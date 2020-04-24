@@ -45,6 +45,7 @@ Rectangle {
                 width: parent.width
                 height: parent.height
                 onClicked: {
+                    setHelpText( "", false )
                     var text = groupDescriptions[section]
                     if( typeof text !== "undefined" )
                         setHelpText( text, false )
@@ -254,6 +255,7 @@ Rectangle {
                 width: comboBox.width - comboBox.combo.width
                 height: itemRect.height
                 onClicked: {
+                    setHelpText( "", false )
                     setHelpText( "", false )
                     var named_option = 0
                     if(typeof key !== "undefined" && key !== "@" && key !== "#")
