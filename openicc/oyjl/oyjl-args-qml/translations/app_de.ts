@@ -129,17 +129,17 @@
 <context>
     <name>OptionsList</name>
     <message>
-        <location filename="../qml/OptionsList.qml" line="109"/>
-        <location filename="../qml/OptionsList.qml" line="153"/>
-        <location filename="../qml/OptionsList.qml" line="192"/>
-        <location filename="../qml/OptionsList.qml" line="206"/>
+        <location filename="../qml/OptionsList.qml" line="110"/>
+        <location filename="../qml/OptionsList.qml" line="154"/>
+        <location filename="../qml/OptionsList.qml" line="193"/>
+        <location filename="../qml/OptionsList.qml" line="207"/>
         <source>selected</source>
         <translation>ausgewählt</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="109"/>
-        <location filename="../qml/OptionsList.qml" line="153"/>
-        <location filename="../qml/OptionsList.qml" line="192"/>
+        <location filename="../qml/OptionsList.qml" line="110"/>
+        <location filename="../qml/OptionsList.qml" line="154"/>
+        <location filename="../qml/OptionsList.qml" line="193"/>
         <source>new/old</source>
         <translation>alt/neu</translation>
     </message>
@@ -157,29 +157,29 @@
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="578"/>
-        <location filename="../qml/main.qml" line="629"/>
-        <location filename="../qml/main.qml" line="662"/>
+        <location filename="../qml/main.qml" line="592"/>
+        <location filename="../qml/main.qml" line="643"/>
+        <location filename="../qml/main.qml" line="676"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="810"/>
+        <location filename="../qml/main.qml" line="824"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="862"/>
+        <location filename="../qml/main.qml" line="876"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="862"/>
+        <location filename="../qml/main.qml" line="876"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="864"/>
+        <location filename="../qml/main.qml" line="878"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>
