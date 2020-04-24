@@ -18,7 +18,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .br
 \fBoyranos-profile-graph\fR \fB\-i\fR \fIFILE\fR \fB\-I\fR \fIPAGE\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 .SH OPTIONS
@@ -47,10 +47,10 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 \fB\-r\fR|\fB\-\-no-repair\fR	No Profile repair of ICC profile ID
 .br
 .SS
-Color Patches Graph from profiles
+HLC Color Atlas Pages
 \fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
-Create a 2D Graph containing the possible color patches inside the ICC Profile gamut.
+Create a 2D Graph containing the possible color patches inside the ICC Profile gamut. More information about HLC Color Atlas can be found on www.freiefarbe.de
 .br
 .sp
 .br
@@ -146,7 +146,7 @@ Specify a page name as string or page index as number. -1 will list all page nam
 .RE
 .SS
 General options
-\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
 .br
 \fB\-t\fR|\fB\-\-thickness\fR \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])
 .br
@@ -184,6 +184,10 @@ Get UI converted into text formats
 .br
 	\-X export		# Export - Get UI data for developers
 .br
+\fB\-R\fR|\fB\-\-render\fR \fIgui|web|\fR	Select Renderer
+.RS
+Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" will launch a local Web Server, which listens on local port.
+.RE
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br
 \fB\-v\fR|\fB\-\-verbose\fR	verbose

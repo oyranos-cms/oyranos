@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-04-22 19:37+0200\n"
+"POT-Creation-Date: 2020-04-24 08:27+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -959,10 +959,6 @@ msgstr "Farbseite"
 msgid "Color Page Input"
 msgstr "Farbseiten Eingabe"
 
-#: tools/oyranos_profile_graph.c:417
-msgid "Color Patches Graph from profiles"
-msgstr "Farbpalette vom Farbprofil"
-
 #. spac
 #: API_generated/oyranos_profile.c:34 API_generated/oyranos_profile.c:70
 #: liboyranos_config/oyranos_icc.c:626
@@ -1333,10 +1329,12 @@ msgstr "Erzeuge eine 3D Interpolationstabelle"
 #: tools/oyranos_profile_graph.c:417
 msgid ""
 "Create a 2D Graph containing the possible color patches inside the ICC "
-"Profile gamut."
+"Profile gamut. More information about HLC Color Atlas can be found on www."
+"freiefarbe.de"
 msgstr ""
 "Erzeuge ein 2D Farbpalette mit allen möglichen Farben innerhalb des "
-"Farbumfanges des ICC Fabprofiles."
+"Farbumfanges des ICC Fabprofiles. Mehr Informationen zum HLC Farbatlas "
+"sind zu finden auf www.freiefarbe.de"
 
 #: tools/oyranos_profile_graph.c:416
 msgid "Create a 2D Graph containing the saturation line from a ICC Profile."
@@ -1904,7 +1902,7 @@ msgstr "Bildschirm"
 
 #: examples/libraw/oyranos_file.cpp:78 tools/oyranos-config.c:93
 #: tools/oyranos-device.c:109 tools/oyranos-monitor-white-point.c:440
-#: tools/oyranos_gamma.c:246 tools/oyranos_profile_graph.c:453
+#: tools/oyranos_gamma.c:246 tools/oyranos_profile_graph.c:452
 #: tools/oyranos_profile_tool.c:131 tools/oyranos_profiles.c:173
 #, c-format
 msgid "For more information read the man page:"
@@ -2018,6 +2016,10 @@ msgstr "HLC"
 
 #: tools/oyranos_profile_graph.c:367
 msgid "HLC Color Atlas"
+msgstr "HLC Farbatlas"
+
+#: tools/oyranos_profile_graph.c:417
+msgid "HLC Color Atlas Pages"
 msgstr "HLC Farbatlas"
 
 #: liboyranos_config/oyranos_texts.c:568
@@ -6701,6 +6703,9 @@ msgstr "xyY"
 
 #~ msgid "Cmyk to Cmyk transformation"
 #~ msgstr "Cmyk nach Cmyk Umwandlung"
+
+#~ msgid "Color Patches Graph from profiles"
+#~ msgstr "Farbpalette vom Farbprofil"
 
 #~ msgid "Color Space for Simulating real devices"
 #~ msgstr "Farbraum für die Nachbildung eines Gerätes (Simulation)"

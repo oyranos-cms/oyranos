@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-04-22 19:37+0200\n"
+"POT-Creation-Date: 2020-04-24 08:27+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1004,11 +1004,6 @@ msgstr "Kolore-espazioa"
 msgid "Color Page Input"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:417
-#, fuzzy
-msgid "Color Patches Graph from profiles"
-msgstr "profilik ez"
-
 #. spac
 #: API_generated/oyranos_profile.c:34 API_generated/oyranos_profile.c:70
 #: liboyranos_config/oyranos_icc.c:626
@@ -1381,7 +1376,8 @@ msgstr ""
 #: tools/oyranos_profile_graph.c:417
 msgid ""
 "Create a 2D Graph containing the possible color patches inside the ICC "
-"Profile gamut."
+"Profile gamut. More information about HLC Color Atlas can be found on www."
+"freiefarbe.de"
 msgstr ""
 
 #: tools/oyranos_profile_graph.c:416
@@ -1987,7 +1983,7 @@ msgstr "Pantaila:"
 
 #: examples/libraw/oyranos_file.cpp:78 tools/oyranos-config.c:93
 #: tools/oyranos-device.c:109 tools/oyranos-monitor-white-point.c:440
-#: tools/oyranos_gamma.c:246 tools/oyranos_profile_graph.c:453
+#: tools/oyranos_gamma.c:246 tools/oyranos_profile_graph.c:452
 #: tools/oyranos_profile_tool.c:131 tools/oyranos_profiles.c:173
 #, c-format
 msgid "For more information read the man page:"
@@ -2112,6 +2108,11 @@ msgstr ""
 #: tools/oyranos_profile_graph.c:367
 #, fuzzy
 msgid "HLC Color Atlas"
+msgstr "Kolore izendunen izenak"
+
+#: tools/oyranos_profile_graph.c:417
+#, fuzzy
+msgid "HLC Color Atlas Pages"
 msgstr "Kolore izendunen izenak"
 
 #: liboyranos_config/oyranos_texts.c:568
@@ -6723,6 +6724,10 @@ msgstr "Yxy"
 
 #~ msgid "Close"
 #~ msgstr "Itxi"
+
+#, fuzzy
+#~ msgid "Color Patches Graph from profiles"
+#~ msgstr "profilik ez"
 
 #~ msgid ""
 #~ "Color profiles are often available from manufacturers of optical devices "
