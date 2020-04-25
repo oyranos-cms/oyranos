@@ -119,7 +119,7 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s"},
+    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i.+,x,s"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s",       "j"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s",       "y"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s",       "m"},
