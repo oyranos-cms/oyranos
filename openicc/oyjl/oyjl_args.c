@@ -1132,21 +1132,34 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
   if(o->value_name)
   {
     const char * value_name = o->value_name;
-    int m = value_name[0] == '[';
+    int m = value_name[0] == '['; /* m=move : migth be explicitely used together with OYJL_OPTION_FLAG_ACCEPT_NO_ARG */
     if(m) /* expect optional arg(s) for this option and *move* the first opening '[' square bracket before the equal '=' sign */
       ++value_name;
     if(style & oyjlOPTIONSTYLE_MAN)
-      oyjlStringAdd( &text, malloc, free, "%s\\fI%s\\fR", OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#") ? " ":"", o->value_name );
+      oyjlStringAdd( &text, malloc, free, "%s\\fI%s%s%s\\fR",
+          OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#") ? " ":"",
+          (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"[":"",
+          o->value_name,
+          (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"]":"" );
     else
     {
       if(style & oyjlOPTIONSTYLE_MARKDOWN)
-        oyjlStringAdd( &text, malloc, free, "%s%s%s%s</em>", m?"<em>[":"", OYJL_IS_NOT_O("@") && !(style & oyjlOPTIONSTYLE_STRING)?"=":" ", m?"":"<em>", value_name ); /* allow for easier word wrap in table */
+        oyjlStringAdd( &text, malloc, free, "%s%s%s%s%s</em>",
+            (m||o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"<em>[":"",
+            OYJL_IS_NOT_O("@") && !(style & oyjlOPTIONSTYLE_STRING)?"=":" ",
+            (m||o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG) ? "" : "<em>",
+            value_name,
+            (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"]":"" ); /* allow for easier word wrap in table */
       else if(style & oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP)
         oyjlStringAdd( &text, malloc, free, "%s", oyjlTermColor(oyjlITALIC,o->value_name) );
       else
       {
         char * t = NULL;
-        oyjlStringAdd( &t, malloc, free, "%s%s%s", m?"[":"", (!o->o || strcmp(o->o, "@")) != 0?"=":"", value_name );
+        oyjlStringAdd( &t, malloc, free, "%s%s%s%s",
+            (m||o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"[":"",
+            (!o->o || strcmp(o->o, "@")) != 0?"=":"",
+            value_name,
+            (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"]":"" );
         oyjlStringAdd( &text, malloc, free, "%s", oyjlTermColor(oyjlITALIC,t) );
         free(t);
       }
@@ -1208,7 +1221,7 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
       o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_h_choices, sizeof(oyjl_h_choices), malloc );
       if(o->value_name == NULL)
       {
-        o->value_name = "[synopsis|...]";
+        o->value_name = "synopsis|...";
         if(o->name == NULL)
         {
           o->name = _("help");
@@ -2648,7 +2661,7 @@ void oyjlUi_EnrichInbuild( oyjlUi_s * ui )
       o->values.choices.list = h_choices;
       if(o->value_name == NULL)
       {
-        o->value_name = "[synopsis|...]";
+        o->value_name = "synopsis|...";
         if(o->name == NULL)
         {
           o->name = _("Help");
