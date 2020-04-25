@@ -2895,7 +2895,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   if( opt_state == oyjlOPTIONS_MISSING ||
       (opt_state == oyjlOPTION_MISSING_VALUE && results && results->group >= 0) )
   {
-    oyjlOptions_PrintHelp( ui->opts, ui, -1, NULL );
+    oyjlOptions_PrintHelp( ui->opts, ui, results && results->group >= 0?-1:-2, NULL );
     oyjlUi_Release( &ui);
     if(status)
       *status |= oyjlUI_STATE_HELP;
