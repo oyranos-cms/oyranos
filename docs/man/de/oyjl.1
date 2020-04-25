@@ -2,19 +2,19 @@
 .SH NAME
 oyjl v1.0.0 \- Oyjl Json Bearbeitung
 .SH ÜBERSICHT
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
-\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
 .br
-\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
 .br
 \fBoyjl\fR \fB\-h\fR \fI[synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
@@ -23,7 +23,7 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 .SS
 Setze Eingangsdateiname und Pfad
 .br
-\fB\-i\fR|\fB\-\-input\fR \fIDATEINAME\fR	Datei oder Datenstrom
+\fB\-i\fR|\fB\-\-input\fR \fIDATEINAME\fR...	Datei oder Datenstrom
 .RS
 Ein JSON-Dateiname oder Eingangsdatenstrom wie "stdin"
 .RE
@@ -35,43 +35,43 @@ Der Pfad besteht aus Namen, welche durch Schrägstrich '/' getrennt sind. Jeder 
 .br
 .SS
 Zeige JSON auf stdout
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
 \fBjson\fR	Zeige JSON auf stdout
 .br
 .SS
 Zeige YAML auf stdout
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
 \fByaml\fR	Zeige YAML auf stdout
 .br
 .SS
 Zeige XML auf stdout
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
 .br
 \fBxml\fR	Zeige XML auf stdout
 .br
 .SS
 Zeige Knotenanzahl
-\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
 .br
 \fBcount\fR	Zeige Anzahl der Knotenzweige
 .br
 .SS
 Zeige Schlüsselname
-\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
 .br
 \fBkey\fR	Zeige Schlüsselname des Knotens
 .br
 .SS
 Zeige Typ
-\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
 .br
 \fBtype\fR	Hole Knotentyp
 .br
 .SS
 Zeige alle zutreffenden Pfade
-\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
 .br
 \fBpaths\fR	Zeige alle zutreffenden Pfade
 .br

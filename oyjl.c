@@ -96,7 +96,7 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&set}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "t","type",          NULL,     _("Type"),     _("Get node type"),          NULL,NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&type}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "i","input",         NULL,     _("Input"),    _("File or Stream"),_("A JSON file name or a input stream like \"stdin\"."),_("FILENAME"),
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_REPETITION, "i","input",         NULL,     _("Input"),    _("File or Stream"),_("A JSON file name or a input stream like \"stdin\"."),_("FILENAME"),
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&i_filename}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "x","xpath",         NULL,     _("XPath"),    _("Path specifier"),_("The path consists of slash '/' separated terms. Each term can be a key name or a square bracketed index. A empty term is used for a search inside a tree."),_("PATH"),
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&xpath}},
@@ -119,7 +119,7 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i.+,x,s"},
+    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s",       "j"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s",       "y"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s",       "m"},
