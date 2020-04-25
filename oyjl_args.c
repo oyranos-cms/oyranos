@@ -1368,6 +1368,9 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
   memset(ol, 0, 8);
   if(t)
     t[0] = '\000';
+  t = strchr(str, '.');
+  if(t)
+    t[0] = '\000';
 
   if(str[0])
   {
