@@ -1079,17 +1079,17 @@ int oyjlOptions_CountGroups       ( oyjlOptions_s  * opts )
 #define OYJL_IS_NOT_O( x ) (!o->o || strcmp(o->o,x) != 0)
 #define OYJL_IS_O( x ) (o->o && strcmp(o->o,x) == 0)
 enum {
-  oyjlOPTIONSTYLE_ONELETTER = 0x01,
-  oyjlOPTIONSTYLE_STRING = 0x02,
-  oyjlOPTIONSTYLE_OPTIONAL_START = 0x04,
-  oyjlOPTIONSTYLE_OPTIONAL_END = 0x08,
-  oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP = 0x10,
-  oyjlOPTIONSTYLE_MAN = 0x20,
-  oyjlOPTIONSTYLE_MARKDOWN = 0x40
+  oyjlOPTIONSTYLE_ONELETTER = 0x01,                     /* the single dash '-' style option is prefered: -o */
+  oyjlOPTIONSTYLE_STRING = 0x02,                        /* add double dash '-' style option as well: --long-option */
+  oyjlOPTIONSTYLE_OPTIONAL_START = 0x04,                /* print the option as optional: EBNF [--option] */
+  oyjlOPTIONSTYLE_OPTIONAL_END = 0x08,                  /* print the option as optional: EBNF [--option] */
+  oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP = 0x10,         /* add second level grouping: [[--option1|--option2]] */
+  oyjlOPTIONSTYLE_MAN = 0x20,                           /* add Unix MAN page groff syntax decoration */
+  oyjlOPTIONSTYLE_MARKDOWN = 0x40                       /* add markdown syntax decoration */
 };
 #define oyjlOPTIONSTYLE_OPTIONAL (oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END)
-#define oyjlOPTIONSTYLE_LINK_GROUP     0x100
-#define oyjlOPTIONSTYLE_LINK_SYNOPSIS  0x200
+#define oyjlOPTIONSTYLE_LINK_GROUP     0x100            /* add link to group, e.g. from synopsis line in markdown */
+#define oyjlOPTIONSTYLE_LINK_SYNOPSIS  0x200            /* add link to synopsis, e.g. in markdown */
 static
 char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
                                        int                 style )
