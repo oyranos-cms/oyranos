@@ -356,7 +356,7 @@ int myMain( int argc, const char ** argv )
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
     {"oiwi", 0,                         "2", "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
     {"oiwi", 0,                         "4", "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "@", NULL,            NULL, _("Input"),         _("ICC Profile"),            NULL, "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE", oyjlOPTIONTYPE_FUNCTION, {.getChoices = listProfiles}, oyjlINT, {.i=&profile_count} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_REPETITION, "@", NULL,            NULL, _("Input"),         _("ICC Profile"),            NULL, "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE", oyjlOPTIONTYPE_FUNCTION, {.getChoices = listProfiles}, oyjlINT, {.i=&profile_count} },
     {"oiwi", 0, "b", "no-border",     NULL, _("Omit border"),   _("Omit border in graph"),   NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_border} },
     {"oiwi", 0, "c", "no-blackbody",  NULL, _("No black body"), _("Omit white line of lambert light emitters"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_blackbody} },
     {"oiwi", 0, "d", "change-thickness",NULL,_("Thickness increase"),_("Specify increase of the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,

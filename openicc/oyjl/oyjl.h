@@ -528,7 +528,7 @@ typedef union oyjlOption_u {
 
 #define OYJL_OPTION_FLAG_EDITABLE      0x001 /**< @brief The oyjlOption_s choices are merely a hint. Let users fill other strings too. */
 #define OYJL_OPTION_FLAG_ACCEPT_NO_ARG 0x002 /**< @brief Accept as well no arg */
-#define OYJL_OPTION_FLAG_REPETITION    0x004 /**< @brief Accept more than one occurence */
+#define OYJL_OPTION_FLAG_REPETITION    0x004 /**< @brief Accept more than one occurence: ... */
 #define OYJL_OPTION_FLAG_MAINTENANCE   0x100 /**< @brief Maintenance option; can be invisible */
 /** @brief abstract UI option
  *

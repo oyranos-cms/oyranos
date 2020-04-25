@@ -1165,6 +1165,8 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
       }
     }
   }
+  if(o->flags & OYJL_OPTION_FLAG_REPETITION)
+    oyjlStringAdd( &text, malloc, free, "..." );
   if(style & oyjlOPTIONSTYLE_OPTIONAL_END)
     oyjlStringAdd( &text, malloc, free, "]" );
   return text;
@@ -2187,7 +2189,9 @@ char *       oyjlOptions_PrintHelpSynopsis (
       if(!getenv("OYJL_NO_EXIT")) exit(1);
     }
     if(strcmp(option, "@") == 0)
-      oyjlStringAdd( &text, malloc, free, " %s", o->value_name?o->value_name:"..." );
+      oyjlStringAdd( &text, malloc, free, " %s%s",
+          o->value_name?o->value_name:"...",
+          o->value_name && o->flags & OYJL_OPTION_FLAG_REPETITION ? "..." : "" );
   }
   oyjlStringListRelease( &m_list, m, free );
   oyjlStringListRelease( &on_list, on, free );
