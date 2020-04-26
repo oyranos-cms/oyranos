@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-04-25 12:31+0200\n"
+"POT-Creation-Date: 2020-04-26 08:03+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -133,7 +133,7 @@ msgstr "Wandele UI JSON nach C Quelltext mit libOyjl"
 msgid "Convert eXported developer JSON to C source"
 msgstr "Wandle EntwicklerJSON nach C Quelltext"
 
-#: oyjl_args_tree.c:1115
+#: oyjl_args_tree.c:1119
 msgid "Copyright"
 msgstr "Kopierrecht"
 
@@ -145,7 +145,7 @@ msgstr "Anzahl"
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
-#: oyjl_args_tree.c:1124
+#: oyjl_args_tree.c:1128
 msgid "Date"
 msgstr "Datum"
 
@@ -153,7 +153,7 @@ msgstr "Datum"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: oyjl_args_tree.c:1121
+#: oyjl_args_tree.c:1125
 msgid "Development"
 msgstr "Entwicklung"
 
@@ -165,7 +165,7 @@ msgstr "Verzeichnis"
 msgid "Display a interactive graphical User Interface."
 msgstr "Zeige eine interaktive grafische Benutzerschnittstelle."
 
-#: oyjl_args_tree.c:1123
+#: oyjl_args_tree.c:1127
 msgid "Documentation"
 msgstr "Dokumente"
 
@@ -181,7 +181,7 @@ msgstr "Doppelt Pflicht"
 msgid "Double occuring option"
 msgstr "Doppelte Option"
 
-#: oyjl_args_tree.c:1119
+#: oyjl_args_tree.c:1123
 msgid "Download"
 msgstr "Bezugsquelle"
 
@@ -375,7 +375,7 @@ msgstr "Schlüsselnamen"
 msgid "LOCALEDIR"
 msgstr "LOCALEPFAD"
 
-#: oyjl_args.c:2961 oyjl_args.c:3466 oyjl_args.c:3732 oyjl_args_tree.c:1116
+#: oyjl_args.c:2961 oyjl_args.c:3466 oyjl_args.c:3732 oyjl_args_tree.c:1120
 msgid "License"
 msgstr "Lizenz"
 
@@ -424,7 +424,7 @@ msgstr "Lang"
 msgid "Man"
 msgstr "Handbuch"
 
-#: oyjl_args_tree.c:1114
+#: oyjl_args_tree.c:1118
 msgid "Manufacturer"
 msgstr "Hersteller"
 
@@ -496,7 +496,7 @@ msgstr "Modus8"
 msgid "Mode9"
 msgstr "Modus9"
 
-#: oyjl_args_tree.c:1095
+#: oyjl_args_tree.c:1099
 msgid "Module"
 msgstr "Modul"
 
@@ -504,7 +504,7 @@ msgstr "Modul"
 msgid "NAME"
 msgstr "NAME"
 
-#: oyjl_args_tree.c:1345
+#: oyjl_args_tree.c:1349
 msgid "No"
 msgstr "Nein"
 
@@ -574,7 +574,7 @@ msgstr "Oyjl Args Ausgabe"
 msgid "Oyjl Json Manipulation"
 msgstr "Oyjl Json Bearbeitung"
 
-#: oyjl_args_tree.c:1122
+#: oyjl_args_tree.c:1126
 msgid "Oyjl Module Author"
 msgstr "Autor des Oyjl Modules"
 
@@ -599,7 +599,7 @@ msgstr "Pfadangabe"
 msgid "Paths"
 msgstr "Pfade"
 
-#: oyjl_args_tree.c:1126
+#: oyjl_args_tree.c:1130
 msgid "Permissions"
 msgstr "Berechtigungen"
 
@@ -800,7 +800,7 @@ msgstr ""
 "Kleines JSON UI Werkzeug, welches libOyjl und eine auswählbaren Darstellung "
 "nutzt"
 
-#: oyjl_args_tree.c:1120
+#: oyjl_args_tree.c:1124
 msgid "Sources"
 msgstr "Quellen"
 
@@ -812,7 +812,7 @@ msgstr "Starte Web Server"
 msgid "Start a local Web Service to connect a Webbrowser with."
 msgstr "Starte lokalen Web Service für die Darstellung in einem Webbrowser"
 
-#: oyjl_args_tree.c:1118
+#: oyjl_args_tree.c:1122
 msgid "Support"
 msgstr "Unterstützung"
 
@@ -886,7 +886,7 @@ msgstr "Die Option erwartet ein Argument"
 msgid "This options explanation text."
 msgstr "Die Erklärung zur Option."
 
-#: oyjl_args_tree.c:1093
+#: oyjl_args_tree.c:1097
 msgid "Tool"
 msgstr "Werkzeug"
 
@@ -919,7 +919,7 @@ msgstr "Freie Optionen sind nicht unterstützt"
 msgid "Unix Man page"
 msgstr "Unix Handbuchseite"
 
-#: oyjl_args_tree.c:1117
+#: oyjl_args_tree.c:1121
 msgid "Url"
 msgstr "Url"
 
@@ -938,7 +938,7 @@ msgstr "Benutzerfehler:"
 msgid "Verbose"
 msgstr "Plaudernd"
 
-#: oyjl-args.c:57 oyjl.c:113 oyjl_args_tree.c:1125 oyjl_translate.c:125
+#: oyjl-args.c:57 oyjl.c:113 oyjl_args_tree.c:1129 oyjl_translate.c:125
 #: test-core.c:601
 msgid "Version"
 msgstr "Version"
@@ -967,7 +967,7 @@ msgstr "XPath"
 msgid "YAML"
 msgstr "YAML"
 
-#: oyjl_args_tree.c:1345
+#: oyjl_args_tree.c:1349
 msgid "Yes"
 msgstr "Ja"
 
