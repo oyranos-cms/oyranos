@@ -317,20 +317,8 @@ int myMain( int argc , const char** argv )
   if( man_page && strcmp(man_page,"man_page") == 0 )
       man = 1;
 
-  if(getenv(OY_DEBUG))
-  {
-    int value = atoi(getenv(OY_DEBUG));
-    if(value > 0)
-      oy_debug += value;
-    DBG_S_( oyPrintTime() );
-  }
   if(oy_debug)
     fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
-
-#ifdef USE_GETTEXT
-  setlocale(LC_ALL,"");
-#endif
-  oyI18NInit_();
 
   if(!man)
     temperature_man = oyGetTemperature(5000);
@@ -688,6 +676,17 @@ int main( int argc_, char ** argv_)
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
   argv[argc++] = "--render=gui"; /* start QML */
 #endif
+
+  /* language needs to be initialised before setup of data structures */
+  int use_gettext = 0;
+#ifdef OYJL_USE_GETTEXT
+  use_gettext = 1;
+#ifdef OYJL_HAVE_LOCALE_H
+  setlocale(LC_ALL,"");
+#endif
+#endif
+
+  oyExportStart_(EXPORT_CHECK_NO);
 
   myMain(argc, (const char **)argv);
 

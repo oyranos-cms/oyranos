@@ -301,11 +301,6 @@ int myMain( int argc, const char ** argv )
   max_x=max_y=1.0;
 
 
-#ifdef USE_GETTEXT
-  setlocale(LC_ALL,"");
-#endif
-  oyI18NInit_();
-
   oyjlOptions_s * opts;
   oyjlUi_s * ui;
   oyjlUiHeaderSection_s * info;
@@ -1787,7 +1782,8 @@ int main( int argc_, char**argv_, char ** envv )
   setlocale(LC_ALL,"");
 #endif
 #endif
-  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
+
+  oyExportStart_(EXPORT_CHECK_NO);
 
   myMain(argc, (const char **)argv);
 

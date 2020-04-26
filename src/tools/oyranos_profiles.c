@@ -514,8 +514,6 @@ int main( int argc_, char**argv_, char ** envv )
   int argc = argc_;
   char ** argv = argv_;
 
-  oyExportStart_(EXPORT_CHECK_NO);
-
 #ifdef __ANDROID__
   setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
 
@@ -535,7 +533,8 @@ int main( int argc_, char**argv_, char ** envv )
   setlocale(LC_ALL,"");
 #endif
 #endif
-  oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &oy_debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, OY_DOMAIN_INTERNAL, NULL );
+
+  oyExportStart_(EXPORT_CHECK_NO);
 
   myMain(argc, (const char **)argv);
 
