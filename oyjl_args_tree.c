@@ -707,7 +707,11 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       if(flg & OYJL_OPTION_FLAG_EDITABLE)
         oyjlStringAdd( &flag_string, 0,0, "%s", "OYJL_OPTION_FLAG_EDITABLE" );
       if(flg & OYJL_OPTION_FLAG_ACCEPT_NO_ARG)
-        oyjlStringAdd( &flag_string, 0,0, "%s", "OYJL_OPTION_FLAG_ACCEPT_NO_ARG" );
+        oyjlStringAdd( &flag_string, 0,0, "%s%s", flag_string?"|":"", "OYJL_OPTION_FLAG_ACCEPT_NO_ARG" );
+      if(flg & OYJL_OPTION_FLAG_REPETITION)
+        oyjlStringAdd( &flag_string, 0,0, "%s%s", flag_string?"|":"", "OYJL_OPTION_FLAG_REPETITION" );
+      if(flg & OYJL_OPTION_FLAG_MAINTENANCE)
+        oyjlStringAdd( &flag_string, 0,0, "%s%s", flag_string?"|":"", "OYJL_OPTION_FLAG_MAINTENANCE" );
       if(!flag_string)
         flag_string = oyjlStringCopy("0",0);
       v = oyjlTreeGetValue( val, 0, "option" ); option_fallback = option = OYJL_GET_STRING(v); /* "option" is needed as fallback for "name" */

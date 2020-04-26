@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-04-25 12:31+0200\n"
+"POT-Creation-Date: 2020-04-26 08:03+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -129,7 +129,7 @@ msgstr ""
 msgid "Convert eXported developer JSON to C source"
 msgstr ""
 
-#: oyjl_args_tree.c:1115
+#: oyjl_args_tree.c:1119
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -141,7 +141,7 @@ msgstr ""
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args_tree.c:1124
+#: oyjl_args_tree.c:1128
 msgid "Date"
 msgstr "Datum"
 
@@ -150,7 +150,7 @@ msgstr "Datum"
 msgid "Description"
 msgstr "popis"
 
-#: oyjl_args_tree.c:1121
+#: oyjl_args_tree.c:1125
 msgid "Development"
 msgstr ""
 
@@ -163,7 +163,7 @@ msgstr "Novy adresar?"
 msgid "Display a interactive graphical User Interface."
 msgstr ""
 
-#: oyjl_args_tree.c:1123
+#: oyjl_args_tree.c:1127
 msgid "Documentation"
 msgstr "Dokumentace"
 
@@ -180,7 +180,7 @@ msgstr ""
 msgid "Double occuring option"
 msgstr "popis"
 
-#: oyjl_args_tree.c:1119
+#: oyjl_args_tree.c:1123
 msgid "Download"
 msgstr ""
 
@@ -387,7 +387,7 @@ msgstr "Mé jméno"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:2961 oyjl_args.c:3466 oyjl_args.c:3732 oyjl_args_tree.c:1116
+#: oyjl_args.c:2961 oyjl_args.c:3466 oyjl_args.c:3732 oyjl_args_tree.c:1120
 msgid "License"
 msgstr "Licence"
 
@@ -443,7 +443,7 @@ msgstr ""
 msgid "Man"
 msgstr "Purpurová"
 
-#: oyjl_args_tree.c:1114
+#: oyjl_args_tree.c:1118
 msgid "Manufacturer"
 msgstr "Výrobce"
 
@@ -525,7 +525,7 @@ msgstr "Model:"
 msgid "Mode9"
 msgstr "Model:"
 
-#: oyjl_args_tree.c:1095
+#: oyjl_args_tree.c:1099
 #, fuzzy
 msgid "Module"
 msgstr "Volby modulu:"
@@ -534,7 +534,7 @@ msgstr "Volby modulu:"
 msgid "NAME"
 msgstr ""
 
-#: oyjl_args_tree.c:1345
+#: oyjl_args_tree.c:1349
 msgid "No"
 msgstr "Ne"
 
@@ -605,7 +605,7 @@ msgstr "nacteno"
 msgid "Oyjl Json Manipulation"
 msgstr ""
 
-#: oyjl_args_tree.c:1122
+#: oyjl_args_tree.c:1126
 #, fuzzy
 msgid "Oyjl Module Author"
 msgstr "Moduly Oyranosu"
@@ -634,7 +634,7 @@ msgstr ""
 msgid "Paths"
 msgstr "Cesty"
 
-#: oyjl_args_tree.c:1126
+#: oyjl_args_tree.c:1130
 #, fuzzy
 msgid "Permissions"
 msgstr "ICC Examin Verze"
@@ -852,7 +852,7 @@ msgstr ""
 msgid "Small JSON UI tool using libOyjl and a selectable renderer"
 msgstr ""
 
-#: oyjl_args_tree.c:1120
+#: oyjl_args_tree.c:1124
 msgid "Sources"
 msgstr ""
 
@@ -864,7 +864,7 @@ msgstr ""
 msgid "Start a local Web Service to connect a Webbrowser with."
 msgstr ""
 
-#: oyjl_args_tree.c:1118
+#: oyjl_args_tree.c:1122
 msgid "Support"
 msgstr ""
 
@@ -931,7 +931,7 @@ msgstr ""
 msgid "This options explanation text."
 msgstr ""
 
-#: oyjl_args_tree.c:1093
+#: oyjl_args_tree.c:1097
 msgid "Tool"
 msgstr ""
 
@@ -964,7 +964,7 @@ msgstr "Volba nepodporovaného typu:"
 msgid "Unix Man page"
 msgstr "Unix a deriváty"
 
-#: oyjl_args_tree.c:1117
+#: oyjl_args_tree.c:1121
 msgid "Url"
 msgstr ""
 
@@ -984,7 +984,7 @@ msgstr ""
 msgid "Verbose"
 msgstr "upovídaný výstup"
 
-#: oyjl-args.c:57 oyjl.c:113 oyjl_args_tree.c:1125 oyjl_translate.c:125
+#: oyjl-args.c:57 oyjl.c:113 oyjl_args_tree.c:1129 oyjl_translate.c:125
 #: test-core.c:601
 #, fuzzy
 msgid "Version"
@@ -1017,7 +1017,7 @@ msgstr "Cesty"
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:1345
+#: oyjl_args_tree.c:1349
 msgid "Yes"
 msgstr "Ano"
 

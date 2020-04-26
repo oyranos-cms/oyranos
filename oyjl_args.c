@@ -1367,7 +1367,7 @@ oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
  *  @memberof oyjlOptions_s
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/08/04
+ *  @date    2020/04/25
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
