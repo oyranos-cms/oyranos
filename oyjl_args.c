@@ -1576,7 +1576,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
         {
           const char * arg = multi_byte_letters[j];
           o = oyjlOptions_GetOption( opts, arg );
-          if(!o)
+          if( !o )
           {
             oyjlOptions_Print( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
@@ -1649,7 +1649,8 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
       {
         long_arg = &str[2];
         o = oyjlOptions_GetOptionL( opts, long_arg );
-        if(!o)
+        if( !o ||
+            (o && o->flags & OYJL_OPTION_FLAG_NO_DASH) )
         {
           oyjlOptions_Print( opts, i );
           fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
