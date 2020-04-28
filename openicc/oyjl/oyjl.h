@@ -528,7 +528,8 @@ typedef union oyjlOption_u {
 
 #define OYJL_OPTION_FLAG_EDITABLE      0x001 /**< @brief The oyjlOption_s choices are merely a hint. Let users fill other strings too. */
 #define OYJL_OPTION_FLAG_ACCEPT_NO_ARG 0x002 /**< @brief Accept as well no arg */
-#define OYJL_OPTION_FLAG_REPETITION    0x004 /**< @brief Accept more than one occurence: ... */
+#define OYJL_OPTION_FLAG_NO_DASH       0x004 /**< @brief No double dash '--' acceptance; single dash can be omitted by not specifying oyjlOption_s::o */
+#define OYJL_OPTION_FLAG_REPETITION    0x008 /**< @brief Accept more than one occurence: ... */
 #define OYJL_OPTION_FLAG_MAINTENANCE   0x100 /**< @brief Maintenance option; can be invisible */
 /** @brief abstract UI option
  *
@@ -540,11 +541,14 @@ struct oyjlOption_s {
    *  - ::OYJL_OPTION_FLAG_ACCEPT_NO_ARG : the flagged option can accept as well no argument without error.
    *    - oyjlSTRING will be set to empty string ("")
    *    - oyjlDOUBLE and oyjlINT will be set to 1
+   *  - ::OYJL_OPTION_FLAG_NO_DASH can be used for subcommand options in ::OYJL_GROUP_FLAG_SUBCOMMAND flagged groups
+   *  - ::OYJL_OPTION_FLAG_REPETITION multi occurence; print trailing ...
+   *  - ::OYJL_OPTION_FLAG_MAINTENANCE accept even without printed visibility
    */
   unsigned int flags;                  /**< @brief parsing and rendering hints */
   /** '#' is used as default option like a command without any arguments.
    *  '@' together with value_name expects arbitrary arguments as described in oyjlOption_s::value_name.
-   *  Reserved letters are ,(comma), \'(quote), \"(double quote), :(double point), ;(semikolon), /(slash), \(backslash)
+   *  Reserved letters are ,(comma), \'(quote), \"(double quote), .(dot), :(double point), ;(semikolon), /(slash), \\(backslash)
    *  The letter shall return strlen(o) <= 1.
    *  If zero '\000' terminated, this short :o: option name is not enabled and a long :option: name shall be provided.
    */
@@ -562,7 +566,7 @@ struct oyjlOption_s {
   oyjlVariable_u variable;             /**< @brief automatically filled variable depending on *value_type* */
 };
 
-#define OYJL_GROUP_FLAG_SUBCOMMAND     0x80 /**< @brief The oyjlOptionGroup_s requires one single mandatory option with oyjlOPTIONTYPE_NONE. */
+#define OYJL_GROUP_FLAG_SUBCOMMAND     0x80 /**< @brief The oyjlOptionGroup_s requires one single mandatory option with oyjlOPTIONTYPE_NONE. See as well ::OYJL_OPTION_FLAG_NO_DASH */
 /**
  *  @brief Info to compile a Syntax line and check missing arguments
  *
@@ -570,7 +574,7 @@ struct oyjlOption_s {
  */
 typedef struct oyjlOptionGroup_s {
   char type [8];                       /**< @brief must be 'oiwg' */
-  /** - ::OYJL_GROUP_FLAG_SUBCOMMAND : flag inhibits --style mandatory option. */
+  /** - ::OYJL_GROUP_FLAG_SUBCOMMAND : flag inhibits --style mandatory option documentation and uses subcommand style without double dash "--" prefix. */
   unsigned int flags;                  /**< @brief parsing and rendering hints */
   const char * name;                   /**< @brief i18n label string */
   const char * description;            /**< @brief i18n short sentence about the option */
