@@ -133,19 +133,49 @@ AppWindow {
 
     function interactiveCallback( key, value, type, group, setOnly )
     {
+        var opts = optionsModel
+        var n = optionsModel.count
+        var i
+        var opt
+        var explicite = typeof group.explicite !== "undefined"
+        var pass = !explicite
+
+        if(pass === false)
+        {
+            for( i = 0; i < n; ++i )
+            {
+                opt = optionsModel.get(i)
+                var arg = opt.key
+                if(arg.match(key))
+                    break;
+                else
+                    opt = false
+            }
+        }
+        if(!pass && opt !== false && opt.immediate)
+            pass = true;
+
         // skip "detail" only groups
-        if(group.mandatory.length === 0 && group.optional.length === 0)
+        if(!pass && group.mandatory.length === 0 && group.optional.length === 0)
             return
 
         // skip optional options from groups with mandatory requirement
-        if(group.mandatory.length && !group.mandatory.match(key))
+        if(!pass && group.mandatory.length && !group.mandatory.match(key))
             return
+
+        var mandatory_found = false
+        if(group.mandatory.length && group.mandatory.match(key))
+            mandatory_found = true
+        var mandatory_exclusive = false
+        if(group.mandatory.length && group.mandatory.match(/[|]/))
+            mandatory_exclusive = true
+
 
         var sCb = processSetCommand
         command_key = key
         if(processSetCommand.length && setOnly >= 0)
         {
-            var arg = key
+            arg = key
             if(command_set_option.length === 0)
             {
                 if(key === "#" || key === "@")
@@ -198,14 +228,13 @@ AppWindow {
             if(app_debug)
                 statusText = "command_set: " + processSetCommand + " " + args
 
-            // create the args from group::optional options and add them to the mandatory arg from above
+            // create the args from group::optional/group::mandatory options and add them to the passed in arg from above
             // TODO: detect mandatory exclusion, e.g. a|b
-            var n = optionsModel.count
-            var i
             for( i = 0; i < n; ++i )
             {
-                var opt = optionsModel.get(i)
+                opt = optionsModel.get(i)
                 var found = 0
+                var first_mandatory = false
                 arg = opt.key
                 if(arg.match(key))
                     continue
@@ -214,9 +243,15 @@ AppWindow {
                 var arrn = arr.length
                 var j
                 for( j = 0; j < arrn; ++j )
-                    if(arr[j] === arg)
-                        found = 1
-                if(group.optional !== null)
+                {
+                    if(arr[j] === arg && !mandatory_exclusive)
+                    {
+                        found = 1;
+                        if(j === 0)
+                            first_mandatory = true;
+                    }
+                }
+                if(!found && group.optional !== null)
                 {
                     arr = group.optional.split(new RegExp('[,|]', 'g'))
                     arrn = arr.length
@@ -235,7 +270,8 @@ AppWindow {
                    !opt.value.length)
                     opt.value = opt.default
 
-                if(!(opt.value.length !== 0 &&
+                if( !(first_mandatory && !mandatory_found) &&
+                    !(opt.value.length !== 0 &&
                      !(opt.type === "bool" &&
                        opt.value === "false")))
                     continue
@@ -286,6 +322,9 @@ AppWindow {
                 }
             }
 
+            //if(app_debug)
+                statusText = "command_set: " + processSetCommand + " " + args + " ex:" + mandatory_exclusive + " mand:" + group.mandatory
+
             statusText = JSON.stringify(args)
             processSet.start( processSetCommand, args )
             setBusyTimer.start()
@@ -294,7 +333,7 @@ AppWindow {
         if(processGetCommand.length && setOnly <= 0)
         {
             if(app_debug)
-                statusText = "command_get: " + processGetCommand + " " + processGetArgs
+                statusText = "command_get: " + processGetCommand + " " + processGetArgs + " ex:" + mandatory_exclusive
             processGet.start( processGetCommand, processGetArgs )
         }
     }
@@ -706,6 +745,8 @@ AppWindow {
         if(typeof groupDescriptions[groupName] === "undefined")
             groupDescriptions[groupName] = groupDescription
 
+        var explicite = typeof group.explicite !== "undefined"
+
         var options = group.options
         for( var index in options )
         {
@@ -716,7 +757,9 @@ AppWindow {
             var choices = opt.choices
             var type = opt.type
             var dbl = {"start":0,"end":1}
+            var immediate = typeof opt.immediate !== "undefined"
             var run = 0
+            var value = ""
             // see mandatory key
             if(group.mandatory.length && group.mandatory.match(opt.key))
                 run = 1
@@ -740,6 +783,10 @@ AppWindow {
             if( type === "bool")
             {
                 current = opt.default;
+                if( opt.default === "1" )
+                    value = "true";
+                else
+                    value = "false";
             }
             if( type === "string")
             {
@@ -778,6 +825,7 @@ AppWindow {
                 dbl: dbl,
                 current: current,
                 suggest: suggest,
+                immediate: immediate,
                 nick: opt.nick,
                 loc: loc,
                 groupName: groupName,
@@ -786,7 +834,7 @@ AppWindow {
                 default: opt.default,
                 group: group,
                 run: run,
-                value: ""
+                value: value
             }
             var text = JSON.stringify(o);
             o.text = text;

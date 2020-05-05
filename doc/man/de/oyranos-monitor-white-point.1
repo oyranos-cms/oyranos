@@ -2,13 +2,13 @@
 .SH NAME
 oyranos-monitor-white-point v0.9.7 \- Nacht Manager
 .SH ÜBERSICHT
-\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFIL\fR [\fB\-b\fR \fIPROZENT\fR] [\fB\-z\fR] [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFIL\fR [\fB\-b\fR \fIPROZENT\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-w\fR \fI0|1|2|3|4|5|6|7\fR \fB\-a\fR \fIKELVIN\fR [\fB\-z\fR] [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFIL\fR [\fB\-z\fR] [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFIL\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\fB\-z\fR] [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
 .br
@@ -18,7 +18,7 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
 .SH OPTIONEN
 .SS
 Nächtliche Anmutung
-\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFIL\fR [\fB\-b\fR \fIPROZENT\fR] [\fB\-z\fR] [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFIL\fR [\fB\-b\fR \fIPROZENT\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche Hormonsystem reduzieren. Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dieser wird zusammen mit einem warmen Lichtton für die allgemeine Zimmerbeleuchtung wärend der Abend-und Nachtstunden empfohlen.
 .br
@@ -78,9 +78,11 @@ Aktueller Modus
 .br
 \fB\-a\fR|\fB\-\-automatic\fR \fIKELVIN\fR	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100])
 .br
+\fB\-y\fR|\fB\-\-test\fR	
+.br
 .SS
 Setze Tagesmodus
-\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFIL\fR [\fB\-z\fR] [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFIL\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fB\-s\fR|\fB\-\-sun-white-point\fR \fI0|1|2|3|4|5|6|7\fR	Setze den Tagesmodus
 .br
@@ -110,7 +112,7 @@ Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprof
 .br
 .SS
 Ort und Dämmerung
-\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\fB\-z\fR] [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fB\-l\fR|\fB\-\-location\fR	Erhalte Position von IP Adresse
 .br
@@ -163,6 +165,8 @@ Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe sta
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br
 \fB\-z\fR|\fB\-\-system-wide\fR	Einstellung in der systemweiten DB
+.br
+\fB\-y\fR|\fB\-\-test\fR	
 .br
 \fB\-v\fR|\fB\-\-verbose\fR	plaudernd
 .br

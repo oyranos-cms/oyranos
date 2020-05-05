@@ -372,9 +372,9 @@ int myMain( int argc , const char** argv )
     {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0} },
     {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
     {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
-    {"oiwi", 0, "y", "dry-run", NULL, "dry run", "dry run", NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&dry} },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_IMMEDIATE, "y", "test", NULL, _("No Action"), NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&dry} },
     {"oiwi", 0, "u", "hour", NULL, "hour", "hour", NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 0, .dbl.end = 48, .dbl.tick = 1, .dbl.d = 0}, oyjlDOUBLE, {.d=&hour_} },
-    {"oiwi", 0, "c", "check", NULL, "check", "check", NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&check} },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE, "c", "check", NULL, "check", "check", NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&check} },
     /* blind options, useful only for man page generation */
     {"oiwi", 0, "E", "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL} },
     {"oiwi", 0, "A", "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL} },
@@ -385,16 +385,16 @@ int myMain( int argc , const char** argv )
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
-    {"oiwg", 0, _("Mode"), _("Actual mode"), NULL, "w,a", "z,v", "w,a" },
+    {"oiwg", 0, _("Mode"), _("Actual mode"), NULL, "w,a", "z,v", "w,a,y" },
 #if defined( XCM_HAVE_X11 )
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g", "b,z,v", "n,g,b" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g", "b,z,v,y", "n,g,b" },
 #else
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g", "z,v", "n,g" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g", "z,v,y", "n,g" },
 #endif
-    {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s,e", "z,v", "s,e" },
-    {"oiwg", 0, _("Location"), _("Location and Twilight"), NULL, "l|i,o", "t,z,v", "l,i,o,t"},
+    {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s,e", "z,v,y", "s,e" },
+    {"oiwg", OYJL_GROUP_FLAG_EXPLICITE, _("Location"), _("Location and Twilight"), NULL, "l|i,o", "t,z,v,y", "l,i,o,t"},
     {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d" },
-    {"oiwg", 0, _("Misc"), _("General options"), NULL, "m|r|X|h|V|R", "v", "h,m,r,X,R,V,z,v" },
+    {"oiwg", 0, _("Misc"), _("General options"), NULL, "m|r|X|h|V|R", "v", "h,m,r,X,R,V,z,y,v" },
     {"",0,0,0,0,0,0,0}
   };
   double night = isNight(0);
@@ -678,9 +678,7 @@ int main( int argc_, char ** argv_)
 #endif
 
   /* language needs to be initialised before setup of data structures */
-  int use_gettext = 0;
 #ifdef OYJL_USE_GETTEXT
-  use_gettext = 1;
 #ifdef OYJL_HAVE_LOCALE_H
   setlocale(LC_ALL,"");
 #endif

@@ -8,7 +8,7 @@ oyranos-profiles v0.9.7 \- Oyranos Profile
 .br
 \fBoyranos-profiles\fR \fB\-I\fR \fIICC_PROFIL\fR | \fB\-t\fR \fITAXI_ID\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profiles\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR
+\fBoyranos-profiles\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR
 .SH BESCHREIBUNG
 Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profil in einen Suchpfad installieren.
 .SH OPTIONEN
@@ -74,7 +74,7 @@ Installiere Profil
 .br
 \fB\-I\fR|\fB\-\-install\fR \fIICC_PROFIL\fR	Installiere Profil
 .br
-\fB\-t\fR|\fB\-\-taxi\fR \fITAXI_ID\fR	ICC Taxi Profile DB
+\fB\-t\fR|\fB\-\-taxi\fR \fITAXI_ID\fR	ICC Taxi Profile DatenBank
 .br
 \fB\-u\fR|\fB\-\-user\fR	Benutzerpfad
 .br
@@ -86,9 +86,11 @@ Installiere Profil
 .br
 \fB\-g\fR|\fB\-\-gui\fR	Zeige Grafische Benutzerschnittstelle
 .br
+\fB\-\-test\fR	Keine Ausführung
+.br
 .SS
 Allgemeine Optionen
-\fBoyranos-profiles\fR \fB\-h\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR
+\fBoyranos-profiles\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR
 .br
 \fB\-h\fR|\fB\-\-help\fR	Hilfe
 .br

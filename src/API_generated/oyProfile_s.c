@@ -751,6 +751,7 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
  *                                     - "path" can provide a string
  *                                       for manual path selection
  *                                     - "device" = "1" - write to device paths
+ *                                     - "test" = "1" - skip write
  *  @return                            error
  *                                     - oyOK - success
  *                                     - >= 1  error
@@ -762,8 +763,8 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromTaxiDB (
  *                                       "Profile already installed"
  *                                     - oyCORRUPTED msg -> profile not useable
  *
- *  @version Oyranos: 0.9.6
- *  @date    2014/06/04
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/04/04
  *  @since   2012/01/13 (Oyranos: 0.9.1)
  */
 OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
@@ -781,6 +782,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
   char * desc = 0;
   char * fn = 0;
   char * pn = 0;
+  int test = oyOptions_FindString( options, "test", "1" ) != NULL;
 
   oyCheckType__m( oyOBJECT_PROFILE_S, return oyERROR_USER )
 
@@ -890,7 +892,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
 
   /** 3. open profile */
   data = oyProfile_GetMem( s, &size, 0, oyAllocateFunc_ );
-  if(data && size)
+  if(data && size && !test)
   {
     /** 3.1 write profile */
     error = oyProfile_ToFile_( (oyProfile_s_*)s, fn );
@@ -905,7 +907,7 @@ OYAPI int OYEXPORT oyProfile_Install ( oyProfile_s       * profile,
         oyDeAllocateFunc_( s_->file_name_ );
       s_->file_name_ = oyStringCopy_( fn, s_->oy_->allocateFunc_ );
     }
-  } else
+  } else if(!test)
   {
     WARNcc1_S( s, "%s",_("Could not open profile") );
     error = oyERROR_DATA_READ;

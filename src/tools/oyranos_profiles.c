@@ -37,6 +37,7 @@
 int    installProfile                ( oyProfile_s       * ip,
                                        const char        * path,
                                        int                 is_device_profile,
+                                       int                 test,
                                        char              * show_text,
                                        int                 show_gui );
 void* oyAllocFunc(size_t size) {return malloc (size);}
@@ -71,6 +72,7 @@ int myMain( int argc, const char ** argv )
   const char * taxi_id = NULL,
              * path = NULL,
              * meta = NULL;
+  int test = 0;
 
   oyjlOptions_s * opts;
   oyjlOption_s * o;
@@ -116,7 +118,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "n", "named-color", NULL, _("Named Color Class"), _("Select Named Color profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&named_color} },
     {"oiwi", 0, "p", "list-paths", NULL, _("List Paths"), _("List ICC Profile Paths"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_paths} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "I", "install", NULL, _("Install"), _("Install Profile"), NULL, _("ICC_PROFILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&install} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "t", "taxi", NULL, _("Taxi DB"), _("ICC Taxi Profile DB"), NULL, _("TAXI_ID"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&taxi_id} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "t", "taxi", NULL, _("Taxi DB"), _("ICC Taxi Profile DataBase"), NULL, _("TAXI_ID"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&taxi_id} },
     {"oiwi", 0, "g", "gui", NULL, _("GUI"), _("Use Graphical User Interface"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&show_gui} },
     {"oiwi", 0, "u", "user", NULL, _("User"), _("User path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&user_path} },
     {"oiwi", 0, "y", "oyranos", NULL, _("Oyranos"), _("Oyranos path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&oyranos_path} },
@@ -126,6 +128,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "T", "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY;VALUE"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)effect_meta, sizeof(effect_meta), 0 )}, oyjlSTRING, {.s=&meta} },
     {"oiwi", 0, "r", "no-repair", NULL, _("No repair"), _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
     {"oiwi", 0, "D", "duplicates", NULL, _("Duplicates"), _("Show identical multiple installed profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&duplicates} },
+    {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE, NULL,"test", NULL, _("Test"), _("No Action"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&test} },
 
     /* default options -h and -v */
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
@@ -146,10 +149,10 @@ int myMain( int argc, const char ** argv )
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0, _("List"), _("List of available ICC color profiles"), NULL, "l", "f,e,a,c,d,k,n,o,i,2,4,P,T,v", "l,f,e,a,c,d,k,n,o,i,2,4,P,T,D" },
+    {"oiwg", 0,     _("List"),          _("List of available ICC color profiles"), NULL,  "l",           "f,e,a,c,d,k,n,o,i,2,4,P,T,v", "l,f,e,a,c,d,k,n,o,i,2,4,P,T,D" },
     {"oiwg", 0,     _("Paths"),         _("List search paths"),       NULL,               "p",           "u|s|y|m,v",   "p,u,s,y,m"},
-    {"oiwg", 0,     _("Install"),       _("Install Profile"),         NULL,               "I|t",         "u|s|y|m,g,v", "I,t,u,s,y,m,g"},
-    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h,X,V",       "",            "h,X,V,r,v"},
+    {"oiwg", OYJL_GROUP_FLAG_EXPLICITE,_("Install"),_("Install Profile"), NULL,           "I|t",         "u|s|y|m,g,v", "I,t,u,s,y,m,g,test"},
+    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h|X|V",       "",            "h,X,V,r,v"},
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
@@ -441,7 +444,7 @@ int myMain( int argc, const char ** argv )
       } else
       {
         is_device_profile = 1;
-        installProfile( ip, path, is_device_profile, show_text, show_gui);
+        installProfile( ip, path, is_device_profile, test, show_text, show_gui);
 
         oyProfile_Release( &ip );
       }
@@ -479,7 +482,7 @@ int myMain( int argc, const char ** argv )
         STRING_ADD( show_text, file_name );
       }
 
-      installProfile( ip, path, is_device_profile, show_text, show_gui);
+      installProfile( ip, path, is_device_profile, test, show_text, show_gui);
 
       oyProfile_Release( &ip );
     }
@@ -526,9 +529,7 @@ int main( int argc_, char**argv_, char ** envv )
 #endif
 
   /* language needs to be initialised before setup of data structures */
-  int use_gettext = 0;
 #ifdef USE_GETTEXT
-  use_gettext = 1;
 #ifdef HAVE_LOCALE_H
   setlocale(LC_ALL,"");
 #endif
@@ -548,6 +549,7 @@ int main( int argc_, char**argv_, char ** envv )
 int    installProfile                ( oyProfile_s       * ip,
                                        const char        * path,
                                        int                 is_device_profile,
+                                       int                 test,
                                        char              * show_text,
                                        int                 show_gui )
 {
@@ -560,6 +562,8 @@ int    installProfile                ( oyProfile_s       * ip,
         oyOptions_SetFromString( &opts, "////path", path, OY_CREATE_NEW );
         if(is_device_profile)
           oyOptions_SetFromString( &opts, "////device", "1", OY_CREATE_NEW );
+        if(test)
+          oyOptions_SetFromString( &opts, "////test", "1", OY_CREATE_NEW );
         error = oyProfile_Install( ip, oySCOPE_USER, opts );
 
         if(error == oyERROR_DATA_AMBIGUITY)

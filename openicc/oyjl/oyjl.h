@@ -531,6 +531,7 @@ typedef union oyjlOption_u {
 #define OYJL_OPTION_FLAG_NO_DASH       0x004 /**< @brief No double dash '--' acceptance; single dash can be omitted by not specifying oyjlOption_s::o */
 #define OYJL_OPTION_FLAG_REPETITION    0x008 /**< @brief Accept more than one occurence: ... */
 #define OYJL_OPTION_FLAG_MAINTENANCE   0x100 /**< @brief Maintenance option; can be invisible */
+#define OYJL_OPTION_FLAG_IMMEDIATE     0x200 /**< @brief Apply instantly in UI; opposite to ::OYJL_GROUP_FLAG_EXPLICITE */
 /** @brief abstract UI option
  *
  *  A oyjlOption_s::o is inside of oyjlOptionGroup_s::detail to be displayed and oyjlOptionGroup_s::mandatory/optional for syntax checking.
@@ -543,6 +544,7 @@ struct oyjlOption_s {
    *    - oyjlDOUBLE and oyjlINT will be set to 1
    *  - ::OYJL_OPTION_FLAG_NO_DASH can be used for subcommand options in ::OYJL_GROUP_FLAG_SUBCOMMAND flagged groups
    *  - ::OYJL_OPTION_FLAG_REPETITION multi occurence; print trailing ...
+   *  - ::OYJL_OPTION_FLAG_IMMEDIATE instant applying; e.g. for cheap status info inside a ::OYJL_GROUP_FLAG_EXPLICITE flagged group
    *  - ::OYJL_OPTION_FLAG_MAINTENANCE accept even without printed visibility
    */
   unsigned int flags;                  /**< @brief parsing and rendering hints */
@@ -566,7 +568,10 @@ struct oyjlOption_s {
   oyjlVariable_u variable;             /**< @brief automatically filled variable depending on *value_type* */
 };
 
-#define OYJL_GROUP_FLAG_SUBCOMMAND     0x80 /**< @brief The oyjlOptionGroup_s requires one single mandatory option with oyjlOPTIONTYPE_NONE. See as well ::OYJL_OPTION_FLAG_NO_DASH */
+/** For a related flag see ::OYJL_OPTION_FLAG_NO_DASH */
+#define OYJL_GROUP_FLAG_SUBCOMMAND     0x080 /**< @brief This oyjlOptionGroup_s flag requires one single mandatory option with oyjlOPTIONTYPE_NONE. */
+/** For per option exception see ::OYJL_OPTION_FLAG_IMMEDIATE . The flag is intended for e.g. costly processing. */
+#define OYJL_GROUP_FLAG_EXPLICITE      0x100 /**< @brief Apply explicitely in UI */
 /**
  *  @brief Info to compile a Syntax line and check missing arguments
  *
