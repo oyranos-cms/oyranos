@@ -218,11 +218,7 @@ static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OY
 }
 
 const char * jcommands = "{\n\
-  \"command_set\": \"oyranos-profile-graph\",\n\
-  \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
-  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
-  \"command_get\": \"oyranos-profile-graph\",\n\
-  \"command_get_args\": [\"-X\",\"json+command\"]\n\
+  \"command_set\": \"oyranos-profile-graph\"\n\
 }";
 /* This function is called the
  * * first time for GUI generation and then
@@ -1775,9 +1771,7 @@ int main( int argc_, char**argv_, char ** envv )
 #endif
 
   /* language needs to be initialised before setup of data structures */
-  int use_gettext = 0;
 #ifdef OYJL_USE_GETTEXT
-  use_gettext = 1;
 #ifdef OYJL_HAVE_LOCALE_H
   setlocale(LC_ALL,"");
 #endif

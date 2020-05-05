@@ -279,7 +279,7 @@ AppWindow {
                 if(command_set_option.length === 0)
                 {
                     if(opt.key === "#" || opt.key === "@")
-                        ;
+                        arg = "";
                     else if(opt.key.length > 1)
                         arg = "--" + opt.key
                     else if(opt.key.length === 1)
@@ -313,12 +313,15 @@ AppWindow {
                     }
 
                 count = args.length
-                if(command_set_option.length === 0)
-                    args[args.length] = arg
-                else
+                if(arg.length)
                 {
-                    args[args.length] = command_set_option
-                    args[args.length] = arg
+                    if(command_set_option.length === 0)
+                        args[args.length] = arg
+                    else
+                    {
+                        args[args.length] = command_set_option
+                        args[args.length] = arg
+                    }
                 }
             }
 
