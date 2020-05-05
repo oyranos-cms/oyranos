@@ -1163,8 +1163,13 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     }
     if(sub_command)
     {
-      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "style" );
-      oyjlValueSetString( key, "sub_command" );
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "sub_command" );
+      oyjlValueSetString( key, "1" );
+    }
+    if(g->flags & OYJL_GROUP_FLAG_EXPLICITE)
+    {
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "explicite" );
+      oyjlValueSetString( key, "1" );
     }
     key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "mandatory" );
     if(sub_command)
@@ -1217,6 +1222,11 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       {
         key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "help" );
         oyjlValueSetString( key, o->help );
+      }
+      if(o->flags & OYJL_OPTION_FLAG_IMMEDIATE)
+      {
+        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "immediate" );
+        oyjlValueSetString( key, "1" );
       }
 
       switch(o->value_type)

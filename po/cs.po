@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-04-26 09:43+0200\n"
+"POT-Creation-Date: 2020-05-04 07:06+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -534,7 +534,7 @@ msgstr "Volby modulu:"
 msgid "NAME"
 msgstr ""
 
-#: oyjl_args_tree.c:1349
+#: oyjl_args_tree.c:1359
 msgid "No"
 msgstr "Ne"
 
@@ -1017,7 +1017,7 @@ msgstr "Cesty"
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:1349
+#: oyjl_args_tree.c:1359
 msgid "Yes"
 msgstr "Ano"
 

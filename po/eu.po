@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-04-26 09:43+0200\n"
+"POT-Creation-Date: 2020-05-04 07:06+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -536,7 +536,7 @@ msgstr "Bereizketa"
 msgid "NAME"
 msgstr ""
 
-#: oyjl_args_tree.c:1349
+#: oyjl_args_tree.c:1359
 msgid "No"
 msgstr ""
 
@@ -1013,7 +1013,7 @@ msgstr "Pausarazi"
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:1349
+#: oyjl_args_tree.c:1359
 msgid "Yes"
 msgstr "Bai"
 

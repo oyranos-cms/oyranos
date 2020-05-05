@@ -100,7 +100,7 @@ ApplicationWindow {
     }
 
     // DEBUG
-    property int app_debug: 0
+    property int app_debug: 1
     onApp_debugChanged: appData.setDebug( app_debug )
 
     Screen.onPrimaryOrientationChanged: {
