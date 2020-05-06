@@ -2947,11 +2947,13 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
     oyjlUiHeaderSection_s * author = oyjlUi_GetHeaderSection( ui, "manufacturer" );
     oyjlUiHeaderSection_s * copyright = oyjlUi_GetHeaderSection( ui, "copyright" );
     oyjlUiHeaderSection_s * license = oyjlUi_GetHeaderSection( ui, "license" );
-    char * prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, argv[0] ), NULL ), * tmp = prog;
+    char * prog = NULL;
     char * v = version && version->name ? oyjlStringCopy( oyjlTermColor( oyjlITALIC, version->name ), NULL ) : NULL;
 
-    if(!verbose && prog && strchr(prog,'/'))
-      prog = strrchr(prog,'/') + 1;
+    if(!verbose && argv[0] && strchr(argv[0],'/'))
+      prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, strrchr(argv[0],'/') + 1 ), NULL );
+    else
+      prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, argv[0] ), NULL );
     fprintf( stdout, "%s v%s%s%s%s - %s\n%s\n%s%s%s\n%s%s%s\n\n", prog,
                                       v ? v : "",
                                       version && version->description ? "(" : "",
@@ -2962,7 +2964,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
                                       license ? _("License"):"", license?":\t":"", license && license->name ? license->name : "",
                                       author ? _("Author"):"", author?": \t":"", author && author->name ? author->name : "" );
     oyjlUi_Release( &ui);
-    free(tmp);
+    free(prog);
     if(v) free(v);
     if(status)
       *status |= oyjlUI_STATE_HELP;
