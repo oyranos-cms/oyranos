@@ -127,7 +127,7 @@ int myMain( int argc, const char ** argv )
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Key Name"),   _("Print key name"),      NULL,  "k",           "i,x",         "k"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Type"),       _("Print type"),          NULL,  "t",           "i,x",         "t"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Paths"), _("Print all matching paths."),NULL,  "paths",       "i,x",         "paths"},
-    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h,X,V",       "v",           "h,X,V,v" },/* just show in documentation */
+    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h|X|V",       "v",           "h,X,V,v" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 
