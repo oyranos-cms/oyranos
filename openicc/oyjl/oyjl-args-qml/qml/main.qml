@@ -116,7 +116,7 @@ AppWindow {
             }
             else
             {
-                if(command_key === "h")
+                if(command_key === "h" || command_key === "V")
                     setHelpText( data, false )
                 else
                     setHelpText( data, true )
@@ -139,18 +139,52 @@ AppWindow {
         var opt
         var explicite = typeof group.explicite !== "undefined"
         var pass = !explicite
+        var mkey = false
 
-        if(pass === false)
+        var sub_command = false
+        if(typeof group.sub_command !== "undefined")
+            sub_command = true
+        var mandatory_found = false
+        if(!sub_command && group.mandatory.length && group.mandatory.match(key))
         {
-            for( i = 0; i < n; ++i )
+            mandatory_found = true
+            mkey = key;
+        }
+        // passed in key might be not a mandatory one ...
+        if(!mandatory_found && group.options.length)
+        {
+            // put mandatory in front especially for sub_command style
+            var arr = group.mandatory.split(new RegExp('[,|]', 'g'))
+            var arrn = arr.length
+            if(arrn)
+                mkey = arr[0];
+            mandatory_found = true
+        }
+
+        if(mkey)
+        for( i = 0; i < n; ++i )
+        {
+            opt = optionsModel.get(i)
+            var arg = opt.key
+            if(arg.match(mkey))
             {
-                opt = optionsModel.get(i)
-                var arg = opt.key
-                if(arg.match(key))
-                    break;
-                else
-                    opt = false
+                // activate value using default from JSON
+                var changed = false
+                if(typeof group.changed !== "undefined")
+                    changed = (group.changed.match(arg) !== null)
+                if(changed === true &&
+                   !opt.value.length)
+                    opt.value = opt.default
+                if(!key.match(mkey))
+                {
+                    key = opt.key
+                    value = opt.value
+                    type = opt.type
+                }
+                break;
             }
+            else
+                opt = false
         }
         if(!pass && opt !== false && opt.immediate)
             pass = true;
@@ -163,9 +197,6 @@ AppWindow {
         if(!pass && group.mandatory.length && !group.mandatory.match(key))
             return
 
-        var mandatory_found = false
-        if(group.mandatory.length && group.mandatory.match(key))
-            mandatory_found = true
         var mandatory_exclusive = false
         if(group.mandatory.length && group.mandatory.match(/[|]/))
             mandatory_exclusive = true
@@ -176,12 +207,13 @@ AppWindow {
         if(processSetCommand.length && setOnly >= 0)
         {
             arg = key
+
             if(command_set_option.length === 0)
             {
                 if(key === "#" || key === "@")
                     arg = null;
                 else if(key.length > 1)
-                    arg = "--" + key
+                    arg = (sub_command ? "":"--") + key
                 else if(key.length === 1)
                     arg = "-" + key
             }
@@ -211,6 +243,7 @@ AppWindow {
                             arg += v
                     }
                 }
+
             var args = []
             args = processSetArgs.slice()
             var count = args.length
@@ -236,15 +269,16 @@ AppWindow {
                 var found = 0
                 var first_mandatory = false
                 arg = opt.key
-                if(arg.match(key))
+                if(mkey && arg.match(mkey))
                     continue
 
-                var arr = group.mandatory.split(new RegExp('[,|]', 'g'))
-                var arrn = arr.length
+                arr = group.mandatory.split(new RegExp('[,|]', 'g'))
+                arrn = arr.length
                 var j
                 for( j = 0; j < arrn; ++j )
                 {
-                    if(arr[j] === arg && !mandatory_exclusive)
+                    if(arr[j] === arg &&
+                            ((j === 0 && !mandatory_found) || !mandatory_exclusive))
                     {
                         found = 1;
                         if(j === 0)
@@ -263,7 +297,7 @@ AppWindow {
                     continue
 
                 // activate value using default from JSON
-                var changed = false
+                changed = false
                 if(typeof group.changed !== "undefined")
                     changed = (group.changed.match(arg) !== null)
                 if(changed === true &&
@@ -281,7 +315,7 @@ AppWindow {
                     if(opt.key === "#" || opt.key === "@")
                         arg = "";
                     else if(opt.key.length > 1)
-                        arg = "--" + opt.key
+                        arg = (sub_command ? "":"--") + opt.key
                     else if(opt.key.length === 1)
                         arg = "-" + opt.key
                 }
@@ -325,7 +359,7 @@ AppWindow {
                 }
             }
 
-            //if(app_debug)
+            if(app_debug)
                 statusText = "command_set: " + processSetCommand + " " + args + " ex:" + mandatory_exclusive + " mand:" + group.mandatory
 
             statusText = JSON.stringify(args)
@@ -381,15 +415,16 @@ AppWindow {
             return
         helpTextChanging = true
         var start = helpText.substr(0,14);
+        var t = helpText
+
         if(start === '<?xml version=')
             helpTextArea.textFormat = Qt.PlainText
         else
-        if(helpText.charAt(0) === '<') // assume rich text
+        if(helpText.charAt(0) === '<' || t.match(/\033\[/)) // assume rich text
             helpTextArea.textFormat = Qt.RichText
         else
             helpTextArea.textFormat = Qt.PlainText
 
-        var t = helpText
         if(t.match(/\033\[/)) // convert ansi color + format codes to HTML markup
         {
             t = t.replace(/\033\[1m/g, "<b>")

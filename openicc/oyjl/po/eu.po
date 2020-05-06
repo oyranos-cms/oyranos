@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-05-04 07:06+0200\n"
+"POT-Creation-Date: 2020-05-06 09:43+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "'_(\\\"%s\\\"); '"
 msgstr ""
 
-#: oyjl_args.c:3013
+#: oyjl_args.c:3015
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
@@ -40,7 +40,7 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:3461 oyjl_args.c:3727
+#: oyjl_args.c:3463 oyjl_args.c:3729
 msgid "AUTHOR"
 msgstr ""
 
@@ -73,11 +73,11 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:2963
+#: oyjl_args.c:2965
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:3471 oyjl_args.c:3473 oyjl_args.c:3741 oyjl_args.c:3743
+#: oyjl_args.c:3473 oyjl_args.c:3475 oyjl_args.c:3743 oyjl_args.c:3745
 msgid "BUGS"
 msgstr ""
 
@@ -86,7 +86,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:3465 oyjl_args.c:3731
+#: oyjl_args.c:3467 oyjl_args.c:3733
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -140,7 +140,7 @@ msgstr "Copyright-a"
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:3338 oyjl_args.c:3603
+#: oyjl_args.c:3340 oyjl_args.c:3605
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -188,16 +188,16 @@ msgstr "Azalpena"
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:3144
+#: oyjl_args.c:3146
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl-args.c:59 oyjl.c:103 oyjl_args.c:3140 oyjl_translate.c:115
+#: oyjl-args.c:59 oyjl.c:103 oyjl_args.c:3142 oyjl_translate.c:115
 #: oyjl_web.c:83
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:3142
+#: oyjl_args.c:3144
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -229,7 +229,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:3148
+#: oyjl_args.c:3150
 msgid "FILES"
 msgstr ""
 
@@ -316,7 +316,7 @@ msgstr ""
 msgid "Gui"
 msgstr ""
 
-#: oyjl_args.c:3146
+#: oyjl_args.c:3148
 msgid "HISTORY"
 msgstr ""
 
@@ -389,7 +389,7 @@ msgstr "Izena"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:2962 oyjl_args.c:3467 oyjl_args.c:3733 oyjl_args_tree.c:1120
+#: oyjl_args.c:2964 oyjl_args.c:3469 oyjl_args.c:3735 oyjl_args_tree.c:1120
 msgid "License"
 msgstr "Lizentzia"
 
@@ -532,7 +532,7 @@ msgstr "Modeloa:"
 msgid "Module"
 msgstr "Bereizketa"
 
-#: oyjl_args.c:3588
+#: oyjl_args.c:3590
 msgid "NAME"
 msgstr ""
 
@@ -548,7 +548,7 @@ msgstr ""
 msgid "November 28, 2019"
 msgstr ""
 
-#: oyjl_args.c:3340 oyjl_args.c:3606
+#: oyjl_args.c:3342 oyjl_args.c:3608
 msgid "OPTIONS"
 msgstr ""
 
@@ -762,12 +762,12 @@ msgstr "Oyranos-en ezarpenak"
 msgid "Results JSON"
 msgstr ""
 
-#: oyjl-args.c:61 oyjl.c:105 oyjl_args.c:3152 oyjl_translate.c:117
+#: oyjl-args.c:61 oyjl.c:105 oyjl_args.c:3154 oyjl_translate.c:117
 #: oyjl_web.c:85
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:3150
+#: oyjl_args.c:3152
 msgid "SEE AS WELL"
 msgstr ""
 
@@ -775,7 +775,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:3326 oyjl_args.c:3591
+#: oyjl_args.c:3328 oyjl_args.c:3593
 msgid "SYNOPSIS"
 msgstr ""
 
