@@ -1086,11 +1086,14 @@ int myMain( int argc, const char ** argv )
   height_=(float)(pixel_h- 2*y - 2*tab_border_y - lower_text_border); /* height of diagram */
   height = MAX( 0, height_ );
 
+  if(0.0 <= lightness && lightness < 5.0)
+    cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
+  else
+    cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
   /* draw spectral gamut line */
   cairo_set_line_width (cr, thickness);
   if(profile_count && no_spectral == 0 && hlc == -1.0)
   {
-    cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
     if(proj == p_xyz)
     {
       i = nano_min;
@@ -1127,7 +1130,6 @@ int myMain( int argc, const char ** argv )
   cairo_set_line_width (cr, 0.5*thickness);
   if(profile_count && no_blackbody == 0 && proj == p_xyz && hlc == -1.0)
   {
-    cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
     if(proj == p_xyz)
     {
       cairo_move_to(cr, xToImage(bb_100K[1][0]*xs_xyz), yToImage(bb_100K[1][1]*ys_xyz));
@@ -1158,15 +1160,23 @@ int myMain( int argc, const char ** argv )
 
   /* draw a frame around the image */
   frame = pixel_w/40.0;
-  cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
+  if(0.0 <= lightness && lightness < 50.0)
+    cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
+  else
+    cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
   cairo_set_line_width (cr, 0.7*thickness);
   if(!no_border)
   cairo_rectangle( cr, x - frame, y - frame,
                          w*scale + 2*frame, h*scale + 2*frame);
   cairo_stroke(cr);
+
+  /* draw cross */
+  if(0.0 <= lightness && lightness < 5.0)
+    cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
+  else
+    cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
   if(profile_count && no_border == 0 && proj == p_lab && hlc == -1.0 )
   {
-    /* draw cross */
     cairo_move_to(cr, xToImage(.0), yToImage(.5));
     cairo_line_to(cr, xToImage(1.0), yToImage(.5));
     cairo_move_to(cr, xToImage(.5), yToImage(0));
@@ -1180,6 +1190,7 @@ int myMain( int argc, const char ** argv )
   cairo_stroke( cr );
 #endif
 
+  /* draw gamut saturation */
   if(profile_count && hlc == -1.0)
   {
     float t = thickness;
@@ -1243,7 +1254,10 @@ int myMain( int argc, const char ** argv )
         }
         cairo_close_path(cr);
       }
-      cairo_set_source_rgba( cr, 1., 1., 1., 1.0);
+      if(-1.0 <= lightness && lightness < 50.0)
+        cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
+      else
+        cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
       cairo_stroke(cr);
 
       oyProfile_Release( &p );
