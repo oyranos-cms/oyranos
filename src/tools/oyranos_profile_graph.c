@@ -1196,7 +1196,7 @@ int myMain( int argc, const char ** argv )
     float t = thickness;
 
     cairo_set_line_width (cr, 3.*t);
-    for ( j=0; j < profile_count; ++j )
+    for ( j = profile_count - 1; j >= 0; --j )
     {
       const char * filename = profile_names[j];
       size_t size = 0;
@@ -1217,7 +1217,93 @@ int myMain( int argc, const char ** argv )
       t = pow( change_thickness, j ) * thickness;
       cairo_set_line_width (cr, 3.*t);
 
-      if(saturation)
+      if(saturation && !no_color && j == 0)
+      {
+        for(i = 1; i<(int)size; ++i)
+        {
+          double XYZ[3];
+          double Lab[3];
+          double x0, y0;
+
+          Lab[0] = saturation[(i-1)*3+0]*100.0;
+          Lab[1] = saturation[(i-1)*3+1]*256.0-128.0;
+          Lab[2] = saturation[(i-1)*3+2]*256.0-128.0;
+          oyLab2XYZ( Lab, XYZ);
+          if(proj == p_lab)
+          {
+            x0 = saturation[(i-1)*3+1]/1.0;
+            y0 = saturation[(i-1)*3+2]/1.0;
+          }
+          else
+          {
+            x0 = XYZ[0]/(XYZ[0]+XYZ[1]+XYZ[2])*xs_xyz;
+            y0 = XYZ[1]/(XYZ[0]+XYZ[1]+XYZ[2])*ys_xyz;
+          }
+          oyXYZ2sRGB( XYZ );
+
+          /* end with a half circle to cover empty areas toward the following line segment */
+          cairo_set_source_rgba( cr, XYZ[0],XYZ[1],XYZ[2], 1.0);
+          cairo_arc( cr, xToImage(x0), yToImage(y0), t*3.0/2.0, 0, 2*M_PI);
+          cairo_fill(cr);
+
+        }
+        for(i = 1; i<(int)size; ++i)
+        {
+          double XYZ[3],XYZ1[3];
+          double Lab[3];
+          cairo_pattern_t * g;
+          double x0, x1, y0, y1;
+
+          Lab[0] = saturation[(i-1)*3+0]*100.0;
+          Lab[1] = saturation[(i-1)*3+1]*256.0-128.0;
+          Lab[2] = saturation[(i-1)*3+2]*256.0-128.0;
+          oyLab2XYZ( Lab, XYZ);
+          if(proj == p_lab)
+          {
+            x0 = saturation[(i-1)*3+1]/1.0;
+            y0 = saturation[(i-1)*3+2]/1.0;
+          }
+          else
+          {
+            x0 = XYZ[0]/(XYZ[0]+XYZ[1]+XYZ[2])*xs_xyz;
+            y0 = XYZ[1]/(XYZ[0]+XYZ[1]+XYZ[2])*ys_xyz;
+          }
+          oyXYZ2sRGB( XYZ );
+
+          Lab[0] = saturation[i*3+0]*100.0;
+          Lab[1] = saturation[i*3+1]*256.0-128.0;
+          Lab[2] = saturation[i*3+2]*256.0-128.0;
+          oyLab2XYZ( Lab, XYZ1);
+          if(proj == p_lab)
+          {
+            x1 = saturation[i*3+1]/1.0;
+            y1 = saturation[i*3+2]/1.0;
+          }
+          else
+          {
+            x1 = XYZ1[0]/(XYZ1[0]+XYZ1[1]+XYZ1[2])*xs_xyz;
+            y1 = XYZ1[1]/(XYZ1[0]+XYZ1[1]+XYZ1[2])*ys_xyz;
+          }
+
+          cairo_new_path(cr);
+          oyXYZ2sRGB( XYZ1 );
+          g = cairo_pattern_create_linear( xToImage(x0),yToImage(y0),
+                                           xToImage(x1),yToImage(y1));
+          cairo_pattern_add_color_stop_rgba(g, 0, XYZ[0],XYZ[1],XYZ[2], 1.0);
+          /* add different stop */
+          cairo_pattern_add_color_stop_rgba(g, 1, XYZ1[0],XYZ1[1],XYZ1[2], 1.0);
+          /* only one color pattern can be drawn at each cairo_stroke;
+           * appears to be a cairo limitation */
+          cairo_set_source(cr, g);
+          cairo_move_to(cr, xToImage(x0), yToImage(y0));
+          cairo_line_to(cr, xToImage(x1), yToImage(y1));
+          //cairo_close_path(cr);
+          cairo_stroke(cr);
+          cairo_pattern_destroy(g);
+
+        }
+      } else
+      if(saturation && (no_color || j > 0))
       {
         cairo_new_path(cr);
         i = 0;
@@ -1253,12 +1339,12 @@ int myMain( int argc, const char ** argv )
           }
         }
         cairo_close_path(cr);
+        if(-1.0 <= lightness && lightness < 50.0)
+          cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
+        else
+          cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
+        cairo_stroke(cr);
       }
-      if(-1.0 <= lightness && lightness < 50.0)
-        cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
-      else
-        cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
-      cairo_stroke(cr);
 
       oyProfile_Release( &p );
     }
@@ -2363,6 +2449,7 @@ void drawIlluminant( cairo_t * cr,
     cairo_line_to( cr, xToImage(x1), yToImage(y1) );
     /* draw a disconnected single line segment with actual gradient pattern */
     cairo_stroke(cr);
+    cairo_pattern_destroy(g);
 
     /* end with a half circle to cover empty areas toward the following line segment */
     if(lab_srgb)
