@@ -1228,6 +1228,11 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
         key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "immediate" );
         oyjlValueSetString( key, "1" );
       }
+      if(o->flags & OYJL_OPTION_FLAG_REPETITION)
+      {
+        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "repetition" );
+        oyjlValueSetString( key, "1" );
+      }
 
       switch(o->value_type)
       {
@@ -1334,12 +1339,9 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
               oyjlValueSetString( key, num );
               oyjlStringListRelease( &results, count, free );
           }
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "start" );
-          sprintf( num, "%g", o->values.dbl.start ); oyjlValueSetString( key, num );
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "end" );
-          sprintf( num, "%g", o->values.dbl.end ); oyjlValueSetString( key, num );
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "tick" );
-          sprintf( num, "%g", o->values.dbl.tick ); oyjlValueSetString( key, num );
+          oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.start, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "start" );
+          oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.end, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "end" );
+          oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->values.dbl.tick, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "tick" );
           key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
           oyjlValueSetString( key, "double" );
           break;
