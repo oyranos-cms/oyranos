@@ -131,6 +131,72 @@ AppWindow {
     property string command_key: ""
 
 
+    function addArg1( args, key, value, type, sub_command )
+    {
+        var arg = null;
+        if(key === "#" || key === "@")
+            arg = null;
+        else if(key.length > 1)
+            arg = (sub_command ? "":"--") + key
+        else if(key.length === 1)
+            arg = "-" + key
+
+        var v = JSON.stringify(value);
+
+        if(v.length)
+        {
+            if(typeof command_set_delimiter !== "undefined")
+            {
+                if(typeof value === "string" && type !== "bool")
+                {
+                    if(value.length !== 0)
+                    {
+                        if(key === "#" || key === "@")
+                            arg = value
+                        else if(arg.length > 0)
+                            arg += command_set_delimiter + value
+                        else
+                            arg += value
+                    }
+                }
+                else if(type === "bool" && value === "false")
+                {
+                    if(key === "#" || key === "@")
+                        arg = v
+                    else if(arg.length > 0)
+                        arg += command_set_delimiter + v
+                    else
+                        arg += v
+                }
+            }
+        }
+
+        var count = args.length
+        if(command_set_option.length === 0)
+        {
+            if(arg !== null)
+                args[count] = arg
+        }
+        else
+        {
+            args[count] = command_set_option
+            if(arg !== null)
+                args[count] = arg
+        }
+    }
+    function addArg( args, key, value, type, sub_command, repetition )
+    {
+        if(repetition)
+        {
+            var arr = value.split(new RegExp('[;]', 'g'));
+            var arrn = arr.length;
+            var i;
+            for( i = 0; i < arrn; ++i )
+                addArg1( args, key, arr[i], type, sub_command );
+        } else
+            addArg1( args, key, value, type, sub_command );
+    }
+
     function interactiveCallback( key, value, type, group, setOnly )
     {
         var opts = optionsModel
@@ -161,12 +227,12 @@ AppWindow {
             mandatory_found = true
         }
 
-        if(mkey)
         for( i = 0; i < n; ++i )
         {
             opt = optionsModel.get(i)
             var arg = opt.key
-            if(arg.match(mkey))
+            var akey = mkey?mkey:key;
+            if(arg.match(akey))
             {
                 // activate value using default from JSON
                 var changed = false
@@ -175,7 +241,7 @@ AppWindow {
                 if(changed === true &&
                    !opt.value.length)
                     opt.value = opt.default
-                if(!key.match(mkey))
+                if(!key.match(akey))
                 {
                     key = opt.key
                     value = opt.value
@@ -201,6 +267,8 @@ AppWindow {
         if(group.mandatory.length && group.mandatory.match(/[|]/))
             mandatory_exclusive = true
 
+        var args = []
+        args = processSetArgs.slice()
 
         var sCb = processSetCommand
         command_key = key
@@ -208,56 +276,8 @@ AppWindow {
         {
             arg = key
 
-            if(command_set_option.length === 0)
-            {
-                if(key === "#" || key === "@")
-                    arg = null;
-                else if(key.length > 1)
-                    arg = (sub_command ? "":"--") + key
-                else if(key.length === 1)
-                    arg = "-" + key
-            }
-            var v = JSON.stringify(value);
-            if(v.length)
-                if(typeof command_set_delimiter !== "undefined")
-                {
-                    if(typeof value === "string" && type !== "bool")
-                    {
-                        if(value.length !== 0)
-                        {
-                            if(key === "#" || key === "@")
-                                arg = value
-                            else if(arg.length > 0)
-                                arg += command_set_delimiter + value
-                            else
-                                arg += value
-                        }
-                    }
-                    else if(type === "bool" && value === "false")
-                    {
-                        if(key === "#" || key === "@")
-                            arg = v
-                        else if(arg.length > 0)
-                            arg += command_set_delimiter + v
-                        else
-                            arg += v
-                    }
-                }
+            addArg( args, key, value, type, sub_command, opt.repetition )
 
-            var args = []
-            args = processSetArgs.slice()
-            var count = args.length
-            if(command_set_option.length === 0)
-            {
-                if(arg !== null)
-                    args[args.length] = arg
-            }
-            else
-            {
-                args[args.length] = command_set_option
-                if(arg !== null)
-                    args[args.length] = arg
-            }
             if(app_debug)
                 statusText = "command_set: " + processSetCommand + " " + args
 
@@ -310,53 +330,7 @@ AppWindow {
                        opt.value === "false")))
                     continue
 
-                if(command_set_option.length === 0)
-                {
-                    if(opt.key === "#" || opt.key === "@")
-                        arg = "";
-                    else if(opt.key.length > 1)
-                        arg = (sub_command ? "":"--") + opt.key
-                    else if(opt.key.length === 1)
-                        arg = "-" + opt.key
-                }
-                v = JSON.stringify(opt.value);
-                if(v.length &&
-                    !(opt.type === "bool"))
-                    if(typeof command_set_delimiter !== "undefined")
-                    {
-                        if(typeof opt.value === "string")
-                        {
-                            if(opt.value.length &&
-                                !(opt.type === "bool" && opt.value === "false"))
-                            {
-                                if(opt.key === "#" || opt.key === "@")
-                                    arg = opt.value
-                                else if(arg.length > 0)
-                                    arg += command_set_delimiter + opt.value
-                                else
-                                    arg += opt.value
-                            }
-                        }
-                        else
-                        {
-                            if(arg.length > 0)
-                                arg += command_set_delimiter + v
-                            else
-                                arg += v
-                        }
-                    }
-
-                count = args.length
-                if(arg.length)
-                {
-                    if(command_set_option.length === 0)
-                        args[args.length] = arg
-                    else
-                    {
-                        args[args.length] = command_set_option
-                        args[args.length] = arg
-                    }
-                }
+                addArg( args, opt.key, opt.value, opt.type, sub_command, opt.repetition )
             }
 
             if(app_debug)
@@ -799,6 +773,7 @@ AppWindow {
             var type = opt.type
             var dbl = {"start":0,"end":1}
             var immediate = typeof opt.immediate !== "undefined"
+            var repetition = typeof opt.repetition !== "undefined"
             var run = 0
             var value = ""
             // see mandatory key
@@ -867,6 +842,7 @@ AppWindow {
                 current: current,
                 suggest: suggest,
                 immediate: immediate,
+                repetition: repetition,
                 nick: opt.nick,
                 loc: loc,
                 groupName: groupName,
