@@ -18,10 +18,9 @@
  *  
  */
 
-# include <stddef.h>
+#include <stddef.h>
 #include <regex.h>
 
-#define __USE_POSIX2 1
 #include <stdio.h>                /* popen() */
 #include <math.h>                 /* NAN */
 #include <string.h>
@@ -147,7 +146,7 @@ int         oyjlCopyNode             ( oyjl_val            src,
                                        int                 out_pos);
 oyjl_val    oyjlTreeGetValueFilteredF( oyjl_val root, int flag, const char * filter, const char * format, ... );
 
-int verbose = 0;
+static int verbose = 0;
 /* implement cairo_write_func_t */
 cairo_status_t oyCairoToStdout(void *closure OYJL_UNUSED,
                        const unsigned char *data,
@@ -161,7 +160,7 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
 {
   oyProfiles_s * ps = oyProfiles_Create( NULL, 0, 0 );
   int n = oyProfiles_Count( ps ), i;
-  oyjlOptionChoice_s * cs = (oyjlOptionChoice_s*) calloc( n+1, sizeof(oyjlOptionChoice_s) );
+  oyjlOptionChoice_s * cs = (oyjlOptionChoice_s*) calloc( (unsigned int)n+1, sizeof(oyjlOptionChoice_s) );
   for(i = 0; i < n; ++i)
   {
     oyProfile_s * p = oyProfiles_Get(ps, i);
@@ -177,7 +176,7 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
   return cs;
 }
 
-oyjlOptionGroup_s **groups_ = NULL;
+static oyjlOptionGroup_s **groups_ = NULL;
 static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
 {
   oyjlOption_s * import = oyjlOptions_GetOptionL( opts, "import" );
@@ -202,7 +201,7 @@ static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OY
         char ** paths = NULL;
         oyjlTreeToPaths( oyjlTreeGetValue( specT, 0, "collection/[0]/pages" ), 1, NULL, OYJL_PATH, &paths );
         pages = 0; while(paths && paths[pages]) ++pages;
-        cs = (oyjlOptionChoice_s*) calloc( pages+1, sizeof(oyjlOptionChoice_s) );
+        cs = (oyjlOptionChoice_s*) calloc( (unsigned)pages+1, sizeof(oyjlOptionChoice_s) );
         for(i = 0; i < pages; ++i)
         {
           cs[i].name = oyjlStringCopy( paths[i], 0 );
@@ -217,7 +216,7 @@ static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OY
   return cs;
 }
 
-const char * jcommands = "{\n\
+static const char * jcommands = "{\n\
   \"command_set\": \"oyranos-profile-graph\"\n\
 }";
 /* This function is called the
@@ -243,7 +242,7 @@ int myMain( int argc, const char ** argv )
   double hlc = -1.0;
   double lightness = -1;
   int no_color = 0;
-  int flags = 0;
+  uint32_t flags = 0;
   int v2 = 0, v4 = 0, no_repair = 0;
 
   double max_x,max_y,min_x,min_y;
@@ -270,7 +269,7 @@ int myMain( int argc, const char ** argv )
          frame = 0;
   int scale_spectrum = 0;
   double pixel_width = 128.0;
-  int pixel_w=pixel_width, pixel_h=pixel_width,  /* size in pixel */
+  int pixel_w=(int)pixel_width, pixel_h=(int)pixel_width,  /* size in pixel */
       x,y,w=0,h=0;                               /* image dimensions */
   oyProfile_s * p_xyz = oyProfile_FromStd(oyASSUMED_XYZ, flags, 0),
               * p_lab = oyProfile_FromStd(oyASSUMED_LAB, flags, 0),
@@ -345,45 +344,45 @@ int myMain( int argc, const char ** argv )
                                     {"","","",""}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
-    {"oiwi", 0,                         "2", "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
-    {"oiwi", 0,                         "4", "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
+    {"oiwi", 0,                         "2", "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&v2} },
+    {"oiwi", 0,                         "4", "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&v4} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_REPETITION, "@", NULL,            NULL, _("Input"),         _("ICC Profile"),            NULL, "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE", oyjlOPTIONTYPE_FUNCTION, {.getChoices = listProfiles}, oyjlINT, {.i=&profile_count} },
-    {"oiwi", 0, "b", "no-border",     NULL, _("Omit border"),   _("Omit border in graph"),   NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_border} },
-    {"oiwi", 0, "c", "no-blackbody",  NULL, _("No black body"), _("Omit white line of lambert light emitters"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_blackbody} },
+    {"oiwi", 0, "b", "no-border",     NULL, _("Omit border"),   _("Omit border in graph"),   NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&no_border} },
+    {"oiwi", 0, "c", "no-blackbody",  NULL, _("No black body"), _("Omit white line of lambert light emitters"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&no_blackbody} },
     {"oiwi", 0, "d", "change-thickness",NULL,_("Thickness increase"),_("Specify increase of the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 2.0, .dbl.tick = 0.05, .dbl.d = 0.7}, oyjlDOUBLE, {.d=&change_thickness} },
     {"oiwi", 0, "f", "format",        NULL, _("Format"),        _("Specify output file format png or svg, default is png"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)out_form, sizeof(out_form), 0 )}, oyjlSTRING, {.s=&format} },
-    {"oiwi", 0, "g", "no-color",      NULL, _("Gray"),          _("Draw Gray"),              NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_color} },
+    {"oiwi", 0, "g", "no-color",      NULL, _("Gray"),          _("Draw Gray"),              NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&no_color} },
     {"oiwi", 0, "H", "hlc",           NULL, _("HLC"),           _("HLC Color Atlas"),   _("Select a page by hue in the HLC Color Atlas. -H=365 will output all hues."), _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 365.0, .dbl.tick = 5, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&hlc} },
     {"oiwi", 0, "l", "lightness",     NULL, _("Lightness"),     _("Background Lightness"),   NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -1.0, .dbl.end = 100.0, .dbl.tick = 1.0, .dbl.d = -1.0}, oyjlDOUBLE, {.d=&lightness} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "import",         NULL, _("Input"),        _("Color Page Input"),       _("Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc"), _("FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&input} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "import",         NULL, _("Input"),        _("Color Page Input"),       _("Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc"), _("FILE"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&input} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "I", "index",          NULL, _("Index"),        _("Page Selection"),         _("Specify a page name as string or page index as number. -1 will list all page names of the imported file."), _("PAGE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = listPages}, oyjlSTRING, {.s=&page} },
     {"oiwi", 0, "u", "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)illu_dxx, sizeof(illu_dxx), 0 )}, oyjlSTRING, {.s=&illuminant} },
     {"oiwi", 0, "k", "kelvin",        NULL, _("Kelvin"),        _("Blackbody Radiator"),     NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 25000.0, .dbl.tick = 100, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&kelvin} },
-    {"oiwi", 0, "n", "no-spectral-line",NULL,_("No spectral"),  _("Omit the spectral line"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_spectral} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "o", "output",        NULL, _("Output"),        _("Specify output file name, default is stdout"), NULL, _("-|FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&output} },
+    {"oiwi", 0, "n", "no-spectral-line",NULL,_("No spectral"),  _("Omit the spectral line"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&no_spectral} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "o", "output",        NULL, _("Output"),        _("Specify output file name, default is stdout"), NULL, _("-|FILE"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&output} },
     {"oiwi", 0, "p", "spectral-format",NULL,_("Spectral Output"),_("Specify spectral output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)spe_form, sizeof(spe_form), 0 )}, oyjlSTRING, {.s=&format} },
     {"oiwi", 0, "m", "swatch-format", NULL, _("Format"),      _("Specify output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)p_format, sizeof(p_format), 0 )}, oyjlSTRING, {.s=&format} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&pattern} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "s", "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&input} },
-    {"oiwi", 0, "S", "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&standardobs} },
-    {"oiwi", 0, "O", "observer-64",   NULL, _("10° Observer"),  _("CIE Observer 1964 10°"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&observer64} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&pattern} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "s", "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&input} },
+    {"oiwi", 0, "S", "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&standardobs} },
+    {"oiwi", 0, "O", "observer-64",   NULL, _("10° Observer"),  _("CIE Observer 1964 10°"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&observer64} },
 
-    {"oiwi", 0, "r", "no-repair",     NULL, _("No repair"),     _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
-    {"oiwi", 0, "T", "raster",        NULL, _("Raster"),        _("Draw Raster"),            NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&raster} },
+    {"oiwi", 0, "r", "no-repair",     NULL, _("No repair"),     _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&no_repair} },
+    {"oiwi", 0, "T", "raster",        NULL, _("Raster"),        _("Draw Raster"),            NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&raster} },
     {"oiwi", 0, "t", "thickness",     NULL, _("Thickness"),     _("Specify the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 10.0, .dbl.tick = 0.05, .dbl.d = 1.0}, oyjlDOUBLE, {.d=&thickness} },
     {"oiwi", 0, "w", "width",         NULL, _("Width"),         _("Specify output image width in pixel"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 64.0, .dbl.end = 4096.0, .dbl.tick = 1, .dbl.d = 128.0}, oyjlDOUBLE, {.d=&pixel_width} },
-    {"oiwi", 0, "x", "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&xyy_plane} },
-    {"oiwi", 0, "z", "scale",         NULL, _("Scale"),         _("Scale the height of the spectrum graph"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&scale_spectrum} },
+    {"oiwi", 0, "x", "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&xyy_plane} },
+    {"oiwi", 0, "z", "scale",         NULL, _("Scale"),         _("Scale the height of the spectrum graph"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&scale_spectrum} },
 
     /* default options -h, -v and -V */
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
@@ -398,7 +397,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "E", "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=0} },
     {"oiwi", 0, "A", "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=0} },
     {"oiwi", 0, "W", "man-see_as_well", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)see_as_well, sizeof(see_as_well), 0 )}, oyjlNONE, {.i=NULL} },
-    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}
   };
   opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );
 
@@ -428,7 +427,7 @@ int myMain( int argc, const char ** argv )
       strcmp(export,"json+command") != 0)
     return 0;
 
-  if(ui && (!export && !input && !profile_count && !standardobs && !observer64 && !kelvin && !illuminant && !render && hlc == -1.0))
+  if(ui && (!export && !input && !profile_count && !standardobs && !observer64 && kelvin == 0.0 && !illuminant && !render && hlc == -1.0))
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
                                                                "version" );
@@ -497,7 +496,7 @@ int myMain( int argc, const char ** argv )
 
   /* detect all anonymous arguments for saturation */
   profile_names = oyjlOptions_ResultsToList( ui->opts, "@", &profile_count );
-  pixel_w = pixel_width+0.5;
+  pixel_w = (int)(pixel_width + 0.5);
   if(xyy_plane) proj = p_xyz;
 
   if(profile_count && profile_names && profile_names[0] && profile_names[0][0] == 'l' && profile_names[0][1] == '\000')
@@ -526,7 +525,7 @@ int myMain( int argc, const char ** argv )
     size_t error_buffer_size = 128;
     if(data_format == oyNAME_JSON)
     {
-      specT = oyjlTreeParse( text, error_buffer, error_buffer_size ),
+      specT = oyjlTreeParse( text, error_buffer, error_buffer_size );
       oyTreeFilterColors( specT, pattern );
       spectra = oySpectrumFromTree( specT );
       if(verbose && spectra) fprintf( stderr, "NCC parsed\n" );
@@ -599,9 +598,9 @@ int myMain( int argc, const char ** argv )
                 (oyStringCaseCmp_(so,"10°") == 0)) )
         stdobs = 10;
 #endif
-      spectral_channels = oySpectrumGetParam( spectra, oySPECTRUM_CHANNELS );
-      spectral_count = oySpectrumGetParam( spectra, oySPECTRUM_COLUMNS );
-      spectra_XYZ = calloc( spectral_count, sizeof(oyF3) );
+      spectral_channels = (int)oySpectrumGetParam( spectra, oySPECTRUM_CHANNELS );
+      spectral_count = (int)oySpectrumGetParam( spectra, oySPECTRUM_COLUMNS );
+      spectra_XYZ = (oyF3*) calloc( (unsigned)spectral_count, sizeof(oyF3) );
 
       oySpectrumComputeWhite( spectra, stdobs, illu_300_830_5nm, &white, spectra_rect );
       for(j = 0; j < spectral_count; ++j)
@@ -1856,7 +1855,10 @@ int myMain( int argc, const char ** argv )
 #undef pflags
 
 extern int * oyjl_debug;
-char ** environment = NULL;
+static char ** environment = NULL;
+#ifdef __ANDROID__
+extern char **environ;
+#endif
 int main( int argc_, char**argv_, char ** envv )
 {
   int argc = argc_;
@@ -2083,7 +2085,7 @@ oyImage_s * oySpectrumCreateEmpty ( int min, int max, int lambda, int columns )
   oyProfile_s * p = oyProfile_FromStd(oyASSUMED_XYZ, 0, 0); 
   int           spp  = (max - min + lambda) / lambda;
 
-  pixel_layout |= oyChannels_m( spp );
+  pixel_layout |= oyChannels_m( (unsigned)spp );
   spec = oyImage_Create ( columns, 1, pixels, pixel_layout, p, NULL );
   oySpectrumSetRange( spec, min, max, lambda );
 
@@ -2091,7 +2093,7 @@ oyImage_s * oySpectrumCreateEmpty ( int min, int max, int lambda, int columns )
 }
 float    oySpectrumFillFromArrayF  ( oyImage_s * spec, float * curve, int column )
 {
-  int channels = oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
+  int channels = (int)oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
   int i;
   float max = -1000000.0;
   int is_allocated = 0;
@@ -2103,14 +2105,14 @@ float    oySpectrumFillFromArrayF  ( oyImage_s * spec, float * curve, int column
   for(i = 0; i < channels; ++i)
   {
     float v = curve[i];
-    dbl[i] = v;
+    dbl[i] = (double)v;
     if(!isnan(v) && v > max) max = v;
   }
   return max;
 }
 float    oySpectrumFillFromArrayF3 ( oyImage_s * spec, float curves[][3] )
 {
-  int channels = oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
+  int channels = (int)oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
   int i, index;
   float max = -1000000.0;
 
@@ -2121,7 +2123,7 @@ float    oySpectrumFillFromArrayF3 ( oyImage_s * spec, float curves[][3] )
     for(i = 1; i <= channels; ++i)
     {
       float v = curves[i][index];
-      dbl[i] = v;
+      dbl[i] = (double)v;
       if(v > max)
         max = v;
     }
@@ -2131,18 +2133,18 @@ float    oySpectrumFillFromArrayF3 ( oyImage_s * spec, float curves[][3] )
 }
 void     oySpectrumNormalise ( oyImage_s * spec, float scale )
 {
-  int channels = oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
-  int pixels = oySpectrumGetParam( spec, oySPECTRUM_COLUMNS );
+  int channels = (int)oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
+  int pixels = (int)oySpectrumGetParam( spec, oySPECTRUM_COLUMNS );
   int i, pixel;
 
-  if(scale)
+  if(scale != 0.0)
   for(pixel = 0; pixel < pixels; ++pixel)
   {
     int is_allocated = 0;
     double * dbl = (double*) oyImage_GetPointF(spec)( spec, pixel,0,-1, &is_allocated );
     for(i = 0; i < channels; ++i)
       if(!isnan(dbl[i]))
-        dbl[i] *= scale;
+        dbl[i] *= (double)scale;
   }
 }
 double   oySpectrumGetParam  ( oyImage_s * spec, oySPECTRUM_PARAM_e mode )
@@ -2163,9 +2165,9 @@ double   oySpectrumGetParam  ( oyImage_s * spec, oySPECTRUM_PARAM_e mode )
          break;
     case oySPECTRUM_LAMBDA:
          {
-           float start    = oySpectrumGetParam(spec, oySPECTRUM_START),
-                 end      = oySpectrumGetParam(spec, oySPECTRUM_END),
-                 channels = oySpectrumGetParam(spec, oySPECTRUM_CHANNELS);
+           double start    = oySpectrumGetParam(spec, oySPECTRUM_START),
+                  end      = oySpectrumGetParam(spec, oySPECTRUM_END),
+                  channels = oySpectrumGetParam(spec, oySPECTRUM_CHANNELS);
            nm = (end - start) / (channels - 1);
          }
          break;

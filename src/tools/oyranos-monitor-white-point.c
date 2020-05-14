@@ -20,7 +20,6 @@
 
 # include <stddef.h>
 
-#define __USE_POSIX2 1
 #include <stdio.h>                /* popen() */
 #include <math.h>
 #include <string.h>
