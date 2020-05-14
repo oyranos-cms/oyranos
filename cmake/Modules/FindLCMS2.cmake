@@ -13,7 +13,7 @@
 
 # Copyright (c) 2008, Adrian Page, <adrian@pagenet.plus.com>
 # Copyright (c) 2009, Cyrille Berger, <cberger@cberger.net>
-# Copyright (c) 2012-2014, Kai-Uwe Behrmann, <ku.b@gmx.de>
+# Copyright (c) 2012-2020, Kai-Uwe Behrmann, <ku.b@gmx.de>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
@@ -32,7 +32,7 @@ find_path(LCMS2_INCLUDE_DIR lcms2.h
    PATH_SUFFIXES lcms2 liblcms2
  )
 
-find_library(LCMS2_LIBRARIES NAMES lcms2 liblcms2 liblcms2-2 lcms-2 liblcms-2
+find_library(LCMS2_LIBRARIES NAMES lcms2 liblcms2 liblcms2-2 lcms-2 liblcms-2 lcms2-static
    HINTS
    ${LCMS2_LIBDIR}
    ${LCMS2_LIBRARY_DIRS}
