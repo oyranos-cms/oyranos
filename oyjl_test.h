@@ -203,7 +203,7 @@ void oyjlSetDbgPosition( const char * file, int line )
  *  @param         do_it               enable the test - usually 1
  */
 #define TEST_RUN( prog, text, do_it ) \
-oyjlTESTRESULT_e prog(); \
+oyjlTESTRESULT_e prog(void); \
 { \
   if(argc > argpos && do_it) { \
       for(i = argpos; i < argc; ++i) \
