@@ -13,7 +13,7 @@
 # This file is based on cmake-2.6/Modules/FindBZip2.cmake
 # Copyright (c) 2010, Yiannis Belias, <jonnyb@hol.gr>
 # modify for YAJL
-# Copyright (c) 2012, Kai-Uwe Behrmann, <ku.b@gmx.de>
+# Copyright (c) 2012-2020, Kai-Uwe Behrmann, <ku.b@gmx.de>
 
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
@@ -28,7 +28,7 @@ ENDIF( YAJL_INCLUDE_DIR AND YAJL_LIBRARIES )
 
 FIND_PATH(YAJL_INCLUDE_DIR yajl/yajl_common.h)
 
-SET(YAJL_NAMES ${YAJL_NAMES} yajl libyajl)
+SET(YAJL_NAMES ${YAJL_NAMES} yajl libyajl yajl-static)
 FIND_LIBRARY(YAJL_LIBRARIES NAMES ${YAJL_NAMES} PATH)
 
 
