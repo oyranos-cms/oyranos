@@ -9362,7 +9362,7 @@ oyjlTESTRESULT_e testCCorrectFlags( )
              flags & oyOPTIONATTRIBUTE_AUTOMATIC ? " auto":"",
              flags );
     if(!tested_key && !(flags & oyOPTIONATTRIBUTE_EDIT) &&
-        val && strstr(reg,"advanced") == NULL && ((v && strcmp(val,v) || !v)))
+        val && strstr(reg,"advanced") == NULL && ((v && strcmp(val,v)) || !v))
     {
       PRINT_SUB( oyjlTESTRESULT_FAIL, "oyConversion_Correct() DB missmatch: %s %s/%s", verbose?"":reg, val, v?v:"----" );
     }
