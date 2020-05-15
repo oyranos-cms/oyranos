@@ -3571,7 +3571,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   ng = oyjlOptions_CountGroups(opts);
   if(!ng && !(flags & oyjlUI_STATE_NO_CHECKS)) return NULL;
 
-#ifdef OYJL_HAVE_LANGINFO_H
+#if defined(OYJL_HAVE_LANGINFO_H) && !defined(__ANDROID__)
   country = nl_langinfo( _NL_ADDRESS_LANG_AB );
 #endif
   if(flags & oyjlUI_STATE_VERBOSE)
