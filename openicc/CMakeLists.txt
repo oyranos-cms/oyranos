@@ -39,6 +39,7 @@ include(GNUInstallDirs)
 
 option(ENABLE_TESTS_${PROJECT_UP_NAME} "Build tests (requires static libs)" ON)
 option(ENABLE_TOOLS_${PROJECT_UP_NAME} "Build tools (currently openicc-device)" ON)
+OPTION(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME} "Build dynamic link libs" ON)
 option(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} "Build static libs" ON)
 OPTION(ENABLE_DOCU_${PROJECT_UP_NAME} "Build HTML documentation out of sources" ON)
 
