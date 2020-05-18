@@ -8,10 +8,18 @@ IF(Qt5Qml_FOUND)
     SET( HAVE_QT 1 )
     INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIRS} )
     LINK_DIRECTORIES( ${QT_LIBRARY_DIRS} )
+    OPTION(ENABLE_QT5_EXECUTABLE "Build Qt5 tools" OFF)
     IF(${CMAKE_SYSTEM_NAME} MATCHES Android)
-      SET( ENABLE_QT5_EXECUTABLE FALSE )
+      IF(NOT ENABLE_QT5_EXECUTABLE)
+        SET( ENABLE_QT5_EXECUTABLE OFF )
+      ENDIF(NOT ENABLE_QT5_EXECUTABLE)
+      FIND_PACKAGE(Qt5 CONFIG COMPONENTS AndroidExtras)
+      IF( Qt5AndroidExtras_FOUND )
+        INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} ${Qt5AndroidExtras_INCLUDE_DIRS} )
+        SET( QT5_ANDROIDEXTRAS_LIB Qt5::AndroidExtras log )
+      ENDIF()
     ELSE()
-      SET( ENABLE_QT5_EXECUTABLE TRUE )
+      SET( ENABLE_QT5_EXECUTABLE ON )
     ENDIF()
 ENDIF()
 
@@ -78,6 +86,7 @@ IF( HAVE_QT)
                 Qt5::Qml
                 Qt5::Quick
                 ${QT5_DBUS_LIB}
+                ${QT5_ANDROIDEXTRAS_LIB}
                 ${OPENICC_LIBRARIES}
                 ${OYJL_TARGET_LIB}
                 ${OYJL_CORE_LIB}
@@ -123,6 +132,7 @@ IF( HAVE_QT)
                 Qt5::Qml
                 Qt5::Quick
                 ${QT5_DBUS_LIB}
+                ${QT5_ANDROIDEXTRAS_LIB}
                 ${OPENICC_LIBRARY_STATIC}
                 ${OYJL_TARGET_LIB_STATIC}
                 ${OYJL_CORE_LIB_STATIC}
@@ -200,6 +210,7 @@ IF( HAVE_QT)
                 Qt5::QSvgPlugin
 #${QT5SVG_LIBRARIES}
                 ${QT5_DBUS_LIB}
+                ${QT5_ANDROIDEXTRAS_LIB}
                 ${OPENICC_LIBRARIES}
                 ${OYJL_TARGET_LIB}
                 ${OYJL_CORE_LIB}
