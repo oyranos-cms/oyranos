@@ -21,7 +21,8 @@
 #endif
 
 #include "oyranos_config_internal.h" /* define HAVE_LANGINFO_H */
-#if defined(HAVE_LANGINFO_H)
+#if defined(HAVE_LANGINFO_H) && !defined(__ANDROID__)
+#define USE_LANGINFO_H 1
 #include <langinfo.h>
 #endif
 
@@ -1049,13 +1050,13 @@ char *       oyVersionString         ( int                 type,
 
   if(type == 4)
   {
-#ifdef HAVE_LANGINFO_H
+#ifdef USE_LANGINFO_H
     oyStringAdd_( &text, nl_langinfo(MON_1-1+oyVersion(1)),
                                             oyAllocateFunc_, oyDeAllocateFunc_);
 #endif
     oySprintf_( temp, " %d - ", oyVersion(2) );
     oyStringAdd_( &text, temp, oyAllocateFunc_, oyDeAllocateFunc_);
-#ifdef HAVE_LANGINFO_H
+#ifdef USE_LANGINFO_H
     oyStringAdd_( &text, nl_langinfo(MON_1-1+oyVersion(3)),
                                             oyAllocateFunc_, oyDeAllocateFunc_);
 #endif
