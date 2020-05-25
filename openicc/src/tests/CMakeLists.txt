@@ -1,6 +1,6 @@
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_BINARY_DIR}/src/liboyranos/" ${ELEKTRA_LIBRARY_DIRS} )
 ADD_EXECUTABLE( test-openicc "${CMAKE_CURRENT_SOURCE_DIR}/test.c" )
-TARGET_LINK_LIBRARIES( test-openicc OpenICC )
+TARGET_LINK_LIBRARIES( test-openicc ${OPENICC_LIBRARIES} )
 ADD_EXECUTABLE( test-openicc-static "${CMAKE_CURRENT_SOURCE_DIR}/test.c" )
 TARGET_LINK_LIBRARIES( test-openicc-static openicc-static )
 ADD_CUSTOM_TARGET(check
