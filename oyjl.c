@@ -179,7 +179,7 @@ int myMain( int argc, const char ** argv )
     int debug = verbose;
     oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
 #else
-    fprintf( stderr, "No render support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer." );
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "No render support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer.", OYJL_DBG_ARGS );
 #endif
   }
   else if(ui)
