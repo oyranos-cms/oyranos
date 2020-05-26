@@ -85,7 +85,7 @@ typedef struct {
 #define	GLOB_NOSYS	(-4)	/* Obsolete: source comptability only. */
 //#endif /* __POSIX_VISIBLE >= 199209 */
 
-#if __BSD_VISIBLE
+#if defined(__BSD_VISIBLE) || defined(__ANDROID__)
 #define	GLOB_ALTDIRFUNC	0x0040	/* Use alternately specified directory funcs. */
 #define	GLOB_BRACE	0x0080	/* Expand braces ala csh. */
 #define	GLOB_MAGCHAR	0x0100	/* Pattern had globbing characters. */
