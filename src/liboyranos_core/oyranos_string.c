@@ -21,7 +21,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "oyranos_config_internal.h"
-#ifdef HAVE_ICONV_H
+#if defined(HAVE_ICONV_H) && !defined(__ANDROID__)
+# define USE_ICONV_H 1
 # include <iconv.h>
 #endif
 
@@ -656,7 +657,7 @@ int                oyIconv           ( const char        * input,
   0
 # endif
   , *loc = to_codeset;
-#ifdef HAVE_ICONV_H
+#ifdef USE_ICONV_H
   iconv_t cd;
 #endif
   size_t size, in_left = len_in, out_left = len_out;
@@ -675,13 +676,13 @@ int                oyIconv           ( const char        * input,
   if(!loc)
     loc = "UTF-8";
 
-#ifdef HAVE_ICONV_H
+#ifdef USE_ICONV_H
   if(!from_codeset && !oy_domain_codeset)
 #endif
   {
     error = !memcpy(output, input, sizeof(char) * OY_MIN(len_in,len_out));
     output[len_out] = 0;
-#ifndef HAVE_ICONV_H
+#ifndef USE_ICONV_H
     if(!src)
       return error;
 
@@ -701,7 +702,7 @@ int                oyIconv           ( const char        * input,
     return error;
   }
 
-#ifdef HAVE_ICONV_H
+#ifdef USE_ICONV_H
   cd = iconv_open( loc, src );
   size = iconv( cd, &in_txt, &in_left, &out_txt, &out_left);
   iconv_close( cd );
