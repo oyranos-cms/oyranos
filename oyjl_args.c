@@ -2471,11 +2471,12 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
 oyjlOptions_s * oyjlOptions_New      ( int                 argc,
                                        const char       ** argv )
 {
-  oyjlOptions_s * opts = calloc( sizeof(oyjlOptions_s), 1 );
+  oyjlOptions_s * opts = (oyjlOptions_s*) calloc( sizeof(oyjlOptions_s), 1 );
   memcpy( opts->type, "oiws", 4 );
 
   opts->argc = argc;
   opts->argv = argv;
+
   return opts;
 }
 
