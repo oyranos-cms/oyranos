@@ -298,6 +298,9 @@ int myMain( int argc, const char ** argv )
   min_x=min_y=0.0;
   max_x=max_y=1.0;
 
+#if defined(__ANDROID__)
+  pixel_width = 1024.0;
+#endif
 
   oyjlOptions_s * opts;
   oyjlUi_s * ui;
@@ -383,7 +386,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "t", "thickness",     NULL, _("Thickness"),     _("Specify the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0.0, .dbl.end = 10.0, .dbl.tick = 0.05, .dbl.d = 1.0}, oyjlDOUBLE, {.d=&thickness} },
     {"oiwi", 0, "w", "width",         NULL, _("Width"),         _("Specify output image width in pixel"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = 64.0, .dbl.end = 4096.0, .dbl.tick = 1, .dbl.d = 128.0}, oyjlDOUBLE, {.d=&pixel_width} },
+      {.dbl.start = 64.0, .dbl.end = 4096.0, .dbl.tick = 1, .dbl.d = pixel_width}, oyjlDOUBLE, {.d=&pixel_width} },
     {"oiwi", 0, "x", "xyy",           NULL, _("xyY"),           _("Use CIE*xyY *x*y plane for saturation line projection"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&xyy_plane} },
     {"oiwi", 0, "z", "scale",         NULL, _("Scale"),         _("Scale the height of the spectrum graph"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&scale_spectrum} },
 
