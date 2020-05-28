@@ -44,6 +44,9 @@
 #include <oyjl.h>
 #include <oyjl_macros.h>
 
+#ifdef __ANDROID__
+# include "oyranos-profile-graph.i18n.c"
+#endif
 
 #include "oyranos_color.h"
 #include "oyranos_color_internal.h"
@@ -420,7 +423,11 @@ int myMain( int argc, const char ** argv )
                   "2019-03-24T12:00:00", "March 24, 2019");
   ui = oyjlUi_Create( argc, (const char**)argv,
       "oyranos-profile-graph", _("Oyranos Profile Graph"), _("The tool is a ICC color profile grapher."),
-      "oyPG-logo",
+#ifdef __ANDROID__
+                                       ":/images/oyPG-logo.svg", // use qrc
+#else
+                                       "oyPG-logo",
+#endif
       info, opts->array, opts->groups, &state );
   if( state & oyjlUI_STATE_EXPORT &&
       export &&
@@ -474,7 +481,12 @@ int myMain( int argc, const char ** argv )
   if(render)
   { 
     int debug = verbose;
-    oyjlArgsRender( argc, argv, NULL, jcommands,NULL, debug, ui, myMain );
+#ifdef __ANDROID__
+# define RENDER_I18N oyranos_json
+#else
+# define RENDER_I18N NULL
+#endif
+    oyjlArgsRender( argc, argv, RENDER_I18N, jcommands,NULL, debug, ui, myMain );
     oyjlUi_Release( &ui);
     return 0;
   }
@@ -1868,8 +1880,9 @@ int main( int argc_, char**argv_, char ** envv )
   setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
 
   argv = calloc( argc + 2, sizeof(char*) );
-  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
+  memcpy( argv, argv_, argc * sizeof(char*) );
   argv[argc++] = "--render=gui"; /* start QML */
+  argv[argc] = NULL;
   environment = environ;
 #else
   environment = envv;
