@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-05-26 21:07+0200\n"
+"POT-Creation-Date: 2020-05-28 13:13+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -167,7 +167,7 @@ msgid "Documentation"
 msgstr ""
 
 #: oyjl_translate.c:99
-msgid "Domain"
+msgid "Domains"
 msgstr ""
 
 #: test-args.c:99
@@ -741,7 +741,7 @@ msgstr "Oyranos Préférences"
 msgid "Render UI"
 msgstr "Oyranos Préférences"
 
-#: oyjl_translate.c:298
+#: oyjl_translate.c:299
 #, fuzzy
 msgid "Rendering Intent"
 msgstr "Oyranos Préférences"
@@ -860,7 +860,7 @@ msgid "Synopsis"
 msgstr ""
 
 #: oyjl_translate.c:99
-msgid "TEXTDOMAIN"
+msgid "TEXTDOMAIN1,TEXTDOMAIN2"
 msgstr ""
 
 #: oyjl_translate.c:113
@@ -868,7 +868,7 @@ msgid "TYPE"
 msgstr ""
 
 #: oyjl_translate.c:99
-msgid "Text Domain"
+msgid "Text Domain List"
 msgstr ""
 
 #: test.c:600
@@ -1161,7 +1161,7 @@ msgid "status"
 msgstr ""
 
 #: oyjl_translate.c:99
-msgid "text domain of your project"
+msgid "text domain list of your project"
 msgstr ""
 
 #: oyjl_translate.c:101

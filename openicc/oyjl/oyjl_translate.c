@@ -96,7 +96,7 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&format}},
     {"oiwi", 0,                          "a","add",           NULL,     _("Add"),      _("Add Translation"),         _("Add gettext translated keys to JSON"),NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&add}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "d","domain",        NULL,     _("Domain"),   _("Text Domain"),             _("text domain of your project"),_("TEXTDOMAIN"),    
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "d","domain",        NULL,     _("Domains"),   _("Text Domain List"),       _("text domain list of your project"),_("TEXTDOMAIN1,TEXTDOMAIN2"),    
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&domain}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "k","key-list",      NULL,     _("Key Names"),_("Key Name List"),           _("to be used key names in a comma separated list"),_("name,description,help"),
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&key_list}},
@@ -285,11 +285,12 @@ int myMain( int argc, const char ** argv )
 
       } else if(add)
       {
-        int ln = 0, n = 0;
+        int ln = 0, n = 0, domains_n = 0;
         char ** langs = oyjlStringSplit( locales, ',', &ln, malloc );
         char * var = NULL;
         const char * oyjl_domain_path = OYJL_LOCALEDIR;
-        char ** list = oyjlStringSplit( key_list, ',', &n, malloc );
+        char ** list = oyjlStringSplit( key_list, ',', &n, malloc ),
+             ** domains = oyjlStringSplit( domain, ',', &domains_n, malloc );
         char * dir;
         oyjl_val new_translations = NULL;
 
@@ -315,13 +316,6 @@ int myMain( int argc, const char ** argv )
         if(translations_only)
           new_translations = oyjlTreeNew(0);
 
-#ifdef OYJL_USE_GETTEXT
-        var = textdomain( domain );
-        dir = bindtextdomain( domain, oyjl_domain_path );
-#endif
-
-        if(*oyjl_debug)
-          fprintf(stderr, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjl_domain_path, domain, var );
         var = NULL;
 
         oyjlStringAdd( &var, 0,0, "NLSPATH=%s", oyjl_domain_path );
@@ -330,7 +324,7 @@ int myMain( int argc, const char ** argv )
         for(i = 0; i < ln; ++i)
         {
           char * lang = langs[i];
-          int j;
+          int j, k;
 
           const char * checklocale = setlocale( LC_MESSAGES, lang );
           if(*oyjl_debug || checklocale == NULL)
@@ -339,46 +333,59 @@ int myMain( int argc, const char ** argv )
           if(!checklocale)
             continue;
 
-          for(j = 0; j < count; ++j)
+          for(k = 0; k < domains_n; ++k)
           {
-            char * path = paths[j];
+            domain = domains[k];
 
-            int k;
-            for(k = 0; k < n; ++k)
-            {
-              char * key = list[k];
-
-              if(oyjlPathMatch(path, key, OYJL_PATH_MATCH_LAST_ITEMS ))
-              {
-                const char * t = NULL,
-                           * tr = NULL;
-                v = oyjlTreeGetValue( root, 0, path );
-                if(v)
-                  t = OYJL_GET_STRING(v);
-                if(t && t[0])
 #ifdef OYJL_USE_GETTEXT
-                  tr = dgettext( domain, t );
-#else
-                  tr = t;
+            var = textdomain( domain );
+            dir = bindtextdomain( domain, oyjl_domain_path );
 #endif
-                if(verbose)
-                  fprintf(stderr, "found:\t key: %s value[%s]: \"%s\"\n", path, domain, tr?tr:"----" );
-                if(t != tr || list_empty)
+
+            if(*oyjl_debug)
+              fprintf( stderr, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjl_domain_path, domain, var );
+
+            for(j = 0; j < count; ++j)
+            {
+              char * path = paths[j];
+
+              int k;
+              for(k = 0; k < n; ++k)
+              {
+                char * key = list[k];
+
+                if(oyjlPathMatch(path, key, OYJL_PATH_MATCH_LAST_ITEMS ))
                 {
-                  char * new_path = NULL, * new_key = oyjlStringCopy( t, NULL ), * tmp;
-                  oyjlStringReplace( &new_key, "/", "%37", NULL,NULL );
-                  tmp = oyjlJsonEscape( new_key );
-                  free(new_key); new_key = tmp; tmp = NULL;
-                  oyjlStringAdd( &new_path, malloc, free, "org/freedesktop/oyjl/translations/%s/%s", lang, new_key );
-                  v = oyjlTreeGetValue( new_translations?new_translations:root, OYJL_CREATE_NEW, new_path );
-                  tmp = oyjlJsonEscape( tr );
-                  if(tmp)
+                  const char * t = NULL,
+                             * tr = NULL;
+                  v = oyjlTreeGetValue( root, 0, path );
+                  if(v)
+                    t = OYJL_GET_STRING(v);
+                  if(t && t[0])
+#ifdef OYJL_USE_GETTEXT
+                    tr = dgettext( domain, t );
+#else
+                    tr = t;
+#endif
+                  if(verbose)
+                    fprintf(stderr, "found:\t key: %s value[%s]: \"%s\"\n", path, domain, tr?tr:"----" );
+                  if(t != tr || list_empty)
                   {
-                    oyjlValueSetString( v, t != tr ? tmp : "" );
-                    free(tmp);
+                    char * new_path = NULL, * new_key = oyjlStringCopy( t, NULL ), * tmp;
+                    oyjlStringReplace( &new_key, "/", "%37", NULL,NULL );
+                    tmp = oyjlJsonEscape( new_key );
+                    free(new_key); new_key = tmp; tmp = NULL;
+                    oyjlStringAdd( &new_path, malloc, free, "org/freedesktop/oyjl/translations/%s/%s", lang, new_key );
+                    v = oyjlTreeGetValue( new_translations?new_translations:root, OYJL_CREATE_NEW, new_path );
+                    tmp = oyjlJsonEscape( tr );
+                    if(tmp)
+                    {
+                      oyjlValueSetString( v, t != tr ? tmp : "" );
+                      free(tmp);
+                    }
+                    oyjlStringAdd( &text, malloc, free, "%s\n", tr );
+                    free(new_path);
                   }
-                  oyjlStringAdd( &text, malloc, free, "%s\n", tr );
-                  free(new_path);
                 }
               }
             }

@@ -19,7 +19,7 @@ Here described are the incredients using Qt Creator.
 * Add a dummy.qml file to trigger importing all required
   QML files.
 * Translation: add a myapp.i18n.c file containing your translations only.
-  Generation example: LANG=C oyranos-profile-graph -X export | oyjl-translate -a -i - -k name,description,help,label -d oyranos -p `pwd`/build/locale -l de_DE,es_ES -t -w C
+  Generation example: LANG=C oyranos-profile-graph -X json | oyjl-translate -a -i - -k name,description,help,label -d oyranos,oyjl -p `pwd`/build/locale -l de_DE,es_ES -t -w C
   Include the above obtained text as header and pass the text array to
   oyjlArgsRender(oyranos_json).
 * Ison: add a myapp.qrc file pointing to your logo.svg
