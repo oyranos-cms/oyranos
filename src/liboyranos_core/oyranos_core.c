@@ -15,6 +15,10 @@
 
 #include "oyranos_core.h" /* define HAVE_POSIX */
 
+#if defined(__ANDROID__)
+#include <android/log.h>
+#endif
+
 #include <sys/stat.h>
 #ifdef HAVE_POSIX
 #include <unistd.h>
@@ -557,6 +561,7 @@ int                oyMessageFormat   ( char             ** message_text,
 int oyMessageFunc( int code, const void * context_object, const char * format, ... )
 {
   char * text = 0, * msg = 0;
+  const char * message = NULL;
   int error = 0;
   va_list list;
   size_t sz = 0;
@@ -580,9 +585,17 @@ int oyMessageFunc( int code, const void * context_object, const char * format, .
   error = oyMessageFormat( &msg, code, c, text );
 
   if(msg)
-    fprintf( stderr, "%s\n", msg );
+    message = msg;
   else if(error)
-    fprintf( stderr, "%s\n", format );
+    message = format;
+
+  if(message)
+  {
+    fprintf( stderr, "%s\n", message );
+#if defined(__ANDROID__)
+    __android_log_print(ANDROID_LOG_INFO, "oyMessageFunc", "%s", message );
+#endif
+  }
 
   oyDeAllocateFunc_( text ); text = 0;
   if(msg){ oyDeAllocateFunc_( msg ); } msg = 0;
