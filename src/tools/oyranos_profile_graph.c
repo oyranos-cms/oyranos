@@ -163,7 +163,7 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
 {
   oyProfiles_s * ps = oyProfiles_Create( NULL, 0, 0 );
   int n = oyProfiles_Count( ps ), i;
-  oyjlOptionChoice_s * cs = (oyjlOptionChoice_s*) calloc( (unsigned int)n+1, sizeof(oyjlOptionChoice_s) );
+  oyjlOptionChoice_s * cs = (oyjlOptionChoice_s*) calloc( (unsigned int)n+20, sizeof(oyjlOptionChoice_s) );
   for(i = 0; i < n; ++i)
   {
     oyProfile_s * p = oyProfiles_Get(ps, i);
@@ -176,6 +176,16 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
     oyProfile_Release( &p );
   }
   oyProfiles_Release( &ps );
+
+  cs[i].nick = cs[i].name = "rgb"; ++i;
+  cs[i].nick = cs[i].name = "cmyk"; ++i;
+  cs[i].nick = cs[i].name = "gray"; ++i;
+  cs[i].nick = cs[i].name = "lab"; ++i;
+  cs[i].nick = cs[i].name = "xyz"; ++i;
+  cs[i].nick = cs[i].name = "web"; ++i;
+  cs[i].nick = cs[i].name = "effect"; ++i;
+  cs[i].nick = cs[i].name = "proof"; ++i;
+
   return cs;
 }
 
@@ -839,7 +849,10 @@ int myMain( int argc, const char ** argv )
           oyProfiles_MoveIn( proofing, &p, -1 );
           error = oyLabGamutCheck( lab, count, proofing, outside, NULL );
           if(error)
+          {
             oyMessageFunc_p( oyMSG_ERROR, NULL, "in oyLabGamutCheck( ): %s", oyProfile_GetFileName( p, -1 ) );
+            return error;
+          }
           oyProfiles_Release( &proofing );
         }
       }
@@ -1999,9 +2012,13 @@ int  oyColorIsProofingMarker         ( const double        i[],
  *  @param[in]     space               color space for gamut boundary check; optional
  *  @param[in,out] is_outside_gamut    array with result of out of gamut test
  *  @param[in,out] lab_tested          the resulting colors
+ *  @return                            results
+ *                                     - -1 : no operation
+ *                                     -  0 : success
+ *                                     -  1 : found error
  *
  *  @version Oyranos: 0.9.7
- *  @date    2020/03/21
+ *  @date    2020/05/29
  *  @since   2020/03/11 (Oyranos: 0.9.7)
  */
 int      oyLabGamutCheck             ( double            * lab,
@@ -2011,8 +2028,10 @@ int      oyLabGamutCheck             ( double            * lab,
                                        double            * lab_tested )
 {
   int error = -1;
-  int icc_profile_flags = 0, i;
-  oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, 0 );
+  int icc_profile_flags = 0, i, found_outsider = 0;
+  oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, 0 ),
+              * proof1 = oyProfiles_Get(proofing, 0);
+  icColorSpaceSignature csp = (icColorSpaceSignature) oyProfile_GetSignature( proof1, oySIGNATURE_COLOR_SPACE);
   double * tmp = lab_tested ? NULL : calloc( 3*count, sizeof(double) ),
          delta = 0.01;
   oyOptions_s * module_options = NULL;
@@ -2043,10 +2062,17 @@ int      oyLabGamutCheck             ( double            * lab,
     int is_outside = is_outside_gamut[i];
     if(is_outside) continue;
     if(oyColorIsProofingMarker( &lab[i*3], delta + 0.02 )) /* test source in greater range */
-      is_outside_gamut[i] = 0;
+      is_outside = 0;
     else
-      is_outside_gamut[i] = oyColorIsProofingMarker(&lab_tested[i*3], delta);
+      is_outside = oyColorIsProofingMarker(&lab_tested[i*3], delta);
+    if(is_outside)
+    {
+      ++found_outsider;
+      is_outside_gamut[i] = is_outside;
+    }
   }
+  if((csp == icSigCmykData || csp == icSigRgbData) && found_outsider == 0)
+    error = 1;
 
   oyProfile_Release( &pLab );
   oyOptions_Release( &module_options );
