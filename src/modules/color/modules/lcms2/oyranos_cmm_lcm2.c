@@ -1350,9 +1350,13 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
                                              p, flags,
                                              intent, intent_proof, 0);
           oyProfile_Release( &p );
-          if(!wrap)
+          if(!wrap || !wrap->l2cms )
           {
             error = 1;
+            l2cms_msg( oyMSG_ERROR, (oyStruct_s*)simulation, OY_DBG_FORMAT_
+                "simulation profiles: %d",
+                OY_DBG_ARGS_,
+                oyProfiles_Count(simulation) );
             break;
           }
           else
@@ -1696,7 +1700,9 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s     * proof,
         l2cms_msg( oyMSG_DBG, (oyStruct_s*)proof, OY_DBG_FORMAT_
                    " wrote to mem and close: " OY_PRINT_POINTER, OY_DBG_ARGS_, hp );
       l2cmsCloseProfile( hp ); hp = 0;
-    }
+    } else
+      l2cms_msg( oyMSG_DBG, (oyStruct_s*)proof, OY_DBG_FORMAT_
+                 "no abstract profile created", OY_DBG_ARGS_ );
 
     s->type = l2cmsOBJECT_PROFILE;
     s->oy_ = oyObject_NewFrom( NULL, "l2cmsProfileWrap_s" );
@@ -2832,8 +2838,8 @@ int      l2cmsFilterPlug_CmmIccRun   ( oyFilterPlug_s    * requestor_plug,
 {
   int j, k, n;
   int error = 0;
-  oyDATATYPE_e data_type_in = 0,
-               data_type_out = 0;
+  oyDATATYPE_e data_type_in = oyUINT8,
+               data_type_out = oyUINT8;
   int channels_out, channels_in;
   int bps_in;
   oyPixel_t pixel_layout_in,
@@ -4211,8 +4217,9 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
       hproof = l2cmsAddProfile( proof );
 #else
       {
-        const char * fn = oyProfile_GetFileName( proof, -1 );
-        hproof = l2cmsOpenProfileFromFileTHR( tc, fn, "r" );
+        size_t size = 0;
+        void * block = oyProfile_GetMem( proof, &size, 0, malloc );
+        hproof = CMMProfileOpen_M( tc, block, size );
       }
 #endif
 
