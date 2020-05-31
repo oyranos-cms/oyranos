@@ -221,6 +221,7 @@ IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
     IF(Qt5Qml_FOUND)
       MESSAGE( "-- Qt5Qml:                   " ${Qt5Qml_DIR} )
       SET( HAVE_QT TRUE )
+      SET( QT_RENDER_LIB oyjl-args-qml-static )
     ENDIF()
   ENDIF()
 ENDIF()
@@ -395,10 +396,10 @@ MACRO( BUILD_TOOL _NAME _SOURCES _DEPENDENCIES _LIBS _DOCUMENT _INSTALL )
   ELSE()
 #    MESSAGE( "-- TOOL: " ${_NAME} )
   ENDIF( )
-  IF(NOT ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
+  IF(NOT HAVE_QT)
     SET_TARGET_PROPERTIES( ${TOOL} PROPERTIES COMPILE_DEFINITIONS "NO_OYJL_ARGS_RENDER=1" )
   ENDIF()
-  TARGET_LINK_LIBRARIES( ${TOOL} ${OYJL_TARGET_LIB} ${EXTRA_LIBS} ${_LIBS} )
+  TARGET_LINK_LIBRARIES( ${TOOL} ${QT_RENDER_LIB} ${OYJL_TARGET_LIB} ${EXTRA_LIBS} ${_LIBS} )
   IF( ${_DOCUMENT} )
     OYJL_DOCUMENT_TOOL( ${TOOL} ${TOOL_SOURCES} "de_DE.UTF8" ${DOC_PATH} )
     SET( TOOLS ${TOOLS} ${TOOL} )
@@ -555,8 +556,9 @@ IF( GETTEXT_FOUND AND OYJL_USE_GETTEXT )
   SET( LOCALES cs_CZ,de_DE,eo,eu_ES,fr_FR,ru_RU )
   FOREACH( TOOL ${TOOLS} )
     ADD_CUSTOM_COMMAND( OUTPUT ${TOOL}.i18n.json
-      COMMAND ${TOOL} -X json > ${TOOL}.json
+      COMMAND export LANG=C && ./${TOOL} -X json > ${TOOL}.json
       COMMAND oyjl-translate -a -i ${TOOL}.json -o ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.i18n.json -k name,description,help -d "oyjl" -p "${CMAKE_BINARY_DIR}/locale/" -l ${LOCALES} -t
+      COMMAND oyjl-translate -a -i ${TOOL}.json -o ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.i18n.c -k name,description,help,label -d "oyjl" -p "${CMAKE_BINARY_DIR}/locale/" -l ${LOCALES} -t -w=C
       DEPENDS ${TOOL}
       COMMENT "generate ${TOOL}.i18n.json" )
     ADD_CUSTOM_TARGET( ${TOOL}_i18n ALL
