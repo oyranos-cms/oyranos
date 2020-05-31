@@ -140,7 +140,7 @@ public:
           {
             a = a_cb; // not implemented; would need stderr
           } else
-            a = QProcess::readAllStandardError();
+            a = e_cb;
         }
         return a;
     }
