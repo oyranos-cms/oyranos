@@ -36,6 +36,7 @@ class Process : public QProcess {
 
     QString tempName_;
     QByteArray a_cb;
+    QByteArray e_cb;
     FILE * fm_cb;
     FILE * fme_cb;
     int saved_stdout = -1;
@@ -109,6 +110,7 @@ public:
     Q_INVOKABLE QByteArray readAll()
     {
         QByteArray a;
+        e_cb = QProcess::readAllStandardError();
         if(processCallback_p != NULL)
         {
             //fprintf(stderr, "read callback %d\n", (int)a_cb.size());
@@ -142,6 +144,10 @@ public:
         }
         return a;
     }
+    Q_INVOKABLE QByteArray readErr()
+    {
+        return e_cb;
+    }
 public Q_SLOTS:
     void setData()
     {
@@ -169,13 +175,12 @@ public Q_SLOTS:
       //fprintf(stderr, OYJL_DBG_FORMAT "read: %s %d %d\n", OYJL_DBG_ARGS, cfn, (int)size, (int)a_cb.size() );
 
       QFile fe( tempName_ + "-err" );
+      fe.open(QIODevice::ReadOnly|QIODevice::Unbuffered);
+      qint64 esize = fe.size();
+      e_cb = fe.read(esize);
+      fe.close();
       if(size == 0 && a_cb.size() == 0)
-      {
-          fe.open(QIODevice::ReadOnly|QIODevice::Unbuffered);
-          qint64 size = fe.size();
-          a_cb = fe.read(size);
-          fe.close();
-      }
+          a_cb = e_cb;
       fe.remove();
 
       // restore stdout

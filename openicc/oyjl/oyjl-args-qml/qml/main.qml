@@ -121,6 +121,8 @@ AppWindow {
                 else
                     setHelpText( data, true )
             }
+            var text = readErr();
+            textArea2.text = text;
             unsetBusyTimer.start()
         }
     }
