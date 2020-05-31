@@ -1246,6 +1246,7 @@ int myMain( int argc, const char ** argv )
 
       if(saturation && !no_color && j == 0)
       {
+        /* background circles */
         for(i = 1; i<(int)size; ++i)
         {
           double XYZ[3];
@@ -1274,6 +1275,8 @@ int myMain( int argc, const char ** argv )
           cairo_fill(cr);
 
         }
+
+        /* colord saturation line */
         for(i = 1; i<(int)size; ++i)
         {
           double XYZ[3],XYZ1[3];
@@ -1324,7 +1327,6 @@ int myMain( int argc, const char ** argv )
           cairo_set_source(cr, g);
           cairo_move_to(cr, xToImage(x0), yToImage(y0));
           cairo_line_to(cr, xToImage(x1), yToImage(y1));
-          //cairo_close_path(cr);
           cairo_stroke(cr);
           cairo_pattern_destroy(g);
 
@@ -2029,9 +2031,9 @@ int      oyLabGamutCheck             ( double            * lab,
 {
   int error = -1;
   int icc_profile_flags = 0, i, found_outsider = 0;
-  oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, 0 ),
+  oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, icc_profile_flags, 0 )/*,
               * proof1 = oyProfiles_Get(proofing, 0);
-  icColorSpaceSignature csp = (icColorSpaceSignature) oyProfile_GetSignature( proof1, oySIGNATURE_COLOR_SPACE);
+  icColorSpaceSignature csp = (icColorSpaceSignature) oyProfile_GetSignature( proof1, oySIGNATURE_COLOR_SPACE)*/;
   double * tmp = lab_tested ? NULL : calloc( 3*count, sizeof(double) ),
          delta = 0.01;
   oyOptions_s * module_options = NULL;
@@ -2071,8 +2073,8 @@ int      oyLabGamutCheck             ( double            * lab,
       is_outside_gamut[i] = is_outside;
     }
   }
-  if((csp == icSigCmykData || csp == icSigRgbData) && found_outsider == 0)
-    error = 1;
+  /*if((csp == icSigCmykData || csp == icSigRgbData) && found_outsider == 0)
+    error = 1;*/
 
   oyProfile_Release( &pLab );
   oyOptions_Release( &module_options );
@@ -2359,7 +2361,7 @@ int         oySpectrumComputeXYZ( oyImage_s * spectra, int index, float * illu_3
   return error;
 }
 
-oyConversion_s * oy_xyz_srgb = NULL;
+static oyConversion_s * oy_xyz_srgb = NULL;
 int oyXYZ2sRGB ( double * rgb )
 {
   int error = 0;
@@ -2385,7 +2387,6 @@ int oyXYZ2sRGB ( double * rgb )
   for(i = 0; i < 3; ++i) rgb_[i] = rgb[i];
   oyConversion_RunPixels( oy_xyz_srgb, 0 );
   for(i = 0; i < 3; ++i) rgb[i] = rgb_[i];
-  rgb[3] = 1.0;
 
   return error;
 }
