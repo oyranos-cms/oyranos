@@ -31,6 +31,10 @@ extern char **environ;
 # define _(text) text
 #endif
 
+#ifdef __ANDROID__
+# include "oyjl.i18n.c"
+#endif
+
 /* This function is called the
  * * first time for GUI generation and then
  * * for executing the tool.
@@ -176,8 +180,13 @@ int myMain( int argc, const char ** argv )
   if(ui && render)
   {
 #if !defined(NO_OYJL_ARGS_RENDER)
+# ifdef __ANDROID__
+#   define RENDER_I18N oyjl_json
+# else
+#   define RENDER_I18N NULL
+# endif
     int debug = verbose;
-    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
+    oyjlArgsRender( argc, argv, RENDER_I18N, NULL,NULL, debug, ui, myMain );
 #else
     oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "No render support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer.", OYJL_DBG_ARGS );
 #endif
