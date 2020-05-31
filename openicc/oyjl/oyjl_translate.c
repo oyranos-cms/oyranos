@@ -418,6 +418,7 @@ int myMain( int argc, const char ** argv )
           }
 
           oyjlStringReplace( &text, "\"", "\\\"", NULL,NULL );
+          oyjlStringReplace( &text, "\\\\\\\\\"", "\\\\\\\"", NULL,NULL );
           oyjlStringReplace( &text, "\n", "\\n\\\n", NULL,NULL );
           oyjlStringReplace( &sname, "-", "_", NULL,NULL );
           oyjlStringAdd( &tmp, malloc, free, "#define %s_json \"%s\"\n", sname, text );
