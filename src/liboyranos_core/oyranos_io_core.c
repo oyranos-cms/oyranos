@@ -1492,7 +1492,8 @@ char**  oyXDGPathsGet_( int             * count,
       if( ((i == 0 || i == 2) && data != oyNO) ||
           ((i == 1 || i == 3) && data != oyYES) )
     {
-      const char * var = getenv(vars[i]);
+      const char * v = vars[i];
+      const char * var = getenv(v);
       if(var)
       {
         if(strlen(var))

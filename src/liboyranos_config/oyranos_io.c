@@ -248,6 +248,10 @@ char **  oyProfilePathsGet_          ( int               * count,
 #ifdef __APPLE__
   TestAndSetDefaultPATH( CSNetworkPath );
 #endif
+#ifdef __ANDROID__
+  TestAndSetDefaultPATH( "/storage/emulated/0/Download" );
+  TestAndSetDefaultPATH( "/storage/emulated/0/Documents" );
+#endif
 #ifdef GLOBAL_PROFILE_SEARCH_PATH
   TestAndSetDefaultPATH( GLOBAL_PROFILE_SEARCH_PATH );
 #endif

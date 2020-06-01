@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2012-2019  Kai-Uwe Behrmann
+ *  Copyright (C) 2012-2020  Kai-Uwe Behrmann
  *
  */
 
