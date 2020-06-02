@@ -145,7 +145,7 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->logo, OYJL_REG "/ui/logo" );
 
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "oyjlHeaderSection_s", OYJL_REG "/ui/header/%s", "comment" );
-  n = oyjlUi_CountHeaderSections( ui );
+  n = oyjlUiHeaderSection_Count( ui->sections );
   for(i = 0; i < n; ++i)
   {
     oyjlUiHeaderSection_s * s = &ui->sections[i];
@@ -1104,7 +1104,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
   if(ui->logo)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->logo, OYJL_REG "/modules/[0]/logo" );
 
-  n = oyjlUi_CountHeaderSections( ui );
+  n = oyjlUiHeaderSection_Count( ui->sections );
   for(i = 0; i < n; ++i)
   {
     oyjlUiHeaderSection_s * s = &ui->sections[i];

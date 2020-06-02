@@ -3061,18 +3061,16 @@ void           oyjlUi_Release     ( oyjlUi_s      ** ui )
 }
 
 /** @brief    Return the number of sections of type "oihs"
- *  @memberof oyjlUi_s
- *
- *  The oyjlUi_s contains already options in the opts member.
+ *  @memberof oyjlUiHeaderSection_s
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/08/14
+ *  @date    2020/06/01
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-int     oyjlUi_CountHeaderSections( oyjlUi_s       * ui )
+int     oyjlUiHeaderSection_Count    ( oyjlUiHeaderSection_s * sections )
 {
   int n = 0;
-  while( *(oyjlOBJECT_e*)&ui->sections[n] /*"oihs"*/ == oyjlOBJECT_UI_HEADER_SECTION) ++n;
+  while( *(oyjlOBJECT_e*)&sections[n] /*"oihs"*/ == oyjlOBJECT_UI_HEADER_SECTION) ++n;
   return n;
 }
 
@@ -3088,7 +3086,7 @@ oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
                                        const char        * nick )
 {
   oyjlUiHeaderSection_s * section = NULL;
-  int i, count = oyjlUi_CountHeaderSections(ui);
+  int i, count = oyjlUiHeaderSection_Count(ui->sections);
   for(i = 0; i < count; ++i)
     if( strcmp(ui->sections[i].nick, nick) == 0 )
       section = &ui->sections[i];
@@ -3296,7 +3294,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   if(!ui) return text;
   opts = ui->opts;
 
-  n = oyjlUi_CountHeaderSections( ui );
+  n = oyjlUiHeaderSection_Count( ui->sections );
   for(i = 0; i < n; ++i)
   {
     oyjlUiHeaderSection_s * s = &ui->sections[i];
@@ -3551,7 +3549,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   if( !ui ) return text;
 
   opts = ui->opts;
-  n = oyjlUi_CountHeaderSections( ui );
+  n = oyjlUiHeaderSection_Count( ui->sections );
   for(i = 0; i < n; ++i)
   {
     oyjlUiHeaderSection_s * s = &ui->sections[i];
