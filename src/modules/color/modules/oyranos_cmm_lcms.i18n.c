@@ -164,6 +164,7 @@
             \"[none]\": \"[kein]\",\n\
             \"Black Preservation\": \"Schwarzerhalt\",\n\
             \"Decide how to preserve the black channel for Cmyk to Cmyk transforms\": \"Entscheide wie der Schwarzkanal erhalten wird bei Umwandlungen von einem Druckfarbraum in einen Anderen\",\n\
+            \"normal\": \"normal\",\n\
             \"Optimization\": \"Optimierung\",\n\
             \"Color Transforms can be differently stored internally\": \"Farbumwandlung können intern unterschiedlich gespeichert werden\"\n\
           },\n\

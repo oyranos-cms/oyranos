@@ -2,7 +2,7 @@
 <a name="toc"></a>
 [NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
-<strong>"oyranos-profile-graph"</strong> *1* <em>"March 24, 2019"</em> "User Commands"
+<strong>"oyranos-profile-graph"</strong> *1* <em>"June 2, 2020"</em> "User Commands"
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 

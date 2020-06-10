@@ -139,8 +139,8 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
       STRING_ADD ( text, ":" );
     } else if(type == oyNAME_NAME)
     {
-      list = oyStringSplit_( oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ),
-                             '/', &n, oyAllocateFunc_);
+    list = oyStringSplit_( oyObject_GetName( obj->oy_, oyNAME_DESCRIPTION ),
+                           '/', &n, oyAllocateFunc_);
       for( i = 0; i < n; ++i )
       {
         for(j = 0; j < i; ++j)
@@ -264,10 +264,29 @@ int            oyOption_SetFromString( oyOption_s        * obj,
 {
   int error = 0;
   oyOption_s_ * s = (oyOption_s_*)obj;
+  const char * dbg = getenv(OY_DEBUG_OPTION);
   if(!s)
     return -1;
 
   oyCheckType__m( oyOBJECT_OPTION_S, return -1 )
+
+  if(dbg)
+  {
+    int n = 0;
+    char ** list = oyStringSplit_( dbg, ':', &n, oyAllocateFunc_ );
+    if( n >= 1 && (strstr(s->registration, list[0] ) || strlen(list[0]) == 0) &&
+        (n == 1 || text && strstr(text, list[1])) )
+    {
+      char * t = NULL;
+      if(getenv(OY_DEBUG_OPTION_BACKTRACE))
+        t = oyBT(0);
+      oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)obj,
+                       OY_DBG_FORMAT_ "%s %s", OY_DBG_ARGS_,
+                       oyNoEmptyName_m_(text), t?t:"" );
+      if(t) oyDeAllocateFunc_(t);
+    }
+    oyStringListRelease_( &list, n, oyDeAllocateFunc_ );
+  }
 
   error = oyOption_SetFromString_( s, text, flags );
   if(!error)

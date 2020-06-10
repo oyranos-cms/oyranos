@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-06-10 09:40+0200\n"
+"POT-Creation-Date: 2020-06-10 16:31+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -5815,7 +5815,7 @@ msgstr "b kolorea"
 #. oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[0]/choices/[0]/name
 #. oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[2]/choices/[0]/name
 #. oyranos_cmm_lcms.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[0]/choices/[0]/name
-#: include/oyranos_definitions.h:156
+#: include/oyranos_definitions.h:178
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3373
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3431
 #: tools/oyranos-monitor-white-point.c:90

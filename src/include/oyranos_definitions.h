@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2004-2014 (C) Kai-Uwe Behrmann
+ *            2004-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    macros and definitions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -84,6 +84,28 @@
  *  @since 0.9.7
  */
 #define OY_DEBUG_OBJECTS_SKIP_CMM_CACHES "OY_DEBUG_OBJECTS_SKIP_CMM_CACHES"
+/** @brief Oyranos debug environment variable
+ *
+ *  Allows to trace option switching.
+ *  Syntax: "name_fragment:value_fragment"
+ *  The option is printed in case of a match or no fragment is delivered.
+ *  The double point ':' is optional.
+ *
+ *  @see @ref debug_vars
+ *
+ *  @since 0.9.7
+ */
+#define OY_DEBUG_OPTION                "OY_DEBUG_OPTION"
+/** @brief Oyranos debug environment variable
+ *
+ *  Integrates backtrace information into ::OY_DEBUG_OPTION
+ *  initiated output.
+ *
+ *  @see @ref debug_vars
+ *
+ *  @since 0.9.7
+ */
+#define OY_DEBUG_OPTION_BACKTRACE      "OY_DEBUG_OPTION_BACKTRACE"
 /** @brief Oyranos debug environment variable
  *
  *  Maps to ::oy_debug_signals variable.
