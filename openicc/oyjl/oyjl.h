@@ -687,6 +687,12 @@ oyjlUi_s *         oyjlUi_Create     ( int                 argc,
                                        int               * status );
 void               oyjlUi_Release    ( oyjlUi_s         ** ui );
 int      oyjlUiHeaderSection_Count   ( oyjlUiHeaderSection_s * sections );
+oyjlUiHeaderSection_s * oyjlUiHeaderSection_Append (
+                                       oyjlUiHeaderSection_s * sections,
+                                       const char        * nick,
+                                       const char        * label,
+                                       const char        * name,
+                                       const char        * description );
 oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
                                        oyjlUi_s          * ui,
                                        const char        * nick );
