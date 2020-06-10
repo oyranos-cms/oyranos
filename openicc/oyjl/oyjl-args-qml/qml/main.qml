@@ -33,6 +33,8 @@ AppWindow {
 
     width: if( fullscreen === false )
                100*dens
+           else
+               width
 
     signal fileChanged(var variable) // Input
     onFileChanged: { setDataText( appData.getJSON( variable ) ); var fn = "---"; if(variable[0] !== '{') fn = variable;
