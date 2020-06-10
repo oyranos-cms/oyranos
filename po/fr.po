@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-06-01 21:32+0200\n"
+"POT-Creation-Date: 2020-06-05 21:49+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:3462 oyjl_args.c:3728
+#: oyjl_args.c:3489 oyjl_args.c:3755
 msgid "AUTHOR"
 msgstr ""
 
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:3472 oyjl_args.c:3474 oyjl_args.c:3742 oyjl_args.c:3744
+#: oyjl_args.c:3499 oyjl_args.c:3501 oyjl_args.c:3769 oyjl_args.c:3771
 msgid "BUGS"
 msgstr ""
 
@@ -83,7 +83,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:3466 oyjl_args.c:3732
+#: oyjl_args.c:3493 oyjl_args.c:3759
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -137,7 +137,7 @@ msgstr "Copyright"
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:3339 oyjl_args.c:3604
+#: oyjl_args.c:3366 oyjl_args.c:3631
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -183,16 +183,16 @@ msgstr "Description"
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:3145
+#: oyjl_args.c:3172
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl-args.c:59 oyjl.c:107 oyjl_args.c:3141 oyjl_translate.c:115
+#: oyjl-args.c:59 oyjl.c:107 oyjl_args.c:3168 oyjl_translate.c:115
 #: oyjl_web.c:83
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:3143
+#: oyjl_args.c:3170
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -224,7 +224,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:3149
+#: oyjl_args.c:3176
 msgid "FILES"
 msgstr ""
 
@@ -310,7 +310,7 @@ msgstr ""
 msgid "Gui"
 msgstr ""
 
-#: oyjl_args.c:3147
+#: oyjl_args.c:3174
 msgid "HISTORY"
 msgstr ""
 
@@ -383,7 +383,7 @@ msgstr "Nom"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:2965 oyjl_args.c:3468 oyjl_args.c:3734 oyjl_args_tree.c:1120
+#: oyjl_args.c:2965 oyjl_args.c:3495 oyjl_args.c:3761 oyjl_args_tree.c:1120
 msgid "License"
 msgstr ""
 
@@ -524,7 +524,7 @@ msgstr "Model:"
 msgid "Module"
 msgstr "Options"
 
-#: oyjl_args.c:3589
+#: oyjl_args.c:3616
 msgid "NAME"
 msgstr ""
 
@@ -540,7 +540,7 @@ msgstr ""
 msgid "November 28, 2019"
 msgstr ""
 
-#: oyjl_args.c:3341 oyjl_args.c:3607
+#: oyjl_args.c:3368 oyjl_args.c:3634
 msgid "OPTIONS"
 msgstr ""
 
@@ -750,12 +750,12 @@ msgstr "Oyranos Préférences"
 msgid "Results JSON"
 msgstr ""
 
-#: oyjl-args.c:61 oyjl.c:109 oyjl_args.c:3153 oyjl_translate.c:117
+#: oyjl-args.c:61 oyjl.c:109 oyjl_args.c:3180 oyjl_translate.c:117
 #: oyjl_web.c:85
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:3151
+#: oyjl_args.c:3178
 msgid "SEE AS WELL"
 msgstr ""
 
@@ -763,7 +763,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:3327 oyjl_args.c:3592
+#: oyjl_args.c:3354 oyjl_args.c:3619
 msgid "SYNOPSIS"
 msgstr ""
 

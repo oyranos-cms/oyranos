@@ -3074,6 +3074,33 @@ int     oyjlUiHeaderSection_Count    ( oyjlUiHeaderSection_s * sections )
   return n;
 }
 
+/** @brief    Add new header section at end
+ *  @memberof oyjlUiHeaderSection_s
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/06/05
+ *  @since   2020/06/05 (Oyjl: 1.0.0)
+ */
+oyjlUiHeaderSection_s * oyjlUiHeaderSection_Append (
+                                       oyjlUiHeaderSection_s * sections,
+                                       const char        * nick,
+                                       const char        * label,
+                                       const char        * name,
+                                       const char        * description )
+{
+  int n = oyjlUiHeaderSection_Count( sections );
+  oyjlUiHeaderSection_s * info = (oyjlUiHeaderSection_s*) oyjlStringAppendN( NULL, (const char*)sections, sizeof(oyjlUiHeaderSection_s) * (n+2) , malloc );
+  if(!info) return NULL;
+
+  sprintf( info[n].type, "%s", "oihs" );
+  info[n].nick = nick;
+  info[n].label = label;
+  info[n].name = name;
+  info[n].description = description;
+
+  return info;
+}
+
 /** @brief    Return the section which was specified by its nick name
  *  @memberof oyjlUi_s
  *
