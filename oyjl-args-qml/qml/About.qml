@@ -63,7 +63,7 @@ Rectangle {
             text: "<html><head></head><body> <p align=\"center\">" +
                           "Version " + ApplicationVersion + "<br \>" +
                           qsTr("Oyjl Options Renderer") +
-                          "<br \>Copyright (c) 2018-2019 Kai-Uwe Behrmann<br \>" +
+                          "<br \>Copyright © 2018-2020 Kai-Uwe Behrmann<br \>" +
                           qsTr("All Rights reserved.") +
                           "<br \><a href=\"http://www.oyranos.org\">www.oyranos.org</a></p>" +
                           "<hr /><p align=\"center\">" +
