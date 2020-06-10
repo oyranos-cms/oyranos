@@ -314,7 +314,7 @@ int myMain( int argc, const char ** argv )
 
   oyjlOptions_s * opts;
   oyjlUi_s * ui;
-  oyjlUiHeaderSection_s * info;
+  oyjlUiHeaderSection_s * info, * info_tmp;
   const char * export = NULL;
   const char * render = NULL;
   int help = 0;
@@ -432,8 +432,13 @@ int myMain( int argc, const char ** argv )
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
 
-  info = oyUiInfo(_("The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout."),
-                  "2019-03-24T12:00:00", "March 24, 2019");
+  info_tmp = oyUiInfo(_("The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout."),
+                  "2020-06-02T12:00:00", "June 2, 2020");
+  /* use newline separated permissions in name + write newline separated list in description; both lists need to match in count */
+  info = oyjlUiHeaderSection_Append( info_tmp, "permissions", NULL,
+                                     "android.permission.READ_EXTERNAL_STORAGE\nandroid.permission.WRITE_EXTERNAL_STORAGE",
+                                     _("Read external storage for global data access, like downloads, music ...\nWrite external storage to create and modify global data.") );
+  free(info_tmp); info_tmp = NULL;
   ui = oyjlUi_Create( argc, (const char**)argv,
       "oyranos-profile-graph", _("Oyranos Profile Graph"), _("The tool is a ICC color profile grapher."),
 #ifdef __ANDROID__
@@ -2049,7 +2054,7 @@ int      oyLabGamutCheck             ( double            * lab,
                                        (oyStruct_s**) &profs,
                                        OY_CREATE_NEW );
     oyOptions_SetFromString( &module_options, OY_DEFAULT_PROOF_SOFT, "1", OY_CREATE_NEW );
-    oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_GAMUT_WARNING, "1", OY_CREATE_NEW );
+    oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_GAMUT_WARNING, "1", OY_CREATE_NEW ); /* This option expands the grid size and slows the initial context creation down. However, it is needed for precise enough output. */
     oyOptions_SetFromString( &module_options, OY_DEFAULT_RENDERING_INTENT_PROOF, "3", OY_CREATE_NEW );
   }
   oyConversion_s * cc = oyConversion_CreateBasicPixelsFromBuffers (

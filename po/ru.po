@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-05-30 07:59+0200\n"
+"POT-Creation-Date: 2020-06-10 09:40+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -1844,7 +1844,7 @@ msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:78 tools/oyranos-config.c:93
 #: tools/oyranos-device.c:109 tools/oyranos-monitor-white-point.c:427
-#: tools/oyranos_gamma.c:246 tools/oyranos_profile_graph.c:462
+#: tools/oyranos_gamma.c:246 tools/oyranos_profile_graph.c:467
 #: tools/oyranos_profile_tool.c:131 tools/oyranos_profiles.c:176
 #, c-format
 msgid "For more information read the man page:"
@@ -3365,7 +3365,7 @@ msgstr ""
 msgid "Oyranos Night Manager handles the monitor white point"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:438
+#: tools/oyranos_profile_graph.c:443
 #, fuzzy
 msgid "Oyranos Profile Graph"
 msgstr "ICC-профили"
@@ -3852,6 +3852,12 @@ msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1173
 msgid "Read PPM"
+msgstr ""
+
+#: tools/oyranos_profile_graph.c:440
+msgid ""
+"Read external storage for global data access, like downloads, music ...\n"
+"Write external storage to create and modify global data."
 msgstr ""
 
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2927
@@ -5171,7 +5177,7 @@ msgid ""
 "time. A additional effect profile can be selected."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:438
+#: tools/oyranos_profile_graph.c:443
 #, fuzzy
 msgid "The tool is a ICC color profile grapher."
 msgstr "ICC-профиль"
@@ -5886,7 +5892,7 @@ msgid "path is not a directory"
 msgstr ""
 
 #: liboyranos_core/oyranos_io_core.c:1311
-#: liboyranos_core/oyranos_io_core.c:1905
+#: liboyranos_core/oyranos_io_core.c:1906
 msgid "path is not readable"
 msgstr ""
 

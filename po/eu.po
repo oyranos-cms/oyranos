@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-05-30 07:59+0200\n"
+"POT-Creation-Date: 2020-06-10 09:40+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1983,7 +1983,7 @@ msgstr "Pantaila:"
 
 #: examples/libraw/oyranos_file.cpp:78 tools/oyranos-config.c:93
 #: tools/oyranos-device.c:109 tools/oyranos-monitor-white-point.c:427
-#: tools/oyranos_gamma.c:246 tools/oyranos_profile_graph.c:462
+#: tools/oyranos_gamma.c:246 tools/oyranos_profile_graph.c:467
 #: tools/oyranos_profile_tool.c:131 tools/oyranos_profiles.c:176
 #, c-format
 msgid "For more information read the man page:"
@@ -3592,7 +3592,7 @@ msgstr "huts egin du X pantaila irekitzean"
 msgid "Oyranos Night Manager handles the monitor white point"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:438
+#: tools/oyranos_profile_graph.c:443
 #, fuzzy
 msgid "Oyranos Profile Graph"
 msgstr "Oyranos-en ezarpenak"
@@ -4142,6 +4142,12 @@ msgstr "Prest"
 #, fuzzy
 msgid "Read PPM"
 msgstr "Prest"
+
+#: tools/oyranos_profile_graph.c:440
+msgid ""
+"Read external storage for global data access, like downloads, music ...\n"
+"Write external storage to create and modify global data."
+msgstr ""
 
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2927
 #, fuzzy
@@ -5505,7 +5511,7 @@ msgid ""
 "time. A additional effect profile can be selected."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:438
+#: tools/oyranos_profile_graph.c:443
 #, fuzzy
 msgid "The tool is a ICC color profile grapher."
 msgstr "ICC kolore-profilak (*.ic*)"
@@ -6274,7 +6280,7 @@ msgid "path is not a directory"
 msgstr ""
 
 #: liboyranos_core/oyranos_io_core.c:1311
-#: liboyranos_core/oyranos_io_core.c:1905
+#: liboyranos_core/oyranos_io_core.c:1906
 msgid "path is not readable"
 msgstr ""
 
