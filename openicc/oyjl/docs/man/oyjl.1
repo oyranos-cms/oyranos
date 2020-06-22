@@ -2,19 +2,21 @@
 .SH NAME
 oyjl v1.0.0 \- Oyjl Json Manipulation
 .SH SYNOPSIS
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBoyjl\fR \fBformat\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBoyjl\fR \fB\-h\fR \fI[synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
 .SH DESCRIPTION
@@ -33,47 +35,57 @@ The path consists of slash '/' separated terms. Each term can be a key name or a
 .RE
 \fB\-s\fR|\fB\-\-set\fR \fISTRING\fR	Set a key name to a value
 .br
+\fB\-r\fR|\fB\-\-try-format\fR \fIFORMAT\fR	Try to find data format, even with offset.
+.br
+	\-r JSON		# JSON
+.br
 .SS
 Print JSON to stdout
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBjson\fR	Print JSON to stdout
 .br
 .SS
 Print YAML to stdout
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fByaml\fR	Print YAML to stdout
 .br
 .SS
 Print XML to stdout
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBxml\fR	Print XML to stdout
 .br
 .SS
 Print node count
-\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBcount\fR	Print count of leafs in node
 .br
 .SS
 Print key name
-\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBkey\fR	Print key name of node
 .br
 .SS
 Print type
-\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBtype\fR	Get node type
 .br
 .SS
 Print all matching paths.
-\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR]
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBpaths\fR	Print all matching paths
+.br
+.SS
+Print Data Format.
+\fBoyjl\fR \fBformat\fR [\fB\-i\fR \fIFILENAME\fR...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBformat\fR	Print Data Format
 .br
 .SS
 General options
@@ -98,6 +110,8 @@ Show usage information and hints for the tool.
 	\-h key		# Key Name
 .br
 	\-h type		# Type
+.br
+	\-h format		# Format
 .br
 	\-h export		# export - Get UI converted into text formats
 .br

@@ -2,19 +2,21 @@
 .SH NAME
 oyjl v1.0.0 \- Oyjl Json Bearbeitung
 .SH ÜBERSICHT
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBoyjl\fR \fBformat\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBoyjl\fR \fB\-h\fR \fI[synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
@@ -33,47 +35,57 @@ Der Pfad besteht aus Namen, welche durch Schrägstrich '/' getrennt sind. Jeder 
 .RE
 \fB\-s\fR|\fB\-\-set\fR \fITEXT\fR	Setze Wert des Schlüssels
 .br
+\fB\-r\fR|\fB\-\-try-format\fR \fIFORMAT\fR	Versuche ein Datenformat zu finden, auch mit Versatz.
+.br
+	\-r JSON		# JSON
+.br
 .SS
 Zeige JSON auf stdout
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBjson\fR	Zeige JSON auf stdout
 .br
 .SS
 Zeige YAML auf stdout
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fByaml\fR	Zeige YAML auf stdout
 .br
 .SS
 Zeige XML auf stdout
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBxml\fR	Zeige XML auf stdout
 .br
 .SS
 Zeige Knotenanzahl
-\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBcount\fR	Zeige Anzahl der Knotenzweige
 .br
 .SS
 Zeige Schlüsselname
-\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBkey\fR	Zeige Schlüsselname des Knotens
 .br
 .SS
 Zeige Typ
-\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBtype\fR	Hole Knotentyp
 .br
 .SS
 Zeige alle zutreffenden Pfade
-\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR]
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
 \fBpaths\fR	Zeige alle zutreffenden Pfade
+.br
+.SS
+Zeige Datenformat.
+\fBoyjl\fR \fBformat\fR [\fB\-i\fR \fIDATEINAME\fR...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBformat\fR	Zeige Datenformat
 .br
 .SS
 Allgemeine Optionen
@@ -98,6 +110,8 @@ Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
 	\-h key		# Schlüsselname
 .br
 	\-h type		# Typ
+.br
+	\-h format		# Format
 .br
 	\-h export		# exportiere - Hole Benutzerschnittstelle als Text
 .br
