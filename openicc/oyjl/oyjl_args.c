@@ -2530,8 +2530,9 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    int d = oyjlStringDelimiterCount(g->detail, ",|"),
-        j;
+    int * d_index = NULL, d = 0;
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, &d_index, malloc );
+    int j;
     if(g->mandatory && g->mandatory[0])
     {
       int n = 0;
@@ -2552,10 +2553,11 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
     }
     for(j = 0; j < d; ++j)
     {
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, &g->detail[j] );
+      const char * option = d_list[j];
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       if(!o)
       {
-        fprintf(stdout, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
+        fprintf(stdout, "\n%s: option not declared: %s\n", g->name, option);
         if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
       switch(o->value_type)
@@ -2565,6 +2567,13 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
             int n = 0;
             while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
+            if(!o->value_name)
+            {
+              char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+              fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
+              fprintf( stderr, "%s (%s)\n", _("This option needs oyjlOption_s::value_name defined"), t );
+              if(!getenv("OYJL_NO_EXIT")) exit(1);
+            }
             if( !n && !(o->flags & OYJL_OPTION_FLAG_EDITABLE) &&
                 strcmp(o->o, "h") != 0 && strcmp(o->o, "X") != 0 && strcmp(o->o, "R") != 0 )
             {
@@ -2583,8 +2592,8 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_START: break;
         case oyjlOPTIONTYPE_END: break;
       }
-      while(g->detail[j] && g->detail[j] != ',') ++j;
     }
+    oyjlStringListRelease( &d_list, d, free );
   }
 
   return status;
