@@ -2594,6 +2594,7 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
       }
     }
     oyjlStringListRelease( &d_list, d, free );
+    free( d_index );
   }
 
   return status;
