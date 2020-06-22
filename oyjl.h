@@ -281,6 +281,7 @@ int        oyjlPathMatch             ( const char        * path,
                                        int                 flags );
 
 int        oyjlDataFormat            ( const char        * text );
+const char * oyjlDataFormatToString  ( int                 format );
 char *     oyjlJsonEscape            ( const char        * in );
 /** @} *//* oyjl_tree */
 
