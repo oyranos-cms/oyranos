@@ -123,6 +123,7 @@ const char * oyGetScopeString_       ( oySCOPE_e           scope );
 char *       oyGetScopeString        ( oySCOPE_e           scope,
                                        oySCOPE_e           scope_prefered,
                                        const char        * reg );
+oySCOPE_e    oyStringToScope         ( const char        * reg );
 
   /* ksNext uses the same entry twice in a 1 component KeySet, we avoid this */
 #define FOR_EACH_IN_KDBKEYSET( current_, list ) \
@@ -230,6 +231,20 @@ int oyGetByName(KeySet * ks, const char * key_name)
   Key * top =  keyNew(key_name, KEY_END);
 
   int rc = kdbGet(oy_handle_, ks, top); oyERR(top)
+  if(rc == -1)
+  {
+    oySCOPE_e scope = oyStringToScope(key_name);
+    char * p = oyGetInstallPath( oyPATH_POLICY, scope, oyAllocateFunc_ ), * json;
+    size_t size = 0;
+    int r = 0;
+    STRING_ADD( p, "/openicc.json" );
+    json = oyReadFileToMem_( p, &size, NULL );
+    if((r = oyjlDataFormat(json)) != 7)
+    {
+      WARNc2_S( "Clearing unreadable config file: %s %d", oyNoEmptyString_m_(p), r );
+      oyRemoveFile_(p);
+    }
+  }
 
   keyDel(top);
   kdbClose(oy_handle_, error_key);
@@ -440,6 +455,13 @@ char * oyGetScopeString              ( oySCOPE_e           scope,
   return full_elektra_key_reg;
 }
 
+oySCOPE_e    oyStringToScope         ( const char        * reg )
+{
+  oySCOPE_e scope = oySCOPE_USER;
+  if(reg && strlen(reg) > strlen(OY_SYS) && memcmp(reg,OY_SYS,strlen(OY_SYS)) == 0)
+    scope = oySCOPE_SYSTEM;
+  return scope;
+}
 
 
 /* oyranos hook part */
