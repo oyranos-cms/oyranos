@@ -41,7 +41,8 @@ extern char **environ;
  */
 int myMain( int argc, const char ** argv )
 {
-  char * text = NULL;
+  char * text = NULL,
+       * text_tmp = NULL;
   int size = 0;
   oyjl_val root = NULL;
   oyjl_val value = NULL;
@@ -59,6 +60,8 @@ int myMain( int argc, const char ** argv )
   const char * set = NULL;
   const char * i_filename = NULL;
   const char * xpath = NULL;
+  int format = 0;
+  const char * try_format = NULL;
   int verbose = 0;
   const char * help = NULL;
   int version = 0;
@@ -70,6 +73,10 @@ int myMain( int argc, const char ** argv )
                                                  "2017-11-12T12:00:00", _("November 12, 2017") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */
+  oyjlOptionChoice_s r_choices[] = {{"JSON",        "JSON",             NULL,                         NULL},
+                                    /*{"XML",         "XML",              NULL,                         NULL},
+                                    {"YAML",        "YAML",             NULL,                         NULL},*/
+                                    {"","","",""}};
   oyjlOptionChoice_s A_choices[] = {{_("Print JSON to stdout"),_("oyjl -i text.json -x ///[0]"),NULL,                         NULL},
                                     {_("Print count of leafs in node"),_("oyjl -c -i text.json -x my/path/"),NULL,                         NULL},
                                     {_("Print key name of node"),_("oyjl -k -i text.json -x ///[0]"),NULL,                         NULL},
@@ -104,6 +111,10 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&i_filename}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "x","xpath",         NULL,     _("XPath"),    _("Path specifier"),_("The path consists of slash '/' separated terms. Each term can be a key name or a square bracketed index. A empty term is used for a search inside a tree."),_("PATH"),
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&xpath}},
+    {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "f","format",        NULL,     _("Format"),   _("Print Data Format"),       NULL, NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&format}},
+    {"oiwi", 0,                          "r","try-format",    NULL,     _("Try Format"),_("Try to find data format, even with offset."), NULL, _("FORMAT"),
+        oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), malloc )}, oyjlSTRING,    {.s=&try_format}},
     {"oiwi", 0,                          "A","man-examples",  NULL,     _("EXAMPLES"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc )}, oyjlNONE,      {}},
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
@@ -123,14 +134,15 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s",       "j"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s",       "y"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s",       "m"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Count"),      _("Print node count"),    NULL,  "c",           "i,x",         "c"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Key Name"),   _("Print key name"),      NULL,  "k",           "i,x",         "k"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Type"),       _("Print type"),          NULL,  "t",           "i,x",         "t"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Paths"), _("Print all matching paths."),NULL,  "paths",       "i,x",         "paths"},
+    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s,r"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s,r",     "j"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s,r",     "y"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s,r",     "m"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Count"),      _("Print node count"),    NULL,  "c",           "i,x,r",       "c"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Key Name"),   _("Print key name"),      NULL,  "k",           "i,x,r",       "k"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Type"),       _("Print type"),          NULL,  "t",           "i,x,r",       "t"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Paths"),      _("Print all matching paths."),NULL,  "paths",  "i,x,r",       "paths"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Format"),     _("Print Data Format."),  NULL,  "f",           "i,x,r",       "f"},
     {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h|X|V",       "v",           "h,X,V,v" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
@@ -217,11 +229,25 @@ int myMain( int argc, const char ** argv )
       }
     }
 
+    if(text && try_format && strcasecmp(try_format, "JSON") == 0 && text[0] != '{' && strstr(text, "\n{"))
+    {
+      text_tmp = text;
+      text = strstr(text, "\n{") + 1;
+    }
+
+    if(format)
+    {
+      int type = oyjlDataFormat(text);
+      const char * r = oyjlDataFormatToString(type);
+      fprintf(stdout, "%s\n", r);
+
+    } else
     if(text)
     {
       char error_buffer[256] = {0};
       if(verbose)
         fprintf(stderr, "file read:\t\"%s\" %d\n", i_filename, size);
+
       root = oyjlTreeParse( text, error_buffer, 256 );
       if(error_buffer[0] != '\000')
         fprintf(stderr, "ERROR:\t\"%s\"\n", error_buffer);
@@ -349,7 +375,8 @@ int myMain( int argc, const char ** argv )
     }
 
     if(root) oyjlTreeFree( root );
-    if(text) free(text);
+    if(text_tmp) free(text_tmp);
+    else if(text) free(text);
   }
   else error = 1;
 
