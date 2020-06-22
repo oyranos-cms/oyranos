@@ -37,6 +37,7 @@
 
 #if defined(Q_OS_ANDROID)
 #include <android/log.h>
+#include "main2.h"
 #endif
 
 // startup stuff
@@ -145,6 +146,9 @@ int main(int argc, char *argv[])
     QString inputJSON = parser.value(inputOption);
     QString outputJSON = parser.value(outputOption);
     QString commandsJSON = parser.value(commandsOption);
+#if defined(Q_OS_ANDROID)
+    inputJSON = QString(oyjl_json);
+#endif
 
 
     qmlRegisterType<AppData>("AppData", 1, 0, "AppData");
