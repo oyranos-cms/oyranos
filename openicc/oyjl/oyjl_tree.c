@@ -81,6 +81,26 @@ int          oyjlDataFormat          ( const char        * text )
     return 0;
 }
 
+/** @brief   name data format
+ *
+ *  @param         format              number from oyjlDataFormat()
+ *  @return                            string
+ */
+const char * oyjlDataFormatToString  ( int                 format )
+{
+  const char * text = "";
+  switch(format)
+  {
+    case 7: text = "JSON"; break;
+    case 8: text = "XML"; break;
+    case 9: text = "YAML"; break;
+    case 0: text = "unknown"; break;
+    case -1: text = "no input"; break;
+    case -2: text = "no data"; break;
+  }
+  return text;
+}
+
 #define Florian_Forster_SOURCE_GUARD
 static oyjl_val oyjlValueAlloc (oyjl_type type)
 {
