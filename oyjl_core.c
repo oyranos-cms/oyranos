@@ -43,13 +43,27 @@
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>           /* setlocale LC_NUMERIC */
 #endif
+
+/*     Sections     */
+/* --- Debug_Section --- */
+/* --- Message_Section --- */
+/* --- String_Section --- */
+/* --- IO_Section --- */
+/* --- Render_Section --- */
+/* --- Init_Section --- */
+/* --- Misc_Section --- */
+
+
+/* --- Debug_Section --- */
 int oyjl_debug_local = 0;
 int * oyjl_debug = &oyjl_debug_local;
 
 /** @brief   set own debug variable */
 void       oyjlDebugVariableSet      ( int               * debug )
 { oyjl_debug = debug; }
+/* --- Debug_Section --- */
 
+/* --- Message_Section --- */
 /** @brief   the default message handler to stderr
  *
  *  @version OpenICC: 0.1.0
@@ -97,6 +111,7 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
     oyjlMessage_p = message_func;
   return 0;
 }
+/* --- Message_Section --- */
 
 /** \addtogroup oyjl_core Core
  *  @brief I/O and String Handling
@@ -120,6 +135,7 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
  *
  *  @{ *//* oyjl_core */
 
+/* --- String_Section --- */
 /* return the beginning of the next word */
 const char *   oyjlStringGetNext     ( const char        * text )
 {
@@ -1140,7 +1156,9 @@ const char*oyjlStr                   ( oyjl_str            string )
 {
   return (const char*)string->s;
 }
+/* --- String_Section --- */
 
+/* --- IO_Section --- */
 /** @brief read FILE into memory
  *
  *  allocators are malloc()/realloc()
@@ -1509,8 +1527,10 @@ int  oyjlWriteFile                   ( const char        * filename,
 
   return written_n;
 }
+/* --- IO_Section --- */
 /** @} *//* oyjl_core */
 
+/* --- Render_Section --- */
 #if !defined(COMPILE_STATIC) || !defined(HAVE_QT)
 #warning "compile dynamic section"
 #ifdef COMPILE_STATIC
@@ -1781,7 +1801,9 @@ void oyjlLibRelease() {
   }
 #endif
 }
+/* --- Render_Section --- */
 
+/* --- Init_Section --- */
 #define OyjlToString2_M(t) OyjlToString_M(t)
 #define OyjlToString_M(t) #t
 /** @brief   init the libraries language; optionaly
@@ -1902,8 +1924,10 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 
   return error;
 }
+/* --- Init_Section --- */
 
 
+/* --- Misc_Section --- */
 #include "oyjl_version.h"
 #include <yajl/yajl_parse.h>
 #include <yajl/yajl_version.h>
@@ -1921,6 +1945,7 @@ int            oyjlVersion           ( int                 type )
 
   return OYJL_VERSION;
 }
+/* --- Misc_Section --- */
 
 /** @} *//* oyjl */
 
