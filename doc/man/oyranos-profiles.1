@@ -2,7 +2,7 @@
 .SH NAME
 oyranos-profiles v0.9.7 \- Oyranos Profiles
 .SH SYNOPSIS
-\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR] [\fB\-T\fR \fIKEY;VALUE\fR] [\fB\-v\fR]
+\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR \fIPATH_SUB_STRING\fR] [\fB\-T\fR \fIKEY;VALUE\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profiles\fR \fB\-p\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-v\fR]
 .br
@@ -14,7 +14,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
 .SH OPTIONS
 .SS
 List of available ICC color profiles
-\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR] [\fB\-T\fR \fIKEY;VALUE\fR] [\fB\-v\fR]
+\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR \fIPATH_SUB_STRING\fR] [\fB\-T\fR \fIKEY;VALUE\fR] [\fB\-v\fR]
 .br
 \fB\-l\fR|\fB\-\-list-profiles\fR	List Profiles
 .br
@@ -44,10 +44,8 @@ The text string comes from the 'desc' tag.
 .br
 \fB\-4\fR|\fB\-\-icc-version-4\fR	Select ICC v4 Profiles
 .br
-\fB\-P\fR|\fB\-\-path\fR	Show profiles containing a string as part of their full name
-.RS
-PATH_SUB_STRING
-.RE
+\fB\-P\fR|\fB\-\-path\fR \fIPATH_SUB_STRING\fR	Show profiles containing a string as part of their full name
+.br
 \fB\-T\fR|\fB\-\-meta\fR \fIKEY;VALUE\fR	Filter for meta tag key/value pair
 .RS
 Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching.

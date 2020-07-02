@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2010-2019 (C) Kai-Uwe Behrmann
+ *            2010-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -124,7 +124,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "y", "oyranos", NULL, _("Oyranos"), _("Oyranos path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&oyranos_path} },
     {"oiwi", 0, "s", "system", NULL, _("System"), _("System path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_path} },
     {"oiwi", 0, "m", "machine", NULL, _("Machine"), _("Machine path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&machine_path} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "path", NULL, _("Path filter"), _("Show profiles containing a string as part of their full name"), _("PATH_SUB_STRING"), NULL, oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&path} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "path", NULL, _("Path filter"), _("Show profiles containing a string as part of their full name"), NULL, _("PATH_SUB_STRING"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&path} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "T", "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY;VALUE"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)effect_meta, sizeof(effect_meta), 0 )}, oyjlSTRING, {.s=&meta} },
     {"oiwi", 0, "r", "no-repair", NULL, _("No repair"), _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
     {"oiwi", 0, "D", "duplicates", NULL, _("Duplicates"), _("Show identical multiple installed profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&duplicates} },
