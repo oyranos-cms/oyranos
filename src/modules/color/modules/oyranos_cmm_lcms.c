@@ -2304,7 +2304,7 @@ char lcms_extra_options[] = {
  */
 int lcmsGetOptionsUI                 ( oyCMMapiFilter_s   * module OY_UNUSED,
                                        oyOptions_s        * options,
-                                       int                  flags,
+                                       int                  flags OY_UNUSED,
                                        char              ** ui_text,
                                        oyAlloc_f            allocateFunc )
 {

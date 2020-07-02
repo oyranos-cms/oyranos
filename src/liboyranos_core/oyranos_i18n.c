@@ -4,7 +4,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2006-2009 (C) Kai-Uwe Behrmann
+ *            2006-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    string translation
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -67,7 +67,6 @@ void oyI18NInit_()
 
   if(!oy_i18n_init_)
   {
-    char * var = NULL;
     ++oy_i18n_init_;
     oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &oy_debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, OY_TEXTDOMAIN, oyMessageFunc_p );
 #ifdef USE_GETTEXT

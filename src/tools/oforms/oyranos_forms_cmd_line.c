@@ -52,8 +52,7 @@ int        oyJSON2XFORMsCmdLineHtmlHeadlineHandler (
                                        oyPointer           user_data )
 {
   const char * label = 0,
-             * help = 0,
-             * type = 0;
+             * help = 0;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
   int print = forms_args ? forms_args->print : 1;
 

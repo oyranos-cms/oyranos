@@ -275,7 +275,7 @@ int            oyOption_SetFromString( oyOption_s        * obj,
     int n = 0;
     char ** list = oyStringSplit_( dbg, ':', &n, oyAllocateFunc_ );
     if( n >= 1 && (strstr(s->registration, list[0] ) || strlen(list[0]) == 0) &&
-        (n == 1 || text && strstr(text, list[1])) )
+        (n == 1 || (text && strstr(text, list[1]))) )
     {
       char * t = NULL;
       if(getenv(OY_DEBUG_OPTION_BACKTRACE))

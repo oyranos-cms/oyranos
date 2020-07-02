@@ -117,7 +117,7 @@ const char * oyStruct_GetText        ( oyStruct_s        * obj,
   if(!error && !text && !(flags & 0x02))
     text = oyStructTypeToText( obj->type_ );
 
-  if(text && name_type >= oyNAME_JSON && oyjlDataFormat(text) != name_type)
+  if(text && name_type >= oyNAME_JSON && oyjlDataFormat(text) != (int)name_type)
     return NULL;
 
   return text;
