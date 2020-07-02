@@ -189,7 +189,6 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
   return cs;
 }
 
-static oyjlOptionGroup_s **groups_ = NULL;
 static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
 {
   oyjlOption_s * import = oyjlOptions_GetOptionL( opts, "import" );
@@ -704,7 +703,6 @@ int myMain( int argc, const char ** argv )
 
           oyXYZ2sRGB( rgb );
           {
-            double D50[3] = { 0.964294, 1.000000, 0.825104 }; /* D65[3] = { 0.9505, 1.000, 1.0888 } */
             double computedLab[3];
             oyXYZ2Lab( computedXYZ, computedLab ); /* no white point -> D50 conversion, as that is already our state */
             if(!L && !a && !b)
