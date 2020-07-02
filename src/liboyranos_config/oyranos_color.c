@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2008-2019 (C) Kai-Uwe Behrmann
+ *            2008-2020 (C) Kai-Uwe Behrmann
  *
  *  @internal
  *  @brief    misc color APIs
@@ -205,11 +205,25 @@ void         oyICCXYZrel2CIEabsXYZ   ( const double      * ICCXYZ,
     CIEXYZ[i] = (ICCXYZ[i] * (XYZmax[i] - XYZmin[i]) + XYZmin[i]) / XYZwhite[i];
 }
 
-double oyEstimateTemperature( double cie_a_, double cie_b_, double * dist )
+/** @brief guess black body radiation locus from CIE*ab
+ *  @internal
+ *
+ *  @param[in]     CIEa                CIE location in CIE*ab plane
+ *  @param[in]     CIEb                CIE location in CIE*ab plane
+ *  @param[out]    dist                distance of input CIEa/CIEb to found location; optional
+ *  @return                            color temperature in kelvin
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since Oyranos: version 0.9.7
+ *  @date  2019/03/15 (API 0.9.7)
+ */
+double       oyEstimateTemperature   ( double              CIEa,
+                                       double              CIEb,
+                                       double            * dist )
 {
   double temperature = 0;
 
-  if(cie_a_ != 0.0 && cie_b_ != 0.0)
+  if(CIEa != 0.0 && CIEb != 0.0)
   {
     int i;
     int pos = -1;
@@ -225,7 +239,7 @@ double oyEstimateTemperature( double cie_a_, double cie_b_, double * dist )
       cie_a = Lab[1]/256.0 + 0.5;
       cie_b = Lab[2]/256.0 + 0.5;
       {
-        double dist_ = OY_HYP(fabs(cie_a - cie_a_),fabs(cie_b - cie_b_));
+        double dist_ = OY_HYP(fabs(cie_a - CIEa),fabs(cie_b - CIEb));
         if(dist_ < min)
         {
           min = dist_;
