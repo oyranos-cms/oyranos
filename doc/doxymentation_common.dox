@@ -62,6 +62,7 @@
     - "-1": to omit printing track informations.
     - "-3": animate the history of object releases.
 
+    ::OY_DEBUG_OBJECTS_PRINT_TREE together with ::OY_DEBUG_OBJECTS for DAG \n
     ::OY_DEBUG_OBJECTS_SKIP_CMM_CACHES together with ::OY_DEBUG_OBJECTS for a
     cleaner graph \n
     ::OY_DEBUG_OBJECTS_SHOW_NEW together with ::OY_DEBUG_OBJECTS for a

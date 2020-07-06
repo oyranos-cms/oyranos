@@ -76,6 +76,13 @@
  *
  *  @since 0.9.7
  */
+#define OY_DEBUG_OBJECTS_PRINT_TREE    "OY_DEBUG_OBJECTS_PRINT_TREE"
+/** @brief Oyranos debug environment variable
+ *
+ *  @see @ref debug_vars
+ *
+ *  @since 0.9.7
+ */
 #define OY_DEBUG_OBJECTS_SHOW_NEW      "OY_DEBUG_OBJECTS_SHOW_NEW"
 /** @brief Oyranos debug environment variable
  *

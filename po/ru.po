@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-07-02 12:22+0200\n"
+"POT-Creation-Date: 2020-07-04 19:07+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -1116,7 +1116,7 @@ msgstr ""
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[1]/label
 #. oyranos_cmm_lcms.json:org/freedesktop/openicc/modules/[0]/information/[1]/label
-#: API_generated/oyranos_module.c:1415 liboyranos_config/oyranos_icc.c:457
+#: API_generated/oyranos_module.c:1418 liboyranos_config/oyranos_icc.c:457
 #: modules/lcm2-i18n.c:20 modules/lcms-i18n.c:20
 msgid "Copyright"
 msgstr ""
@@ -1140,7 +1140,7 @@ msgid "Copyright (c) 1998-2016 Marti Maria Saguer; MIT"
 msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1500
-#: modules/color/modules/oyranos_cmm_oyra.c:157
+#: modules/color/modules/oyranos_cmm_oyra.c:161
 msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -1189,7 +1189,7 @@ msgstr ""
 msgid "Copyright:       "
 msgstr ""
 
-#: API_generated/oyranos_module.c:2039
+#: API_generated/oyranos_module.c:2042
 msgid "Could not allocate memory for:"
 msgstr ""
 
@@ -1205,11 +1205,11 @@ msgstr ""
 msgid "Could not download from WWW. Please install curl or wget."
 msgstr ""
 
-#: API_generated/oyranos_module.c:789
+#: API_generated/oyranos_module.c:772
 msgid "Could not find any meta module."
 msgstr ""
 
-#: API_generated/oyranos_module.c:793
+#: API_generated/oyranos_module.c:776
 msgid ""
 "Could not find any meta module. Did you set the OY_MODULE_PATH variable, to "
 "point to a Oyranos module loader library?"
@@ -2841,7 +2841,7 @@ msgstr ""
 #: API_generated/oyName_s_.c:47 API_generated/oyName_s_.c:55
 #: API_generated/oyNamedColor_s_.c:282 API_generated/oyNamedColor_s_.c:290
 #: API_generated/oyNamedColors_s_.c:245 API_generated/oyNamedColors_s_.c:253
-#: API_generated/oyObserver_s_.c:307 API_generated/oyObserver_s_.c:315
+#: API_generated/oyObserver_s_.c:309 API_generated/oyObserver_s_.c:317
 #: API_generated/oyOption_s_.c:320 API_generated/oyOption_s_.c:328
 #: API_generated/oyOptions_s_.c:255 API_generated/oyOptions_s_.c:263
 #: API_generated/oyPixelAccess_s_.c:285 API_generated/oyPixelAccess_s_.c:293
@@ -2851,7 +2851,7 @@ msgstr ""
 #: API_generated/oyProfiles_s_.c:254 API_generated/oyProfiles_s_.c:262
 #: API_generated/oyRectangle_s_.c:250 API_generated/oyRectangle_s_.c:258
 #: API_generated/oyStructList_s_.c:296 API_generated/oyStructList_s_.c:304
-#: API_generated/oyranos_devices.c:3614 API_generated/oyranos_module.c:1577
+#: API_generated/oyranos_devices.c:3614 API_generated/oyranos_module.c:1580
 #: liboyranos/oyranos_alpha.c:312 liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr ""
@@ -2906,7 +2906,7 @@ msgstr "файл: "
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/information/[0]/label
 #. oyranos_cmm_lcms.json:org/freedesktop/openicc/modules/[0]/information/[0]/label
-#: API_generated/oyranos_module.c:1414 API_generated/oyranos_profile.c:43
+#: API_generated/oyranos_module.c:1417 API_generated/oyranos_profile.c:43
 #: modules/lcm2-i18n.c:11 modules/lcms-i18n.c:11
 msgid "Manufacturer"
 msgstr ""
@@ -3085,7 +3085,7 @@ msgstr ""
 msgid "NUMBER"
 msgstr ""
 
-#: API_generated/oyranos_module.c:1413
+#: API_generated/oyranos_module.c:1416
 msgid "Name"
 msgstr ""
 
@@ -3450,7 +3450,7 @@ msgstr ""
 msgid "Oyranos meta module directory name"
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:314 modules/color/modules/oyranos_cmm_oyra.c:141
+#: liboyranos/oyranos_cmm.c:314 modules/color/modules/oyranos_cmm_oyra.c:145
 msgid "Oyranos modules"
 msgstr ""
 
@@ -3467,7 +3467,7 @@ msgstr "О программе Oyranos"
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
 #: modules/color/modules/oyranos_cmm_oicc.c:1214
 #: modules/color/modules/oyranos_cmm_oydi.c:1366
-#: modules/color/modules/oyranos_cmm_oyra.c:151
+#: modules/color/modules/oyranos_cmm_oyra.c:155
 #: modules/color/modules/oyranos_cmm_trds.c:819
 msgid ""
 "Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; "
@@ -3491,7 +3491,7 @@ msgid ""
 "local computer. The settings can be per user and per system."
 msgstr ""
 
-#: liboyranos/oyranos_cmm.c:316 modules/color/modules/oyranos_cmm_oyra.c:143
+#: liboyranos/oyranos_cmm.c:316 modules/color/modules/oyranos_cmm_oyra.c:147
 msgid "Oyranos supplied modules"
 msgstr ""
 
@@ -4324,7 +4324,7 @@ msgstr ""
 
 #: API_generated/oyFilterNode_s_.c:1562 API_generated/oyObserver_s.c:332
 #: API_generated/oyObserver_s.c:343 API_generated/oyObserver_s.c:547
-#: API_generated/oyObserver_s.c:624 API_generated/oyObserver_s_.c:669
+#: API_generated/oyObserver_s.c:624 API_generated/oyObserver_s_.c:671
 #: examples/image_display/oyranos_display_helper_classes_fltk.cpp:51
 msgid "Signal"
 msgstr ""
@@ -5467,7 +5467,7 @@ msgstr ""
 #. oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[0]/choices/[0]/name
 #. oyranos_cmm_lcm2.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[2]/choices/[0]/name
 #. oyranos_cmm_lcms.json:org/freedesktop/openicc/modules/[0]/groups/[0]/groups/[0]/options/[0]/choices/[0]/name
-#: include/oyranos_definitions.h:178
+#: include/oyranos_definitions.h:185
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3373
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3431
 #: tools/oyranos-monitor-white-point.c:90
@@ -5591,7 +5591,7 @@ msgstr ""
 #: API_generated/oyConversion_s.c:208 API_generated/oyFilterNode_s_.c:928
 #: API_generated/oyranos_devices.c:2627 API_generated/oyranos_devices.c:2639
 #: API_generated/oyranos_devices.c:2672 API_generated/oyranos_devices.c:3188
-#: API_generated/oyranos_module.c:2031
+#: API_generated/oyranos_module.c:2034
 msgid "error in module:"
 msgstr ""
 
@@ -5634,7 +5634,7 @@ msgstr ""
 msgid "found issues parsing JSON"
 msgstr ""
 
-#: API_generated/oyObserver_s_.c:731
+#: API_generated/oyObserver_s_.c:733
 msgid "found list of wrong type"
 msgstr ""
 
@@ -5830,7 +5830,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oiDB.c:522
 #: modules/color/modules/oyranos_cmm_oicc.c:1222
 #: modules/color/modules/oyranos_cmm_oydi.c:1374
-#: modules/color/modules/oyranos_cmm_oyra.c:159
+#: modules/color/modules/oyranos_cmm_oyra.c:163
 #: modules/color/modules/oyranos_cmm_trds.c:827
 msgid "new BSD license: http://www.opensource.org/licenses/BSD-3-Clause"
 msgstr ""

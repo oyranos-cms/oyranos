@@ -18,6 +18,7 @@
 void oyObserver_Release__Members( oyObserver_s_ * observer )
 {
   int error = 0;
+  int id = 0;
   /* Deallocate members here
    * E.g: oyXXX_Release( &observer->member );
    */
@@ -46,6 +47,7 @@ void oyObserver_Release__Members( oyObserver_s_ * observer )
   }
   if(observer->model)
   {
+    id = observer->model->oy_->id_;
     oyObject_UnRef( observer->model->oy_ );
     /*observer->model->release( &observer->model );*/
     if(oy_debug_objects == observer->model->oy_->id_)
@@ -55,7 +57,7 @@ void oyObserver_Release__Members( oyObserver_s_ * observer )
   if(observer->user_data)
   { observer->user_data->release( &observer->user_data ); observer->user_data = 0; }
 
-  if(oy_debug_objects == -3)
+  if(oy_debug_objects == -3 || (oy_debug_objects == id && getenv(OY_DEBUG_OBJECTS_PRINT_TREE))) /* animate the history of object releases */
   {
     char * text = NULL;
     OY_BACKTRACE_STRING(7)

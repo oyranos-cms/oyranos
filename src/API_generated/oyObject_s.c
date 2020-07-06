@@ -284,7 +284,7 @@ int          oyObject_Release         ( oyObject_s      * obj )
   if(oy_debug_objects >= 0 || oy_debug_objects <= -2)
     oyObject_UnTrack( s );
 
-  if(oy_debug_objects == -3) /* animate the history of object releases */
+  if(oy_debug_objects == -3 || (oy_debug_objects == s->id_ && getenv(OY_DEBUG_OBJECTS_PRINT_TREE))) /* animate the history of object releases */
   {
     char * text = NULL;
     OY_BACKTRACE_STRING(7)
