@@ -398,7 +398,7 @@ char * oyReadCmdToMem_               ( const char        * command,
   if(command && command[0] && size )
   {
     {
-      if(oy_debug)
+      if(oy_debug && (strstr(command, "addr2line") == NULL || oy_debug > 1))
         oyMessageFunc_p( oyMSG_DBG, 0, OY_DBG_FORMAT_"%s",OY_DBG_ARGS_, command );
       fp = oyPOPEN_m( command, mode );
     }
