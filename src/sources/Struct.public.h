@@ -21,4 +21,5 @@ void         oyThreadLockingSet      ( oyStruct_LockCreate_f  createLockFunc,
                                        oyLock_f            lockFunc,
                                        oyUnLock_f          unlockFunc );
 int          oyThreadLockingReady    ( void );
+void         oyThreadLockingReset    ( );
 

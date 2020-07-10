@@ -234,6 +234,25 @@ void         oyThreadLockingSet        ( oyStruct_LockCreate_f  createLockFunc,
   }
 }
 
+/** Function: oyThreadLockingReset
+ *  @ingroup threads
+ *  @brief unset locking functions for threaded applications
+ *
+ *  Use this after threads ended to remove resources.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2020/07/07 (Oyranos: 0.9.7)
+ *  @date    2020/07/07
+ */
+void         oyThreadLockingReset      ( )
+{
+  oyStruct_LockCreateFunc_ = oyStruct_LockCreateDummy_;
+  oyLockReleaseFunc_ = oyLockReleaseDummy_;
+  oyLockFunc_ = oyLockDummy_;
+  oyUnLockFunc_ = oyUnLockDummy_;
+  if(oy_debug) fprintf( stderr, "oyThreadLockingReset(): done\n" );
+}
+
 /**
  *  @brief tell if thread locking is ready
  *  @ingroup threads
