@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2018 (C) Kai-Uwe Behrmann
+ *            2005-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    monitor configurator, gamma loader, daemon
  *  @internal
@@ -588,13 +588,14 @@ int main( int argc , char** argv )
               oyOption_Release( &o );
             }
           } else
-          if(strcmp(format,"edid") == 0)
+          if(strcmp(format,"edid") == 0 && device_pos == i)
           {
             o = oyConfig_Find( c, "edid" );
             data = oyOption_GetData( o, &size, oyAllocFunc );
           } else
-          if( strcmp(format,"icc") == 0 ||
-              strcmp(format, "vcgt") == 0 )
+          if( device_pos == i &&
+              ( strcmp(format,"icc") == 0 ||
+                strcmp(format, "vcgt") == 0 ) )
           {
             oyOptions_s * cs_options = 0;
             if(x_color_region_target)
