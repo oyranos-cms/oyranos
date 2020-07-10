@@ -662,6 +662,9 @@ int                trdsCMMReset      ( oyStruct_s        * filter OY_UNUSED )
   }
   oyStructList_Release( &oy_threads_ );
 
+  oyJobHandlingReset(); /* release together with thread handling */
+  oyThreadLockingReset();
+
   return error;
 }
 
