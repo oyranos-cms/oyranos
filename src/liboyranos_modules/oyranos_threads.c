@@ -96,7 +96,7 @@
  *
  *  @{ *//* threads */
 
-static const char * oy_thread_api_nick = "dumy";
+static char * oy_thread_api_nick = NULL;
 
 /**
  *  @brief   Initialise the oyJob_s APIs
@@ -120,7 +120,9 @@ void               oyJobHandlingSet  ( oyJob_Add_f         jadd,
   oyJob_Get = jget;
   oyMsg_Add = madd;
   oyJobResult = result;
-  oy_thread_api_nick = nick;
+  if(oy_thread_api_nick) oyDeAllocateFunc_( oy_thread_api_nick );
+  if(nick) oy_thread_api_nick = oyStringCopy_(nick, 0);
+  else oy_thread_api_nick = NULL;
 }
 
 int                oyJob_AddInit     ( oyJob_s          ** job,
@@ -179,6 +181,25 @@ int                oyThreadIdInit    ( void )
     return oyThreadId();
   else
     return 1;
+}
+
+/**
+ *  @brief   Reset the oyJob_s APIs
+ *  @extends oyStruct_s
+ *  @memberof oyJob_s
+ *
+ *  Clean all functions for new initialisation.
+ *  Otherwise the behaviour is undefined.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2020/07/09 (Oyranos: 0.9.7)
+ *  @date    2020/07/09
+ */
+void               oyJobHandlingReset( )
+{
+  oyJobHandlingSet( oyJob_AddInit, oyJob_GetInit, oyMsg_AddInit, oyJobResultInit, NULL);
+  oyThreadIdSet( oyThreadIdInit, NULL );
+  if(oy_debug) fprintf( stderr, "oyJobHandlingReset(): done\n" );
 }
 
 
@@ -289,14 +310,18 @@ oyJobResult_f oyJobResult = oyJobResultInit;
  *  @since   2019/09/22 (Oyranos: 0.9.7)
  */
 oyThreadId_f oyThreadId = oyThreadIdInit;
+
+int oyObjectGetThreadIdDummyThreads() { return 0; }
 void               oyThreadIdSet     ( oyThreadId_f        tid,
                                        const char        * nick )
 {
-  if(!oy_thread_api_nick || (oy_thread_api_nick && nick && strcmp(oy_thread_api_nick,nick) != 0))
+  if((!oy_thread_api_nick && nick) || (oy_thread_api_nick && !nick) || (oy_thread_api_nick && nick && strcmp(oy_thread_api_nick,nick) != 0))
     oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_
                      " previous and new thread API nick differ %s - %s.",OY_DBG_ARGS_,
                      oyNoEmptyString_m_(oy_thread_api_nick), oyNoEmptyString_m_(nick));
   oyThreadId = tid;
+  if(tid == oyThreadIdInit)
+    oyObjectGetThreadId = oyObjectGetThreadIdDummyThreads;
 }
 
 

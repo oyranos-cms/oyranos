@@ -94,6 +94,7 @@ void               oyJobHandlingSet  ( oyJob_Add_f         jadd,
                                        oyMsg_Add_f         madd,
                                        oyJobResult_f       result,
                                        const char        * nick );
+void               oyJobHandlingReset( );
 
 typedef int      (*oyThreadId_f)     ( void );
 extern oyThreadId_f oyThreadId;
