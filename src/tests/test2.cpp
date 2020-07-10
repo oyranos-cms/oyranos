@@ -6260,7 +6260,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
   fprintf(stdout, "\n" );
 
   fprintf(zout, "clearing caches\n" );
-  oyAlphaFinish_(0);
+  oyLibConfigRelease(0); \
 
   double clck = oyClock();
   for(i = 0; i < n*bign; ++i)
