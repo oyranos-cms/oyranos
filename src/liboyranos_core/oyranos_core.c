@@ -149,8 +149,11 @@ void               oyLibCoreRelease  ( )
   oy_static_msg_funcs_ = NULL;
 
   for( i = 0; i < oy_msg_func_n_; ++i )
-    if(oy_static_free_funcs_[i])
-      oy_static_free_funcs_[i]();
+  {
+    oyStruct_RegisterStaticFreeFunc_f f = oy_static_free_funcs_[i];
+    if(f)
+      f();
+  }
 
   if(oy_static_free_funcs_)
     oyDeAllocateFunc_(oy_static_free_funcs_);
@@ -164,6 +167,8 @@ void               oyLibCoreRelease  ( )
 
   oyjlLibRelease();
 }
+
+int get_oy_msg_func_n_() { return oy_msg_func_n_; }
 
 /** Function oyStruct_GetInfo
  *  @memberof oyStruct_s

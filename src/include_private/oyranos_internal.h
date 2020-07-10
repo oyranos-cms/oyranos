@@ -28,6 +28,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/* libOyranosCore */
+int get_oy_msg_func_n_();
+
 
 /** @internal
     @brief used by sort engine */
