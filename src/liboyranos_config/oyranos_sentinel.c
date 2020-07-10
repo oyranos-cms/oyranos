@@ -88,6 +88,7 @@ int oyExportReset_(int export_check)
 }
 
 #include "oyranos_cache.h"
+#include "oyranos_db.h"
 #ifdef HAVE_LIBXML2
 #include <libxml/parser.h>
 #endif
@@ -100,6 +101,8 @@ void     oyFinish_                   ( int                 flags )
 {
   if(!(flags & FINISH_IGNORE_I18N))
     oyI18Nreset_();
+  if(!(flags & FINISH_IGNORE_CORE) || !(flags & FINISH_IGNORE_CACHES))
+    oyLibCoreRelease();
   if(!(flags & FINISH_IGNORE_CACHES))
     oyAlphaFinish_( 0 );
   if(oy_debug_objects >= 0)
@@ -109,12 +112,11 @@ void     oyFinish_                   ( int                 flags )
     oyObjectGetList( 0 );
   oyDebugLevelCacheRelease();
 
+  oyDbHandlingReset();
+
 #ifdef HAVE_LIBXML2
   xmlCleanupParser();
 #endif
-
-  if(!(flags & FINISH_IGNORE_CORE))
-    oyLibCoreRelease();
 }
 
 #include "oyProfile_s_.h"
@@ -129,6 +131,11 @@ void     oyFinish_                   ( int                 flags )
  */
 void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
 {
+  if(get_oy_msg_func_n_())
+  {
+    fprintf(stderr, "FATAL: releasing modules before cleaning static structs\nUse oyLibCoreRelease() before oyAlphaFinish_()\n");
+    if(!getenv("OYJL_NO_EXIT")) exit(1);
+  }
   /* before releasing all modules, the threads module should be used to close the mutex */
   oyObjectIdRelease();
 
