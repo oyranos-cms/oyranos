@@ -79,7 +79,7 @@ static const char * oyImage_StaticMessageFunc_ (
              s->layout_[oyCHANS]);
   else
   if((int)type >= oyNAME_DESCRIPTION)
-    sprintf( &oy_image_msg_text_[strlen(oy_image_msg_text_)], "(%dx%d)%dc%s", s->width, s->height,
+    sprintf( &oy_image_msg_text_[strlen(oy_image_msg_text_)], "(%dx%d)%dc %s", s->width, s->height,
              s->layout_[oyCHANS],
              oyDataTypeToText( oyToDataType_m( s->layout_[oyLAYOUT] )));
 

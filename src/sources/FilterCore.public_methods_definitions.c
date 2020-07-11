@@ -171,6 +171,11 @@ oyFilterCore_s * oyFilterCore_NewWith( const char        * registration,
     oyFilterCore_Release( &s );
     WARNc2_S("%s: \"%s\"", _("Could not create filter"), oyNoEmptyName_m_(registration));
   }
+  else if(s && oy_debug)
+  {
+    const char * txt = oyStruct_GetInfo( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0x01 );
+    oyObject_SetName( s->oy_, txt, oyNAME_DESCRIPTION );
+  }
 
   return s;
 }

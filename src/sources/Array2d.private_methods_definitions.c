@@ -25,6 +25,12 @@ int                oyArray2d_Init_   ( oyArray2d_s_      * s,
     oyAllocHelper_m_( s->array2d, unsigned char *, height + 1, s->oy_->allocateFunc_, return 1 );
     error = !memset( s->array2d, 0, y_len );
     s->own_lines = oyNO;
+
+    if(oy_debug)
+    {
+      const char * txt = oyStruct_GetInfo( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0x01 );
+      oyObject_SetName( s->oy_, txt, oyNAME_DESCRIPTION );
+    }
   }
   return error;
 }

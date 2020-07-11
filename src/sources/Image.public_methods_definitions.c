@@ -299,6 +299,12 @@ oyImage_s *    oyImage_Create         ( int               width,
                               (oyStruct_s**)&display_rectangle, OY_CREATE_NEW );
   }
 
+  if(error <= 0 && oy_debug)
+  {
+    const char * txt = oyStruct_GetInfo( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0x01 );
+    oyObject_SetName( s->oy_, txt, oyNAME_DESCRIPTION );
+  }
+
   if(oy_debug_objects >= 0)
     oyObjectDebugMessage_( s->oy_, __func__, oyStructTypeToText(s->type_) );
 

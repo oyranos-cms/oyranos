@@ -267,6 +267,11 @@ oyFilterNode_s *   oyFilterNode_Create(const char        * registration,
 
   if(error)
     oyFilterNode_Release( (oyFilterNode_s**) &s );
+  else if(oy_debug)
+  {
+    const char * txt = oyStruct_GetInfo( (oyStruct_s*)s, oyNAME_DESCRIPTION, 0x01 );
+    oyObject_SetName( s->oy_, txt, oyNAME_DESCRIPTION );
+  }
 
   return (oyFilterNode_s*) s;
 }
