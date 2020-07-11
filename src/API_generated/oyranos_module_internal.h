@@ -251,7 +251,6 @@ char   *     oyCMMCacheListPrint_    ( void );
 oyCMMapis_s *  oyCMMGetMetaApis_     ( );
 int              oyCMMCanHandle_    ( oyCMMapi3_s        * api,
                                       oyCMMapiQueries_s  * queries );
-oyCMMapis_s *    oyCMMsGetMetaApis_  ( );
 char **          oyCMMsGetNames_     ( uint32_t          * n,
                                        const char        * sub_path,
                                        const char        * ext,

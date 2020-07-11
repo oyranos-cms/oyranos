@@ -715,23 +715,6 @@ char * oyCMMCacheListPrint_()
 }
 
 
-
-/** @internal
- *  @brief   Get module loaders
- *
- *  This function searches for a meta modul API.
- *
- *  @version Oyranos: 0.9.6
- *  @date    2015/01/26
- *  @since   2008/12/28 (Oyranos: 0.1.10)
- */
-oyCMMapis_s * oyCMMGetMetaApis_     ( )
-{
-  oyCMMapis_s * meta_apis = 0;
-  meta_apis = oyCMMsGetMetaApis_( );
-  return meta_apis;
-}
-
 /** @internal
  *  @brief    Get oyranos modules
  *
@@ -739,7 +722,7 @@ oyCMMapis_s * oyCMMGetMetaApis_     ( )
  *  @date     2015/01/26
  *  @since    2010/06/25 (Oyranos: 0.1.10)
  */
-oyCMMapis_s *    oyCMMsGetMetaApis_  ( )
+static oyCMMapis_s *    oyCMMsGetMetaApis_  ( )
 {
   int error = 0;
   oyCMMapis_s * apis = 0;
@@ -822,6 +805,27 @@ oyCMMapis_s *    oyCMMsGetMetaApis_  ( )
 
   return apis;
 }
+
+static int oy_cmm_get_meta_apis_single_ = 0;
+/** @internal
+ *  @brief   Get module loaders
+ *
+ *  This function searches for a meta modul API.
+ *
+ *  @version Oyranos: 0.9.6
+ *  @date    2015/01/26
+ *  @since   2008/12/28 (Oyranos: 0.1.10)
+ */
+oyCMMapis_s * oyCMMGetMetaApis_     ( )
+{
+  oyCMMapis_s * meta_apis = 0;
+  if(oy_cmm_get_meta_apis_single_) return meta_apis;
+  else oy_cmm_get_meta_apis_single_ = 1;
+  meta_apis = oyCMMsGetMetaApis_( );
+  oy_cmm_get_meta_apis_single_ = 0;
+  return meta_apis;
+}
+
 
 /** @internal
  *  @brief release Oyranos CMM dlopen handle
@@ -925,7 +929,7 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name )
 {
   int error = !lib_name;
   int n, i;
-  oyCMMhandle_s * cmm_handle = 0;
+  oyCMMhandle_s * cmm_handle = NULL;
 
   if(error <= 0 && !oy_cmm_infos_)
   {
@@ -943,12 +947,10 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name )
     oyCMMhandle_s * cmmh = (oyCMMhandle_s*) oyStructList_GetType_((oyStructList_s_*)oy_cmm_infos_,
                                                 i, oyOBJECT_CMM_HANDLE_S );
 
-    if( !oyStrcmp_( cmmh->lib_name, lib_name ) )
+    if( oyStrcmp_( cmmh->lib_name, lib_name ) == 0 )
     {
-      cmm_handle = oyCMMhandle_Copy_( cmmh, 0 );
-      error = oyStructList_ReferenceAt_( (oyStructList_s_*)oy_cmm_infos_, i );
-      if(!error)
-        break;
+      cmm_handle = cmmh; /* just return; a single reference in the oy_cmm_infos_ is sufficient until the end of run time */
+      break;
     }
   }
 
@@ -1179,8 +1181,6 @@ oyCMMinfo_s *    oyCMMOpen_          ( const char        * lib_name )
       if(error <= 0)
         oyStructList_MoveIn(oy_cmm_infos_, (oyStruct_s**)&cmm_handle, -1, 0);
     }
-
-    oyCMMdsoRelease_( lib_name );
   }
 
 cOpenClean:
@@ -1290,8 +1290,8 @@ int          oyCMMdsoReference_    ( const char        * lib_name,
       {
         if(!oyPointer_GetPointer( s ))
           oyPointer_Set( s, 0, 0, ptr, 0, 0 );
-        /*else
-          WARNc_S(("Attempt to register dso handle multiple times."));*/
+        else
+          WARNc_S(("Attempt to register dso handle multiple times."));
       }
     }
   }
@@ -1683,7 +1683,6 @@ int              oyCMMhandle_Set_    ( oyCMMhandle_s     * handle,
     handle->info = info;
     handle->dso_handle = dso_handle;
     handle->lib_name = oyStringCopy_( lib_name, handle->oy_->allocateFunc_ );
-    oyCMMdsoReference_( handle->lib_name, dso_handle );
   }
 
   return error;
