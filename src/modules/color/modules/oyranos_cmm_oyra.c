@@ -170,6 +170,9 @@ int  oyraInit                        ( oyStruct_s        * module_info OY_UNUSED
              * a_tmp = 0,
              * m = 0;
 
+  if(oyra_initialised > 1)
+    oyra_msg( oyMSG_WARN, module_info, OY_DBG_FORMAT_ "multiple inits: %d", OY_DBG_ARGS_, oyra_initialised );
+
   if(oyra_initialised)
     return 0;
   ++oyra_initialised;
