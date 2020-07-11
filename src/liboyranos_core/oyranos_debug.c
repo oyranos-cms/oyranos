@@ -194,7 +194,7 @@ char *   oyBT                        ( int                 stack_limit )
                 addr_infos = oyReadCmdToMem_( command, &size, "r", NULL );
               }
 
-              if(oy_debug)
+              if(oy_debug > 1)
                 fprintf(stderr, "%s\n", line);
 
               {
