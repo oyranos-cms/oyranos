@@ -129,57 +129,67 @@
 <context>
     <name>OptionsList</name>
     <message>
-        <location filename="../qml/OptionsList.qml" line="110"/>
-        <location filename="../qml/OptionsList.qml" line="154"/>
-        <location filename="../qml/OptionsList.qml" line="193"/>
-        <location filename="../qml/OptionsList.qml" line="207"/>
+        <location filename="../qml/OptionsList.qml" line="111"/>
+        <location filename="../qml/OptionsList.qml" line="155"/>
+        <location filename="../qml/OptionsList.qml" line="194"/>
+        <location filename="../qml/OptionsList.qml" line="208"/>
         <source>selected</source>
         <translation>ausgewählt</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="110"/>
-        <location filename="../qml/OptionsList.qml" line="154"/>
-        <location filename="../qml/OptionsList.qml" line="193"/>
+        <location filename="../qml/OptionsList.qml" line="111"/>
+        <location filename="../qml/OptionsList.qml" line="155"/>
+        <location filename="../qml/OptionsList.qml" line="194"/>
         <source>new/old</source>
         <translation>alt/neu</translation>
+    </message>
+    <message>
+        <location filename="../qml/OptionsList.qml" line="327"/>
+        <source>Multiple Options Hint</source>
+        <translation>Hinweis für Mehrfachoptionen</translation>
+    </message>
+    <message>
+        <location filename="../qml/OptionsList.qml" line="329"/>
+        <source>Enter first value, append &apos;;&apos; and confirm. The final &apos;;&apos; is not executed. Then select next value. Repeat as needed. A final confirm without ending &apos;;&apos; can execute.</source>
+        <translation>Zunächst einen Wert eingeben, dann ein Semikolon &apos;;&apos; anhängen und bestätigen. Anschließend den nächsten Wert wählen. Das Auswählen bei Bedarf wiederholen. Ein Bestätigen ohne Semikolon  &apos;;&apos; am Ende kann den Befehl ausführen.</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
-        <location filename="../qml/main.qml" line="39"/>
+        <location filename="../qml/main.qml" line="41"/>
         <source>Loaded</source>
         <translation>Geladen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="91"/>
+        <location filename="../qml/main.qml" line="93"/>
         <source>commands enabled</source>
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="648"/>
-        <location filename="../qml/main.qml" line="699"/>
-        <location filename="../qml/main.qml" line="732"/>
+        <location filename="../qml/main.qml" line="650"/>
+        <location filename="../qml/main.qml" line="701"/>
+        <location filename="../qml/main.qml" line="734"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="891"/>
+        <location filename="../qml/main.qml" line="893"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="943"/>
+        <location filename="../qml/main.qml" line="945"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="943"/>
+        <location filename="../qml/main.qml" line="945"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="945"/>
+        <location filename="../qml/main.qml" line="947"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>

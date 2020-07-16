@@ -13,4 +13,5 @@
 
 Combo {
     combo.editable: true
+    property string value_old: ""
 }

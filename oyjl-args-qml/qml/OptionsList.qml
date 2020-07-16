@@ -101,6 +101,7 @@ Rectangle {
                 }
                 combo.onCurrentIndexChanged: {
                     var role = combo.textRole
+                    var old_text = combo.currentText
                     var t = combo.textAt(combo.currentIndex)
                     var i = combo.find(t)
                     var item = combo.model.get(i)
@@ -218,6 +219,7 @@ Rectangle {
                 getLabelWidthMin: function() { return 0 }
                 color: "transparent"
                 property bool init: true
+                property bool repetition: false
                 Component.onCompleted: {
                     if(type === "string")
                     {
@@ -230,24 +232,48 @@ Rectangle {
                         if(app_debug)
                             statusText = key + " string"
                         setDataText2( this, text, value )
+                        repetition = j.repetition
                         visible = true
                         init = false
                     } else
                         visible = false
                 }
+                combo.onCurrentTextChanged: value = combo.currentText
+                combo.onEditTextChanged: value = combo.editText
+                combo.onDisplayTextChanged: value = combo.displayText
                 combo.onAccepted: {
                     var i = combo
-                    var t = i.editText
+                    var t = value
+                    var c = t[t.length-1]
+                    if(repetition && c === ";")
+                    {
+                        value_old = t
+                        return
+                    }
+                    var old = value_old
                     var k = key;
-                    var ind  = combo.find(t)
                     var model = combo.model
+                    if(old.length > 0)
+                        c = old[old.length-1]
+                    if(repetition && c === ";")
+                    {
+                        t = value_old + value
+                        i.displayText = t
+                        if( typeof model !== "undefined")
+                            model.append({key: t})
+                    }
+                    var ind  = combo.find(t)
                     if (ind === -1)
                     {
                         if( typeof model !== "undefined")
                             model.append({key: t})
                     }
                     statusText = k + ":" + t
-                    value = t
+                    //value = t
+                    i.displayText = t;
+                    i.editText = t;
+                    //i.currentText = t;
+                    value_old = value
                     callback( key, value, type, group, 0 )
                 }
             }
@@ -295,6 +321,15 @@ Rectangle {
                             found = 1;
                         }
                     }
+                    if( type === "string" && repetition)
+                    {
+                        helpText += "\n\n";
+                        helpText += qsTr("Multiple Options Hint");
+                        helpText += "\n";
+                        helpText += qsTr("Enter first value, append ';' and confirm. The final ';' is not executed. Then select next value. Repeat as needed. A final confirm without ending ';' can execute.");
+                        found = 1;
+                    }
+
                     itemRect.focus = true
                 }
             }
