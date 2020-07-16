@@ -55,12 +55,16 @@ oyjlTESTRESULT_e testArgs()
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
    * *support*, *download*, *sources*, *oyjl_module_author* and
    * *documentation* what you see fit. Add new ones as needed. */
-  oyjlUiHeaderSection_s sections[] = {
+  oyjlUiHeaderSection_s sections_static[] = {
     /* type, nick,            label, name,                  description  */
     {"oihs", "version",       NULL,  "1.0",                 NULL},
     {"oihs", "documentation", NULL,  "",                    _("The example tool demontrates the usage of the libOyjl API's.")},
     {"oihs", "date",          NULL,  "2018-10-10T12:00:00", _("October 10, 2018")},
-    {"",0,0,0,0}};
+    {"",0,0,0,0}},
+  /* use newline separated permissions in name + write newline separated list in description; both lists need to match in count */
+                      * sections = oyjlUiHeaderSection_Append( sections_static, "permissions", NULL,
+                                     "android.permission.READ_EXTERNAL_STORAGE\nandroid.permission.WRITE_EXTERNAL_STORAGE",
+                                     _("Read external storage for global data access, like downloads, music ...\nWrite external storage to create and modify global data.") );
 
   /* declare some option choices */
   oyjlOptionChoice_s i_choices[] = {{"oyjl.json", _("oyjl.json"), _("oyjl.json"), ""},
@@ -559,6 +563,7 @@ oyjlTESTRESULT_e testArgs()
   free(oarray2[0].values.choices.list);
   free(oarray2[1].values.choices.list);
   free(oarray2[2].values.choices.list);
+  free(sections);
 
   return result;
 }
