@@ -3088,7 +3088,7 @@ int     oyjlUiHeaderSection_Count    ( oyjlUiHeaderSection_s * sections )
  *  @memberof oyjlUiHeaderSection_s
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/06/05
+ *  @date    2020/07/16
  *  @since   2020/06/05 (Oyjl: 1.0.0)
  */
 oyjlUiHeaderSection_s * oyjlUiHeaderSection_Append (
@@ -3099,8 +3099,12 @@ oyjlUiHeaderSection_s * oyjlUiHeaderSection_Append (
                                        const char        * description )
 {
   int n = oyjlUiHeaderSection_Count( sections );
-  oyjlUiHeaderSection_s * info = (oyjlUiHeaderSection_s*) oyjlStringAppendN( NULL, (const char*)sections, sizeof(oyjlUiHeaderSection_s) * (n+2) , malloc );
+  oyjlUiHeaderSection_s * info = (oyjlUiHeaderSection_s*) calloc(sizeof(oyjlUiHeaderSection_s), n+2);
+
   if(!info) return NULL;
+
+  if(n)
+    memcpy( info, sections, sizeof(oyjlUiHeaderSection_s) * n );
 
   sprintf( info[n].type, "%s", "oihs" );
   info[n].nick = nick;
@@ -3280,7 +3284,7 @@ char *       oyjlExtraManSections ( oyjlOptions_s  * opts, int flags, char *** s
       char * tmp = oyjlExtraManSection(opts, option, flags, sections, sn);
       if(tmp)
       {
-        oyjlStringAdd( &text, malloc, free, tmp );
+        oyjlStringAddN( &text, tmp, strlen(tmp), malloc, free );
         free(tmp);
       }
     }
