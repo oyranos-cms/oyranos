@@ -4,7 +4,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .SH ÜBERSICHT
 \fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE...
 .br
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fB\-L\fR \fINUMMER\fR] [\fB\-C\fR \fINUMMER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
@@ -14,7 +14,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .br
 \fBoyranos-profile-graph\fR \fB\-u\fR \fIWORT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-s\fR \fIDATEI\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-P\fR \fIWORT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIDATEI\fR \fB\-p\fR \fIFORMAT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-P\fR \fIWORT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR] [\fB\-z\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-i\fR \fIDATEI\fR \fB\-I\fR \fISEITE\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
 .br
@@ -48,15 +48,23 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 .br
 .SS
 HLC Farbatlas
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fB\-L\fR \fINUMMER\fR] [\fB\-C\fR \fINUMMER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 Erzeuge ein 2D Farbpalette mit allen möglichen Farben innerhalb des Farbumfanges des ICC Fabprofiles. Mehr Informationen zum HLC Farbatlas sind zu finden auf www.freiefarbe.de
 .br
 .sp
 .br
-\fB\-H\fR|\fB\-\-hlc\fR \fINUMMER\fR	HLC Farbatlas (NUMMER:0 [≥0 ≤365])
+\fB\-H\fR|\fB\-\-hue\fR \fINUMMER\fR	HLC Farbatlas (NUMMER:0 [≥0 ≤365])
 .RS
-Wähle ein Seite des HLC Farbatlas mit dem Farbton. -H=365 wählt all Farben.
+Wähle ein Seite des HLC Farbatlas mit dem Farbtonwinkel. -H=365 wählt all Farben.
+.RE
+\fB\-L\fR|\fB\-\-lightness\fR \fINUMMER\fR	HLC Farbatlas (NUMMER:-5 [≥-5 ≤100])
+.RS
+Wähle ein Seite des HLC Farbatlas mit der Helligkeit.
+.RE
+\fB\-C\fR|\fB\-\-chroma\fR \fINUMMER\fR	HLC Farbatlas (NUMMER:-5 [≥-5 ≤130])
+.RS
+Wähle ein Seite des HLC Farbatlas mit der Farbsättigung.
 .RE
 \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...	ICC Profil
 .br
@@ -108,7 +116,7 @@ Beleuchtungsspektrumzeichnung
 .br
 .SS
 Spektrumgraph
-\fBoyranos-profile-graph\fR \fB\-s\fR \fIDATEI\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-P\fR \fIWORT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIDATEI\fR \fB\-p\fR \fIFORMAT\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-P\fR \fIWORT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR] [\fB\-z\fR]
 .br
 \fB\-s\fR|\fB\-\-spectral\fR \fIDATEI\fR	Spektrale Eingabe
 .br
@@ -152,7 +160,7 @@ Allgemeine Optionen
 .br
 \fB\-b\fR|\fB\-\-no-border\fR	Lasse Rand aus in Zeichnung
 .br
-\fB\-l\fR|\fB\-\-lightness\fR \fINUMMER\fR	Hintergrund Helligkeit (NUMMER:-1 [≥-1 ≤100])
+\fB\-l\fR|\fB\-\-background-lightness\fR \fINUMMER\fR	Hintergrund Helligkeit (NUMMER:-1 [≥-1 ≤100])
 .br
 \fB\-g\fR|\fB\-\-no-color\fR	Zeichne grau
 .br
@@ -204,7 +212,7 @@ Der gültige Bereich ist 1-20.
 .TP
 XDG_DATA_HOME XDG_DATA_DIRS
 .br
-richte Oyranos auf obere Verzeichnisse, welche Resourcen enthalten. An die Pfade für ICC Farbprofile wird "color/icc" angehangen. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.openicc.org/index.php0,000000title=OpenIccDirectoryProposal.html
 .SH BEISPIELE
 .TP
 Zeichne ICC Profil

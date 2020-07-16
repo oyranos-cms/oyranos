@@ -4,7 +4,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .SH SYNOPSIS
 \fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMBER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE...
 .br
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fB\-L\fR \fINUMBER\fR] [\fB\-C\fR \fINUMBER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
@@ -14,7 +14,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .br
 \fBoyranos-profile-graph\fR \fB\-u\fR \fISTRING\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR] [\fB\-z\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-i\fR \fIFILE\fR \fB\-I\fR \fIPAGE\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
 .br
@@ -48,15 +48,23 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 .br
 .SS
 HLC Color Atlas Pages
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fB\-L\fR \fINUMBER\fR] [\fB\-C\fR \fINUMBER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 Create a 2D Graph containing the possible color patches inside the ICC Profile gamut. More information about HLC Color Atlas can be found on www.freiefarbe.de
 .br
 .sp
 .br
-\fB\-H\fR|\fB\-\-hlc\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:0 [≥0 ≤365])
+\fB\-H\fR|\fB\-\-hue\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:0 [≥0 ≤365])
 .RS
-Select a page by hue in the HLC Color Atlas. -H=365 will output all hues.
+Select a page by hue color angle in the HLC Color Atlas. -H=365 will output all hues.
+.RE
+\fB\-L\fR|\fB\-\-lightness\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:-5 [≥-5 ≤100])
+.RS
+Select a page by lightness in the HLC Color Atlas.
+.RE
+\fB\-C\fR|\fB\-\-chroma\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:-5 [≥-5 ≤130])
+.RS
+Select a page by chroma (saturation) in the HLC Color Atlas.
 .RE
 \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...	ICC Profile
 .br
@@ -108,7 +116,7 @@ Illuminant Spectrum Graph
 .br
 .SS
 Spectral Input Graph
-\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR \fB\-z\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR] [\fB\-z\fR]
 .br
 \fB\-s\fR|\fB\-\-spectral\fR \fIFILE\fR	Spectral Input
 .br
@@ -152,7 +160,7 @@ General options
 .br
 \fB\-b\fR|\fB\-\-no-border\fR	Omit border in graph
 .br
-\fB\-l\fR|\fB\-\-lightness\fR \fINUMBER\fR	Background Lightness (NUMBER:-1 [≥-1 ≤100])
+\fB\-l\fR|\fB\-\-background-lightness\fR \fINUMBER\fR	Background Lightness (NUMBER:-1 [≥-1 ≤100])
 .br
 \fB\-g\fR|\fB\-\-no-color\fR	Draw Gray
 .br
@@ -204,7 +212,7 @@ Valid integer range is from 1-20.
 .TP
 XDG_DATA_HOME XDG_DATA_DIRS
 .br
-route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.openicc.org/index.php0.000000title=OpenIccDirectoryProposal.html
 .SH EXAMPLES
 .TP
 Show graph of a ICC profile

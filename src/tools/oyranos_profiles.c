@@ -88,7 +88,7 @@ int myMain( int argc, const char ** argv )
   opts = oyjlOptions_New( argc, (const char**)argv );
   /* nick, name, description, help */
   oyjlOptionChoice_s env_vars[]={{"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
-                                    {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"), "", ""},
+                                    {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html"), "", ""},
                                     {"","","",""}};
   oyjlOptionChoice_s examples[]={{_("List all installed profiles by internal name"), "oyranos-profiles -le", "", ""},
                                     {_("List all installed profiles of the display and output device classes"), "oyranos-profiles -l -od", "", ""},

@@ -1463,7 +1463,7 @@ int oyLibListCb_ ( oyFileList_s * data,
  *  @brief query valid XDG paths
  *
  *  @see Directory paths for color profiles and other configuration data
- *       http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+ *       http://www.openicc.info/index.php%3ftitle=OpenIccDirectoryProposal.html
  *
  *  @param[out]    count       number of paths found
  *  @param[in]     data        oyYES/oyNO/oyALL for data or config text

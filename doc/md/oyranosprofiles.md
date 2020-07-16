@@ -104,7 +104,7 @@ The tool can list installed profiles, search paths and can help install a ICC co
   <br />
 &nbsp;&nbsp;Valid integer range is from 1-20.
 #### XDG_DATA_HOME XDG_DATA_DIRS
-&nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+&nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.openicc.org/index.php0.000000title=OpenIccDirectoryProposal.html
 
 <h2>EXAMPLES <a href="#toc" name="examples">&uarr;</a></h2>
 
