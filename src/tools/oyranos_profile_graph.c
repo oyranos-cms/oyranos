@@ -251,8 +251,10 @@ int myMain( int argc, const char ** argv )
   int standardobs = 0, observer64 = 0;
   double kelvin = 0.0;
   const char * illuminant = NULL;
-  double hlc = -1.0;
-  double lightness = -1;
+  double hue = -1.0;
+  double lightness = -1.0;
+  double chroma = -1.0;
+  double background_lightness = -1;
   int no_color = 0;
   uint32_t flags = 0;
   int v2 = 0, v4 = 0, no_repair = 0;
@@ -324,7 +326,7 @@ int myMain( int argc, const char ** argv )
   opts = oyjlOptions_New( argc, (const char**)argv );
   /* nick, name, description, help */
   oyjlOptionChoice_s env_vars[]={ {"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
-                                  {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"), "", ""},
+                                  {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html"), "", ""},
                                   {"","","",""}};
   oyjlOptionChoice_s examples[]={ {_("Show graph of a ICC profile"), "oyranos-profile-graph ICC_PROFILE", "", ""},
                                   {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph -w 256 -n -t 3 sRGB.icc ProPhoto-RGB.icc", "", ""},
@@ -369,10 +371,14 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "f", "format",        NULL, _("Format"),        _("Specify output file format png or svg, default is png"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)out_form, sizeof(out_form), 0 )}, oyjlSTRING, {.s=&format} },
     {"oiwi", 0, "g", "no-color",      NULL, _("Gray"),          _("Draw Gray"),              NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&no_color} },
-    {"oiwi", 0, "H", "hlc",           NULL, _("HLC"),           _("HLC Color Atlas"),   _("Select a page by hue in the HLC Color Atlas. -H=365 will output all hues."), _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = 0.0, .dbl.end = 365.0, .dbl.tick = 5, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&hlc} },
-    {"oiwi", 0, "l", "lightness",     NULL, _("Lightness"),     _("Background Lightness"),   NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = -1.0, .dbl.end = 100.0, .dbl.tick = 1.0, .dbl.d = -1.0}, oyjlDOUBLE, {.d=&lightness} },
+    {"oiwi", 0, "H", "hue",           NULL, _("Hue"),           _("HLC Color Atlas"),   _("Select a page by hue color angle in the HLC Color Atlas. -H=365 will output all hues."), _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = 0.0, .dbl.end = 365.0, .dbl.tick = 5, .dbl.d = 0.0}, oyjlDOUBLE, {.d=&hue} },
+    {"oiwi", 0, "L", "lightness",     NULL, _("Lightness"),     _("HLC Color Atlas"),   _("Select a page by lightness in the HLC Color Atlas."), _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = -5.0, .dbl.end = 100.0, .dbl.tick = 5, .dbl.d = -5.0}, oyjlDOUBLE, {.d=&lightness} },
+    {"oiwi", 0, "C", "chroma",        NULL, _("Chroma"),        _("HLC Color Atlas"),   _("Select a page by chroma (saturation) in the HLC Color Atlas."), _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = -5.0, .dbl.end = 130.0, .dbl.tick = 5, .dbl.d = -5.0}, oyjlDOUBLE, {.d=&chroma} },
+    {"oiwi", 0, "l", "background-lightness",     NULL, _("Background"),     _("Background Lightness"),   NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
+      {.dbl.start = -1.0, .dbl.end = 100.0, .dbl.tick = 1.0, .dbl.d = -1.0}, oyjlDOUBLE, {.d=&background_lightness} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "import",         NULL, _("Input"),        _("Color Page Input"),       _("Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc"), _("FILE"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&input} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "I", "index",          NULL, _("Index"),        _("Page Selection"),         _("Specify a page name as string or page index as number. -1 will list all page names of the imported file."), _("PAGE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = listPages}, oyjlSTRING, {.s=&page} },
     {"oiwi", 0, "u", "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
@@ -419,12 +425,12 @@ int myMain( int argc, const char ** argv )
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
     {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "t,b,l,g,w,o,f,c,x,d,n,2,4,r,v", "@,d,x,c,n,2,4,r" },
-    {"oiwg", 0, _("HLC"), _("HLC Color Atlas Pages"), _("Create a 2D Graph containing the possible color patches inside the ICC Profile gamut. More information about HLC Color Atlas can be found on www.freiefarbe.de"), "H", "@,t,b,l,g,w,m,o,p,2,4,r,v", "H,@,m" },
+    {"oiwg", 0, _("HLC"), _("HLC Color Atlas Pages"), _("Create a 2D Graph containing the possible color patches inside the ICC Profile gamut. More information about HLC Color Atlas can be found on www.freiefarbe.de"), "H", "L,C,@,t,b,l,g,w,m,o,p,2,4,r,v", "H,L,C,@,m" },
     {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "t,b,l,g,w,T,o,f,v", "S" },
     {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "t,b,l,g,w,T,o,f,v", "O" },
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,l,g,w,T,o,f,v", "k" },
     {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "u", "t,b,l,g,w,T,o,f,v", "u" },
-    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p,z", "t,b,l,g,w,T,P,o,v", "s,p,P,z" },
+    {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p", "t,b,l,g,w,T,P,o,v,z", "s,p,P,z" },
     {"oiwg", 0, _("Color Page"), _("Render Color Page"), NULL, "i,I", "t,b,l,g,w,T,f,o,v", "i,I" },
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h|V|R", "v", "t,b,l,g,w,T,o,f,h,X,R,V,v" },
     {"",0,0,0,0,0,0,0}
@@ -451,7 +457,7 @@ int myMain( int argc, const char ** argv )
       strcmp(export,"json+command") != 0)
     return 0;
 
-  if(ui && (!export && !input && !profile_count && !standardobs && !observer64 && kelvin == 0.0 && !illuminant && !render && hlc == -1.0))
+  if(ui && (!export && !input && !profile_count && !standardobs && !observer64 && kelvin == 0.0 && !illuminant && !render && hue == -1.0))
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
                                                                "version" );
@@ -513,13 +519,13 @@ int myMain( int argc, const char ** argv )
     oy_debug = verbose - 1;
 
   {
-    double Lab[3] = { lightness == -1.0 ? 70 : lightness, 0.0, 0.0 }, rgb[3];
+    double Lab[3] = { background_lightness == -1.0 ? 70 : background_lightness, 0.0, 0.0 }, rgb[3];
     oyLab2XYZ( Lab, rgb );
     if(verbose) fprintf(stderr, "Background Lab: %.2f %.2f %.2f XYZ: %.2f %.2f %.2f ", Lab[0], Lab[1], Lab[2], rgb[0], rgb[1], rgb[2] );
     oyXYZ2sRGB( rgb );
     if(verbose) fprintf(stderr, "RGB: %.2f %.2f %.2f\n", rgb[0], rgb[1], rgb[2] );
     bg_rgba[0] = rgb[0]; bg_rgba[1] = rgb[1]; bg_rgba[2] = rgb[2];
-    if(lightness >= 0.0)
+    if(background_lightness >= 0.0)
       bg_rgba[3] = 1.0;
   }
 
@@ -740,7 +746,7 @@ int myMain( int argc, const char ** argv )
     int dist = 5, l,c, c_max = dist==10 ? 130 : 125; \
     int lcount = (100-2)/(double)dist + 2, \
         ccount = c_max/(double)dist + 1;
-  if(hlc != -1.0)
+  if((int)(hue-.5) != -1)
   {
     HLC_PARAM_SETUP
     int h = 0;
@@ -763,10 +769,10 @@ int myMain( int argc, const char ** argv )
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "ncc1", "type" );
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "Named Color Collection v1", "comment" );
 
-    if(hlc == 365)
+    if((int)(hue+.5) == 365)
       oyjlStringAdd( &t, 0,0, "HLC ALL" );
     else
-      oyjlStringAdd( &t, 0,0, "HLC H%03d", (int)hlc );
+      oyjlStringAdd( &t, 0,0, "HLC H%03d", (int)hue );
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, t, "description" );
     free( t ); t = NULL;
 
@@ -825,8 +831,8 @@ int myMain( int argc, const char ** argv )
     {
       char page_id[8];
       char id[24];
-      if(hlc != 365)
-        h = hlc;
+      if((int)(hue+.5) != 365)
+        h = hue;
       sprintf( page_id, "H%03d", h );
       oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, h/dist,  "collection/[0]/pages/%s/index", page_id );
 
@@ -860,7 +866,7 @@ int myMain( int argc, const char ** argv )
         }
       }
 
-      if(h == 0 || h == hlc)
+      if(h == 0 || h == (int)(hue+.5))
         oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "The page consists of a array of rows, each containing a array of columns. Each column references a color index number or null for no color at this position in the row.",  "collection/[0]/pages/%s/comment", page_id );
       /* provide axis texts */
       oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "L",  "collection/[0]/pages/%s/rows_marker", page_id );
@@ -985,7 +991,7 @@ int myMain( int argc, const char ** argv )
           ++index;
         }
       }
-      if(hlc != 365)
+      if((int)(hue+.5) != 365)
         break;
     }
 
@@ -1116,13 +1122,13 @@ int myMain( int argc, const char ** argv )
   height_=(float)(pixel_h- 2*y - 2*tab_border_y - lower_text_border); /* height of diagram */
   height = MAX( 0, height_ );
 
-  if(0.0 <= lightness && lightness < 5.0)
+  if(0.0 <= background_lightness && background_lightness < 5.0)
     cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
   else
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
   /* draw spectral gamut line */
   cairo_set_line_width (cr, thickness);
-  if(profile_count && no_spectral == 0 && hlc == -1.0)
+  if(profile_count && no_spectral == 0 && (int)(hue-.5) == -1)
   {
     if(proj == p_xyz)
     {
@@ -1158,7 +1164,7 @@ int myMain( int argc, const char ** argv )
 
   /* draw white point line */
   cairo_set_line_width (cr, 0.5*thickness);
-  if(profile_count && no_blackbody == 0 && proj == p_xyz && hlc == -1.0)
+  if(profile_count && no_blackbody == 0 && proj == p_xyz && (int)(hue-.5) == -1)
   {
     if(proj == p_xyz)
     {
@@ -1190,7 +1196,7 @@ int myMain( int argc, const char ** argv )
 
   /* draw a frame around the image */
   frame = pixel_w/40.0;
-  if(0.0 <= lightness && lightness < 50.0)
+  if(0.0 <= background_lightness && background_lightness < 50.0)
     cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
   else
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
@@ -1201,11 +1207,11 @@ int myMain( int argc, const char ** argv )
   cairo_stroke(cr);
 
   /* draw cross */
-  if(0.0 <= lightness && lightness < 5.0)
+  if(0.0 <= background_lightness && background_lightness < 5.0)
     cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
   else
     cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
-  if(profile_count && no_border == 0 && proj == p_lab && hlc == -1.0 )
+  if(profile_count && no_border == 0 && proj == p_lab && (int)(hue-.5) == -1 )
   {
     cairo_move_to(cr, xToImage(.0), yToImage(.5));
     cairo_line_to(cr, xToImage(1.0), yToImage(.5));
@@ -1221,9 +1227,9 @@ int myMain( int argc, const char ** argv )
 #endif
 
   /* draw gamut saturation */
-  if(profile_count && hlc == -1.0)
+  if(profile_count && (int)(hue-.5) == -1)
   {
-    float t = thickness;
+    double t = thickness;
 
     cairo_set_line_width (cr, 3.*t);
     for ( j = profile_count - 1; j >= 0; --j )
@@ -1232,7 +1238,7 @@ int myMain( int argc, const char ** argv )
       size_t size = 0;
 
       oyProfile_s * p = oyProfile_FromName( filename, pflags, NULL );
-      double * saturation;
+      double * saturation = NULL;
 
       if(!p)
       {
@@ -1241,7 +1247,7 @@ int myMain( int argc, const char ** argv )
         p = oyImage_GetProfile( image );
       }
 
-      if(hlc == -1.0)
+      if((int)(hue-.5) == -1)
         saturation = getSaturationLine_( p, 3, &size, p_lab );
 
       t = pow( change_thickness, j ) * thickness;
@@ -1371,7 +1377,7 @@ int myMain( int argc, const char ** argv )
           }
         }
         cairo_close_path(cr);
-        if(-1.0 <= lightness && lightness < 50.0)
+        if(-1.0 <= background_lightness && background_lightness < 50.0)
           cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
         else
           cairo_set_source_rgba( cr, .0, .0, .0, 1.0);
@@ -1440,7 +1446,7 @@ int myMain( int argc, const char ** argv )
     cairo_set_line_width (cr, off * 2.0);
     char * utf8 = NULL;
     const char * t;
-    if(0.0 <= lightness && lightness < 50.0)
+    if(0.0 <= background_lightness && background_lightness < 50.0)
       /* set font color */
       cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
     cairo_select_font_face(cr, "Sans",
