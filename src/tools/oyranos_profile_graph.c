@@ -769,6 +769,9 @@ int myMain( int argc, const char ** argv )
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "ncc1", "type" );
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "Named Color Collection v1", "comment" );
 
+    if(lightness >= 0.0 && chroma >= 0.0)
+        count = 1;
+
     if((int)(hue+.5) == 365)
       oyjlStringAdd( &t, 0,0, "HLC ALL" );
     else
@@ -829,23 +832,38 @@ int myMain( int argc, const char ** argv )
     oyjlTreeGetValue( specT, OYJL_CREATE_NEW, "collection/[0]/colors" );
     for(h = 0; h < 360; h += dist)
     {
-      char page_id[8];
+      char page_id[16];
       char id[24];
+      char * color_desc = NULL;
       if((int)(hue+.5) != 365)
         h = hue;
-      sprintf( page_id, "H%03d", h );
+      if(count == 1)
+      {
+        l = lightness/dist;
+        c = chroma/dist;
+        double LCh[3] = { l/(double)(lcount-1), c/(double)(ccount-1)*c_max/128.0, h/360.0 };
+        sprintf( page_id, "H%03d_L%03d_C%03d", (int)(LCh[2]*360.0+0.5), (int)(LCh[0]*100.0+0.5), (int)(LCh[1]*128.0+0.5) );
+      } else
+        sprintf( page_id, "H%03d", h );
       oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, h/dist,  "collection/[0]/pages/%s/index", page_id );
 
       if(profile_count)
       {
         memset( outside, 0, sizeof(int) * count );
-        for(c = 0; c < ccount; ++c)
+        if(count > 1)
         {
-          for(l = 0; l < lcount; ++l)
+          for(c = 0; c < ccount; ++c)
           {
-            double LCh[3] = { l/(double)lcount, c/(double)ccount*c_max/128.0, h/360.0 };
-            oyLCh2Lab( LCh, &lab[ (c + l * ccount) * 3 ], NULL );
+            for(l = 0; l < lcount; ++l)
+            {
+              double LCh[3] = { l/(double)lcount, c/(double)ccount*c_max/128.0, h/360.0 };
+              oyLCh2Lab( LCh, &lab[ (c + l * ccount) * 3 ], NULL );
+            }
           }
+        } else
+        {
+          double LCh[3] = { lightness/100.0, chroma/128.0, h/360.0 };
+          oyLCh2Lab( LCh, &lab[0], NULL );
         }
         for(i = 0; i < profile_count; ++i)
         {
@@ -869,27 +887,41 @@ int myMain( int argc, const char ** argv )
       if(h == 0 || h == (int)(hue+.5))
         oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "The page consists of a array of rows, each containing a array of columns. Each column references a color index number or null for no color at this position in the row.",  "collection/[0]/pages/%s/comment", page_id );
       /* provide axis texts */
-      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "L",  "collection/[0]/pages/%s/rows_marker", page_id );
-      for(l = 0; l < lcount; ++l)
+      if(count > 1)
       {
-        sprintf( id, "%03d", (int)(l/(double)(lcount-1)*100) );
-        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,  "collection/[0]/pages/%s/rows_markers/[%d]", page_id, l );
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "L",  "collection/[0]/pages/%s/rows_marker", page_id );
+        for(l = 0; l < lcount; l++)
+        {
+          sprintf( id, "%03d", (int)(l/(double)(lcount-1)*100) );
+          oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,  "collection/[0]/pages/%s/rows_markers/[%d]", page_id, l );
+        }
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "C",  "collection/[0]/pages/%s/columns_marker", page_id );
+        for(c = 0; c < ccount; c++)
+        {
+          sprintf( id, "%03d", (int)(c/(double)(ccount-1)*c_max) );
+          oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,  "collection/[0]/pages/%s/columns_markers/[%d]", page_id, c );
+        }
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "a*",  "collection/[0]/pages/%s/columns_marker2", page_id );
+        oyjlTreeGetValueF( specT, OYJL_CREATE_NEW,         "collection/[0]/pages/%s/columns_markers2/[%d]", page_id, 0 );
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "b*",  "collection/[0]/pages/%s/columns_marker3", page_id );
+        oyjlTreeGetValueF( specT, OYJL_CREATE_NEW,         "collection/[0]/pages/%s/columns_markers3/[%d]", page_id, 0 );
       }
-      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "C",  "collection/[0]/pages/%s/columns_marker", page_id );
-      for(c = 0; c < ccount; ++c)
+      if(count == 1)
       {
-        sprintf( id, "%03d", (int)(c/(double)(ccount-1)*c_max) );
-        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,  "collection/[0]/pages/%s/columns_markers/[%d]", page_id, c );
+        oyjlStringAdd( &color_desc, 0,0, "HLC: %.1f %.1f %.1f", hue, lightness, chroma );
+        oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, color_desc,  "collection/[0]/pages/%s/columns_marker", page_id );
       }
-      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "a*",  "collection/[0]/pages/%s/columns_marker2", page_id );
-      oyjlTreeGetValueF( specT, OYJL_CREATE_NEW,         "collection/[0]/pages/%s/columns_markers2/[%d]", page_id, 0 );
-      oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, "b*",  "collection/[0]/pages/%s/columns_marker3", page_id );
-      oyjlTreeGetValueF( specT, OYJL_CREATE_NEW,         "collection/[0]/pages/%s/columns_markers3/[%d]", page_id, 0 );
-      for(l = lcount - 1; l >= 0; --l)
+      for(l = lcount - 1; l >= 0; l--)
       {
         char row_id[8];
+        c = 0;
+        if(count == 1)
+        {
+          l = lightness/dist;
+          c = chroma/dist;
+        }
         sprintf( row_id, "L%03d", (int)(l/(double)(lcount-1)*100) );
-        for(c = 0; c < ccount; ++c)
+        for(; c < ccount; c++)
         {
           double LCh[3] = { l/(double)(lcount-1), c/(double)(ccount-1)*c_max/128.0, h/360.0 };
           double Lab[3], XYZ[3];
@@ -905,10 +937,14 @@ int myMain( int argc, const char ** argv )
             oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, id,  "collection/[0]/pages/%s/columns_markers3/[%d]", page_id, c );
           }
 
-          i = l * ccount + c;
+          if(count == 1)
+            i = 0;
+          else
+            i = l * ccount + c;
           if(outside && outside[i])
           {
             oyjlTreeGetValueF( specT, OYJL_CREATE_NEW, "collection/[0]/pages/%s/rows/%s/[%d]", page_id, row_id, c );
+            if(count == 1) break;
             continue;
           }
 
@@ -931,6 +967,12 @@ int myMain( int argc, const char ** argv )
           if(verbose) fprintf(stderr, "%d %s: HLC: %.2f %.2f %.2f Lab: %.2f %.2f %.2f XYZ: %.2f %.2f %.2f ", index, id, LCh[2], LCh[0], LCh[1], Lab[0], Lab[1], Lab[2], rgb[0], rgb[1], rgb[2] );
           oyXYZ2sRGB( rgb );
           if(verbose) fprintf(stderr, "RGB: %.5f %.5f %.5f\n", rgb[0], rgb[1], rgb[2] );
+          if(count == 1)
+          {
+            free(color_desc); color_desc = NULL;
+            oyjlStringAdd( &color_desc, 0,0, "Lab: %.1f %.1f %.1f  XYZ: %.3f %.3f %.3f  sRGB: %.3f %.3f %.3f", Lab[0], Lab[1], Lab[2], XYZ[0], XYZ[1], XYZ[2], rgb[0], rgb[1], rgb[2] );
+            oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, color_desc,  "collection/[0]/pages/%s/columns_marker", page_id );
+          }
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, XYZ[0], "collection/[0]/colors/[%d]/xyz/[0]/data/[0]", index );
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, XYZ[1], "collection/[0]/colors/[%d]/xyz/[0]/data/[1]", index );
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, XYZ[2], "collection/[0]/colors/[%d]/xyz/[0]/data/[2]", index );
@@ -980,8 +1022,19 @@ int myMain( int argc, const char ** argv )
                 pos = oyjlValueCount( v );
               }
               oyjlTreeSetStringF(   specT, OYJL_CREATE_NEW, desc,     "collection/[0]/colors/[%d]/%s/[%d]/id",        index, json_cn, pos );
+              if(count == 1)
+              {
+                free(color_desc); color_desc = NULL;
+                oyjlStringAdd( &color_desc, 0,0, "%s:", desc );
+              }
               for(j = 0; j < channel_count; ++j)
+              {
                 oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, color[j], "collection/[0]/colors/[%d]/%s/[%d]/data/[%d]", index, json_cn, pos, j );
+                if(count == 1)
+                  oyjlStringAdd( &color_desc, 0,0, " %.3f", color[j] );
+              }
+              if(count == 1)
+                oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, color_desc,  "collection/[0]/pages/%s/columns_marker2", page_id );
             }
           }
 
@@ -989,10 +1042,15 @@ int myMain( int argc, const char ** argv )
           oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, index, "collection/[0]/pages/%s/rows/%s/[%d]", page_id, row_id, c );
 
           ++index;
+          if(count == 1)
+            break;
         }
+        if(count == 1)
+          break;
       }
       if((int)(hue+.5) != 365)
         break;
+      if(color_desc) { free(color_desc); } color_desc = NULL;
     }
 
     oyStructList_Release( &ccs );
@@ -1458,7 +1516,7 @@ int myMain( int argc, const char ** argv )
     {
       oyjlStringAdd( &utf8, 0,0, t );
       cairo_move_to (cr, xToImage(0) - frame * 0.8,
-                         yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 + 0.01) - off);
+                         yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 + (ratio==1.0?0.0:0.01)) - off);
       cairo_show_text (cr, utf8);
       free(utf8); utf8 = NULL;
     }
@@ -1476,8 +1534,8 @@ int myMain( int argc, const char ** argv )
     x = columns - 1;
     cairo_set_font_size (cr, frame);
     oyjlStringAdd( &utf8, 0,0, "%s", page_id ? page_id : "----" );
-    cairo_move_to (cr, xToImage(1.0) - frame * 2.5,
-                       yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 + 0.01) - off);
+    cairo_move_to (cr, xToImage(1.0) - frame * (strlen(utf8)>5 ? 8.0 : 2.5),
+                       yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 + (ratio==1.0?0.0:0.01)) - off);
     cairo_show_text (cr, utf8);
     free(utf8); utf8 = NULL;
 
@@ -1487,17 +1545,18 @@ int myMain( int argc, const char ** argv )
     {
       oyjlStringAdd( &utf8, 0,0, t );
       cairo_move_to (cr, xToImage(0) - frame * 0.8,
-                         yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.05) - off);
+                         yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - (columns == 1?0.023:0.05)) - off);
       cairo_show_text (cr, utf8);
       free(utf8); utf8 = NULL;
     }
 
-    cairo_set_font_size (cr, frame/2.0);
+    if(columns > 1)
+      cairo_set_font_size (cr, frame/2.0);
     if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/columns_marker2", page_id ))) != NULL)
     {
       oyjlStringAdd( &utf8, 0,0, t );
       cairo_move_to (cr, xToImage(0) - frame * 0.8,
-                         yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - 0.07) - off);
+                         yToImage((double)(y  )/(double)rows * ratio + (1-ratio) / 2.0 - (columns == 1?0.053:0.07)) - off);
       cairo_show_text (cr, utf8);
       free(utf8); utf8 = NULL;
     }
@@ -1510,7 +1569,6 @@ int myMain( int argc, const char ** argv )
       free(utf8); utf8 = NULL;
     }
 
-    cairo_set_font_size (cr, frame/2.0);
     for(x = 0; x < columns; ++x)
     {
       if((t = OYJL_GET_STRING(oyjlTreeGetValueF( specT, 0, "collection/[0]/pages/%s/columns_markers/[%d]", page_id, x ))) != NULL)
@@ -1568,6 +1626,18 @@ int myMain( int argc, const char ** argv )
           cairo_close_path(cr);
           cairo_set_source_rgba( cr, rgb[0], rgb[1], rgb[2], 1.0);
           cairo_fill(cr);
+        } else
+        /* draw cross for not found single patch */
+        if(columns == 1 && rows == 1)
+        {
+          cairo_new_path(cr);
+          cairo_set_line_width (cr, off * 10.0);
+          cairo_move_to(cr, xToImage((double)(x  )/(double)columns) + off, yToImage((double)(rows-1-y  )/(double)rows * ratio + (1-ratio) / 2.0) - off);
+          cairo_line_to(cr, xToImage((double)(x+1)/(double)columns) - off, yToImage((double)(rows-1-y+1)/(double)rows * ratio + (1-ratio) / 2.0) + off);
+          cairo_stroke(cr);
+          cairo_move_to(cr, xToImage((double)(x+1)/(double)columns) - off, yToImage((double)(rows-1-y  )/(double)rows * ratio + (1-ratio) / 2.0) - off);
+          cairo_line_to(cr, xToImage((double)(x  )/(double)columns) + off, yToImage((double)(rows-1-y+1)/(double)rows * ratio + (1-ratio) / 2.0) + off);
+          cairo_stroke(cr);
         }
 
         cairo_set_source_rgba( cr, 0, 0, 0, 1.0 );
@@ -1578,7 +1648,7 @@ int myMain( int argc, const char ** argv )
 
   if(image) /* support first line RGB and draw each channel */
   {
-    float t = thickness;
+    double t = thickness;
     cairo_set_line_width (cr, 0.5*t);
     int channels = oyImage_GetPixelLayout( image, oyCHANS );
     int layout = oyImage_GetPixelLayout( image, oyLAYOUT);

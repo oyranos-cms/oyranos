@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-07-16 08:03+0200\n"
+"POT-Creation-Date: 2020-07-25 06:31+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1933,8 +1933,8 @@ msgid "File:            "
 msgstr "Tamaina:        "
 
 #. The following strings must match the categories for a menu entry.
-#: modules/color/modules/oyranos_cmm_oJPG.c:777
-#: modules/color/modules/oyranos_cmm_oJPG.c:1320
+#: modules/color/modules/oyranos_cmm_oJPG.c:779
+#: modules/color/modules/oyranos_cmm_oJPG.c:1322
 #: modules/color/modules/oyranos_cmm_oPNG.c:587
 #: modules/color/modules/oyranos_cmm_oPNG.c:1214
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
@@ -2930,8 +2930,8 @@ msgstr ""
 msgid "Load"
 msgstr "Kargatu"
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:762
-#: modules/color/modules/oyranos_cmm_oJPG.c:1305
+#: modules/color/modules/oyranos_cmm_oJPG.c:764
+#: modules/color/modules/oyranos_cmm_oJPG.c:1307
 #: modules/color/modules/oyranos_cmm_oyra_image.c:363
 #: modules/color/modules/oyranos_cmm_oyra_image.c:790
 #, fuzzy
@@ -3515,8 +3515,8 @@ msgstr ""
 msgid "Option \"filename\", a valid filename of a existing PPM image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:768
-#: modules/color/modules/oyranos_cmm_oJPG.c:1311
+#: modules/color/modules/oyranos_cmm_oJPG.c:770
+#: modules/color/modules/oyranos_cmm_oJPG.c:1313
 msgid "Option \"filename\", a valid filename of a existing image"
 msgstr ""
 
@@ -4140,8 +4140,8 @@ msgstr ""
 msgid "RawCamera"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:777
-#: modules/color/modules/oyranos_cmm_oJPG.c:1320
+#: modules/color/modules/oyranos_cmm_oJPG.c:779
+#: modules/color/modules/oyranos_cmm_oJPG.c:1322
 #, fuzzy
 msgid "Read"
 msgstr "Prest"
@@ -4952,8 +4952,8 @@ msgid ""
 "illumination in evening and night times."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:770
-#: modules/color/modules/oyranos_cmm_oJPG.c:1313
+#: modules/color/modules/oyranos_cmm_oJPG.c:772
+#: modules/color/modules/oyranos_cmm_oJPG.c:1315
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the image "
 "data from. If the file does not exist, a error will occure."
@@ -6370,8 +6370,8 @@ msgstr "Profila-kolorea"
 msgid "profile not found:"
 msgstr "Profila-kolorea"
 
-#: modules/color/modules/oyranos_cmm_oJPG.c:760
-#: modules/color/modules/oyranos_cmm_oJPG.c:1303
+#: modules/color/modules/oyranos_cmm_oJPG.c:762
+#: modules/color/modules/oyranos_cmm_oJPG.c:1305
 msgid "read"
 msgstr ""
 
