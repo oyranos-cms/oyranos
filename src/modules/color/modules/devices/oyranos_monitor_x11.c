@@ -1260,7 +1260,7 @@ oyGetDisplayNumber_        (oyMonitor_s *disp)
 
   if( display_name )
   {
-    char ds[10];             /* display.screen*/
+    char ds[8];             /* display.screen*/
     const char *txt = strchr( display_name, ':' );
     int l;
     
@@ -1274,7 +1274,7 @@ oyGetDisplayNumber_        (oyMonitor_s *disp)
     if(txt[0])
       ++txt;
     l = strlen(txt) > 8 ? 8 : strlen(txt);
-    strncpy( ds, txt, l );
+    memcpy( ds, txt, l );
     ds[7] = '\000';
     if( strchr( ds, '.' ) )
     {
@@ -1295,7 +1295,7 @@ int   oyX1Monitor_getScreenFromDisplayName_( oyMonitor_s     * disp )
 
   if( display_name )
   {
-    char ds[10];             /* display.screen*/
+    char ds[8];             /* display.screen*/
     const char *txt = strchr( display_name, ':' );
     
     memset( ds, 0, 8 );
@@ -1305,7 +1305,7 @@ int   oyX1Monitor_getScreenFromDisplayName_( oyMonitor_s     * disp )
       return -1;
     }
 
-    strncpy( ds, txt, strlen(txt) > 8 ? 8 : strlen(txt) );
+    memcpy( ds, txt, strlen(txt) > 8 ? 8 : strlen(txt) );
     ds[7] = '\000';
     if( strchr( display_name, '.' ) )
     {
