@@ -1260,7 +1260,7 @@ oyGetDisplayNumber_        (oyMonitor_s *disp)
 
   if( display_name )
   {
-    char ds[8];             /* display.screen*/
+    char ds[10];             /* display.screen*/
     const char *txt = strchr( display_name, ':' );
     int l;
     
@@ -1295,7 +1295,7 @@ int   oyX1Monitor_getScreenFromDisplayName_( oyMonitor_s     * disp )
 
   if( display_name )
   {
-    char ds[8];             /* display.screen*/
+    char ds[10];             /* display.screen*/
     const char *txt = strchr( display_name, ':' );
     
     memset( ds, 0, 8 );

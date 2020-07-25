@@ -191,7 +191,7 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
   <br />
 &nbsp;&nbsp;Valid integer range is from 1-20.
 #### XDG_DATA_HOME XDG_DATA_DIRS
-&nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.openicc.org/index.php0.000000title=OpenIccDirectoryProposal.html
+&nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html
 
 <h2>EXAMPLES <a href="#toc" name="examples">&uarr;</a></h2>
 

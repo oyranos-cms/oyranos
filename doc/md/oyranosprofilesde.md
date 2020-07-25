@@ -104,7 +104,7 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
   <br />
 &nbsp;&nbsp;Der gültige Bereich ist 1-20.
 #### XDG_DATA_HOME XDG_DATA_DIRS
-&nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.openicc.org/index.php0,000000title=OpenIccDirectoryProposal.html
+&nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html
 
 <h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
 

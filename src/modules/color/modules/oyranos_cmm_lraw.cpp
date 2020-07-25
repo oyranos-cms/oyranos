@@ -914,7 +914,7 @@ oyCMMapi4_s_ lraw_api4_image_input_libraw = {
   lrawCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_LIBRAW_REGISTRATION,
+  (char*)OY_LIBRAW_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
   CMM_API_VERSION,                     /**< int32_t module_api[3] */
@@ -962,7 +962,7 @@ oyCMMapi7_s_ lraw_api7_image_input_libraw = {
   lrawCMMMessageFuncSet, /* oyCMMMessageFuncSet_f */
 
   /* registration */
-  OY_LIBRAW_REGISTRATION,
+  (char*)OY_LIBRAW_REGISTRATION,
 
   CMM_VERSION, /* int32_t version[3] */
   CMM_API_VERSION,                     /**< int32_t module_api[3] */

@@ -46,12 +46,14 @@
 oyMessage_f ojpg_msg = oyMessageFunc;
 
 /* Helpers */
-#if defined(__GNUC__)
-# define  OY_DBG_FORMAT_ "%s:%d %s() "
-# define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
-#else
-# define  OY_DBG_FORMAT_ "%s:%d "
-# define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+#ifndef OY_DBG_FORMAT_
+# if defined(__GNUC__)
+#  define  OY_DBG_FORMAT_ "%s:%d %s() "
+#  define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
+# else
+#  define  OY_DBG_FORMAT_ "%s:%d "
+#  define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+# endif
 #endif
 #define _DBG_FORMAT_ OY_DBG_FORMAT_
 #define _DBG_ARGS_ OY_DBG_ARGS_
