@@ -32,6 +32,7 @@ void oyjlLibRelease();
 #endif
 #include "oyjl_i18n.h"
 
+#define oyjlNoEmpty(x) ((x)?(x):"---")
 
 /* --- actual tests --- */
 
@@ -78,7 +79,7 @@ oyjlTESTRESULT_e testI18N()
       fprintf( stderr, "Could not modify LANG environment variable. Test will not be useful.\n" );
   }
 
-  setlocale(LC_ALL,"");
+  clang = setlocale(LC_ALL,"");
 
   if(clang && (strstr(clang, "de_DE") != 0))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -87,6 +88,26 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "Language initialised failed %s          ", clang?clang:"---" );
   }
+
+  char * language = oyjlLanguage( clang );
+  if(language && (strstr(language, "de") != 0))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlLanguage() good %s                             ", language?language:"---" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlLanguage() good %s                             ", language?language:"---" );
+  }
+  if(language) free(language);
+
+  char * country = oyjlCountry( clang );
+  if(country && (strstr(country, "DE") != 0))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlCountry() good %s                              ", country?country:"---" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlCountry() good %s                              ", country?country:"---" );
+  }
+  if(country) free(country);
 
   setlocale(LC_ALL,"de_DE.UTF8");
   int use_gettext = 0;
@@ -544,6 +565,69 @@ oyjlTESTRESULT_e testString ()
     "oyjlStringSplitUTF8( )                              %d", len );
   }
   oyjlStringListRelease( &list, wlen, myDeAllocFunc );
+
+  text = "my_string_1_is_long";
+  const char * regexp = "*string";
+  if(!oyjlRegExpMatch(text, regexp))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "!oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "!oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+  }
+  regexp = "_string_";
+  if(oyjlRegExpMatch(text, regexp))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+  }
+
+  regexp = "NONE";
+  if(!oyjlRegExpMatch(text, regexp))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "!oyjlRegExpMatch( \"%s\", \"%s\" ) ", text, oyjlNoEmpty(regexp) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "!oyjlRegExpMatch( \"%s\", \"%s\" ) ", text, oyjlNoEmpty(regexp) );
+  }
+
+  regexp = "1";
+  if(oyjlRegExpMatch(text, regexp))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlRegExpMatch( \"%s\", \"%s\" ) ", text, oyjlNoEmpty(regexp) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlRegExpMatch( \"%s\", \"%s\" ) ", text, oyjlNoEmpty(regexp) );
+  }
+
+  regexp = "string.1";
+  if(oyjlRegExpMatch(text, regexp))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+  }
+
+  regexp = "str.*lon";
+  if(oyjlRegExpMatch(text, regexp))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+  }
+
+  regexp = "st[.]*lo";
+  if(!oyjlRegExpMatch(text, regexp))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "!oyjlRegExpMatch(\"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "!oyjlRegExpMatch(\"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+  }
 
   return result;
 }

@@ -788,8 +788,7 @@ int          oyjlStringsToDoubles    ( const char        * text,
  *  used. Otherwise only C strstr() API will be called.
  *
  *  @param         text                string to search in
- *  @param         regex               regular expression to try with text; used with OYJL_HAVE_REGEX_H
- *  @param         pattern             ordinary pattern to search for in text; used without OYJL_HAVE_REGEX_H
+ *  @param         regex               regular expression to try with text
  *  @return                            result:
  *                                     - 1: found
  *                                     - 0: no match
@@ -798,27 +797,34 @@ int          oyjlStringsToDoubles    ( const char        * text,
  *  @date    2020/07/28
  *  @since   2020/07/28 (Oyjl: 1.0.0)
  */
-int            oyjlRegExpMatch       ( const char        * text,
-                                       const char        * regex,
-                                       const char        * pattern )
+int        oyjlRegExpMatch           ( const char        * text,
+                                       const char        * regex )
 {
   int match = 0;
-  if( !text ||
-      (!regex && !pattern) )
+  if( !text || !regex )
     return match;
 
 #ifdef OYJL_HAVE_REGEX_H
   int status = 0;
   regex_t re;
-  if(regcomp(&re, regex, REG_EXTENDED|REG_NOSUB) != 0)
+  int error = 0;
+  if((error = regcomp(&re, regex, REG_EXTENDED|REG_NOSUB)) != 0)
+  {
+    char * err_msg = calloc( 1024, sizeof(char) );
+    regerror( error, &re, err_msg, 1024 );
+    oyjlMessage_p( oyjlMSG_INFO, 0,
+                   OYJL_DBG_FORMAT "regcomp(\"%s\") %s",
+                   OYJL_DBG_ARGS,  regex, err_msg );
+    if(err_msg) free(err_msg);
     return 0;
+  }
   status = regexec( &re, text, (size_t)0, NULL, 0 );
   regfree( &re );
   if(status == 0)
     match = 1;
 #endif
 
-  if(!match && pattern && strstr(text, pattern) != NULL)
+  if(!match && strstr(text, regex) != NULL)
     match = 1;
 
   return match;
