@@ -13,6 +13,7 @@
 
 #define TESTS_RUN \
   TEST_RUN( testVersion, "Version matching", 1 ); \
+  TEST_RUN( testI18N, "Internationalisation", 1 ); \
   TEST_RUN( testDataFormat, "Data Format Detection", 1 ); \
   TEST_RUN( testJson, "JSON handling", 1 ); \
   TEST_RUN( testFromJson, "Data Writers", 1 ); \
@@ -35,6 +36,7 @@ void oyjlLibRelease();
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
+#include "oyjl_i18n.h"
 
 
 /* --- actual tests --- */
@@ -57,6 +59,214 @@ oyjlTESTRESULT_e testVersion()
     result = oyjlTESTRESULT_SUCCESS;
   else
     result = oyjlTESTRESULT_FAIL;
+
+  return result;
+}
+
+extern oyjlMessage_f oyjlMessage_p;
+oyjlTESTRESULT_e testI18N()
+{
+  const char * clang;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  clang = setlocale(LC_ALL, NULL);
+  if((clang && (strcmp(clang, "C") == 0)) || !clang)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "Language uninitialised good \"C\"              " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "Language uninitialised failed                 " );
+  }
+
+  clang = getenv("LANG");
+  if(!clang || strcmp(clang,"C") == 0)
+  {
+    char * tmp = oyjlStringCopy("LANG=de_DE.UTF-8", 0);
+    putenv(tmp);
+    clang = getenv("LANG");
+    if(!clang || strcmp(clang,"de_DE.UTF-8") != 0)
+      fprintf( stderr, "Could not modify LANG environment variable. Test will not be useful.\n" );
+  }
+
+  clang = setlocale(LC_ALL,"");
+
+  if(clang && (strstr(clang, "de_DE") != 0))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "Language initialised good %s            ", clang?clang:"---" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "Language initialised failed %s          ", clang?clang:"---" );
+  }
+
+  char * language = oyjlLanguage( clang );
+  if(language && (strstr(language, "de") != 0))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlLanguage() good %s                             ", language?language:"---" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlLanguage() good %s                             ", language?language:"---" );
+  }
+  if(language) free(language);
+
+  char * country = oyjlCountry( clang );
+  if(country && (strstr(country, "DE") != 0))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlCountry() good %s                              ", country?country:"---" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlCountry() good %s                              ", country?country:"---" );
+  }
+  if(country) free(country);
+
+  setlocale(LC_ALL,"de_DE.UTF8");
+  int use_gettext = 0;
+#ifdef OYJL_USE_GETTEXT
+  use_gettext = 1;
+#endif
+  int debug = 0;
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", &debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, oyjlMessage_p );
+
+  const char * lang = setlocale(LC_ALL, NULL);
+  if(lang && (strcmp(lang, "C") != 0))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "setlocale() initialised good %s            ", lang );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "setlocale() initialised failed %s          ", lang );
+  }
+
+  const char * text = _("Example");
+  if(strcmp(text,"Beispiel") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "dgettext() good \"%s\"                      ", text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "dgettext() failed \"%s\"                    ", text );
+  }
+
+#undef _
+#define _(x) oyjlTranslate( lang, catalog, x )
+  const char * json = "{\n\
+  \"org\": {\n\
+    \"freedesktop\": {\n\
+      \"oyjl\": {\n\
+        \"translations\": {\n\
+          \"de_DE.UTF8\": {\n\
+            \"Example\": \"Beispiel\"\n\
+          },\n\
+          \"de_DE\": {\n\
+            \"Example2\": \"Beispiel2\"\n\
+          },\n\
+          \"de_AT\": {\n\
+            \"Nonsense\": \"Schmarrn\"\n\
+          },\n\
+          \"de\": {\n\
+            \"Color\": \"Farbe\"\n\
+          }\n\
+        }\n\
+      }\n\
+    }\n\
+  }\n\
+}";
+  oyjl_val catalog = oyjlTreeParse( json, NULL, 0 );
+  text = _("Example");
+  if(strcmp(text,"Beispiel") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"  ", lang, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"  ", lang, text );
+  }
+
+  text = _("Example2");
+  if(strcmp(text,"Beispiel2") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlTranslate(%s) \"de_DE\":\"%s\"      ", lang, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlTranslate(%s) \"de_DE\":\"%s\"      ", lang, text );
+  }
+
+  text = _("Color");
+  if(strcmp(text,"Farbe") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlTranslate(%s) \"de\":\"%s\"         ", lang, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlTranslate(%s) \"de\":\"%s\"         ", lang, text );
+  }
+
+  text = _("Nonsense");
+  if(strcmp(text,"Schmarrn") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlTranslate(%s) \"de_AT\":\"%s\"      ", lang, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlTranslate(%s) \"de_AT\":\"%s\"      ", lang, text );
+  }
+
+  lang = "de_CH.UTF-8";
+  text = _("Nonsense");
+  if(strcmp(text,"Schmarrn") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlTranslate(%s) \"de_AT\":\"%s\"      ", lang, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlTranslate(%s) \"de_AT\":\"%s\"      ", lang, text );
+  }
+
+  lang = "de_DE";
+  text = _("Example");
+  if(strcmp(text,"Beispiel") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"  ", lang, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"  ", lang, text );
+  }
+
+  text = _("Color");
+  if(strcmp(text,"Farbe") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlTranslate(%s) \"de\":\"%s\"              ", lang, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlTranslate(%s) \"de\":\"%s\"              ", lang, text );
+  }
+
+  lang = "de";
+  text = _("Example");
+  if(strcmp(text,"Beispiel") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"      ", lang, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"      ", lang, text );
+  }
+
+  lang = "de_CH";
+  text = _("Color");
+  if(strcmp(text,"Farbe") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlTranslate(%s) \"de\":\"%s\"              ", lang, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
+    "oyjlTranslate(%s) \"de\":\"%s\"              ", lang, text );
+  }
+
+  oyjlTreeFree( catalog );
+
+#undef _
+#ifdef OYJL_USE_GETTEXT
+# define _(text) dgettext( OYJL_DOMAIN, text )
+#else
+# define _(text) text
+#endif
+
+  setlocale(LC_ALL,"");
+
 
   return result;
 }
