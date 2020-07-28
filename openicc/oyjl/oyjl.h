@@ -408,6 +408,8 @@ int        oyjlStringsToDoubles      ( const char        * text,
                                        int               * count,
                                        void*            (* alloc)(size_t),
                                        double           ** value );
+int        oyjlRegExpMatch           ( const char        * text,
+                                       const char        * regex );
 typedef struct oyjl_string_s * oyjl_str;
 oyjl_str   oyjlStrNew                ( size_t              length,
                                        void*            (* alloc)(size_t),
