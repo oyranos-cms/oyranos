@@ -326,6 +326,11 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
                                        const char        * default_locdir,
                                        const char        * loc_domain,
                                        oyjlMessage_f       msg );
+char *         oyjlLanguage          ( const char        * loc );
+char *         oyjlCountry           ( const char        * loc );
+const char *   oyjlTranslate         ( const char        * loc,
+                                       oyjl_val            catalog,
+                                       const char        * string );
 
 void       oyjlDebugVariableSet      ( int               * debug );
 

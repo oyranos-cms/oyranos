@@ -43,6 +43,9 @@
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>           /* setlocale LC_NUMERIC */
 #endif
+#ifdef OYJL_HAVE_REGEX_H
+# include <regex.h>
+#endif
 
 /*     Sections     */
 /* --- Debug_Section --- */
@@ -51,6 +54,7 @@
 /* --- IO_Section --- */
 /* --- Render_Section --- */
 /* --- Init_Section --- */
+/* --- I18n_Section --- */
 /* --- Misc_Section --- */
 
 
@@ -776,6 +780,48 @@ int          oyjlStringsToDoubles    ( const char        * text,
   oyjlStringListRelease(&list, n, free);
 
   return error;
+}
+
+/** @brief   search for pattern
+ *
+ *  Test for OYJL_HAVE_REGEX_H macro to see if regexec() API is
+ *  used. Otherwise only C strstr() API will be called.
+ *
+ *  @param         text                string to search in
+ *  @param         regex               regular expression to try with text; used with OYJL_HAVE_REGEX_H
+ *  @param         pattern             ordinary pattern to search for in text; used without OYJL_HAVE_REGEX_H
+ *  @return                            result:
+ *                                     - 1: found
+ *                                     - 0: no match
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/07/28
+ *  @since   2020/07/28 (Oyjl: 1.0.0)
+ */
+int            oyjlRegExpMatch       ( const char        * text,
+                                       const char        * regex,
+                                       const char        * pattern )
+{
+  int match = 0;
+  if( !text ||
+      (!regex && !pattern) )
+    return match;
+
+#ifdef OYJL_HAVE_REGEX_H
+  int status = 0;
+  regex_t re;
+  if(regcomp(&re, regex, REG_EXTENDED|REG_NOSUB) != 0)
+    return 0;
+  status = regexec( &re, text, (size_t)0, NULL, 0 );
+  regfree( &re );
+  if(status == 0)
+    match = 1;
+#endif
+
+  if(!match && pattern && strstr(text, pattern) != NULL)
+    match = 1;
+
+  return match;
 }
 
 /*
@@ -1926,6 +1972,53 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 }
 /* --- Init_Section --- */
 
+/* --- I18n_Section --- */
+/** @brief   obtain language part of i18n locale code
+ *
+ *  @param         loc                 locale name as from setlocale("")
+ *  @return                            language part
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/07/27
+ *  @since   2020/07/27 (Oyjl: 1.0.0)
+ */
+char *         oyjlLanguage          ( const char        * loc )
+{
+  if(strchr(loc,'_') != NULL)
+  {
+    char * t = strdup(loc);
+    char * tmp = strchr(t,'_');
+    tmp[0] = '\000';
+    return t;
+  } else
+    return strdup(loc);
+}
+
+/** @brief   obtain country part of i18n locale code
+ *
+ *  @param         loc                 locale name as from setlocale("")
+ *  @return                            country part
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/07/27
+ *  @since   2020/07/27 (Oyjl: 1.0.0)
+ */
+char *         oyjlCountry           ( const char        * loc )
+{
+  if(strchr(loc,'_') != NULL)
+  {
+    char * t = strdup( strchr(loc,'_') + 1 );
+    if(strchr(t,'.') != NULL)
+    {
+      char * tmp = strchr(t,'.');
+      tmp[0] = '\000';
+    }
+    return t;
+  }
+  else
+    return NULL;
+}
+/* --- I18n_Section --- */
 
 /* --- Misc_Section --- */
 #include "oyjl_version.h"
