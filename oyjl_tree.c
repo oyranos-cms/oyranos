@@ -1660,3 +1660,93 @@ void oyjlTreeFree (oyjl_val v)
 }
 
 /** @} *//* oyjl_tree */
+
+
+/** \addtogroup oyjl
+ *  @{ *//* oyjl */
+
+/** @brief   translate string from catalog
+ *
+ *  The passed in catalog shall contain its translations in the
+ *  "org/freedesktop/oyjl/translations/loc" path.
+ *
+ *  @param         loc                 locale name as from setlocale("")
+ *  @param         catalog             the parsed catalog as tree
+ *  @param         string              the to be translated text
+ *  @return                            translated item
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/07/27
+ *  @since   2020/07/27 (Oyjl: 1.0.0)
+ */
+const char *   oyjlTranslate         ( const char        * loc,
+                                       oyjl_val            catalog,
+                                       const char        * string )
+{
+  const char * translated = NULL;
+  oyjl_val v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", loc, string );
+  if(v)
+    translated = OYJL_GET_STRING(v);
+  if(!translated)
+  {
+    char * language = oyjlLanguage(loc),
+         * country = oyjlCountry(loc);
+    if(language && country)
+      v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s_%s/%s", language, country, string );
+    if(v)
+      translated = OYJL_GET_STRING(v);
+    if(language) free(language);
+    if(country) free(country);
+  }
+  if(!translated)
+  {
+    char * language = oyjlLanguage(loc);
+    v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", language, string );
+    if(v)
+      translated = OYJL_GET_STRING(v);
+    if(language) free(language);
+  }
+  if(!translated)
+  {
+    char * language = oyjlLanguage(loc);
+    char * path = NULL;
+    char ** paths = NULL;
+    int count, i;
+    oyjl_val test = NULL;
+    char * regex = NULL;
+    oyjlStringAdd( &regex, 0,0, "org/freedesktop/oyjl/translations/%s.*/%s", language, string );
+
+    oyjlTreeToPaths( catalog, 10000000, NULL, OYJL_KEY, &paths );
+    count = 0; while(paths && paths[count]) ++count;
+
+    for(i = 0; i < count; ++i)
+    {
+      path = paths[i];
+      if(oyjlRegExpMatch(path, regex))
+      {
+        paths[i] = NULL;
+        break;
+      }
+    }
+
+    if(paths && count)
+      oyjlStringListRelease( &paths, count, free );
+
+    if(i == count)
+      path = NULL;
+
+    v = NULL;
+    if(path)
+    {
+      v = oyjlTreeGetValueF( catalog, 0, "%s", path );
+      free(path);
+    }
+    if(v)
+      translated = OYJL_GET_STRING(v);
+    if(language) free(language);
+    if(regex) free(regex);
+  }
+  return translated ? translated : string;
+}
+/** @} *//* oyjl */
+
