@@ -1684,7 +1684,12 @@ const char *   oyjlTranslate         ( const char        * loc,
                                        const char        * string )
 {
   const char * translated = NULL;
-  oyjl_val v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", loc, string );
+  oyjl_val v;
+
+  if(!loc || strcmp(loc,"C") == 0 || !catalog)
+    return string;
+
+  v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", loc, string );
   if(v)
     translated = OYJL_GET_STRING(v);
   if(!translated)
