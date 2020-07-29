@@ -19,7 +19,6 @@
  */
 
 #include <stddef.h>
-#include <regex.h>
 
 #include <stdio.h>                /* popen() */
 #include <math.h>                 /* NAN */
@@ -44,10 +43,6 @@
 #include <oyjl.h>
 #include <oyjl_macros.h>
 
-#ifdef __ANDROID__
-# include "oyranos-profile-graph.i18n.c"
-#endif
-
 #include "oyranos_color.h"
 #include "oyranos_color_internal.h"
 #include "oyranos_debug.h"
@@ -59,6 +54,15 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
+
+#ifdef __ANDROID__
+# include "oyranos-profile-graph.i18n.c"
+oyjl_val i18n_catalog = NULL;
+const char * lang = NULL;
+#undef _
+#define _(x) (char*)oyjlTranslate( lang, i18n_catalog, x )
+#endif
+
 
 #include "ciexyz31_2.h" /* cieXYZ_31_2 1931 2° */
 #include "ciexyz64_1.h"
@@ -291,6 +295,21 @@ int myMain( int argc, const char ** argv )
   int xyy_plane = 0;
   double xs_xyz = 1.2,                           /* scaling of CIE*xy graph */
          ys_xyz = 1.2;
+#ifdef __ANDROID__
+  if(!i18n_catalog)
+    i18n_catalog = oyjlTreeParse(oyranos_json,0,0);
+  if(!lang || (lang && strcmp(lang,"C") == 0))
+    lang =
+#ifdef OYJL_HAVE_LOCALE_H
+      setlocale(LC_ALL, ""); /* unlikely to work */
+#else
+      NULL;
+#endif
+  if(!lang || (lang && strcmp(lang,"C") == 0))
+    lang = getenv("LANG"); /* flacky */
+  if(!lang || (lang && strcmp(lang,"C") == 0))
+    lang = oyjlLang("");
+#endif
 
   /* spectal variables */
   int nano_min = 64; /* 420 nm */
@@ -510,7 +529,9 @@ int myMain( int argc, const char ** argv )
 # define RENDER_I18N NULL
 #endif
     oyjlArgsRender( argc, argv, RENDER_I18N, jcommands,NULL, debug, ui, myMain );
+#ifndef __ANDROID__
     oyjlUi_Release( &ui);
+#endif
     return 0;
   }
 #endif
@@ -2348,8 +2369,8 @@ void        oySpecCompute ( int start, int lambda, int channel, int pos, oyF3 *x
     int k;
     for(k = 0; k < 3; ++k)
     {
-      double spd;
-      double weigthed;
+      double spd = 0.0;
+      double weigthed = 0.0;
 
       if(stdobs == 2)
         spd = cieXYZ_31_2[1 + cmf_start_pos + channel*lambda][k];
@@ -3052,7 +3073,7 @@ oyjl_val    oyTreeFromCxf( const char * text )
              lab = oyjlTreeGetValueFilteredF( obj, 0, "cc:", "cc:ColorValues/cc:ColorCIELab" ),
              rgb = oyjlTreeGetValueFilteredF( obj, 0, "cc:", "cc:ColorValues/cc:ColorSRGB" ),
              cmyk = oyjlTreeGetValueFilteredF( obj, 0, "cc:", "cc:ColorValues/cc:ColorCMYK" );
-    int n = 0, j, r;
+    int n = 0, j, r = 0;
     long startNm = 0;
     double * list = NULL, d;
     char * colorSpec = oyjlValueText( oyjlTreeGetValueFilteredF( obj, 0, "cc:", "cc:ColorValues//@ColorSpecification" ), 0 );
@@ -3704,18 +3725,6 @@ int         oyTreeToIccXml( oyjl_val root, int * level OYJL_UNUSED, char ** text
   return error;
 }
 
-int oyRegExpMatch( const char * text, const char * pattern )
-{
-  int status = 0;
-  regex_t re;
-  if(regcomp(&re, pattern, REG_EXTENDED|REG_NOSUB) != 0)
-    return 0;
-  status = regexec( &re, text, (size_t)0, NULL, 0 );
-  regfree( &re );
-  if(status != 0)
-    return 0;
-  return 1;
-}
 
 void        oyTreeFilterColors( oyjl_val root, const char * pattern )
 {
@@ -3737,7 +3746,7 @@ void        oyTreeFilterColors( oyjl_val root, const char * pattern )
     v = oyjlTreeGetValueF( data, 0, "[%d]/name", index );
     name = OYJL_GET_STRING(v);
     if(!name) continue;
-    match = oyRegExpMatch( name, pattern );
+    match = oyjlRegExpMatch( name, pattern );
     if(pattern && !match )
     {
       sprintf( num, "[%d]", index );

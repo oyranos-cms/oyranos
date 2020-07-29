@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-07-25 06:31+0200\n"
+"POT-Creation-Date: 2020-07-29 11:52+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -73,7 +73,7 @@ msgstr ""
 msgid "-v verbose"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:389
+#: tools/oyranos_profile_graph.c:408
 msgid "-|FILE"
 msgstr ""
 
@@ -138,7 +138,7 @@ msgstr ""
 msgid "10color"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:397
+#: tools/oyranos_profile_graph.c:416
 msgid "10° Observer"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr ""
 msgid "16. Channel"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:430
+#: tools/oyranos_profile_graph.c:449
 msgid "1964 10° Observer Graph"
 msgstr ""
 
@@ -202,7 +202,7 @@ msgstr ""
 msgid "2. Channel"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:427
+#: tools/oyranos_profile_graph.c:446
 msgid "2D Graph from profiles"
 msgstr ""
 
@@ -440,7 +440,7 @@ msgstr ""
 msgid "Alt v - set window fullscreen"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:332 tools/oyranos_profile_graph.c:328
+#: tools/oyranos-monitor-white-point.c:332 tools/oyranos_profile_graph.c:347
 #: tools/oyranos_profiles.c:90
 msgid "Alternatively the -v option can be used."
 msgstr ""
@@ -597,11 +597,11 @@ msgstr ""
 msgid "BackSpace - previous page"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:380
+#: tools/oyranos_profile_graph.c:399
 msgid "Background"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:380
+#: tools/oyranos_profile_graph.c:399
 msgid "Background Lightness"
 msgstr ""
 
@@ -642,11 +642,11 @@ msgstr ""
 msgid "Black Preservation"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:386 tools/oyranos_profile_graph.c:431
+#: tools/oyranos_profile_graph.c:405 tools/oyranos_profile_graph.c:450
 msgid "Blackbody Radiator"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:431
+#: tools/oyranos_profile_graph.c:450
 msgid "Blackbody Radiator Spectrum Graph"
 msgstr ""
 
@@ -662,11 +662,11 @@ msgstr ""
 msgid "Blue tone reproduction curve"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:351
+#: tools/oyranos_profile_graph.c:370
 msgid "CGATS"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:351
+#: tools/oyranos_profile_graph.c:370
 #, fuzzy
 msgid "CGATS Values"
 msgstr "значе́ние"
@@ -691,39 +691,39 @@ msgstr ""
 msgid "CIE *v"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:336
+#: tools/oyranos_profile_graph.c:355
 msgid "CIE A spectral power distribution"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:337
+#: tools/oyranos_profile_graph.c:356
 msgid "CIE D50 spectral power distribution (computed)"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:338
+#: tools/oyranos_profile_graph.c:357
 msgid "CIE D55 spectral power distribution (computed)"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:340
+#: tools/oyranos_profile_graph.c:359
 msgid "CIE D65 spectral power distribution"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:339
+#: tools/oyranos_profile_graph.c:358
 msgid "CIE D65 spectral power distribution (computed)"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:341
+#: tools/oyranos_profile_graph.c:360
 msgid "CIE D75 spectral power distribution (computed)"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:342
+#: tools/oyranos_profile_graph.c:361
 msgid "CIE D93 spectral power distribution (computed)"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:397
+#: tools/oyranos_profile_graph.c:416
 msgid "CIE Observer 1964 10°"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:396
+#: tools/oyranos_profile_graph.c:415
 msgid "CIE Standard Observer 1931 2°"
 msgstr ""
 
@@ -794,11 +794,11 @@ msgstr ""
 msgid "CMM behaviour options for color rendering, precission and fixes."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:349
+#: tools/oyranos_profile_graph.c:368
 msgid "CSV"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:349
+#: tools/oyranos_profile_graph.c:368
 #, fuzzy
 msgid "CSV Values"
 msgstr "значе́ние"
@@ -864,7 +864,7 @@ msgstr ""
 msgid "Choices:"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:378
+#: tools/oyranos_profile_graph.c:397
 msgid "Chroma"
 msgstr ""
 
@@ -942,11 +942,11 @@ msgstr ""
 msgid "Color Managed Devices"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:434
+#: tools/oyranos_profile_graph.c:453
 msgid "Color Page"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:382
+#: tools/oyranos_profile_graph.c:401
 msgid "Color Page Input"
 msgstr ""
 
@@ -1031,7 +1031,7 @@ msgstr ""
 msgid "Color measurement data"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:333
+#: tools/oyranos_profile_graph.c:352
 msgid ""
 "Color patches are only shown, if they are in gamut of the default CMYK and "
 "web profile."
@@ -1290,14 +1290,14 @@ msgstr ""
 msgid "Create 3D CLUT"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:428
+#: tools/oyranos_profile_graph.c:447
 msgid ""
 "Create a 2D Graph containing the possible color patches inside the ICC "
 "Profile gamut. More information about HLC Color Atlas can be found on www."
 "freiefarbe.de"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:427
+#: tools/oyranos_profile_graph.c:446
 msgid "Create a 2D Graph containing the saturation line from a ICC Profile."
 msgstr ""
 
@@ -1554,11 +1554,11 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:373
+#: tools/oyranos_profile_graph.c:392
 msgid "Draw Gray"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:400
+#: tools/oyranos_profile_graph.c:419
 msgid "Draw Raster"
 msgstr ""
 
@@ -1761,7 +1761,7 @@ msgstr "ICC-профиль"
 #: examples/libraw/oyranos_file.cpp:67 examples/libraw/oyranos_file.cpp:68
 #: tools/oyranos-device.c:52 tools/oyranos-device.c:92
 #: tools/oyranos-device.c:93 tools/oyranos-device.c:94
-#: tools/oyranos_profile_graph.c:382 tools/oyranos_profile_graph.c:395
+#: tools/oyranos_profile_graph.c:401 tools/oyranos_profile_graph.c:414
 msgid "FILE"
 msgstr ""
 
@@ -1774,8 +1774,8 @@ msgid "FILE_NAME"
 msgstr ""
 
 #: tools/oyranos_convert.c:73 tools/oyranos_convert.c:83
-#: tools/oyranos_profile_graph.c:371 tools/oyranos_profile_graph.c:390
-#: tools/oyranos_profile_graph.c:392
+#: tools/oyranos_profile_graph.c:390 tools/oyranos_profile_graph.c:409
+#: tools/oyranos_profile_graph.c:411
 msgid "FORMAT"
 msgstr ""
 
@@ -1819,7 +1819,7 @@ msgstr ""
 msgid "Filter for meta tag key/value pair"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:394
+#: tools/oyranos_profile_graph.c:413
 msgid "Filter of Color Names"
 msgstr ""
 
@@ -1852,13 +1852,13 @@ msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:78 tools/oyranos-config.c:93
 #: tools/oyranos-device.c:109 tools/oyranos-monitor-white-point.c:427
-#: tools/oyranos_gamma.c:246 tools/oyranos_profile_graph.c:472
+#: tools/oyranos_gamma.c:246 tools/oyranos_profile_graph.c:491
 #: tools/oyranos_profile_tool.c:131 tools/oyranos_profiles.c:176
 #, c-format
 msgid "For more information read the man page:"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:371 tools/oyranos_profile_graph.c:392
+#: tools/oyranos_profile_graph.c:390 tools/oyranos_profile_graph.c:411
 msgid "Format"
 msgstr ""
 
@@ -1887,7 +1887,7 @@ msgstr ""
 msgid "Gamut Warning"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:396 tools/oyranos_profile_graph.c:435
+#: tools/oyranos-monitor-white-point.c:396 tools/oyranos_profile_graph.c:454
 #: tools/oyranos_profiles.c:155
 msgid "General options"
 msgstr ""
@@ -1943,7 +1943,7 @@ msgstr "значе́ние"
 msgid "Gravure"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:197 tools/oyranos_profile_graph.c:373
+#: liboyranos_config/oyranos_icc.c:197 tools/oyranos_profile_graph.c:392
 msgid "Gray"
 msgstr ""
 
@@ -1963,17 +1963,17 @@ msgstr ""
 msgid "Green tone reproduction curve"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:428
+#: tools/oyranos_profile_graph.c:447
 msgid "HLC"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:374 tools/oyranos_profile_graph.c:376
-#: tools/oyranos_profile_graph.c:378
+#: tools/oyranos_profile_graph.c:393 tools/oyranos_profile_graph.c:395
+#: tools/oyranos_profile_graph.c:397
 #, fuzzy
 msgid "HLC Color Atlas"
 msgstr "ICC-профиль"
 
-#: tools/oyranos_profile_graph.c:428
+#: tools/oyranos_profile_graph.c:447
 #, fuzzy
 msgid "HLC Color Atlas Pages"
 msgstr "ICC-профиль"
@@ -2035,7 +2035,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:537
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:728
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:996
-#: tools/oyranos-monitor-white-point.c:370 tools/oyranos_profile_graph.c:409
+#: tools/oyranos-monitor-white-point.c:370 tools/oyranos_profile_graph.c:428
 #: tools/oyranos_profiles.c:134
 msgid "Help"
 msgstr "Справка"
@@ -2059,7 +2059,7 @@ msgid "Hsv"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:295 liboyranos_config/oyranos_icc.c:300
-#: tools/oyranos_profile_graph.c:374
+#: tools/oyranos_profile_graph.c:393
 msgid "Hue"
 msgstr ""
 
@@ -2067,12 +2067,12 @@ msgstr ""
 msgid "ICC Class"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:352
+#: tools/oyranos_profile_graph.c:371
 #, fuzzy
 msgid "ICC Named Color Values"
 msgstr "ICC-профиль"
 
-#: tools/oyranos_profile_graph.c:366
+#: tools/oyranos_profile_graph.c:385
 #, fuzzy
 msgid "ICC Profile"
 msgstr "ICC-профиль"
@@ -2087,11 +2087,11 @@ msgid "ICC Version"
 msgstr ""
 
 #. type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable
-#: tools/oyranos_profile_graph.c:364 tools/oyranos_profiles.c:107
+#: tools/oyranos_profile_graph.c:383 tools/oyranos_profiles.c:107
 msgid "ICC Version 2"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:365 tools/oyranos_profiles.c:108
+#: tools/oyranos_profile_graph.c:384 tools/oyranos_profiles.c:108
 msgid "ICC Version 4"
 msgstr ""
 
@@ -2175,7 +2175,7 @@ msgstr ""
 msgid "ITU-R BT.709"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:352
+#: tools/oyranos_profile_graph.c:371
 msgid "Icc XML"
 msgstr ""
 
@@ -2184,39 +2184,39 @@ msgstr ""
 msgid "Identity"
 msgstr ""
 
-#: API_generated/oyranos_profile.c:47 tools/oyranos_profile_graph.c:384
+#: API_generated/oyranos_profile.c:47 tools/oyranos_profile_graph.c:403
 msgid "Illuminant"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:853 tools/oyranos_profile_graph.c:336
+#: liboyranos_config/oyranos_icc.c:853 tools/oyranos_profile_graph.c:355
 msgid "Illuminant A"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:848 liboyranos_config/oyranos_texts.c:506
-#: tools/oyranos_profile_graph.c:337
+#: tools/oyranos_profile_graph.c:356
 msgid "Illuminant D50"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:852 liboyranos_config/oyranos_texts.c:506
-#: tools/oyranos_profile_graph.c:338
+#: tools/oyranos_profile_graph.c:357
 msgid "Illuminant D55"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:849 liboyranos_config/oyranos_texts.c:509
-#: tools/oyranos_profile_graph.c:339
+#: tools/oyranos_profile_graph.c:358
 msgid "Illuminant D65"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:340
+#: tools/oyranos_profile_graph.c:359
 msgid "Illuminant D65 T"
 msgstr ""
 
-#: liboyranos_config/oyranos_texts.c:510 tools/oyranos_profile_graph.c:341
+#: liboyranos_config/oyranos_texts.c:510 tools/oyranos_profile_graph.c:360
 msgid "Illuminant D75"
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:850 liboyranos_config/oyranos_texts.c:511
-#: tools/oyranos_profile_graph.c:342
+#: tools/oyranos_profile_graph.c:361
 msgid "Illuminant D93"
 msgstr ""
 
@@ -2228,11 +2228,11 @@ msgstr ""
 msgid "Illuminant F8"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:384 tools/oyranos_profile_graph.c:432
+#: tools/oyranos_profile_graph.c:403 tools/oyranos_profile_graph.c:451
 msgid "Illuminant Spectrum"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:432
+#: tools/oyranos_profile_graph.c:451
 msgid "Illuminant Spectrum Graph"
 msgstr ""
 
@@ -2339,7 +2339,7 @@ msgid ""
 "work, the numbers need to be preserved."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:383
+#: tools/oyranos_profile_graph.c:402
 msgid "Index"
 msgstr ""
 
@@ -2369,8 +2369,8 @@ msgid "InkJet printer"
 msgstr ""
 
 #. scnr
-#: liboyranos_config/oyranos_icc.c:616 tools/oyranos_profile_graph.c:366
-#: tools/oyranos_profile_graph.c:382
+#: liboyranos_config/oyranos_icc.c:616 tools/oyranos_profile_graph.c:385
+#: tools/oyranos_profile_graph.c:401
 msgid "Input"
 msgstr ""
 
@@ -2472,7 +2472,7 @@ msgid "Kai-Uwe Behrmann"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:234
-#: tools/oyranos-monitor-white-point.c:548 tools/oyranos_profile_graph.c:386
+#: tools/oyranos-monitor-white-point.c:548 tools/oyranos_profile_graph.c:405
 msgid "Kelvin"
 msgstr ""
 
@@ -2562,7 +2562,7 @@ msgstr "значе́ние"
 msgid "License"
 msgstr ""
 
-#: liboyranos_config/oyranos_icc.c:301 tools/oyranos_profile_graph.c:376
+#: liboyranos_config/oyranos_icc.c:301 tools/oyranos_profile_graph.c:395
 msgid "Lightness"
 msgstr ""
 
@@ -2973,7 +2973,7 @@ msgstr ""
 msgid "Microsoft"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:396 tools/oyranos_profile_graph.c:435
+#: tools/oyranos-monitor-white-point.c:396 tools/oyranos_profile_graph.c:454
 #: tools/oyranos_profiles.c:155
 msgid "Misc"
 msgstr ""
@@ -3082,16 +3082,16 @@ msgstr ""
 msgid "NAME"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:350 tools/oyranos_profile_graph.c:357
+#: tools/oyranos_profile_graph.c:369 tools/oyranos_profile_graph.c:376
 msgid "NCC"
 msgstr ""
 
 #: tools/oyranos-device.c:70 tools/oyranos-device.c:103
-#: tools/oyranos_convert.c:97 tools/oyranos_profile_graph.c:369
-#: tools/oyranos_profile_graph.c:374 tools/oyranos_profile_graph.c:376
-#: tools/oyranos_profile_graph.c:378 tools/oyranos_profile_graph.c:380
-#: tools/oyranos_profile_graph.c:386 tools/oyranos_profile_graph.c:401
-#: tools/oyranos_profile_graph.c:403 tools/oyranos_profile_tool.c:85
+#: tools/oyranos_convert.c:97 tools/oyranos_profile_graph.c:388
+#: tools/oyranos_profile_graph.c:393 tools/oyranos_profile_graph.c:395
+#: tools/oyranos_profile_graph.c:397 tools/oyranos_profile_graph.c:399
+#: tools/oyranos_profile_graph.c:405 tools/oyranos_profile_graph.c:420
+#: tools/oyranos_profile_graph.c:422 tools/oyranos_profile_tool.c:85
 #: tools/oyranos_profile_tool.c:89
 msgid "NUMBER"
 msgstr ""
@@ -3115,7 +3115,7 @@ msgstr ""
 msgid "Named Color Class"
 msgstr "ICC-профиль"
 
-#: tools/oyranos_profile_graph.c:350 tools/oyranos_profile_graph.c:357
+#: tools/oyranos_profile_graph.c:369 tools/oyranos_profile_graph.c:376
 #, fuzzy
 msgid "Named Color Collection"
 msgstr "ICC-профиль"
@@ -3188,7 +3188,7 @@ msgstr ""
 msgid "No Image profile"
 msgstr "ICC-профиль"
 
-#: tools/oyranos_profile_graph.c:399 tools/oyranos_profiles.c:129
+#: tools/oyranos_profile_graph.c:418 tools/oyranos_profiles.c:129
 #, fuzzy
 msgid "No Profile repair of ICC profile ID"
 msgstr "ICC-профиль"
@@ -3198,15 +3198,15 @@ msgstr "ICC-профиль"
 msgid "No White on White Fix"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:368
+#: tools/oyranos_profile_graph.c:387
 msgid "No black body"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:399 tools/oyranos_profiles.c:129
+#: tools/oyranos_profile_graph.c:418 tools/oyranos_profiles.c:129
 msgid "No repair"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:388
+#: tools/oyranos_profile_graph.c:407
 msgid "No spectral"
 msgstr ""
 
@@ -3218,7 +3218,7 @@ msgstr ""
 msgid "Node"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:430
+#: tools/oyranos_profile_graph.c:449
 msgid "Obs10°"
 msgstr ""
 
@@ -3227,19 +3227,19 @@ msgstr ""
 msgid "Offset Lithography"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:367
+#: tools/oyranos_profile_graph.c:386
 msgid "Omit border"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:367
+#: tools/oyranos_profile_graph.c:386
 msgid "Omit border in graph"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:388
+#: tools/oyranos_profile_graph.c:407
 msgid "Omit the spectral line"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:368
+#: tools/oyranos_profile_graph.c:387
 msgid "Omit white line of lambert light emitters"
 msgstr ""
 
@@ -3311,7 +3311,7 @@ msgid "Options"
 msgstr ""
 
 #. prtr
-#: liboyranos_config/oyranos_icc.c:620 tools/oyranos_profile_graph.c:389
+#: liboyranos_config/oyranos_icc.c:620 tools/oyranos_profile_graph.c:408
 msgid "Output"
 msgstr ""
 
@@ -3376,7 +3376,7 @@ msgstr ""
 msgid "Oyranos Night Manager handles the monitor white point"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:448
+#: tools/oyranos_profile_graph.c:467
 #, fuzzy
 msgid "Oyranos Profile Graph"
 msgstr "ICC-профили"
@@ -3510,7 +3510,7 @@ msgstr ""
 msgid "P22"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:383
+#: tools/oyranos_profile_graph.c:402
 msgid "PAGE"
 msgstr ""
 
@@ -3531,21 +3531,21 @@ msgstr ""
 msgid "PERCENT"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:344 tools/oyranos_profile_graph.c:347
-#: tools/oyranos_profile_graph.c:355
+#: tools/oyranos_profile_graph.c:363 tools/oyranos_profile_graph.c:366
+#: tools/oyranos_profile_graph.c:374
 msgid "PNG"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:344 tools/oyranos_profile_graph.c:347
-#: tools/oyranos_profile_graph.c:355
+#: tools/oyranos_profile_graph.c:363 tools/oyranos_profile_graph.c:366
+#: tools/oyranos_profile_graph.c:374
 msgid "PNG Raster"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:353
+#: tools/oyranos_profile_graph.c:372
 msgid "PPM"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:383
+#: tools/oyranos_profile_graph.c:402
 msgid "Page Selection"
 msgstr ""
 
@@ -3587,7 +3587,7 @@ msgstr ""
 msgid "Paths where ICC Profiles can be found"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:394
+#: tools/oyranos_profile_graph.c:413
 msgid "Pattern"
 msgstr ""
 
@@ -3838,7 +3838,7 @@ msgstr ""
 msgid "RGB primaries missed"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:400
+#: tools/oyranos_profile_graph.c:419
 msgid "Raster"
 msgstr ""
 
@@ -3865,7 +3865,7 @@ msgstr ""
 msgid "Read PPM"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:445
+#: tools/oyranos_profile_graph.c:464
 msgid ""
 "Read external storage for global data access, like downloads, music ...\n"
 "Write external storage to create and modify global data."
@@ -3925,7 +3925,7 @@ msgstr ""
 msgid "Remove naive and XCM aware CM apps profiles."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:434
+#: tools/oyranos_profile_graph.c:453
 msgid "Render Color Page"
 msgstr ""
 
@@ -3976,17 +3976,17 @@ msgstr ""
 msgid "SMPTE RP145-1994"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:384 tools/oyranos_profile_graph.c:394
+#: tools/oyranos_profile_graph.c:403 tools/oyranos_profile_graph.c:413
 msgid "STRING"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:345 tools/oyranos_profile_graph.c:348
-#: tools/oyranos_profile_graph.c:356
+#: tools/oyranos_profile_graph.c:364 tools/oyranos_profile_graph.c:367
+#: tools/oyranos_profile_graph.c:375
 msgid "SVG"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:345 tools/oyranos_profile_graph.c:348
-#: tools/oyranos_profile_graph.c:356
+#: tools/oyranos_profile_graph.c:364 tools/oyranos_profile_graph.c:367
+#: tools/oyranos_profile_graph.c:375
 msgid "SVG Vector"
 msgstr ""
 
@@ -3997,7 +3997,7 @@ msgstr ""
 
 #. type,   flags, name, description, help, mandatory, optional, detail
 #: liboyranos_config/oyranos_icc.c:296 liboyranos_config/oyranos_icc.c:302
-#: liboyranos_config/oyranos_texts.c:591 tools/oyranos_profile_graph.c:427
+#: liboyranos_config/oyranos_texts.c:591 tools/oyranos_profile_graph.c:446
 msgid "Saturation"
 msgstr ""
 
@@ -4009,7 +4009,7 @@ msgstr ""
 msgid "Save to a new policy:"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:406
+#: tools/oyranos_profile_graph.c:425
 msgid "Scale"
 msgstr ""
 
@@ -4017,7 +4017,7 @@ msgstr ""
 msgid "Scale Image Filter Object"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:406
+#: tools/oyranos_profile_graph.c:425
 msgid "Scale the height of the spectrum graph"
 msgstr ""
 
@@ -4061,13 +4061,13 @@ msgstr "ICC-профили"
 msgid "Select Device Link profiles"
 msgstr "ICC-профили"
 
-#: tools/oyranos-device.c:106 tools/oyranos_profile_graph.c:364
+#: tools/oyranos-device.c:106 tools/oyranos_profile_graph.c:383
 #: tools/oyranos_profiles.c:107
 #, fuzzy
 msgid "Select ICC v2 Profiles"
 msgstr "ICC-профили"
 
-#: tools/oyranos-device.c:107 tools/oyranos_profile_graph.c:365
+#: tools/oyranos-device.c:107 tools/oyranos_profile_graph.c:384
 #: tools/oyranos_profiles.c:108
 #, fuzzy
 msgid "Select ICC v4 Profiles"
@@ -4111,17 +4111,17 @@ msgstr ""
 msgid "Select a daemon or set manually."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:378
+#: tools/oyranos_profile_graph.c:397
 msgid "Select a page by chroma (saturation) in the HLC Color Atlas."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:374
+#: tools/oyranos_profile_graph.c:393
 msgid ""
 "Select a page by hue color angle in the HLC Color Atlas. -H=365 will output "
 "all hues."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:376
+#: tools/oyranos_profile_graph.c:395
 msgid "Select a page by lightness in the HLC Color Atlas."
 msgstr ""
 
@@ -4237,7 +4237,7 @@ msgstr ""
 msgid "Show DB File"
 msgstr "ICC-профиль"
 
-#: tools/oyranos_profile_graph.c:333
+#: tools/oyranos_profile_graph.c:352
 #, fuzzy
 msgid "Show HLC Color Atlas patches"
 msgstr "ICC-профиль"
@@ -4275,7 +4275,7 @@ msgstr ""
 msgid "Show file infos"
 msgstr "ICC-профиль"
 
-#: tools/oyranos_profile_graph.c:331
+#: tools/oyranos_profile_graph.c:350
 #, fuzzy
 msgid "Show graph of a ICC profile"
 msgstr "ICC-профиль"
@@ -4316,13 +4316,13 @@ msgstr ""
 msgid "Show profiles containing a string as part of their full name"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:332
+#: tools/oyranos_profile_graph.c:351
 msgid ""
 "Show the saturation lines of two profiles in CIE*ab 256 pixel width, without "
 "spectral line and with thicker lines:"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:334
+#: tools/oyranos_profile_graph.c:353
 msgid "Show the standard observer spectral function as curves:"
 msgstr ""
 
@@ -4402,59 +4402,59 @@ msgstr ""
 msgid "Sources"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:383
+#: tools/oyranos_profile_graph.c:402
 msgid ""
 "Specify a page name as string or page index as number. -1 will list all page "
 "names of the imported file."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:369
+#: tools/oyranos_profile_graph.c:388
 msgid "Specify increase of the thickness of the graph lines"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:392
+#: tools/oyranos_profile_graph.c:411
 #, fuzzy
 msgid "Specify output file format"
 msgstr "ICC-профиль"
 
-#: tools/oyranos_profile_graph.c:371
+#: tools/oyranos_profile_graph.c:390
 msgid "Specify output file format png or svg, default is png"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:389
+#: tools/oyranos_profile_graph.c:408
 msgid "Specify output file name, default is stdout"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:403
+#: tools/oyranos_profile_graph.c:422
 msgid "Specify output image width in pixel"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:390
+#: tools/oyranos_profile_graph.c:409
 #, fuzzy
 msgid "Specify spectral output file format"
 msgstr "ICC-профиль"
 
-#: tools/oyranos_profile_graph.c:401
+#: tools/oyranos_profile_graph.c:420
 msgid "Specify the thickness of the graph lines"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:395
+#: tools/oyranos_profile_graph.c:414
 msgid "Spectral"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:395 tools/oyranos_profile_graph.c:433
+#: tools/oyranos_profile_graph.c:414 tools/oyranos_profile_graph.c:452
 msgid "Spectral Input"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:433
+#: tools/oyranos_profile_graph.c:452
 msgid "Spectral Input Graph"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:390
+#: tools/oyranos_profile_graph.c:409
 msgid "Spectral Output"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:353
+#: tools/oyranos_profile_graph.c:372
 msgid "Spectral PAM Image"
 msgstr ""
 
@@ -4463,11 +4463,11 @@ msgstr ""
 msgid "Spectral viewing conditions"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:396
+#: tools/oyranos_profile_graph.c:415
 msgid "Standard Observer"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:429
+#: tools/oyranos_profile_graph.c:448
 msgid "Standard Observer 1931 2° Graph"
 msgstr ""
 
@@ -4475,7 +4475,7 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:429
+#: tools/oyranos_profile_graph.c:448
 msgid "StdObs2°"
 msgstr ""
 
@@ -4508,7 +4508,7 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:382
+#: tools/oyranos_profile_graph.c:401
 msgid ""
 "Supported is a color page in NCC format, which contains pages layout with "
 "referenced rgb values. Those are placed on a sheed. Such pages are created "
@@ -4578,7 +4578,7 @@ msgstr ""
 msgid "The "
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:440
+#: tools/oyranos_profile_graph.c:459
 msgid ""
 "The  oyranos-profile-graph programm converts ICC profiles or embedded ICC "
 "profiles from images to a graph image. By default the program shows the "
@@ -5197,7 +5197,7 @@ msgid ""
 "time. A additional effect profile can be selected."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:448
+#: tools/oyranos_profile_graph.c:467
 #, fuzzy
 msgid "The tool is a ICC color profile grapher."
 msgstr "ICC-профиль"
@@ -5211,11 +5211,11 @@ msgstr ""
 msgid "Thermal wax printer"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:401
+#: tools/oyranos_profile_graph.c:420
 msgid "Thickness"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:369
+#: tools/oyranos_profile_graph.c:388
 msgid "Thickness increase"
 msgstr ""
 
@@ -5291,7 +5291,7 @@ msgstr "по́льзование"
 msgid "Use Black Point Compensation"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:405
+#: tools/oyranos_profile_graph.c:424
 msgid "Use CIE*xyY *x*y plane for saturation line projection"
 msgstr ""
 
@@ -5323,7 +5323,7 @@ msgstr ""
 msgid "V4toV2"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:332 tools/oyranos_profile_graph.c:328
+#: tools/oyranos-monitor-white-point.c:332 tools/oyranos_profile_graph.c:347
 #: tools/oyranos_profiles.c:90
 msgid "Valid integer range is from 1-20."
 msgstr ""
@@ -5333,7 +5333,7 @@ msgid "Value"
 msgstr "значе́ние"
 
 #: API_generated/oyranos_profile.c:38 tools/oyranos-monitor-white-point.c:373
-#: tools/oyranos_profile_graph.c:412 tools/oyranos_profiles.c:137
+#: tools/oyranos_profile_graph.c:431 tools/oyranos_profiles.c:137
 msgid "Version"
 msgstr ""
 
@@ -5389,7 +5389,7 @@ msgstr ""
 msgid "Well behaving Color Space for Editing"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:403
+#: tools/oyranos_profile_graph.c:422
 msgid "Width"
 msgstr ""
 
@@ -5697,7 +5697,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:535
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:726
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:994
-#: tools/oyranos-monitor-white-point.c:370 tools/oyranos_profile_graph.c:409
+#: tools/oyranos-monitor-white-point.c:370 tools/oyranos_profile_graph.c:428
 #: tools/oyranos_profiles.c:134
 msgid "help"
 msgstr ""
@@ -5987,7 +5987,7 @@ msgstr ""
 msgid "route Oyranos to additional directories containing modules."
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:329 tools/oyranos_profiles.c:91
+#: tools/oyranos_profile_graph.c:348 tools/oyranos_profiles.c:91
 #, c-format
 msgid ""
 "route Oyranos to top directories containing resources. The derived paths for "
@@ -6042,7 +6042,7 @@ msgid "select unsigned integer 8-bit precision data format"
 msgstr ""
 
 #. nick, name, description, help
-#: tools/oyranos-monitor-white-point.c:332 tools/oyranos_profile_graph.c:328
+#: tools/oyranos-monitor-white-point.c:332 tools/oyranos_profile_graph.c:347
 #: tools/oyranos_profiles.c:90
 msgid "set the Oyranos debug level."
 msgstr ""
@@ -6116,12 +6116,12 @@ msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:69 tools/oyranos-config.c:84
 #: tools/oyranos-device.c:101 tools/oyranos-monitor-white-point.c:372
-#: tools/oyranos_convert.c:103 tools/oyranos_profile_graph.c:411
+#: tools/oyranos_convert.c:103 tools/oyranos_profile_graph.c:430
 #: tools/oyranos_profile_tool.c:116 tools/oyranos_profiles.c:136
 msgid "verbose"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:373 tools/oyranos_profile_graph.c:412
+#: tools/oyranos-monitor-white-point.c:373 tools/oyranos_profile_graph.c:431
 #: tools/oyranos_profiles.c:137
 msgid "version"
 msgstr ""
@@ -6175,7 +6175,7 @@ msgstr ""
 msgid "wrong profile for static web color space selected, need sRGB"
 msgstr ""
 
-#: tools/oyranos_profile_graph.c:405
+#: tools/oyranos_profile_graph.c:424
 msgid "xyY"
 msgstr ""
 
