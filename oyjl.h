@@ -328,6 +328,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
                                        oyjlMessage_f       msg );
 char *         oyjlLanguage          ( const char        * loc );
 char *         oyjlCountry           ( const char        * loc );
+const char *   oyjlLang              ( const char        * loc );
 const char *   oyjlTranslate         ( const char        * loc,
                                        oyjl_val            catalog,
                                        const char        * string );

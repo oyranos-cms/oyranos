@@ -373,7 +373,7 @@ int        oyjlStringAdd             ( char             ** string,
   {
     int l = strlen(*string),
         l2 = strlen(text);
-    text_copy = allocate( l2 + l + 1 );
+    text_copy = (char*)allocate( l2 + l + 1 );
     strcpy( text_copy, *string );
     strcpy( &text_copy[l], text );
 
@@ -1841,6 +1841,7 @@ int oyjlArgsRender                   ( int                 argc,
  *  @{ *//* oyjl */
 
 static char * oyjl_nls_path_ = NULL;
+static char * oyjl_lang_ = NULL;
 void oyjlLibRelease() {
   if(oyjl_nls_path_)
   {
@@ -1852,6 +1853,11 @@ void oyjlLibRelease() {
     dlclose(oyjl_args_render_lib); oyjl_args_render_lib = NULL; oyjl_args_render_init = 0;
   }
 #endif
+  if(oyjl_lang_)
+  {
+    free(oyjl_lang_);
+    oyjl_lang_ = NULL;
+  }
 }
 /* --- Render_Section --- */
 
@@ -2023,6 +2029,37 @@ char *         oyjlCountry           ( const char        * loc )
   }
   else
     return NULL;
+}
+
+/** @brief   set explicitely language
+ *
+ *  @param         loc                 locale name as from setlocale("")
+ *                                     - NULL: reset
+ *                                     - "": get existing without change
+ *                                     - "something": set lang to "something"
+ *  @return                            current locale
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/07/28
+ *  @since   2020/07/28 (Oyjl: 1.0.0)
+ */
+const char *   oyjlLang              ( const char        * loc )
+{
+  if(!loc && oyjl_lang_)
+  {
+    free(oyjl_lang_);
+    oyjl_lang_ = NULL;
+  }
+  if(loc && strlen(loc))
+  {
+    if(oyjl_lang_)
+    {
+      free(oyjl_lang_);
+      oyjl_lang_ = NULL;
+    }
+    oyjl_lang_ = strdup(loc);
+  }
+  return oyjl_lang_;
 }
 /* --- I18n_Section --- */
 
