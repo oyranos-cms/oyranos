@@ -33,6 +33,7 @@
 #endif
 
 #include <stdlib.h> // free()
+#include <oyjl.h>
 
 #if defined(Q_OS_ANDROID)
 #include <android/log.h>
@@ -56,6 +57,7 @@ void printObjectClassNames( QObject * o )
   }
 }
 
+oyjlUi_s          * qml_lib_ui = NULL;
 int oyjlArgsQmlStart__               ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
@@ -65,6 +67,12 @@ int oyjlArgsQmlStart__               ( int                 argc,
                                        oyjlUi_s          * ui,
                                        int               (*callback)(int argc, const char ** argv))
 {
+    if(app_init)
+    {
+      qml_lib_ui = ui;
+      return 0;
+    }
+
     setenv("FORCE_COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
 
     Q_INIT_RESOURCE(app);
@@ -80,6 +88,13 @@ int oyjlArgsQmlStart__               ( int                 argc,
         LOG( QString("failed loading locale: ") + lname );
     else
         app.installTranslator(&translator);
+
+#ifdef __ANDROID__
+    QLocale loc;
+    QString lang = loc.name();
+    lang = QLocale::system().name();
+    oyjlLang( lang.toLocal8Bit().data() );
+#endif
 
     foreach (QScreen * screen, QGuiApplication::screens())
         screen->setOrientationUpdateMask(Qt::LandscapeOrientation | Qt::PortraitOrientation |
@@ -142,6 +157,13 @@ int oyjlArgsQmlStart__               ( int                 argc,
     processCallback_p = callback;
     app_init = 1;
 
+#ifdef __ANDROID__
+    if(oyjlLang("") != NULL && strlen(oyjlLang("")) > 0)
+      callback(argc, argv);
+#endif
+
+    if(qml_lib_ui)
+      ui = qml_lib_ui;
 
     oyjl_val root = NULL;
     char error_buffer[256] = {0};
@@ -332,6 +354,7 @@ int oyjlArgsRender                   ( int                 argc,
   fflush(stderr);
   return result;
 }
+
 #endif /* COMPILE_STATIC */
 } /* extern "C" */
 
