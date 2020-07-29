@@ -77,7 +77,7 @@
 extern oyjlMessage_f oyjlMessage_p;
 /** convert ( const char * format, ... ) function args into a string */
 #define OYJL_CREATE_VA_STRING(format_, text_, alloc_, error_action) \
-{ \
+if(format_ && strchr(format_,'%') != NULL) { \
   va_list list; \
   size_t sz = 0; \
   int len = 0; \
@@ -101,6 +101,9 @@ extern oyjlMessage_f oyjlMessage_p;
     len = vsnprintf( text, len+1, format_, list); \
     va_end  ( list ); \
   } \
+} else if(format_) \
+{ \
+  text_ = oyjlStringCopy( format_, alloc_ );\
 }
 
 #define oyjlAllocHelper_m(ptr_, type, size_, alloc_func, action) { \
