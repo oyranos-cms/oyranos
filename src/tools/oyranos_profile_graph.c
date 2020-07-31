@@ -57,10 +57,11 @@
 
 #ifdef __ANDROID__
 # include "oyranos-profile-graph.i18n.c"
+int i18n_init = 0;
 oyjl_val i18n_catalog = NULL;
 const char * lang = NULL;
 #undef _
-#define _(x) (char*)oyjlTranslate( lang, i18n_catalog, x )
+#define _(x) (char*)oyjlTranslate( oyjlLang(""), oyjlCatalog(&i18n_catalog), x )
 #endif
 
 
@@ -296,8 +297,11 @@ int myMain( int argc, const char ** argv )
   double xs_xyz = 1.2,                           /* scaling of CIE*xy graph */
          ys_xyz = 1.2;
 #ifdef __ANDROID__
-  if(!i18n_catalog)
+  if(!i18n_init)
+  {
     i18n_catalog = oyjlTreeParse(oyranos_json,0,0);
+    ++i18n_init;
+  }
   if(!lang || (lang && strcmp(lang,"C") == 0))
     lang =
 #ifdef OYJL_HAVE_LOCALE_H
