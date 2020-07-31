@@ -53,7 +53,7 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
       ENDFOREACH( _lang ${_langs} )
 
       ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c
-          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG="C" DISPLAY="man_page" ${_tool} -X json | oyjl-translate -a -i - -o ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c -k name,description,help,label -d "oyjl,oyranos" -p "${CMAKE_BINARY_DIR}/locale/" -l ${_langs} -t -w=C
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG="C" DISPLAY="man_page" ${_tool} -X json | oyjl-translate -a -i - -o ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c -k name,description,help,label,value_name -d "oyjl,oyranos" -p "${CMAKE_BINARY_DIR}/locale/" -l ${_langs} -t -w=C
           DEPENDS ${_tool} ${_tool_src}
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
