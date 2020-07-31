@@ -141,7 +141,7 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
 
 /* --- String_Section --- */
 /* return the beginning of the next word */
-const char *   oyjlStringGetNext     ( const char        * text )
+static const char * oyjlStringGetNext_( const char        * text )
 {
   /* remove leading white space */
   if(text && text[0] && isspace(text[0]))
@@ -158,19 +158,19 @@ const char *   oyjlStringGetNext     ( const char        * text )
 
   return text && text[0] ? text : NULL;
 }
-int            oyjlStringNextSpace   ( const char        * text )
+static int     oyjlStringNextSpace_  ( const char        * text )
 {
   int len = 0;
   while( text && text[len] && !isspace(text[len]) ) len++;
   return len;
 }
 
-/**
+/**  @internal
  *   Assume some text and extract the found words.
  *   The words can be separated by white space as 
  *   seen by isspace().
  */
-char **        oyjlStringSplitSpace  ( const char        * text,
+static char ** oyjlStringSplitSpace_ ( const char        * text,
                                        int               * count,
                                        void*            (* alloc)(size_t))
 {
@@ -185,7 +185,7 @@ char **        oyjlStringSplitSpace  ( const char        * text,
     if(!alloc) alloc = malloc;
 
     if(tmp && tmp[0] && !isspace(tmp[0])) ++n;
-    while( tmp && tmp[0] && (tmp = oyjlStringGetNext( tmp )) != NULL ) ++n;
+    while( tmp && tmp[0] && (tmp = oyjlStringGetNext_( tmp )) != NULL ) ++n;
 
     if((list = alloc( (n+1) * sizeof(char*) )) == 0) return NULL;
     memset( list, 0, (n+1) * sizeof(char*) );
@@ -193,17 +193,17 @@ char **        oyjlStringSplitSpace  ( const char        * text,
     {
       const char * start = text;
       if(start && isspace(start[0]))
-        start = oyjlStringGetNext( start );
+        start = oyjlStringGetNext_( start );
 
       for(i = 0; i < n; ++i)
       {
-        int len = oyjlStringNextSpace( start );
+        int len = oyjlStringNextSpace_( start );
 
         if((list[i] = alloc( len+1 )) == 0) return NULL;
 
         memcpy( list[i], start, len );
         list[i][len] = 0;
-        start = oyjlStringGetNext( start );
+        start = oyjlStringGetNext_( start );
       }
     }
   }
@@ -275,7 +275,7 @@ char **        oyjlStringSplit2      ( const char        * text,
     if(!alloc) alloc = malloc;
 
     if(!delimiter || !delimiter[0])
-      return oyjlStringSplitSpace( text, count, alloc );
+      return oyjlStringSplitSpace_( text, count, alloc );
 
     tmp = oyjlStringDelimiter(tmp, delimiter, NULL);
     if(tmp == text) ++n;
@@ -1594,7 +1594,7 @@ int  oyjlWriteFile                   ( const char        * filename,
 
 #ifdef HAVE_DL
 #include <dlfcn.h>
-static void *  oyjl_args_render_lib = NULL;
+static void *  oyjl_args_render_lib_ = NULL;
 static char *  oyjlLibNameCreate_    ( const char        * lib_base_name,
                                        int                 version )
 {
@@ -1645,19 +1645,19 @@ static int (*oyjlArgsRender_p)       ( int                 argc,
                                        oyjlUi_s          * ui,
                                        int               (*callback)(int argc, const char ** argv)) = NULL;
 static int oyjl_args_render_init = 0;
-int oyjlArgsRendererLoad( const char * render_lib )
+static int oyjlArgsRendererLoad_( const char * render_lib )
 {
   const char * name = render_lib;
   char * fn = oyjlLibNameCreate_(name, 1), * func = NULL;
   int error = -1;
 
 #ifdef HAVE_DL
-  if(oyjl_args_render_lib)
-    dlclose( oyjl_args_render_lib );
-  oyjl_args_render_lib = NULL;
+  if(oyjl_args_render_lib_)
+    dlclose( oyjl_args_render_lib_ );
+  oyjl_args_render_lib_ = NULL;
   oyjlArgsRender_p = NULL;
-  oyjl_args_render_lib = dlopen(fn, RTLD_LAZY);
-  if(!oyjl_args_render_lib)
+  oyjl_args_render_lib_ = dlopen(fn, RTLD_LAZY);
+  if(!oyjl_args_render_lib_)
   {
     oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "not existent: %s", OYJL_DBG_ARGS, fn );
     error = 1;
@@ -1665,7 +1665,7 @@ int oyjlArgsRendererLoad( const char * render_lib )
   else
   {
     func = oyjlFuncNameCreate_(name);
-    oyjlArgsRender_p = (oyjlArgsRender_f)dlsym( oyjl_args_render_lib, func );
+    oyjlArgsRender_p = (oyjlArgsRender_f)dlsym( oyjl_args_render_lib_, func );
     if(oyjlArgsRender_p)
       error = 0; /* found */
     else
@@ -1680,7 +1680,7 @@ int oyjlArgsRendererLoad( const char * render_lib )
   return error;
 }
 
-static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
+static int oyjlArgsRendererSelect_  (  oyjlUi_s          * ui )
 {
   const char * arg = NULL, * name = NULL;
   oyjlOption_s * R;
@@ -1733,14 +1733,14 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
           return 1;
         }
         free(low);
-        error = oyjlArgsRendererLoad( name );
+        error = oyjlArgsRendererLoad_( name );
       }
     }
     else /* report all available renderers */
     {
-      if(oyjlArgsRendererLoad( "OyjlArgsQml" ) == 0)
+      if(oyjlArgsRendererLoad_( "OyjlArgsQml" ) == 0)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsQml found - option -R=\"gui\"", OYJL_DBG_ARGS );
-      if(oyjlArgsRendererLoad( "OyjlArgsWeb" ) == 0)
+      if(oyjlArgsRendererLoad_( "OyjlArgsWeb" ) == 0)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsWeb found - option -R=\"web\"", OYJL_DBG_ARGS );
     }
   }
@@ -1803,7 +1803,7 @@ int oyjlArgsRender                   ( int                 argc,
                                        int               (*callback)(int argc, const char ** argv))
 {
   int result = -1;
-  oyjlArgsRendererSelect(ui);
+  oyjlArgsRendererSelect_(ui);
   if(oyjlArgsRender_p)
     result = oyjlArgsRender_p(argc, argv, json, commands, output, debug, ui, callback );
   fflush(stdout);
@@ -1841,22 +1841,26 @@ int oyjlArgsRender                   ( int                 argc,
  *  @{ *//* oyjl */
 
 static char * oyjl_nls_path_ = NULL;
-static char * oyjl_lang_ = NULL;
 void oyjlLibRelease() {
   if(oyjl_nls_path_)
   {
     putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL;
   }
 #if defined(HAVE_DL) && (!defined(COMPILE_STATIC) || !defined(HAVE_QT))
-  if(oyjl_args_render_lib)
+  if(oyjl_args_render_lib_)
   {
-    dlclose(oyjl_args_render_lib); oyjl_args_render_lib = NULL; oyjl_args_render_init = 0;
+    dlclose(oyjl_args_render_lib_); oyjl_args_render_lib_ = NULL; oyjl_args_render_init = 0;
   }
 #endif
   if(oyjl_lang_)
   {
     free(oyjl_lang_);
     oyjl_lang_ = NULL;
+  }
+  if(oyjl_catalog_)
+  {
+    oyjlTreeFree(oyjl_catalog_);
+    oyjl_catalog_ = NULL;
   }
 }
 /* --- Render_Section --- */
@@ -2031,6 +2035,7 @@ char *         oyjlCountry           ( const char        * loc )
     return NULL;
 }
 
+char * oyjl_lang_ = NULL;
 /** @brief   set explicitely language
  *
  *  @param         loc                 locale name as from setlocale("")

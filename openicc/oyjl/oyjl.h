@@ -329,7 +329,11 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 char *         oyjlLanguage          ( const char        * loc );
 char *         oyjlCountry           ( const char        * loc );
 const char *   oyjlLang              ( const char        * loc );
-const char *   oyjlTranslate         ( const char        * loc,
+oyjl_val       oyjlCatalog           ( oyjl_val          * catalog );
+char *         oyjlTranslate         ( const char        * loc,
+                                       oyjl_val            catalog,
+                                       const char        * string );
+typedef char(* oyjlTranslate_f)      ( const char        * loc,
                                        oyjl_val            catalog,
                                        const char        * string );
 

@@ -38,7 +38,7 @@ int myMain( int argc, const char ** argv )
   int state = 0;
 
   /* handle options */
-  oyjlUiHeaderSection_s * sections = oyjlUiInfo( _("Tool to convert UI JSON description from *-X export* into source code."),
+  oyjlUiHeaderSection_s * sections = oyjlUiInfo_( _("Tool to convert UI JSON description from *-X export* into source code."),
                                                  "2019-6-26T12:00:00", _("June 26, 2019") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */

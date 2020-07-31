@@ -552,13 +552,13 @@ const char *   oyjlStringGetNext     ( const char        * text )
 
   return text && text[0] ? text : NULL;
 }
-int            oyjlStringNextSpace   ( const char        * text )
+static int     oyjlStringNextSpace_  ( const char        * text )
 {
   int len = 0;
   while( text && text[len] && !isspace(text[len]) ) len++;
   return len;
 }
-char **        oyjlStringSplitSpace  ( const char        * text,
+static char ** oyjlStringSplitSpace_ ( const char        * text,
                                        int               * count,
                                        void*            (* alloc)(size_t))
 {
@@ -585,7 +585,7 @@ char **        oyjlStringSplitSpace  ( const char        * text,
 
       for(i = 0; i < n; ++i)
       {
-        int len = oyjlStringNextSpace( start );
+        int len = oyjlStringNextSpace_( start );
 
         if((list[i] = alloc( len+1 )) == 0) return NULL;
 
@@ -632,7 +632,7 @@ char **        oyjlStringSplit2      ( const char        * text,
     if(!alloc) alloc = malloc;
 
     if(!delimiter)
-      return oyjlStringSplitSpace( text, count, alloc );
+      return oyjlStringSplitSpace_( text, count, alloc );
 
     tmp = oyjlStringDelimiter(tmp, delimiter, NULL);
     if(tmp == text) ++n;
@@ -1173,14 +1173,13 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
 }
 #define oyjlHELP 0x01
 #define oyjlDESCRIPTION 0x02
-/**
+/** @internal
  * 
  * @param[in]      flags               modifier
  *                                     - oyjlDESCRIPTION
  *                                     - oyjlHELP
  */
-static
-char * oyjlOption_PrintArgDouble     ( oyjlOption_s      * o,
+static char* oyjlOption_PrintArgDouble_( oyjlOption_s    * o,
                                        int                 flags )
 {
   char * text = NULL;
@@ -1191,36 +1190,36 @@ char * oyjlOption_PrintArgDouble     ( oyjlOption_s      * o,
   return text;
 }
 
-oyjlOptionChoice_s oyjl_h_choices[] = {
+oyjlOptionChoice_s oyjl_h_choices_[] = {
                                     {"-", "", "", ""},
                                     {"synopsis", "", "", ""},
                                     {"","","",""}};
-oyjlOptionChoice_s oyjl_X_choices[] = {
+oyjlOptionChoice_s oyjl_X_choices_[] = {
                                     {"man", "", "", ""},
                                     {"markdown", "", "", ""},
                                     {"json", "", "", ""},
                                     {"json+command", "", "", ""},
                                     {"export", "", "", ""},
                                     {"","","",""}};
-oyjlOptionChoice_s oyjl_R_choices[] = {
+oyjlOptionChoice_s oyjl_R_choices_[] = {
                                     {"gui", "", "", ""},
                                     {"web", "", "", ""},
                                     {"-","","",""},
                                     {"","","",""}};
-void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
+static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
 {
   /* enrich inbuild variables */
   if(strcmp(o->o, "h") == 0)
   {
     if(o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
     {
-      oyjl_h_choices[0].name = _("Full Help");
-      oyjl_h_choices[0].description = _("Print help for all groups");
-      oyjl_h_choices[0].help = "";
-      oyjl_h_choices[1].name = _("Synopsis");
-      oyjl_h_choices[1].description = _("List groups");
-      oyjl_h_choices[1].help = _("Show all groups including syntax");
-      o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_h_choices, sizeof(oyjl_h_choices), malloc );
+      oyjl_h_choices_[0].name = _("Full Help");
+      oyjl_h_choices_[0].description = _("Print help for all groups");
+      oyjl_h_choices_[0].help = "";
+      oyjl_h_choices_[1].name = _("Synopsis");
+      oyjl_h_choices_[1].description = _("List groups");
+      oyjl_h_choices_[1].help = _("Show all groups including syntax");
+      o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_h_choices_, sizeof(oyjl_h_choices_), malloc );
       if(o->value_name == NULL)
       {
         o->value_name = "synopsis|...";
@@ -1241,28 +1240,28 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
   {
     if(o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
     {
-      oyjl_X_choices[0].name = _("Man");
-      oyjl_X_choices[0].description = _("Unix Man page");
-      oyjl_X_choices[0].help = _("Get a unix man page");
-      oyjl_X_choices[1].name = _("Markdown");
-      oyjl_X_choices[1].description = _("Formated text");
-      oyjl_X_choices[1].help = _("Get formated text");
+      oyjl_X_choices_[0].name = _("Man");
+      oyjl_X_choices_[0].description = _("Unix Man page");
+      oyjl_X_choices_[0].help = _("Get a unix man page");
+      oyjl_X_choices_[1].name = _("Markdown");
+      oyjl_X_choices_[1].description = _("Formated text");
+      oyjl_X_choices_[1].help = _("Get formated text");
 #if defined(OYJL_INTERNAL)
-      oyjl_X_choices[2].name = _("Json");
-      oyjl_X_choices[2].description = _("GUI");
-      oyjl_X_choices[2].help = _("Get a Oyjl Json UI declaration");
-      oyjl_X_choices[3].name = _("Json + Command");
-      oyjl_X_choices[3].description = _("GUI + Command");
-      oyjl_X_choices[3].help = _("Get Oyjl Json UI declaration incuding command");
-      oyjl_X_choices[4].name = _("Export");
-      oyjl_X_choices[4].description = _("All available data");
-      oyjl_X_choices[4].help = _("Get UI data for developers");
+      oyjl_X_choices_[2].name = _("Json");
+      oyjl_X_choices_[2].description = _("GUI");
+      oyjl_X_choices_[2].help = _("Get a Oyjl Json UI declaration");
+      oyjl_X_choices_[3].name = _("Json + Command");
+      oyjl_X_choices_[3].description = _("GUI + Command");
+      oyjl_X_choices_[3].help = _("Get Oyjl Json UI declaration incuding command");
+      oyjl_X_choices_[4].name = _("Export");
+      oyjl_X_choices_[4].description = _("All available data");
+      oyjl_X_choices_[4].help = _("Get UI data for developers");
 #else
-      oyjl_X_choices[2].nick = "";
-      oyjl_X_choices[3].nick = "";
-      oyjl_X_choices[4].nick = "";
+      oyjl_X_choices_[2].nick = "";
+      oyjl_X_choices_[3].nick = "";
+      oyjl_X_choices_[4].nick = "";
 #endif
-      o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_X_choices, sizeof(oyjl_X_choices), malloc );
+      o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_X_choices_, sizeof(oyjl_X_choices_), malloc );
       if(o->value_name == NULL)
       {
 #if defined(OYJL_INTERNAL)
@@ -1288,14 +1287,14 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
     if(o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
     {
 #if defined(OYJL_INTERNAL)
-      oyjl_R_choices[0].name = _("Gui");
-      oyjl_R_choices[0].description = _("Show UI");
-      oyjl_R_choices[0].help = _("Display a interactive graphical User Interface.");
-      oyjl_R_choices[1].name = _("Web");
-      oyjl_R_choices[1].description = _("Start Web Server");
-      oyjl_R_choices[1].help = _("Start a local Web Service to connect a Webbrowser with.");
+      oyjl_R_choices_[0].name = _("Gui");
+      oyjl_R_choices_[0].description = _("Show UI");
+      oyjl_R_choices_[0].help = _("Display a interactive graphical User Interface.");
+      oyjl_R_choices_[1].name = _("Web");
+      oyjl_R_choices_[1].description = _("Start Web Server");
+      oyjl_R_choices_[1].help = _("Start a local Web Service to connect a Webbrowser with.");
 #endif
-      o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_R_choices, sizeof(oyjl_R_choices), malloc );
+      o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_R_choices_, sizeof(oyjl_R_choices_), malloc );
       if(o->value_name == NULL)
       {
 #if defined(OYJL_INTERNAL)
@@ -1316,7 +1315,7 @@ void oyjlOptions_EnrichInbuild( oyjlOption_s * o )
   }
 }
 
-static int oyjlStringDelimiterCount ( const char * text, const char * delimiter )
+static int oyjlStringDelimiterCount_( const char * text, const char * delimiter )
 {
   int i,j, dn = delimiter ? strlen(delimiter) : 0, len = text?strlen(text):0, n = 0;
   if(len) ++n;
@@ -1349,11 +1348,11 @@ oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
     if(o->o && strcmp(o->o, ol) == 0)
     {
       if(strcmp(ol, "h") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
-        oyjlOptions_EnrichInbuild(o);
+        oyjlOptions_EnrichInbuild_(o);
       if(strcmp(ol, "X") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
-        oyjlOptions_EnrichInbuild(o);
+        oyjlOptions_EnrichInbuild_(o);
       if(strcmp(ol, "R") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
-        oyjlOptions_EnrichInbuild(o);
+        oyjlOptions_EnrichInbuild_(o);
 
       return o;
     }
@@ -1412,11 +1411,11 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
       )
     {
       if(strcmp(str, "help") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
-        oyjlOptions_EnrichInbuild(o);
+        oyjlOptions_EnrichInbuild_(o);
       if(strcmp(str, "export") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
-        oyjlOptions_EnrichInbuild(o);
+        oyjlOptions_EnrichInbuild_(o);
       if(strcmp(str, "render") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
-        oyjlOptions_EnrichInbuild(o);
+        oyjlOptions_EnrichInbuild_(o);
       free(str);
 
       return o;
@@ -1429,8 +1428,7 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
 
   return o;
 }
-static
-oyjlOPTIONSTATE_e oyjlOptions_Check (
+static oyjlOPTIONSTATE_e oyjlOptions_Check_(
                                        oyjlOptions_s  * opts )
 {
   int i,j;
@@ -1479,7 +1477,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Check (
   }
   return oyjlOPTION_NONE;
 }
-
+#if 0
 /* list of static strings */
 void       oyjlStringListStaticAdd   ( const char      *** list,
                                        int               * n,
@@ -1508,8 +1506,9 @@ void       oyjlStringListStaticAdd   ( const char      *** list,
 
   *list = nlist;
 }
+#endif
 
-void oyjlOptions_Print               ( oyjlOptions_s     * opts,
+void oyjlOptions_Print_              ( oyjlOptions_s     * opts,
                                        int                 pos )
 {
   int i;
@@ -1548,7 +1547,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
     result->options = (char**) calloc( len + 1, sizeof(char*) );
     result->values = (const char**) calloc( len + 1, sizeof(char*) );
     result->group = -1;
-    if((state = oyjlOptions_Check(opts)) != oyjlOPTION_NONE)
+    if((state = oyjlOptions_Check_(opts)) != oyjlOPTION_NONE)
       goto clean_parse;
     for(i = 1; i < opts->argc; ++i)
     {
@@ -1578,7 +1577,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           o = oyjlOptions_GetOption( opts, arg );
           if( !o )
           {
-            oyjlOptions_Print( opts, i );
+            oyjlOptions_Print_( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
             fprintf( stderr, "%s \'%s\'\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,arg) );
             state = oyjlOPTION_NOT_SUPPORTED;
@@ -1608,7 +1607,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             if(!value && !might_have_value)
             {
                 char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-                oyjlOptions_Print( opts, i );
+                oyjlOptions_Print_( opts, i );
                 fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
                 fprintf( stderr, "%s \'%s\' (%s)\n", _("Option needs a argument"), oyjlTermColor(oyjlBOLD,arg), t );
                 free(t);
@@ -1634,7 +1633,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           else
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-            oyjlOptions_Print( opts, i );
+            oyjlOptions_Print_( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
             fprintf( stderr, "%s \'%s\' (%s)\n", _("Option has a unexpected argument"), arg, t );
             free(t);
@@ -1652,7 +1651,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
         if( !o ||
             (o && o->flags & OYJL_OPTION_FLAG_NO_DASH) )
         {
-          oyjlOptions_Print( opts, i );
+          oyjlOptions_Print_( opts, i );
           fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
           fprintf( stderr, "%s \'%s\'\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,long_arg) );
           state = oyjlOPTION_NOT_SUPPORTED;
@@ -1678,7 +1677,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           if( !value && !might_have_value )
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-            oyjlOptions_Print( opts, i );
+            oyjlOptions_Print_( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
             fprintf( stderr, "%s \'%s\' (%s)\n", _("Option needs a argument"), oyjlTermColor(oyjlBOLD,long_arg), t );
             free(t);
@@ -1705,7 +1704,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           else
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-            oyjlOptions_Print( opts, i );
+            oyjlOptions_Print_( opts, i );
             fprintf( stderr, "%s %s \'%s\' (%s)\n", oyjlTermColor(oyjlRED,_("Usage Error:")), _("Option has a unexpected argument"), opts->argv[i+1], t );
             free(t);
             state = oyjlOPTION_UNEXPECTED_VALUE;
@@ -1751,7 +1750,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           else if( o && !might_have_value && value )
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-            oyjlOptions_Print( opts, i );
+            oyjlOptions_Print_( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
             fprintf( stderr, "%s (%s)\n", _("This option expects arguments"), t );
             fprintf( stderr, "%s\n", _("Options with arguments are not allowed in sub command style. A sub command has no leading '--'. It is a mandatory option of a option group.") );
@@ -1780,7 +1779,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           }
           else
           {
-            oyjlOptions_Print( opts, i );
+            oyjlOptions_Print_( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
             fprintf( stderr, "%s: \"%s\"\n", _("Unbound options are not supported"), oyjlTermColor(oyjlBOLD,opts->argv[i]) );
             state = oyjlOPTION_NOT_SUPPORTED;
@@ -1810,7 +1809,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
     o = oyjlOptions_GetOption( opts, "#" );
     if(opts->argc == 1 && !o)
     {
-      oyjlOptions_Print( opts, 0 );
+      oyjlOptions_Print_( opts, 0 );
       fprintf( stderr, "%s %s\n", oyjlTermColor(oyjlRED,_("Usage Error:")), _("Optionless mode not supported. (That would need '#' option declaration.)") );
       state = oyjlOPTIONS_MISSING;
       return state;
@@ -1922,9 +1921,9 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
           o->values.dbl.end < *result_dbl) )
     {
       char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-      char * desc = oyjlOption_PrintArgDouble( o, 0 );
+      char * desc = oyjlOption_PrintArgDouble_( o, 0 );
       i = pos + 1;
-      oyjlOptions_Print( opts, i );
+      oyjlOptions_Print_( opts, i );
       fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
       fprintf( stderr, "%s: \"%s\" %s %s !: %g\n", _("Option has a different value range"), oyjlTermColor(oyjlBOLD,opts->argv[i]), t, desc, *result_dbl );
       free( t );
@@ -2052,7 +2051,7 @@ char * oyjlOptions_ResultsToText  ( oyjlOptions_s  * opts )
  *  @date    2020/04/18
  *  @since   2020/04/18 (Oyjl: 1.0.0)
  */
-const char * oyjlOptions_GetGroupId  ( oyjlOptions_s  *    opts,
+const char * oyjlOptions_GetGroupId_ ( oyjlOptions_s  *    opts,
                                        oyjlOptionGroup_s * g )
 {
   char ** m_list = NULL;
@@ -2081,7 +2080,7 @@ const char * oyjlOptions_GetGroupId  ( oyjlOptions_s  *    opts,
  *  @date    2020/04/13
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-char *       oyjlOptions_PrintHelpSynopsis (
+char *       oyjlOptions_PrintHelpSynopsis_ (
                                        oyjlOptions_s  *    opts,
                                        oyjlOptionGroup_s * g,
                                        int                 style )
@@ -2089,8 +2088,8 @@ char *       oyjlOptions_PrintHelpSynopsis (
   int i;
   char ** m_list = NULL, ** on_list = NULL;
   int * m_index = NULL, * on_index = NULL;
-  int m = oyjlStringDelimiterCount(g->mandatory, ",|");
-  int on = oyjlStringDelimiterCount(g->optional, ",|");
+  int m = oyjlStringDelimiterCount_(g->mandatory, ",|");
+  int on = oyjlStringDelimiterCount_(g->optional, ",|");
   int opt_group = 0;
   int gstyle = style | g->flags;
   const char * prog = opts->argv[0];
@@ -2132,7 +2131,7 @@ char *       oyjlOptions_PrintHelpSynopsis (
     if(option[0] != '@' && !(option[0] == '#' && m+on == 1))
     {
       char * t = oyjlOption_PrintArg(o, style);
-      const char * group_id = oyjlOptions_GetGroupId( opts, g );
+      const char * group_id = oyjlOptions_GetGroupId_( opts, g );
       if(i == 0 && o->option && style & oyjlOPTIONSTYLE_MARKDOWN && style & oyjlOPTIONSTYLE_LINK_GROUP && group_id)
         oyjlStringAdd( &text, malloc, free, " <a href=\"#%s\">%s</a>", group_id, t );
       else
@@ -2205,7 +2204,7 @@ char *       oyjlOptions_PrintHelpSynopsis (
  * - >= 0 - if found
  * - -1 - if not found
  */
-int oyjlOptionMandatoryIndex         ( oyjlOption_s      * opt,
+int oyjlOptionMandatoryIndex_         ( oyjlOption_s      * opt,
                                        oyjlOptionGroup_s * g )
 {
   int found = -1;
@@ -2335,7 +2334,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     for(i = 0 ; i < ng; ++i)
     {
       oyjlOptionGroup_s * g = &opts->groups[i];
-      char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER );
+      char * t = oyjlOptions_PrintHelpSynopsis_( opts, g, oyjlOPTIONSTYLE_ONELETTER );
       fprintf( oyjl_help_zout, OYJL_HELP_SUBSECTION "%s\n", t );
       free(t);
     }
@@ -2356,7 +2355,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     fprintf( oyjl_help_zout, OYJL_HELP_SUBSECTION "%s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
     if(g->mandatory && g->mandatory[0])
     {
-      char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER );
+      char * t = oyjlOptions_PrintHelpSynopsis_( opts, g, oyjlOPTIONSTYLE_ONELETTER );
       fprintf( oyjl_help_zout, OYJL_HELP_COMMAND "%s\n", t );
       free(t);
     }
@@ -2369,7 +2368,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     {
       const char * option = d_list[j];
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
-      int mandatory_index = oyjlOptionMandatoryIndex( o, g );
+      int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
       int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING;
       if(mandatory_index == 0)
         style |= g->flags;
@@ -2435,7 +2434,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             
             fprintf( oyjl_help_zout, OYJL_HELP_OPTION );
             fprintf( oyjl_help_zout, "%s", t );
-            { char * desc = oyjlOption_PrintArgDouble( o, oyjlDESCRIPTION | oyjlHELP ); fprintf( oyjl_help_zout, "\t%s\n", desc ); free(desc); }
+            { char * desc = oyjlOption_PrintArgDouble_( o, oyjlDESCRIPTION | oyjlHELP ); fprintf( oyjl_help_zout, "\t%s\n", desc ); free(desc); }
             free(t);
           }
           break;
@@ -2498,7 +2497,7 @@ oyjlUi_s* oyjlUi_New                 ( int                 argc,
   return ui;
 }
 
-oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
+static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
                                        int                 flags OYJL_UNUSED )
 {
   oyjlOPTIONSTATE_e status = oyjlOPTION_NONE;
@@ -2600,7 +2599,7 @@ oyjlOPTIONSTATE_e  oyjlUi_Check      ( oyjlUi_s          * ui,
   return status;
 }
 
-void oyjlUi_EnrichInbuild( oyjlUi_s * ui )
+void oyjlUi_EnrichInbuild_( oyjlUi_s * ui )
 {
   /* enrich inbuild variables */
   int nopts = oyjlOptions_Count( ui->opts ), i;
@@ -2693,7 +2692,7 @@ void oyjlUi_EnrichInbuild( oyjlUi_s * ui )
   }
 }
 
-const char * oyjlOPTIONSTATE_toString( oyjlOPTIONSTATE_e i )
+static const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
 {
   switch(i)
   {
@@ -2804,7 +2803,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   ui->opts->array = options;
   ui->opts->groups = groups;
 
-  oyjlUi_EnrichInbuild( ui );
+  oyjlUi_EnrichInbuild_( ui );
 
   /* get results and check syntax ... */
   opt_state = oyjlOptions_Parse( ui->opts );
@@ -2902,7 +2901,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   else if(!optionless && opt_state != oyjlOPTION_NOT_SUPPORTED && !help && !pass_group)
   {
     if(opt_state == oyjlOPTION_NONE)
-      oyjlOptions_Print( ui->opts, 0 );
+      oyjlOptions_Print_( ui->opts, 0 );
     fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
     fputs( _("Missing mandatory option. No usage mode in synopsis lines found."), stderr );
     fputs( "\n", stderr );
@@ -2917,7 +2916,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
 
   if(opt_state != oyjlOPTION_NONE && *oyjl_debug)
   {
-    fputs( oyjlOPTIONSTATE_toString( opt_state ), stderr );
+    fputs( oyjlOPTIONSTATE_eToString_( opt_state ), stderr );
     fputs( "\n", stderr );
   }
 
@@ -2934,7 +2933,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
         opt_state == oyjlOPTION_SUBCOMMAND ) &&
       !(flags & oyjlUI_STATE_NO_CHECKS)
     )
-    opt_state = oyjlUi_Check(ui, 0);
+    opt_state = oyjlUi_Check_(ui, 0);
 
   if( help &&
       ( opt_state == oyjlOPTION_NONE ||
@@ -3157,8 +3156,7 @@ char *       oyjlStringToLower       ( const char        * t )
   oyjlStringListAddStaticString( sections, sn, sec, 0,0 ); \
   oyjlStringListAddStaticString( sections, sn, link, 0,0 ); }
 
-static
-char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
+static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
                                        const char        * opt_name,
                                        int                 flags,
                                        char            *** sections,
@@ -3268,8 +3266,7 @@ char *       oyjlExtraManSection     ( oyjlOptions_s     * opts,
   return text;
 }
 
-static
-char *       oyjlExtraManSections ( oyjlOptions_s  * opts, int flags, char *** sections, int * sn )
+static char * oyjlExtraManSections_( oyjlOptions_s  * opts, int flags, char *** sections, int * sn )
 {
   char * text = NULL;
   int nopts = oyjlOptions_Count( opts );
@@ -3281,7 +3278,7 @@ char *       oyjlExtraManSections ( oyjlOptions_s  * opts, int flags, char *** s
     int olen = option ? strlen(option) : 0;
     if(olen > 7 && option[0] == 'm' && option[1] == 'a' && option[2] == 'n' && option[3] == '-')
     {
-      char * tmp = oyjlExtraManSection(opts, option, flags, sections, sn);
+      char * tmp = oyjlExtraManSection_(opts, option, flags, sections, sn);
       if(tmp)
       {
         oyjlStringAddN( &text, tmp, strlen(tmp), malloc, free );
@@ -3363,13 +3360,13 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
                    tool?1:7, date?date:"", tool?"User Commands":"Misc" );
   }
 
-  oyjlStringAdd( &text, malloc, free, ".SH NAME\n%s %s%s \\- %s\n", ui->nick, vers?"v":"", vers?vers:"", ui->name );
+  oyjlStringAdd( &text, malloc, free, ".SH %s\n%s %s%s \\- %s\n", _("NAME"), ui->nick, vers?"v":"", vers?vers:"", ui->name );
 
   oyjlStringAdd( &text, malloc, free, ".SH %s\n", _("SYNOPSIS") );
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    char * syn = oyjlOptions_PrintHelpSynopsis( opts, g,
+    char * syn = oyjlOptions_PrintHelpSynopsis_( opts, g,
                          oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN );
     if(syn && syn[0])
       oyjlStringAdd( &text, malloc, free, "%s\n%s", syn, (i < (ng-1)) ? ".br\n" : "" );
@@ -3395,7 +3392,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
       oyjlStringAdd( &text, malloc, free, "\n"  );
     if(g->mandatory && g->mandatory[0])
     {
-      char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN );
+      char * t = oyjlOptions_PrintHelpSynopsis_( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN );
       oyjlStringAdd( &text, malloc, free, "%s\n", t );
       free(t);
     }
@@ -3409,7 +3406,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
       const char * option = d_list[j];
       char * t;
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
-      int mandatory_index = oyjlOptionMandatoryIndex( o, g );
+      int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
       int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN;
       if(mandatory_index == 0)
         style |= g->flags;
@@ -3469,7 +3466,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           {
-            char * desc = oyjlOption_PrintArgDouble( o, oyjlDESCRIPTION );
+            char * desc = oyjlOption_PrintArgDouble_( o, oyjlDESCRIPTION );
             t = oyjlOption_PrintArg(o, style);
             oyjlStringAdd( &text, malloc, free, "%s", t );
             free(t);
@@ -3492,7 +3489,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     oyjlStringListRelease( &d_list, dn, free );
   }
 
-  tmp = oyjlExtraManSections( opts, oyjlOPTIONSTYLE_MAN, NULL, NULL );
+  tmp = oyjlExtraManSections_( opts, oyjlOPTIONSTYLE_MAN, NULL, NULL );
   if(tmp)
   {
     oyjlStringAdd( &text, malloc, free, "%s", tmp );
@@ -3517,7 +3514,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   return text;
 }
 
-static void replaceOutsideHTML(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, void * data)
+static void replaceOutsideHTML_(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, void * data)
 {
   if(start < end)
   {
@@ -3634,7 +3631,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
-    char * syn = oyjlOptions_PrintHelpSynopsis( opts, g,
+    char * syn = oyjlOptions_PrintHelpSynopsis_( opts, g,
                          oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN | oyjlOPTIONSTYLE_LINK_GROUP );
     if(syn[0])
       oyjlStringAdd( &text, malloc, free, "%s\n%s", syn, (i < (ng-1)) ? "<br />\n" : "" );
@@ -3655,7 +3652,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
          * t;
     if(g->description)
     {
-      const char * group_id = oyjlOptions_GetGroupId( opts, g );
+      const char * group_id = oyjlOptions_GetGroupId_( opts, g );
       if(group_id)
         oyjlStringAdd( &text, malloc, free, "<h3 id=\"%s\">%s</h3>\n", group_id, g->description );
       else
@@ -3664,7 +3661,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     }
     if(g->mandatory && g->mandatory[0])
     {
-      char * t = oyjlOptions_PrintHelpSynopsis( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN | oyjlOPTIONSTYLE_LINK_SYNOPSIS );
+      char * t = oyjlOptions_PrintHelpSynopsis_( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN | oyjlOPTIONSTYLE_LINK_SYNOPSIS );
       oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", t );
       free(t);
     }
@@ -3679,7 +3676,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     {
       const char * option = d_list[j];
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
-      int mandatory_index = oyjlOptionMandatoryIndex( o, g );
+      int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
       int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN;
       if(mandatory_index == 0)
         style |= g->flags;
@@ -3733,7 +3730,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           {
-            char * desc = oyjlOption_PrintArgDouble( o, oyjlDESCRIPTION | oyjlHELP );
+            char * desc = oyjlOption_PrintArgDouble_( o, oyjlDESCRIPTION | oyjlHELP );
             t = oyjlOption_PrintArg(o, style);
             oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
             free(t);
@@ -3758,7 +3755,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     oyjlStringAdd( &text, malloc, free, "\n"  );
   }
 
-  tmp = oyjlExtraManSections( opts, oyjlOPTIONSTYLE_MARKDOWN, sections, sn );
+  tmp = oyjlExtraManSections_( opts, oyjlOPTIONSTYLE_MARKDOWN, sections, sn );
   if(tmp)
   {
     oyjlStringAdd( &text, malloc, free, "%s", tmp );
@@ -3801,9 +3798,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     int insideXML[3] = {0,0,0};
     oyjl_str tmp = oyjlStrNew(10,0,0);
     oyjlStrAppendN( tmp, text, strlen(text) );
-    oyjlStrReplace( tmp, "`", "\\`", replaceOutsideHTML, insideXML );
-    oyjlStrReplace( tmp, "-", "\\-", replaceOutsideHTML, insideXML );
-    oyjlStrReplace( tmp, "_", "\\_", replaceOutsideHTML, insideXML );
+    oyjlStrReplace( tmp, "`", "\\`", replaceOutsideHTML_, insideXML );
+    oyjlStrReplace( tmp, "-", "\\-", replaceOutsideHTML_, insideXML );
+    oyjlStrReplace( tmp, "_", "\\_", replaceOutsideHTML_, insideXML );
     t = oyjlStr(tmp);
     text[0] = 0;
     oyjlStringAdd( &text, malloc,free, "%s", t );

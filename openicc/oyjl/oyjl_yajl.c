@@ -449,7 +449,7 @@ oyjl_val oyjlTreeParse   (const char *input,
                           char *error_buffer, size_t error_buffer_size)
 {
 #if (YAJL_VERSION) > 20000
-static yajl_callbacks oyjl_tree_callbacks = {
+static yajl_callbacks oyjl_tree_callbacks_ = {
   handle_null,
   handle_boolean,
   NULL, //handle_integer,
@@ -463,7 +463,7 @@ static yajl_callbacks oyjl_tree_callbacks = {
   handle_end_array
 };
 #else
-static yajl_callbacks oyjl_tree_callbacks = {
+static yajl_callbacks oyjl_tree_callbacks_ = {
   handle_null,
   handle_boolean,
   NULL, //handle_integer,
@@ -509,7 +509,7 @@ static yajl_callbacks oyjl_tree_callbacks = {
     if (error_buffer != NULL)
         memset (error_buffer, 0, error_buffer_size);
 
-    handle = yajl_alloc( &oyjl_tree_callbacks,
+    handle = yajl_alloc( &oyjl_tree_callbacks_,
 #if YAJL_VERSION < 20000
                                                 &yconfig,
 #endif
@@ -834,7 +834,7 @@ int oyjlYamlGetId( yaml_node_t * n, int index, int key )
   return id;
 }
 
-static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int flags, int is_key, char ** json )
+static int oyjlYamlReadNode_( yaml_document_t * doc, yaml_node_t * node, int flags, int is_key, char ** json )
 {
   int error = 0;
   int count, i;
@@ -866,7 +866,7 @@ static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int flag
       int id = oyjlYamlGetId( node, i, 0 );
       yaml_node_t * n =
       yaml_document_get_node( doc, id );
-      error = oyjlYamlReadNode(doc, n, flags, 0, json);
+      error = oyjlYamlReadNode_(doc, n, flags, 0, json);
       if(i < count - 1) oyjlStringAdd( json, 0,0, ",");
     }
     oyjlStringAdd( json, 0,0, "]");
@@ -883,14 +883,14 @@ static int oyjlYamlReadNode( yaml_document_t * doc, yaml_node_t * node, int flag
 
       if(i == 0) oyjlStringAdd( json, 0,0, "{");
 
-      error = oyjlYamlReadNode(doc, key, flags, 1, json);
+      error = oyjlYamlReadNode_(doc, key, flags, 1, json);
       if( key->type == YAML_SCALAR_NODE &&
           !error )
       {
         oyjlStringAdd( json, 0,0, ":");
       }
 
-      error = oyjlYamlReadNode(doc, val, flags, 0, json);
+      error = oyjlYamlReadNode_(doc, val, flags, 0, json);
       if(i < count - 1) oyjlStringAdd( json, 0,0, ",");
       else if( i == count - 1 ) oyjlStringAdd( json, 0,0, "}");
     }
@@ -951,7 +951,7 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
   }
 
   root = yaml_document_get_root_node(&document);
-  error = oyjlYamlReadNode( &document, root, flags, 1, &json );
+  error = oyjlYamlReadNode_( &document, root, flags, 1, &json );
   if( error )
   {
     if(error_buffer)

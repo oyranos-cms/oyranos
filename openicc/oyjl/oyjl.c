@@ -17,19 +17,9 @@
 #include "oyjl_tree_internal.h"
 #include "oyjl_macros.h"
 #include "oyjl_version.h"
+#include "oyjl_i18n.h"
 extern char **environ;
 
-#ifdef OYJL_HAVE_LOCALE_H
-#include <locale.h>
-#endif
-#ifdef OYJL_USE_GETTEXT
-# ifdef OYJL_HAVE_LIBINTL_H
-#  include <libintl.h> /* bindtextdomain() */
-# endif
-# define _(text) dgettext( OYJL_DOMAIN, text )
-#else
-# define _(text) text
-#endif
 
 #ifdef __ANDROID__
 # include "oyjl.i18n.c"
@@ -69,7 +59,7 @@ int myMain( int argc, const char ** argv )
   const char * export = NULL;
 
   /* handle options */
-  oyjlUiHeaderSection_s * sections = oyjlUiInfo( _("The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON texts."),
+  oyjlUiHeaderSection_s * sections = oyjlUiInfo_( _("The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON texts."),
                                                  "2017-11-12T12:00:00", _("November 12, 2017") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */
