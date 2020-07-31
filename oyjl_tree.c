@@ -102,7 +102,7 @@ const char * oyjlDataFormatToString  ( int                 format )
 }
 
 #define Florian_Forster_SOURCE_GUARD
-static oyjl_val oyjlValueAlloc (oyjl_type type)
+static oyjl_val oyjlValueAlloc_(oyjl_type type)
 {
     oyjl_val v;
 
@@ -114,7 +114,7 @@ static oyjl_val oyjlValueAlloc (oyjl_type type)
     return (v);
 }
 
-static void oyjlObjectFree (oyjl_val v)
+static void oyjlObjectFree_(oyjl_val v)
 {
     size_t i;
 
@@ -140,7 +140,7 @@ static void oyjlObjectFree (oyjl_val v)
       free(v->u.object.values);
 }
 
-static void oyjlArrayFree (oyjl_val v)
+static void oyjlArrayFree_(oyjl_val v)
 {
     size_t i;
 
@@ -182,7 +182,7 @@ oyjl_val oyjlTreeGet(oyjl_val n, const char ** path, oyjl_type type)
 }
 #undef Florian_Forster_SOURCE_GUARD
 
-int        oyjlPathTermGetIndex      ( const char        * term,
+int        oyjlPathTermGetIndex_     ( const char        * term,
                                        int               * index );
 
 /** @brief get the value as text string with user allocator */
@@ -242,7 +242,7 @@ static void  oyjlTreeFind_           ( oyjl_val            root,
     term = terms[level];
 
   if(term)
-    oyjlPathTermGetIndex( term, &pos );
+    oyjlPathTermGetIndex_( term, &pos );
 
   switch(root->type)
   {
@@ -358,7 +358,7 @@ void       oyjlTreeToPaths           ( oyjl_val            root,
   oyjlStringListRelease( &terms, n, free );
 }
 
-static void oyjlJsonIndent ( char ** json, const char * before, int level, const char * after )
+static void oyjlJsonIndent_( char ** json, const char * before, int level, const char * after )
 {
   char * njson;
   int len;
@@ -412,7 +412,7 @@ char * oyjlJsonEscape( const char * in )
   return out;
 }
 
-int  oyjlTreeToJson21 (oyjl_val v, int * level, oyjl_str json)
+int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
 {
   int error = 0;
   if(v)
@@ -447,7 +447,7 @@ int  oyjlTreeToJson21 (oyjl_val v, int * level, oyjl_str json)
            *level += 2;
            for(i = 0; i < count; ++i)
            {
-             oyjlTreeToJson21( v->u.array.values[i], level, json );
+             oyjlTreeToJson21_( v->u.array.values[i], level, json );
              if(count > 1)
              {
                if(i < count - 1)
@@ -482,7 +482,7 @@ int  oyjlTreeToJson21 (oyjl_val v, int * level, oyjl_str json)
               free( escaped );
              }
              oyjlStrAppendN( json, "\": ", 3 );
-             error = oyjlTreeToJson21( v->u.object.values[i], level, json );
+             error = oyjlTreeToJson21_( v->u.object.values[i], level, json );
              if(error) return error;
              if(count > 1)
              {
@@ -510,7 +510,7 @@ int  oyjlTreeToJson21 (oyjl_val v, int * level, oyjl_str json)
 void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
 {
   oyjl_str string = oyjlStrNew(10, 0,0);
-  oyjlTreeToJson21( v, level, string );
+  oyjlTreeToJson21_( v, level, string );
   if(oyjlStr(string))
     *json = oyjlStrPull(string);
   else
@@ -518,7 +518,7 @@ void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
   oyjlStrRelease( &string );
 }
 
-void oyjlTreeToJson2 (oyjl_val v, int * level, char ** json)
+void oyjlTreeToJson2_ (oyjl_val v, int * level, char ** json)
 {
   if(v)
   switch(v->type)
@@ -557,7 +557,7 @@ void oyjlTreeToJson2 (oyjl_val v, int * level, char ** json)
            *level += 2;
            for(i = 0; i < count; ++i)
            {
-             oyjlTreeToJson2( v->u.array.values[i], level, json );
+             oyjlTreeToJson2_( v->u.array.values[i], level, json );
              if(count > 1)
              {
                if(i < count - 1)
@@ -578,7 +578,7 @@ void oyjlTreeToJson2 (oyjl_val v, int * level, char ** json)
            *level += 2;
            for(i = 0; i < count; ++i)
            {
-             oyjlJsonIndent( json, "\n", *level, NULL );
+             oyjlJsonIndent_( json, "\n", *level, NULL );
              if(!v->u.object.keys || !v->u.object.keys[i])
              {
                oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "missing key", OYJL_DBG_ARGS );
@@ -590,7 +590,7 @@ void oyjlTreeToJson2 (oyjl_val v, int * level, char ** json)
                return;
              }
              oyjlStringAdd( json, 0,0, "\"%s\": ", v->u.object.keys[i] );
-             oyjlTreeToJson2( v->u.object.values[i], level, json );
+             oyjlTreeToJson2_( v->u.object.values[i], level, json );
              if(count > 1)
              {
                if(i < count - 1)
@@ -599,7 +599,7 @@ void oyjlTreeToJson2 (oyjl_val v, int * level, char ** json)
            }
            *level -= 2;
 
-           oyjlJsonIndent( json, "\n", *level, "}" );
+           oyjlJsonIndent_( json, "\n", *level, "}" );
          }
          break;
     default:
@@ -666,7 +666,7 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
 
            for(i = 0; i < count; ++i)
            {
-             oyjlJsonIndent( text, "\n", *level, "-" );
+             oyjlJsonIndent_( text, "\n", *level, "-" );
              *level += 2;
              oyjlTreeToYaml( v->u.array.values[i], level, text );
              *level -= 2;
@@ -680,7 +680,7 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
 
            for(i = 0; i < count; ++i)
            {
-             oyjlJsonIndent( text, "\n", *level, NULL );
+             oyjlJsonIndent_( text, "\n", *level, NULL );
              if(!v->u.object.keys || !v->u.object.keys[i])
              {
                oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "missing key", OYJL_DBG_ARGS );
@@ -706,7 +706,7 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
 #undef YAML_INDENT
 }
 
-void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, oyjl_str text)
+static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oyjl_str text)
 {
   if(!v) return;
 
@@ -735,7 +735,7 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, oyjl_str 
           for(i = 0; i < count; ++i)
           {
             if( v->u.array.values[i] && v->u.array.values[i]->type == oyjl_t_object )
-              oyjlTreeToXml2( v->u.array.values[i], parent_key, level, text );
+              oyjlTreeToXml2_( v->u.array.values[i], parent_key, level, text );
             else
             {
               /* print only values and the closing */
@@ -745,7 +745,7 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, oyjl_str 
                 for(j = 0; j < *level; ++j) oyjlStrAppendN( text, " ", 1 );
                 oyjlStrAdd( text, "<%s>", parent_key );
 
-                oyjlTreeToXml2( v->u.array.values[i], parent_key, level, text );
+                oyjlTreeToXml2_( v->u.array.values[i], parent_key, level, text );
 
                 oyjlStrAdd( text, "</%s>", parent_key );
               }
@@ -866,7 +866,7 @@ void oyjlTreeToXml2 (oyjl_val v, const char * parent_key, int * level, oyjl_str 
             if( strcmp(key, XML_CDATA) == 0 )
               oyjlStrAppendN( text, "<![CDATA[", 9 );
 
-            oyjlTreeToXml2( v->u.object.values[i], key, level, text );
+            oyjlTreeToXml2_( v->u.object.values[i], key, level, text );
 
             if( strcmp(key, XML_CDATA) == 0 )
               oyjlStrAppendN( text, "]]>", 3 );
@@ -953,7 +953,7 @@ void               oyjlTreeToXml     ( oyjl_val            v,
             return;
           }
           oyjl_str str = oyjlStrNewFrom(text, 0, 0,0);
-          oyjlTreeToXml2( v->u.object.values[0], v->u.object.keys[0], level, str );
+          oyjlTreeToXml2_( v->u.object.values[0], v->u.object.keys[0], level, str );
           *text = oyjlStrPull( str );
           oyjlStrRelease( &str );
          }
@@ -1012,7 +1012,7 @@ oyjl_val       oyjlValuePosGet       ( oyjl_val            v,
  *                                     - 1  : error
  *                                     - -1 : no suitable term, will set index to -1
  */
-int        oyjlPathTermGetIndex      ( const char        * term,
+int        oyjlPathTermGetIndex_     ( const char        * term,
                                        int               * index )
 {
   char * tindex;
@@ -1101,8 +1101,8 @@ int        oyjlPathMatch             ( const char        * path,
     int xindex = -2,
         pindex = -2;
 
-    oyjlPathTermGetIndex( xterm, &xindex );
-    oyjlPathTermGetIndex( pterm, &pindex );
+    oyjlPathTermGetIndex_( xterm, &xindex );
+    oyjlPathTermGetIndex_( pterm, &pindex );
 
     if(!(strcmp(xterm, pterm) == 0 ||
         (pindex >= 0 && xindex == pindex) ||
@@ -1138,7 +1138,7 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
     found = 0;
     if(count == 0 && !(flags & OYJL_CREATE_NEW)) break;
 
-    oyjlPathTermGetIndex( term, &pos );
+    oyjlPathTermGetIndex_( term, &pos );
 
     /* requests index in object or array */
     if(pos != -1)
@@ -1152,7 +1152,7 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
       if(!level &&
          flags & OYJL_CREATE_NEW)
       {
-        level = oyjlValueAlloc( oyjl_t_null );
+        level = oyjlValueAlloc_( oyjl_t_null );
 
         if(parent)
         {
@@ -1201,7 +1201,7 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
       if(!level &&
          flags & OYJL_CREATE_NEW)
       {
-        level = oyjlValueAlloc( oyjl_t_null );
+        level = oyjlValueAlloc_( oyjl_t_null );
 
         if(parent)
         {
@@ -1284,7 +1284,7 @@ oyjl_val   oyjlTreeNew               ( const char        * path )
   if(path && path[0])
     return oyjlTreeGetValue_( NULL, OYJL_CREATE_NEW, path );
   else
-    return oyjlValueAlloc( oyjl_t_null );
+    return oyjlValueAlloc_( oyjl_t_null );
 }
 
 /** @brief   get a full path string from a child node
@@ -1524,9 +1524,9 @@ void oyjlValueClear          (oyjl_val v)
         if(v->u.number.r) free(v->u.number.r);
         v->u.number.r = NULL;
     } else if (OYJL_GET_OBJECT(v))
-        oyjlObjectFree(v);
+        oyjlObjectFree_(v);
     else if (OYJL_GET_ARRAY(v))
-        oyjlArrayFree(v);
+        oyjlArrayFree_(v);
 
     v->type = oyjl_t_null;
 }
@@ -1673,13 +1673,13 @@ void oyjlTreeFree (oyjl_val v)
  *  @param         loc                 locale name as from setlocale("")
  *  @param         catalog             the parsed catalog as tree
  *  @param         string              the to be translated text
- *  @return                            translated item
+ *  @return                            translated item; must not be freed
  *
  *  @version Oyjl: 1.0.0
  *  @date    2020/07/27
  *  @since   2020/07/27 (Oyjl: 1.0.0)
  */
-const char *   oyjlTranslate         ( const char        * loc,
+char *         oyjlTranslate         ( const char        * loc,
                                        oyjl_val            catalog,
                                        const char        * string )
 {
@@ -1687,7 +1687,7 @@ const char *   oyjlTranslate         ( const char        * loc,
   oyjl_val v;
 
   if(!loc || strcmp(loc,"C") == 0 || !catalog)
-    return string;
+    return (char*)string;
 
   v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", loc, string );
   if(v)
@@ -1717,7 +1717,6 @@ const char *   oyjlTranslate         ( const char        * loc,
     char * path = NULL;
     char ** paths = NULL;
     int count, i;
-    oyjl_val test = NULL;
     char * regex = NULL;
     oyjlStringAdd( &regex, 0,0, "org/freedesktop/oyjl/translations/%s.*/%s", language, string );
 
@@ -1751,7 +1750,35 @@ const char *   oyjlTranslate         ( const char        * loc,
     if(language) free(language);
     if(regex) free(regex);
   }
-  return translated ? translated : string;
+  return translated ? (char*)translated : (char*)string;
+}
+
+oyjl_val oyjl_catalog_ = NULL;
+/** @brief   set message translation catalog
+ *
+ *  @param         catalog             message catalog for oyjlTranslate()
+ *                                     - NULL: reset
+ *                                     - pointer to NULL: return catalog
+ *                                     - oyjl_val catalog: move in as new current
+ *  @return                            current catalog
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/07/29
+ *  @since   2020/07/29 (Oyjl: 1.0.0)
+ */
+oyjl_val       oyjlCatalog           ( oyjl_val          * catalog )
+{
+  if((!catalog || (catalog && *catalog)) && oyjl_catalog_)
+  {
+    oyjlTreeFree(oyjl_catalog_);
+    oyjl_catalog_ = NULL;
+  }
+  if(catalog && *catalog)
+  {
+    oyjl_catalog_ = *catalog;
+    *catalog = NULL;
+  }
+  return oyjl_catalog_;
 }
 /** @} *//* oyjl */
 

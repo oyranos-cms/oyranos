@@ -3,7 +3,7 @@
  *  oyjl - UI helpers
  *
  *  @par Copyright:
- *            2018-2019 (C) Kai-Uwe Behrmann
+ *            2018-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl argument handling with libOyjlCore
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -82,7 +82,7 @@ char * oyjlOptions_ResultsToJson  ( oyjlOptions_s  * opts )
 }
 
 #define CASE_RETURN_ENUM( text_ ) case text_: return #text_;
-static const char * oyjlOPTIONTYPE_eToString ( oyjlOPTIONTYPE_e e )
+static const char * oyjlOPTIONTYPE_eToString_( oyjlOPTIONTYPE_e e )
 {
   switch( e )
   {
@@ -95,7 +95,7 @@ static const char * oyjlOPTIONTYPE_eToString ( oyjlOPTIONTYPE_e e )
   }
   return NULL;
 }
-static const char * oyjlVARIABLE_eToString ( oyjlVARIABLE_e e )
+static const char * oyjlVARIABLE_eToString_( oyjlVARIABLE_e e )
 {
   switch( e )
   {
@@ -178,7 +178,7 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->description, OYJL_REG "/ui/options/array/[%d]/%s", i, "description" );
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->help, OYJL_REG "/ui/options/array/[%d]/%s", i, "help" );
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->value_name, OYJL_REG "/ui/options/array/[%d]/%s", i, "value_name" );
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oyjlOPTIONTYPE_eToString(o->value_type), OYJL_REG "/ui/options/array/[%d]/%s", i, "value_type" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oyjlOPTIONTYPE_eToString_(o->value_type), OYJL_REG "/ui/options/array/[%d]/%s", i, "value_type" );
     switch(o->value_type)
     {
       case oyjlOPTIONTYPE_CHOICE:
@@ -226,7 +226,7 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
       case oyjlOPTIONTYPE_END:
         break;
     }
-    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oyjlVARIABLE_eToString(o->variable_type), OYJL_REG "/ui/options/array/[%d]/%s", i, "variable_type" );
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oyjlVARIABLE_eToString_(o->variable_type), OYJL_REG "/ui/options/array/[%d]/%s", i, "variable_type" );
     if(o->variable_type != oyjlNONE)
       oyjlTreeSetStringF( root, OYJL_CREATE_NEW, NULL, OYJL_REG "/ui/options/array/[%d]/%s", i, "variable_name" );
   }
@@ -256,7 +256,7 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
 #define OYJL_QUOTE     0x02
 #define OYJL_SQUOTE    0x04
 #define OYJL_LAST      0x08
-static void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int space )
+static void oyjlStrAddSpaced_( oyjl_str s, const char * text, int flags, int space )
 {
   int len = 0, i,n;
 
@@ -316,7 +316,7 @@ static void oyjlStrAddSpaced( oyjl_str s, const char * text, int flags, int spac
 }
 
 /* heuristic for variable name */
-static char * oyjlGuessSingleWordFromChar ( char o, const char * text )
+static char * oyjlGuessSingleWordFromChar_ ( char o, const char * text )
 { /* guess from name */
   int words_n = 0, i, len, found = 0;
   char * name = NULL;
@@ -368,7 +368,7 @@ static char * oyjlGuessSingleWordFromChar ( char o, const char * text )
   return name;
 }
 
-void oyjlUiCanonicaliseVariableName( char ** name )
+static void oyjlUiCanonicaliseVariableName_( char ** name )
 {
   const char * txt;
   int i;
@@ -390,7 +390,7 @@ void oyjlUiCanonicaliseVariableName( char ** name )
 }
 
 /* obtain a variable name for C inclusion + the according type. e.g.: int var_name */
-static char *  oyjlUiGetVariableName ( oyjl_val            val,
+static char *  oyjlUiGetVariableName_( oyjl_val            val,
                                        const char       ** type )
 {
   oyjl_val v;
@@ -420,16 +420,16 @@ static char *  oyjlUiGetVariableName ( oyjl_val            val,
       else if(option)
       {
         t = oyjlStringCopy(option, 0);
-        oyjlUiCanonicaliseVariableName( &t );
+        oyjlUiCanonicaliseVariableName_( &t );
       }
       else if(o)
       {
-        t = oyjlGuessSingleWordFromChar( o[0], name );
-        oyjlUiCanonicaliseVariableName( &t );
+        t = oyjlGuessSingleWordFromChar_( o[0], name );
+        oyjlUiCanonicaliseVariableName_( &t );
         if(!t)
         {
-          t = oyjlGuessSingleWordFromChar( o[0], description );
-          oyjlUiCanonicaliseVariableName( &t );
+          t = oyjlGuessSingleWordFromChar_( o[0], description );
+          oyjlUiCanonicaliseVariableName_( &t );
         }
         if(!t)
         {
@@ -443,10 +443,10 @@ static char *  oyjlUiGetVariableName ( oyjl_val            val,
   }
   return t;
 }
-static char *  oyjlUiGetVariableNameC( oyjl_val            val,
+static char * oyjlUiGetVariableNameC_( oyjl_val            val,
                                        const char       ** type )
 {
-  char * t = oyjlUiGetVariableName( val, type );
+  char * t = oyjlUiGetVariableName_( val, type );
   if(!t) return t;
   /* replace some reserved C names */
   if('0' <= t[0] && t[0] <= '9') { char * name = NULL; oyjlStringAdd( &name, 0,0, "var_%s", t ); free(t); t = name; }
@@ -480,7 +480,7 @@ static char *  oyjlUiGetVariableNameC( oyjl_val            val,
   return t;
 }
 
-static oyjl_val oyjlFindOption( oyjl_val root, char o )
+static oyjl_val oyjlFindOption_( oyjl_val root, char o )
 {
   char oo[4] = {o,0,0,0};
   int found = 0, k;
@@ -570,7 +570,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     for(i = 0; i < n; ++i)
     {
       const char * type = NULL;
-      char * t = oyjlUiGetVariableNameC( oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i ), &type );
+      char * t = oyjlUiGetVariableNameC_( oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i ), &type );
       if(type && t)
       {
         oyjlStrAdd( s, "  %s %s = 0;\n", type, t );
@@ -609,9 +609,9 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "   * *documentation*. Choose what you see fit. Add new ones as needed. */\n" );
     oyjlStrAdd( s, "  oyjlUiHeaderSection_s sections[] = {\n" );
     oyjlStrAdd( s, "    /* type, " );
-    oyjlStrAddSpaced( s, "nick",  0, 17 );
-    oyjlStrAddSpaced( s, "label", 0, 7 );
-    oyjlStrAddSpaced( s, "name",  0, 26 );
+    oyjlStrAddSpaced_( s, "nick",  0, 17 );
+    oyjlStrAddSpaced_( s, "label", 0, 7 );
+    oyjlStrAddSpaced_( s, "name",  0, 26 );
     oyjlStrAdd(       s, "description */\n" );
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/header/sections" ) );
     for(i = 0; i < n; ++i)
@@ -625,19 +625,19 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       v = oyjlTreeGetValue( val, 0, "description" ); desc = OYJL_GET_STRING(v);
       oyjlStrAdd( s, "    {\"oihs\", ");
 
-      oyjlStrAddSpaced( s, nick,  OYJL_QUOTE,                17 );
-      oyjlStrAddSpaced( s, label, OYJL_QUOTE|OYJL_TRANSLATE, 7 );
-      oyjlStrAddSpaced( s, name&&name[0]?name:NULL,  OYJL_QUOTE|OYJL_TRANSLATE, 26 );
-      oyjlStrAddSpaced( s, desc,  OYJL_QUOTE|OYJL_TRANSLATE|OYJL_LAST, 4 );
+      oyjlStrAddSpaced_( s, nick,  OYJL_QUOTE,                17 );
+      oyjlStrAddSpaced_( s, label, OYJL_QUOTE|OYJL_TRANSLATE, 7 );
+      oyjlStrAddSpaced_( s, name&&name[0]?name:NULL,  OYJL_QUOTE|OYJL_TRANSLATE, 26 );
+      oyjlStrAddSpaced_( s, desc,  OYJL_QUOTE|OYJL_TRANSLATE|OYJL_LAST, 4 );
       oyjlStrAdd( s, "},\n");
     }
     oyjlStrAdd( s, "    {\"\",0,0,0,0}};\n" );
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s,       "  /* declare the option choices  *   " );
-    oyjlStrAddSpaced( s, "nick",         0, 15 );
-    oyjlStrAddSpaced( s, "name",         0, 20 );
-    oyjlStrAddSpaced( s, "description",  0, 30 );
-    oyjlStrAddSpaced( s, "help",         OYJL_LAST, 4 );
+    oyjlStrAddSpaced_( s, "nick",         0, 15 );
+    oyjlStrAddSpaced_( s, "name",         0, 20 );
+    oyjlStrAddSpaced_( s, "description",  0, 30 );
+    oyjlStrAddSpaced_( s, "help",         OYJL_LAST, 4 );
     oyjlStrAdd( s,       " */\n" );
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/array" ) );
     for(i = 0; i < n; ++i)
@@ -665,10 +665,10 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           else
             oyjlStrAdd( s, "{");
 
-          oyjlStrAddSpaced( s, nick,  OYJL_QUOTE,                15 );
-          oyjlStrAddSpaced( s, name,  OYJL_QUOTE|OYJL_TRANSLATE, 20 );
-          oyjlStrAddSpaced( s, desc,  OYJL_QUOTE|OYJL_TRANSLATE, 30 );
-          oyjlStrAddSpaced( s, help,  OYJL_QUOTE|OYJL_TRANSLATE|OYJL_LAST, 4 );
+          oyjlStrAddSpaced_( s, nick,  OYJL_QUOTE,                15 );
+          oyjlStrAddSpaced_( s, name,  OYJL_QUOTE|OYJL_TRANSLATE, 20 );
+          oyjlStrAddSpaced_( s, desc,  OYJL_QUOTE|OYJL_TRANSLATE, 30 );
+          oyjlStrAddSpaced_( s, help,  OYJL_QUOTE|OYJL_TRANSLATE|OYJL_LAST, 4 );
           oyjlStrAdd( s, "},\n");
         }
         if(count)
@@ -681,19 +681,19 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "  /* declare options - the core information; use previously declared choices */\n" );
     oyjlStrAdd( s, "  oyjlOption_s oarray[] = {\n" );
     oyjlStrAdd( s, "  /* type,   " );
-    oyjlStrAddSpaced( s, "flags",        0, 28 );
-    oyjlStrAddSpaced( s, "o",            0, 4 );
-    oyjlStrAddSpaced( s, "option",       0, 17 );
-    oyjlStrAddSpaced( s, "key",          0, 10 );
-    oyjlStrAddSpaced( s, "name",         0, 15 );
-    oyjlStrAddSpaced( s, "description",  0, 30 );
-    oyjlStrAddSpaced( s, "help",         0, 6 );
-    oyjlStrAddSpaced( s, "value_name",   0, 20 );
+    oyjlStrAddSpaced_( s, "flags",        0, 28 );
+    oyjlStrAddSpaced_( s, "o",            0, 4 );
+    oyjlStrAddSpaced_( s, "option",       0, 17 );
+    oyjlStrAddSpaced_( s, "key",          0, 10 );
+    oyjlStrAddSpaced_( s, "name",         0, 15 );
+    oyjlStrAddSpaced_( s, "description",  0, 30 );
+    oyjlStrAddSpaced_( s, "help",         0, 6 );
+    oyjlStrAddSpaced_( s, "value_name",   0, 20 );
     oyjlStrAdd( s,       "\n        " );
-    oyjlStrAddSpaced( s, "value_type",   0, 25 );
-    oyjlStrAddSpaced( s, "values",       0, 20 );
-    oyjlStrAddSpaced( s, "variable_type",0, 15 );
-    oyjlStrAddSpaced( s, "variable_name",OYJL_LAST, 10 );
+    oyjlStrAddSpaced_( s, "value_type",   0, 25 );
+    oyjlStrAddSpaced_( s, "values",       0, 20 );
+    oyjlStrAddSpaced_( s, "variable_type",0, 15 );
+    oyjlStrAddSpaced_( s, "variable_name",OYJL_LAST, 10 );
     oyjlStrAdd( s,       " */\n" );
     for(i = 0; i < n; ++i)
     {
@@ -720,7 +720,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       if(!option_fallback && o && o[0] != '@' && flags & OYJL_SUGGEST_VARIABLE_NAMES)
       {
         const char * ctype = NULL;
-        tmp_variable_name = oyjlUiGetVariableNameC( val, &ctype );
+        tmp_variable_name = oyjlUiGetVariableNameC_( val, &ctype );
         if(tmp_variable_name)
         {
           len = strlen(tmp_variable_name);
@@ -763,7 +763,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         {
           for(j = 0; j < len; ++j)
           {
-            oyjl_val nv = oyjlFindOption( root, name[j] );
+            oyjl_val nv = oyjlFindOption_( root, name[j] );
             if(!nv)
             {
               oo[0] = name[j];
@@ -787,28 +787,28 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
       v = oyjlTreeGetValue( val, 0, "variable_type" ); variable_type = OYJL_GET_STRING(v);
       oyjlStrAdd( s, "    {\"oiwi\", ");
-      oyjlStrAddSpaced( s, flag_string, 0,                         28 );
+      oyjlStrAddSpaced_( s, flag_string, 0,                         28 );
       if(*oyjl_debug)
         fprintf( stderr, "o: \"%s\" / %s\n", o, option );
       if(o && o[0])
-        oyjlStrAddSpaced( s, o,         OYJL_QUOTE,                4 );
+        oyjlStrAddSpaced_( s, o,         OYJL_QUOTE,                4 );
       else
-        oyjlStrAddSpaced( s, "NULL",    0,                         4 );
-      oyjlStrAddSpaced( s, option,      OYJL_QUOTE,                17 );
-      oyjlStrAddSpaced( s, key,         OYJL_QUOTE,                10 );
-      oyjlStrAddSpaced( s, name,        OYJL_QUOTE|OYJL_TRANSLATE, 15 );
-      oyjlStrAddSpaced( s, desc,        OYJL_QUOTE|OYJL_TRANSLATE, 30 );
-      oyjlStrAddSpaced( s, help,        OYJL_QUOTE|OYJL_TRANSLATE, 6 );
-      oyjlStrAddSpaced( s, value_name,  OYJL_QUOTE|OYJL_TRANSLATE, 20 );
+        oyjlStrAddSpaced_( s, "NULL",    0,                         4 );
+      oyjlStrAddSpaced_( s, option,      OYJL_QUOTE,                17 );
+      oyjlStrAddSpaced_( s, key,         OYJL_QUOTE,                10 );
+      oyjlStrAddSpaced_( s, name,        OYJL_QUOTE|OYJL_TRANSLATE, 15 );
+      oyjlStrAddSpaced_( s, desc,        OYJL_QUOTE|OYJL_TRANSLATE, 30 );
+      oyjlStrAddSpaced_( s, help,        OYJL_QUOTE|OYJL_TRANSLATE, 6 );
+      oyjlStrAddSpaced_( s, value_name,  OYJL_QUOTE|OYJL_TRANSLATE, 20 );
       oyjlStrAdd( s,       "\n        " );
-      oyjlStrAddSpaced( s, value_type,  0,                         25 );
+      oyjlStrAddSpaced_( s, value_type,  0,                         25 );
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_CHOICE") == 0)
       {
         int count = oyjlValueCount( oyjlTreeGetValue( val, 0, "values/choices/list" ) );
         if(count)
           oyjlStrAdd( s,   "{.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)%s_choices, sizeof(%s_choices), malloc ), 0}}, ", o,o );
         else
-          oyjlStrAddSpaced(s,"{0}",        0, 20 );
+          oyjlStrAddSpaced_(s,"{0}",        0, 20 );
       } else
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_FUNCTION") == 0)
       {
@@ -836,11 +836,11 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       } else
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_NONE") == 0)
       {
-        oyjlStrAddSpaced(s,"{0}",        0, 20 );
+        oyjlStrAddSpaced_(s,"{0}",        0, 20 );
       }
-      oyjlStrAddSpaced( s, variable_type,0,                         15 );
+      oyjlStrAddSpaced_( s, variable_type,0,                         15 );
       if(variable_type && strcmp(variable_type, "oyjlNONE") == 0)
-        oyjlStrAddSpaced( s, variable_name?variable_name:"{}",OYJL_LAST,                 2 );
+        oyjlStrAddSpaced_( s, variable_name?variable_name:"{}",OYJL_LAST,                 2 );
       else
       {
         char * t = NULL;
@@ -857,14 +857,14 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(type)
         {
           const char * ctype = NULL;
-          char * vname = oyjlUiGetVariableNameC( val, &ctype );
+          char * vname = oyjlUiGetVariableNameC_( val, &ctype );
           if(ctype && vname)
             oyjlStringAdd( &t, 0,0, "{.%c=&%s}", type, vname );
           if(vname) free(vname);
         }
         else
           oyjlStringAdd( &t, 0,0, "{0}" );
-        oyjlStrAddSpaced( s, t,OYJL_LAST,                 2 );
+        oyjlStrAddSpaced_( s, t,OYJL_LAST,                 2 );
         if(t) free( t );
       }
       
@@ -874,18 +874,18 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     }
     if(!(flags & OYJL_NO_DEFAULT_OPTIONS))
     {
-      if(!help_found && !oyjlFindOption( root, 'h' ))
+      if(!help_found && !oyjlFindOption_( root, 'h' ))
       oyjlStrAdd(s,"    /* default options -h and -v */\n" );
-      if(!help_found && !oyjlFindOption( root, 'h' ))
+      if(!help_found && !oyjlFindOption_( root, 'h' ))
       oyjlStrAdd(s,"    {\"oiwi\", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, \"h\", \"help\", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&help} },\n" );
-      if(!verbose_found && !oyjlFindOption( root, 'v' ))
+      if(!verbose_found && !oyjlFindOption_( root, 'v' ))
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"v\", \"verbose\", NULL, _(\"verbose\"), _(\"Verbose\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },\n" );
-      if(!render_found && !oyjlFindOption( root, 'R' ))
+      if(!render_found && !oyjlFindOption_( root, 'R' ))
       {
       oyjlStrAdd(s,"    /* The --render option can be hidden and used only internally. */\n" );
       oyjlStrAdd(s,"    {\"oiwi\", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE, \"R\", \"render\",  NULL, _(\"render\"),  _(\"Render\"),  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },\n" );
       }
-      if(!version_found && !oyjlFindOption( root, 'V' ))
+      if(!version_found && !oyjlFindOption_( root, 'V' ))
       oyjlStrAdd(s,"    {\"oiwi\", 0, \"V\", \"version\", NULL, _(\"version\"), _(\"Version\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },\n" );
       oyjlStrAdd(s,"    /* default option template -X|--export */\n" );
       if(!export_found && !X_found)
@@ -895,13 +895,13 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "  /* declare option groups, for better syntax checking and UI groups */\n" );
     oyjlStrAdd( s, "  oyjlOptionGroup_s groups[] = {\n" );
     oyjlStrAdd( s, "  /* type,   " );
-    oyjlStrAddSpaced( s, "flags",        0, 7 );
-    oyjlStrAddSpaced( s, "name",         0, 20 );
-    oyjlStrAddSpaced( s, "description",  0, 30 );
-    oyjlStrAddSpaced( s, "help",         0, 20 );
-    oyjlStrAddSpaced( s, "mandatory",    0, 15 );
-    oyjlStrAddSpaced( s, "optional",     0, 15 );
-    oyjlStrAddSpaced( s, "detail",       OYJL_LAST, 4 );
+    oyjlStrAddSpaced_( s, "flags",        0, 7 );
+    oyjlStrAddSpaced_( s, "name",         0, 20 );
+    oyjlStrAddSpaced_( s, "description",  0, 30 );
+    oyjlStrAddSpaced_( s, "help",         0, 20 );
+    oyjlStrAddSpaced_( s, "mandatory",    0, 15 );
+    oyjlStrAddSpaced_( s, "optional",     0, 15 );
+    oyjlStrAddSpaced_( s, "detail",       OYJL_LAST, 4 );
     oyjlStrAdd( s,       " */\n" );
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/groups" ) );
     for(i = 0; i < n; ++i)
@@ -923,13 +923,13 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         oyjlStringAdd( &flag_string, 0,0, "%s", "OYJL_GROUP_FLAG_SUBCOMMAND" );
       if(!flag_string)
         flag_string = oyjlStringCopy("0",0);
-      oyjlStrAddSpaced( s, flag_string, 0,                         7 );
-      oyjlStrAddSpaced( s, name,        OYJL_QUOTE|OYJL_TRANSLATE, 20 );
-      oyjlStrAddSpaced( s, desc,        OYJL_QUOTE|OYJL_TRANSLATE, 30 );
-      oyjlStrAddSpaced( s, help,        OYJL_QUOTE|OYJL_TRANSLATE, 20 );
-      oyjlStrAddSpaced( s, mandatory,   OYJL_QUOTE,                15 );
-      oyjlStrAddSpaced( s, optional,    OYJL_QUOTE,                15 );
-      oyjlStrAddSpaced( s, detail,      OYJL_QUOTE|OYJL_LAST,      4 );
+      oyjlStrAddSpaced_( s, flag_string, 0,                         7 );
+      oyjlStrAddSpaced_( s, name,        OYJL_QUOTE|OYJL_TRANSLATE, 20 );
+      oyjlStrAddSpaced_( s, desc,        OYJL_QUOTE|OYJL_TRANSLATE, 30 );
+      oyjlStrAddSpaced_( s, help,        OYJL_QUOTE|OYJL_TRANSLATE, 20 );
+      oyjlStrAddSpaced_( s, mandatory,   OYJL_QUOTE,                15 );
+      oyjlStrAddSpaced_( s, optional,    OYJL_QUOTE,                15 );
+      oyjlStrAddSpaced_( s, detail,      OYJL_QUOTE|OYJL_LAST,      4 );
       oyjlStrAdd( s, "},\n");
       if(flag_string) free( flag_string );
     }
@@ -1139,6 +1139,30 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     }
   }
 
+  i = 0;
+#define ADD_SECTIONS( name_ ) \
+  key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/sections/[%d]/%s", i++, "name" ); \
+  oyjlValueSetString( key, name_ );
+  ADD_SECTIONS( _("Name") )
+  ADD_SECTIONS( _("NAME") )
+  ADD_SECTIONS( _("Synopsis") )
+  ADD_SECTIONS( _("SYNOPSIS") )
+  ADD_SECTIONS( _("Description") )
+  ADD_SECTIONS( _("DESCRIPTION") )
+  ADD_SECTIONS( _("Usage") )
+  ADD_SECTIONS( _("OPTIONS") )
+  ADD_SECTIONS( _("AUTHOR") )
+  ADD_SECTIONS( _("COPYRIGHT") )
+  ADD_SECTIONS( _("License") )
+  ADD_SECTIONS( _("BUGS") )
+  ADD_SECTIONS( _("EXAMPLES") )
+  ADD_SECTIONS( _("EXIT-STATE") )
+  ADD_SECTIONS( _("ENVIRONMENT VARIABLES") )
+  ADD_SECTIONS( _("HISTORY") )
+  ADD_SECTIONS( _("FILES") )
+  ADD_SECTIONS( _("SEE AS WELL") )
+  ADD_SECTIONS( _("SEE ALSO") )
+
   ng = oyjlOptions_CountGroups( ui->opts );
   for(i = 0; i < ng; ++i)
   {
@@ -1204,7 +1228,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       int mandatory_index;
       if(!o) continue;
-      mandatory_index = oyjlOptionMandatoryIndex( o, g );
+      mandatory_index = oyjlOptionMandatoryIndex_( o, g );
       num[0] = '\000';
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "key" );
       if(!o->key)
@@ -1222,6 +1246,11 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       {
         key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "help" );
         oyjlValueSetString( key, o->help );
+      }
+      if(o->value_name)
+      {
+        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "value_name" );
+        oyjlValueSetString( key, o->value_name );
       }
       if(o->flags & OYJL_OPTION_FLAG_IMMEDIATE)
       {
@@ -1375,9 +1404,10 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
   return t;
 }
 
+
 /* private stuff */
 
-oyjlUiHeaderSection_s * oyjlUiInfo   ( const char          * documentation,
+oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char          * documentation,
                                        const char          * date_name,
                                        const char          * date_description )
 {

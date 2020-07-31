@@ -40,7 +40,7 @@ extern "C" {
 extern int * oyjl_debug;
 int oyjlIsDirFull_ (const char* name);
 
-int        oyjlTreePathsGetIndex     ( const char        * term,
+int        oyjlTreePathsGetIndex_    ( const char        * term,
                                        int               * index );
 
 typedef struct {
@@ -50,10 +50,10 @@ typedef struct {
   int           group; /* detected group */
 } oyjlOptsPrivate_s;
 
-oyjlUiHeaderSection_s * oyjlUiInfo   ( const char          * documentation,
+oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char          * documentation,
                                        const char          * date_name,
                                        const char          * date_description );
-int oyjlOptionMandatoryIndex         ( oyjlOption_s      * opt,
+int oyjlOptionMandatoryIndex_        ( oyjlOption_s      * opt,
                                        oyjlOptionGroup_s * g );
 
 char *       oyjlStringToLower       ( const char        * t );

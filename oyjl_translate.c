@@ -23,18 +23,6 @@
 #include "oyjl_i18n.h"
 #include "oyjl_tree_internal.h"
 
-#ifdef OYJL_HAVE_LOCALE_H
-#include <locale.h>
-#endif
-#ifdef OYJL_USE_GETTEXT
-# ifdef OYJL_HAVE_LIBINTL_H
-#  include <libintl.h> /* bindtextdomain() */
-# endif
-# define _(text) dgettext( OYJL_DOMAIN, text )
-#else
-# define _(text) text
-#endif
-
 /* This function is called the
  * * first time for GUI generation and then
  * * for executing the tool.
@@ -70,7 +58,7 @@ int myMain( int argc, const char ** argv )
   /* Select a nick from *version*, *manufacturer*, *copyright*, *license*,
    * *url*, *support*, *download*, *sources*, *oyjl_module_author* and
    * *documentation*. Choose what you see fit. Add new ones as needed. */
-  oyjlUiHeaderSection_s * sections = oyjlUiInfo( _("Convert Oyjl UI JSON to C translatable strings for use with gettext tools and translate a tools UI using the programs own text domain. The resulting Oyjl UI JSON can be used for translated rendering."),
+  oyjlUiHeaderSection_s * sections = oyjlUiInfo_( _("Convert Oyjl UI JSON to C translatable strings for use with gettext tools and translate a tools UI using the programs own text domain. The resulting Oyjl UI JSON can be used for translated rendering."),
                                                  "2020-01-02T12:00:00", _("January 2, 2020") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */
