@@ -722,6 +722,41 @@ int        oyjlStringSplitUTF8       ( const char        * text,
   return wlen;
 }
 
+char **    oyjlStringListCatList     ( const char       ** list,
+                                       int                 n_alt,
+                                       const char       ** append,
+                                       int                 n_app,
+                                       int               * count,
+                                       void*            (* alloc)(size_t) )
+{
+  char ** nlist = 0;
+
+  {
+    int i = 0;
+    int n = 0;
+
+    if(n_alt || n_app)
+      oyjlAllocHelper_m(nlist, char*, n_alt + n_app +1, alloc, return NULL);
+
+    for(i = 0; i < n_alt; ++i)
+    {
+      if(list[i])
+        nlist[n] = oyjlStringCopy( list[i], alloc );
+      n++;
+    }
+
+    for(i = 0; i < n_app; ++i)
+    {
+      nlist[n] = oyjlStringCopy( append[i], alloc );
+      n++;
+    }
+
+    if(count)
+      *count = n;
+  }
+
+  return nlist;
+}
 void       oyjlStringListRelease  ( char            *** l,
                                        int                 size,
                                        void             (* deAlloc)(void*) )
@@ -2494,6 +2529,55 @@ oyjlUi_s* oyjlUi_New                 ( int                 argc,
   oyjlUi_s * ui = calloc( sizeof(oyjlUi_s), 1 );
   memcpy( ui->type, "oiui", 4 );
   ui->opts = oyjlOptions_New( argc, argv );
+  return ui;
+}
+
+/** @brief    Copy structure
+ *  @memberof oyjlUi_s
+ *
+ *  The oyjlUi_s string members are mostly references.
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/07/31
+ *  @since   2020/07/31 (Oyjl: 1.0.0)
+ */
+oyjlUi_s *         oyjlUi_Copy       ( oyjlUi_s          * src )
+{
+  oyjlUi_s * ui = NULL;
+  if(!src) return ui;
+  int size;
+
+  if( *(oyjlOBJECT_e*)src != oyjlOBJECT_UI)
+  {
+    char * a = (char*)src;
+    char type[5] = {a[0],a[1],a[2],a[3],0};
+    fprintf(stderr, "Unexpected object: \"%s\"(expected: \"oyjlUi_s\")\n", type );
+    return ui;
+  }
+
+  size = sizeof(oyjlUi_s);
+  ui = (oyjlUi_s*)oyjlStringAppendN( NULL, (const char*)src, size, malloc );
+  size = sizeof(oyjlOptions_s);
+  ui->opts = (oyjlOptions_s*)oyjlStringAppendN( NULL, (const char*)src->opts, size, malloc );
+  if(src->opts->private_data)
+  {
+    oyjlOptsPrivate_s * results = src->opts->private_data;
+    if(results)
+    {
+      oyjlOptsPrivate_s * results_dst = (oyjlOptsPrivate_s*) calloc( 1, sizeof(oyjlOptsPrivate_s) );
+      results_dst->options = oyjlStringListCatList( (const char**)results->options, results->count+1, NULL,0, &results_dst->count, malloc );
+      /* values are only references */
+      if(results->values)
+      {
+        int n = 0;
+        while(results->values[n]) ++n;
+        results_dst->values = (const char**)oyjlStringAppendN( NULL, (const char*)results->values, n+1, malloc );;
+      }
+      results_dst->group = results->group;
+      ui->opts->private_data = results_dst;
+    }
+  }
+
   return ui;
 }
 

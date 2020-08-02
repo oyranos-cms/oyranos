@@ -680,6 +680,7 @@ struct oyjlUi_s {
 };
 oyjlUi_s *         oyjlUi_New        ( int                 argc,
                                        const char       ** argv );
+oyjlUi_s *         oyjlUi_Copy       ( oyjlUi_s          * src );
 enum {
   oyjlUI_STATE_NONE,                   /**< @brief nothing to report */
   oyjlUI_STATE_HELP,                   /**< @brief --help printed */
@@ -722,6 +723,11 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
 #define OYJL_SUGGEST_VARIABLE_NAMES    0x04 /**< @brief automatic suggestion of variable names for missing ::o and ::option members */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
+void               oyjlUi_Translate  ( oyjlUi_s          * ui,
+                                       oyjlUi_s          * catalog_lang,
+                                       const char        * new_loc,
+                                       oyjl_val            catalog,
+                                       oyjlTranslate_f     translator );
 
 /** link with libOyjlArgsWeb and use microhttps WWW renderer as library \n
  *  link with libOyjlArgsQml and use Qt's QML to render in a GUI
