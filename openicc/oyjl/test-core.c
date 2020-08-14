@@ -259,6 +259,7 @@ oyjlTESTRESULT_e testString ()
     "oyjlStringReplace(none)                             " );
   }
   myDeAllocFunc(test_out);
+  compare = NULL;
 
   test_out = oyjlStringCopy(test,malloc);
   n = oyjlStringReplace( &test_out, "display", "moni", 0,0 );
@@ -628,6 +629,38 @@ oyjlTESTRESULT_e testString ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "!oyjlRegExpMatch(\"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
   }
+
+  char * pattern = NULL;
+#define REGEX_ESCAPE( pre, regex_, escape ) \
+  { \
+    t = oyjlRegExpEscape( escape ); \
+    oyjlStringAdd( &compare, 0,0, "%s%s", pre, escape ); \
+    oyjlStringAdd( &pattern, 0,0, "%s%s", regex_, t ); \
+    if(oyjlRegExpMatch( compare, pattern )) \
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, \
+      "oyjlRegExpEscape( \"%s\" )                 ", escape ); \
+    } else \
+    { PRINT_SUB( oyjlTESTRESULT_FAIL, \
+      "oyjlRegExpEscape( \"%s\" ) %s -> oyjlRegExpMatch(\"%s\", \"%s\")", escape, t, compare, pattern ); \
+    } \
+    free(t); t = NULL; \
+    free(compare); compare = NULL; \
+    free(pattern); pattern = NULL; \
+  }
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "_string" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", " (string) " )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "!string" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "^string" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "string^" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "?<=string" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "<string>" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "[:digit:]" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "[s,S]ring" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "$+string" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "string.*" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "string.+" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "string{3,}" )
+  REGEX_ESCAPE( "/stri/n/g_", "str.*", "(ring|Ring)" )
 
   return result;
 }

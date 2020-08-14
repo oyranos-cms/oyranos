@@ -830,6 +830,54 @@ int        oyjlRegExpMatch           ( const char        * text,
   return match;
 }
 
+/** @brief   use a pattern literaly
+ *
+ *  This function detects OYJL_HAVE_REGEX_H macro internally to
+ *  fit the oyjlRegExpMatch() implementation.
+ *
+ *  It is escaping: \n
+ *  .$*+?()[{\|
+ *
+ *  @param         text                string to escape
+ *  @return                            escaped string
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/08/14
+ *  @since   2020/08/14 (Oyjl: 1.0.0)
+ */
+char *     oyjlRegExpEscape          ( const char        * text )
+{
+  char * out = NULL;
+  const char * t = text;
+  oyjl_str tmp;
+  if(!text) return NULL;
+
+  tmp = oyjlStrNew(10,0,0);
+  oyjlStrAppendN( tmp, t, strlen(t) );
+#ifdef OYJL_HAVE_REGEX_H
+  oyjlStrReplace( tmp, "\\", "\\\\", 0, NULL );
+  oyjlStrReplace( tmp, ".", "\\.", 0, NULL );
+  oyjlStrReplace( tmp, "^", "\\^", 0, NULL );
+  oyjlStrReplace( tmp, "$", "\\$", 0, NULL );
+  oyjlStrReplace( tmp, "*", "\\*", 0, NULL );
+  oyjlStrReplace( tmp, "+", "\\+", 0, NULL );
+  oyjlStrReplace( tmp, "?", "\\?", 0, NULL );
+  //oyjlStrReplace( tmp, "!", "\\!", 0, NULL );
+  oyjlStrReplace( tmp, "(", "\\(", 0, NULL );
+  oyjlStrReplace( tmp, ")", "\\)", 0, NULL );
+  oyjlStrReplace( tmp, "[", "\\[", 0, NULL );
+  //oyjlStrReplace( tmp, "]", "\\]", 0, NULL );
+  oyjlStrReplace( tmp, "{", "\\{", 0, NULL );
+  //oyjlStrReplace( tmp, "}", "\\}", 0, NULL );
+  //oyjlStrReplace( tmp, ",", "\\,", 0, NULL );
+  oyjlStrReplace( tmp, "|", "\\|", 0, NULL );
+#endif
+  out = oyjlStrPull(tmp); 
+  oyjlStrRelease( &tmp );
+  return out;
+}
+
+
 /*
 * Index into the table below with the first byte of a UTF-8 sequence to
 * get the number of trailing bytes that are supposed to follow it.
