@@ -2834,7 +2834,7 @@ static const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
  *                                     - ::oyjlUI_STATE_EXPORT : export of json, man or markdown was detected, printed and oyjlUi_s was released
  *                                     - ::oyjlUI_STATE_VERBOSE : verbose was detected
  *                                     - ::oyjlUI_STATE_OPTION+ : error occured in option parser, message printed, ::oyjlOPTIONSTATE_e is placed in >> ::oyjlUI_STATE_OPTION and oyjlUi_s was released
- *                                     -- ::oyjlUI_STATE_NO_CHECKS : skip any checks during creation; Only useful if part of the passed in data is omitted or needs to be passed through.
+ *                                     - ::oyjlUI_STATE_NO_CHECKS : skip any checks during creation; Only useful if part of the passed in data is omitted or needs to be passed through.
  *  @return                            UI object for later use
  *
  *  @version Oyjl: 1.0.0
