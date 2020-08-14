@@ -1717,8 +1717,11 @@ char *         oyjlTranslate         ( const char        * loc,
     char * path = NULL;
     char ** paths = NULL;
     int count, i;
-    char * regex = NULL;
-    oyjlStringAdd( &regex, 0,0, "org/freedesktop/oyjl/translations/%s.*/%s", language, string );
+    char * regex = NULL,
+         * json = oyjlJsonEscape( string ),
+         * escape = oyjlRegExpEscape( json );
+    oyjlStringAdd( &regex, 0,0, "org/freedesktop/oyjl/translations/%s.*/%s", language, escape );
+    free(escape); escape = NULL;
 
     oyjlTreeToPaths( catalog, 10000000, NULL, OYJL_KEY, &paths );
     count = 0; while(paths && paths[count]) ++count;
