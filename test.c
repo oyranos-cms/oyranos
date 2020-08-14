@@ -983,6 +983,18 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   oyjlTreeFree( json ); json = NULL;
 
+  text = oyjlUi_ExportToJson( ui_en, 0 );
+  if(text && strlen(text) == 6798)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlUi_ExportToJson(copy)            %lu", text?strlen(text):0 );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlUi_ExportToJson(copy)            %lu", text?strlen(text):0 );
+  }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson-copy", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+
   {
     const char * catalog_json = "{\n\
   \"org\": {\n\
