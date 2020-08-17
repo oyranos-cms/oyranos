@@ -2924,13 +2924,18 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   for(i = 0; i < ng; ++i)
   {
     int mgoup_index = 0;
+    oyjlOption_s * o;
+    const char * option;
+    char ** list = NULL;
+    int n = 0, j;
     g = &ui->opts->groups[i];
     /* test mandatory options for correct numbers */
     if(g->mandatory && g->mandatory[0])
     {
       const char * mandatory = g->mandatory;
-      int n = 0, j,k, found = 0;
-      char ** list = oyjlStringSplit2( mandatory, "|,", &n, NULL, malloc );
+      int k, found = 0;
+
+      list = oyjlStringSplit2( mandatory, "|,", &n, NULL, malloc );
 
       if( strchr(mandatory,'#') != NULL &&
           results ? (results->count == 0) : 0 )
@@ -2941,13 +2946,19 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
       for( j = 0; j  < n; ++j )
       {
         const char * moption = list[j];
+        o = oyjlOptions_GetOptionL( ui->opts, moption );
+        if(!o)
+        {
+          fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
+          fprintf( stderr, "%s (%s)\n", _("This option is not defined"), moption );
+        }
         for( k = 0; k  < (results?results->count:0); ++k )
         {
           const char * roption = results->options[k];
           if(strcmp(roption, "h") == 0)
           {
-            oyjlOption_s * o = NULL;
             const char * v = results->values[k];
+            o = NULL;
             if(strcmp(v, "1") != 0) /* skip --help no arg results */
               o = oyjlOptions_GetOptionL( ui->opts, v );
             if(o)
@@ -2958,7 +2969,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
             ++found;
           if(i == mgoup_index && j == 0)
           {
-            oyjlOption_s * o = oyjlOptions_GetOptionL( ui->opts, roption );
+            o = oyjlOptions_GetOptionL( ui->opts, roption );
             if(o && o->flags & OYJL_OPTION_FLAG_MAINTENANCE)
               ++pass_group; 
           }
@@ -2969,6 +2980,32 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
       if(found && max < found)
         max = found;
     }
+
+    list = oyjlStringSplit2( g->optional, "|,", &n, NULL, malloc );
+    for( j = 0; j  < n; ++j )
+    {
+      option = list[j];
+      o = oyjlOptions_GetOptionL( ui->opts, option );
+      if(!o)
+      {
+        fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
+        fprintf( stderr, "%s (%s)\n", _("This option is not defined"), option );
+      }
+    }
+    oyjlStringListRelease( &list, n, free );
+
+    list = oyjlStringSplit2( g->detail, "|,", &n, NULL, malloc );
+    for( j = 0; j  < n; ++j )
+    {
+      option = list[j];
+      o = oyjlOptions_GetOptionL( ui->opts, option );
+      if(!o)
+      {
+        fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
+        fprintf( stderr, "%s (%s)\n", _("This option is not defined"), option );
+      }
+    }
+    oyjlStringListRelease( &list, n, free );
   }
 
   if(max > -1)
