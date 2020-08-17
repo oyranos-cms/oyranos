@@ -333,7 +333,7 @@ oyjl_val       oyjlCatalog           ( oyjl_val          * catalog );
 char *         oyjlTranslate         ( const char        * loc,
                                        oyjl_val            catalog,
                                        const char        * string );
-typedef char(* oyjlTranslate_f)      ( const char        * loc,
+typedef char*(*oyjlTranslate_f)      ( const char        * loc,
                                        oyjl_val            catalog,
                                        const char        * string );
 

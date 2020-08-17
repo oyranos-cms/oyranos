@@ -1465,6 +1465,95 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
   return t;
 }
 
+/** @brief    Translate a Ui at any time
+ *  @memberof oyjlUi_s
+ *
+ *  Typically translation occur at initialisation time.
+ *  However, it might be desireable to update the Ui due
+ *  to later language change. This function helps to replace
+ *  the previous language.
+ *
+ *  @param[in,out] ui                 the structure to translate strings inside
+ *  @param[in]     catalog_lang       the Ui with all strings from catalog for follow up translations from a second language to a thierd; optional
+ *  @param[in]     new_loc            the desired language; optional, without the function will return
+ *  @param[int]    catalog            the message catalog; optional, without the function will return
+ *  @param[int]    translator         the translation function; optional, defaut is oyjlTranslate()
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/07/30
+ *  @since   2020/07/30 (Oyjl: 1.0.0)
+ */
+void               oyjlUi_Translate  ( oyjlUi_s          * ui,
+                                       oyjlUi_s          * catalog_lang,
+                                       const char        * new_loc,
+                                       oyjl_val            catalog,
+                                       oyjlTranslate_f     translator )
+{
+  char * t = NULL;
+  int i,j,n,ng;
+
+  if(!ui || !new_loc || !catalog) return;
+
+  if(!catalog_lang)
+    catalog_lang = ui;
+
+  if(!translator)
+    translator = oyjlTranslate;
+
+#define tr( text ) ui->text = translator(new_loc, catalog, catalog_lang->text)
+  tr(name);
+  tr(description);
+  n = oyjlUiHeaderSection_Count( ui->sections );
+  for(i = 0; i < n; ++i)
+  {
+    oyjlUiHeaderSection_s * s = &ui->sections[i];
+    if(s->label)
+      tr(sections[i].label);
+    if(s->name)
+      tr(sections[i].name);
+    if(s->description)
+      tr(sections[i].description);
+  }
+
+  int nopts = oyjlOptions_Count( ui->opts );
+  for(i = 0; i < nopts; ++i)
+  {
+    oyjlOption_s * o = &ui->opts->array[i];
+    tr(opts->array[i].name);
+    tr(opts->array[i].description);
+    tr(opts->array[i].help);
+    tr(opts->array[i].value_name);
+    switch(o->value_type)
+    {
+      case oyjlOPTIONTYPE_CHOICE:
+        n = oyjlOptionChoice_Count( o->values.choices.list );
+        if(n)
+          for(j = 0; j < n; ++j)
+          {
+            tr(opts->array[i].values.choices.list[j].name);
+            tr(opts->array[i].values.choices.list[j].description);
+            tr(opts->array[i].values.choices.list[j].help);
+          }
+        break;
+      case oyjlOPTIONTYPE_FUNCTION:
+      case oyjlOPTIONTYPE_DOUBLE:
+      case oyjlOPTIONTYPE_NONE:
+      case oyjlOPTIONTYPE_START:
+      case oyjlOPTIONTYPE_END:
+        break;
+    }
+  }
+
+  ng = oyjlOptions_CountGroups( ui->opts );
+  for(i = 0; i < ng; ++i)
+  {
+    tr(opts->groups[i].name);
+    tr(opts->groups[i].description);
+    tr(opts->groups[i].help);
+  }
+}
+#undef tr
+
 
 /* private stuff */
 
