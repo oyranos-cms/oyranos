@@ -1670,9 +1670,9 @@ void oyjlTreeFree (oyjl_val v)
  *  The passed in catalog shall contain its translations in the
  *  "org/freedesktop/oyjl/translations/loc" path.
  *
- *  @param         loc                 locale name as from setlocale("")
- *  @param         catalog             the parsed catalog as tree
- *  @param         string              the to be translated text
+ *  @param         loc                 locale name as from setlocale(""); optional, will return without
+ *  @param         catalog             the parsed catalog as tree; optional, will return without
+ *  @param         text                the to be translated text; optional, will return without
  *  @return                            translated item; must not be freed
  *
  *  @version Oyjl: 1.0.0
@@ -1681,15 +1681,15 @@ void oyjlTreeFree (oyjl_val v)
  */
 char *         oyjlTranslate         ( const char        * loc,
                                        oyjl_val            catalog,
-                                       const char        * string )
+                                       const char        * text )
 {
   const char * translated = NULL;
   oyjl_val v;
 
-  if(!loc || strcmp(loc,"C") == 0 || !catalog)
-    return (char*)string;
+  if(!loc || strcmp(loc,"C") == 0 || !catalog || !text)
+    return (char*)text;
 
-  v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", loc, string );
+  v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", loc, text );
   if(v)
     translated = OYJL_GET_STRING(v);
   if(!translated)
@@ -1697,7 +1697,7 @@ char *         oyjlTranslate         ( const char        * loc,
     char * language = oyjlLanguage(loc),
          * country = oyjlCountry(loc);
     if(language && country)
-      v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s_%s/%s", language, country, string );
+      v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s_%s/%s", language, country, text );
     if(v)
       translated = OYJL_GET_STRING(v);
     if(language) free(language);
@@ -1706,19 +1706,19 @@ char *         oyjlTranslate         ( const char        * loc,
   if(!translated)
   {
     char * language = oyjlLanguage(loc);
-    v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", language, string );
+    v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", language, text );
     if(v)
       translated = OYJL_GET_STRING(v);
     if(language) free(language);
   }
-  if(!translated)
+  if(!translated && text[0])
   {
     char * language = oyjlLanguage(loc);
     char * path = NULL;
     char ** paths = NULL;
     int count, i;
     char * regex = NULL,
-         * json = oyjlJsonEscape( string ),
+         * json = oyjlJsonEscape( text ),
          * escape = oyjlRegExpEscape( json );
     oyjlStringAdd( &regex, 0,0, "org/freedesktop/oyjl/translations/%s.*/%s", language, escape );
     free(escape); escape = NULL;
@@ -1753,7 +1753,7 @@ char *         oyjlTranslate         ( const char        * loc,
     if(language) free(language);
     if(regex) free(regex);
   }
-  return translated ? (char*)translated : (char*)string;
+  return translated ? (char*)translated : (char*)text;
 }
 
 oyjl_val oyjl_catalog_ = NULL;
