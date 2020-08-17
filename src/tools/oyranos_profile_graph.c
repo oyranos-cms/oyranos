@@ -55,7 +55,12 @@
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 
-#ifdef __ANDROID__
+#ifdef SKIP_GETTEXT
+# ifdef OYJL_USE_GETTEXT
+# undef OYJL_USE_GETTEXT
+# endif
+#endif
+#if defined(__ANDROID__) || !defined(OYJL_USE_GETTEXT)
 # include "oyranos-profile-graph.i18n.c"
 int i18n_init = 0;
 oyjl_val i18n_catalog = NULL;
@@ -296,7 +301,7 @@ int myMain( int argc, const char ** argv )
   int xyy_plane = 0;
   double xs_xyz = 1.2,                           /* scaling of CIE*xy graph */
          ys_xyz = 1.2;
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || !defined(OYJL_USE_GETTEXT)
   if(!i18n_init)
   {
     i18n_catalog = oyjlTreeParse(oyranos_json,0,0);
@@ -311,6 +316,8 @@ int myMain( int argc, const char ** argv )
 #endif
   if(!lang || (lang && strcmp(lang,"C") == 0))
     lang = getenv("LANG"); /* flacky */
+  if(lang && strlen(lang) >= 2)
+    lang = oyjlLang(lang);
   if(!lang || (lang && strcmp(lang,"C") == 0))
     lang = oyjlLang("");
 #endif
@@ -527,7 +534,7 @@ int myMain( int argc, const char ** argv )
   if(render)
   { 
     int debug = verbose;
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || !defined(OYJL_USE_GETTEXT)
 # define RENDER_I18N oyranos_json
 #else
 # define RENDER_I18N NULL
@@ -2011,10 +2018,8 @@ int main( int argc_, char**argv_, char ** envv )
 #endif
 
   /* language needs to be initialised before setup of data structures */
-#ifdef OYJL_USE_GETTEXT
 #ifdef OYJL_HAVE_LOCALE_H
   setlocale(LC_ALL,"");
-#endif
 #endif
 
   oyExportStart_(EXPORT_CHECK_NO);
