@@ -2103,7 +2103,7 @@ const char *   oyjlLang              ( const char        * loc )
     free(oyjl_lang_);
     oyjl_lang_ = NULL;
   }
-  if(loc && strlen(loc))
+  if(loc && strlen(loc) && oyjl_lang_ != loc)
   {
     if(oyjl_lang_)
     {
