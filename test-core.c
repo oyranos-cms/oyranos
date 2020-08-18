@@ -852,12 +852,12 @@ oyjlTESTRESULT_e testArgs()
                                        "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 4483)
+  if(text && strlen(text) == 4753)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu                           ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson() 3348 == %lu                   ", strlen(text) );
+    "oyjlUi_ToJson() 4753 == %lu                   ", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson", "txt" )
   if(verbose && text)
