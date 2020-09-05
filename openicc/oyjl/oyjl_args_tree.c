@@ -1474,33 +1474,28 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
  *  the previous language.
  *
  *  @param[in,out] ui                 the structure to translate strings inside
- *  @param[in]     catalog_lang       the Ui with all strings from catalog for follow up translations from a second language to a thierd; optional
- *  @param[in]     new_loc            the desired language; optional, without the function will return
+ *  @param[in]     loc                the desired language, the locale "back" will inverse the translation; optional, without the function will return
  *  @param[int]    catalog            the message catalog; optional, without the function will return
  *  @param[int]    translator         the translation function; optional, defaut is oyjlTranslate()
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/07/30
+ *  @date    2020/08/18
  *  @since   2020/07/30 (Oyjl: 1.0.0)
  */
 void               oyjlUi_Translate  ( oyjlUi_s          * ui,
-                                       oyjlUi_s          * catalog_lang,
-                                       const char        * new_loc,
+                                       const char        * loc,
                                        oyjl_val            catalog,
                                        oyjlTranslate_f     translator )
 {
   char * t = NULL;
   int i,j,n,ng;
 
-  if(!ui || !new_loc || !catalog) return;
-
-  if(!catalog_lang)
-    catalog_lang = ui;
+  if(!ui || !loc || !catalog) return;
 
   if(!translator)
     translator = oyjlTranslate;
 
-#define tr( text ) ui->text = translator(new_loc, catalog, catalog_lang->text)
+#define tr( text ) ui->text = translator(loc, catalog, ui->text)
   tr(name);
   tr(description);
   n = oyjlUiHeaderSection_Count( ui->sections );
@@ -1551,8 +1546,8 @@ void               oyjlUi_Translate  ( oyjlUi_s          * ui,
     tr(opts->groups[i].description);
     tr(opts->groups[i].help);
   }
-}
 #undef tr
+}
 
 
 /* private stuff */
