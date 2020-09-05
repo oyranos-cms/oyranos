@@ -725,7 +725,6 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
 void               oyjlUi_Translate  ( oyjlUi_s          * ui,
-                                       oyjlUi_s          * catalog_lang,
                                        const char        * new_loc,
                                        oyjl_val            catalog,
                                        oyjlTranslate_f     translator );
