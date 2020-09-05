@@ -64,7 +64,7 @@ int myMain( int argc, const char ** argv )
   /* declare the option choices  *   nick,          name,               description,                  help */
   oyjlOptionChoice_s w_choices[] = {{"C",           _("C static char"), NULL,                         NULL},
                                     {"","","",""}};
-  oyjlOptionChoice_s A_choices[] = {{_("Convert JSON to gettext ready C strings"),_("oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_(\\\"%%s\\\"); ' -k name,description,help"),NULL,                         NULL},
+  oyjlOptionChoice_s A_choices[] = {{_("Convert JSON to gettext ready C strings"),_("oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_(\"%s\"); ' -k name,description,help"),NULL,                         NULL},
                                     {_("Add gettext translated keys to JSON"),_("oyjl-translate -a -i oyjl-ui.json -o result.json -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES"),NULL,                         NULL},
                                     {_("View MAN page"),_("oyjl-translate -X man | groff -T utf8 -man -"), NULL,NULL},
                                     {"","","",""}};
@@ -80,7 +80,7 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&input}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Output"),   _("File or Stream"),          _("A JSON file name or a output stream like \"stdout\"."),_("FILENAME"),      
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&output}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("Format string"),           _("A output format string."),_("'_(\\\"%s\\\"); '"), 
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("Format string"),           _("A output format string."),_("'_(\"%s\"); '"), 
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&format}},
     {"oiwi", 0,                          "a","add",           NULL,     _("Add"),      _("Add Translation"),         _("Add gettext translated keys to JSON"),NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&add}},
