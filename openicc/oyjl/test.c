@@ -938,7 +938,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups_no_args[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o" }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode(1)"),_("Simple mode \"(1)\""), NULL, "#", "o,v",    "o" }, /* accepted even if none of the mandatory options is set */
     {"oiwg", OYJL_OPTION_FLAG_EDITABLE,_("Mode2"),_("Any arg mode"),NULL,"@","o,v","@,o"},/* accepted if anonymous arguments are set */
     {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "o,v",    "i,o" },/* parsed and checked with -i option */
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "h",      "h,v" },/* just show in documentation */
@@ -951,7 +951,7 @@ oyjlTESTRESULT_e testUiTranslation ()
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups_no_args, NULL );
   char * text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7270)
+  if(text && strlen(text) == 7280)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson()                      %lu", text?strlen(text):0 );
   } else
@@ -964,7 +964,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6799)
+  if(text && strlen(text) == 6809)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()                %lu", text?strlen(text):0 );
   } else
@@ -982,7 +982,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 8345)
+  if(c_source && strlen(c_source) == 8347)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUiJsonToCode()                   %lu", c_source?strlen(c_source):0 );
   } else
@@ -997,7 +997,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   oyjlTreeFree( json ); json = NULL;
 
   text = oyjlUi_ExportToJson( ui_en, 0 );
-  if(text && strlen(text) == 6799)
+  if(text && strlen(text) == 6809)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson(copy)            %lu", text?strlen(text):0 );
   } else
@@ -1007,6 +1007,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson-copy", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
+  if(text) {free(text);} text = NULL;
 
   {
     const char * catalog_json = "{\n\
@@ -1018,7 +1019,7 @@ oyjlTESTRESULT_e testUiTranslation ()
             \"Help\": \"Nápověda\",\n\
             \"Example\": \"Příklad\",\n\
             \"FILENAME\": \"JMENO_SOUBORU\",\n\
-            \"Mode1\": \"Režimu1\",\n\
+            \"Mode(1)\": \"Režimu(1)\",\n\
             \"Mode3\": \"Režimu3\",\n\
             \"General options\": \"Obecné volby\",\n\
             \"Print All\": \"Tisknout vše\",\n\
@@ -1037,7 +1038,7 @@ oyjlTESTRESULT_e testUiTranslation ()
             \"FILENAME\": \"DATEINAME\",\n\
             \"General options\": \"Allgemeine Optionen\",\n\
             \"Misc\": \"Verschiedenes\",\n\
-            \"Mode1\": \"Modus1\",\n\
+            \"Mode(1)\": \"Modus(1)\",\n\
             \"Mode3\": \"Modus3\",\n\
             \"October 10, 2018\": \"10. Oktober 2018\",\n\
             \"Print All\": \"Zeige Alle\",\n\
@@ -1046,7 +1047,7 @@ oyjlTESTRESULT_e testUiTranslation ()
             \"Set Input\": \"Setze Eingabe\",\n\
             \"Short example tool using libOyjl\": \"Einfaches Beispielwerkzeug mit libOyjl\",\n\
             \"Show Status\": \"Zeige Status\",\n\
-            \"Simple mode\": \"Einfacher Modus\"\n\
+            \"Simple mode \\\"(1)\\\"\": \"Einfacher Modus \\\"(1)\\\"\"\n\
           },\n\
           \"de_DE\": {\n\
             \"Example2\": \"Beispiel2\"\n\
@@ -1072,7 +1073,7 @@ oyjlTESTRESULT_e testUiTranslation ()
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups_no_args, NULL );
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6805)
+  if(text && strlen(text) == 6815)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson(de)              %lu", text?strlen(text):0 );
   } else
@@ -1088,7 +1089,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 8351)
+  if(c_source && strlen(c_source) == 8353)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUiJsonToCode(de)                 %lu", c_source?strlen(c_source):0 );
   } else
@@ -1104,9 +1105,9 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   oyjl_val catalog = NULL;
   oyjlTranslate_f tr = oyjlTranslate;
-  oyjlUi_Translate( ui, ui_en, "cs_CZ", oyjlCatalog(&catalog), tr );
+  oyjlUi_Translate( ui_en, "cs_CZ", oyjlCatalog(&catalog), tr );
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6872)
+  if(text && strlen(text) == 6888)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson(de->cs)          %lu", text?strlen(text):0 );
   } else
@@ -1119,7 +1120,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7401)
+  if(text && strlen(text) == 7417)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson(de->cs)                %lu", text?strlen(text):0 );
   } else
