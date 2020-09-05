@@ -1,4 +1,6 @@
-SET(LANGS "de_DE.UTF8")
+SET( LANGS
+     cs_CZ.UTF8
+     de_DE.UTF8 )
 MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
   IF( CMAKE_CROSSCOMPILING )
       MESSAGE( "-- Skipping ${_tool} docu: cross compiling; Hint: build first for local march to generate docu + i18n" )
@@ -24,11 +26,14 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
 #        COMMENT "Extract markdown formated manual page to ${_tool_MD}.md"
     )
     IF( USE_GETTEXT )
+#      MESSAGE( "add \"${_tool}\": \"${_langs}\"" )
       # add translations
+      SET(long_langs "")
       FOREACH( _lang ${_langs} )
-        SET( _lang "de_DE.UTF8" )
         STRING(SUBSTRING ${_lang} 0 2 short_lang)
-#      MESSAGE( "add \"${_tool}\": \"" ${short_lang} "\" from ${_lang} / \"${_langs}\"" )
+        STRING(SUBSTRING ${_lang} 0 5 long_lang)
+        SET(long_langs ${long_langs} ${long_lang})
+#        MESSAGE( "add \"${_tool}\": \"" ${short_lang} "\" from ${_lang} / \"${_langs}\"" )
         ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/${_tool}.1
           COMMAND mkdir -p "${CMAKE_SOURCE_DIR}/doc/man/${short_lang}/"
           COMMAND cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy
@@ -52,8 +57,9 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
         )
       ENDFOREACH( _lang ${_langs} )
 
+      STRING(REGEX REPLACE ";" "," oyjl_langs "${long_langs}")
       ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c
-          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG="C" DISPLAY="man_page" ${_tool} -X json | oyjl-translate -a -i - -o ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c -k name,description,help,label,value_name -d "oyjl,oyranos" -p "${CMAKE_BINARY_DIR}/locale/" -l ${_langs} -t -w=C
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG="C" DISPLAY="man_page" ${_tool} -X json | oyjl-translate -a -i - -o ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c -k name,description,help,label,value_name -d "oyjl,oyranos" -p "${CMAKE_BINARY_DIR}/locale/" -l ${oyjl_langs} -t -w=C
           DEPENDS ${_tool} ${_tool_src}
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
@@ -75,7 +81,7 @@ IF( NOT HAVE_OYJL )
 ENDIF()
 TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} )
 INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
-OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} ${LANGS} )
+OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} "${LANGS}" )
 
 # ICC profile information and manipulations
 ADD_EXECUTABLE( oyranos-profile "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profile_tool.c" )
@@ -107,7 +113,7 @@ IF( NOT HAVE_OYJL )
 ENDIF()
 TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} ${DBUS_LIBS} )
 INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
-OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} ${LANGS} )
+OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} "${LANGS}" )
 
 # Device listing
 ADD_EXECUTABLE( oyranos-device "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-device.c" )
@@ -126,7 +132,7 @@ ENDIF()
   TARGET_LINK_LIBRARIES ( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS}
                  ${CAIRO_LIBRARIES} )
   INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
-  OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} ${LANGS} )
+  OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} "${LANGS}" )
 ENDIF()
 
 ADD_SUBDIRECTORY( oforms )
