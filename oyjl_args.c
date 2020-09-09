@@ -1218,10 +1218,10 @@ static char* oyjlOption_PrintArgDouble_( oyjlOption_s    * o,
                                        int                 flags )
 {
   char * text = NULL;
-  oyjlStringAdd( &text, malloc, free, "%s%s%s (%s%s%g [≥%g ≤%g])",
+  oyjlStringAdd( &text, malloc, free, "%s%s%s (%s%s%g [≥%g ≤%g Δ%g])",
       (o->description && flags & oyjlDESCRIPTION) ? o->description:"",
       (o->help && flags & oyjlHELP)?": ":"", (o->help && flags & oyjlHELP)?o->help :"",
-      o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end );
+      o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end, o->values.dbl.tick );
   return text;
 }
 
