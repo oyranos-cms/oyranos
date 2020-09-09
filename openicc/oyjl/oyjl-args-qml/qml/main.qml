@@ -771,7 +771,7 @@ AppWindow {
         {
             var opt = options[index];
             var def = opt.default;
-            var current = -1;
+            var current = "";
             var suggest;
             var choices = opt.choices
             var type = opt.type
@@ -780,6 +780,10 @@ AppWindow {
             var repetition = typeof opt.repetition !== "undefined"
             var run = 0
             var value = ""
+            var value_name = ""
+
+            if(typeof opt.value_name !== "undefined")
+              value_name = opt.value_name;
             // see mandatory key
             if(group.mandatory.length && group.mandatory.match(opt.key))
                 run = 1
@@ -855,7 +859,8 @@ AppWindow {
                 default: opt.default,
                 group: group,
                 run: run,
-                value: value
+                value: value,
+                value_name: value_name
             }
             var text = JSON.stringify(o);
             o.text = text;
