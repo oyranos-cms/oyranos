@@ -1,7 +1,7 @@
 /** @file OptionsList.qml
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2020 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -287,9 +287,12 @@ Rectangle {
                     if(typeof key !== "undefined" && key !== "@" && key !== "#")
                         named_option = 1
                     if( named_option )
-                        helpText = "[-" + key + "] "
+                        helpText = "[-" + key
                     else if(typeof key !== "undefined")
-                        helpText = "[" + key + "] "
+                        helpText = "[" + key
+                    if( value_name.length !== 0 )
+                        helpText += "=" + value_name
+                    helpText += "] "
                     var found = 0
                     if( typeof name !== "undefined" )
                     {
@@ -321,6 +324,16 @@ Rectangle {
                             found = 1;
                         }
                     }
+                    if( type === "double")
+                    {
+                        if(found === 1) helpText += "\n"; found = 0
+                        if(typeof dbl.tick !== "undefined")
+                        {
+                            helpText += "(" + value_name + ":" + current + " [≥" + dbl.start + " ≤" + dbl.end + " Δ" + dbl.tick + "])"
+                            found = 1;
+                        }
+                    }
+
                     if( type === "string" && repetition)
                     {
                         helpText += "\n\n";
