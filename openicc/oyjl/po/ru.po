@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-08-18 07:38+0200\n"
+"POT-Creation-Date: 2020-09-07 13:38+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -808,7 +808,7 @@ msgstr ""
 #: test-args.c:368 test-args.c:464 test-args.c:480 test-args.c:500
 #: test-args.c:524 test-args.c:544 test-core.c:734 test-core.c:760
 #: test-core.c:798 test-core.c:812 test-core.c:825 test-core.c:838
-#: test-core.c:852 test.c:849 test.c:951 test.c:1073
+#: test-core.c:852 test.c:849 test.c:951 test.c:1074
 msgid "Short example tool using libOyjl"
 msgstr ""
 
