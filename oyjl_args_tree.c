@@ -450,6 +450,7 @@ static char * oyjlUiGetVariableNameC_( oyjl_val            val,
   if(!t) return t;
   /* replace some reserved C names */
   if('0' <= t[0] && t[0] <= '9') { char * name = NULL; oyjlStringAdd( &name, 0,0, "var_%s", t ); free(t); t = name; }
+  if(strcmp(t,"#") == 0) { free(t); t = oyjlStringCopy("no_arg_var",0); }
   if(strcmp(t,"break") == 0) { free(t); t = oyjlStringCopy("break_var",0); }
   if(strcmp(t,"case") == 0) { free(t); t = oyjlStringCopy("case_var",0); }
   if(strcmp(t,"char") == 0) { free(t); t = oyjlStringCopy("char_var",0); }
