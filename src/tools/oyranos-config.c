@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2017-2019 (C) Kai-Uwe Behrmann
+ *            2017-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    DB manipulation tool
  *  @internal
@@ -32,6 +32,7 @@
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 #include "oyranos_config_internal.h"
+#include "oyranos_git_version.h"
 #include "oyProfiles_s.h"
 
 #include <locale.h>
@@ -43,57 +44,6 @@ void  getKey                         ( const char        * key,
                                        int                 verbose,
                                        int                 print );
 
-
-void  printfHelp (int argc, char** argv)
-{
-  int i;
-  fprintf( stderr, "\n");
-  for(i = 0; i < argc; ++i)
-    fprintf( stderr, "\'%s\' ", argv[i]);
-  printf("\n");
-  printf("oyranos-config v%d.%d.%d %s\n",
-         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-         _("is a settings administration tool"));
-  printf("%s:\n",                 _("Usage"));
-  printf("  %s:\n",               _("Persistent Settings"));
-  printf("      %s -g XPATH\t%s\n", argv[0], _("Get a Value") );
-  printf("      %s -s XPATH:VALUE\t%s\n", argv[0], _("Set a Value") );
-  printf("      %s -l\t\t%s\n", argv[0], _("List existing paths") );
-  printf("      %s -p\t\t%s\n", argv[0], _("Show DB File") );
-#ifdef HAVE_DBUS
-  printf("      %s --watch\t\t%s\n", argv[0], _("Watch DB changes") );
-#endif
-  printf("\n");
-  printf("  %s:\n",               _("Show Install Paths"));
-  printf("      %s --syscolordir\t%s\n", argv[0],  _("Path to system main color directory") );
-  printf("      %s --usercolordir\t%s\n", argv[0], _("Path to users main color directory") );
-  printf("      %s --iccdirname\t%s\n", argv[0], _("ICC profile directory name") );
-  printf("      %s --settingsdirname\t%s\n", argv[0], _("Oyranos settings directory name") );
-  printf("      %s --cmmdir\t%s\n", argv[0], _("Oyranos CMM directory name") );
-  printf("      %s --metadir\t%s\n", argv[0], _("Oyranos meta module directory name") );
-  printf("\n");
-  printf("  %s\n",               _("Show Version"));
-  printf("      %s --version\t%s\n", argv[0], _("Show official version") );
-  printf("      %s --api-version\t%s\n", argv[0], _("Show version of API"));
-  printf("      %s --num-version\t%s\n", argv[0], _("Show version as a simple number"));
-  printf("\n");
-  printf("  %s\n",               _("Show Help:"));
-  printf("      %s [-h]\n", argv[0]);
-  printf("\n");
-  printf("  %s\n",               _("General options:"));
-  printf("         -v      \t%s\n", _("verbose"));
-  printf("\n");
-  printf("  %s\n",               _("Miscellaneous options:"));
-  printf("         --cflags\t%s\n", _("compiler flags"));
-  printf("         --ldflags\t%s\n", _("dynamic link flags"));
-  printf("         --ldstaticflags\t%s\n", _("static linking flags"));
-  printf("         --sourcedir\t%s\n", _("Oyranos local source directory name"));
-  printf("         --builddir\t%s\n", _("Oyranos local build directory name"));
-  printf("\n");
-  printf(_("For more information read the man page:"));
-  printf("\n");
-  printf("      man oyranos-config\n");
-}
 
 #ifdef HAVE_DBUS
 #include "oyranos_dbus_macros.h"
@@ -130,24 +80,226 @@ static void oyConfigCallbackDBus     ( double              progress_zero_till_on
 
 #endif /* HAVE_DBUS */
 
+const char * jcommands = "{\n\
+  \"command_set\": \"oyranos-config\",\n\
+  \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
+  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
+  \"command_get\": \"oyranos-config\",\n\
+  \"command_get_args\": [\"-X\",\"json\"]\n\
+}";
 
-int main(int argc, char *argv[])
+/* This function is called the
+ * * first time for GUI generation and then
+ * * for executing the tool.
+ */
+int myMain( int argc , const char** argv )
 {
-  int error = 0;
   int i;
 
   char * v;
   int count = 0;
+  oySCOPE_e scope = oySCOPE_USER_SYS;
 
   /* the functional switches */
-  int verbose = 0;
-  char * set = NULL;
-  char * get = NULL;
+  int error = 0;
+  int state = 0;
+  int no_arg_var = 0;
   int path = 0;
-  int paths = 0;
-  int daemon = -1;
+  int list = 0;
+  const char * get = 0;
+  const char * set = 0;
+  int daemon = 0;
+  int system_wide = 0;
+  int syscolordir = 0;
+  int usercolordir = 0;
+  int iccdirname = 0;
+  int settingsdirname = 0;
+  int cmmdir = 0;
+  int metadir = 0;
+  int Version = 0;
+  int api_version = 0;
+  int num_version = 0;
+  int git_version = 0;
+  int cflags = 0;
+  int ldflags = 0;
+  int ldstaticflags = 0;
+  int sourcedir = 0;
+  int builddir = 0;
+  const char * export = 0;
+  const char * render = 0;
+  const char * help = 0;
+  int verbose = 0;
+  int version = 0;
 
-  oySCOPE_e scope = oySCOPE_USER_SYS;
+
+  /* nick, name, description, help */
+  /* declare the option choices  *   nick,          name,               description,                  help */
+  oyjlOptionChoice_s d_choices[] = {{"0",           _("Deactivate"),    _("Deactivate"),              ""},
+                                    {"1",           _("Activate"),      _("Activate"),                ""},
+                                    {"","","",""}};
+
+  oyjlOptionChoice_s E_choices[] = {{"OY_DEBUG",    _("set the Oyranos debug level."),_("Alternatively the -v option can be used."),_("Valid integer range is from 1-20.")},
+                                    {"OY_MODULE_PATH",_("route Oyranos to additional directories containing modules."),"",                        ""},
+                                    {"","","",""}};
+
+  oyjlOptionChoice_s A_choices[] = {{"Watch events.",_("oyranos-config -d 1"),"",                        ""},
+                                    {"Show all settings.",_("oyranos-config -l -v"),"",                        ""},
+                                    {"","","",""}};
+
+  oyjlOptionChoice_s S_choices[] = {{"oyranos-policy(1) oyranos-config-synnefo(1) oyranos(3)","",              "",                        ""},
+                                    {"http://www.oyranos.org","",              "",                        ""},
+                                    {"","","",""}};
+
+  /* declare options - the core information; use previously declared choices */
+  oyjlOption_s oarray[] = {
+  /* type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,         
+        value_type,              values,             variable_type, variable_name */
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,"#",NULL,            NULL,     _("name"),     _("Project Name"),            NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&no_arg_var}},
+    {"oiwi", 0,                          "p","path",          NULL,     _("path"),     _("Show DB File"),            NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&path}},
+    {"oiwi", 0,                          "l","list",          NULL,     _("paths"),    _("List existing paths"),     NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "g","get",           NULL,     _("get"),      _("Get a Value"),             NULL, _("XPATH"),         
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&get}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","set",           NULL,     _("set"),      _("Set a Value"),             NULL, _("XPATH:VALUE"),   
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&set}},
+    {"oiwi", 0,                          "d","daemon",        NULL,     _("daemon"),   _("Watch DB changes"),        NULL, _("0|1"),           
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)d_choices, sizeof(d_choices), malloc ), 0}}, oyjlINT,       {.i=&daemon}},
+    {"oiwi", 0,                          "z","system-wide",   NULL,     _("system wide"),_("System wide DB setting"),  NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&system_wide}},
+    {"oiwi", 0,                          NULL,"syscolordir",   NULL,     _("syscolordir"),_("Path to system main color directory"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&syscolordir}},
+    {"oiwi", 0,                          NULL,"usercolordir",  NULL,     _("usercolordir"),_("Path to users main color directory"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&usercolordir}},
+    {"oiwi", 0,                          NULL,"iccdirname",    NULL,     _("iccdirname"),_("ICC profile directory name"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&iccdirname}},
+    {"oiwi", 0,                          NULL,"settingsdirname",NULL,     _("settingsdirname"),_("Oyranos settings directory name"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&settingsdirname}},
+    {"oiwi", 0,                          NULL,"cmmdir",        NULL,     _("cmmdir"),   _("Oyranos CMM directory name"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&cmmdir}},
+    {"oiwi", 0,                          NULL,"metadir",       NULL,     _("metadir"),  _("Oyranos meta module directory name"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&metadir}},
+    {"oiwi", 0,                          NULL,"Version",       NULL,     _("Version"),  _("Show official version"),   NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&Version}},
+    {"oiwi", 0,                          NULL,"api-version",   NULL,     _("api-version"),_("Show version of API"),     NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&api_version}},
+    {"oiwi", 0,                          NULL,"num-version",   NULL,     _("num-version"),_("Show version as a simple number"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&num_version}},
+    {"oiwi", 0,                          NULL,"git-version",   NULL,     _("git-version"),_("Show version as in git"),  NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&git_version}},
+    {"oiwi", 0,                          NULL,"cflags",        NULL,     _("cflags"),   _("compiler flags"),          NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&cflags}},
+    {"oiwi", 0,                          NULL,"ldflags",       NULL,     _("ldflags"),  _("dynamic link flags"),      NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&ldflags}},
+    {"oiwi", 0,                          NULL,"ldstaticflags", NULL,     _("ldstaticflags"),_("static linking flags"),    NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&ldstaticflags}},
+    {"oiwi", 0,                          NULL,"sourcedir",     NULL,     _("sourcedir"),_("Oyranos local source directory name"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&sourcedir}},
+    {"oiwi", 0,                          NULL,"builddir",      NULL,     _("builddir"), _("Oyranos local build directory name"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&builddir}},
+    {"oiwi", 0,                          "E","man-environment_variables",NULL,     "",         "",                        NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)E_choices, sizeof(E_choices), malloc ), 0}}, oyjlNONE,      {}},
+    {"oiwi", 0,                          "A","man-examples",  NULL,     "",         "",                        NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {}},
+    {"oiwi", 0,                          "S","man-see_as_well",NULL,     "",         "",                        NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc ), 0}}, oyjlNONE,      {}},
+    /* default option template -X|--export */
+    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    /* The --render option can be hidden and used only internally. */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&help} },
+    {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0} },
+    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
+    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
+    {"",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}
+  };
+
+  /* declare option groups, for better syntax checking and UI groups */
+  oyjlOptionGroup_s groups[] = {
+  /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
+    {"oiwg", 0,     _("Settings"),      _("Persistent Settings"),     _("Handle OpenICC DB configuration on low level."),"g|s|l|p","v,z","g,s,l,p"},
+#ifdef HAVE_DBUS
+    {"oiwg", 0,     _("Watch"),         _("Observe config changes"),  _("Will only work on command line."),"d",           "v",           "d" },
+#endif
+    {"oiwg", 0,     _("Install Paths"), _("Show Install Paths"),      NULL,               "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir","v,z",         "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir"},
+    {"oiwg", 0,     _("Version"),       _("Show Version"),            NULL,               "Version|api-version|num-version|git-version","v",           "Version|api-version|num-version|git-version"},
+    {"oiwg", 0,     _("Options"),       _("Miscellaneous options"),   _("These strings can be used to compile programs."),"cflags|ldflags|ldstaticflags|sourcedir|builddir","v",           "cflags|ldflags|ldstaticflags|sourcedir|builddir"},
+    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "X|h|V|R",     "v",           "h,X,R,V,z,v"},
+    {"",0,0,0,0,0,0,0}
+  };
+
+  oyjlUiHeaderSection_s * sections = oyUiInfo(_("The tool can read and set OpenICC DB options, and display paths and static information."),
+                  "2020-10-22T12:00:00", "October 22, 2020");
+  oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oyranos-config", _("Config"), _("Oyranos Config tool"),
+#ifdef __ANDROID__
+                                       ":/images/logo.svg", // use qrc
+#else
+                                       "oyranos_logo",
+#endif
+                                       sections, oarray, groups, &state );
+  if( state & oyjlUI_STATE_EXPORT &&
+      export &&
+      strcmp(export,"json+command") != 0)
+    goto clean_main;
+  if(state & oyjlUI_STATE_HELP)
+  {
+    fprintf( stderr, "%s\n\tman oyranos-config\n\n", _("For more information read the man page:") );
+    goto clean_main;
+  }
+
+  if(ui && verbose)
+  {
+    char * json = oyjlOptions_ResultsToJson( ui->opts );
+    if(json)
+      fputs( json, stderr );
+    fputs( "\n", stderr );
+
+    char * text = oyjlOptions_ResultsToText( ui->opts );
+    if(text)
+      fputs( text, stderr );
+    fputs( "\n", stderr );
+  }
+
+  if(ui && (export && strcmp(export,"json+command") == 0))
+  {
+    char * json = oyjlUi_ToJson( ui, 0 ),
+         * json_commands = NULL;
+    oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"%s\"", argv[0] );
+    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] ); /* skip opening '{' */
+    puts( json_commands );
+    goto clean_main;
+  }
+
+  /* Render boilerplate */
+  if(ui && render)
+  {
+#if !defined(NO_OYJL_ARGS_RENDER)
+    int debug = verbose;
+    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
+#else
+    fprintf( stderr, "No render support compiled in. For a GUI use -X json and load into oyjl-args-render viewer." );
+#endif
+  } else if(ui)
+  {
+    /* ... working code goes here ... */
+
+
+  if(oy_debug)
+    fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
+
+  if(system_wide)
+    scope = oySCOPE_SYSTEM;
+
+  if(oy_debug)
+    fprintf( stderr, "  Oyranos v%s\n",
+                  oyNoEmptyName_m_(oyVersionString(1,0)));
+
+
+
+  if(verbose > 1)
+    oy_debug += verbose-1;
 
   if(getenv(OY_DEBUG))
   {
@@ -156,99 +308,58 @@ int main(int argc, char *argv[])
       oy_debug += value;
   }
 
-#ifdef USE_GETTEXT
-  setlocale(LC_ALL,"");
-#endif
-  oyInit_();
-
-  if(argc != 1)
+  if(no_arg_var)
   {
-    int pos = 1;
-    const char *wrong_arg = 0;
-    while(pos < argc)
-    {
-      switch(argv[pos][0])
-      {
-        case '-':
-            for(i = 1; i < (int)strlen(argv[pos]); ++i)
-            switch (argv[pos][i])
-            {
-              case 'g': OY_PARSE_STRING_ARG( get ); break;
-              case 's': OY_PARSE_STRING_ARG( set ); break;
-              case 'l': paths = 1; break;
-              case 'p': path = 1; break;
-              case 'v': if(verbose++) ++oy_debug; break;
-              case 'h':
-              case '-':
-                        if(i == 1)
-                        {
-                             if(OY_IS_ARG("version"))
-                        { fprintf( stdout, "%s\n", oyVersionString(1,0) ); return 0; }
-                        else if(OY_IS_ARG("api-version"))
-                        { fprintf( stdout, "%d\n", OYRANOS_VERSION_A ); return 0; }
-                        else if(OY_IS_ARG("num-version"))
-                        { fprintf( stdout, "%d\n", OYRANOS_VERSION ); return 0; }
-                        else if(OY_IS_ARG("cflags"))
-                        { system( "pkg-config --cflags oyranos" ); i=100; break; }
-                        else if(OY_IS_ARG("ldflags"))
-                        { system( "pkg-config --libs oyranos" ); i=100; break; }
-                        else if(OY_IS_ARG("ldstaticflags"))
-                        { puts( "-L" OY_LIBDIR " -loyranos-static" ); i=100; break; }
-                        else if(OY_IS_ARG("syscolordir"))
-                        { puts( OY_SYSCOLORDIR "\n" ); return 0; }
-                        else if(OY_IS_ARG("usercolordir"))
-                        { puts( OY_USERCOLORDIR "\n" ); return 0; }
-                        else if(OY_IS_ARG("iccdirname"))
-                        { puts( OY_ICCDIRNAME "\n" ); return 0; }
-                        else if(OY_IS_ARG("settingsdirname"))
-                        { puts( OY_SETTINGSDIRNAME "\n" ); return 0; }
-                        else if(OY_IS_ARG("cmmdir"))
-                        { puts( OY_CMMDIR "\n" ); return 0; }
-                        else if(OY_IS_ARG("metadir"))
-                        { puts( OY_LIBDIR OY_SLASH OY_METASUBPATH "\n" ); return 0; }
-                        else if(OY_IS_ARG("sourcedir"))
-                        { puts( OY_SOURCEDIR "\n" ); return 0; }
-                        else if(OY_IS_ARG("builddir"))
-                        { puts( OY_BUILDDIR "\n" ); return 0; }
-                        else if(OY_IS_ARG("watch"))
-                        { daemon = 1; i=100; break; }
-                        else if(OY_IS_ARG("verbose"))
-                        { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
-                        else if(OY_IS_ARG("help"))
-                        { printfHelp(argc, argv); i=100; break; }
-                        else if(OY_IS_ARG("system-wide"))
-                        { scope = oySCOPE_SYSTEM; i=100; break; }
-                        } OY_FALLTHROUGH
-              default:
-                        printfHelp(argc, argv);
-                        exit (0);
-                        break;
-            }
-            break;
-        default:
-                        printfHelp(argc, argv);
-                        exit (0);
-      }
-      if( wrong_arg )
-      {
-        printf("%s %s\n", _("wrong argument to option:"), wrong_arg);
-        exit(1);
-      }
-      ++pos;
-    }
-    if(oy_debug)
-      for(i = 0; i < argc; ++i)
-        fprintf( stderr, "\'%s\' ", argv[i]);
-  }
-  else
-  {
-                        fprintf( stdout, "oyranos" );
-                        exit (0);
+    fprintf( stdout, "oyranos" );
+    goto clean_main;
   }
 
   if(oy_debug)
     fprintf( stderr, "  Oyranos v%s\n",
                   oyNoEmptyName_m_(oyVersionString(1,0)));
+
+
+  int dir = 0;
+  if(syscolordir)
+  { puts( OY_SYSCOLORDIR ); dir = 1; }
+  else if(usercolordir)
+  { puts( OY_USERCOLORDIR ); dir = 1; }
+  if( dir &&
+      (iccdirname || settingsdirname || cmmdir || metadir) )
+    puts("/");
+  if(iccdirname)
+  { puts( OY_ICCDIRNAME ); dir = 1; }
+  else if(settingsdirname)
+  { puts( OY_SETTINGSDIRNAME ); dir = 1; }
+  else if(cmmdir)
+  { puts( OY_CMMDIR ); dir = 1; }
+  else if(metadir)
+  { puts( OY_LIBDIR OY_SLASH OY_METASUBPATH ); dir = 1; }
+  if(dir)
+  {
+    puts("\n");
+    return 0;
+  }
+
+  if(Version)
+  { fprintf( stdout, "%s\n", oyVersionString(1,0) ); return 0; }
+  else if(api_version)
+  { fprintf( stdout, "%d\n", OYRANOS_VERSION_A ); return 0; }
+  else if(num_version)
+  { fprintf( stdout, "%d\n", OYRANOS_VERSION ); return 0; }
+  else if(git_version)
+  { fprintf( stdout, "%s\n", OY_GIT_VERSION ); return 0; }
+
+  if(cflags)
+  { system( "pkg-config --cflags oyranos" ); }
+  if(ldflags)
+  { system( "pkg-config --libs oyranos" ); }
+  if(ldstaticflags)
+  { puts( "-L" OY_LIBDIR " -loyranos-static" ); }
+  if(sourcedir)
+  { puts( OY_SOURCEDIR "\n" ); return 0; }
+  if(builddir)
+  { puts( OY_BUILDDIR "\n" ); return 0; }
 
   if(path)
   {
@@ -260,7 +371,7 @@ int main(int argc, char *argv[])
     if(v) oyFree_m_(v);
   }
 
-  if(paths)
+  if(list)
   {
     char * p;
     if(scope == oySCOPE_USER_SYS) scope = oySCOPE_USER;
@@ -333,13 +444,13 @@ int main(int argc, char *argv[])
     }
     else
     {
-                        printfHelp(argc, argv);
-                        exit (0);
+      oyjlOptions_PrintHelp( ui->opts, ui, verbose, NULL );
+      goto clean_main;
     }
-  } 
+  }
 
 #ifdef HAVE_DBUS
-  if(daemon != -1)
+  if(daemon == 1)
   {
     int id;
     double hour_old = 0.0;
@@ -366,7 +477,53 @@ int main(int argc, char *argv[])
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
+  }
+  else error = 1;
+
+  clean_main:
+  {
+    int i = 0;
+    while(oarray[i].type[0])
+    {
+      if(oarray[i].value_type == oyjlOPTIONTYPE_CHOICE && oarray[i].values.choices.list)
+        free(oarray[i].values.choices.list);
+      ++i;
+    }
+  }
+  oyjlLibRelease();
+
   return error;
+}
+
+int main( int argc_, char ** argv_)
+{
+  int argc = argc_;
+  char ** argv = argv_;
+
+#ifdef __ANDROID__
+  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
+  argv = calloc( argc + 2, sizeof(char*) );
+  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
+  argv[argc++] = "--render=gui"; /* start QML */
+#endif
+
+  /* language needs to be initialised before setup of data structures */
+#ifdef OYJL_USE_GETTEXT
+#ifdef OYJL_HAVE_LOCALE_H
+  setlocale(LC_ALL,"");
+#endif
+#endif
+
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  myMain(argc, (const char **)argv);
+
+#ifdef __ANDROID__
+  free( argv );
+#endif
+
+  return 0;
 }
 
 void  getKey                         ( const char        * key,

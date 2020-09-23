@@ -42,7 +42,7 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebettet
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'> <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>...</td> <td>ICC Profil </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--change-thickness</strong> <em>NUMMER</em></td> <td>Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥0 ≤2])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--change-thickness</strong> <em>NUMMER</em></td> <td>Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥0 ≤2 Δ0,05])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-x</strong>|<strong>--xyy</strong></td> <td>Benutze CIE*xyY *x*y Ebene für Projektion</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--no-blackbody</strong></td> <td>Lasse Weißlinie von Lambertstrahlern fort</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--no-spectral-line</strong></td> <td>Lasse Spektrallinie fort</td> </tr>
@@ -58,9 +58,9 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebettet
 &nbsp;&nbsp;Erzeuge ein 2D Farbpalette mit allen möglichen Farben innerhalb des Farbumfanges des ICC Fabprofiles. Mehr Informationen zum HLC Farbatlas sind zu finden auf www.freiefarbe.de
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-H</strong>|<strong>--hue</strong> <em>NUMMER</em></td> <td>HLC Farbatlas: Wähle ein Seite des HLC Farbatlas mit dem Farbtonwinkel. -H=365 wählt all Farben. (NUMMER:0 [≥0 ≤365])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-L</strong>|<strong>--lightness</strong> <em>NUMMER</em></td> <td>HLC Farbatlas: Wähle ein Seite des HLC Farbatlas mit der Helligkeit. (NUMMER:-5 [≥-5 ≤100])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-C</strong>|<strong>--chroma</strong> <em>NUMMER</em></td> <td>HLC Farbatlas: Wähle ein Seite des HLC Farbatlas mit der Farbsättigung. (NUMMER:-5 [≥-5 ≤130])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-H</strong>|<strong>--hue</strong> <em>NUMMER</em></td> <td>HLC Farbatlas: Wähle ein Seite des HLC Farbatlas mit dem Farbtonwinkel. -H=365 wählt all Farben. (NUMMER:0 [≥0 ≤365 Δ5])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-L</strong>|<strong>--lightness</strong> <em>NUMMER</em></td> <td>HLC Farbatlas: Wähle ein Seite des HLC Farbatlas mit der Helligkeit. (NUMMER:-5 [≥-5 ≤100 Δ5])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-C</strong>|<strong>--chroma</strong> <em>NUMMER</em></td> <td>HLC Farbatlas: Wähle ein Seite des HLC Farbatlas mit der Farbsättigung. (NUMMER:-5 [≥-5 ≤130 Δ5])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'> <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>...</td> <td>ICC Profil </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--swatch-format</strong> <em>FORMAT</em></td> <td>Gib Ausgabeformat an
   <table>
@@ -93,7 +93,7 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebettet
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-k</strong>=<em>NUMMER</em> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--kelvin</strong> <em>NUMMER</em></td> <td>Lambertstrahler (NUMMER:0 [≥0 ≤25000])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--kelvin</strong> <em>NUMMER</em></td> <td>Lambertstrahler (NUMMER:0 [≥0 ≤25000 Δ100])</td> </tr>
 </table>
 
 <h3 id="illuminant">Beleuchtungsspektrumzeichnung</h3>
@@ -151,11 +151,11 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebettet
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|web|</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--thickness</strong> <em>NUMMER</em></td> <td>Gib die Liniendicke an (NUMMER:1 [≥0 ≤10])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--thickness</strong> <em>NUMMER</em></td> <td>Gib die Liniendicke an (NUMMER:1 [≥0 ≤10 Δ0,05])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--no-border</strong></td> <td>Lasse Rand aus in Zeichnung</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--background-lightness</strong> <em>NUMMER</em></td> <td>Hintergrund Helligkeit (NUMMER:-1 [≥-1 ≤100])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--background-lightness</strong> <em>NUMMER</em></td> <td>Hintergrund Helligkeit (NUMMER:-1 [≥-1 ≤100 Δ1])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--no-color</strong></td> <td>Zeichne grau</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--width</strong> <em>NUMMER</em></td> <td>Gib Ausgabebildbreite in Pixel an (NUMMER:128 [≥64 ≤4096])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--width</strong> <em>NUMMER</em></td> <td>Gib Ausgabebildbreite in Pixel an (NUMMER:128 [≥64 ≤4096 Δ1])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-T</strong>|<strong>--raster</strong></td> <td>Zeichne Gitter</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong> <em>-|DATEI</em></td> <td>Gib Ausgabedateiname an, voreingestellt ist stdout </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong> <em>FORMAT</em></td> <td>Gib Ausgabeformat PNG oder SVG an, voreingestellt ist PNG
@@ -191,7 +191,7 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebettet
   <br />
 &nbsp;&nbsp;Der gültige Bereich ist 1-20.
 #### XDG_DATA_HOME XDG_DATA_DIRS
-&nbsp;&nbsp;route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html
+&nbsp;&nbsp;richte Oyranos auf obere Verzeichnisse, welche Resourcen enthalten. An die Pfade für ICC Farbprofile wird "color/icc" angehangen. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html
 
 <h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
 

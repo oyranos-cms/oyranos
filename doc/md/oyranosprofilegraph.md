@@ -42,7 +42,7 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'> <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>...</td> <td>ICC Profile </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--change-thickness</strong> <em>NUMBER</em></td> <td>Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥0 ≤2])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--change-thickness</strong> <em>NUMBER</em></td> <td>Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥0 ≤2 Δ0.05])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-x</strong>|<strong>--xyy</strong></td> <td>Use CIE*xyY *x*y plane for saturation line projection</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--no-blackbody</strong></td> <td>Omit white line of lambert light emitters</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--no-spectral-line</strong></td> <td>Omit the spectral line</td> </tr>
@@ -58,9 +58,9 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
 &nbsp;&nbsp;Create a 2D Graph containing the possible color patches inside the ICC Profile gamut. More information about HLC Color Atlas can be found on www.freiefarbe.de
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-H</strong>|<strong>--hue</strong> <em>NUMBER</em></td> <td>HLC Color Atlas: Select a page by hue color angle in the HLC Color Atlas. -H=365 will output all hues. (NUMBER:0 [≥0 ≤365])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-L</strong>|<strong>--lightness</strong> <em>NUMBER</em></td> <td>HLC Color Atlas: Select a page by lightness in the HLC Color Atlas. (NUMBER:-5 [≥-5 ≤100])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-C</strong>|<strong>--chroma</strong> <em>NUMBER</em></td> <td>HLC Color Atlas: Select a page by chroma (saturation) in the HLC Color Atlas. (NUMBER:-5 [≥-5 ≤130])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-H</strong>|<strong>--hue</strong> <em>NUMBER</em></td> <td>HLC Color Atlas: Select a page by hue color angle in the HLC Color Atlas. -H=365 will output all hues. (NUMBER:0 [≥0 ≤365 Δ5])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-L</strong>|<strong>--lightness</strong> <em>NUMBER</em></td> <td>HLC Color Atlas: Select a page by lightness in the HLC Color Atlas. (NUMBER:-5 [≥-5 ≤100 Δ5])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-C</strong>|<strong>--chroma</strong> <em>NUMBER</em></td> <td>HLC Color Atlas: Select a page by chroma (saturation) in the HLC Color Atlas. (NUMBER:-5 [≥-5 ≤130 Δ5])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'> <em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em>...</td> <td>ICC Profile </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--swatch-format</strong> <em>FORMAT</em></td> <td>Specify output file format
   <table>
@@ -93,7 +93,7 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-k</strong>=<em>NUMBER</em> [<strong>-t</strong>=<em>NUMBER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMBER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMBER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|FILE</em>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--kelvin</strong> <em>NUMBER</em></td> <td>Blackbody Radiator (NUMBER:0 [≥0 ≤25000])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--kelvin</strong> <em>NUMBER</em></td> <td>Blackbody Radiator (NUMBER:0 [≥0 ≤25000 Δ100])</td> </tr>
 </table>
 
 <h3 id="illuminant">Illuminant Spectrum Graph</h3>
@@ -151,11 +151,11 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|web|</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--thickness</strong> <em>NUMBER</em></td> <td>Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--thickness</strong> <em>NUMBER</em></td> <td>Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10 Δ0.05])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--no-border</strong></td> <td>Omit border in graph</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--background-lightness</strong> <em>NUMBER</em></td> <td>Background Lightness (NUMBER:-1 [≥-1 ≤100])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--background-lightness</strong> <em>NUMBER</em></td> <td>Background Lightness (NUMBER:-1 [≥-1 ≤100 Δ1])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--no-color</strong></td> <td>Draw Gray</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--width</strong> <em>NUMBER</em></td> <td>Specify output image width in pixel (NUMBER:128 [≥64 ≤4096])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--width</strong> <em>NUMBER</em></td> <td>Specify output image width in pixel (NUMBER:128 [≥64 ≤4096 Δ1])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-T</strong>|<strong>--raster</strong></td> <td>Draw Raster</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong> <em>-|FILE</em></td> <td>Specify output file name, default is stdout </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong> <em>FORMAT</em></td> <td>Specify output file format png or svg, default is png

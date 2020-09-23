@@ -55,7 +55,7 @@ The tool can set the actual white point or set it by local day and night time. A
   </table>
   </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--night-backlight</strong> <em>PERCENT</em></td> <td>Set Nightly Backlight: The option needs xbacklight installed and supporting your device for dimming the monitor lamp. (PERCENT:4 [≥0 ≤100])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--night-backlight</strong> <em>PERCENT</em></td> <td>Set Nightly Backlight: The option needs xbacklight installed and supporting your device for dimming the monitor lamp. (PERCENT:4 [≥0 ≤100 Δ1])</td> </tr>
 </table>
 
 <h3 id="white-point">Actual mode</h3>
@@ -75,7 +75,7 @@ The tool can set the actual white point or set it by local day and night time. A
   </table>
   </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--automatic</strong> <em>KELVIN</em></td> <td>A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--automatic</strong> <em>KELVIN</em></td> <td>A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100 Δ100])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-y</strong>|<strong>--test</strong></td> <td></td> </tr>
 </table>
 
@@ -112,9 +112,9 @@ The tool can set the actual white point or set it by local day and night time. A
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--location</strong></td> <td>Detect location by IP adress</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--latitude</strong> <em>ANGLE_IN_DEGREE</em></td> <td>Set Latitude (ANGLE_IN_DEGREE:0 [≥-90 ≤90])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--longitude</strong> <em>ANGLE_IN_DEGREE</em></td> <td>Set Longitude (ANGLE_IN_DEGREE:0 [≥-180 ≤180])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--twilight</strong> <em>ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical</em></td> <td>Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--latitude</strong> <em>ANGLE_IN_DEGREE</em></td> <td>Set Latitude (ANGLE_IN_DEGREE:0 [≥-90 ≤90 Δ1])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--longitude</strong> <em>ANGLE_IN_DEGREE</em></td> <td>Set Longitude (ANGLE_IN_DEGREE:0 [≥-180 ≤180 Δ1])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--twilight</strong> <em>ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical</em></td> <td>Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18 Δ1])</td> </tr>
 </table>
 
 <h3 id="daemon">Run sunset daemon</h3>

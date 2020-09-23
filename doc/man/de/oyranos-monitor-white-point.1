@@ -52,7 +52,7 @@ Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprof
 .br
 	\-g Effect 2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
 .br
-\fB\-b\fR|\fB\-\-night-backlight\fR \fIPROZENT\fR	Setze Nächtiches Monitorlicht (PROZENT:4 [≥0 ≤100])
+\fB\-b\fR|\fB\-\-night-backlight\fR \fIPROZENT\fR	Setze Nächtiches Monitorlicht (PROZENT:4 [≥0 ≤100 Δ1])
 .RS
 Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe.
 .RE
@@ -76,7 +76,7 @@ Aktueller Modus
 .br
 	\-w 6		# Lichtart D93
 .br
-\fB\-a\fR|\fB\-\-automatic\fR \fIKELVIN\fR	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100])
+\fB\-a\fR|\fB\-\-automatic\fR \fIKELVIN\fR	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100 Δ100])
 .br
 \fB\-y\fR|\fB\-\-test\fR	
 .br
@@ -116,11 +116,11 @@ Ort und Dämmerung
 .br
 \fB\-l\fR|\fB\-\-location\fR	Erhalte Position von IP Adresse
 .br
-\fB\-i\fR|\fB\-\-latitude\fR \fIWINKEL_IN_GRAD\fR	Setze Geographische Breite (WINKEL_IN_GRAD:0 [≥-90 ≤90])
+\fB\-i\fR|\fB\-\-latitude\fR \fIWINKEL_IN_GRAD\fR	Setze Geographische Breite (WINKEL_IN_GRAD:0 [≥-90 ≤90 Δ1])
 .br
-\fB\-o\fR|\fB\-\-longitude\fR \fIWINKEL_IN_GRAD\fR	Setze Geographische Länge (WINKEL_IN_GRAD:0 [≥-180 ≤180])
+\fB\-o\fR|\fB\-\-longitude\fR \fIWINKEL_IN_GRAD\fR	Setze Geographische Länge (WINKEL_IN_GRAD:0 [≥-180 ≤180 Δ1])
 .br
-\fB\-t\fR|\fB\-\-twilight\fR \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR	Setze Dämmerungswinkel (WINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch:0 [≥18 ≤-18])
+\fB\-t\fR|\fB\-\-twilight\fR \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR	Setze Dämmerungswinkel (WINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch:0 [≥18 ≤-18 Δ1])
 .br
 .SS
 Setze Sonnenuntergangsdienst

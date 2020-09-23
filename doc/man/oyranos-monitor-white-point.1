@@ -52,7 +52,7 @@ A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curv
 .br
 	\-g Effect 2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
 .br
-\fB\-b\fR|\fB\-\-night-backlight\fR \fIPERCENT\fR	Set Nightly Backlight (PERCENT:4 [≥0 ≤100])
+\fB\-b\fR|\fB\-\-night-backlight\fR \fIPERCENT\fR	Set Nightly Backlight (PERCENT:4 [≥0 ≤100 Δ1])
 .RS
 The option needs xbacklight installed and supporting your device for dimming the monitor lamp.
 .RE
@@ -76,7 +76,7 @@ Actual mode
 .br
 	\-w 6		# Illuminant D93
 .br
-\fB\-a\fR|\fB\-\-automatic\fR \fIKELVIN\fR	A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100])
+\fB\-a\fR|\fB\-\-automatic\fR \fIKELVIN\fR	A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100 Δ100])
 .br
 \fB\-y\fR|\fB\-\-test\fR	
 .br
@@ -116,11 +116,11 @@ Location and Twilight
 .br
 \fB\-l\fR|\fB\-\-location\fR	Detect location by IP adress
 .br
-\fB\-i\fR|\fB\-\-latitude\fR \fIANGLE_IN_DEGREE\fR	Set Latitude (ANGLE_IN_DEGREE:0 [≥-90 ≤90])
+\fB\-i\fR|\fB\-\-latitude\fR \fIANGLE_IN_DEGREE\fR	Set Latitude (ANGLE_IN_DEGREE:0 [≥-90 ≤90 Δ1])
 .br
-\fB\-o\fR|\fB\-\-longitude\fR \fIANGLE_IN_DEGREE\fR	Set Longitude (ANGLE_IN_DEGREE:0 [≥-180 ≤180])
+\fB\-o\fR|\fB\-\-longitude\fR \fIANGLE_IN_DEGREE\fR	Set Longitude (ANGLE_IN_DEGREE:0 [≥-180 ≤180 Δ1])
 .br
-\fB\-t\fR|\fB\-\-twilight\fR \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR	Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18])
+\fB\-t\fR|\fB\-\-twilight\fR \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR	Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18 Δ1])
 .br
 .SS
 Run sunset daemon

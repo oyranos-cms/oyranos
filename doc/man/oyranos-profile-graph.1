@@ -32,7 +32,7 @@ Create a 2D Graph containing the saturation line from a ICC Profile.
 .br
 \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...	ICC Profile
 .br
-\fB\-d\fR|\fB\-\-change-thickness\fR \fINUMBER\fR	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥0 ≤2])
+\fB\-d\fR|\fB\-\-change-thickness\fR \fINUMBER\fR	Specify increase of the thickness of the graph lines (NUMBER:0.7 [≥0 ≤2 Δ0.05])
 .br
 \fB\-x\fR|\fB\-\-xyy\fR	Use CIE*xyY *x*y plane for saturation line projection
 .br
@@ -54,15 +54,15 @@ Create a 2D Graph containing the possible color patches inside the ICC Profile g
 .br
 .sp
 .br
-\fB\-H\fR|\fB\-\-hue\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:0 [≥0 ≤365])
+\fB\-H\fR|\fB\-\-hue\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:0 [≥0 ≤365 Δ5])
 .RS
 Select a page by hue color angle in the HLC Color Atlas. -H=365 will output all hues.
 .RE
-\fB\-L\fR|\fB\-\-lightness\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:-5 [≥-5 ≤100])
+\fB\-L\fR|\fB\-\-lightness\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:-5 [≥-5 ≤100 Δ5])
 .RS
 Select a page by lightness in the HLC Color Atlas.
 .RE
-\fB\-C\fR|\fB\-\-chroma\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:-5 [≥-5 ≤130])
+\fB\-C\fR|\fB\-\-chroma\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:-5 [≥-5 ≤130 Δ5])
 .RS
 Select a page by chroma (saturation) in the HLC Color Atlas.
 .RE
@@ -92,7 +92,7 @@ Standard Observer 1931 2° Graph
 Blackbody Radiator Spectrum Graph
 \fBoyranos-profile-graph\fR \fB\-k\fR \fINUMBER\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
-\fB\-k\fR|\fB\-\-kelvin\fR \fINUMBER\fR	Blackbody Radiator (NUMBER:0 [≥0 ≤25000])
+\fB\-k\fR|\fB\-\-kelvin\fR \fINUMBER\fR	Blackbody Radiator (NUMBER:0 [≥0 ≤25000 Δ100])
 .br
 .SS
 Illuminant Spectrum Graph
@@ -156,15 +156,15 @@ Specify a page name as string or page index as number. -1 will list all page nam
 General options
 \fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
 .br
-\fB\-t\fR|\fB\-\-thickness\fR \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10])
+\fB\-t\fR|\fB\-\-thickness\fR \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10 Δ0.05])
 .br
 \fB\-b\fR|\fB\-\-no-border\fR	Omit border in graph
 .br
-\fB\-l\fR|\fB\-\-background-lightness\fR \fINUMBER\fR	Background Lightness (NUMBER:-1 [≥-1 ≤100])
+\fB\-l\fR|\fB\-\-background-lightness\fR \fINUMBER\fR	Background Lightness (NUMBER:-1 [≥-1 ≤100 Δ1])
 .br
 \fB\-g\fR|\fB\-\-no-color\fR	Draw Gray
 .br
-\fB\-w\fR|\fB\-\-width\fR \fINUMBER\fR	Specify output image width in pixel (NUMBER:128 [≥64 ≤4096])
+\fB\-w\fR|\fB\-\-width\fR \fINUMBER\fR	Specify output image width in pixel (NUMBER:128 [≥64 ≤4096 Δ1])
 .br
 \fB\-T\fR|\fB\-\-raster\fR	Draw Raster
 .br
