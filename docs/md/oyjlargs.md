@@ -37,8 +37,8 @@ Tool to convert UI JSON description from *-X export* into source code.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Full Help</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Synopsis</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h input</strong></td><td># input</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h export</strong></td><td># export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Convert</strong></td><td># Generate source code</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Misc</strong></td><td># General options</td></tr>
   </table>
   </td>
  </tr>
