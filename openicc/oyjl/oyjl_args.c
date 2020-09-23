@@ -1397,6 +1397,16 @@ oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
   return o;
 }
 
+static int oyjlOptions_IsHelp_       ( oyjlOptions_s     * opts )
+{
+  int help = 0;
+  oyjlOption_s * h = oyjlOptions_GetOption( opts, "h" );
+  if(h && h->variable_type == oyjlINT && h->variable.i)
+    help = *h->variable.i;
+  if(h && h->variable_type == oyjlSTRING && h->variable.s)
+    help = *h->variable.s && (*h->variable.s)[0];
+  return help;
+}
 /** @brief    Obtain the specified option from option string
  *  @memberof oyjlOptions_s
  *
@@ -1458,7 +1468,8 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
     else
       o = NULL;
   }
-  fprintf( stderr, "Option not found: %s\n", str );
+  if( !oyjlOptions_IsHelp_( opts ))
+    fprintf( stderr, "%s: %s\n", _("Option not found"), str );
   free(str);
 
   return o;
@@ -1842,12 +1853,16 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
     }
 
     o = oyjlOptions_GetOption( opts, "#" );
-    if(opts->argc == 1 && !o)
+    if(opts->argc == 1)
     {
-      oyjlOptions_Print_( opts, 0 );
-      fprintf( stderr, "%s %s\n", oyjlTermColor(oyjlRED,_("Usage Error:")), _("Optionless mode not supported. (That would need '#' option declaration.)") );
-      state = oyjlOPTIONS_MISSING;
-      return state;
+      if(!o)
+      {
+        oyjlOptions_Print_( opts, 0 );
+        fprintf( stderr, "%s %s\n", oyjlTermColor(oyjlRED,_("Usage Error:")), _("Optionless mode not supported. (That would need '#' option declaration.)") );
+        state = oyjlOPTIONS_MISSING;
+        return state;
+      } else if(o->variable_type == oyjlINT && o->variable.i)
+        *o->variable.i = 1;
     }
 
     /** Put the count of found anonymous arguments into '@' options variable.i of variable_type oyjlINT. */
@@ -2719,42 +2734,11 @@ void oyjlUi_EnrichInbuild_( oyjlUi_s * ui )
       for(i = 0; i < ng; ++i)
       {
         oyjlOptionGroup_s * g = &ui->opts->groups[i];
-        /* fill in mandatory options */
-        if(g->mandatory && g->mandatory[0])
-        {
-          const char * mandatory = g->mandatory;
-          char * opt, * tmp = NULL;
-          oyjlOption_s * o_;
-          if(!mandatory) continue;
-          /* skip "help" entry */
-          if(mandatory[0] == 'h' && (mandatory[1] == ',' || mandatory[1] == '|'))
-            mandatory = &mandatory[2];
-          else if(mandatory[0] == 'h' && mandatory[1] == '\000')
-            continue;
-          opt = oyjlStringCopy( mandatory, malloc );
-          if(strchr(opt, ',') && strchr(opt,'|'))
-          {
-            if(strchr(opt, ',') < strchr(opt,'|'))
-              tmp = strchr(opt, ',');
-            else
-              tmp = strchr(opt,'|');
-          }
-          else if(strchr(opt, ','))
-              tmp = strchr(opt, ',');
-          else if(strchr(opt, '|'))
-              tmp = strchr(opt,'|');
-          if(tmp)
-            tmp[0] = '\000';
-
-          o_ = oyjlOptions_GetOption( ui->opts, opt );
-          if(!o_) continue;
-          h_choices[pos].nick = (char*)(o_->option?o_->option:o_->o);
-          h_choices[pos].name = (char*)o_->name;
-          h_choices[pos].description = (char*)o_->description;
-          h_choices[pos].help = (char*)o_->help;
-          free(opt);
-          ++pos;
-        }
+        h_choices[pos].nick = (char*)g->name;
+        h_choices[pos].name = (char*)(g->description?g->description:g->name);
+        h_choices[pos].description = (char*)g->description;
+        h_choices[pos].help = (char*)g->help;
+        ++pos;
       }
 
       o->values.choices.list = h_choices;
@@ -2854,7 +2838,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
 {
   int help = 0, verbose = 0, version = 0, i,ng, * rank_list = 0, max = -1, pass_group = 0;
   const char * export = NULL;
-  oyjlOption_s * h, * v, * X, * V;
+  oyjlOption_s * v, * X, * V;
   oyjlOptionGroup_s * g = NULL;
   oyjlOPTIONSTATE_e opt_state = oyjlOPTION_NONE;
   oyjlOptsPrivate_s * results;
@@ -2896,11 +2880,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   X = oyjlOptions_GetOption( ui->opts, "X" );
   if(X && X->variable_type == oyjlSTRING && X->variable.s)
     export = *X->variable.s;
-  h = oyjlOptions_GetOption( ui->opts, "h" );
-  if(h && h->variable_type == oyjlINT && h->variable.i)
-    help = *h->variable.i;
-  if(h && h->variable_type == oyjlSTRING && h->variable.s)
-    help = *h->variable.s && (*h->variable.s)[0];
+  help = oyjlOptions_IsHelp_( ui->opts );;
   v = oyjlOptions_GetOption( ui->opts, "v" );
   if(v && v->variable_type == oyjlINT && v->variable.i)
   {
@@ -2963,6 +2943,8 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
               o = oyjlOptions_GetOptionL( ui->opts, v );
             if(o)
               roption = o->o?o->o:o->option;
+            if(g->name && strcmp(v,g->name) == 0)
+              ++found;
           }
           if( strcmp(moption, roption) == 0 &&
               strcmp(roption, "h") != 0 )
@@ -2979,6 +2961,24 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
       rank_list[i] = found;
       if(found && max < found)
         max = found;
+    } else
+    if(help)
+    {
+      int k, found = 0;
+      for( k = 0; k  < (results?results->count:0); ++k )
+      {
+        const char * roption = results->options[k];
+        if(strcmp(roption, "h") == 0)
+        {
+          const char * v = results->values[k];
+          if(g->name && strcmp(v,g->name) == 0)
+            ++found;
+        }
+      }
+      rank_list[i] = found;
+      if(found && max < found)
+        max = found;
+
     }
 
     list = oyjlStringSplit2( g->optional, "|,", &n, NULL, malloc );
@@ -3006,6 +3006,13 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
       }
     }
     oyjlStringListRelease( &list, n, free );
+  }
+
+  if(results && results->count == 0)
+  {
+    oyjlOption_s * o = oyjlOptions_GetOption( ui->opts, "#" );
+    if(o && o->flags & OYJL_OPTION_FLAG_MAINTENANCE)
+      optionless = 1;
   }
 
   if(max > -1)

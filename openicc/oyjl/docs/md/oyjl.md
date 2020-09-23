@@ -122,14 +122,16 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
   <table>
    <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Full Help</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Synopsis</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h json</strong></td><td># JSON</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h yaml</strong></td><td># YAML</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h xml</strong></td><td># XML</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h count</strong></td><td># Count</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h key</strong></td><td># Key Name</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h type</strong></td><td># Type</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h format</strong></td><td># Format</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h export</strong></td><td># export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Input</strong></td><td># Set input file and path</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Print JSON</strong></td><td># Print JSON to stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Print YAML</strong></td><td># Print YAML to stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Print XML</strong></td><td># Print XML to stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Count</strong></td><td># Print node count</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Key Name</strong></td><td># Print key name</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Type</strong></td><td># Print type</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Paths</strong></td><td># Print all matching paths.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Format</strong></td><td># Print Data Format.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Misc</strong></td><td># General options</td></tr>
   </table>
   </td>
  </tr>

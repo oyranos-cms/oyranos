@@ -122,14 +122,16 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
   <table>
    <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Vollständige Hilfe</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Übersicht</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h json</strong></td><td># JSON</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h yaml</strong></td><td># YAML</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h xml</strong></td><td># XML</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h count</strong></td><td># Anzahl</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h key</strong></td><td># Schlüsselname</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h type</strong></td><td># Typ</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h format</strong></td><td># Format</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h export</strong></td><td># exportiere</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Eingabe</strong></td><td># Setze Eingangsdateiname und Pfad</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Zeige JSON</strong></td><td># Zeige JSON auf stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Zeige YAML</strong></td><td># Zeige YAML auf stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Zeige XML</strong></td><td># Zeige XML auf stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Anzahl</strong></td><td># Zeige Knotenanzahl</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Schlüsselname</strong></td><td># Zeige Schlüsselname</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Typ</strong></td><td># Zeige Typ</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Pfade</strong></td><td># Zeige alle zutreffenden Pfade</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Format</strong></td><td># Zeige Datenformat.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h Verschiedenes</strong></td><td># Allgemeine Optionen</td></tr>
   </table>
   </td>
  </tr>
