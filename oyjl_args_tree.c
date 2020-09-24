@@ -511,7 +511,7 @@ static oyjl_val oyjlFindOption_( oyjl_val root, char o )
  *  @param[in]     flags               ::OYJL_SOURCE_CODE_C, ::OYJL_SUGGEST_VARIABLE_NAMES and ::OYJL_NO_DEFAULT_OPTIONS are supported
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/06/24
+ *  @date    2020/09/23
  *  @since   2019/06/24 (Oyjl: 1.0.0)
  */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
@@ -644,9 +644,10 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     for(i = 0; i < n; ++i)
     {
       oyjl_val v;
-      const char *value_type, *o, *o_fallback;
+      const char *value_type, *o, *o_fallback, *option;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "o" ); o_fallback = o = OYJL_GET_STRING(v);
+      v = oyjlTreeGetValue( val, 0, "option" ); option = OYJL_GET_STRING(v);
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_CHOICE") == 0)
       {
@@ -666,7 +667,10 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           else
             oyjlStrAdd( s, "{");
 
-          oyjlStrAddSpaced_( s, nick,  OYJL_QUOTE,                15 );
+          if(option && strstr(option, "man-") != NULL)
+            oyjlStrAddSpaced_(s,nick,  OYJL_QUOTE|OYJL_TRANSLATE, 15 );
+          else
+            oyjlStrAddSpaced_(s,nick,  OYJL_QUOTE,                15 );
           oyjlStrAddSpaced_( s, name,  OYJL_QUOTE|OYJL_TRANSLATE, 20 );
           oyjlStrAddSpaced_( s, desc,  OYJL_QUOTE|OYJL_TRANSLATE, 30 );
           oyjlStrAddSpaced_( s, help,  OYJL_QUOTE|OYJL_TRANSLATE|OYJL_LAST, 4 );
