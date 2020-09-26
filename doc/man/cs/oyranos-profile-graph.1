@@ -1,0 +1,250 @@
+.TH "oyranos-profile-graph" 1 "June 2, 2020" "User Commands"
+.SH NAME
+oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
+.SH SYNOPSIS
+\fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMBER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE...
+.br
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fB\-L\fR \fINUMBER\fR] [\fB\-C\fR \fINUMBER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+.br
+\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+.br
+\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+.br
+\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMBER\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+.br
+\fBoyranos-profile-graph\fR \fB\-u\fR \fISTRING\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+.br
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR] [\fB\-z\fR]
+.br
+\fBoyranos-profile-graph\fR \fB\-i\fR \fIFILE\fR \fB\-I\fR \fIPAGE\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
+.br
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
+.SH DESCRIPTION
+The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
+.SH OPTIONS
+.SS
+2D Graph from profiles
+\fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMBER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE...
+.br
+Create a 2D Graph containing the saturation line from a ICC Profile.
+.br
+.sp
+.br
+\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...	ICC Profile
+.br
+\fB\-d\fR|\fB\-\-change-thickness\fR \fINUMBER\fR	Specify increase of the thickness of the graph lines (NUMBER:0,7 [≥0 ≤2 Δ0,05])
+.br
+\fB\-x\fR|\fB\-\-xyy\fR	Use CIE*xyY *x*y plane for saturation line projection
+.br
+\fB\-c\fR|\fB\-\-no-blackbody\fR	Omit white line of lambert light emitters
+.br
+\fB\-n\fR|\fB\-\-no-spectral-line\fR	Omit the spectral line
+.br
+\fB\-2\fR|\fB\-\-icc-version-2\fR	Select ICC v2 Profiles
+.br
+\fB\-4\fR|\fB\-\-icc-version-4\fR	Select ICC v4 Profiles
+.br
+\fB\-r\fR|\fB\-\-no-repair\fR	No Profile repair of ICC profile ID
+.br
+.SS
+HLC Color Atlas Pages
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMBER\fR [\fB\-L\fR \fINUMBER\fR] [\fB\-C\fR \fINUMBER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+.br
+Create a 2D Graph containing the possible color patches inside the ICC Profile gamut. More information about HLC Color Atlas can be found on www.freiefarbe.de
+.br
+.sp
+.br
+\fB\-H\fR|\fB\-\-hue\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:0 [≥0 ≤365 Δ5])
+.RS
+Select a page by hue color angle in the HLC Color Atlas. -H=365 will output all hues.
+.RE
+\fB\-L\fR|\fB\-\-lightness\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:-5 [≥-5 ≤100 Δ5])
+.RS
+Select a page by lightness in the HLC Color Atlas.
+.RE
+\fB\-C\fR|\fB\-\-chroma\fR \fINUMBER\fR	HLC Color Atlas (NUMBER:-5 [≥-5 ≤130 Δ5])
+.RS
+Select a page by chroma (saturation) in the HLC Color Atlas.
+.RE
+\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...	ICC Profile
+.br
+\fB\-m\fR|\fB\-\-swatch-format\fR \fIFORMAT\fR	Specify output file format
+.br
+	\-m png		# PNG - PNG Raster
+.br
+	\-m svg		# SVG - SVG Vector
+.br
+	\-m ncc		# NCC - Named Color Collection
+.br
+.SS
+Standard Observer 1931 2° Graph
+\fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+.br
+\fB\-S\fR|\fB\-\-standard-observer\fR	CIE Standard Observer 1931 2°
+.br
+.SS
+1964 10° Observer Graph
+\fBoyranos-profile-graph\fR \fB\-O\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+.br
+\fB\-O\fR|\fB\-\-observer-64\fR	CIE Observer 1964 10°
+.br
+.SS
+Blackbody Radiator Spectrum Graph
+\fBoyranos-profile-graph\fR \fB\-k\fR \fINUMBER\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+.br
+\fB\-k\fR|\fB\-\-kelvin\fR \fINUMBER\fR	Blackbody Radiator (NUMBER:0 [≥0 ≤25000 Δ100])
+.br
+.SS
+Illuminant Spectrum Graph
+\fBoyranos-profile-graph\fR \fB\-u\fR \fISTRING\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
+.br
+\fB\-u\fR|\fB\-\-illuminant\fR \fISTRING\fR	Illuminant Spectrum
+.br
+	\-u A		# Iluminant A - CIE A spectral power distribution
+.br
+	\-u D50		# Iluminant D50 - CIE D50 spectral power distribution (computed)
+.br
+	\-u D55		# Iluminant D55 - CIE D55 spectral power distribution (computed)
+.br
+	\-u D65		# Iluminant D65 - CIE D65 spectral power distribution (computed)
+.br
+	\-u D65T		# Illuminant D65 T - CIE D65 spectral power distribution
+.br
+	\-u D75		# Illuminant D75 - CIE D75 spectral power distribution (computed)
+.br
+	\-u D93		# Iluminant D93 - CIE D93 spectral power distribution (computed)
+.br
+.SS
+Spectral Input Graph
+\fBoyranos-profile-graph\fR \fB\-s\fR \fIFILE\fR \fB\-p\fR \fIFORMAT\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-P\fR \fISTRING\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR] [\fB\-z\fR]
+.br
+\fB\-s\fR|\fB\-\-spectral\fR \fIFILE\fR	Spectral Input
+.br
+\fB\-p\fR|\fB\-\-spectral-format\fR \fIFORMAT\fR	Specify spectral output file format
+.br
+	\-p png		# PNG - PNG Raster
+.br
+	\-p svg		# SVG - SVG Vector
+.br
+	\-p csv		# CSV - CSV Values
+.br
+	\-p ncc		# NCC - Named Color Collection
+.br
+	\-p cgats		# CGATS - CGATS Values
+.br
+	\-p icc-xml		# Icc XML - ICC Named Color Values
+.br
+	\-p ppm		# PPM - Spectral PAM Image
+.br
+\fB\-P\fR|\fB\-\-pattern\fR \fISTRING\fR	Filter of Color Names
+.br
+\fB\-z\fR|\fB\-\-scale\fR	Scale the height of the spectrum graph
+.br
+.SS
+Render Color Page
+\fBoyranos-profile-graph\fR \fB\-i\fR \fIFILE\fR \fB\-I\fR \fIPAGE\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
+.br
+\fB\-i\fR|\fB\-\-import\fR \fIFILE\fR	Color Page Input
+.RS
+Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc
+.RE
+\fB\-I\fR|\fB\-\-index\fR \fIPAGE\fR	Page Selection
+.RS
+Specify a page name as string or page index as number. -1 will list all page names of the imported file.
+.RE
+.SS
+General options
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
+.br
+\fB\-t\fR|\fB\-\-thickness\fR \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10 Δ0,05])
+.br
+\fB\-b\fR|\fB\-\-no-border\fR	Omit border in graph
+.br
+\fB\-l\fR|\fB\-\-background-lightness\fR \fINUMBER\fR	Background Lightness (NUMBER:-1 [≥-1 ≤100 Δ1])
+.br
+\fB\-g\fR|\fB\-\-no-color\fR	Draw Gray
+.br
+\fB\-w\fR|\fB\-\-width\fR \fINUMBER\fR	Specify output image width in pixel (NUMBER:128 [≥64 ≤4096 Δ1])
+.br
+\fB\-T\fR|\fB\-\-raster\fR	Draw Raster
+.br
+\fB\-o\fR|\fB\-\-output\fR \fI-|FILE\fR	Specify output file name, default is stdout
+.br
+\fB\-f\fR|\fB\-\-format\fR \fIFORMAT\fR	Specify output file format png or svg, default is png
+.br
+	\-f png		# PNG - PNG Raster
+.br
+	\-f svg		# SVG - SVG Vector
+.br
+\fB\-h\fR|\fB\-\-help\fR	Help
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
+.RS
+Get UI converted into text formats
+.RE
+	\-X man		# Man - Get a unix man page
+.br
+	\-X markdown		# Markdown - Get formated text
+.br
+	\-X json		# Json - Get a Oyjl Json UI declaration
+.br
+	\-X json+command		# Json + Command - Get Oyjl Json UI declaration incuding command
+.br
+	\-X export		# Export - Get UI data for developers
+.br
+\fB\-R\fR|\fB\-\-render\fR \fIgui|web|\fR	Select Renderer
+.RS
+Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" will launch a local Web Server, which listens on local port.
+.RE
+\fB\-V\fR|\fB\-\-version\fR	Version
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	upovídaný výstup
+.br
+.SH ENVIRONMENT VARIABLES
+.TP
+OY_DEBUG
+.br
+set the Oyranos debug level.
+.br
+Alternatively the -v option can be used.
+.br
+Valid integer range is from 1-20.
+.TP
+XDG_DATA_HOME XDG_DATA_DIRS
+.br
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html
+.SH EXAMPLES
+.TP
+Show graph of a ICC profile
+.br
+oyranos-profile-graph ICC_PROFILE
+.TP
+Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:
+.br
+oyranos-profile-graph -w 256 -n -t 3 sRGB.icc ProPhoto-RGB.icc
+.TP
+Show HLC Color Atlas patches
+.br
+oyranos-profile-graph -H=90 -o HLC_H090.png cmyk web
+.br
+Color patches are only shown, if they are in gamut of the default CMYK and web profile.
+.TP
+Show the standard observer spectral function as curves:
+.br
+oyranos-profile-graph --standard-observer -o CIE-StdObserver.png
+.SH SEE AS WELL
+.TP
+oyranos-profile(1) oyranos-config(1) oyranos-policy(1) oyranos(3)
+.br
+.TP
+http://www.oyranos.org
+.br
+.SH AUTHOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH COPYRIGHT
+© 2005-2020 Kai-Uwe Behrmann and others
+.br
+Licence: newBSD http://www.oyranos.org
+.SH BUGS
+https://www.github.com/oyranos-cms/oyranos/issues 
+

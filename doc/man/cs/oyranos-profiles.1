@@ -1,0 +1,168 @@
+.TH "oyranos-profiles" 1 "October 11, 2018" "User Commands"
+.SH NAME
+oyranos-profiles v0.9.7 \- Oyranos Profiles
+.SH SYNOPSIS
+\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR \fIPATH_SUB_STRING\fR] [\fB\-T\fR \fIKEY;VALUE\fR] [\fB\-v\fR]
+.br
+\fBoyranos-profiles\fR \fB\-p\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-v\fR]
+.br
+\fBoyranos-profiles\fR \fB\-I\fR \fIICC_PROFILE\fR | \fB\-t\fR \fITAXI_ID\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
+.br
+\fBoyranos-profiles\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR
+.SH DESCRIPTION
+The tool can list installed profiles, search paths and can help install a ICC color profile in a search path.
+.SH OPTIONS
+.SS
+List of available ICC color profiles
+\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR \fIPATH_SUB_STRING\fR] [\fB\-T\fR \fIKEY;VALUE\fR] [\fB\-v\fR]
+.br
+\fB\-l\fR|\fB\-\-list-profiles\fR	List Profiles
+.br
+\fB\-f\fR|\fB\-\-full-names\fR	List profile full names
+.RS
+Show path name and file name.
+.RE
+\fB\-e\fR|\fB\-\-internal-names\fR	List profile internal names
+.RS
+The text string comes from the 'desc' tag.
+.RE
+\fB\-a\fR|\fB\-\-abstract\fR	Select Abstract profiles
+.br
+\fB\-c\fR|\fB\-\-color-space\fR	Select Color Space profiles
+.br
+\fB\-d\fR|\fB\-\-display\fR	Select Monitor profiles
+.br
+\fB\-k\fR|\fB\-\-device-link\fR	Select Device Link profiles
+.br
+\fB\-n\fR|\fB\-\-named-color\fR	Select Named Color profiles
+.br
+\fB\-o\fR|\fB\-\-output\fR	Select Output profiles
+.br
+\fB\-i\fR|\fB\-\-input\fR	Select Input profiles
+.br
+\fB\-2\fR|\fB\-\-icc-version-2\fR	Select ICC v2 Profiles
+.br
+\fB\-4\fR|\fB\-\-icc-version-4\fR	Select ICC v4 Profiles
+.br
+\fB\-P\fR|\fB\-\-path\fR \fIPATH_SUB_STRING\fR	Show profiles containing a string as part of their full name
+.br
+\fB\-T\fR|\fB\-\-meta\fR \fIKEY;VALUE\fR	Filter for meta tag key/value pair
+.RS
+Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching.
+.RE
+\fB\-D\fR|\fB\-\-duplicates\fR	Show identical multiple installed profiles
+.br
+.SS
+List search paths
+\fBoyranos-profiles\fR \fB\-p\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-v\fR]
+.br
+\fB\-p\fR|\fB\-\-list-paths\fR	List ICC Profile Paths
+.br
+\fB\-u\fR|\fB\-\-user\fR	User path
+.br
+\fB\-s\fR|\fB\-\-system\fR	System path
+.br
+\fB\-y\fR|\fB\-\-oyranos\fR	Oyranos path
+.br
+\fB\-m\fR|\fB\-\-machine\fR	Machine path
+.br
+.SS
+Install Profile
+\fBoyranos-profiles\fR \fB\-I\fR \fIICC_PROFILE\fR | \fB\-t\fR \fITAXI_ID\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
+.br
+\fB\-I\fR|\fB\-\-install\fR \fIICC_PROFILE\fR	Install Profile
+.br
+\fB\-t\fR|\fB\-\-taxi\fR \fITAXI_ID\fR	ICC Taxi Profile DataBase
+.br
+\fB\-u\fR|\fB\-\-user\fR	User path
+.br
+\fB\-s\fR|\fB\-\-system\fR	System path
+.br
+\fB\-y\fR|\fB\-\-oyranos\fR	Oyranos path
+.br
+\fB\-m\fR|\fB\-\-machine\fR	Machine path
+.br
+\fB\-g\fR|\fB\-\-gui\fR	Use Graphical User Interface
+.br
+\fB\-\-test\fR	No Action
+.br
+.SS
+General options
+\fBoyranos-profiles\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR
+.br
+\fB\-h\fR|\fB\-\-help\fR	Help
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
+.RS
+Get UI converted into text formats
+.RE
+	\-X man		# Man - Get a unix man page
+.br
+	\-X markdown		# Markdown - Get formated text
+.br
+	\-X json		# Json - Get a Oyjl Json UI declaration
+.br
+	\-X json+command		# Json + Command - Get Oyjl Json UI declaration incuding command
+.br
+	\-X export		# Export - Get UI data for developers
+.br
+\fB\-V\fR|\fB\-\-version\fR	Version
+.br
+\fB\-r\fR|\fB\-\-no-repair\fR	No Profile repair of ICC profile ID
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	upovídaný výstup
+.br
+.SH ENVIRONMENT VARIABLES
+.TP
+OY_DEBUG
+.br
+set the Oyranos debug level.
+.br
+Alternatively the -v option can be used.
+.br
+Valid integer range is from 1-20.
+.TP
+XDG_DATA_HOME XDG_DATA_DIRS
+.br
+route Oyranos to top directories containing resources. The derived paths for ICC profiles have a "color/icc" appended. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html
+.SH EXAMPLES
+.TP
+List all installed profiles by internal name
+.br
+oyranos-profiles -le
+.TP
+List all installed profiles of the display and output device classes
+.br
+oyranos-profiles -l -od
+.TP
+List all installed profiles in user path
+.br
+oyranos-profiles -lfu
+.TP
+Install a profile for the actual user and show error messages in a GUI
+.br
+oyranos-profiles --install profilename -u --gui
+.TP
+Install a profile for the actual user and show error messages in a GUI
+.br
+oyranos-profiles --install --taxi=taxi_id/0 --gui -d -u
+.TP
+Show file infos
+.br
+SAVEIFS=$IFS ; IFS=$'\n\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in "${profiles[@]}"; do ls "$file"; done
+.SH SEE AS WELL
+.TP
+oyranos-profile-graph(1) oyranos-config(1) oyranos-policy(1) oyranos(3)
+.br
+.TP
+http://www.oyranos.org
+.br
+.SH AUTHOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH COPYRIGHT
+© 2005-2020 Kai-Uwe Behrmann and others
+.br
+Licence: newBSD http://www.oyranos.org
+.SH BUGS
+https://www.github.com/oyranos-cms/oyranos/issues 
+

@@ -39,7 +39,14 @@ SET( MAN1_PAGES
      man/qcmsevents.1
      man/qcmsevents-qt4.1
    )
+SET( MAN1CS_PAGES
+     man/cs/oyranos-config.1
+     man/cs/oyranos-monitor-white-point.1
+     man/cs/oyranos-profile-graph.1
+     man/cs/oyranos-profiles.1
+   )
 SET( MAN1DE_PAGES
+     man/de/oyranos-config.1
      man/de/oyranos-monitor-white-point.1
      man/de/oyranos-profile-graph.1
      man/de/oyranos-profiles.1
@@ -49,6 +56,7 @@ SET( MAN3_PAGES
    )
 
 INSTALL( FILES ${MAN1_PAGES} DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
+INSTALL( FILES ${MAN1CS_PAGES} DESTINATION ${CMAKE_INSTALL_MANDIR}/cs/man1 )
 INSTALL( FILES ${MAN1DE_PAGES} DESTINATION ${CMAKE_INSTALL_MANDIR}/de/man1 )
 INSTALL( FILES ${MAN3_PAGES} DESTINATION ${CMAKE_INSTALL_MANDIR}/man3 )
 

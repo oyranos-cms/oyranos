@@ -1,0 +1,206 @@
+.TH "oyranos-config" 1 "September 23, 2020" "User Commands"
+.SH NAME
+oyranos-config v0.9.7 \- Konfiguration
+.SH ÜBERSICHT
+\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:WERT\fR | \fB\-l\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR]
+.br
+\fBoyranos-config\fR \fB\-d\fR \fI0|1\fR [\fB\-v\fR]
+.br
+\fBoyranos-config\fR \fB\-\-syscolordir\fR | \fB\-\-usercolordir\fR | \fB\-\-iccdirname\fR | \fB\-\-settingsdirname\fR | \fB\-\-cmmdir\fR | \fB\-\-metadir\fR [\fB\-v\fR] [\fB\-z\fR]
+.br
+\fBoyranos-config\fR \fB\-\-Version\fR | \fB\-\-api-version\fR | \fB\-\-num-version\fR | \fB\-\-git-version\fR [\fB\-v\fR]
+.br
+\fBoyranos-config\fR \fB\-\-cflags\fR | \fB\-\-ldflags\fR | \fB\-\-ldstaticflags\fR | \fB\-\-sourcedir\fR | \fB\-\-builddir\fR [\fB\-v\fR]
+.br
+\fBoyranos-config\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR \fI[synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
+.SH BESCHREIBUNG
+Dar Werkzeug zeigt und öndert OpenICC DB Einstellungen, und es zeigt Pfade und statische Informationen.
+.SH OPTIONEN
+.SS
+Einstellungen
+\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:WERT\fR | \fB\-l\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR]
+.br
+Handhabe OpenICC Konfigurations DB auf niedriger Ebene.
+.br
+.sp
+.br
+\fB\-g\fR|\fB\-\-get\fR \fIXPATH\fR	Lese einen Wert
+.br
+\fB\-s\fR|\fB\-\-set\fR \fIXPATH:WERT\fR	Setze einen Wert
+.br
+\fB\-l\fR|\fB\-\-list\fR	Zeige vorhandene Pfade
+.br
+\fB\-p\fR|\fB\-\-path\fR	Zeige DB Dateipfad
+.br
+.SS
+Beobachte Einstellungsänderungen
+\fBoyranos-config\fR \fB\-d\fR \fI0|1\fR [\fB\-v\fR]
+.br
+Arbeitet nur auf der Kommandozeile.
+.br
+.sp
+.br
+\fB\-d\fR|\fB\-\-daemon\fR \fI0|1\fR	Beobachte Einstellungsänderungen
+.br
+	\-d 0		# Deaktiviere
+.br
+	\-d 1		# Aktiviere
+.br
+.SS
+Zeige Installationspfade
+\fBoyranos-config\fR \fB\-\-syscolordir\fR | \fB\-\-usercolordir\fR | \fB\-\-iccdirname\fR | \fB\-\-settingsdirname\fR | \fB\-\-cmmdir\fR | \fB\-\-metadir\fR [\fB\-v\fR] [\fB\-z\fR]
+.br
+\fB\-\-syscolordir\fR	Pfad zum Hauptfarbverzeichnis im System
+.br
+\fB\-\-usercolordir\fR	Pfad zum Hauptfarbverzeichnis des Benutzers
+.br
+\fB\-\-iccdirname\fR	ICC Profilpfad
+.br
+\fB\-\-settingsdirname\fR	Oyranos Einstellungspfad
+.br
+\fB\-\-cmmdir\fR	Oyranos CMM Pfadname
+.br
+\fB\-\-metadir\fR	Oyranos Metamodulpfad
+.br
+.SS
+Zeige Version
+\fBoyranos-config\fR \fB\-\-Version\fR | \fB\-\-api-version\fR | \fB\-\-num-version\fR | \fB\-\-git-version\fR [\fB\-v\fR]
+.br
+Die Veröffentlichungsversion wird gebildet aus den Nummern zuHaupt(Major|API|ABI)-Neben(Minor|neue API)-Mini(Micro|Fehlerbehebung). Zur Orientierung in git gibt es die Versionsnummer der letzen Veröffentlichung, die Eintragsnummer, die SHA1 Identifikation und das Datum als Jahr-Monat-Tag.
+.br
+.sp
+.br
+\fB\-\-Version\fR	Zeige offizielle Version
+.RS
+API|ABI-neueAPI-FehlerKorrektur Veröffentlichung
+.RE
+\fB\-\-api-version\fR	Zeige Version der API
+.br
+\fB\-\-num-version\fR	Zeige Version als einfache Zahl
+.RS
+10000*API+100*Feature+Patch
+.RE
+\fB\-\-git-version\fR	Zeige Version wie in git
+.RS
+letzteVeröffentlichungsVersion-gitEintragsNummer-gitEintragsSHA1ID-Jahr-Monat-Tag
+.RE
+.SS
+Sonstige Optionen
+\fBoyranos-config\fR \fB\-\-cflags\fR | \fB\-\-ldflags\fR | \fB\-\-ldstaticflags\fR | \fB\-\-sourcedir\fR | \fB\-\-builddir\fR [\fB\-v\fR]
+.br
+Die Texte dienen dem Übersetzen von Programmen.
+.br
+.sp
+.br
+\fB\-\-cflags\fR	Übersetzungsargumente
+.br
+\fB\-\-ldflags\fR	dynamische Verknüpfungsargumente
+.br
+\fB\-\-ldstaticflags\fR	statische Verknüpfungsargumente
+.br
+\fB\-\-sourcedir\fR	Oyranos lokaler Quelltextpfad
+.br
+\fB\-\-builddir\fR	Oyranos lokaler Übersetzungpfad
+.br
+.SS
+Allgemeine Optionen
+\fBoyranos-config\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR \fI[synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
+.br
+\fB\-h\fR|\fB\-\-help\fR \fI[synopsis|...]\fR	Zeige Hilfetext an
+.RS
+Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+.RE
+	\-h 1		# Vollständige Hilfe
+.br
+	\-h synopsis		# Übersicht - Zeige alle Gruppen mit Syntax
+.br
+	\-h Einstellungen		# Einstellungen - Handhabe OpenICC Konfigurations DB auf niedriger Ebene.
+.br
+	\-h Beobachten		# Beobachte Einstellungsänderungen - Arbeitet nur auf der Kommandozeile.
+.br
+	\-h Installationspfade		# Zeige Installationspfade
+.br
+	\-h Version		# Zeige Version - Die Veröffentlichungsversion wird gebildet aus den Nummern zuHaupt(Major|API|ABI)-Neben(Minor|neue API)-Mini(Micro|Fehlerbehebung). Zur Orientierung in git gibt es die Versionsnummer der letzen Veröffentlichung, die Eintragsnummer, die SHA1 Identifikation und das Datum als Jahr-Monat-Tag.
+.br
+	\-h Optionen		# Sonstige Optionen - Die Texte dienen dem Übersetzen von Programmen.
+.br
+	\-h Verschiedenes		# Allgemeine Optionen
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+.RS
+Hole Benutzerschnittstelle als Text
+.RE
+	\-X man		# Handbuch - Hole Unix Handbuchseite
+.br
+	\-X markdown		# Markdown - Hole formatierten Text
+.br
+	\-X json		# Json - Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X export		# Export - Erhalte Daten für Entwickler
+.br
+\fB\-R\fR|\fB\-\-render\fR \fIgui|web|\fR	Wähle Darstellung
+.RS
+Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" wird einen Web Service starten.
+.RE
+\fB\-V\fR|\fB\-\-version\fR	Version
+.br
+\fB\-z\fR|\fB\-\-system-wide\fR	Einstellung in der systemweiten DB
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	plaudernd
+.br
+.SH UMGEBUNGSVARIABLEN
+.TP
+OY_DEBUG
+.br
+Setze das Oyranos Fehlersuchniveau.
+.br
+Die -v Option kann alternativ benutzt werden.
+.br
+Der gültige Bereich ist 1-20.
+.TP
+OY_MODULE_PATH
+.br
+zeige Oyranos zusätzliche Verzeichnisse mit Modulen.
+.SH BEISPIELE
+.TP
+Zeige einen Einstellungswert
+.br
+oyranos-config -g org/freedesktop/openicc/behaviour/effect_switch
+.TP
+Ändere eine Einstellung
+.br
+oyranos-config -s org/freedesktop/openicc/behaviour/effect_switch:1
+.TP
+Zeige alle Einstellungswerte
+.br
+oyranos-config -l -v
+.TP
+Beobachte Änderungen
+.br
+oyranos-config -d 1 -v > log-datei.txt
+.TP
+Übersetze ein einfaches Programm
+.br
+cc `oyranos-config --cflags` meineDatei.c `oyranos-config --ldflags` -o meinProgramm
+.TP
+Zeige systemsichtbare Profile im Oyranos Installationspfad
+.br
+ls `oyranos-config --syscolordir --iccdirname`
+.SH SIEHE AUCH
+.TP
+oyranos-policy(1) oyranos-config-synnefo(1) oyranos(3)
+.br
+.TP
+http://www.oyranos.org
+.br
+.SH AUTOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH KOPIERRECHT
+© 2005-2020 Kai-Uwe Behrmann and others
+.br
+Lizenz: newBSD http://www.oyranos.org
+.SH FEHLER
+https://www.github.com/oyranos-cms/oyranos/issues 
+

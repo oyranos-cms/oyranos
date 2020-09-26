@@ -89,9 +89,15 @@ TARGET_LINK_LIBRARIES( oyranos-profile ${TARGET_LIB} ${EXTRA_LIBS} )
 INSTALL (TARGETS oyranos-profile DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Oyranos settings and config DB
-ADD_EXECUTABLE( oyranos-config "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-config.c" )
+SET( TOOL "oyranos-config" )
+SET( TOOL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-config.c" )
+ADD_EXECUTABLE( ${TOOL} ${TOOL_SRC} )
+IF( NOT HAVE_OYJL )
+  SET_TARGET_PROPERTIES( ${TOOL} PROPERTIES COMPILE_DEFINITIONS "NO_OYJL_ARGS_RENDER=1" )
+ENDIF()
 TARGET_LINK_LIBRARIES( oyranos-config ${TARGET_LIB} ${EXTRA_LIBS} ${DBUS_LIBS} )
 INSTALL (TARGETS oyranos-config DESTINATION ${CMAKE_INSTALL_BINDIR})
+OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} "${LANGS}" )
 
 # Oyranos policy / grouping for easy switching, export, import of default settings
 ADD_EXECUTABLE( oyranos-policy "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_policy.c" )
