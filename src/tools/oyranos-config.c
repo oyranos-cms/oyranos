@@ -142,8 +142,12 @@ int myMain( int argc , const char** argv )
                                     {"OY_MODULE_PATH",_("route Oyranos to additional directories containing modules."),"",                        ""},
                                     {"","","",""}};
 
-  oyjlOptionChoice_s A_choices[] = {{"Watch events.",_("oyranos-config -d 1"),"",                        ""},
-                                    {"Show all settings.",_("oyranos-config -l -v"),"",                        ""},
+  oyjlOptionChoice_s A_choices[] = {{_("Show a settings value"),_("oyranos-config -g org/freedesktop/openicc/behaviour/effect_switch"),"",""},
+                                    {_("Change a setting"),_("oyranos-config -s org/freedesktop/openicc/behaviour/effect_switch:1"),"",""},
+                                    {_("Show all settings with values"),_("oyranos-config -l -v"),"",                        ""},
+                                    {_("Watch events"),_("oyranos-config -d 1 -v > log-file.txt"),"",                        ""},
+                                    {_("Compile a simple programm"),_("cc `oyranos-config --cflags` myFile.c `oyranos-config --ldflags` -o myProg"),"",""},
+                                    {_("Show system wide visible profiles from the Oyranos installation path"),_("ls `oyranos-config --syscolordir --iccdirname`"),"",""},
                                     {"","","",""}};
 
   oyjlOptionChoice_s S_choices[] = {{"oyranos-policy(1) oyranos-config-synnefo(1) oyranos(3)","",              "",                        ""},
@@ -180,13 +184,13 @@ int myMain( int argc , const char** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&cmmdir}},
     {"oiwi", 0,                          NULL,"metadir",       NULL,     _("metadir"),  _("Oyranos meta module directory name"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&metadir}},
-    {"oiwi", 0,                          NULL,"Version",       NULL,     _("Version"),  _("Show official version"),   NULL, NULL,               
+    {"oiwi", 0,                          NULL,"Version",       NULL,     _("Version"),  _("Show official version"),   _("API|ABI-Feature-Patch|BugFix Release"), NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&Version}},
     {"oiwi", 0,                          NULL,"api-version",   NULL,     _("api-version"),_("Show version of API"),     NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&api_version}},
-    {"oiwi", 0,                          NULL,"num-version",   NULL,     _("num-version"),_("Show version as a simple number"),NULL, NULL,               
+    {"oiwi", 0,                          NULL,"num-version",   NULL,     _("num-version"),_("Show version as a simple number"),_("10000*API+100*Feature+Patch"), NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&num_version}},
-    {"oiwi", 0,                          NULL,"git-version",   NULL,     _("git-version"),_("Show version as in git"),  NULL, NULL,               
+    {"oiwi", 0,                          NULL,"git-version",   NULL,     _("git-version"),_("Show version as in git"),  _("lastReleaseVersion-gitCommitNumber-gitCommitSHA1ID-Year-month-day"), NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&git_version}},
     {"oiwi", 0,                          NULL,"cflags",        NULL,     _("cflags"),   _("compiler flags"),          NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&cflags}},
@@ -223,14 +227,14 @@ int myMain( int argc , const char** argv )
     {"oiwg", 0,     _("Watch"),         _("Observe config changes"),  _("Will only work on command line."),"d",           "v",           "d" },
 #endif
     {"oiwg", 0,     _("Install Paths"), _("Show Install Paths"),      NULL,               "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir","v,z",         "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir"},
-    {"oiwg", 0,     _("Version"),       _("Show Version"),            NULL,               "Version|api-version|num-version|git-version","v",           "Version|api-version|num-version|git-version"},
+    {"oiwg", 0,     _("Version"),       _("Show Version"),            _("Release Version follow of a Major(API|ABI)-Minor(Feature)-Micro(Patch|Bug Fix) scheme. For orientation in git the last release, commit number, SHA1 ID and Year-month-day parts are available."), "Version|api-version|num-version|git-version","v",           "Version|api-version|num-version|git-version"},
     {"oiwg", 0,     _("Options"),       _("Miscellaneous options"),   _("These strings can be used to compile programs."),"cflags|ldflags|ldstaticflags|sourcedir|builddir","v",           "cflags|ldflags|ldstaticflags|sourcedir|builddir"},
     {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "X|h|V|R",     "v",           "h,X,R,V,z,v"},
     {"",0,0,0,0,0,0,0}
   };
 
   oyjlUiHeaderSection_s * sections = oyUiInfo(_("The tool can read and set OpenICC DB options, and display paths and static information."),
-                  "2020-10-22T12:00:00", "October 22, 2020");
+                  "2020-09-23T12:00:00", "September 23, 2020");
   oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
                                        "oyranos-config", _("Config"), _("Oyranos Config tool"),
 #ifdef __ANDROID__
@@ -321,12 +325,12 @@ int myMain( int argc , const char** argv )
 
   int dir = 0;
   if(syscolordir)
-  { puts( OY_SYSCOLORDIR ); dir = 1; }
+  { printf( OY_SYSCOLORDIR ); dir = 1; }
   else if(usercolordir)
-  { puts( OY_USERCOLORDIR ); dir = 1; }
+  { printf( OY_USERCOLORDIR ); dir = 1; }
   if( dir &&
       (iccdirname || settingsdirname || cmmdir || metadir) )
-    puts("/");
+    printf("/");
   if(iccdirname)
   { puts( OY_ICCDIRNAME ); dir = 1; }
   else if(settingsdirname)
