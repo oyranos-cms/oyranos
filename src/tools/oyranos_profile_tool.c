@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2011-2014 (C) Kai-Uwe Behrmann
+ *            2011-2020 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -114,7 +114,7 @@ void  printfHelp (int argc OY_UNUSED, char** argv)
                    " wildcard \"rgb\", \"cmyk\", \"gray\", \"lab\", \"xyz\", \"web\", \"rgbi\", \"cmyki\", \"grayi\", \"labi\", \"xyzi\"." \
                    " Wildcards ending with \"i\" are assumed profiles. \"web\" is a sRGB profile. The other wildcards are editing profiles."));
   fprintf( stderr, "      -v %s\n",        _("verbose"));
-  fprintf( stderr, "      -i %s\n",        _("read input stream"));
+  fprintf( stderr, "      -i=%s\t%s\n",    _("ICC_FILE_NAME"), _("read file or use '-' for stdin input stream"));
   fprintf( stderr, "      -2 %s\n",        _("select a ICC v2 profile"));
   fprintf( stderr, "      -4 %s\n",        _("select a ICC v4 profile"));
   fprintf( stderr, "      --short %s\n",   _("print only the file name"));
@@ -187,7 +187,7 @@ int main( int argc , char** argv )
               case '4': flags |= OY_ICC_VERSION_4; break;
               case 'c': OY_PARSE_STRING_ARG(device_class); break;
               case 'f': OY_PARSE_STRING_ARG(format); break;
-              case 'i': read_stdin = 1; break;
+              case 'i': OY_PARSE_STRING_ARG(file_name); break;
               case 'j': OY_PARSE_STRING_ARG(json_name); break;
               case 'l': list_tags = 1; break;
               case 'm': list_hash = 1; break;
@@ -254,6 +254,8 @@ int main( int argc , char** argv )
     exit(1);
   }
 
+  if(file_name && strcmp(file_name,"-") == 0)
+    read_stdin = 1;
   if(read_stdin)
   {
     size_t size = 0;
