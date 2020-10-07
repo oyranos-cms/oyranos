@@ -873,10 +873,25 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlUiJsonToCode()                   %lu", c_source?strlen(c_source):0 );
   }
-  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUi_ExportToCode", "txt" )
+  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode", "txt" )
   if(verbose && c_source)
     fprintf( zout, "%s\n", c_source );
   if(c_source) {free(c_source);} c_source = NULL;
+
+  ui = oyjlUi_ImportFromJson( json, 0 );
+  text = oyjlUi_ExportToJson( ui, 0 );
+  if(text && strlen(text) == 6798)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlUi_ImportFromJson()              %lu", text?strlen(text):0 );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlUi_ImportFromJson()              %lu", text?strlen(text):0 );
+  }
+  oyjlUi_Release( &ui);
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ImportFromJson", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+  if(text) {free(text);} text = NULL;
 
   oyjlTreeFree( json ); json = NULL;
 

@@ -928,6 +928,8 @@ typedef struct {
   const char ** values; /* the vanilla args from main(argv[]) */
   int           count; /* number of detected options */
   int           group; /* detected group */
+  void        * attr; /* oyjl_val attributes */
+  int           memory_allocation; /* 0: as usual; 1: sections, opts->groups and opts->array are owned and need to be released */
 } oyjlOptsPrivate_s;
 #endif /* OYJL_INTERNAL */
 
@@ -1075,6 +1077,7 @@ const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text) {
 int  oyjlOptionChoice_Count          ( oyjlOptionChoice_s* list )
 {
   int n = 0;
+  if(!list) return 0;
   if(list)
     while(list[n].nick && list[n].nick[0] != '\000')
       ++n;
@@ -1092,6 +1095,7 @@ int  oyjlOptionChoice_Count          ( oyjlOptionChoice_s* list )
 int oyjlOptions_Count             ( oyjlOptions_s  * opts )
 {
   int n = 0;
+  if(!(opts && opts->array)) return 0;
   while( *(oyjlOBJECT_e*)&opts->array[n] /*"oiwi"*/ == oyjlOBJECT_OPTION) ++n;
   return n;
 }
@@ -1106,6 +1110,7 @@ int oyjlOptions_Count             ( oyjlOptions_s  * opts )
 int oyjlOptions_CountGroups       ( oyjlOptions_s  * opts )
 {
   int n = 0;
+  if(!(opts && opts->groups)) return 0;
   while( *(oyjlOBJECT_e*)&opts->groups[n] /*"oiwg"*/ == oyjlOBJECT_OPTION_GROUP) ++n;
   return n;
 }
@@ -3185,6 +3190,22 @@ void           oyjlUi_Release     ( oyjlUi_s      ** ui )
     oyjlOptsPrivate_s * results = (*ui)->opts->private_data;
     if(results)
     {
+      if(results->memory_allocation)
+      {
+        int nopts = oyjlOptions_Count( (*ui)->opts ), i;
+        for(i = 0; i < nopts; ++i)
+        {
+          oyjlOption_s * opt = &(*ui)->opts->array[i];
+          if(opt->value_type == oyjlOPTIONTYPE_CHOICE && opt->values.choices.list)
+            free(opt->values.choices.list);
+        }
+        if((*ui)->sections)
+          free((*ui)->sections);
+        if((*ui)->opts->array)
+          free((*ui)->opts->array);
+        if((*ui)->opts->groups)
+          free((*ui)->opts->groups);
+      }
       oyjlStringListRelease( &results->options, results->count, free );
       results->count = 0;
       free(results->options);
@@ -3207,6 +3228,7 @@ void           oyjlUi_Release     ( oyjlUi_s      ** ui )
 int     oyjlUiHeaderSection_Count    ( oyjlUiHeaderSection_s * sections )
 {
   int n = 0;
+  if(!sections) return 0;
   while( *(oyjlOBJECT_e*)&sections[n] /*"oihs"*/ == oyjlOBJECT_UI_HEADER_SECTION) ++n;
   return n;
 }

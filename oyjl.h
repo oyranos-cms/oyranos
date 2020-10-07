@@ -700,6 +700,8 @@ oyjlUi_s *         oyjlUi_Create     ( int                 argc,
                                        oyjlOption_s   * options,
                                        oyjlOptionGroup_s * groups,
                                        int               * status );
+oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
+                                       int                 flags );
 void               oyjlUi_Release    ( oyjlUi_s         ** ui );
 int      oyjlUiHeaderSection_Count   ( oyjlUiHeaderSection_s * sections );
 oyjlUiHeaderSection_s * oyjlUiHeaderSection_Append (
