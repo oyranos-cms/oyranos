@@ -1095,16 +1095,19 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "one/[%d]/key3", 1 );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr3a", "one/[%d]/data/[0]", 1 );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr3b", "one/[%d]/data/[1]", 1 );
+  oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, 1.4,     "one/[%d]/key4", 1 );
+  oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, 1.2,     "one/[%d]/data/[2]", 1 );
   oyjlTreeToJson( root, &i, &text ); i = 0;
-  if( text && strlen( text ) == 215 )
+  if( text && strlen( text ) == 238 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "add array                                      %ld", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "add array                                      %ld", strlen(text) );
   }
-  if(verbose)
-    puts( text );
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeSetStringF", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
   myDeAllocFunc( text ); text = NULL;
   oyjlTreeFree( root );
 

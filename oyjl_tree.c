@@ -1469,8 +1469,34 @@ int        oyjlTreeSetDoubleF        ( oyjl_val            root,
   if(text) { free(text); text = NULL; }
 
   if(value_node)
+    error = oyjlValueSetDouble( value_node, value );
+  else
+    error = -1;
+
+  return error;
+}
+
+/** Function oyjlValueSetDouble
+ *  @brief   set a child node to a string value
+ *
+ *  @param[in,out] v                   the oyjl node
+ *  @param[in]     value               IEEE floating point number with double precission
+ *  @return                            error
+ *                                     - -1 - if not found
+ *                                     - 0 on success
+ *                                     - else error
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/10/12
+ *  @since   2020/10/12 (Oyjl: 1.0.0)
+ */
+int        oyjlValueSetDouble        ( oyjl_val            v,
+                                       double              value )
+{
+  int error = 0;
+
+  if(v)
   {
-    oyjl_val v = value_node;
     oyjlValueClear( v );
     v->type = oyjl_t_number;
     v->u.number.d = value;
