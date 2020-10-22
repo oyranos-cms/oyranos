@@ -796,6 +796,8 @@ oyjlTESTRESULT_e testUiRoundtrip ()
 
   int output = 0;
   const char * file = NULL;
+  const char * func = NULL;
+  double number = 0.0;
   int file_count = 0;
   int show_status = 0;
   int help = 0;
@@ -825,9 +827,11 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
     {"oiwi", 0,     "#", "",        NULL, _("status"),  _("Show Status"),    NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &show_status} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,"@","",NULL,_("input"),_("Set Input"),NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlINT, {.i = &file_count} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,"@","",NULL,_("input"),_("Set Input"),NULL, _("FILENAME"), oyjlOPTIONTYPE_FUNCTION, {}, oyjlINT, {.i = &file_count} },
     {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
     {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
+    {"oiwi", 0,     "f", "function",NULL, _("function"),_("Function"),       NULL, _("FUNCTION"), oyjlOPTIONTYPE_FUNCTION, {}, oyjlSTRING, {.s = &func} },
+    {"oiwi", 0,     "n", "number",  NULL, _("number"),  _("Number"),         NULL, _("NUMBER"),   oyjlOPTIONTYPE_DOUBLE, {.dbl.start = -1.0, .dbl.end = 1.0, .dbl.tick = 0.1, .dbl.d = number}, oyjlDOUBLE, {.d = &number} },
     {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
@@ -838,54 +842,100 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
     {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o" }, /* accepted even if none of the mandatory options is set */
     {"oiwg", OYJL_OPTION_FLAG_EDITABLE,_("Mode2"),_("Any arg mode"),NULL,"@","o,v","@,o"},/* accepted if anonymous arguments are set */
-    {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "o,v",    "i,o" },/* parsed and checked with -i option */
+    {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "o,f,n,v",    "i,o,f,n" },/* parsed and checked with -i option */
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 
+  const char * attr = "{\n\
+  \"org\": {\n\
+    \"freedesktop\": {\n\
+      \"oyjl\": {\n\
+        \"ui\": {\n\
+          \"options\": {\n\
+            \"type\": \"oiws\",\n\
+            \"array\": [{},{\n\
+                \"type\": \"oiwi\",\n\
+                \"o\": \"@\",\n\
+                \"values\": {\n\
+                  \"getChoicesCompletionBash\": \"ls -1\"\n\
+                }\n\
+              },{},{},{\n\
+                \"type\": \"oiwi\",\n\
+                \"o\": \"f\",\n\
+                \"values\": {\n\
+                  \"getChoicesCompletionBash\": \"pwd\"\n\
+                }\n\
+              }]\n\
+            }\n\
+          }\n\
+        }\n\
+      }\n\
+    }\n\
+  }";
+  char error_buffer[128] = {0};
+  oyjl_val root = oyjlTreeParse( attr, error_buffer, 128 );
+
   const char * argv_anonymous[] = {"test","-v","file-name.json","file-name2.json"};
   int argc_anonymous = 4;
-  oyjlUi_s * ui = oyjlUi_Create( argc_anonymous, argv_anonymous, /* argc+argv are required for parsing the command line options */
-                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
-                                       sections, oarray, groups_no_args, NULL );
+  /* declare options    type,   array,  groups,         user_data, argc,           argv,           private_data */
+  oyjlOptions_s opts = {"oiws", oarray, groups_no_args, NULL,      argc_anonymous, argv_anonymous, NULL };
+  {
+    oyjlOptions_SetAttributes( &opts, &root );
+  }
+  oyjlUi_s * ui = oyjlUi_FromOptions( "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
+                                  sections, &opts, NULL );
   char * text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6798)
+  if(text && strlen(text) == 7993)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ExportToJson()                %lu", text?strlen(text):0 );
+    "oyjlUi_ExportToJson()                  %lu", text?strlen(text):0 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ExportToJson()                %lu", text?strlen(text):0 );
+    "oyjlUi_ExportToJson()                  %lu", text?strlen(text):0 );
   }
+  oyjlOptions_SetAttributes( &opts, NULL );
   oyjlUi_Release( &ui);
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
 
-  char error_buffer[128] = {0};
   oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
   if(text) {free(text);} text = NULL;
 
   char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 8345)
+  if(c_source && strlen(c_source) == 9201)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUiJsonToCode()                   %lu", c_source?strlen(c_source):0 );
+    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)   %lu", c_source?strlen(c_source):0 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUiJsonToCode()                   %lu", c_source?strlen(c_source):0 );
+    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)   %lu", c_source?strlen(c_source):0 );
   }
   OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode", "txt" )
   if(verbose && c_source)
     fprintf( zout, "%s\n", c_source );
   if(c_source) {free(c_source);} c_source = NULL;
 
-  ui = oyjlUi_ImportFromJson( json, 0 );
-  text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6798)
+  c_source = oyjlUiJsonToCode( json, OYJL_COMPLETION_BASH );
+  if(c_source && strlen(c_source) == 3674)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ImportFromJson()              %lu", text?strlen(text):0 );
+    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH) %lu", c_source?strlen(c_source):0 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ImportFromJson()              %lu", text?strlen(text):0 );
+    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH) %lu", c_source?strlen(c_source):0 );
+  }
+  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode-Completion", "txt" )
+  if(verbose && c_source)
+    fprintf( zout, "%s\n", c_source );
+  if(c_source) {free(c_source);} c_source = NULL;
+
+  ui = oyjlUi_ImportFromJson( json, 0 );
+  text = oyjlUi_ExportToJson( ui, 0 );
+  if(text && strlen(text) == 7885)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlUi_ImportFromJson()                %lu", text?strlen(text):0 );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlUi_ImportFromJson()                %lu", text?strlen(text):0 );
   }
   oyjlUi_Release( &ui);
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ImportFromJson", "txt" )
@@ -968,12 +1018,12 @@ oyjlTESTRESULT_e testUiTranslation ()
   char * text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 7280)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ToJson()                      %lu", text?strlen(text):0 );
+    "oyjlUi_ToJson(en_GB)                 %lu", text?strlen(text):0 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson()                      %lu", text?strlen(text):0 );
+    "oyjlUi_ToJson(en_GB)                 %lu", text?strlen(text):0 );
   }
-  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson", "txt" )
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson-en_GB", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
@@ -981,14 +1031,14 @@ oyjlTESTRESULT_e testUiTranslation ()
   text = oyjlUi_ExportToJson( ui, 0 );
   if(text && strlen(text) == 6809)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ExportToJson()                %lu", text?strlen(text):0 );
+    "oyjlUi_ExportToJson(en_GB)           %lu", text?strlen(text):0 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ExportToJson()                %lu", text?strlen(text):0 );
+    "oyjlUi_ExportToJson(en_GB)           %lu", text?strlen(text):0 );
   }
   oyjlUi_s * ui_en = oyjlUi_Copy( ui );
   oyjlUi_Release( &ui);
-  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson", "txt" )
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson-en_GB", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
 
@@ -999,12 +1049,12 @@ oyjlTESTRESULT_e testUiTranslation ()
   char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
   if(c_source && strlen(c_source) == 8347)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUiJsonToCode()                   %lu", c_source?strlen(c_source):0 );
+    "oyjlUiJsonToCode(en_GB)              %lu", c_source?strlen(c_source):0 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUiJsonToCode()                   %lu", c_source?strlen(c_source):0 );
+    "oyjlUiJsonToCode(en_GB)              %lu", c_source?strlen(c_source):0 );
   }
-  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUi_ExportToCode", "txt" )
+  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode-en_GB", "txt" )
   if(verbose && c_source)
     fprintf( zout, "%s\n", c_source );
   if(c_source) {free(c_source);} c_source = NULL;
@@ -1023,6 +1073,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(verbose && text)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
+  oyjlUi_Release( &ui_en );
 
   {
     const char * catalog_json = "{\n\
@@ -1087,6 +1138,18 @@ oyjlTESTRESULT_e testUiTranslation ()
   ui = oyjlUi_Create( argc_anonymous, argv_anonymous, /* argc+argv are required for parsing the command line options */
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups_no_args, NULL );
+  text = oyjlUi_ToJson( ui, 0 );
+  if(text && strlen(text) == 7286)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlUi_ToJson(de)                    %lu", text?strlen(text):0 );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlUi_ToJson(de)                    %lu", text?strlen(text):0 );
+  }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson-de", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+
   text = oyjlUi_ExportToJson( ui, 0 );
   if(text && strlen(text) == 6815)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -1095,7 +1158,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlUi_ExportToJson(de)              %lu", text?strlen(text):0 );
   }
-  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson", "txt" )
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson-de", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
 
@@ -1111,7 +1174,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlUiJsonToCode(de)                 %lu", c_source?strlen(c_source):0 );
   }
-  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUi_ExportToCode", "txt" )
+  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode-de", "txt" )
   if(verbose && c_source)
     fprintf( zout, "%s\n", c_source );
   if(c_source) {free(c_source);} c_source = NULL;
@@ -1120,35 +1183,66 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   oyjl_val catalog = NULL;
   oyjlTranslate_f tr = oyjlTranslate;
-  oyjlUi_Translate( ui_en, "cs_CZ", oyjlCatalog(&catalog), tr );
-  text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6888)
+  oyjlUi_Translate( ui, "back", oyjlCatalog(&catalog), tr );
+  text = oyjlUi_ToJson( ui, 0 );
+  if(text && strlen(text) == 7286)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ExportToJson(de->cs)          %lu", text?strlen(text):0 );
+    "oyjlUi_ToJson(back)                  %lu", text?strlen(text):0 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ExportToJson(de->cs)          %lu", text?strlen(text):0 );
+    "oyjlUi_ToJson(back)                  %lu", text?strlen(text):0 );
   }
-  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson", "txt" )
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson-back", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+
+  text = oyjlUi_ExportToJson( ui, 0 );
+  if(text && strlen(text) == 6809)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlUi_ExportToJson(back)            %lu", text?strlen(text):0 );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlUi_ExportToJson(back)            %lu", text?strlen(text):0 );
+  }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson-back", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
+  oyjlUi_Translate( ui, "cs_CZ", oyjlCatalog(&catalog), tr );
   text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 7417)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ToJson(de->cs)                %lu", text?strlen(text):0 );
+    "oyjlUi_ToJson(cs)                    %lu", text?strlen(text):0 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson(de->cs)                %lu", text?strlen(text):0 );
+    "oyjlUi_ToJson(cs)                    %lu", text?strlen(text):0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson-cs", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
+  text = oyjlUi_ExportToJson( ui, 0 );
+  if(text && strlen(text) == 6888)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlUi_ExportToJson(cs)              %lu", text?strlen(text):0 );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlUi_ExportToJson(cs)              %lu", text?strlen(text):0 );
+  }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson-cs", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+  if(text) {free(text);} text = NULL;
+
+  catalog = oyjlCatalog(&catalog);
+  int level = 0;
+  oyjlTreeToJson( catalog, &level, &text );
+  //puts(text);
+  if(text) {free(text);} text = NULL;
+
   oyjlUi_Release( &ui);
-  oyjlUi_Release( &ui_en );
 
   free(oarray[2].values.choices.list);
   free(oarray[3].values.choices.list);
