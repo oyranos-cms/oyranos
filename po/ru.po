@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-10-07 07:47+0200\n"
+"POT-Creation-Date: 2020-10-20 21:34+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "'_(\"%s\"); '"
 msgstr ""
 
-#: oyjl_args.c:3158
+#: oyjl_args.c:3174
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
@@ -42,12 +42,12 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:3650 oyjl_args.c:3916 oyjl_args_tree.c:1340
+#: oyjl_args.c:3737 oyjl_args.c:4003 oyjl_args_tree.c:1884
 msgid "AUTHOR"
 msgstr ""
 
 #: test-args.c:100 test-args.c:307 test-args.c:457 test-core.c:727
-#: test-core.c:791 test.c:841 test.c:958 oyjl-args-qml/mini-app.c:195
+#: test-core.c:791 test.c:845 test.c:1008 oyjl-args-qml/mini-app.c:195
 msgid "Actual mode"
 msgstr ""
 
@@ -63,7 +63,7 @@ msgstr ""
 msgid "Add gettext translated keys to JSON"
 msgstr ""
 
-#: oyjl_args.c:1297
+#: oyjl_args.c:1302
 msgid "All available data"
 msgstr ""
 
@@ -71,17 +71,17 @@ msgstr ""
 msgid "Alternate"
 msgstr ""
 
-#: test-args.c:99 test-core.c:726 test.c:840 test.c:957
+#: test-args.c:99 test-core.c:726 test.c:844 test.c:1007
 #: oyjl-args-qml/mini-app.c:194
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:3108
+#: oyjl_args.c:3124
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:3660 oyjl_args.c:3662 oyjl_args.c:3930 oyjl_args.c:3932
-#: oyjl_args_tree.c:1343
+#: oyjl_args.c:3747 oyjl_args.c:3749 oyjl_args.c:4017 oyjl_args.c:4019
+#: oyjl_args_tree.c:1887
 msgid "BUGS"
 msgstr ""
 
@@ -90,7 +90,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:3654 oyjl_args.c:3920 oyjl_args_tree.c:1341
+#: oyjl_args.c:3741 oyjl_args.c:4007 oyjl_args_tree.c:1885
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -103,13 +103,17 @@ msgstr ""
 msgid "Common Options"
 msgstr ""
 
-#: test-args.c:84 test-args.c:448 test-core.c:714 test.c:830 test.c:947
+#: oyjl-args.c:55
+msgid "Completion Bash"
+msgstr ""
+
+#: test-args.c:84 test-args.c:448 test-core.c:714 test.c:832 test.c:997
 #: oyjl-args-qml/mini-app.c:181
 msgid "Control Output"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: oyjl-args.c:71
+#: oyjl-args.c:73
 msgid "Convert"
 msgstr ""
 
@@ -128,16 +132,16 @@ msgid ""
 "Oyjl UI JSON can be used for translated rendering."
 msgstr ""
 
-#: oyjl-args.c:78
+#: oyjl-args.c:80
 msgid "Convert UI JSON to C code using libOyjl"
 msgstr ""
 
 #. declare the option choices  *   nick,          name,               description,                  help
-#: oyjl-args.c:45
+#: oyjl-args.c:46
 msgid "Convert eXported developer JSON to C source"
 msgstr ""
 
-#: oyjl_args_tree.c:1305
+#: oyjl_args_tree.c:1849
 msgid "Copyright"
 msgstr ""
 
@@ -145,19 +149,19 @@ msgstr ""
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:3527 oyjl_args.c:3792 oyjl_args_tree.c:1337
+#: oyjl_args.c:3614 oyjl_args.c:3879 oyjl_args_tree.c:1881
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args_tree.c:1314
+#: oyjl_args_tree.c:1858
 msgid "Date"
 msgstr ""
 
-#: oyjl_args.c:2384 oyjl_args_tree.c:1336
+#: oyjl_args.c:2399 oyjl_args_tree.c:1880
 msgid "Description"
 msgstr ""
 
-#: oyjl_args_tree.c:1311
+#: oyjl_args_tree.c:1855
 msgid "Development"
 msgstr ""
 
@@ -165,11 +169,11 @@ msgstr ""
 msgid "Directory"
 msgstr ""
 
-#: oyjl_args.c:1332
+#: oyjl_args.c:1337
 msgid "Display a interactive graphical User Interface."
 msgstr ""
 
-#: oyjl_args_tree.c:1313
+#: oyjl_args_tree.c:1857
 msgid "Documentation"
 msgstr ""
 
@@ -181,24 +185,24 @@ msgstr ""
 msgid "Double mandatory"
 msgstr ""
 
-#: oyjl_args.c:1497
+#: oyjl_args.c:1502
 msgid "Double occuring option"
 msgstr ""
 
-#: oyjl_args_tree.c:1309
+#: oyjl_args_tree.c:1853
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:3334 oyjl_args_tree.c:1346
+#: oyjl_args.c:3421 oyjl_args_tree.c:1890
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl-args.c:59 oyjl.c:108 oyjl_args.c:3330 oyjl_args_tree.c:1344
+#: oyjl-args.c:61 oyjl.c:108 oyjl_args.c:3417 oyjl_args_tree.c:1888
 #: oyjl_translate.c:103 oyjl_web.c:83
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:3332 oyjl_args_tree.c:1345
+#: oyjl_args.c:3419 oyjl_args_tree.c:1889
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -212,11 +216,11 @@ msgstr "приме́р"
 msgid "Example2"
 msgstr "приме́р"
 
-#: oyjl_args.c:1296
+#: oyjl_args.c:1301
 msgid "Export"
 msgstr ""
 
-#: oyjl_args.c:1317
+#: oyjl_args.c:1322
 msgid "Export formated text"
 msgstr ""
 
@@ -228,19 +232,23 @@ msgstr ""
 msgid "Extract translatable Messages"
 msgstr ""
 
-#: oyjl-args.c:53 oyjl.c:100 oyjl_translate.c:79 oyjl_translate.c:81
+#: oyjl-args.c:54 oyjl.c:100 oyjl_translate.c:79 oyjl_translate.c:81
 #: test-args.c:82 test-args.c:83 test-args.c:447 test-core.c:712
-#: test-core.c:713 test.c:828 test.c:829 test.c:945 test.c:946
+#: test-core.c:713 test.c:830 test.c:831 test.c:995 test.c:996
 #: oyjl-args-qml/mini-app.c:179 oyjl-args-qml/mini-app.c:180
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:3338 oyjl_args_tree.c:1348
+#: oyjl_args.c:3425 oyjl_args_tree.c:1892
 msgid "FILES"
 msgstr ""
 
 #: oyjl.c:106
 msgid "FORMAT"
+msgstr ""
+
+#: test.c:833
+msgid "FUNCTION"
 msgstr ""
 
 #: oyjl-args-qml/mini-app.c:180
@@ -251,7 +259,7 @@ msgstr ""
 msgid "File or Stream"
 msgstr ""
 
-#: oyjl-args.c:88 oyjl.c:154 oyjl_translate.c:147 oyjl_web.c:107
+#: oyjl-args.c:90 oyjl.c:154 oyjl_translate.c:147 oyjl_web.c:107
 msgid "For more information read the man page:"
 msgstr ""
 
@@ -263,55 +271,63 @@ msgstr ""
 msgid "Format string"
 msgstr ""
 
-#: oyjl_args.c:1287
+#: oyjl_args.c:1292
 msgid "Formated text"
 msgstr ""
 
-#: oyjl_args.c:1256 oyjl_args.c:2730
+#: oyjl_args.c:1261 oyjl_args.c:2750
 #, fuzzy
 msgid "Full Help"
 msgstr "Справка"
 
+#: test.c:833
+msgid "Function"
+msgstr ""
+
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: oyjl_args.c:1291 oyjl_web.c:93
+#: oyjl_args.c:1296 oyjl_web.c:93
 msgid "GUI"
 msgstr ""
 
-#: oyjl_args.c:1294
+#: oyjl_args.c:1299
 msgid "GUI + Command"
 msgstr ""
 
-#: oyjl-args.c:72 oyjl.c:136 oyjl_translate.c:129 oyjl_web.c:94 test-args.c:104
-#: test-args.c:308 test-args.c:458 test-core.c:728 test-core.c:792 test.c:842
-#: test.c:959 oyjl-args-qml/mini-app.c:196
+#: oyjl-args.c:74 oyjl.c:136 oyjl_translate.c:129 oyjl_web.c:94 test-args.c:104
+#: test-args.c:308 test-args.c:458 test-core.c:728 test-core.c:792 test.c:846
+#: test.c:1009 oyjl-args-qml/mini-app.c:196
 msgid "General options"
 msgstr ""
 
-#: oyjl-args.c:71
+#: oyjl-args.c:55
+msgid "Generate bash completion code"
+msgstr ""
+
+#: oyjl-args.c:73
 msgid "Generate source code"
 msgstr ""
 
-#: oyjl_args.c:1295
+#: oyjl_args.c:1300
 msgid "Get Oyjl Json UI declaration incuding command"
 msgstr ""
 
-#: oyjl_args.c:1319
+#: oyjl_args.c:1324
 msgid "Get UI converted into text formats"
 msgstr ""
 
-#: oyjl_args.c:1298
+#: oyjl_args.c:1303
 msgid "Get UI data for developers"
 msgstr ""
 
-#: oyjl_args.c:1292
+#: oyjl_args.c:1297
 msgid "Get a Oyjl Json UI declaration"
 msgstr ""
 
-#: oyjl_args.c:1285
+#: oyjl_args.c:1290
 msgid "Get a unix man page"
 msgstr ""
 
-#: oyjl_args.c:1288
+#: oyjl_args.c:1293
 msgid "Get formated text"
 msgstr ""
 
@@ -319,16 +335,16 @@ msgstr ""
 msgid "Get node type"
 msgstr ""
 
-#: oyjl_args.c:1330
+#: oyjl_args.c:1335
 msgid "Gui"
 msgstr ""
 
-#: oyjl_args.c:3336 oyjl_args_tree.c:1347
+#: oyjl_args.c:3423 oyjl_args_tree.c:1891
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl_args.c:2755 oyjl_web.c:78 test-args.c:85 test-args.c:449
-#: test-core.c:716 test.c:831 test.c:948 oyjl-args-qml/mini-app.c:184
+#: oyjl_args.c:2775 oyjl_web.c:78 test-args.c:85 test-args.c:449
+#: test-core.c:716 test.c:835 test.c:998 oyjl-args-qml/mini-app.c:184
 msgid "Help"
 msgstr "Справка"
 
@@ -362,15 +378,15 @@ msgstr ""
 msgid "January 2, 2020"
 msgstr ""
 
-#: oyjl_args.c:1290
+#: oyjl_args.c:1295
 msgid "Json"
 msgstr ""
 
-#: oyjl_args.c:1293
+#: oyjl_args.c:1298
 msgid "Json + Command"
 msgstr ""
 
-#: oyjl-args.c:42
+#: oyjl-args.c:43
 msgid "June 26, 2019"
 msgstr ""
 
@@ -390,8 +406,8 @@ msgstr ""
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:3107 oyjl_args.c:3656 oyjl_args.c:3922 oyjl_args_tree.c:1306
-#: oyjl_args_tree.c:1342
+#: oyjl_args.c:3123 oyjl_args.c:3743 oyjl_args.c:4009 oyjl_args_tree.c:1850
+#: oyjl_args_tree.c:1886
 msgid "License"
 msgstr ""
 
@@ -403,7 +419,7 @@ msgstr ""
 msgid "List empty"
 msgstr ""
 
-#: oyjl_args.c:1260 oyjl_args.c:2736
+#: oyjl_args.c:1265 oyjl_args.c:2756
 msgid "List groups"
 msgstr ""
 
@@ -436,11 +452,11 @@ msgstr ""
 msgid "Long"
 msgstr ""
 
-#: oyjl_args.c:1283
+#: oyjl_args.c:1288
 msgid "Man"
 msgstr ""
 
-#: oyjl_args_tree.c:1304
+#: oyjl_args_tree.c:1848
 msgid "Manufacturer"
 msgstr ""
 
@@ -448,18 +464,18 @@ msgstr ""
 msgid "March 05, 2020"
 msgstr ""
 
-#: oyjl_args.c:1286
+#: oyjl_args.c:1291
 msgid "Markdown"
 msgstr ""
 
 #. parsed and checked with -i option
-#: oyjl-args.c:72 oyjl.c:136 oyjl_translate.c:129 oyjl_web.c:94 test-args.c:104
-#: test-args.c:308 test-args.c:458 test-core.c:728 test-core.c:792 test.c:842
-#: test.c:959 oyjl-args-qml/mini-app.c:196
+#: oyjl-args.c:74 oyjl.c:136 oyjl_translate.c:129 oyjl_web.c:94 test-args.c:104
+#: test-args.c:308 test-args.c:458 test-core.c:728 test-core.c:792 test.c:846
+#: test.c:1009 oyjl-args-qml/mini-app.c:196
 msgid "Misc"
 msgstr ""
 
-#: oyjl_args.c:3039
+#: oyjl_args.c:3055
 msgid "Missing mandatory option. No usage mode in synopsis lines found."
 msgstr ""
 
@@ -469,24 +485,24 @@ msgid "Mode"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test.c:956
+#: test.c:1006
 msgid "Mode(1)"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-args.c:95 test-core.c:725 test.c:839 oyjl-args-qml/mini-app.c:193
+#: test-args.c:95 test-core.c:725 test.c:843 oyjl-args-qml/mini-app.c:193
 msgid "Mode1"
 msgstr ""
 
 #. accepted even if none of the mandatory options is set
-#: test-args.c:96 test-core.c:726 test.c:840 test.c:957
+#: test-args.c:96 test-core.c:726 test.c:844 test.c:1007
 #: oyjl-args-qml/mini-app.c:194
 msgid "Mode2"
 msgstr ""
 
 #. accepted even if none of the mandatory options is set
 #. accepted if anonymous arguments are set
-#: test-args.c:97 test-core.c:727 test.c:841 test.c:958
+#: test-args.c:97 test-core.c:727 test.c:845 test.c:1008
 #: oyjl-args-qml/mini-app.c:195
 msgid "Mode3"
 msgstr ""
@@ -519,19 +535,23 @@ msgstr ""
 msgid "Mode9"
 msgstr ""
 
-#: oyjl_args_tree.c:1285
+#: oyjl_args_tree.c:1829
 msgid "Module"
 msgstr ""
 
-#: oyjl_args.c:3513 oyjl_args.c:3777 oyjl_args_tree.c:1333
+#: oyjl_args.c:3600 oyjl_args.c:3864 oyjl_args_tree.c:1877
 msgid "NAME"
 msgstr ""
 
-#: oyjl_args_tree.c:1332
+#: test.c:834
+msgid "NUMBER"
+msgstr ""
+
+#: oyjl_args_tree.c:1876
 msgid "Name"
 msgstr ""
 
-#: oyjl_args_tree.c:1587
+#: oyjl_args_tree.c:2131
 msgid "No"
 msgstr ""
 
@@ -547,11 +567,15 @@ msgstr ""
 msgid "November 28, 2019"
 msgstr ""
 
-#: oyjl_args.c:3529 oyjl_args.c:3795 oyjl_args_tree.c:1339
+#: test.c:834
+msgid "Number"
+msgstr ""
+
+#: oyjl_args.c:3616 oyjl_args.c:3882 oyjl_args_tree.c:1883
 msgid "OPTIONS"
 msgstr ""
 
-#: test-args.c:62 test-core.c:694 test.c:812 test.c:929
+#: test-args.c:62 test-core.c:694 test.c:814 test.c:979
 msgid "October 10, 2018"
 msgstr ""
 
@@ -559,33 +583,33 @@ msgstr ""
 msgid "Only Translations"
 msgstr ""
 
-#: oyjl_args.c:1983
+#: oyjl_args.c:1999
 msgid "Option has a different value range"
 msgstr ""
 
-#: oyjl_args.c:1689 oyjl_args.c:1759
+#: oyjl_args.c:1699 oyjl_args.c:1769
 msgid "Option has a unexpected argument"
 msgstr ""
 
-#: oyjl_args.c:1663 oyjl_args.c:1733
+#: oyjl_args.c:1673 oyjl_args.c:1743
 msgid "Option needs a argument"
 msgstr ""
 
-#: oyjl_args.c:1477
+#: oyjl_args.c:1482
 msgid "Option not found"
 msgstr ""
 
-#: oyjl_args.c:1514 oyjl_args.c:1525 oyjl_args.c:1633 oyjl_args.c:1707
-#: oyjl_args.c:2684
+#: oyjl_args.c:1519 oyjl_args.c:1530 oyjl_args.c:1643 oyjl_args.c:1717
+#: oyjl_args.c:2704
 msgid "Option not supported"
 msgstr ""
 
-#: oyjl_args.c:1866
+#: oyjl_args.c:1876
 msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr ""
 
-#: oyjl_args.c:1807
+#: oyjl_args.c:1817
 msgid ""
 "Options with arguments are not allowed in sub command style. A sub command "
 "has no leading '--'. It is a mandatory option of a option group."
@@ -606,7 +630,7 @@ msgstr ""
 msgid "Oyjl Json Manipulation"
 msgstr ""
 
-#: oyjl_args_tree.c:1312
+#: oyjl_args_tree.c:1856
 msgid "Oyjl Module Author"
 msgstr ""
 
@@ -631,21 +655,21 @@ msgstr ""
 msgid "Paths"
 msgstr ""
 
-#: oyjl_args_tree.c:1316
+#: oyjl_args_tree.c:1860
 msgid "Permissions"
 msgstr ""
 
-#: test-args.c:73 test-core.c:701 test.c:819 test.c:936
+#: test-args.c:73 test-core.c:701 test.c:821 test.c:986
 #: oyjl-args-qml/mini-app.c:170
 msgid "Print All"
 msgstr ""
 
-#: test-args.c:74 test-core.c:702 test.c:820 test.c:937
+#: test-args.c:74 test-core.c:702 test.c:822 test.c:987
 #: oyjl-args-qml/mini-app.c:171
 msgid "Print Camera"
 msgstr ""
 
-#: test-args.c:74 test-core.c:702 test.c:820 test.c:937
+#: test-args.c:74 test-core.c:702 test.c:822 test.c:987
 #: oyjl-args-qml/mini-app.c:171
 msgid "Print Camera JSON"
 msgstr ""
@@ -666,7 +690,7 @@ msgstr ""
 msgid "Print JSON to stdout"
 msgstr ""
 
-#: test-args.c:75 test-core.c:703 test.c:821 test.c:938
+#: test-args.c:75 test-core.c:703 test.c:823 test.c:988
 #: oyjl-args-qml/mini-app.c:172
 msgid "Print None"
 msgstr ""
@@ -699,7 +723,7 @@ msgstr ""
 msgid "Print count of leafs in node"
 msgstr ""
 
-#: oyjl_args.c:1257 oyjl_args.c:2731
+#: oyjl_args.c:1262 oyjl_args.c:2751
 msgid "Print help for all groups"
 msgstr ""
 
@@ -707,7 +731,7 @@ msgstr ""
 msgid "Print help for command line style interface"
 msgstr ""
 
-#: oyjl_args.c:1271 oyjl_args.c:2758
+#: oyjl_args.c:1276 oyjl_args.c:2778
 msgid "Print help text"
 msgstr ""
 
@@ -727,7 +751,7 @@ msgstr ""
 msgid "Print type"
 msgstr ""
 
-#: oyjl_args.c:2676 oyjl_args.c:2937 oyjl_args.c:2996 oyjl_args.c:3009
+#: oyjl_args.c:2696 oyjl_args.c:2953 oyjl_args.c:3012 oyjl_args.c:3025
 msgid "Program Error:"
 msgstr ""
 
@@ -754,12 +778,12 @@ msgstr ""
 msgid "Results JSON"
 msgstr ""
 
-#: oyjl-args.c:61 oyjl.c:110 oyjl_args.c:3342 oyjl_args_tree.c:1350
+#: oyjl-args.c:63 oyjl.c:110 oyjl_args.c:3429 oyjl_args_tree.c:1894
 #: oyjl_translate.c:105 oyjl_web.c:85
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:3340 oyjl_args_tree.c:1349
+#: oyjl_args.c:3427 oyjl_args_tree.c:1893
 msgid "SEE AS WELL"
 msgstr ""
 
@@ -767,23 +791,23 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:3515 oyjl_args.c:3780 oyjl_args_tree.c:1335
+#: oyjl_args.c:3602 oyjl_args.c:3867 oyjl_args_tree.c:1879
 msgid "SYNOPSIS"
 msgstr ""
 
-#: oyjl_args.c:1348
+#: oyjl_args.c:1353
 msgid "Select Renderer"
 msgstr ""
 
-#: oyjl_args.c:1350
+#: oyjl_args.c:1355
 msgid ""
 "Select and possibly configure Renderer. -R=\"gui\" will just launch a "
 "graphical UI. -R=\"port_number:api_path:TLS_private_key:TLS_CA_certificate:"
 "style.css\" will launch a local Web Server, which listens on local port."
 msgstr ""
 
-#: oyjl-args.c:53 test-args.c:82 test-args.c:83 test-args.c:447 test-core.c:712
-#: test-core.c:713 test.c:828 test.c:829 test.c:945 test.c:946
+#: oyjl-args.c:54 test-args.c:82 test-args.c:83 test-args.c:447 test-core.c:712
+#: test-core.c:713 test.c:830 test.c:831 test.c:995 test.c:996
 #: oyjl-args-qml/mini-app.c:179 oyjl-args-qml/mini-app.c:180
 msgid "Set Input"
 msgstr ""
@@ -812,33 +836,33 @@ msgstr ""
 #: test-args.c:368 test-args.c:464 test-args.c:480 test-args.c:500
 #: test-args.c:524 test-args.c:544 test-core.c:734 test-core.c:760
 #: test-core.c:798 test-core.c:812 test-core.c:825 test-core.c:838
-#: test-core.c:852 test.c:849 test.c:966 test.c:1088
+#: test-core.c:852 test.c:886 test.c:1016 test.c:1139
 msgid "Short example tool using libOyjl"
 msgstr ""
 
-#: test-args.c:81 test-core.c:711 test.c:827 test.c:944
+#: test-args.c:81 test-core.c:711 test.c:829 test.c:994
 #: oyjl-args-qml/mini-app.c:178
 msgid "Show Status"
 msgstr ""
 
-#: oyjl_args.c:1331
+#: oyjl_args.c:1336
 msgid "Show UI"
 msgstr ""
 
-#: oyjl_args.c:1261 oyjl_args.c:2737
+#: oyjl_args.c:1266 oyjl_args.c:2757
 msgid "Show all groups including syntax"
 msgstr ""
 
-#: oyjl_args.c:1273 oyjl_args.c:2760
+#: oyjl_args.c:1278 oyjl_args.c:2780
 msgid "Show usage information and hints for the tool."
 msgstr ""
 
 #: test-args.c:95 test-args.c:96 test-args.c:97 test-args.c:98 test-core.c:725
-#: test.c:839 oyjl-args-qml/mini-app.c:193
+#: test.c:843 oyjl-args-qml/mini-app.c:193
 msgid "Simple mode"
 msgstr ""
 
-#: test.c:956
+#: test.c:1006
 msgid "Simple mode \"(1)\""
 msgstr ""
 
@@ -846,23 +870,23 @@ msgstr ""
 msgid "Small JSON UI tool using libOyjl and a selectable renderer"
 msgstr ""
 
-#: oyjl_args_tree.c:1310
+#: oyjl_args_tree.c:1854
 msgid "Sources"
 msgstr ""
 
-#: oyjl_args.c:1334
+#: oyjl_args.c:1339
 msgid "Start Web Server"
 msgstr ""
 
-#: oyjl_args.c:1335
+#: oyjl_args.c:1340
 msgid "Start a local Web Service to connect a Webbrowser with."
 msgstr ""
 
-#: oyjl_args_tree.c:1308
+#: oyjl_args_tree.c:1852
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:1259 oyjl_args.c:2388 oyjl_args.c:2735 oyjl_args_tree.c:1334
+#: oyjl_args.c:1264 oyjl_args.c:2403 oyjl_args.c:2755 oyjl_args_tree.c:1878
 msgid "Synopsis"
 msgstr ""
 
@@ -878,7 +902,7 @@ msgstr ""
 msgid "Text Domain List"
 msgstr ""
 
-#: test.c:811 test.c:928
+#: test.c:813 test.c:978
 msgid "The example tool demonstrates the usage of the libOyjl API's."
 msgstr ""
 
@@ -917,15 +941,15 @@ msgstr ""
 msgid "This Group handles Long options"
 msgstr ""
 
-#: oyjl_args.c:1806
+#: oyjl_args.c:1816
 msgid "This option expects arguments"
 msgstr ""
 
-#: oyjl_args.c:2938 oyjl_args.c:2997 oyjl_args.c:3010
+#: oyjl_args.c:2954 oyjl_args.c:3013 oyjl_args.c:3026
 msgid "This option is not defined"
 msgstr ""
 
-#: oyjl_args.c:2677
+#: oyjl_args.c:2697
 msgid "This option needs oyjlOption_s::value_name defined"
 msgstr ""
 
@@ -933,12 +957,12 @@ msgstr ""
 msgid "This options explanation text."
 msgstr ""
 
-#: oyjl_args_tree.c:1283
+#: oyjl_args_tree.c:1827
 msgid "Tool"
 msgstr ""
 
 #. handle options
-#: oyjl-args.c:41
+#: oyjl-args.c:42
 msgid "Tool to convert UI JSON description from *-X export* into source code."
 msgstr ""
 
@@ -960,30 +984,30 @@ msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: oyjl-args.c:78
+#: oyjl-args.c:80
 msgid "Ui to source code"
 msgstr ""
 
-#: oyjl_args.c:1835
+#: oyjl_args.c:1845
 msgid "Unbound options are not supported"
 msgstr ""
 
-#: oyjl_args.c:1284
+#: oyjl_args.c:1289
 msgid "Unix Man page"
 msgstr ""
 
-#: oyjl_args_tree.c:1307
+#: oyjl_args_tree.c:1851
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:2403 oyjl_args_tree.c:1338 oyjl_translate.c:163
+#: oyjl_args.c:2418 oyjl_args_tree.c:1882 oyjl_translate.c:163
 msgid "Usage"
 msgstr "по́льзование"
 
-#: oyjl_args.c:1497 oyjl_args.c:1513 oyjl_args.c:1524 oyjl_args.c:1632
-#: oyjl_args.c:1662 oyjl_args.c:1688 oyjl_args.c:1706 oyjl_args.c:1732
-#: oyjl_args.c:1759 oyjl_args.c:1805 oyjl_args.c:1834 oyjl_args.c:1866
-#: oyjl_args.c:1982 oyjl_args.c:2683 oyjl_args.c:3038
+#: oyjl_args.c:1502 oyjl_args.c:1518 oyjl_args.c:1529 oyjl_args.c:1642
+#: oyjl_args.c:1672 oyjl_args.c:1698 oyjl_args.c:1716 oyjl_args.c:1742
+#: oyjl_args.c:1769 oyjl_args.c:1815 oyjl_args.c:1844 oyjl_args.c:1876
+#: oyjl_args.c:1998 oyjl_args.c:2703 oyjl_args.c:3054
 msgid "Usage Error:"
 msgstr ""
 
@@ -991,7 +1015,7 @@ msgstr ""
 msgid "Verbose"
 msgstr ""
 
-#: oyjl-args.c:57 oyjl.c:118 oyjl_args_tree.c:1315 oyjl_translate.c:113
+#: oyjl-args.c:59 oyjl.c:118 oyjl_args_tree.c:1859 oyjl_translate.c:113
 #: test-core.c:718
 msgid "Version"
 msgstr ""
@@ -1000,7 +1024,7 @@ msgstr ""
 msgid "View MAN page"
 msgstr ""
 
-#: oyjl_args.c:1333
+#: oyjl_args.c:1338
 msgid "Web"
 msgstr ""
 
@@ -1020,7 +1044,7 @@ msgstr ""
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:1587
+#: oyjl_args_tree.c:2131
 msgid "Yes"
 msgstr ""
 
@@ -1032,7 +1056,7 @@ msgstr ""
 msgid "error"
 msgstr ""
 
-#: oyjl_args.c:1314
+#: oyjl_args.c:1319
 msgid "export"
 msgstr ""
 
@@ -1040,9 +1064,13 @@ msgstr ""
 msgid "finished"
 msgstr ""
 
+#: test.c:833
+msgid "function"
+msgstr ""
+
 #. default options -h, -v and -V
-#: oyjl_args.c:1268 oyjl_web.c:78 test-args.c:85 test-args.c:449
-#: test-core.c:716 test.c:831 test.c:948 oyjl-args-qml/mini-app.c:184
+#: oyjl_args.c:1273 oyjl_web.c:78 test-args.c:85 test-args.c:449
+#: test-core.c:716 test.c:835 test.c:998 oyjl-args-qml/mini-app.c:184
 msgid "help"
 msgstr ""
 
@@ -1052,8 +1080,8 @@ msgstr ""
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
 #. OYJL_OPTION_FLAG_EDITABLE
-#: oyjl-args.c:53 test-args.c:82 test-args.c:83 test-args.c:447 test-core.c:712
-#: test-core.c:713 test.c:828 test.c:829 test.c:945 test.c:946
+#: oyjl-args.c:54 test-args.c:82 test-args.c:83 test-args.c:447 test-core.c:712
+#: test-core.c:713 test.c:830 test.c:831 test.c:995 test.c:996
 #: oyjl-args-qml/mini-app.c:179 oyjl-args-qml/mini-app.c:180
 msgid "input"
 msgstr ""
@@ -1086,15 +1114,19 @@ msgstr ""
 msgid "name,description,help"
 msgstr ""
 
-#: oyjl_args.c:1514
+#: oyjl_args.c:1519
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:1525 oyjl_args.c:2684
+#: oyjl_args.c:1530 oyjl_args.c:2704
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
-#: test-args.c:84 test-args.c:448 test-core.c:714 test.c:830 test.c:947
+#: test.c:834
+msgid "number"
+msgstr ""
+
+#: test-args.c:84 test-args.c:448 test-core.c:714 test.c:832 test.c:997
 #: oyjl-args-qml/mini-app.c:181
 msgid "output"
 msgstr ""
@@ -1127,7 +1159,7 @@ msgstr ""
 msgid "oyjl -p -i text.json -x //"
 msgstr ""
 
-#: oyjl-args.c:45
+#: oyjl-args.c:46
 msgid "oyjl-args -X export | oyjl-args -i -"
 msgstr ""
 
@@ -1153,16 +1185,16 @@ msgid ""
 msgstr ""
 
 #. declare some option choices
-#: test-args.c:70 test-core.c:698 test.c:816 test.c:933
+#: test-args.c:70 test-core.c:698 test.c:818 test.c:983
 msgid "oyjl.json"
 msgstr ""
 
-#: test-args.c:71 test-core.c:699 test.c:817 test.c:934
+#: test-args.c:71 test-core.c:699 test.c:819 test.c:984
 msgid "oyjl2.json"
 msgstr ""
 
 #. The --render option can be hidden and used only internally.
-#: oyjl_args.c:1345 oyjl-args-qml/mini-app.c:183
+#: oyjl_args.c:1350 oyjl-args-qml/mini-app.c:183
 msgid "render"
 msgstr ""
 
@@ -1171,7 +1203,7 @@ msgid "started"
 msgstr ""
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: test-args.c:81 test-core.c:711 test.c:827 test.c:944
+#: test-args.c:81 test-core.c:711 test.c:829 test.c:994
 #: oyjl-args-qml/mini-app.c:178
 msgid "status"
 msgstr ""
@@ -1184,12 +1216,12 @@ msgstr ""
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: oyjl-args.c:56 oyjl_web.c:79 test-args.c:86 test-args.c:450 test-core.c:717
-#: test.c:832 test.c:949 oyjl-args-qml/mini-app.c:185
+#: oyjl-args.c:58 oyjl_web.c:79 test-args.c:86 test-args.c:450 test-core.c:717
+#: test.c:836 test.c:999 oyjl-args-qml/mini-app.c:185
 msgid "verbose"
 msgstr ""
 
-#: oyjl-args.c:57 oyjl.c:118 oyjl_translate.c:113 oyjl_web.c:80 test-core.c:718
+#: oyjl-args.c:59 oyjl.c:118 oyjl_translate.c:113 oyjl_web.c:80 test-core.c:718
 msgid "version"
 msgstr ""
 

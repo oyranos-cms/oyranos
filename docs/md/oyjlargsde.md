@@ -10,7 +10,7 @@ oyjl-args v1.0.0 - Benutzerschnittstellen nach Quelltext
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyjl-args</strong> <a href="#input"><strong>-i</strong>=<em>DATEINAME</em></a> [<strong>-v</strong>]
+<strong>oyjl-args</strong> <a href="#input"><strong>-i</strong>=<em>DATEINAME</em></a> [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 <br />
 <strong>oyjl-args</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-V</strong> [<strong>-v</strong>]
 
@@ -22,10 +22,11 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 
 <h3 id="input">Erzeuge Quelltext</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>DATEINAME</em> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>DATEINAME</em> [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong> <em>DATEINAME</em></td> <td>Setze Eingabe </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--completion-bash</strong></td> <td>Erzeuge Bash Vervollständigungsskript</td> </tr>
 </table>
 
 <h3 id="help">Allgemeine Optionen</h3>
