@@ -1,0 +1,135 @@
+_oyjl_translate()
+{
+    local cur prev words cword
+    _init_completion -s || return
+
+    #set -x -v
+    : "autocomplete options with choices for long options "$prev""
+    case "$prev" in
+        --wrap) # long option with static args
+            local WORD_LIST=('C')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --help) # long option with static args
+            local WORD_LIST=('1' 'synopsis' 'Gemeinsame Optionen' 'Auszug' 'Addiere' 'Verschiedenes')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --export) # long option with static args
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --render) # long option with static args
+            local WORD_LIST=('gui' 'web' '-')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+    esac
+    : "autocomplete options with choices for single letter options "$cur""
+    case "$cur" in
+        -w=*) # single letter option with static args
+            local WORD_LIST=('C')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -h=*) # single letter option with static args
+            local WORD_LIST=('1' 'synopsis' 'Gemeinsame Optionen' 'Auszug' 'Addiere' 'Verschiedenes')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -X=*) # single letter option with static args
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -R=*) # single letter option with static args
+            local WORD_LIST=('gui' 'web' '-')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "autocomplete options "$cur""
+    case "$cur" in
+        -i|-o|-f|-d|-k|-l|-p|-w|-h|-X|-R)
+            : "finish short options with choices"
+            COMPREPLY=("$cur=")
+            set +x +v
+            return
+            ;;
+        --input|--output|--format|--domain|--key-list|--locales|--localedir|--wrap|--help|--export|--render)
+            : "finish long options with choices"
+            COMPREPLY=("$cur=")
+            set +x +v
+            return
+            ;;
+        -a|-n|-t|-e|-v|-V)
+            : "finish short options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+        --add|--list-empty|--translations-only|--extract|--synopsis|--verbose|--version)
+            : "finish long options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "show help for none '@' UIs"
+    if [[ "$cur" == "" ]]; then
+      if [[ ${COMP_WORDS[1]} == "" ]]; then
+        $1 help synopsis 1>&2
+      else
+        $1 help ${COMP_WORDS[1]} 1>&2
+      fi
+    fi
+
+
+    : "suggest group options for subcommands"
+    if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
+      case "${COMP_WORDS[1]}" in
+        -e|--extract|-k|--key-list)
+          COMPREPLY=($(compgen -W '-i= --input= -o= --output= -f= --format= -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -a|--add|-d|--domain|-k|--key-list)
+          COMPREPLY=($(compgen -W '-i= --input= -o= --output= -l= --locales= -p= --localedir= -w= --wrap= -t --translations-only -n --list-empty -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -h|--help|-X|--export|-V|--version)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+      esac
+    fi
+
+    : "suggest mandatory options on first args only"
+    if [[ "${COMP_WORDS[2]}" == "" ]]; then
+      WORD_LIST=("${WORD_LIST[@]}" -e --extract -k= --key-list= -a --add -d= --domain= -k= --key-list= -h= --help= -X= --export= -V --version)
+      _oyra_complete_choices
+      set +x +v
+      return
+    fi
+
+    set +x +v
+} &&
+complete -F _oyjl_translate -o nospace oyjl-translate
+
+
