@@ -30,6 +30,7 @@ int myMain( int argc, const char ** argv )
 {
 
   const char * file = NULL;
+  int completion_bash = 0;
   const char * export = NULL;
   const char * render = NULL;
   const char * help = NULL;
@@ -51,6 +52,7 @@ int myMain( int argc, const char ** argv )
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file} },
+    {"oiwi", 0,    NULL, "completion-bash",NULL, _("Completion Bash"),_("Generate bash completion code"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &completion_bash} },
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"h", "help", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE,{0}, oyjlSTRING, {.s = &help} },
     {"oiwi", 0,    NULL, "synopsis",NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &verbose} },
@@ -68,7 +70,7 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Convert"),_("Generate source code"),NULL, "i", "v",      "i" }, /* parsed and checked with -i option */
+    {"oiwg", 0,     _("Convert"),_("Generate source code"),NULL, "i", "completion-bash,v","i,completion-bash" }, /* parsed and checked with -i option */
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X,V",   "v",      "h,X,V,v" }, /* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
@@ -146,7 +148,7 @@ int myMain( int argc, const char ** argv )
     
     char error_buffer[128] = {0};
     oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
-    char * sources = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
+    char * sources = oyjlUiJsonToCode( json, completion_bash ? OYJL_COMPLETION_BASH : OYJL_SOURCE_CODE_C );
     fprintf( stderr, "wrote %d to stdout\n", sources&&strlen(sources)?(int)strlen(sources):0 );
     puts( sources );
   }
