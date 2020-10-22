@@ -43,13 +43,18 @@ int oyjlIsDirFull_ (const char* name);
 int        oyjlTreePathsGetIndex_    ( const char        * term,
                                        int               * index );
 
+#define oyjlMEMORY_ALLOCATION_SECTIONS 0x01
+#define oyjlMEMORY_ALLOCATION_ARRAY    0x02
+#define oyjlMEMORY_ALLOCATION_GROUPS   0x04
+#define oyjlMEMORY_ALLOCATION_OPTIONS  0x08
+
 typedef struct {
   char       ** options; /* detected vanilla args + probably "@" for anonymous args */
   const char ** values; /* the vanilla args from main(argv[]) */
   int           count; /* number of detected options */
   int           group; /* detected group */
   void        * attr; /* oyjl_val attributes */
-  int           memory_allocation; /* 0: as usual; 1: sections, opts->groups and opts->array are owned and need to be released */
+  int           memory_allocation; /* 0: as usual; 1 - sections, 2 - opts->groups and 4 - opts->array are owned and need to be released */
 } oyjlOptsPrivate_s;
 
 oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char          * documentation,
