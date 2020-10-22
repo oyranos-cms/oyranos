@@ -70,6 +70,23 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
     ENDIF( USE_GETTEXT )
   ENDIF( CMAKE_CROSSCOMPILING )
 ENDMACRO(OY_DOCUMENT_TOOL)
+MACRO(OY_COMPLETION_TOOL _tool _tool_src)
+  IF( CMAKE_CROSSCOMPILING )
+      MESSAGE( "-- Skipping ${_tool} completion: cross compiling" )
+  ELSE( CMAKE_CROSSCOMPILING )
+    ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} ${_tool} -X export | oyjl-args -i - --completion-bash > ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
+        DEPENDS ${_tool} ${_tool_src}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+    ADD_CUSTOM_TARGET( ${_tool}.completion ALL
+      DEPENDS  ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
+      COMMENT "Generate bash completion script code ${_tool}.completion"
+    )
+    INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/bash-completion/completions/ )
+  ENDIF( CMAKE_CROSSCOMPILING )
+ENDMACRO(OY_COMPLETION_TOOL)
+
 
 SET( LD_LIBRARY_PATH "${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/src/liboyranos:${CMAKE_BINARY_DIR}/src/liboyranos_config:${CMAKE_BINARY_DIR}/src/liboyranos_modules:${CMAKE_BINARY_DIR}/src/liboyranos_object:${CMAKE_BINARY_DIR}/src/liboyranos_core" )
 # ICC profiles listing
@@ -82,6 +99,7 @@ ENDIF()
 TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} )
 INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
 OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} "${LANGS}" )
+OY_COMPLETION_TOOL( ${TOOL} ${TOOL_SRC} )
 
 # ICC profile information and manipulations
 ADD_EXECUTABLE( oyranos-profile "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_profile_tool.c" )
@@ -98,6 +116,7 @@ ENDIF()
 TARGET_LINK_LIBRARIES( oyranos-config ${TARGET_LIB} ${EXTRA_LIBS} ${DBUS_LIBS} )
 INSTALL (TARGETS oyranos-config DESTINATION ${CMAKE_INSTALL_BINDIR})
 OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} "${LANGS}" )
+OY_COMPLETION_TOOL( ${TOOL} ${TOOL_SRC} )
 
 # Oyranos policy / grouping for easy switching, export, import of default settings
 ADD_EXECUTABLE( oyranos-policy "${CMAKE_CURRENT_SOURCE_DIR}/oyranos_policy.c" )
@@ -120,6 +139,7 @@ ENDIF()
 TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} ${DBUS_LIBS} )
 INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
 OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} "${LANGS}" )
+OY_COMPLETION_TOOL( ${TOOL} ${TOOL_SRC} )
 
 # Device listing
 ADD_EXECUTABLE( oyranos-device "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-device.c" )
@@ -139,6 +159,7 @@ ENDIF()
                  ${CAIRO_LIBRARIES} )
   INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
   OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} "${LANGS}" )
+  OY_COMPLETION_TOOL( ${TOOL} ${TOOL_SRC} )
 ENDIF()
 
 ADD_SUBDIRECTORY( oforms )

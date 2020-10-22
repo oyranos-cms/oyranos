@@ -474,14 +474,43 @@ int myMain( int argc, const char ** argv )
                                      "android.permission.READ_EXTERNAL_STORAGE\nandroid.permission.WRITE_EXTERNAL_STORAGE",
                                      _("Read external storage for global data access, like downloads, music ...\nWrite external storage to create and modify global data.") );
   free(info_tmp); info_tmp = NULL;
-  ui = oyjlUi_Create( argc, (const char**)argv,
-      "oyranos-profile-graph", _("Oyranos Profile Graph"), _("The tool is a ICC color profile grapher."),
+  const char * attr = "{\n\
+  \"org\": {\n\
+    \"freedesktop\": {\n\
+      \"oyjl\": {\n\
+        \"ui\": {\n\
+          \"options\": {\n\
+            \"type\": \"oiws\",\n\
+            \"array\": [{},{},{\n\
+                \"type\": \"oiwi\",\n\
+                \"o\": \"@\",\n\
+                \"values\": {\n\
+                  \"getChoicesCompletionBash\": \"oyranos-profiles -l 2>/dev/null\"\n\
+                }\n\
+                },{},{},{},{},{},{},{},{},{},{},{\n\
+                \"type\": \"oiwi\",\n\
+                \"o\": \"I\",\n\
+                \"values\": {\n\
+                  \"getChoicesCompletionBash\": \"oyranos-profile-graph -I=-1\"\n\
+                }\n\
+              }]\n\
+            }\n\
+          }\n\
+        }\n\
+      }\n\
+    }\n\
+  }";
+  char error_buffer[128] = {0};
+  oyjl_val root;
+  root = oyjlTreeParse( attr, error_buffer, 128 );
+  oyjlOptions_SetAttributes( opts, &root );
+  ui = oyjlUi_FromOptions( "oyranos-profile-graph", _("Oyranos Profile Graph"), _("The tool is a ICC color profile grapher."),
 #ifdef __ANDROID__
                                        ":/images/oyPG-logo.svg", // use qrc
 #else
                                        "oyPG-logo",
 #endif
-      info, opts->array, opts->groups, &state );
+      info, opts, &state );
   if( state & oyjlUI_STATE_EXPORT &&
       export &&
       strcmp(export,"json+command") != 0)

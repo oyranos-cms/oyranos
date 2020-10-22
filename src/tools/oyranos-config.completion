@@ -1,0 +1,150 @@
+_oyranos_config()
+{
+    local cur prev words cword
+    _init_completion -s || return
+
+    #set -x -v
+    : "autocomplete options with choices for long options "$prev""
+    case "$prev" in
+        --daemon) # long option with static args
+            local WORD_LIST=('0' '1')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --export) # long option with static args
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --render) # long option with static args
+            local WORD_LIST=('gui' 'web' '-')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --help) # long option with static args
+            local WORD_LIST=('1' 'synopsis' 'Einstellungen' 'Beobachten' 'Installationspfade' 'Version' 'Optionen' 'Verschiedenes')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+    esac
+    : "autocomplete options with choices for single letter options "$cur""
+    case "$cur" in
+        -d=*) # single letter option with static args
+            local WORD_LIST=('0' '1')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -X=*) # single letter option with static args
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -R=*) # single letter option with static args
+            local WORD_LIST=('gui' 'web' '-')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -h=*) # single letter option with static args
+            local WORD_LIST=('1' 'synopsis' 'Einstellungen' 'Beobachten' 'Installationspfade' 'Version' 'Optionen' 'Verschiedenes')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "autocomplete options "$cur""
+    case "$cur" in
+        -g|-s|-d|-X|-R|-h)
+            : "finish short options with choices"
+            COMPREPLY=("$cur=")
+            set +x +v
+            return
+            ;;
+        --get|--set|--daemon|--export|--render|--help)
+            : "finish long options with choices"
+            COMPREPLY=("$cur=")
+            set +x +v
+            return
+            ;;
+        -p|-l|-z|-v|-V)
+            : "finish short options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+        --path|--list|--system-wide|--syscolordir|--usercolordir|--iccdirname|--settingsdirname|--cmmdir|--metadir|--Version|--api-version|--num-version|--git-version|--cflags|--ldflags|--ldstaticflags|--sourcedir|--builddir|--synopsis|--verbose|--version)
+            : "finish long options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "show help for none '@' UIs"
+    if [[ "$cur" == "" ]]; then
+      if [[ ${COMP_WORDS[1]} == "" ]]; then
+        $1 help synopsis 1>&2
+      else
+        $1 help ${COMP_WORDS[1]} 1>&2
+      fi
+    fi
+
+
+    : "suggest group options for subcommands"
+    if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
+      case "${COMP_WORDS[1]}" in
+        -g|--get|-s|--set|-l|--list|-p|--path)
+          COMPREPLY=($(compgen -W '-v --verbose -z --system-wide' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -d|--daemon)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --syscolordir|--usercolordir|--iccdirname|--settingsdirname|--cmmdir|--metadir)
+          COMPREPLY=($(compgen -W '-v --verbose -z --system-wide' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --Version|--api-version|--num-version|--git-version)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --cflags|--ldflags|--ldstaticflags|--sourcedir|--builddir)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -X|--export|-h|--help|-V|--version|-R|--render)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+      esac
+    fi
+
+    : "suggest mandatory options on first args only"
+    if [[ "${COMP_WORDS[2]}" == "" ]]; then
+      WORD_LIST=("${WORD_LIST[@]}" -g= --get= -s= --set= -l --list -p --path -d= --daemon= --syscolordir --usercolordir --iccdirname --settingsdirname --cmmdir --metadir --Version --api-version --num-version --git-version --cflags --ldflags --ldstaticflags --sourcedir --builddir -X= --export= -h= --help= -V --version -R= --render=)
+      _oyra_complete_choices
+      set +x +v
+      return
+    fi
+
+    set +x +v
+} &&
+complete -F _oyranos_config -o nospace oyranos-config
+
+

@@ -1,0 +1,217 @@
+_oyranos_profile_graph()
+{
+    local cur prev words cword
+    _init_completion -s || return
+
+    #set -x -v
+    : "autocomplete options with choices for long options "$prev""
+    case "$prev" in
+        --format) # long option with static args
+            local WORD_LIST=('png' 'svg')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --index) # long option with dynamic args
+            local OYJL_TEXTS=$(oyranos-profile-graph -I=-1)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --illuminant) # long option with static args
+            local WORD_LIST=('A' 'D50' 'D55' 'D65' 'D65T' 'D75' 'D93')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --spectral-format) # long option with static args
+            local WORD_LIST=('png' 'svg' 'csv' 'ncc' 'cgats' 'icc-xml' 'ppm')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --swatch-format) # long option with static args
+            local WORD_LIST=('png' 'svg' 'ncc')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --export) # long option with static args
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --render) # long option with static args
+            local WORD_LIST=('gui' 'web' '-')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+    esac
+    : "autocomplete options with choices for single letter options "$cur""
+    case "$cur" in
+        -f=*) # single letter option with static args
+            local WORD_LIST=('png' 'svg')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -I=*) # single letter option with dynamic args
+            local OYJL_TEXTS=$(oyranos-profile-graph -I=-1)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -u=*) # single letter option with static args
+            local WORD_LIST=('A' 'D50' 'D55' 'D65' 'D65T' 'D75' 'D93')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -p=*) # single letter option with static args
+            local WORD_LIST=('png' 'svg' 'csv' 'ncc' 'cgats' 'icc-xml' 'ppm')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -m=*) # single letter option with static args
+            local WORD_LIST=('png' 'svg' 'ncc')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -X=*) # single letter option with static args
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -R=*) # single letter option with static args
+            local WORD_LIST=('gui' 'web' '-')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "autocomplete options "$cur""
+    case "$cur" in
+        -d|-f|-H|-L|-C|-l|-i|-I|-u|-k|-o|-p|-m|-P|-s|-t|-w|-X|-R)
+            : "finish short options with choices"
+            COMPREPLY=("$cur=")
+            set +x +v
+            return
+            ;;
+        --change-thickness|--format|--hue|--lightness|--chroma|--background-lightness|--import|--index|--illuminant|--kelvin|--output|--spectral-format|--swatch-format|--pattern|--spectral|--thickness|--width|--export|--render)
+            : "finish long options with choices"
+            COMPREPLY=("$cur=")
+            set +x +v
+            return
+            ;;
+        -2|-4|-b|-c|-g|-n|-S|-O|-r|-T|-x|-z|-h|-v|-V)
+            : "finish short options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+        --icc-version-2|--icc-version-4|--no-border|--no-blackbody|--no-color|--no-spectral-line|--standard-observer|--observer-64|--no-repair|--raster|--xyy|--scale|--help|--synopsis|--verbose|--version)
+            : "finish long options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "show help for none '@' UIs"
+    if [[ "$cur" == "" ]]; then
+      if [[ ${COMP_WORDS[1]} == "" ]]; then
+        $1 help synopsis 1>&2
+      else
+        $1 help ${COMP_WORDS[1]} 1>&2
+      fi
+    fi
+
+
+    : "suggest group options for subcommands"
+    if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
+      case "${COMP_WORDS[1]}" in
+        -H|--hue)
+          COMPREPLY=($(compgen -W '-L= --lightness= -C= --chroma= -@=  -t= --thickness= -b --no-border -l= --background-lightness= -g --no-color -w= --width= -m= --swatch-format= -o= --output= -p= --spectral-format= -2 --icc-version-2 -4 --icc-version-4 -r --no-repair -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -S|--standard-observer)
+          COMPREPLY=($(compgen -W '-t= --thickness= -b --no-border -l= --background-lightness= -g --no-color -w= --width= -T --raster -o= --output= -f= --format= -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -O|--observer-64)
+          COMPREPLY=($(compgen -W '-t= --thickness= -b --no-border -l= --background-lightness= -g --no-color -w= --width= -T --raster -o= --output= -f= --format= -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -k|--kelvin)
+          COMPREPLY=($(compgen -W '-t= --thickness= -b --no-border -l= --background-lightness= -g --no-color -w= --width= -T --raster -o= --output= -f= --format= -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -u|--illuminant)
+          COMPREPLY=($(compgen -W '-t= --thickness= -b --no-border -l= --background-lightness= -g --no-color -w= --width= -T --raster -o= --output= -f= --format= -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -s|--spectral|-p|--spectral-format)
+          COMPREPLY=($(compgen -W '-t= --thickness= -b --no-border -l= --background-lightness= -g --no-color -w= --width= -T --raster -P= --pattern= -o= --output= -v --verbose -z --scale' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -i|--import|-I|--index)
+          COMPREPLY=($(compgen -W '-t= --thickness= -b --no-border -l= --background-lightness= -g --no-color -w= --width= -T --raster -f= --format= -o= --output= -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -X|--export|-h|--help|-V|--version|-R|--render)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        .*)
+          COMPREPLY=($(compgen -W '-t= --thickness= -b --no-border -l= --background-lightness= -g --no-color -w= --width= -o= --output= -f= --format= -c --no-blackbody -x --xyy -d= --change-thickness= -n --no-spectral-line -2 --icc-version-2 -4 --icc-version-4 -r --no-repair -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+      esac
+    fi
+
+    : "suggest mandatory options on first args only"
+    if [[ "${COMP_WORDS[2]}" == "" ]]; then
+      local OYJL_TEXTS=$(oyranos-profiles -l 2>/dev/null)
+      local IFS=$'\n'
+      local WORD_LIST=()
+      for OYJL_TEXT in $OYJL_TEXTS
+        do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+      done
+      WORD_LIST=("${WORD_LIST[@]}" -H= --hue= -S --standard-observer -O --observer-64 -k= --kelvin= -u= --illuminant= -s= --spectral= -p= --spectral-format= -i= --import= -I= --index= -X= --export= -h --help -V --version -R= --render=)
+      _oyra_complete_choices
+      set +x +v
+      return
+    fi
+
+    set +x +v
+} &&
+complete -F _oyranos_profile_graph -o nospace oyranos-profile-graph
+
+

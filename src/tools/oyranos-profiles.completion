@@ -1,0 +1,135 @@
+_oyranos_profiles()
+{
+    local cur prev words cword
+    _init_completion -s || return
+
+    #set -x -v
+    : "autocomplete options with choices for long options "$prev""
+    case "$prev" in
+        --path) # long option with static args
+            local WORD_LIST=('basICColor' 'colord' 'edid' 'OpenICC' 'oyra' 'xorg')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --meta) # long option with static args
+            local WORD_LIST=('EFFECT_class;sepia')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --export) # long option with static args
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --render) # long option with static args
+            local WORD_LIST=('gui' 'web' '-')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+    esac
+    : "autocomplete options with choices for single letter options "$cur""
+    case "$cur" in
+        -P=*) # single letter option with static args
+            local WORD_LIST=('basICColor' 'colord' 'edid' 'OpenICC' 'oyra' 'xorg')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -T=*) # single letter option with static args
+            local WORD_LIST=('EFFECT_class;sepia')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -X=*) # single letter option with static args
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -R=*) # single letter option with static args
+            local WORD_LIST=('gui' 'web' '-')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "autocomplete options "$cur""
+    case "$cur" in
+        -I|-t|-P|-T|-X|-R)
+            : "finish short options with choices"
+            COMPREPLY=("$cur=")
+            set +x +v
+            return
+            ;;
+        --install|--taxi|--path|--meta|--export|--render)
+            : "finish long options with choices"
+            COMPREPLY=("$cur=")
+            set +x +v
+            return
+            ;;
+        -2|-4|-l|-f|-e|-c|-d|-i|-o|-a|-k|-n|-p|-g|-u|-y|-s|-m|-r|-D|-h|-v|-V)
+            : "finish short options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+        --icc-version-2|--icc-version-4|--list-profiles|--full-names|--internal-names|--color-space|--display|--input|--output|--abstract|--device-link|--named-color|--list-paths|--gui|--user|--oyranos|--system|--machine|--no-repair|--duplicates|--test|--help|--synopsis|--verbose|--version)
+            : "finish long options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "show help for none '@' UIs"
+    if [[ "$cur" == "" ]]; then
+      if [[ ${COMP_WORDS[1]} == "" ]]; then
+        $1 help synopsis 1>&2
+      else
+        $1 help ${COMP_WORDS[1]} 1>&2
+      fi
+    fi
+
+
+    : "suggest group options for subcommands"
+    if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
+      case "${COMP_WORDS[1]}" in
+        -l|--list-profiles)
+          COMPREPLY=($(compgen -W '-f --full-names -e --internal-names -a --abstract -c --color-space -d --display -k --device-link -n --named-color -o --output -i --input -2 --icc-version-2 -4 --icc-version-4 -P= --path= -T= --meta= -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -p|--list-paths)
+          COMPREPLY=($(compgen -W '-u --user -s --system -y --oyranos -m --machine -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -I|--install|-t|--taxi)
+          COMPREPLY=($(compgen -W '-u --user -s --system -y --oyranos -m --machine -g --gui -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+      esac
+    fi
+
+    : "suggest mandatory options on first args only"
+    if [[ "${COMP_WORDS[2]}" == "" ]]; then
+      WORD_LIST=("${WORD_LIST[@]}" -l --list-profiles -p --list-paths -I= --install= -t= --taxi= -h --help -X= --export= -V --version)
+      _oyra_complete_choices
+      set +x +v
+      return
+    fi
+
+    set +x +v
+} &&
+complete -F _oyranos_profiles -o nospace oyranos-profiles
+
+

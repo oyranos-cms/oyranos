@@ -1,0 +1,138 @@
+_oyranos_monitor_white_point()
+{
+    local cur prev words cword
+    _init_completion -s || return
+
+    #set -x -v
+    : "autocomplete options with choices for long options "$prev""
+    case "$prev" in
+        --daemon) # long option with static args
+            local WORD_LIST=('0' '1' '2')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --export) # long option with static args
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --render) # long option with static args
+            local WORD_LIST=('gui' 'web' '-')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+    esac
+    : "autocomplete options with choices for single letter options "$cur""
+    case "$cur" in
+        -d=*) # single letter option with static args
+            local WORD_LIST=('0' '1' '2')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -X=*) # single letter option with static args
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        -R=*) # single letter option with static args
+            local WORD_LIST=('gui' 'web' '-')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "autocomplete options "$cur""
+    case "$cur" in
+        -d|-w|-n|-s|-a|-g|-e|-b|-i|-o|-t|-X|-R|-u)
+            : "finish short options with choices"
+            COMPREPLY=("$cur=")
+            set +x +v
+            return
+            ;;
+        --daemon|--white-point|--night-white-point|--sun-white-point|--automatic|--night-effect|--sunlight-effect|--night-backlight|--latitude|--longitude|--twilight|--export|--render|--hour)
+            : "finish long options with choices"
+            COMPREPLY=("$cur=")
+            set +x +v
+            return
+            ;;
+        -m|-l|-r|-z|-h|-v|-V|-y|-c)
+            : "finish short options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+        --modes|--location|--sunrise|--system-wide|--help|--synopsis|--verbose|--version|--test|--check)
+            : "finish long options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "show help for none '@' UIs"
+    if [[ "$cur" == "" ]]; then
+      if [[ ${COMP_WORDS[1]} == "" ]]; then
+        $1 help synopsis 1>&2
+      else
+        $1 help ${COMP_WORDS[1]} 1>&2
+      fi
+    fi
+
+
+    : "suggest group options for subcommands"
+    if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
+      case "${COMP_WORDS[1]}" in
+        -n|--night-white-point|-g|--night-effect|-b|--night-backlight)
+          COMPREPLY=($(compgen -W '-z --system-wide -v --verbose -y --test' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -w|--white-point|-a|--automatic)
+          COMPREPLY=($(compgen -W '-z --system-wide -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -s|--sun-white-point|-e|--sunlight-effect)
+          COMPREPLY=($(compgen -W '-z --system-wide -v --verbose -y --test' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -l|--location|-i|--latitude|-o|--longitude)
+          COMPREPLY=($(compgen -W '-t= --twilight= -z --system-wide -v --verbose -y --test' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -d|--daemon)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -m|--modes|-r|--sunrise|-X|--export|-h|--help|-V|--version|-R|--render)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+      esac
+    fi
+
+    : "suggest mandatory options on first args only"
+    if [[ "${COMP_WORDS[2]}" == "" ]]; then
+      WORD_LIST=("${WORD_LIST[@]}" -n= --night-white-point= -g= --night-effect= -b= --night-backlight= -w= --white-point= -a= --automatic= -s= --sun-white-point= -e= --sunlight-effect= -l --location -i= --latitude= -o= --longitude= -d= --daemon= -m --modes -r --sunrise -X= --export= -h --help -V --version -R= --render=)
+      _oyra_complete_choices
+      set +x +v
+      return
+    fi
+
+    set +x +v
+} &&
+complete -F _oyranos_monitor_white_point -o nospace oyranos-monitor-white-point
+
+
