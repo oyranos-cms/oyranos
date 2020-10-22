@@ -273,6 +273,8 @@ oyjl_val   oyjlValuePosGet           ( oyjl_val            v,
                                        int                 pos );
 int        oyjlValueSetString        ( oyjl_val            v,
                                        const char        * string );
+int        oyjlValueSetDouble        ( oyjl_val            v,
+                                       double              value );
 void       oyjlValueClear            ( oyjl_val            v );
 #define    OYJL_PATH_MATCH_LEN         0x20   /**< @brief  flag to test if the specified path match with the full length. */
 #define    OYJL_PATH_MATCH_LAST_ITEMS  0x40   /**< @brief  flag to test only the last path segments, which are separated by slash '/'. */
@@ -652,6 +654,8 @@ char *   oyjlOptions_ResultsToText   ( oyjlOptions_s     * opts );
 char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
                                        const char        * option,
                                        int               * count );
+void     oyjlOptions_SetAttributes   ( oyjlOptions_s     * opts,
+                                       oyjl_val          * root );
 typedef struct oyjlUi_s oyjlUi_s;
 void   oyjlOptions_PrintHelp         ( oyjlOptions_s     * opts,
                                        oyjlUi_s          * ui,
@@ -700,6 +704,13 @@ oyjlUi_s *         oyjlUi_Create     ( int                 argc,
                                        oyjlOption_s   * options,
                                        oyjlOptionGroup_s * groups,
                                        int               * status );
+oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
+                                       const char        * name,
+                                       const char        * description,
+                                       const char        * logo,
+                                       oyjlUiHeaderSection_s * info,
+                                       oyjlOptions_s     * opts,
+                                       int               * status );
 oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
                                        int                 flags );
 void               oyjlUi_Release    ( oyjlUi_s         ** ui );
@@ -724,6 +735,7 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
 #define OYJL_SOURCE_CODE_C             0x01 /**< @brief C programming language source code */
 #define OYJL_NO_DEFAULT_OPTIONS        0x02 /**< @brief omit automatic options generation for --help, --X export or --verbose */
 #define OYJL_SUGGEST_VARIABLE_NAMES    0x04 /**< @brief automatic suggestion of variable names for missing ::o and ::option members */
+#define OYJL_COMPLETION_BASH           0x100 /**< @brief bash completion source code */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
 void               oyjlUi_Translate  ( oyjlUi_s          * ui,
