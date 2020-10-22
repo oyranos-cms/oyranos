@@ -923,13 +923,18 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
   return error;
 }
 
+#define oyjlMEMORY_ALLOCATION_SECTIONS 0x01
+#define oyjlMEMORY_ALLOCATION_ARRAY    0x02
+#define oyjlMEMORY_ALLOCATION_GROUPS   0x04
+#define oyjlMEMORY_ALLOCATION_OPTIONS  0x08
+
 typedef struct {
   char       ** options; /* detected vanilla args + probably "@" for anonymous args */
   const char ** values; /* the vanilla args from main(argv[]) */
   int           count; /* number of detected options */
   int           group; /* detected group */
   void        * attr; /* oyjl_val attributes */
-  int           memory_allocation; /* 0: as usual; 1: sections, opts->groups and opts->array are owned and need to be released */
+  int           memory_allocation; /* 0: as usual; 1 - sections, 2 - opts->groups and 4 - opts->array are owned and need to be released */
 } oyjlOptsPrivate_s;
 #endif /* OYJL_INTERNAL */
 
@@ -1577,7 +1582,7 @@ void oyjlOptions_Print_              ( oyjlOptions_s     * opts,
  *  will be set too.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/04/05
+ *  @date    2020/10/14
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
@@ -1586,11 +1591,16 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
   oyjlOption_s * o;
   oyjlOptsPrivate_s * result;
 
+  if(!opts) return state;
+
+  result = (oyjlOptsPrivate_s*) opts->private_data;
+  if(!result)
+    result = (oyjlOptsPrivate_s*) calloc( 1, sizeof(oyjlOptsPrivate_s) );
+
   /* parse the command line arguments */
-  if(opts && !opts->private_data)
+  if(!result->values)
   {
     int i, len = 0;
-    result = (oyjlOptsPrivate_s*) calloc( 1, sizeof(oyjlOptsPrivate_s) );
     for(i = 1; i < opts->argc; ++i)
       if(opts->argv[i])
         len += strlen(opts->argv[i]);
@@ -1888,6 +1898,8 @@ clean_parse:
   oyjlStringListRelease( &result->options, result->count, free );
   free(result->values);
   free(result);
+  opts->private_data = NULL;
+
   return state;
 }
 
@@ -1921,8 +1933,11 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
   oyjlOptsPrivate_s * results;
   oyjlOption_s * o = oyjlOptions_GetOption( opts, opt );
 
+  if(!opts) return state;
+  results = opts->private_data;
+
+  if(!results || !results->values)
   /* parse the command line arguments */
-  if(!opts->private_data)
     state = oyjlOptions_Parse( opts );
   if(state != oyjlOPTION_NONE)
     return state;
@@ -1930,6 +1945,7 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
   results = opts->private_data;
   if(!results)
     return state;
+
   if(opt == NULL && results->count)
   {
     if(result_int)
@@ -2030,10 +2046,9 @@ char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
   int i,list_len = 0;
   oyjlOption_s * o = oyjlOptions_GetOption( opts, oc );
 
-  if(!opts)
-    return NULL;
+  if(!opts) return NULL;
   results = opts->private_data;
-  if(!results)
+  if(!results || !results->values)
   {
     if(oyjlOptions_Parse( opts ))
       return NULL;
@@ -2078,7 +2093,7 @@ char * oyjlOptions_ResultsToText  ( oyjlOptions_s  * opts )
   oyjlOptsPrivate_s * results = opts->private_data;
   int i;
 
-  if(!results)
+  if(!results || !results->values)
   {
     if(oyjlOptions_Parse( opts ))
       return NULL;
@@ -2526,10 +2541,15 @@ oyjlOptions_s * oyjlOptions_New      ( int                 argc,
                                        const char       ** argv )
 {
   oyjlOptions_s * opts = (oyjlOptions_s*) calloc( sizeof(oyjlOptions_s), 1 );
+  oyjlOptsPrivate_s * results;;
   memcpy( opts->type, "oiws", 4 );
 
   opts->argc = argc;
   opts->argv = argv;
+
+  results = (oyjlOptsPrivate_s*) calloc( sizeof(oyjlOptsPrivate_s), 1 );
+  results->memory_allocation = oyjlMEMORY_ALLOCATION_OPTIONS;
+  opts->private_data = results;
 
   return opts;
 }
@@ -2782,7 +2802,7 @@ static const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
   }
   return "";
 }
-/** @brief    Create a new UI structure
+/** @brief    Create a new UI structure from options
  *  @memberof oyjlUi_s
  *
  *  This is a high level convinience function.
@@ -2793,16 +2813,13 @@ static const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
  *  The app_type defaults to "tool", but it can be replaced if needed.
  *
  *  @code
-  oyjlUi_s * ui = oyjlUi_Create( argc, argv,
-                                       "myCl",
+  oyjlUi_s * ui = oyjlUi_FromOptions ( "myCl",
                                        _("My Command"),
                                        _("My Command line tool from Me"),
                                        "my_logo",
-                                       info, options, groups, NULL )
+                                       info, opts, NULL )
     @endcode
  *
- *  @param[in]     argc                number of command line arguments
- *  @param[in]     argv                command line args from C/C++ main()
  *  @param[in]     nick                four byte string; e.g. "myCl"
  *  @param[in]     name                short name of the tool; i18n;
  *                 e.g. _("My Command")
@@ -2814,10 +2831,10 @@ static const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
  *                 detected there. e.g. "my_logo" points to "my_logo.{png|svg}"
  *  @param[in]     info                general information for rich UI's and
  *                                     for help text
- *  @param[in,out] options             the main option declaration, with
- *                 syntax declaration and variable passing for setting results
- *  @param[in]     groups              the option grouping declares
- *                 dependencies of options and provides a UI layout
+ *  @param[in,out] opts                The main option declaration, with
+ *                 syntax declaration and variable passing for setting results.
+ *                 The option grouping declares
+ *                 dependencies of options and provides a UI layout.
  *  @param[in,out] state               inform about processing
  *                                     - ::oyjlUI_STATE_HELP : help was detected, printed and oyjlUi_s was released
  *                                     - ::oyjlUI_STATE_EXPORT : export of json, man or markdown was detected, printed and oyjlUi_s was released
@@ -2827,18 +2844,15 @@ static const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
  *  @return                            UI object for later use
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/04/05
- *  @since   2018/08/20 (OpenICC: 0.1.1)
+ *  @date    2020/10/13
+ *  @since   2020/10/13 (Oyjl: 1.0.0)
  */
-oyjlUi_s *  oyjlUi_Create            ( int                 argc,
-                                       const char       ** argv,
-                                       const char        * nick,
+oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
                                        const char        * name,
                                        const char        * description,
                                        const char        * logo,
                                        oyjlUiHeaderSection_s * info,
-                                       oyjlOption_s      * options,
-                                       oyjlOptionGroup_s * groups,
+                                       oyjlOptions_s     * opts,
                                        int               * status )
 {
   int help = 0, verbose = 0, version = 0, i,ng, * rank_list = 0, max = -1, pass_group = 0;
@@ -2860,7 +2874,9 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
     flags = *status;
 
   /* allocate options structure */
-  oyjlUi_s * ui = oyjlUi_New( argc, argv ); /* argc+argv are required for parsing the command line options */
+  oyjlUi_s * ui = calloc( sizeof(oyjlUi_s), 1 ); /* argc+argv are required for parsing the command line options */
+  memcpy( ui->type, "oiui", 4 );
+  ui->opts = opts;
   /* tell about the tool */
   if(!(flags & oyjlUI_STATE_NO_CHECKS))
     ui->app_type = "tool";
@@ -2873,13 +2889,13 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
    * *support*, *download*, *sources*, *oyjl_module_author* and
    * *documentation* what you see fit. Add new ones as needed. */
   ui->sections = info;
-  ui->opts->array = options;
-  ui->opts->groups = groups;
 
   oyjlUi_EnrichInbuild_( ui );
 
   /* get results and check syntax ... */
-  opt_state = oyjlOptions_Parse( ui->opts );
+  results = ui->opts->private_data;
+  if(!results || !results->values)
+    opt_state = oyjlOptions_Parse( ui->opts );
   results = ui->opts->private_data;
 
   X = oyjlOptions_GetOption( ui->opts, "X" );
@@ -3093,10 +3109,10 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
     char * prog = NULL;
     char * v = version && version->name ? oyjlStringCopy( oyjlTermColor( oyjlITALIC, version->name ), NULL ) : NULL;
 
-    if(!verbose && argv[0] && strchr(argv[0],'/'))
-      prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, strrchr(argv[0],'/') + 1 ), NULL );
+    if(!verbose && ui->opts->argv[0] && strchr(ui->opts->argv[0],'/'))
+      prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, strrchr(ui->opts->argv[0],'/') + 1 ), NULL );
     else
-      prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, argv[0] ), NULL );
+      prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, ui->opts->argv[0] ), NULL );
     fprintf( stdout, "%s v%s%s%s%s - %s\n%s\n%s%s%s\n%s%s%s\n\n", prog,
                                       v ? v : "",
                                       version && version->description ? "(" : "",
@@ -3166,6 +3182,74 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
   return ui;
 }
 
+/** @brief    Create a new UI structure
+ *  @memberof oyjlUi_s
+ *
+ *  This is a high level convinience function.
+ *  The returned oyjlUi_s is a comlete description of the UI and can be
+ *  used instantly. The options are parsed, errors are printed, help text
+ *  is printed for the boolean -h/--help option. Boolean -v/--verbose
+ *  is handled too. The results are set to the declared variables. 
+ *  The app_type defaults to "tool", but it can be replaced if needed.
+ *
+ *  @code
+  oyjlUi_s * ui = oyjlUi_Create( argc, argv,
+                                       "myCl",
+                                       _("My Command"),
+                                       _("My Command line tool from Me"),
+                                       "my_logo",
+                                       info, options, groups, NULL )
+    @endcode
+ *
+ *  @param[in]     argc                number of command line arguments
+ *  @param[in]     argv                command line args from C/C++ main()
+ *  @param[in]     nick                four byte string; e.g. "myCl"
+ *  @param[in]     name                short name of the tool; i18n;
+ *                 e.g. _("My Command")
+ *  @param[in]     description         compact sentence starting with full name; i18n;
+ *                 e.g. _("My Command line tool from Me")
+ *  @param[in]     logo                icon name; This variable must contain
+ *                 the file name only, without ending. The icon needs
+ *                 to be installed in typical icon search path and will be
+ *                 detected there. e.g. "my_logo" points to "my_logo.{png|svg}"
+ *  @param[in]     info                general information for rich UI's and
+ *                                     for help text
+ *  @param[in,out] options             the main option declaration, with
+ *                 syntax declaration and variable passing for setting results
+ *  @param[in]     groups              the option grouping declares
+ *                 dependencies of options and provides a UI layout
+ *  @param[in,out] state               inform about processing
+ *                                     - ::oyjlUI_STATE_HELP : help was detected, printed and oyjlUi_s was released
+ *                                     - ::oyjlUI_STATE_EXPORT : export of json, man or markdown was detected, printed and oyjlUi_s was released
+ *                                     - ::oyjlUI_STATE_VERBOSE : verbose was detected
+ *                                     - ::oyjlUI_STATE_OPTION+ : error occured in option parser, message printed, ::oyjlOPTIONSTATE_e is placed in >> ::oyjlUI_STATE_OPTION and oyjlUi_s was released
+ *                                     - ::oyjlUI_STATE_NO_CHECKS : skip any checks during creation; Only useful if part of the passed in data is omitted or needs to be passed through.
+ *  @return                            UI object for later use
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/04/05
+ *  @since   2018/08/20 (OpenICC: 0.1.1)
+ */
+oyjlUi_s *  oyjlUi_Create            ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * nick,
+                                       const char        * name,
+                                       const char        * description,
+                                       const char        * logo,
+                                       oyjlUiHeaderSection_s * info,
+                                       oyjlOption_s      * options,
+                                       oyjlOptionGroup_s * groups,
+                                       int               * status )
+{
+  /* allocate options structure */
+  oyjlOptions_s * opts = oyjlOptions_New( argc, argv ); /* argc+argv are required for parsing the command line options */
+  opts->array = options;
+  opts->groups = groups;
+  oyjlUi_s * ui = oyjlUi_FromOptions( nick, name, description, logo, info, opts, status );
+
+  return ui;
+}
+
 /** @brief    Release "oiui"
  *  @memberof oyjlUi_s
  *
@@ -3177,6 +3261,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
  */
 void           oyjlUi_Release     ( oyjlUi_s      ** ui )
 {
+  int memory_allocation = 0;
   if(!ui || !*ui) return;
   if( *(oyjlOBJECT_e*)*ui != oyjlOBJECT_UI)
   {
@@ -3190,20 +3275,22 @@ void           oyjlUi_Release     ( oyjlUi_s      ** ui )
     oyjlOptsPrivate_s * results = (*ui)->opts->private_data;
     if(results)
     {
+      memory_allocation = results->memory_allocation;
       if(results->memory_allocation)
       {
         int nopts = oyjlOptions_Count( (*ui)->opts ), i;
+        if(memory_allocation & oyjlMEMORY_ALLOCATION_ARRAY)
         for(i = 0; i < nopts; ++i)
         {
           oyjlOption_s * opt = &(*ui)->opts->array[i];
           if(opt->value_type == oyjlOPTIONTYPE_CHOICE && opt->values.choices.list)
             free(opt->values.choices.list);
         }
-        if((*ui)->sections)
+        if((*ui)->sections && memory_allocation & oyjlMEMORY_ALLOCATION_SECTIONS)
           free((*ui)->sections);
-        if((*ui)->opts->array)
+        if((*ui)->opts->array && memory_allocation & oyjlMEMORY_ALLOCATION_ARRAY)
           free((*ui)->opts->array);
-        if((*ui)->opts->groups)
+        if((*ui)->opts->groups && memory_allocation & oyjlMEMORY_ALLOCATION_GROUPS)
           free((*ui)->opts->groups);
       }
       oyjlStringListRelease( &results->options, results->count, free );
@@ -3213,7 +3300,7 @@ void           oyjlUi_Release     ( oyjlUi_s      ** ui )
       free((*ui)->opts->private_data);
     }
   }
-  if((*ui)->opts) free((*ui)->opts);
+  if((*ui)->opts && memory_allocation & oyjlMEMORY_ALLOCATION_OPTIONS) free((*ui)->opts);
   free((*ui));
   *ui = NULL;
 }
