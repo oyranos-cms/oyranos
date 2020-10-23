@@ -293,13 +293,15 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
     char ** attr_paths = NULL;
     oyjl_val v;
     n = 0;
-    oyjlTreeToPaths( attr, 0, NULL, OYJL_KEY, &attr_paths );
+    oyjlTreeToPaths( attr, 0, NULL, 0, &attr_paths );
     while(attr_paths && attr_paths[n]) ++n;
     for(i = 0; i < n; ++i)
     {
       oyjl_type type;
       oyjl_val rootv;
-      const char * path = attr_paths[i], * attr_string, * root_string;
+      oyjl_val attrv;
+      const char * path = attr_paths[i];
+      attrv = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/ui/attr/%s", path ); /* store for easy deserialisation */
       v = oyjlTreeGetValue( attr, 0, path );
       if(!v) continue;
       type = v->type;
@@ -315,17 +317,20 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
                                  OYJL_DBG_ARGS, path, root_string, attr_string );
               }
               oyjlValueSetString( rootv, v->u.string );
+              oyjlValueSetString( attrv, v->u.string );
               break;
         case oyjl_t_number: /* 2 - floating or integer number */
               oyjlValueSetDouble( rootv, v->u.number.d );
+              oyjlValueSetDouble( attrv, v->u.number.d );
+              break;
+        case oyjl_t_true:   /* 5 - boolean true or 1 */
+        case oyjl_t_false:  /* 6 - boolean false or 0 */
+        case oyjl_t_any:    /* 8 - not valid */
+              oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "%s->type is set to unsupported: %d", path, type );
               break;
         case oyjl_t_object: /* 3 - a JSON object */
         case oyjl_t_array:  /* 4 - a JSON array */
-        case oyjl_t_true:   /* 5 - boolean true or 1 */
-        case oyjl_t_false:  /* 6 - boolean false or 0 */
         case oyjl_t_null:   /* 7 - empty value */
-        case oyjl_t_any:    /* 8 - not valid */
-              oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "%s->type is set to unsupported: %d", path, type );
               break;
       }
     }
@@ -359,7 +364,7 @@ oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
   *(oyjlOBJECT_e*)&ui->type /*"oyui"*/ = oyjlOBJECT_UI;
 
   {
-    oyjl_val val;
+    oyjl_val val, v;
     char * app_type;
     int i,n;
     oyjlOptsPrivate_s * results;
@@ -371,7 +376,6 @@ oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
     oyjlAllocHelper_m( ui->sections, oyjlUiHeaderSection_s, n+1, malloc, return NULL );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *nick, *label, *name, *desc;
       *(oyjlOBJECT_e*)&ui->sections[i] /*"oihs"*/ = oyjlOBJECT_UI_HEADER_SECTION;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/header/sections/[%d]", i );
@@ -393,7 +397,6 @@ oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
     oyjlAllocHelper_m( ui->opts->array, oyjlOption_s, n+1, malloc, return NULL );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *value_type_string, *o, *option;
       const char *key, *name, *desc, *help, *value_name, *variable_type;
       int flg;
@@ -485,7 +488,6 @@ oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
     oyjlAllocHelper_m( ui->opts->groups, oyjlOptionGroup_s, n+1, malloc, return NULL );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *name, *desc, *help, *mandatory, *optional, *detail;
       int flg;
       oyjlOptionGroup_s * g = &ui->opts->groups[i];
@@ -515,6 +517,44 @@ oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
     ui->description = description;
     val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/logo" ); logo = OYJL_GET_STRING(val);
     ui->logo = logo;
+    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/attr" );
+    if(val)
+    {
+      char ** attr_paths = NULL;
+      oyjl_val attr = oyjlTreeNew( "" );
+      n = 0;
+      oyjlTreeToPaths( val, 0, NULL, 0, &attr_paths );
+      while(attr_paths && attr_paths[n]) ++n;
+      for(i = 0; i < n; ++i)
+      {
+        const char * path = attr_paths[i];
+        oyjl_type type;
+        oyjl_val attrv, rootv;
+        rootv = oyjlTreeGetValue( val, 0, path );
+        type = rootv->type;
+        attrv = oyjlTreeGetValue( attr, OYJL_CREATE_NEW, path );
+        switch(type)
+        {
+          case oyjl_t_string: /* 1 - a text in UTF-8 */
+              oyjlValueSetString( attrv, rootv->u.string );
+              break;
+          case oyjl_t_number: /* 2 - floating or integer number */
+              oyjlValueSetDouble( attrv, rootv->u.number.d );
+              break;
+          case oyjl_t_true:   /* 5 - boolean true or 1 */
+          case oyjl_t_false:  /* 6 - boolean false or 0 */
+          case oyjl_t_any:    /* 8 - not valid */
+              oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "%s->type is set to unsupported: %d", path, type );
+              break;
+          case oyjl_t_object: /* 3 - a JSON object */
+          case oyjl_t_array:  /* 4 - a JSON array */
+          case oyjl_t_null:   /* 7 - empty value */
+              break;
+        }
+      }
+      oyjlStringListRelease( &attr_paths, n, free );
+      oyjlOptions_SetAttributes( ui->opts, &attr );
+    }
   }
 
   return ui;
