@@ -563,6 +563,39 @@ oyjlTESTRESULT_e testArgs()
   free(oarray2[0].values.choices.list);
   free(oarray2[1].values.choices.list);
   free(oarray2[2].values.choices.list);
+
+  oyjlOption_s oarray3[] = {
+  /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
+    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
+    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &helpstr} },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+  };
+
+  /* declare option groups, for better syntax checking and UI groups */
+  oyjlOptionGroup_s groups3[] = {
+  /* type,   flags, name,      description,          help, mandatory, optional, detail */
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,     _("Mode"), _("Actual mode"),     NULL, "i|h",       "o,v",    "i,h,o" },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },
+    {"",0,0,0,0,0,0,0}
+  };
+  argc = 2;
+  const char * argv3[] = {"test-args","output"};
+  setenv("OYJL_NO_EXIT", "1", 0);
+  ui = oyjlUi_Create( argc, argv3, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
+                                       sections, oarray3, groups3, NULL );
+  if(!ui)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "ui not created - multiple sub commands in one group" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "ui not created - multiple sub commands in one group" );
+  }
+  oyjlUi_Release( &ui);
+  help = 0;
+
   free(sections);
 
   return result;
