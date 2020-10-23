@@ -558,12 +558,6 @@ oyjlTESTRESULT_e testArgs()
   help = 0; size = 0;
   free(text); text = NULL;
 
-  free(oarray[2].values.choices.list);
-  free(oarray[3].values.choices.list);
-  free(oarray2[0].values.choices.list);
-  free(oarray2[1].values.choices.list);
-  free(oarray2[2].values.choices.list);
-
   oyjlOption_s oarray3[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
     {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
@@ -596,6 +590,15 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_Release( &ui);
   help = 0;
 
+
+  free(oarray[2].values.choices.list);
+  free(oarray[3].values.choices.list);
+  free(oarray2[0].values.choices.list);
+  free(oarray2[1].values.choices.list);
+  free(oarray2[2].values.choices.list);
+  free(oarray3[0].values.choices.list);
+  free(oarray3[1].values.choices.list);
+  free(oarray3[2].values.choices.list);
   free(sections);
 
   return result;
