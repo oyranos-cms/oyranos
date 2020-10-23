@@ -886,7 +886,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   oyjlUi_s * ui = oyjlUi_FromOptions( "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                   sections, &opts, NULL );
   char * text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 7993)
+  if(text && strlen(text) == 8809)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()                  %lu", text?strlen(text):0 );
   } else
@@ -930,7 +930,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
 
   ui = oyjlUi_ImportFromJson( json, 0 );
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 7885)
+  if(text && strlen(text) == 8809)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ImportFromJson()                %lu", text?strlen(text):0 );
   } else
