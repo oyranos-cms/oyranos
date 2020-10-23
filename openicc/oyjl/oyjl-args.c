@@ -150,7 +150,8 @@ int myMain( int argc, const char ** argv )
     oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
     char * sources = oyjlUiJsonToCode( json, completion_bash ? OYJL_COMPLETION_BASH : OYJL_SOURCE_CODE_C );
     fprintf( stderr, "wrote %d to stdout\n", sources&&strlen(sources)?(int)strlen(sources):0 );
-    puts( sources );
+    if(sources)
+      puts( sources );
   }
 
   oyjlUi_Release( &ui);
