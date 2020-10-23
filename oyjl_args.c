@@ -1897,8 +1897,9 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
 clean_parse:
   oyjlStringListRelease( &result->options, result->count, free );
   free(result->values);
-  free(result);
-  opts->private_data = NULL;
+  result->values = NULL;
+  result->count = 0;
+  result->group = -1;
 
   return state;
 }
@@ -2660,6 +2661,16 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
     {
       int n = 0;
       char ** list = oyjlStringSplit2( g->mandatory, "|,", &n, NULL, malloc );
+      if(g->flags & OYJL_GROUP_FLAG_SUBCOMMAND)
+      {
+        if(n != 1)
+        {
+          fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
+          fprintf(stderr, "group->flags set to OYJL_GROUP_FLAG_SUBCOMMAND but more than one mandatory option: \"%s\"\n", g->mandatory );
+          status = oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND;
+          if(!getenv("OYJL_NO_EXIT")) exit(1);
+        }
+      }
       for( j = 0; j  < n; ++j )
       {
         const char * option = list[j];
