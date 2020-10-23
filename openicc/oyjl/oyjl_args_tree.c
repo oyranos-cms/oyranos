@@ -1662,7 +1662,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     {
       oyjl_val v;
       const char *mandatory, *optional;
-      int mandatory_n = 0, optional_n = 0, j;
+      int mandatory_n = 0, optional_n = 0, j, flg, sub = 0;
       char **mandatory_list, **optional_list;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/groups/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "mandatory" ); mandatory = OYJL_GET_STRING(v);
@@ -1671,6 +1671,9 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         continue;
       if(strcmp(mandatory,"@") == 0 || strcmp(mandatory,"#") == 0)
         continue;
+      v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
+      if(flg & OYJL_GROUP_FLAG_SUBCOMMAND)
+        sub = 1;
       mandatory_list = oyjlStringSplit2( mandatory, "|,", &mandatory_n, NULL, malloc );
       optional_list = oyjlStringSplit2( optional, "|,", &optional_n, NULL, malloc );
       oyjlStrAdd( s, "        " );
@@ -1681,7 +1684,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         opt = oyjlOptions_GetOptionL( ui->opts, moption );
         if(opt->o && (strcmp(opt->o,"#") == 0 || strcmp(opt->o,"@") == 0))
           continue;
-        oyjlStrAdd( s, "%s%s%s%s%s%s", found?"|":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && opt->option)?"|":"", opt->option?"--":"", opt->option?opt->option:"" );
+        oyjlStrAdd( s, "%s%s%s%s%s%s", found?"|":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && opt->option)?"|":"", (opt->option && !sub)?"--":"", opt->option?opt->option:"" );
         ++found;
       }
       oyjlStrAdd( s, ")\n" );
@@ -1756,12 +1759,15 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     {
       oyjl_val v;
       const char *mandatory;
-      int mandatory_n = 0, j;
+      int mandatory_n = 0, j, flg, sub = 0;
       char **mandatory_list;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/groups/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "mandatory" ); mandatory = OYJL_GET_STRING(v);
       if(!(mandatory && mandatory[0]))
         continue;
+      v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
+      if(flg & OYJL_GROUP_FLAG_SUBCOMMAND)
+        sub = 1;
       mandatory_list = oyjlStringSplit2( mandatory, "|,", &mandatory_n, NULL, malloc );
       for(j = 0; j < mandatory_n; ++j)
       {
@@ -1769,7 +1775,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         opt = oyjlOptions_GetOptionL( ui->opts, moption );
         if(opt->o && (strcmp(opt->o,"#") == 0 || strcmp(opt->o,"@") == 0))
           continue;
-        oyjlStrAdd( s, "%s%s%s%s%s%s%s%s", found?" ":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && WANT_ARG(opt))?"=":"", opt->o?" ":"", opt->option?"--":"", opt->option?opt->option:"", (opt->option && WANT_ARG(opt))?"=":"" );
+        oyjlStrAdd( s, "%s%s%s%s%s%s%s%s", found?" ":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && WANT_ARG(opt))?"=":"", opt->o?" ":"", (opt->option && !sub)?"--":"", opt->option?opt->option:"", (opt->option && WANT_ARG(opt))?"=":"" );
         ++found;
       }
       oyjlStringListRelease( &mandatory_list, mandatory_n, free );
