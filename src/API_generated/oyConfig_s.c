@@ -376,8 +376,8 @@ OYAPI int  OYEXPORT
  *  @param         scope               oySCOPE_USER and oySCOPE_SYS are possible
  *  @return                            0 - good, 1 >= error
  *
- *  @version Oyranos: 0.9.6
- *  @date    2015/03/07
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/10/26
  *  @since   2009/01/27 (Oyranos: 0.1.10)
  */
 OYAPI int  OYEXPORT oyConfig_EraseFromDB (
@@ -396,6 +396,9 @@ OYAPI int  OYEXPORT oyConfig_EraseFromDB (
 
   DBG_PROG_START
   oyExportStart_(EXPORT_PATH | EXPORT_SETTING);
+
+  if(!oyCanSetPersistent(scope))
+    return 1;
 
   if(error <= 0)
   {

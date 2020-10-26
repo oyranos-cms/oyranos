@@ -109,6 +109,7 @@ char *       oyGetPersistentString   ( const char        * key_name,
                                        uint32_t            flags,
                                        oySCOPE_e           scope,
                                        oyAlloc_f           alloc_func );
+int          oyCanSetPersistent      ( oySCOPE_e           scope );
 int          oySetPersistentString   ( const char        * key_name,
                                        oySCOPE_e           scope,
                                        const char        * value,

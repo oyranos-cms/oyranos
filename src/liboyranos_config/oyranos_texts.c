@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 #include "oyProfiles_s.h"
 #include "oyCMMapi4_s.h"
@@ -2503,6 +2504,59 @@ int          oyExistPersistentString ( const char        * key_name,
   return found;
 }
 
+int          oyCanSetPersistent      ( oySCOPE_e           scope )
+{
+  int available = 1;
+  if(scope == oySCOPE_USER || scope == oySCOPE_USER_SYS)
+  {
+    char * path = oyGetInstallPath( oyPATH_POLICY, oySCOPE_USER, oyAllocateFunc_ );
+    oyjlStringAdd( &path, oyAllocateFunc_, oyDeAllocateFunc_, "/openicc.json" );
+    size_t size = oyIsFile_(path) ? oyReadFileSize_(path) : 0;
+    if(size)
+    {
+#ifdef HAVE_POSIX
+      {
+        /* get local free disk space the POSIX way */
+        char * num = oyReadCmdToMemf_( &size, "r", oyAllocateFunc_, "df -P %s | awk '{ print $4 }' | awk '{ sum += $1 }; END { print sum }'", path );
+        long space = 0;
+        if(oy_debug)
+          fprintf(stderr, "empty disk space: %s\n", num );
+        if(num && oyjlStringToLong(num, &space) == 0)
+        {
+          if(space < 10)
+          {
+            WARNc1_S( "not enough disk space: %ld", space );
+            return 0;
+          }
+        }
+        if(num) free(num);
+      }
+#else
+      {
+        /* check file size and possibly send warning */
+        char * data = oyReadFileToMem_( path, &size, oyAllocateFunc_);
+        oyjlStringAdd( &data, oyAllocateFunc_, oyDeAllocateFunc_, "testtesttesttesttest" );
+        char * output = NULL;
+        int error = oyWriteMemToFile2_( path, data, strlen(data), OY_FILE_NAME_SEARCH, &output, oyAllocateFunc_ );
+        size_t output_size = oyReadFileSize_(output);
+        if(error || output_size < strlen(data))
+        {
+          WARNc3_S( "output_size: %d|%d error: %d\n", (int)output_size, (int)strlen(data), error );
+          return 0;
+        }
+        error = remove(output);
+        if(error)
+           WARNc3_S( "remove error: %d %s %s\n", error, strerror(errno), output );
+        if(data) oyDeAllocateFunc_(data);
+        if(output) oyDeAllocateFunc_(output);
+      }
+#endif
+    }
+    if(path) oyDeAllocateFunc_(path);
+  }
+  return available;
+}
+
 /** Function oySetPersistentString
  *  @brief   set string into DB and cache
  *
@@ -2524,9 +2578,12 @@ int          oySetPersistentString   ( const char        * key_name,
                                        const char        * value,
                                        const char        * comment )
 {
-  int rc;
+  int rc = -1;
   const char * key = key_name;
   int error = 0;
+
+  if(!oyCanSetPersistent(scope))
+    return rc;
 
   if(value)
     rc = oyDBSetString( key_name, scope, value, comment );
@@ -2540,7 +2597,7 @@ int          oySetPersistentString   ( const char        * key_name,
   error = oyOptions_SetRegFromText( &oy_db_cache_, key, value, OY_ADD_ALWAYS );
   if(error)
     WARNc3_S( "Could not set key: %d %s -> %s",
-              error, key_name, value ? value : "" ); 
+              error, key_name, value ? value : "" );
 
   return rc;
 }
