@@ -350,8 +350,30 @@ oyjlTESTRESULT_e testString ()
   }
   oyjlStringListRelease( &list, list_n, myDeAllocFunc );
 
+  long l = 0;
+  int error = oyjlStringToLong( "2", &l );
+  if( !error &&
+      l == 2)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringToLong(\"2\") = %ld                          ", l );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringToLong(\"2\") = %ld                          ", l );
+  }
+
+  l = 0;
+  error = oyjlStringToLong( "2\n", &l );
+  if( !error &&
+      l == 2)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringToLong(\"2\n\") = %ld                         ", l );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringToLong(\"2\n\") = %ld                         ", l );
+  }
+
   double d = 0.0;
-  int error = oyjlStringToDouble( "0.2", &d );
+  error = oyjlStringToDouble( "0.2", &d );
   if( !error &&
       d == 0.2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -359,6 +381,17 @@ oyjlTESTRESULT_e testString ()
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlStringToDouble(\"0.2\") = %g  error = %d           ", d, error );
+  }
+
+  d = 0.0;
+  error = oyjlStringToDouble( "0.2#", &d );
+  if( !error &&
+      d == 0.2)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringToDouble(\"0.2#\") = %g                    ", d );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringToDouble(\"0.2#\") = %g  error = %d          ", d, error );
   }
 
   double * doubles = NULL;
