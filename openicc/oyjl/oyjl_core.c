@@ -25,7 +25,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <ctype.h>   /* isspace() tolower() */
+#include <ctype.h>   /* isspace() tolower() isdigit() */
 #include <math.h>    /* NAN */
 #include <stdarg.h>  /* va_list */
 #include <stddef.h>  /* ptrdiff_t size_t */
@@ -663,7 +663,7 @@ int      oyjlStringToLong            ( const char        * text,
 {
   char * end = 0;
   *value = strtol( text, &end, 0 );
-  if(end && end != text && end[0] == '\000' )
+  if(end && end != text && !isdigit(end[0]) )
     return 0;
   else
     return 1;
@@ -686,7 +686,7 @@ int      oyjlStringToLong            ( const char        * text,
 int          oyjlStringToDouble      ( const char        * text,
                                        double            * value )
 {
-  char * p = NULL, * t = NULL;
+  char * end = NULL, * t = NULL;
   int len, pos = 0;
   int error = -1;
 #ifdef OYJL_HAVE_LOCALE_H
@@ -712,16 +712,16 @@ int          oyjlStringToDouble      ( const char        * text,
   while(text[pos] && isspace(text[pos])) pos++;
   memcpy( t, &text[pos], len );
 
-  *value = strtod( t, &p );
+  *value = strtod( t, &end );
 
 #ifdef OYJL_HAVE_LOCALE_H
   setlocale(LC_NUMERIC, save_locale);
   if(save_locale) free( save_locale );
 #endif
 
-  if(p && p != t && p[0] == '\000')
+  if(end && end != text && !isdigit(end[0]) )
     error = 0;
-  else if(p && p == t)
+  else if(end && end == t)
   {
     *value = NAN;
     error = 2;
