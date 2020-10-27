@@ -121,5 +121,12 @@ if(format_ && strchr(format_,'%') != NULL) { \
   }                                                         \
 }
 
+#if defined(_WIN32)                    
+# define oyjlPOPEN_m    _popen
+# define oyjlPCLOSE_m   _pclose
+#else
+# define oyjlPOPEN_m    popen
+# define oyjlPCLOSE_m   pclose
+#endif
 
 #endif /* OYJL_MACROS_H */
