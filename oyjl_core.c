@@ -1356,6 +1356,163 @@ char *    oyjlReadFile( const char * file_name,
   return text;
 }
 
+/** @internal
+ *  Copy to external allocator */
+char *       oyjlReAllocFromStdMalloc_(char              * mem,
+                                       int               * size,
+                                       void*            (* alloc)(size_t) )
+{
+  if(mem)
+  {
+    if(alloc != malloc)
+    {
+      char* temp = mem;
+
+      mem = alloc( *size + 1 );
+      if(mem)
+      {
+        memcpy( mem, temp, *size );
+        mem[*size] = '\000';
+      }
+      else
+        *size = 0;
+
+      free( temp );
+    } else
+      mem[*size] = '\000';
+  }
+
+  return mem;
+}
+
+int oyjlIsFileFull_ (const char* fullFileName, const char * read_mode);
+/* resembles which */
+char * oyjlFindApplication_(const char * app_name)
+{
+  const char * path = getenv("PATH");
+  char * full_app_name = NULL;
+  if(path && app_name)
+  {
+    int paths_n = 0, i;
+    char ** paths = oyjlStringSplit( path, ':', &paths_n, malloc );
+    for(i = 0; i < paths_n; ++i)
+    {
+      char * full_name = NULL;
+      int found;
+      oyjlStringAdd( &full_name, 0,0, "%s/%s", paths[i], app_name );
+      found = oyjlIsFileFull_( full_name, "rb" );
+      if(found)
+      {
+        i = paths_n;
+        full_app_name = strdup( full_name );
+      }
+      free( full_name );
+      if(found) break;
+    }
+    oyjlStringListRelease( &paths, paths_n, free );
+  }
+  return full_app_name;
+}
+
+/** @internal
+ *  Read a file stream without knowing its size in advance.
+ */
+char * oyjlReadCmdToMem_             ( const char        * command,
+                                       int               * size,
+                                       const char        * mode,
+                                       void*            (* alloc)(size_t) )
+{
+  char * text = 0;
+  FILE * fp = 0;
+
+  if(!alloc) alloc = malloc;
+
+  if(command && command[0] && size )
+  {
+    {
+      if(*oyjl_debug && (strstr(command, "addr2line") == NULL || *oyjl_debug > 1))
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s", OYJL_DBG_ARGS, command );
+      fp = oyjlPOPEN_m( command, mode );
+    }
+    if(fp)
+    {
+      int mem_size = 0;
+      char* mem = NULL;
+
+      text = oyjlReadFileStreamToMem(fp, size);
+
+      if(!feof(fp))
+      {
+        if(text) { free( text ); text = NULL; }
+        *size = 0;
+        mem_size = 1024;
+        mem = malloc(mem_size+1);
+        oyjlPCLOSE_m(fp);
+        fp = oyjlPOPEN_m( command, mode );
+      }
+      if(fp)
+      while(!feof(fp))
+      {
+        if(*size >= mem_size)
+        {
+          mem_size *= 10;
+          mem = realloc( mem, mem_size+1 );
+          if(!mem) { *size = 0; break; }
+        }
+        if(mem)
+          *size += fread( &mem[*size], sizeof(char), mem_size-*size, fp );
+      }
+      if(fp && mem)
+      {
+        mem = oyjlReAllocFromStdMalloc_( mem, size, alloc );
+        text = mem;
+      }
+      if(fp)
+        oyjlPCLOSE_m(fp);
+      fp = 0;
+
+      if(*size == 0)
+      {
+        char * t = strdup(command);
+        char * end = strstr( t?t:"", " " ), * app;
+        if(end)
+          end[0] = '\000';
+
+        if((app = oyjlFindApplication_( t )) == NULL)
+          oyjlMessage_p( oyjlMSG_ERROR,0, OYJL_DBG_FORMAT "%s: \"%s\"",
+                         OYJL_DBG_ARGS, _("Program not found"), t?t:"");
+
+        if(t) free(t);
+        if(app) free(app);
+      }
+    }
+  }
+
+  return text;
+}
+
+/** @brief Read a stream from shell command.
+ */
+char *     oyjlReadCommandF          ( int               * size,
+                                       const char        * mode,
+                                       void*            (* alloc)(size_t),
+                                       const char        * format,
+                                                           ... )
+{
+  char * result = NULL;
+  char * text = 0;
+
+  if(!alloc) alloc = malloc;
+
+  OYJL_CREATE_VA_STRING(format, text, malloc, return NULL)
+
+  result = oyjlReadCmdToMem_( text, size, mode, alloc );
+
+  free(text);
+
+  return result;
+}
+
 
 #include <sys/stat.h> /* stat() */
 int oyjlIsFileFull_ (const char* fullFileName, const char * read_mode)
