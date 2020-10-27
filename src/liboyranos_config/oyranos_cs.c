@@ -372,12 +372,12 @@ int      oyOSxVersionAtRuntime       ( void )
   for(i = 0; i < 3; ++i)
   {
     len = 0;
-    po = popen(cmd[i], "r");
+    po = oyPOPEN_m(cmd[i], "r");
     if(po)
     {
       len = fread( t, sizeof(char), 24, po );
       t[23] = 0;
-      pclose(po);
+      oyPCLOSE_m(po);
     }
     if(len)
     {

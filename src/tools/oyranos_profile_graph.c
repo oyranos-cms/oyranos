@@ -199,7 +199,7 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
   return cs;
 }
 
-static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
+static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts )
 {
   oyjlOption_s * import = oyjlOptions_GetOptionL( opts, "import" );
   const char * input = *import->variable.s;

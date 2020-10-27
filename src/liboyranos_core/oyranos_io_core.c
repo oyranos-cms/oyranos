@@ -415,7 +415,7 @@ char * oyReadCmdToMem_               ( const char        * command,
         *size = 0;
         mem_size = 1024;
         mem = malloc(mem_size+1);
-        pclose(fp);
+        oyPCLOSE_m(fp);
         fp = oyPOPEN_m( command, mode );
       }
       if(fp)
@@ -436,7 +436,7 @@ char * oyReadCmdToMem_               ( const char        * command,
         text = mem;
       }
       if(fp)
-        pclose(fp);
+        oyPCLOSE_m(fp);
       fp = 0;
 
       if(*size == 0)
