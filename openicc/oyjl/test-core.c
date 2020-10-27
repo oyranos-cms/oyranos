@@ -1202,6 +1202,26 @@ oyjlTESTRESULT_e testIO ()
     "oyjlIsFile()                            " );
   }
 
+  char * text = oyjlReadFile( "test2.txt", &size );
+  if(text && strcmp(text, "test2") == 0 && size == 6)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlReadFile()                          " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlReadFile()                          " );
+  }
+  if(text) { free(text); text = NULL; }
+
+  text = oyjlReadCommandF( &size, "r", malloc, "echo ABC" );
+  if(text && strcmp(text, "ABC\n") == 0 && size == 4)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlReadCommandF()                      " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlReadCommandF() %s %d                ", text, size );
+  }
+  if(text) { free(text); text = NULL; }
+
   if( verbose )
     fprintf( zout, "info: %s %s\n", info, info2 );
 

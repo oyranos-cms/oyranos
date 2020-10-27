@@ -457,6 +457,11 @@ char *     oyjlReadFileStreamToMem   ( FILE              * fp,
                                        int               * size );
 char *     oyjlReadFile              ( const char        * file_name,
                                        int               * size_ptr );
+char *     oyjlReadCommandF          ( int               * size,
+                                       const char        * mode,
+                                       void*            (* alloc)(size_t),
+                                       const char        * format,
+                                                           ... );
 int        oyjlWriteFile             ( const char        * filename,
                                        void              * mem,
                                        int                 size );
