@@ -4,11 +4,12 @@
 # Kai-Uwe Behrmann <ku.b@gmx.de>, 2005.
 # This file is distributed under the BSD licence (http://www.opensource.org/licenses/bsd-license.php
 #
+#: oyjl.c:44
 msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-10-27 05:53+0100\n"
+"POT-Creation-Date: 2020-10-28 07:14+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -24,11 +25,11 @@ msgstr ""
 msgid "'_(\"%s\"); '"
 msgstr ""
 
-#: oyjl_args.c:3185
+#: oyjl_args.c:3210
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
-#: oyjl.c:113 oyjl_translate.c:79
+#: oyjl.c:127 oyjl_translate.c:79
 msgid "A JSON file name or a input stream like \"stdin\"."
 msgstr ""
 
@@ -40,7 +41,7 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:3748 oyjl_args.c:4014 oyjl_args_tree.c:1930
+#: oyjl_args.c:3773 oyjl_args.c:4039 oyjl_args_tree.c:1930
 msgid "AUTHOR"
 msgstr ""
 
@@ -79,7 +80,7 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:3758 oyjl_args.c:3760 oyjl_args.c:4028 oyjl_args.c:4030
+#: oyjl_args.c:3783 oyjl_args.c:3785 oyjl_args.c:4053 oyjl_args.c:4055
 #: oyjl_args_tree.c:1933
 msgid "BUGS"
 msgstr ""
@@ -89,7 +90,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:3752 oyjl_args.c:4018 oyjl_args_tree.c:1931
+#: oyjl_args.c:3777 oyjl_args.c:4043 oyjl_args_tree.c:1931
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -144,11 +145,11 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
-#: oyjl.c:103 oyjl.c:144
+#: oyjl.c:117 oyjl.c:158
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:3625 oyjl_args.c:3890 oyjl_args_tree.c:1927
+#: oyjl_args.c:3650 oyjl_args.c:3915 oyjl_args_tree.c:1927
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -193,16 +194,16 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:3432 oyjl_args_tree.c:1936
+#: oyjl_args.c:3457 oyjl_args_tree.c:1936
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl-args.c:61 oyjl.c:121 oyjl_args.c:3428 oyjl_args_tree.c:1934
+#: oyjl-args.c:61 oyjl.c:135 oyjl_args.c:3453 oyjl_args_tree.c:1934
 #: oyjl_translate.c:103 oyjl_web.c:83
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:3430 oyjl_args_tree.c:1935
+#: oyjl_args.c:3455 oyjl_args_tree.c:1935
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -231,18 +232,18 @@ msgstr ""
 msgid "Extract translatable Messages"
 msgstr ""
 
-#: oyjl-args.c:54 oyjl.c:113 oyjl_translate.c:79 oyjl_translate.c:81
+#: oyjl-args.c:54 oyjl.c:127 oyjl_translate.c:79 oyjl_translate.c:81
 #: test-args.c:82 test-args.c:83 test-args.c:447 test-args.c:563
 #: test-core.c:745 test-core.c:746 test.c:830 test.c:831 test.c:995 test.c:996
 #: oyjl-args-qml/mini-app.c:179 oyjl-args-qml/mini-app.c:180
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:3436 oyjl_args_tree.c:1938
+#: oyjl_args.c:3461 oyjl_args_tree.c:1938
 msgid "FILES"
 msgstr ""
 
-#: oyjl.c:119
+#: oyjl.c:133
 msgid "FORMAT"
 msgstr ""
 
@@ -255,15 +256,15 @@ msgstr ""
 msgid "File"
 msgstr "nomo"
 
-#: oyjl.c:113 oyjl_translate.c:79 oyjl_translate.c:81
+#: oyjl.c:127 oyjl_translate.c:79 oyjl_translate.c:81
 msgid "File or Stream"
 msgstr ""
 
-#: oyjl-args.c:90 oyjl.c:167 oyjl_translate.c:147 oyjl_web.c:107
+#: oyjl-args.c:90 oyjl.c:181 oyjl_translate.c:147 oyjl_web.c:107
 msgid "For more information read the man page:"
 msgstr ""
 
-#: oyjl.c:117 oyjl.c:148 oyjl_translate.c:83
+#: oyjl.c:131 oyjl.c:162 oyjl_translate.c:83
 msgid "Format"
 msgstr ""
 
@@ -292,7 +293,7 @@ msgstr ""
 msgid "GUI + Command"
 msgstr ""
 
-#: oyjl-args.c:74 oyjl.c:149 oyjl_translate.c:129 oyjl_web.c:94 test-args.c:104
+#: oyjl-args.c:74 oyjl.c:163 oyjl_translate.c:129 oyjl_web.c:94 test-args.c:104
 #: test-args.c:308 test-args.c:458 test-args.c:574 test-core.c:761
 #: test-core.c:825 test.c:846 test.c:1009 oyjl-args-qml/mini-app.c:196
 msgid "General options"
@@ -330,7 +331,7 @@ msgstr ""
 msgid "Get formated text"
 msgstr ""
 
-#: oyjl.c:111
+#: oyjl.c:125
 msgid "Get node type"
 msgstr ""
 
@@ -338,7 +339,7 @@ msgstr ""
 msgid "Gui"
 msgstr ""
 
-#: oyjl_args.c:3434 oyjl_args_tree.c:1937
+#: oyjl_args.c:3459 oyjl_args_tree.c:1937
 msgid "HISTORY"
 msgstr ""
 
@@ -356,14 +357,14 @@ msgstr "kolora"
 #. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
-#: oyjl.c:113 oyjl.c:140 oyjl_translate.c:79
+#: oyjl.c:127 oyjl.c:154 oyjl_translate.c:79
 #, fuzzy
 msgid "Input"
 msgstr "Ekrano"
 
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
-#: oyjl.c:97
+#: oyjl.c:111
 msgid "JSON"
 msgstr ""
 
@@ -393,7 +394,7 @@ msgstr ""
 msgid "June 26, 2019"
 msgstr ""
 
-#: oyjl.c:105 oyjl.c:145
+#: oyjl.c:119 oyjl.c:159
 #, fuzzy
 msgid "Key Name"
 msgstr "nomo"
@@ -412,12 +413,12 @@ msgstr "nomo"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:3134 oyjl_args.c:3754 oyjl_args.c:4020 oyjl_args_tree.c:1896
+#: oyjl_args.c:3134 oyjl_args.c:3779 oyjl_args.c:4045 oyjl_args_tree.c:1896
 #: oyjl_args_tree.c:1932
 msgid "License"
 msgstr ""
 
-#: oyjl.c:154
+#: oyjl.c:168
 msgid "Light weight JSON parse and manipulation tool"
 msgstr ""
 
@@ -477,7 +478,7 @@ msgid "Markdown"
 msgstr ""
 
 #. parsed and checked with -i option
-#: oyjl-args.c:74 oyjl.c:149 oyjl_translate.c:129 oyjl_web.c:94 test-args.c:104
+#: oyjl-args.c:74 oyjl.c:163 oyjl_translate.c:129 oyjl_web.c:94 test-args.c:104
 #: test-args.c:308 test-args.c:458 test-args.c:574 test-core.c:761
 #: test-core.c:825 test.c:846 test.c:1009 oyjl-args-qml/mini-app.c:196
 msgid "Misc"
@@ -554,7 +555,7 @@ msgstr "kolora"
 msgid "Module"
 msgstr ""
 
-#: oyjl_args.c:3611 oyjl_args.c:3875 oyjl_args_tree.c:1923
+#: oyjl_args.c:3636 oyjl_args.c:3900 oyjl_args_tree.c:1923
 msgid "NAME"
 msgstr ""
 
@@ -575,7 +576,7 @@ msgstr ""
 msgid "Nonsense"
 msgstr ""
 
-#: oyjl.c:76
+#: oyjl.c:90
 msgid "November 12, 2017"
 msgstr ""
 
@@ -587,7 +588,7 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: oyjl_args.c:3627 oyjl_args.c:3893 oyjl_args_tree.c:1929
+#: oyjl_args.c:3652 oyjl_args.c:3918 oyjl_args_tree.c:1929
 msgid "OPTIONS"
 msgstr ""
 
@@ -642,7 +643,7 @@ msgid "Oyjl Args Renderer"
 msgstr ""
 
 #. argc+argv are required for parsing the command line options
-#: oyjl.c:154
+#: oyjl.c:168
 msgid "Oyjl Json Manipulation"
 msgstr ""
 
@@ -659,15 +660,15 @@ msgstr ""
 msgid "Oyjl UI JSON Translation tool"
 msgstr ""
 
-#: oyjl.c:115
+#: oyjl.c:129
 msgid "PATH"
 msgstr ""
 
-#: oyjl.c:115
+#: oyjl.c:129
 msgid "Path specifier"
 msgstr ""
 
-#: oyjl.c:107 oyjl.c:147
+#: oyjl.c:121 oyjl.c:161
 msgid "Paths"
 msgstr ""
 
@@ -691,20 +692,20 @@ msgstr ""
 msgid "Print Camera JSON"
 msgstr ""
 
-#: oyjl.c:117
+#: oyjl.c:131
 msgid "Print Data Format"
 msgstr ""
 
-#: oyjl.c:148
+#: oyjl.c:162
 msgid "Print Data Format."
 msgstr ""
 
-#: oyjl.c:141
+#: oyjl.c:155
 #, fuzzy
 msgid "Print JSON"
 msgstr "verda"
 
-#: oyjl.c:83 oyjl.c:97 oyjl.c:141
+#: oyjl.c:97 oyjl.c:111 oyjl.c:155
 #, fuzzy
 msgid "Print JSON to stdout"
 msgstr "verda"
@@ -715,35 +716,35 @@ msgstr "verda"
 msgid "Print None"
 msgstr "verda"
 
-#: oyjl.c:143
+#: oyjl.c:157
 #, fuzzy
 msgid "Print XML"
 msgstr "verda"
 
-#: oyjl.c:101 oyjl.c:143
+#: oyjl.c:115 oyjl.c:157
 #, fuzzy
 msgid "Print XML to stdout"
 msgstr "verda"
 
-#: oyjl.c:142
+#: oyjl.c:156
 #, fuzzy
 msgid "Print YAML"
 msgstr "verda"
 
-#: oyjl.c:99 oyjl.c:142
+#: oyjl.c:113 oyjl.c:156
 #, fuzzy
 msgid "Print YAML to stdout"
 msgstr "verda"
 
-#: oyjl.c:86 oyjl.c:107
+#: oyjl.c:100 oyjl.c:121
 msgid "Print all matching paths"
 msgstr ""
 
-#: oyjl.c:147
+#: oyjl.c:161
 msgid "Print all matching paths."
 msgstr ""
 
-#: oyjl.c:84 oyjl.c:103
+#: oyjl.c:98 oyjl.c:117
 msgid "Print count of leafs in node"
 msgstr ""
 
@@ -760,22 +761,22 @@ msgstr ""
 msgid "Print help text"
 msgstr "verda"
 
-#: oyjl.c:145
+#: oyjl.c:159
 #, fuzzy
 msgid "Print key name"
 msgstr "verda"
 
-#: oyjl.c:85 oyjl.c:105
+#: oyjl.c:99 oyjl.c:119
 #, fuzzy
 msgid "Print key name of node"
 msgstr "verda"
 
-#: oyjl.c:144
+#: oyjl.c:158
 #, fuzzy
 msgid "Print node count"
 msgstr "verda"
 
-#: oyjl.c:146
+#: oyjl.c:160
 #, fuzzy
 msgid "Print type"
 msgstr "verda"
@@ -812,20 +813,20 @@ msgstr ""
 msgid "Results JSON"
 msgstr ""
 
-#: oyjl-args.c:63 oyjl.c:123 oyjl_args.c:3440 oyjl_args_tree.c:1940
+#: oyjl-args.c:63 oyjl.c:137 oyjl_args.c:3465 oyjl_args_tree.c:1940
 #: oyjl_translate.c:105 oyjl_web.c:85
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:3438 oyjl_args_tree.c:1939
+#: oyjl_args.c:3463 oyjl_args_tree.c:1939
 msgid "SEE AS WELL"
 msgstr ""
 
-#: oyjl.c:109 oyjl_web.c:75 oyjl_web.c:76 oyjl_web.c:77
+#: oyjl.c:123 oyjl_web.c:75 oyjl_web.c:76 oyjl_web.c:77
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:3613 oyjl_args.c:3878 oyjl_args_tree.c:1925
+#: oyjl_args.c:3638 oyjl_args.c:3903 oyjl_args_tree.c:1925
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -846,11 +847,11 @@ msgstr ""
 msgid "Set Input"
 msgstr ""
 
-#: oyjl.c:109
+#: oyjl.c:123
 msgid "Set Value"
 msgstr ""
 
-#: oyjl.c:87 oyjl.c:109
+#: oyjl.c:101 oyjl.c:123
 msgid "Set a key name to a value"
 msgstr ""
 
@@ -858,7 +859,7 @@ msgstr ""
 msgid "Set basic parameters"
 msgstr ""
 
-#: oyjl.c:140
+#: oyjl.c:154
 msgid "Set input file and path"
 msgstr ""
 
@@ -950,13 +951,13 @@ msgid "The example tool demontrates the usage of the libOyjl API's."
 msgstr ""
 
 #. handle options
-#: oyjl.c:75
+#: oyjl.c:89
 msgid ""
 "The oyjl program can be used to parse, filter sub trees, select values and "
 "modify values in JSON texts."
 msgstr ""
 
-#: oyjl.c:115
+#: oyjl.c:129
 msgid ""
 "The path consists of slash '/' separated terms. Each term can be a key name "
 "or a square bracketed index. A empty term is used for a search inside a tree."
@@ -1003,15 +1004,15 @@ msgstr ""
 msgid "Translations only"
 msgstr ""
 
-#: oyjl.c:119
+#: oyjl.c:133
 msgid "Try Format"
 msgstr ""
 
-#: oyjl.c:119
+#: oyjl.c:133
 msgid "Try to find data format, even with offset."
 msgstr ""
 
-#: oyjl.c:111 oyjl.c:146
+#: oyjl.c:125 oyjl.c:160
 msgid "Type"
 msgstr ""
 
@@ -1044,11 +1045,11 @@ msgstr ""
 msgid "Usage Error:"
 msgstr ""
 
-#: oyjl.c:128 oyjl_translate.c:111
+#: oyjl.c:142 oyjl_translate.c:111
 msgid "Verbose"
 msgstr ""
 
-#: oyjl-args.c:59 oyjl.c:131 oyjl_args_tree.c:1905 oyjl_translate.c:113
+#: oyjl-args.c:59 oyjl.c:145 oyjl_args_tree.c:1905 oyjl_translate.c:113
 #: test-core.c:751
 msgid "Version"
 msgstr ""
@@ -1065,15 +1066,15 @@ msgstr ""
 msgid "Wrap Type"
 msgstr ""
 
-#: oyjl.c:101
+#: oyjl.c:115
 msgid "XML"
 msgstr ""
 
-#: oyjl.c:115
+#: oyjl.c:129
 msgid "XPath"
 msgstr ""
 
-#: oyjl.c:99
+#: oyjl.c:113
 msgid "YAML"
 msgstr ""
 
@@ -1108,7 +1109,7 @@ msgstr ""
 msgid "help"
 msgstr ""
 
-#: oyjl.c:128 oyjl_translate.c:111
+#: oyjl.c:142 oyjl_translate.c:111
 msgid "increase verbosity"
 msgstr ""
 
@@ -1175,23 +1176,23 @@ msgstr ""
 msgid "oyjl -X json+command | oyjl-args-render -i - -c +"
 msgstr ""
 
-#: oyjl.c:84
+#: oyjl.c:98
 msgid "oyjl -c -i text.json -x my/path/"
 msgstr ""
 
-#: oyjl.c:83
+#: oyjl.c:97
 msgid "oyjl -i text.json -x ///[0]"
 msgstr ""
 
-#: oyjl.c:87
+#: oyjl.c:101
 msgid "oyjl -i text.json -x my/path/to/key -s value"
 msgstr ""
 
-#: oyjl.c:85
+#: oyjl.c:99
 msgid "oyjl -k -i text.json -x ///[0]"
 msgstr ""
 
-#: oyjl.c:86
+#: oyjl.c:100
 msgid "oyjl -p -i text.json -x //"
 msgstr ""
 
@@ -1257,7 +1258,7 @@ msgstr ""
 msgid "verbose"
 msgstr ""
 
-#: oyjl-args.c:59 oyjl.c:131 oyjl_translate.c:113 oyjl_web.c:80 test-core.c:751
+#: oyjl-args.c:59 oyjl.c:145 oyjl_translate.c:113 oyjl_web.c:80 test-core.c:751
 msgid "version"
 msgstr ""
 

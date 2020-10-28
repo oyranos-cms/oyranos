@@ -2028,7 +2028,7 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
  *  @return                            a possibly filterd string list of results;
  *                                     Without a filter it contains the argument
  *                                     Id followed by double point and the
- *                                     result starting at index 3.
+ *                                     result following.
  *                                     With filter it contains only results if
  *                                     apply and without Id.
  *                                     The memory is owned by caller.
@@ -2866,7 +2866,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
                                        oyjlOptions_s     * opts,
                                        int               * status )
 {
-  int help = 0, verbose = 0, version = 0, i,ng, * rank_list = 0, max = -1, pass_group = 0;
+  int help = 0, verbose = 0, version = 0, i,ng,nopts, * rank_list = 0, max = -1, pass_group = 0;
   const char * export = NULL;
   oyjlOption_s * v, * X, * V;
   oyjlOptionGroup_s * g = NULL;
@@ -3175,6 +3175,31 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       return NULL;
     }
 #endif
+  }
+
+  nopts = oyjlOptions_Count( ui->opts );
+  for(i = 0; i < nopts; ++i)
+  {
+    const char * value = NULL;
+    oyjlOption_s * o = &ui->opts->array[i];
+    oyjlOptions_GetResult( opts, o->o, &value, 0, 0 );
+    if(value && strcmp(value, "oyjl-list") == 0 && o->value_type == oyjlOPTIONTYPE_FUNCTION)
+    {
+      int n = 0,l;
+      oyjlOptionChoice_s * list;
+      list = oyjlOption_GetChoices_(o, NULL, opts );
+      if(list)
+        while(list[n].nick && list[n].nick[0] != '\000')
+          ++n;
+      for(l = 0; l < n; ++l)
+        fprintf( stdout, "%s\n", list[l].nick );
+      /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
+
+      if(status)
+        *status |= oyjlUI_STATE_EXPORT;
+      oyjlUi_Release( &ui);
+      return NULL;
+    }
   }
   /* done with options handling */
 

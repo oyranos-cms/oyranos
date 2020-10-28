@@ -25,6 +25,33 @@ extern char **environ;
 # include "oyjl.i18n.c"
 #endif
 
+static oyjlOptionChoice_s * listInput ( oyjlOption_s * o OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
+{
+  oyjlOptionChoice_s * c = NULL;
+
+  int size = 0, i,n = 0;
+  char * result = oyjlReadCommandF( &size, "r", malloc, "ls -1 *.[J,j][S,s][O,o][N,n]" );
+  char ** list = oyjlStringSplit( result, '\n', &n, 0 );
+
+  if(list)
+  {
+    c = calloc(n+1, sizeof(oyjlOptionChoice_s));
+    if(c)
+    {
+      for(i = 0; i < n; ++i)
+      {
+        c[i].nick = strdup( list[i] );
+        c[i].name = strdup(_(""));
+        c[i].description = strdup("");
+        c[i].help = strdup("");
+      }
+    }
+    free(list);
+  }
+
+  return c;
+}
+
 /* This function is called the
  * * first time for GUI generation and then
  * * for executing the tool.
@@ -98,7 +125,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "t","type",          NULL,     _("Type"),     _("Get node type"),          NULL,NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&type}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_REPETITION, "i","input",         NULL,     _("Input"),    _("File or Stream"),_("A JSON file name or a input stream like \"stdin\"."),_("FILENAME"),
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&i_filename}},
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = listInput}, oyjlSTRING, {.s=&i_filename}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "x","xpath",         NULL,     _("XPath"),    _("Path specifier"),_("The path consists of slash '/' separated terms. Each term can be a key name or a square bracketed index. A empty term is used for a search inside a tree."),_("PATH"),
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&xpath}},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "f","format",        NULL,     _("Format"),   _("Print Data Format"),       NULL, NULL,
