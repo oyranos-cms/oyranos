@@ -695,7 +695,7 @@ enum {
   oyjlUI_STATE_NONE,                   /**< @brief nothing to report */
   oyjlUI_STATE_HELP,                   /**< @brief --help printed */
   oyjlUI_STATE_VERBOSE = 2,            /**< @brief --verbose option detected */
-  oyjlUI_STATE_EXPORT = 4,             /**< @brief --export=XXX printed */
+  oyjlUI_STATE_EXPORT = 4,             /**< @brief --export=XXX or other stuff printed printed */
   oyjlUI_STATE_OPTION = 24,            /**< @brief bit shift for detected error from option parser */
   oyjlUI_STATE_NO_CHECKS = 0x1000      /**< @brief skip any checks */
 };
