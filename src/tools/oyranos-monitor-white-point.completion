@@ -4,10 +4,71 @@ _oyranos_monitor_white_point()
     _init_completion -s || return
 
     #set -x -v
+
+    local SUB_COMMAND=""
+    if [[ ${COMP_WORDS[1]} != "" ]]; then
+      SUB_COMMAND=${COMP_WORDS[1]}
+    fi
+
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
         --daemon) # long option with static args
             local WORD_LIST=('0' '1' '2')
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --white-point) # long option with dynamic args
+            local OYJL_TEXTS=$(oyranos_monitor_white_point $SUB_COMMAND --white-point=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --night-white-point) # long option with dynamic args
+            local OYJL_TEXTS=$(oyranos_monitor_white_point $SUB_COMMAND --night-white-point=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --sun-white-point) # long option with dynamic args
+            local OYJL_TEXTS=$(oyranos_monitor_white_point $SUB_COMMAND --sun-white-point=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --night-effect) # long option with dynamic args
+            local OYJL_TEXTS=$(oyranos_monitor_white_point $SUB_COMMAND --night-effect=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
+        --sunlight-effect) # long option with dynamic args
+            local OYJL_TEXTS=$(oyranos_monitor_white_point $SUB_COMMAND --sunlight-effect=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
             _oyra_complete_choices
             set +x +v
             return
