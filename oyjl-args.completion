@@ -10,23 +10,31 @@ _oyjl_args()
       SUB_COMMAND=${COMP_WORDS[1]}
     fi
 
+    local SEARCH=${COMP_WORDS[COMP_CWORD]}
+    if [[ "$SEARCH" == "=" ]]; then
+      SEARCH=""
+    fi
+
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
         --help) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('1' 'synopsis' 'Umwandlung' 'Verschiedenes')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --export) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --render) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('gui' 'web' '-')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
@@ -34,20 +42,23 @@ _oyjl_args()
     : "autocomplete options with choices for single letter options "$cur""
     case "$cur" in
         -h=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('1' 'synopsis' 'Umwandlung' 'Verschiedenes')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -X=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -R=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('gui' 'web' '-')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
@@ -58,13 +69,13 @@ _oyjl_args()
     case "$cur" in
         -i|-h|-X|-R)
             : "finish short options with choices"
-            COMPREPLY=("$cur=")
+            COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
         --input|--help|--export|--render)
             : "finish long options with choices"
-            COMPREPLY=("$cur=")
+            COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
@@ -112,7 +123,7 @@ _oyjl_args()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       WORD_LIST=("${WORD_LIST[@]}" -i= --input= -h= --help= -X= --export= -V --version)
-      _oyra_complete_choices
+      COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return
     fi
