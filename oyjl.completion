@@ -4,8 +4,25 @@ _oyjl()
     _init_completion -s || return
 
     #set -x -v
+
+    local SUB_COMMAND
+    if [[ ${COMP_WORDS[1]} != "" ]]; then
+      SUB_COMMAND=${COMP_WORDS[1]}
+    fi
+
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
+        --input) # long option with dynamic args
+            local OYJL_TEXTS=$(oyjl $SUB_COMMAND --input=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            _oyra_complete_choices
+            set +x +v
+            return
+            ;;
         --try-format) # long option with static args
             local WORD_LIST=('JSON')
             _oyra_complete_choices

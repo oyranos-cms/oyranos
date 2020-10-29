@@ -4,6 +4,12 @@ _oyjl_args()
     _init_completion -s || return
 
     #set -x -v
+
+    local SUB_COMMAND
+    if [[ ${COMP_WORDS[1]} != "" ]]; then
+      SUB_COMMAND=${COMP_WORDS[1]}
+    fi
+
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
         --help) # long option with static args
