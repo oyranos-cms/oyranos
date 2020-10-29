@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-10-29 05:39+0100\n"
+"POT-Creation-Date: 2020-10-29 08:22+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:3773 oyjl_args.c:4039 oyjl_args_tree.c:1966
+#: oyjl_args.c:3773 oyjl_args.c:4039 oyjl_args_tree.c:1973
 msgid "AUTHOR"
 msgstr ""
 
@@ -81,7 +81,7 @@ msgid "Author"
 msgstr ""
 
 #: oyjl_args.c:3783 oyjl_args.c:3785 oyjl_args.c:4053 oyjl_args.c:4055
-#: oyjl_args_tree.c:1969
+#: oyjl_args_tree.c:1976
 msgid "BUGS"
 msgstr ""
 
@@ -90,7 +90,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:3777 oyjl_args.c:4043 oyjl_args_tree.c:1967
+#: oyjl_args.c:3777 oyjl_args.c:4043 oyjl_args_tree.c:1974
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -141,7 +141,7 @@ msgstr ""
 msgid "Convert eXported developer JSON to C source"
 msgstr ""
 
-#: oyjl_args_tree.c:1931
+#: oyjl_args_tree.c:1938
 msgid "Copyright"
 msgstr ""
 
@@ -149,20 +149,20 @@ msgstr ""
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:3650 oyjl_args.c:3915 oyjl_args_tree.c:1963
+#: oyjl_args.c:3650 oyjl_args.c:3915 oyjl_args_tree.c:1970
 msgid "DESCRIPTION"
 msgstr ""
 
-#: oyjl_args_tree.c:1940
+#: oyjl_args_tree.c:1947
 msgid "Date"
 msgstr ""
 
-#: oyjl_args.c:2400 oyjl_args_tree.c:1962
+#: oyjl_args.c:2400 oyjl_args_tree.c:1969
 #, fuzzy
 msgid "Description"
 msgstr "kolora"
 
-#: oyjl_args_tree.c:1937
+#: oyjl_args_tree.c:1944
 msgid "Development"
 msgstr ""
 
@@ -174,7 +174,7 @@ msgstr ""
 msgid "Display a interactive graphical User Interface."
 msgstr ""
 
-#: oyjl_args_tree.c:1939
+#: oyjl_args_tree.c:1946
 msgid "Documentation"
 msgstr ""
 
@@ -190,20 +190,20 @@ msgstr ""
 msgid "Double occuring option"
 msgstr ""
 
-#: oyjl_args_tree.c:1935
+#: oyjl_args_tree.c:1942
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:3457 oyjl_args_tree.c:1972
+#: oyjl_args.c:3457 oyjl_args_tree.c:1979
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl-args.c:61 oyjl.c:135 oyjl_args.c:3453 oyjl_args_tree.c:1970
+#: oyjl-args.c:61 oyjl.c:135 oyjl_args.c:3453 oyjl_args_tree.c:1977
 #: oyjl_translate.c:103 oyjl_web.c:83
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:3455 oyjl_args_tree.c:1971
+#: oyjl_args.c:3455 oyjl_args_tree.c:1978
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -239,7 +239,7 @@ msgstr ""
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:3461 oyjl_args_tree.c:1974
+#: oyjl_args.c:3461 oyjl_args_tree.c:1981
 msgid "FILES"
 msgstr ""
 
@@ -339,7 +339,7 @@ msgstr ""
 msgid "Gui"
 msgstr ""
 
-#: oyjl_args.c:3459 oyjl_args_tree.c:1973
+#: oyjl_args.c:3459 oyjl_args_tree.c:1980
 msgid "HISTORY"
 msgstr ""
 
@@ -413,8 +413,8 @@ msgstr "nomo"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:3134 oyjl_args.c:3779 oyjl_args.c:4045 oyjl_args_tree.c:1932
-#: oyjl_args_tree.c:1968
+#: oyjl_args.c:3134 oyjl_args.c:3779 oyjl_args.c:4045 oyjl_args_tree.c:1939
+#: oyjl_args_tree.c:1975
 msgid "License"
 msgstr ""
 
@@ -464,7 +464,7 @@ msgstr ""
 msgid "Man"
 msgstr "Fuksina"
 
-#: oyjl_args_tree.c:1930
+#: oyjl_args_tree.c:1937
 #, fuzzy
 msgid "Manufacturer"
 msgstr "kolora"
@@ -551,11 +551,11 @@ msgstr "kolora"
 msgid "Mode9"
 msgstr "kolora"
 
-#: oyjl_args_tree.c:1911
+#: oyjl_args_tree.c:1918
 msgid "Module"
 msgstr ""
 
-#: oyjl_args.c:3636 oyjl_args.c:3900 oyjl_args_tree.c:1959
+#: oyjl_args.c:3636 oyjl_args.c:3900 oyjl_args_tree.c:1966
 msgid "NAME"
 msgstr ""
 
@@ -563,12 +563,12 @@ msgstr ""
 msgid "NUMBER"
 msgstr ""
 
-#: oyjl_args_tree.c:1958
+#: oyjl_args_tree.c:1965
 #, fuzzy
 msgid "Name"
 msgstr "nomo"
 
-#: oyjl_args_tree.c:2213
+#: oyjl_args_tree.c:2220
 msgid "No"
 msgstr ""
 
@@ -588,7 +588,7 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: oyjl_args.c:3652 oyjl_args.c:3918 oyjl_args_tree.c:1965
+#: oyjl_args.c:3652 oyjl_args.c:3918 oyjl_args_tree.c:1972
 msgid "OPTIONS"
 msgstr ""
 
@@ -647,7 +647,7 @@ msgstr ""
 msgid "Oyjl Json Manipulation"
 msgstr ""
 
-#: oyjl_args_tree.c:1938
+#: oyjl_args_tree.c:1945
 msgid "Oyjl Module Author"
 msgstr ""
 
@@ -672,7 +672,7 @@ msgstr ""
 msgid "Paths"
 msgstr ""
 
-#: oyjl_args_tree.c:1942
+#: oyjl_args_tree.c:1949
 msgid "Permissions"
 msgstr ""
 
@@ -813,12 +813,12 @@ msgstr ""
 msgid "Results JSON"
 msgstr ""
 
-#: oyjl-args.c:63 oyjl.c:137 oyjl_args.c:3465 oyjl_args_tree.c:1976
+#: oyjl-args.c:63 oyjl.c:137 oyjl_args.c:3465 oyjl_args_tree.c:1983
 #: oyjl_translate.c:105 oyjl_web.c:85
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:3463 oyjl_args_tree.c:1975
+#: oyjl_args.c:3463 oyjl_args_tree.c:1982
 msgid "SEE AS WELL"
 msgstr ""
 
@@ -826,7 +826,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:3638 oyjl_args.c:3903 oyjl_args_tree.c:1961
+#: oyjl_args.c:3638 oyjl_args.c:3903 oyjl_args_tree.c:1968
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -904,7 +904,7 @@ msgstr ""
 msgid "Small JSON UI tool using libOyjl and a selectable renderer"
 msgstr ""
 
-#: oyjl_args_tree.c:1936
+#: oyjl_args_tree.c:1943
 msgid "Sources"
 msgstr ""
 
@@ -916,11 +916,11 @@ msgstr ""
 msgid "Start a local Web Service to connect a Webbrowser with."
 msgstr ""
 
-#: oyjl_args_tree.c:1934
+#: oyjl_args_tree.c:1941
 msgid "Support"
 msgstr ""
 
-#: oyjl_args.c:1264 oyjl_args.c:2404 oyjl_args.c:2766 oyjl_args_tree.c:1960
+#: oyjl_args.c:1264 oyjl_args.c:2404 oyjl_args.c:2766 oyjl_args_tree.c:1967
 msgid "Synopsis"
 msgstr ""
 
@@ -991,7 +991,7 @@ msgstr ""
 msgid "This options explanation text."
 msgstr ""
 
-#: oyjl_args_tree.c:1909
+#: oyjl_args_tree.c:1916
 msgid "Tool"
 msgstr ""
 
@@ -1030,11 +1030,11 @@ msgstr ""
 msgid "Unix Man page"
 msgstr ""
 
-#: oyjl_args_tree.c:1933
+#: oyjl_args_tree.c:1940
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:2419 oyjl_args_tree.c:1964 oyjl_translate.c:163
+#: oyjl_args.c:2419 oyjl_args_tree.c:1971 oyjl_translate.c:163
 msgid "Usage"
 msgstr ""
 
@@ -1049,7 +1049,7 @@ msgstr ""
 msgid "Verbose"
 msgstr ""
 
-#: oyjl-args.c:59 oyjl.c:145 oyjl_args_tree.c:1941 oyjl_translate.c:113
+#: oyjl-args.c:59 oyjl.c:145 oyjl_args_tree.c:1948 oyjl_translate.c:113
 #: test-core.c:751
 msgid "Version"
 msgstr ""
@@ -1078,7 +1078,7 @@ msgstr ""
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:2213
+#: oyjl_args_tree.c:2220
 msgid "Yes"
 msgstr "Jes"
 

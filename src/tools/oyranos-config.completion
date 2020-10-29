@@ -5,34 +5,43 @@ _oyranos_config()
 
     #set -x -v
 
-    local SUB_COMMAND=""
+    local SUB_COMMAND
     if [[ ${COMP_WORDS[1]} != "" ]]; then
       SUB_COMMAND=${COMP_WORDS[1]}
+    fi
+
+    local SEARCH=${COMP_WORDS[COMP_CWORD]}
+    if [[ "$SEARCH" == "=" ]]; then
+      SEARCH=""
     fi
 
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
         --daemon) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('0' '1')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --export) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --render) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('gui' 'web' '-')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --help) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('1' 'synopsis' 'Einstellungen' 'Beobachten' 'Installationspfade' 'Version' 'Optionen' 'Verschiedenes')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
@@ -40,26 +49,30 @@ _oyranos_config()
     : "autocomplete options with choices for single letter options "$cur""
     case "$cur" in
         -d=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('0' '1')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -X=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -R=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('gui' 'web' '-')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -h=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('1' 'synopsis' 'Einstellungen' 'Beobachten' 'Installationspfade' 'Version' 'Optionen' 'Verschiedenes')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
@@ -70,13 +83,13 @@ _oyranos_config()
     case "$cur" in
         -g|-s|-d|-X|-R|-h)
             : "finish short options with choices"
-            COMPREPLY=("$cur=")
+            COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
         --get|--set|--daemon|--export|--render|--help)
             : "finish long options with choices"
-            COMPREPLY=("$cur=")
+            COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
@@ -144,7 +157,7 @@ _oyranos_config()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       WORD_LIST=("${WORD_LIST[@]}" -g= --get= -s= --set= -l --list -p --path -d= --daemon= --syscolordir --usercolordir --iccdirname --settingsdirname --cmmdir --metadir --Version --api-version --num-version --git-version --cflags --ldflags --ldstaticflags --sourcedir --builddir -X= --export= -h= --help= -V --version -R= --render=)
-      _oyra_complete_choices
+      COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return
     fi

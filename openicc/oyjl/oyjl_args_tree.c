@@ -1409,6 +1409,11 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "      SUB_COMMAND=${COMP_WORDS[1]}\n" );
     oyjlStrAdd( s, "    fi\n" );
     oyjlStrAdd( s, "\n" );
+    oyjlStrAdd( s, "    local SEARCH=${COMP_WORDS[COMP_CWORD]}\n" );
+    oyjlStrAdd( s, "    if [[ \"$SEARCH\" == \"=\" ]]; then\n" );
+    oyjlStrAdd( s, "      SEARCH=\"\"\n" );
+    oyjlStrAdd( s, "    fi\n" );
+    oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "    : \"autocomplete options with choices for long options \"$prev\"\"\n" );
     oyjlStrAdd( s, "    case \"$prev\" in\n" );
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/array" ) );
@@ -1438,7 +1443,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           oyjlStrAdd( s, "            for OYJL_TEXT in $OYJL_TEXTS\n" );
           oyjlStrAdd( s, "              do WORD_LIST=(\"${WORD_LIST[@]}\" \"$OYJL_TEXT\")\n" );
           oyjlStrAdd( s, "            done\n" );
-          oyjlStrAdd( s, "            _oyra_complete_choices\n" );
+          oyjlStrAdd( s, "            COMPREPLY=($(compgen -W '\"${WORD_LIST[@]}\"' -- \"$cur\"))\n" );
           oyjlStrAdd( s, "            set +x +v\n" );
           oyjlStrAdd( s, "            return\n" );
           oyjlStrAdd( s, "            ;;\n" );
@@ -1461,7 +1466,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
               oyjlStrAdd( s, "            for OYJL_TEXT in $OYJL_TEXTS\n" );
               oyjlStrAdd( s, "              do WORD_LIST=(\"${WORD_LIST[@]}\" \"$OYJL_TEXT\")\n" );
               oyjlStrAdd( s, "            done\n" );
-              oyjlStrAdd( s, "            _oyra_complete_choices\n" );
+              oyjlStrAdd( s, "            COMPREPLY=($(compgen -W '\"${WORD_LIST[@]}\"' -- \"$cur\"))\n" );
               oyjlStrAdd( s, "            set +x +v\n" );
               oyjlStrAdd( s, "            return\n" );
               oyjlStrAdd( s, "            ;;\n" );
@@ -1478,6 +1483,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(count)
         {
           oyjlStrAdd( s, "        --%s) # long option with static args\n", option );
+          oyjlStrAdd( s, "            local IFS=$'\\n'\n" );
           oyjlStrAdd( s, "            local WORD_LIST=(" );
         }
         for(j = 0; j < count; ++j)
@@ -1489,7 +1495,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(count)
         {
           oyjlStrAdd( s, ")\n" );
-          oyjlStrAdd( s, "            _oyra_complete_choices\n" );
+          oyjlStrAdd( s, "            COMPREPLY=($(compgen -W '\"${WORD_LIST[@]}\"' -- \"$cur\"))\n" );
           oyjlStrAdd( s, "            set +x +v\n" );
           oyjlStrAdd( s, "            return\n" );
           oyjlStrAdd( s, "            ;;\n" );
@@ -1533,7 +1539,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           oyjlStrAdd( s, "            for OYJL_TEXT in $OYJL_TEXTS\n" );
           oyjlStrAdd( s, "              do WORD_LIST=(\"${WORD_LIST[@]}\" \"$OYJL_TEXT\")\n" );
           oyjlStrAdd( s, "            done\n" );
-          oyjlStrAdd( s, "            _oyra_complete_choices\n" );
+          oyjlStrAdd( s, "            COMPREPLY=($(compgen -W '\"${WORD_LIST[@]}\"' -- \"$SEARCH\"))\n" );
           oyjlStrAdd( s, "            set +x +v\n" );
           oyjlStrAdd( s, "            return\n" );
           oyjlStrAdd( s, "            ;;\n" );
@@ -1548,6 +1554,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(count)
         {
           oyjlStrAdd( s, "        -%s=*) # single letter option with static args\n", o );
+          oyjlStrAdd( s, "            local IFS=$'\\n'\n" );
           oyjlStrAdd( s, "            local WORD_LIST=(" );
         }
         for(j = 0; j < count; ++j)
@@ -1559,7 +1566,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(count)
         {
           oyjlStrAdd( s, ")\n" );
-          oyjlStrAdd( s, "            _oyra_complete_choices\n" );
+          oyjlStrAdd( s, "            COMPREPLY=($(compgen -W '\"${WORD_LIST[@]}\"' -- \"$SEARCH\"))\n" );
           oyjlStrAdd( s, "            set +x +v\n" );
           oyjlStrAdd( s, "            return\n" );
           oyjlStrAdd( s, "            ;;\n" );
@@ -1605,7 +1612,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     {
       oyjlStrAdd( s, ")\n" );
       oyjlStrAdd( s, "            : \"finish short options with choices\"\n" );
-      oyjlStrAdd( s, "            COMPREPLY=(\"$cur=\")\n" );
+      oyjlStrAdd( s, "            COMPREPLY=(\"$cur=\\\"\")\n" );
       oyjlStrAdd( s, "            set +x +v\n" );
       oyjlStrAdd( s, "            return\n" );
       oyjlStrAdd( s, "            ;;\n" );
@@ -1641,7 +1648,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     {
       oyjlStrAdd( s, ")\n" );
       oyjlStrAdd( s, "            : \"finish long options with choices\"\n" );
-      oyjlStrAdd( s, "            COMPREPLY=(\"$cur=\")\n" );
+      oyjlStrAdd( s, "            COMPREPLY=(\"$cur=\\\"\")\n" );
       oyjlStrAdd( s, "            set +x +v\n" );
       oyjlStrAdd( s, "            return\n" );
       oyjlStrAdd( s, "            ;;\n" );
@@ -1826,7 +1833,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         oyjlStrAdd( s, "      local IFS=$'\\n'\n" );
         oyjlStrAdd( s, "      local WORD_LIST=()\n" );
         oyjlStrAdd( s, "      for OYJL_TEXT in $OYJL_TEXTS\n" );
-        oyjlStrAdd( s, "        do WORD_LIST=(\"${WORD_LIST[@]}\" \"$OYJL_TEXT\")\n" );
+        oyjlStrAdd( s, "        do WORD_LIST=(\"${WORD_LIST[@]}\"\n\"$OYJL_TEXT\")\n" );
         oyjlStrAdd( s, "      done\n" );
     }
     if(n)
@@ -1861,7 +1868,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStrAdd( s, ")\n" );
     }
 #undef WANT_ARG
-    oyjlStrAdd( s, "      _oyra_complete_choices\n" );
+    oyjlStrAdd( s, "      COMPREPLY=($(compgen -W '\"${WORD_LIST[@]}\"' -- \"$cur\"))\n" );
     oyjlStrAdd( s, "      set +x +v\n" );
     oyjlStrAdd( s, "      return\n" );
     oyjlStrAdd( s, "    fi\n" );

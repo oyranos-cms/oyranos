@@ -5,34 +5,43 @@ _oyranos_profiles()
 
     #set -x -v
 
-    local SUB_COMMAND=""
+    local SUB_COMMAND
     if [[ ${COMP_WORDS[1]} != "" ]]; then
       SUB_COMMAND=${COMP_WORDS[1]}
+    fi
+
+    local SEARCH=${COMP_WORDS[COMP_CWORD]}
+    if [[ "$SEARCH" == "=" ]]; then
+      SEARCH=""
     fi
 
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
         --path) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('basICColor' 'colord' 'edid' 'OpenICC' 'oyra' 'xorg')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --meta) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('EFFECT_class;sepia')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --export) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --render) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('gui' 'web' '-')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
@@ -40,26 +49,30 @@ _oyranos_profiles()
     : "autocomplete options with choices for single letter options "$cur""
     case "$cur" in
         -P=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('basICColor' 'colord' 'edid' 'OpenICC' 'oyra' 'xorg')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -T=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('EFFECT_class;sepia')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -X=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -R=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('gui' 'web' '-')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
@@ -70,13 +83,13 @@ _oyranos_profiles()
     case "$cur" in
         -I|-t|-P|-T|-X|-R)
             : "finish short options with choices"
-            COMPREPLY=("$cur=")
+            COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
         --install|--taxi|--path|--meta|--export|--render)
             : "finish long options with choices"
-            COMPREPLY=("$cur=")
+            COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
@@ -129,7 +142,7 @@ _oyranos_profiles()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       WORD_LIST=("${WORD_LIST[@]}" -l --list-profiles -p --list-paths -I= --install= -t= --taxi= -h --help -X= --export= -V --version)
-      _oyra_complete_choices
+      COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return
     fi

@@ -5,16 +5,22 @@ _oyranos_profile_graph()
 
     #set -x -v
 
-    local SUB_COMMAND=""
+    local SUB_COMMAND
     if [[ ${COMP_WORDS[1]} != "" ]]; then
       SUB_COMMAND=${COMP_WORDS[1]}
+    fi
+
+    local SEARCH=${COMP_WORDS[COMP_CWORD]}
+    if [[ "$SEARCH" == "=" ]]; then
+      SEARCH=""
     fi
 
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
         --format) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('png' 'svg')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
@@ -25,37 +31,42 @@ _oyranos_profile_graph()
             for OYJL_TEXT in $OYJL_TEXTS
               do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
             done
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --illuminant) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('A' 'D50' 'D55' 'D65' 'D65T' 'D75' 'D93')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --spectral-format) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('png' 'svg' 'csv' 'ncc' 'cgats' 'icc-xml' 'ppm')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --swatch-format) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('png' 'svg' 'ncc')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --export) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
         --render) # long option with static args
+            local IFS=$'\n'
             local WORD_LIST=('gui' 'web' '-')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
             ;;
@@ -63,8 +74,9 @@ _oyranos_profile_graph()
     : "autocomplete options with choices for single letter options "$cur""
     case "$cur" in
         -f=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('png' 'svg')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
@@ -75,37 +87,42 @@ _oyranos_profile_graph()
             for OYJL_TEXT in $OYJL_TEXTS
               do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
             done
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -u=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('A' 'D50' 'D55' 'D65' 'D65T' 'D75' 'D93')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -p=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('png' 'svg' 'csv' 'ncc' 'cgats' 'icc-xml' 'ppm')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -m=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('png' 'svg' 'ncc')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -X=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
         -R=*) # single letter option with static args
+            local IFS=$'\n'
             local WORD_LIST=('gui' 'web' '-')
-            _oyra_complete_choices
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
             ;;
@@ -116,13 +133,13 @@ _oyranos_profile_graph()
     case "$cur" in
         -d|-f|-H|-L|-C|-l|-i|-I|-u|-k|-o|-p|-m|-P|-s|-t|-w|-X|-R)
             : "finish short options with choices"
-            COMPREPLY=("$cur=")
+            COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
         --change-thickness|--format|--hue|--lightness|--chroma|--background-lightness|--import|--index|--illuminant|--kelvin|--output|--spectral-format|--swatch-format|--pattern|--spectral|--thickness|--width|--export|--render)
             : "finish long options with choices"
-            COMPREPLY=("$cur=")
+            COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
@@ -208,10 +225,11 @@ _oyranos_profile_graph()
       local IFS=$'\n'
       local WORD_LIST=()
       for OYJL_TEXT in $OYJL_TEXTS
-        do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+        do WORD_LIST=("${WORD_LIST[@]}"
+"$OYJL_TEXT")
       done
       WORD_LIST=("${WORD_LIST[@]}" -H= --hue= -S --standard-observer -O --observer-64 -k= --kelvin= -u= --illuminant= -s= --spectral= -p= --spectral-format= -i= --import= -I= --index= -X= --export= -h --help -V --version -R= --render=)
-      _oyra_complete_choices
+      COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return
     fi
