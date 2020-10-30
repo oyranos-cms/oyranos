@@ -6,7 +6,7 @@ _oyranos_monitor_white_point()
     #set -x -v
 
     local SUB_COMMAND
-    if [[ ${COMP_WORDS[1]} != "" ]]; then
+    if [[ ${COMP_WORDS[1]} != "" ]] && [[ ${COMP_WORDS[2]} != "=" ]] && [[ $COMP_CWORD -gt 2 ]]; then
       SUB_COMMAND=${COMP_WORDS[1]}
     fi
 
@@ -25,7 +25,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         --white-point) # long option with dynamic args
-            local OYJL_TEXTS=$(oyranos_monitor_white_point $SUB_COMMAND --white-point=oyjl-list)
+            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --white-point=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -36,7 +36,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         --night-white-point) # long option with dynamic args
-            local OYJL_TEXTS=$(oyranos_monitor_white_point $SUB_COMMAND --night-white-point=oyjl-list)
+            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --night-white-point=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -47,7 +47,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         --sun-white-point) # long option with dynamic args
-            local OYJL_TEXTS=$(oyranos_monitor_white_point $SUB_COMMAND --sun-white-point=oyjl-list)
+            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --sun-white-point=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -58,7 +58,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         --night-effect) # long option with dynamic args
-            local OYJL_TEXTS=$(oyranos_monitor_white_point $SUB_COMMAND --night-effect=oyjl-list)
+            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --night-effect=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -69,7 +69,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         --sunlight-effect) # long option with dynamic args
-            local OYJL_TEXTS=$(oyranos_monitor_white_point $SUB_COMMAND --sunlight-effect=oyjl-list)
+            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --sunlight-effect=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -99,6 +99,61 @@ _oyranos_monitor_white_point()
         -d=*) # single letter option with static args
             local IFS=$'\n'
             local WORD_LIST=('0' '1' '2')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -w=*) # single letter option with dynamic args
+            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --white-point=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -n=*) # single letter option with dynamic args
+            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --night-white-point=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -s=*) # single letter option with dynamic args
+            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --sun-white-point=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -g=*) # single letter option with dynamic args
+            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --night-effect=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -e=*) # single letter option with dynamic args
+            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --sunlight-effect=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
@@ -197,6 +252,7 @@ _oyranos_monitor_white_point()
 
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
+      local WORD_LIST=()
       WORD_LIST=("${WORD_LIST[@]}" -s= --sun-white-point= -e= --sunlight-effect= -n= --night-white-point= -g= --night-effect= -b= --night-backlight= -w= --white-point= -a= --automatic= -l --location -i= --latitude= -o= --longitude= -d= --daemon= -m --modes -r --sunrise -X= --export= -h --help -V --version -R= --render=)
       COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v

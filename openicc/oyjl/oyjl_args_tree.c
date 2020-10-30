@@ -1405,7 +1405,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "    #set -x -v\n" );
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "    local SUB_COMMAND\n" );
-    oyjlStrAdd( s, "    if [[ ${COMP_WORDS[1]} != \"\" ]]; then\n" );
+    oyjlStrAdd( s, "    if [[ ${COMP_WORDS[1]} != \"\" ]] && [[ ${COMP_WORDS[2]} != \"=\" ]] && [[ $COMP_CWORD -gt 2 ]]; then\n" );
     oyjlStrAdd( s, "      SUB_COMMAND=${COMP_WORDS[1]}\n" );
     oyjlStrAdd( s, "    fi\n" );
     oyjlStrAdd( s, "\n" );
@@ -1432,12 +1432,23 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_FUNCTION") == 0)
       {
         const char * getChoices;
+        int use_getChoicesCompletionBash = 0;
         v = oyjlTreeGetValue( val, 0, "values/getChoicesCompletionBash" ); getChoices = OYJL_GET_STRING(v);
         if(getChoices)
         {
+          use_getChoicesCompletionBash = 1;
           oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoicesCompletionBash: `%s` for --%s", getChoices, oyjlTermColor( oyjlITALIC, option ) );
+        } else
+        {
+          v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);
+        }
+        if(getChoices)
+        {
           oyjlStrAdd( s, "        --%s) # long option with dynamic args\n", option );
-          oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s)\n", getChoices );
+          if(use_getChoicesCompletionBash)
+            oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s)\n", getChoices );
+          else
+            oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s $SUB_COMMAND --%s=oyjl-list)\n", nick_, option );
           oyjlStrAdd( s, "            local IFS=$'\\n'\n" );
           oyjlStrAdd( s, "            local WORD_LIST=()\n" );
           oyjlStrAdd( s, "            for OYJL_TEXT in $OYJL_TEXTS\n" );
@@ -1447,33 +1458,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           oyjlStrAdd( s, "            set +x +v\n" );
           oyjlStrAdd( s, "            return\n" );
           oyjlStrAdd( s, "            ;;\n" );
-        }
-        else
-        {
-          v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);
-          if(getChoices)
-          {
-            const char * value = NULL;
-            oyjlOption_s * opt = oyjlOptions_GetOptionL( ui->opts, option );
-            oyjlOptions_GetResult( ui->opts, option, &value, 0, 0 );
-            if(opt && opt->value_type == oyjlOPTIONTYPE_FUNCTION)
-            {
-              oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoices: `%s` for --%s", getChoices, oyjlTermColor( oyjlITALIC, option ) );
-              oyjlStrAdd( s, "        --%s) # long option with dynamic args\n", option );
-              oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s $SUB_COMMAND --%s=oyjl-list)\n", func, option );
-              oyjlStrAdd( s, "            local IFS=$'\\n'\n" );
-              oyjlStrAdd( s, "            local WORD_LIST=()\n" );
-              oyjlStrAdd( s, "            for OYJL_TEXT in $OYJL_TEXTS\n" );
-              oyjlStrAdd( s, "              do WORD_LIST=(\"${WORD_LIST[@]}\" \"$OYJL_TEXT\")\n" );
-              oyjlStrAdd( s, "            done\n" );
-              oyjlStrAdd( s, "            COMPREPLY=($(compgen -W '\"${WORD_LIST[@]}\"' -- \"$cur\"))\n" );
-              oyjlStrAdd( s, "            set +x +v\n" );
-              oyjlStrAdd( s, "            return\n" );
-              oyjlStrAdd( s, "            ;;\n" );
-
-              /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
-            }
-          }
         }
       } else
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_CHOICE") == 0)
@@ -1524,7 +1508,16 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_FUNCTION") == 0)
       {
         const char * getChoices;
+        int use_getChoicesCompletionBash = 0;
         v = oyjlTreeGetValue( val, 0, "values/getChoicesCompletionBash" ); getChoices = OYJL_GET_STRING(v);
+        if(getChoices)
+        {
+          use_getChoicesCompletionBash = 1;
+          oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoicesCompletionBash: `%s` for -%s", getChoices, oyjlTermColor( oyjlITALIC, o ) );
+        } else
+        {
+          v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);
+        }
         if(!getChoices)
           continue;
         if(strcmp(o,"@") == 0)
@@ -1533,7 +1526,10 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         {
           oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoicesCompletionBash: `%s` for -%s\n", getChoices, oyjlTermColor( oyjlITALIC, o ) );
           oyjlStrAdd( s, "        -%s=*) # single letter option with dynamic args\n", o );
-          oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s)\n", getChoices );
+          if(use_getChoicesCompletionBash)
+            oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s)\n", getChoices );
+          else
+            oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s $SUB_COMMAND --%s=oyjl-list)\n", nick_, option );
           oyjlStrAdd( s, "            local IFS=$'\\n'\n" );
           oyjlStrAdd( s, "            local WORD_LIST=()\n" );
           oyjlStrAdd( s, "            for OYJL_TEXT in $OYJL_TEXTS\n" );
@@ -1826,12 +1822,12 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "    : \"suggest mandatory options on first args only\"\n" );
     oyjlStrAdd( s, "    if [[ \"${COMP_WORDS[2]}\" == \"\" ]]; then\n" );
+    oyjlStrAdd( s, "      local WORD_LIST=()\n" );
     found = 0;
     if(found_at_arg_func)
     {
         oyjlStrAdd( s, "      local OYJL_TEXTS=$(%s)\n", found_at_arg_func );
         oyjlStrAdd( s, "      local IFS=$'\\n'\n" );
-        oyjlStrAdd( s, "      local WORD_LIST=()\n" );
         oyjlStrAdd( s, "      for OYJL_TEXT in $OYJL_TEXTS\n" );
         oyjlStrAdd( s, "        do WORD_LIST=(\"${WORD_LIST[@]}\"\n\"$OYJL_TEXT\")\n" );
         oyjlStrAdd( s, "      done\n" );
