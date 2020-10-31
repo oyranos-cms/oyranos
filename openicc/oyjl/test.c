@@ -726,7 +726,9 @@ oyjlTESTRESULT_e testJsonRoundtrip ()
   root = oyjlTreeParseXml( text_to_xml, OYJL_NUMBER_DETECTION, error_buffer, 128 );
   level = 0;
   oyjlTreeToJson( root, &level, &text_from_xml );
-  if(text && text_from_xml && strlen(text_from_xml) == strlen(text))
+  int text_from_xml_size = strlen(text_from_xml),
+      text_size = strlen(text);
+  if(text && text_from_xml && text_from_xml_size == text_size)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeToXml () <-> oyjlTreeParseXml ()        " );
   } else
