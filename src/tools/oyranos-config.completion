@@ -17,6 +17,28 @@ _oyranos_config()
 
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
+        --get) # long option with dynamic args
+            local OYJL_TEXTS=$(oyranos-config $SUB_COMMAND --get=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --set) # long option with dynamic args
+            local OYJL_TEXTS=$(oyranos-config $SUB_COMMAND --set=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --daemon) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('0' '1')
@@ -48,6 +70,28 @@ _oyranos_config()
     esac
     : "autocomplete options with choices for single letter options "$cur""
     case "$cur" in
+        -g=*) # single letter option with dynamic args
+            local OYJL_TEXTS=$(oyranos-config $SUB_COMMAND --get=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -s=*) # single letter option with dynamic args
+            local OYJL_TEXTS=$(oyranos-config $SUB_COMMAND --set=oyjl-list)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
         -d=*) # single letter option with static args
             local IFS=$'\n'
             local WORD_LIST=('0' '1')

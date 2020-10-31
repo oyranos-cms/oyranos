@@ -80,6 +80,117 @@ static void oyConfigCallbackDBus     ( double              progress_zero_till_on
 
 #endif /* HAVE_DBUS */
 
+static oyjlOptionChoice_s * choicesFromStringList ( char ** list, int n )
+{
+  oyjlOptionChoice_s * c = NULL;
+  int i;
+
+  if(list && n > 0)
+  {
+    c = calloc(n+1, sizeof(oyjlOptionChoice_s));
+    if(c)
+    {
+      for(i = 0; i < n; ++i)
+      {
+        c[i].nick = strdup( list[i] );
+        c[i].name = strdup(_(""));
+        c[i].description = strdup("");
+        c[i].help = strdup("");
+      }
+    }
+  }
+
+  return c;
+}
+
+#if 0
+static oyjlOptionChoice_s * choicesFromCommand ( const char * command )
+{
+  oyjlOptionChoice_s * c = NULL;
+
+  int size = 0, i,n = 0;
+  char * result = oyjlReadCommandF( &size, "r", malloc, command );
+  char ** list = oyjlStringSplit( result, '\n', &n, 0 );
+
+  if(list)
+  {
+    c = choicesFromStringList( list, n );
+    oyjlStringListRelease( &list, n, free );
+  }
+
+  return c;
+}
+static oyjlOptionChoice_s * listKeys ( oyjlOption_s * o OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
+{
+  return choicesFromCommand("oyranos-config -l");
+}
+#else
+static char ** getDBPaths( oySCOPE_e scope, int * n )
+{
+  char * p = oyGetInstallPath( oyPATH_POLICY, scope, oyAllocateFunc_ );
+  char ** paths = NULL;
+
+    if(p)
+    {
+      size_t size = 0;
+      int count = 0;
+      char * db;
+      STRING_ADD( p, "/openicc.json" );
+      db = oyReadFileToMem_( p, &size, oyAllocateFunc_ );
+      if(db)
+      {
+        char error_buffer[128] = {0};
+        oyjl_val root = oyjlTreeParse( db, error_buffer, 128 );
+
+        oyjlTreeToPaths( root, 1000000, NULL, OYJL_KEY, &paths );
+        while(paths && paths[count]) ++count;
+        *n = count;
+
+        oyFree_m_(db);
+      }
+      oyFree_m_(p);
+    }
+
+  return paths;
+}
+static oyjlOptionChoice_s * listKeys ( oyjlOption_s * o OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
+{
+  int count = 0;
+  char ** paths = getDBPaths( oySCOPE_USER, &count );
+  oyjlOptionChoice_s * c = NULL;
+
+  c = choicesFromStringList( paths, count );
+  oyjlStringListRelease( &paths, count, free );
+
+  return c;
+}
+char ** getDBVals( oySCOPE_e scope, int *n )
+{
+  int count = 0, i;
+  char ** paths = getDBPaths( scope, &count );
+
+  for(i = 0; i < count; ++i)
+  {
+    char * key = paths[i];
+    char * v = oyGetPersistentString( key, 0, scope, malloc );
+    oyjlStringAdd( &key, 0,0, ":%s", v );
+    paths[i] = key;
+  }
+  *n = count;
+
+  return paths;
+}
+static oyjlOptionChoice_s * listVals ( oyjlOption_s * o OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
+{
+  int count = 0;
+  char ** paths = getDBVals( oySCOPE_USER, &count );
+  oyjlOptionChoice_s * c = choicesFromStringList( paths, count );
+  oyjlStringListRelease( &paths, count, free );
+
+  return c;
+}
+#endif
+
 const char * jcommands = "{\n\
   \"command_set\": \"oyranos-config\",\n\
   \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
@@ -165,9 +276,9 @@ int myMain( int argc , const char** argv )
     {"oiwi", 0,                          "l","list",          NULL,     _("paths"),    _("List existing paths"),     NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "g","get",           NULL,     _("get"),      _("Get a Value"),             NULL, _("XPATH"),         
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&get}},
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices=listKeys}, oyjlSTRING,{.s=&get}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","set",           NULL,     _("set"),      _("Set a Value"),             NULL, _("XPATH:VALUE"),   
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&set}},
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices=listVals}, oyjlSTRING,{.s=&set}},
     {"oiwi", 0,                          "d","daemon",        NULL,     _("daemon"),   _("Watch DB changes"),        NULL, _("0|1"),           
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)d_choices, sizeof(d_choices), malloc ), 0}}, oyjlINT,       {.i=&daemon}},
     {"oiwi", 0,                          "z","system-wide",   NULL,     _("system wide"),_("System wide DB setting"),  NULL, NULL,               
@@ -377,38 +488,19 @@ int myMain( int argc , const char** argv )
 
   if(list)
   {
-    char * p;
+    int count = 0, i;
+    char ** paths;
+
     if(scope == oySCOPE_USER_SYS) scope = oySCOPE_USER;
-    p = oyGetInstallPath( oyPATH_POLICY, scope, oyAllocateFunc_ );
+    if(verbose)
+      paths = getDBVals( scope, &count );
+    else
+      paths = getDBPaths( scope, &count );
 
-    if(p)
-    {
-      size_t size = 0;
-      STRING_ADD( p, "/openicc.json" );
-      v = oyReadFileToMem_( p, &size, oyAllocateFunc_ );
-      if(v)
-      {
-        char ** paths = NULL;
-        char error_buffer[128] = {0};
-        oyjl_val root = oyjlTreeParse( v, error_buffer, 128 );
+    for(i = 0; i < count; ++i)
+      fprintf(stdout,"%s\n", paths[i]);
 
-        oyjlTreeToPaths( root, 1000000, NULL, OYJL_KEY, &paths );
-        while(paths && paths[count]) ++count;
-
-        for(i = 0; i < count; ++i)
-        {
-          if(verbose)
-          {
-            getKey( paths[i], scope, verbose, 1 );
-          } else
-            fprintf(stdout,"%s\n", paths[i]);
-        }
-
-        oyjlStringListRelease( &paths, count, free );
-        oyFree_m_(v);
-      }
-      oyFree_m_(p);
-    }
+    oyjlStringListRelease( &paths, count, free );
   }
 
   if(get)
