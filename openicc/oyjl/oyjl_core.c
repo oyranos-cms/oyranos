@@ -700,12 +700,12 @@ int          oyjlStringToDouble      ( const char        * text,
   {
     *value = NAN;
     error = 1;
-    return error;
+    goto clean_oyjlStringToDouble;
   }
 
   /* avoid irritating valgrind output of "Invalid read of size 8"
    * might be a glibc error or a false positive in valgrind */
-  oyjlAllocHelper_m( t, char, len + 2*sizeof(double) + 1, malloc, return 1);
+  oyjlAllocHelper_m( t, char, len + 2*sizeof(double) + 1, malloc, error = 1; goto clean_oyjlStringToDouble);
   memset( t, 0, len + 2*sizeof(double) + 1 );
 
   /* remove leading empty space */
@@ -713,11 +713,6 @@ int          oyjlStringToDouble      ( const char        * text,
   memcpy( t, &text[pos], len );
 
   *value = strtod( t, &end );
-
-#ifdef OYJL_HAVE_LOCALE_H
-  setlocale(LC_NUMERIC, save_locale);
-  if(save_locale) free( save_locale );
-#endif
 
   if(end && end != text && !isdigit(end[0]) )
     error = 0;
@@ -727,7 +722,14 @@ int          oyjlStringToDouble      ( const char        * text,
     error = 2;
   }
 
-  free( t );
+clean_oyjlStringToDouble:
+
+#ifdef OYJL_HAVE_LOCALE_H
+  setlocale(LC_NUMERIC, save_locale);
+  if(save_locale) free( save_locale );
+#endif
+
+  if(t) free( t );
 
   return error;
 }

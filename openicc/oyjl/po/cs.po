@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-10-29 08:52+0100\n"
+"POT-Creation-Date: 2020-10-31 07:46+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -210,7 +210,7 @@ msgstr ""
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:914 oyjl_core.c:2183 test-core.c:129 test.c:141 test.c:175
+#: oyjl_args.c:914 oyjl_core.c:2185 test-core.c:129 test.c:141 test.c:175
 #: test.c:222 test.c:241
 msgid "Example"
 msgstr "Příklad"
@@ -359,7 +359,7 @@ msgstr ""
 msgid "Help"
 msgstr "Nápověda"
 
-#: oyjl_core.c:2301
+#: oyjl_core.c:2303
 #, fuzzy
 msgid "Information"
 msgstr "Informace:"
@@ -819,7 +819,7 @@ msgstr "Tiskárna CUPS"
 msgid "Program Error:"
 msgstr ""
 
-#: oyjl_core.c:1483
+#: oyjl_core.c:1485
 #, fuzzy
 msgid "Program not found"
 msgstr "profil nenalezen:"
