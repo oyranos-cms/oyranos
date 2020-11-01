@@ -454,7 +454,7 @@ int      oyjlStringToLong            ( const char        * text,
 {
   char * end = 0;
   *value = strtol( text, &end, 0 );
-  if(end && end != text && end[0] == '\000' )
+  if(end && end != text && isdigit(text[0]) && !isdigit(end[0]) )
     return 0;
   else
     return 1;
@@ -462,7 +462,7 @@ int      oyjlStringToLong            ( const char        * text,
 int          oyjlStringToDouble      ( const char        * text,
                                        double            * value )
 {
-  char * p = NULL, * t = NULL;
+  char * end = NULL, * t = NULL;
   int len, pos = 0;
   int error = -1;
 #ifdef OYJL_HAVE_LOCALE_H
@@ -476,34 +476,36 @@ int          oyjlStringToDouble      ( const char        * text,
   {
     *value = NAN;
     error = 1;
-    return error;
+    goto clean_oyjlStringToDouble;
   }
 
   /* avoid irritating valgrind output of "Invalid read of size 8"
    * might be a glibc error or a false positive in valgrind */
-  oyjlAllocHelper_m( t, char, len + 2*sizeof(double) + 1, malloc, return 1);
+  oyjlAllocHelper_m( t, char, len + 2*sizeof(double) + 1, malloc, error = 1; goto clean_oyjlStringToDouble);
   memset( t, 0, len + 2*sizeof(double) + 1 );
 
   /* remove leading empty space */
   while(text[pos] && isspace(text[pos])) pos++;
   memcpy( t, &text[pos], len );
 
-  *value = strtod( t, &p );
+  *value = strtod( t, &end );
+
+  if(end && end != text && isdigit(text[0]) && !isdigit(end[0]) )
+    error = 0;
+  else if(end && end == t)
+  {
+    *value = NAN;
+    error = 2;
+  }
+
+clean_oyjlStringToDouble:
 
 #ifdef OYJL_HAVE_LOCALE_H
   setlocale(LC_NUMERIC, save_locale);
   if(save_locale) free( save_locale );
 #endif
 
-  if(p && p != t && p[0] == '\000')
-    error = 0;
-  else if(p && p == t)
-  {
-    *value = NAN;
-    error = 2;
-  }
-
-  free( t );
+  if(t) free( t );
 
   return error;
 }

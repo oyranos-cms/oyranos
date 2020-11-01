@@ -394,6 +394,16 @@ oyjlTESTRESULT_e testString ()
     "oyjlStringToDouble(\"0.2#\") = %g  error = %d          ", d, error );
   }
 
+  d = 0.0;
+  error = oyjlStringToDouble( "val_a", &d );
+  if( error )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringToDouble(\"val_a\")   error: %d              ", error );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringToDouble(\"val_a\") = %g  error = %d         ", d, error );
+  }
+
   double * doubles = NULL;
   int count = 0;
   error = oyjlStringsToDoubles( "0.2 1 3.5", " ", &count, malloc, &doubles );
