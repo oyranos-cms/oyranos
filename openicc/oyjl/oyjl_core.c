@@ -663,7 +663,7 @@ int      oyjlStringToLong            ( const char        * text,
 {
   char * end = 0;
   *value = strtol( text, &end, 0 );
-  if(end && end != text && !isdigit(end[0]) )
+  if(end && end != text && isdigit(text[0]) && !isdigit(end[0]) )
     return 0;
   else
     return 1;
@@ -714,7 +714,7 @@ int          oyjlStringToDouble      ( const char        * text,
 
   *value = strtod( t, &end );
 
-  if(end && end != text && !isdigit(end[0]) )
+  if(end && end != text && isdigit(text[0]) && !isdigit(end[0]) )
     error = 0;
   else if(end && end == t)
   {
