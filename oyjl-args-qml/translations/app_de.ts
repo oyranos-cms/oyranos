@@ -144,12 +144,12 @@
         <translation>alt/neu</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="327"/>
+        <location filename="../qml/OptionsList.qml" line="340"/>
         <source>Multiple Options Hint</source>
         <translation>Hinweis für Mehrfachoptionen</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="329"/>
+        <location filename="../qml/OptionsList.qml" line="342"/>
         <source>Enter first value, append &apos;;&apos; and confirm. The final &apos;;&apos; is not executed. Then select next value. Repeat as needed. A final confirm without ending &apos;;&apos; can execute.</source>
         <translation>Zunächst einen Wert eingeben, dann ein Semikolon &apos;;&apos; anhängen und bestätigen. Anschließend den nächsten Wert wählen. Das Auswählen bei Bedarf wiederholen. Ein Bestätigen ohne Semikolon  &apos;;&apos; am Ende kann den Befehl ausführen.</translation>
     </message>
@@ -174,22 +174,22 @@
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="893"/>
+        <location filename="../qml/main.qml" line="898"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="945"/>
+        <location filename="../qml/main.qml" line="950"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="945"/>
+        <location filename="../qml/main.qml" line="950"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="947"/>
+        <location filename="../qml/main.qml" line="952"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>

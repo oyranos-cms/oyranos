@@ -2909,6 +2909,8 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   results = ui->opts->private_data;
   if(!results || !results->values)
     opt_state = oyjlOptions_Parse( ui->opts );
+  if(opt_state == oyjlOPTION_NOT_SUPPORTED)
+    goto FromOptions_done;
   results = ui->opts->private_data;
 
   X = oyjlOptions_GetOption( ui->opts, "X" );
@@ -3205,6 +3207,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   }
   /* done with options handling */
 
+  FromOptions_done:
   /* ... and report detected errors */
   if(!export && !version && opt_state != oyjlOPTION_NONE)
   {
