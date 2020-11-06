@@ -113,6 +113,31 @@ void     oyjlOptions_SetAttributes   ( oyjlOptions_s     * opts,
   }
 }
 
+/** @brief    Release "oiui" completely
+ *  @memberof oyjlUi_s
+ *
+ *  Release oyjlUi_s::opts, oyjlUi_s::private_data, oyjlUi_s and
+ *  tree objects.
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/11/06
+ *  @since   2020/11/06 (Oyjl: 1.0.0)
+ */
+
+void           oyjlUi_Release     ( oyjlUi_s      ** ui )
+{
+  if(!ui || !*ui) return;
+  if( *(oyjlOBJECT_e*)*ui != oyjlOBJECT_UI)
+  {
+    char * a = (char*)*ui;
+    char type[5] = {a[0],a[1],a[2],a[3],0};
+    fprintf(stderr, "Unexpected object: \"%s\"(expected: \"oyjlUi_s\")\n", type );
+    return;
+  }
+  oyjlOptions_SetAttributes( (*ui)->opts, NULL );
+  oyjlUi_ReleaseArgs( ui );
+}
+
 #define CASE_RETURN_ENUM( text_ ) case text_: return #text_;
 static const char * oyjlOPTIONTYPE_eToString_( oyjlOPTIONTYPE_e e )
 {

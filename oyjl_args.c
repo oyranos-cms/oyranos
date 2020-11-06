@@ -2617,6 +2617,7 @@ oyjlUi_s *         oyjlUi_Copy       ( oyjlUi_s          * src )
         results_dst->values = (const char**)oyjlStringAppendN( NULL, (const char*)results->values, n+1, malloc );;
       }
       results_dst->group = results->group;
+      results_dst->memory_allocation = oyjlMEMORY_ALLOCATION_OPTIONS;
       ui->opts->private_data = results_dst;
     }
   }
@@ -3088,7 +3089,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       (opt_state == oyjlOPTION_MISSING_VALUE && results && results->group >= 0) )
   {
     oyjlOptions_PrintHelp( ui->opts, ui, results && results->group >= 0?-1:-2, NULL );
-    oyjlUi_Release( &ui);
+    oyjlUi_ReleaseArgs( &ui);
     if(status)
       *status |= oyjlUI_STATE_HELP;
     return NULL;
@@ -3107,7 +3108,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   {
     oyjlOption_s * synopsis = oyjlOptions_GetOptionL( ui->opts, "synopsis" );
     oyjlOptions_PrintHelp( ui->opts, ui, (results && results->group >= 0) ? -1 : (results && results->count >= 1 && strcasecmp(results->values[0],"synopsis") == 0 && synopsis) ? -2 : verbose, NULL );
-    oyjlUi_Release( &ui);
+    oyjlUi_ReleaseArgs( &ui);
     if(status)
       *status |= oyjlUI_STATE_HELP;
     return NULL;
@@ -3137,7 +3138,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
                                       copyright && copyright->name ? copyright->name : "",
                                       license ? _("License"):"", license?":\t":"", license && license->name ? license->name : "",
                                       author ? _("Author"):"", author?": \t":"", author && author->name ? author->name : "" );
-    oyjlUi_Release( &ui);
+    oyjlUi_ReleaseArgs( &ui);
     free(prog);
     if(v) free(v);
     if(status)
@@ -3153,7 +3154,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     {
       t = oyjlUi_ToJson( ui, flags );
       if(t) puts( t );
-      oyjlUi_Release( &ui);
+      oyjlUi_ReleaseArgs( &ui);
       return NULL;
     }
 #endif
@@ -3161,21 +3162,21 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     {
       t = oyjlUi_ToMan( ui, flags );
       if(t) puts( t );
-      oyjlUi_Release( &ui);
+      oyjlUi_ReleaseArgs( &ui);
       return NULL;
     }
     if(strcmp(export, "markdown") == 0)
     {
       t = oyjlUi_ToMarkdown( ui, flags );
       if(t) puts( t );
-      oyjlUi_Release( &ui);
+      oyjlUi_ReleaseArgs( &ui);
       return NULL;
     }
 #if defined(OYJL_INTERNAL)
     if(strcmp(export, "export") == 0)
     {
       puts( oyjlUi_ExportToJson( ui, flags ) );
-      oyjlUi_Release( &ui);
+      oyjlUi_ReleaseArgs( &ui);
       return NULL;
     }
 #endif
@@ -3201,7 +3202,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
 
       if(status)
         *status |= oyjlUI_STATE_EXPORT;
-      oyjlUi_Release( &ui);
+      oyjlUi_ReleaseArgs( &ui);
       return NULL;
     }
   }
@@ -3214,7 +3215,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     fputs( "\n", stderr );
     fputs( _("... try with --help|-h option for usage text. give up"), stderr );
     fputs( "\n", stderr );
-    oyjlUi_Release( &ui);
+    oyjlUi_ReleaseArgs( &ui);
     if(status)
       *status = opt_state << oyjlUI_STATE_OPTION;
     return NULL;
@@ -3300,7 +3301,7 @@ oyjlUi_s *  oyjlUi_Create            ( int                 argc,
  *  @date    2018/08/14
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-void           oyjlUi_Release     ( oyjlUi_s      ** ui )
+void           oyjlUi_ReleaseArgs ( oyjlUi_s      ** ui )
 {
   int memory_allocation = 0;
   if(!ui || !*ui) return;

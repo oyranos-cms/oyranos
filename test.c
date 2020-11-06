@@ -948,6 +948,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlUi_ImportFromJson()                %lu", text?strlen(text):0 );
   }
+  if(ui) oyjlOptions_SetAttributes( ui->opts, NULL );
   oyjlUi_Release( &ui);
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ImportFromJson", "txt" )
   if(verbose && text)
@@ -1160,6 +1161,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson-de", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
+  if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ExportToJson( ui, 0 );
   if(text && strlen(text) == 6815)
@@ -1206,6 +1208,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson-back", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
+  if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ExportToJson( ui, 0 );
   if(text && strlen(text) == 6809)
