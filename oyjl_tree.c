@@ -1712,7 +1712,7 @@ char *         oyjlTranslate         ( const char        * loc,
   const char * translated = NULL;
   oyjl_val v;
 
-  if(!loc || strcmp(loc,"C") == 0 || !catalog || !text)
+  if(!loc || strcmp(loc,"C") == 0 || !catalog || !text || (text && !text[0]))
     return (char*)text;
 
   if(strcmp(loc,"back") == 0 && text[0])

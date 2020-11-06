@@ -172,6 +172,15 @@ oyjlTESTRESULT_e testI18N()
   }\n\
 }";
   oyjl_val catalog = oyjlTreeParse( json, NULL, 0 );
+  text = _("");
+  if(strcmp(text,"") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"          ", lang, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"          ", lang, text );
+  }
+
   text = _("Example");
   if(strcmp(text,"Beispiel") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -1187,7 +1196,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   oyjlTranslate_f tr = oyjlTranslate;
   oyjlUi_Translate( ui, "back", oyjlCatalog(&catalog), tr );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7286)
+  if(text && strlen(text) == 7280)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson(back)                  %lu", text?strlen(text):0 );
   } else
@@ -1213,7 +1222,7 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   oyjlUi_Translate( ui, "cs_CZ", oyjlCatalog(&catalog), tr );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7417)
+  if(text && strlen(text) == 7411)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson(cs)                    %lu", text?strlen(text):0 );
   } else
@@ -1226,7 +1235,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6888)
+  if(text && strlen(text) == 6882)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson(cs)              %lu", text?strlen(text):0 );
   } else
