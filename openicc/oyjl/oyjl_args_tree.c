@@ -2309,29 +2309,29 @@ void               oyjlUi_Translate  ( oyjlUi_s          * ui,
   if(!translator)
     translator = oyjlTranslate;
 
-#define tr( text ) ui->text = translator(loc, catalog, ui->text)
-  tr(name);
-  tr(description);
+#define tr( text ) text = translator(loc, catalog, text)
+  tr(ui->name);
+  tr(ui->description);
   n = oyjlUiHeaderSection_Count( ui->sections );
   for(i = 0; i < n; ++i)
   {
     oyjlUiHeaderSection_s * s = &ui->sections[i];
     if(s->label)
-      tr(sections[i].label);
+      tr(ui->sections[i].label);
     if(s->name)
-      tr(sections[i].name);
+      tr(ui->sections[i].name);
     if(s->description)
-      tr(sections[i].description);
+      tr(ui->sections[i].description);
   }
 
   int nopts = oyjlOptions_Count( ui->opts );
   for(i = 0; i < nopts; ++i)
   {
     oyjlOption_s * o = &ui->opts->array[i];
-    tr(opts->array[i].name);
-    tr(opts->array[i].description);
-    tr(opts->array[i].help);
-    tr(opts->array[i].value_name);
+    tr(ui->opts->array[i].name);
+    tr(ui->opts->array[i].description);
+    tr(ui->opts->array[i].help);
+    tr(ui->opts->array[i].value_name);
     switch(o->value_type)
     {
       case oyjlOPTIONTYPE_CHOICE:
@@ -2339,9 +2339,9 @@ void               oyjlUi_Translate  ( oyjlUi_s          * ui,
         if(n)
           for(j = 0; j < n; ++j)
           {
-            tr(opts->array[i].values.choices.list[j].name);
-            tr(opts->array[i].values.choices.list[j].description);
-            tr(opts->array[i].values.choices.list[j].help);
+            tr(ui->opts->array[i].values.choices.list[j].name);
+            tr(ui->opts->array[i].values.choices.list[j].description);
+            tr(ui->opts->array[i].values.choices.list[j].help);
           }
         break;
       case oyjlOPTIONTYPE_FUNCTION:
@@ -2356,9 +2356,9 @@ void               oyjlUi_Translate  ( oyjlUi_s          * ui,
   ng = oyjlOptions_CountGroups( ui->opts );
   for(i = 0; i < ng; ++i)
   {
-    tr(opts->groups[i].name);
-    tr(opts->groups[i].description);
-    tr(opts->groups[i].help);
+    tr(ui->opts->groups[i].name);
+    tr(ui->opts->groups[i].description);
+    tr(ui->opts->groups[i].help);
   }
 #undef tr
 }
