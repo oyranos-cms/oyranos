@@ -239,7 +239,7 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "SynopsisMode9: %s\n", syn );
   free(syn);
 
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
 
   const char * argv_multiple_mandatory[] = {"test","-b","--candle"};
   int argc_multiple_mandatory = 2;
@@ -253,7 +253,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui created - multiple mandatory args; argc = %d ", argc_multiple_mandatory );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
 
   ++argc_multiple_mandatory;
   ui = oyjlUi_Create( argc_multiple_mandatory, argv_multiple_mandatory, /* argc+argv are required for parsing the command line options */
@@ -266,7 +266,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui created - multiple mandatory args; argc = %d ", argc_multiple_mandatory );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
 
 
   char * text;
@@ -298,7 +298,7 @@ oyjlTESTRESULT_e testArgs()
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
   for(i = 0; i < count; ++i)
     fprintf( zout, "%s\n", results[i] );
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
   oyjlStringListRelease( &results, count, 0 );
 
   /* declare option groups, for better syntax checking and UI groups */
@@ -321,7 +321,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui not created - missing mandatory option      " );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
 
   argc = 3;
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
@@ -334,7 +334,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui not created - missing arg                   " );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
 
   argc = 4;
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
@@ -347,7 +347,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui created - parse string                      " );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
 
   argc = 5;
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
@@ -360,7 +360,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui not created - wrong arg                     " );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
 
 
   argc = 4;
@@ -435,10 +435,10 @@ oyjlTESTRESULT_e testArgs()
                             "1.0", "Test Tool for testing" );
   }
 
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
   char * wrong = "test";
-  fprintf(stdout, "oyjlUi_Release(&\"test\") - should give a warning message:\n" );
-  oyjlUi_Release( (oyjlUi_s **)&wrong);
+  fprintf(stdout, "oyjlUi_ReleaseArgs(&\"test\") - should give a warning message:\n" );
+  oyjlUi_ReleaseArgs( (oyjlUi_s **)&wrong);
 
   verbose_ = 0;
   const char * helpstr = NULL;
@@ -470,7 +470,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui not created - sub command followed by undeclared unbound" );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
   help = 0;
 
   oarray2[2].flags = OYJL_OPTION_FLAG_EDITABLE | OYJL_OPTION_FLAG_ACCEPT_NO_ARG;
@@ -489,7 +489,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "help - sub command followed by unbound    %d  ", size );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "help-subCommandFollowedByUnbound", "txt" )
   help = 0; size = 0;
   free(text); text = NULL;
@@ -509,7 +509,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "help - mandatory sub command followed by unbound" );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "help-mandatorySubCommandFollowedByUnbound", "txt" )
   help = 0; size = 0;
   free(text); text = NULL;
@@ -533,7 +533,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "help - mandatory integer sub command followed by unbound %d 0x%tx", size, (ptrdiff_t)ui );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "help-mandatoryIntegerSubCommandFollowedByUnbound", "txt" )
   help = 0; size = 0;
   free(text); text = NULL;
@@ -553,7 +553,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "help - mandatory integer sub command      %d  ", size );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "help-mandatoryIntegerSubCommand", "txt" )
   help = 0; size = 0;
   free(text); text = NULL;
@@ -587,7 +587,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui not created - multiple sub commands in one group" );
   }
-  oyjlUi_Release( &ui);
+  oyjlUi_ReleaseArgs( &ui);
   help = 0;
 
 
