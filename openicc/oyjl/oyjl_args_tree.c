@@ -1429,11 +1429,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "    #set -x -v\n" );
     oyjlStrAdd( s, "\n" );
-    oyjlStrAdd( s, "    local SUB_COMMAND\n" );
-    oyjlStrAdd( s, "    if [[ ${COMP_WORDS[1]} != \"\" ]] && [[ ${COMP_WORDS[2]} != \"=\" ]] && [[ $COMP_CWORD -gt 2 ]]; then\n" );
-    oyjlStrAdd( s, "      SUB_COMMAND=${COMP_WORDS[1]}\n" );
-    oyjlStrAdd( s, "    fi\n" );
-    oyjlStrAdd( s, "\n" );
     oyjlStrAdd( s, "    local SEARCH=${COMP_WORDS[COMP_CWORD]}\n" );
     oyjlStrAdd( s, "    if [[ \"$SEARCH\" == \"=\" ]]; then\n" );
     oyjlStrAdd( s, "      SEARCH=\"\"\n" );
@@ -1462,7 +1457,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(getChoices)
         {
           use_getChoicesCompletionBash = 1;
-          oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoicesCompletionBash: `%s` for --%s", getChoices, oyjlTermColor( oyjlITALIC, option ) );
+          if(*oyjl_debug)
+            oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoicesCompletionBash: `%s` for --%s", getChoices, oyjlTermColor( oyjlITALIC, option ) );
         } else
         {
           v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);
@@ -1473,7 +1469,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           if(use_getChoicesCompletionBash)
             oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s)\n", getChoices );
           else
-            oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s $SUB_COMMAND --%s=oyjl-list)\n", nick_, option );
+            oyjlStrAdd( s, "            local OYJL_TEXTS=$(${COMP_LINE} --%s=oyjl-list)\n", option );
           oyjlStrAdd( s, "            local IFS=$'\\n'\n" );
           oyjlStrAdd( s, "            local WORD_LIST=()\n" );
           oyjlStrAdd( s, "            for OYJL_TEXT in $OYJL_TEXTS\n" );
@@ -1538,7 +1534,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(getChoices)
         {
           use_getChoicesCompletionBash = 1;
-          oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoicesCompletionBash: `%s` for -%s", getChoices, oyjlTermColor( oyjlITALIC, o ) );
+          if(*oyjl_debug)
+            oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoicesCompletionBash: `%s` for -%s", getChoices, oyjlTermColor( oyjlITALIC, o ) );
         } else
         {
           v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);
@@ -1549,12 +1546,13 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           found_at_arg_func = getChoices;
         else
         {
-          oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoicesCompletionBash: `%s` for -%s\n", getChoices, oyjlTermColor( oyjlITALIC, o ) );
+          if(*oyjl_debug)
+            oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoicesCompletionBash: `%s` for -%s", getChoices, oyjlTermColor( oyjlITALIC, o ) );
           oyjlStrAdd( s, "        -%s=*) # single letter option with dynamic args\n", o );
           if(use_getChoicesCompletionBash)
             oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s)\n", getChoices );
           else
-            oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s $SUB_COMMAND --%s=oyjl-list)\n", nick_, option );
+            oyjlStrAdd( s, "            local OYJL_TEXTS=$(${COMP_LINE} -%s=oyjl-list)\n", o );
           oyjlStrAdd( s, "            local IFS=$'\\n'\n" );
           oyjlStrAdd( s, "            local WORD_LIST=()\n" );
           oyjlStrAdd( s, "            for OYJL_TEXT in $OYJL_TEXTS\n" );

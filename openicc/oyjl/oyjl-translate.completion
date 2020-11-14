@@ -5,11 +5,6 @@ _oyjl_translate()
 
     #set -x -v
 
-    local SUB_COMMAND
-    if [[ ${COMP_WORDS[1]} != "" ]] && [[ ${COMP_WORDS[2]} != "=" ]] && [[ $COMP_CWORD -gt 2 ]]; then
-      SUB_COMMAND=${COMP_WORDS[1]}
-    fi
-
     local SEARCH=${COMP_WORDS[COMP_CWORD]}
     if [[ "$SEARCH" == "=" ]]; then
       SEARCH=""
