@@ -5,11 +5,6 @@ _oyranos_monitor_white_point()
 
     #set -x -v
 
-    local SUB_COMMAND
-    if [[ ${COMP_WORDS[1]} != "" ]] && [[ ${COMP_WORDS[2]} != "=" ]] && [[ $COMP_CWORD -gt 2 ]]; then
-      SUB_COMMAND=${COMP_WORDS[1]}
-    fi
-
     local SEARCH=${COMP_WORDS[COMP_CWORD]}
     if [[ "$SEARCH" == "=" ]]; then
       SEARCH=""
@@ -25,7 +20,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         --white-point) # long option with dynamic args
-            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --white-point=oyjl-list)
+            local OYJL_TEXTS=$(${COMP_LINE} --white-point=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -36,7 +31,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         --night-white-point) # long option with dynamic args
-            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --night-white-point=oyjl-list)
+            local OYJL_TEXTS=$(${COMP_LINE} --night-white-point=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -47,7 +42,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         --sun-white-point) # long option with dynamic args
-            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --sun-white-point=oyjl-list)
+            local OYJL_TEXTS=$(${COMP_LINE} --sun-white-point=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -58,7 +53,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         --night-effect) # long option with dynamic args
-            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --night-effect=oyjl-list)
+            local OYJL_TEXTS=$(${COMP_LINE} --night-effect=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -69,7 +64,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         --sunlight-effect) # long option with dynamic args
-            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --sunlight-effect=oyjl-list)
+            local OYJL_TEXTS=$(${COMP_LINE} --sunlight-effect=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -104,7 +99,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         -w=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --white-point=oyjl-list)
+            local OYJL_TEXTS=$(${COMP_LINE} -w=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -115,7 +110,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         -n=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --night-white-point=oyjl-list)
+            local OYJL_TEXTS=$(${COMP_LINE} -n=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -126,7 +121,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         -s=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --sun-white-point=oyjl-list)
+            local OYJL_TEXTS=$(${COMP_LINE} -s=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -137,7 +132,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         -g=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --night-effect=oyjl-list)
+            local OYJL_TEXTS=$(${COMP_LINE} -g=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -148,7 +143,7 @@ _oyranos_monitor_white_point()
             return
             ;;
         -e=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(oyranos-monitor-white-point $SUB_COMMAND --sunlight-effect=oyjl-list)
+            local OYJL_TEXTS=$(${COMP_LINE} -e=oyjl-list)
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
