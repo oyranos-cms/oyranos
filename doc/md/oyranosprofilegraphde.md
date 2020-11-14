@@ -24,7 +24,7 @@ oyranos-profile-graph v0.9.7 - Oyranos Profile Zeichner
 <br />
 <strong>oyranos-profile-graph</strong> <a href="#spectral"><strong>-s</strong>=<em>DATEI</em></a> <strong>-p</strong>=<em>FORMAT</em> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-P</strong>=<em>WORT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-v</strong>] [<strong>-z</strong>]
 <br />
-<strong>oyranos-profile-graph</strong> <a href="#import"><strong>-i</strong>=<em>DATEI</em></a> <strong>-I</strong>=<em>SEITE</em> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-v</strong>]
+<strong>oyranos-profile-graph</strong> <a href="#import"><strong>-i</strong>=<em>DATEI</em></a> [<strong>-I</strong>=<em>SEITE</em>] [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-v</strong>]
 <br />
 <strong>oyranos-profile-graph</strong> <a href="#export"><strong>-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>-h</strong> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|web|</em> [<strong>-v</strong>]
 
@@ -139,7 +139,7 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebettet
 
 <h3 id="import">Zeige Farbseite</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-i</strong>=<em>DATEI</em> <strong>-I</strong>=<em>SEITE</em> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-i</strong>=<em>DATEI</em> [<strong>-I</strong>=<em>SEITE</em>] [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--import</strong> <em>DATEI</em></td> <td>Farbseiten Eingabe<br />Unterstützt werden Farbseiten im NCC Format, welche ein Seiten layout mit referenzierten rgb Werten besitzen. Diese werden auf eine Seite platziert. Solche Seiten können erzeugt werden z.B. mit oyranos-profile-graph --hlc=NUMMER -f ncc </tr>

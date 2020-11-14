@@ -199,6 +199,33 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
   return cs;
 }
 
+static oyjlOptionChoice_s * listInput ( oyjlOption_s * o OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
+{
+  oyjlOptionChoice_s * c = NULL;
+
+  int size = 0, i,n = 0;
+  char * result = oyjlReadCommandF( &size, "r", malloc, "ls -1 *.[N,n][C,c][C,c]" );
+  char ** list = oyjlStringSplit( result, '\n', &n, 0 );
+
+  if(list)
+  {
+    c = calloc(n+1, sizeof(oyjlOptionChoice_s));
+    if(c)
+    {
+      for(i = 0; i < n; ++i)
+      {
+        c[i].nick = strdup( list[i] );
+        c[i].name = strdup(_(""));
+        c[i].description = strdup("");
+        c[i].help = strdup("");
+      }
+    }
+    free(list);
+  }
+
+  return c;
+}
+
 static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts )
 {
   oyjlOption_s * import = oyjlOptions_GetOptionL( opts, "import" );
@@ -409,7 +436,7 @@ int myMain( int argc, const char ** argv )
       {.dbl.start = -5.0, .dbl.end = 130.0, .dbl.tick = 5, .dbl.d = -5.0}, oyjlDOUBLE, {.d=&chroma} },
     {"oiwi", 0, "l", "background-lightness",     NULL, _("Background"),     _("Background Lightness"),   NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -1.0, .dbl.end = 100.0, .dbl.tick = 1.0, .dbl.d = -1.0}, oyjlDOUBLE, {.d=&background_lightness} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "import",         NULL, _("Input"),        _("Color Page Input"),       _("Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc"), _("FILE"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&input} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "i", "import",         NULL, _("Input"),        _("Color Page Input"),       _("Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc"), _("FILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = listInput}, oyjlSTRING, {.s=&input} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "I", "index",          NULL, _("Index"),        _("Page Selection"),         _("Specify a page name as string or page index as number. -1 will list all page names of the imported file."), _("PAGE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = listPages}, oyjlSTRING, {.s=&page} },
     {"oiwi", 0, "u", "illuminant",    NULL, _("Illuminant"),    _("Illuminant Spectrum"),    NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)illu_dxx, sizeof(illu_dxx), 0 )}, oyjlSTRING, {.s=&illuminant} },
@@ -461,7 +488,7 @@ int myMain( int argc, const char ** argv )
     {"oiwg", 0, _("Blackbody Radiator"), _("Blackbody Radiator Spectrum Graph"), NULL, "k", "t,b,l,g,w,T,o,f,v", "k" },
     {"oiwg", 0, _("Illuminant Spectrum"), _("Illuminant Spectrum Graph"), NULL, "u", "t,b,l,g,w,T,o,f,v", "u" },
     {"oiwg", 0, _("Spectral Input"), _("Spectral Input Graph"), NULL, "s,p", "t,b,l,g,w,T,P,o,v,z", "s,p,P,z" },
-    {"oiwg", 0, _("Color Page"), _("Render Color Page"), NULL, "i,I", "t,b,l,g,w,T,f,o,v", "i,I" },
+    {"oiwg", 0, _("Color Page"), _("Render Color Page"), NULL, "i", "I,t,b,l,g,w,T,f,o,v", "i,I" },
     {"oiwg", 0, _("Misc"), _("General options"), NULL, "X|h|V|R", "v", "t,b,l,g,w,T,o,f,h,X,R,V,v" },
     {"",0,0,0,0,0,0,0}
   };
@@ -486,12 +513,6 @@ int myMain( int argc, const char ** argv )
                 \"o\": \"@\",\n\
                 \"values\": {\n\
                   \"getChoicesCompletionBash\": \"oyranos-profiles -l 2>/dev/null\"\n\
-                }\n\
-                },{},{},{},{},{},{},{},{},{},{},{\n\
-                \"type\": \"oiwi\",\n\
-                \"o\": \"I\",\n\
-                \"values\": {\n\
-                  \"getChoicesCompletionBash\": \"oyranos-profile-graph -I=-1\"\n\
                 }\n\
               }]\n\
             }\n\
