@@ -362,6 +362,20 @@ oyjlTESTRESULT_e testArgs()
   }
   oyjlUi_ReleaseArgs( &ui);
 
+  argc = 2;
+  const char * argv_empty[] = {"test-args","--input="};
+  ui = oyjlUi_Create( argc, argv_empty, /* argc+argv are required for parsing the command line options */
+                                       "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
+                                       sections, oarray, groups, &state );
+  if(!ui)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "ui not created - empty arg  %d                 ", state >> oyjlUI_STATE_OPTION );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "ui not created - empty arg                     " );
+  }
+  oyjlUi_ReleaseArgs( &ui);
+
 
   argc = 4;
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */

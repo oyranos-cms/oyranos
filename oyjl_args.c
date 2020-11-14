@@ -1667,7 +1667,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
 
           if( require_value )
           {
-            if(!value && !might_have_value)
+            if(!(value && value[0]) && !might_have_value)
             {
                 char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
                 oyjlOptions_Print_( opts, i );
@@ -1737,7 +1737,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
 
         if( require_value )
         {
-          if( !value && !might_have_value )
+          if( !(value && value[0]) && !might_have_value )
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             oyjlOptions_Print_( opts, i );
