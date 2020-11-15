@@ -162,34 +162,34 @@
         <translation>Geladen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="93"/>
+        <location filename="../qml/main.qml" line="98"/>
         <source>commands enabled</source>
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="650"/>
-        <location filename="../qml/main.qml" line="701"/>
-        <location filename="../qml/main.qml" line="734"/>
+        <location filename="../qml/main.qml" line="655"/>
+        <location filename="../qml/main.qml" line="706"/>
+        <location filename="../qml/main.qml" line="739"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="898"/>
+        <location filename="../qml/main.qml" line="903"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="950"/>
+        <location filename="../qml/main.qml" line="955"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="950"/>
+        <location filename="../qml/main.qml" line="955"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="952"/>
+        <location filename="../qml/main.qml" line="957"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>
