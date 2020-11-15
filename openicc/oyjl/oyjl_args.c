@@ -2914,6 +2914,9 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     goto FromOptions_done;
   results = ui->opts->private_data;
 
+  V = oyjlOptions_GetOption( ui->opts, "V" );
+  if(V && V->variable_type == oyjlINT && V->variable.i)
+    version = *V->variable.i;
   X = oyjlOptions_GetOption( ui->opts, "X" );
   if(X && X->variable_type == oyjlSTRING && X->variable.s)
     export = *X->variable.s;
@@ -3063,7 +3066,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         break;
       }
   }
-  else if(!optionless && opt_state != oyjlOPTION_NOT_SUPPORTED && !help && !pass_group)
+  else if(!optionless && opt_state != oyjlOPTION_NOT_SUPPORTED && !help && !pass_group && !version && !export)
   {
     if(opt_state == oyjlOPTION_NONE)
       oyjlOptions_Print_( ui->opts, 0 );
@@ -3113,9 +3116,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       *status |= oyjlUI_STATE_HELP;
     return NULL;
   }
-  V = oyjlOptions_GetOption( ui->opts, "V" );
-  if(V && V->variable_type == oyjlINT && V->variable.i)
-    version = *V->variable.i;
+
   if(version)
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui, "version" );
