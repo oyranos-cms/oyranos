@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-11-14 09:27+0100\n"
+"POT-Creation-Date: 2020-11-15 08:25+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "'_(\"%s\"); '"
 msgstr ""
 
-#: oyjl_args.c:3216
+#: oyjl_args.c:3217
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
@@ -37,11 +37,11 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:3779 oyjl_args.c:4045 oyjl_args_tree.c:1992
+#: oyjl_args.c:3780 oyjl_args.c:4046 oyjl_args_tree.c:1992
 msgid "AUTHOR"
 msgstr ""
 
-#: test-args.c:100 test-args.c:307 test-args.c:457 test-args.c:573
+#: test-args.c:100 test-args.c:307 test-args.c:471 test-args.c:587
 #: test-core.c:770 test-core.c:834 test.c:856 test.c:1020
 #: oyjl-args-qml/mini-app.c:195
 msgid "Actual mode"
@@ -73,11 +73,11 @@ msgstr ""
 msgid "Any arg mode"
 msgstr ""
 
-#: oyjl_args.c:3140
+#: oyjl_args.c:3141
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:3789 oyjl_args.c:3791 oyjl_args.c:4059 oyjl_args.c:4061
+#: oyjl_args.c:3790 oyjl_args.c:3792 oyjl_args.c:4060 oyjl_args.c:4062
 #: oyjl_args_tree.c:1995
 msgid "BUGS"
 msgstr ""
@@ -87,7 +87,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:3783 oyjl_args.c:4049 oyjl_args_tree.c:1993
+#: oyjl_args.c:3784 oyjl_args.c:4050 oyjl_args_tree.c:1993
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -106,7 +106,7 @@ msgstr "Volba"
 msgid "Completion Bash"
 msgstr "Volba"
 
-#: test-args.c:84 test-args.c:448 test-args.c:564 test-core.c:757 test.c:843
+#: test-args.c:84 test-args.c:462 test-args.c:578 test-core.c:757 test.c:843
 #: test.c:1009 oyjl-args-qml/mini-app.c:181
 #, fuzzy
 msgid "Control Output"
@@ -150,7 +150,7 @@ msgstr "Copyright"
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:3656 oyjl_args.c:3921 oyjl_args_tree.c:1989
+#: oyjl_args.c:3657 oyjl_args.c:3922 oyjl_args_tree.c:1989
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -197,16 +197,16 @@ msgstr "popis"
 msgid "Download"
 msgstr ""
 
-#: oyjl_args.c:3463 oyjl_args_tree.c:1998
+#: oyjl_args.c:3464 oyjl_args_tree.c:1998
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl-args.c:61 oyjl.c:135 oyjl_args.c:3459 oyjl_args_tree.c:1996
+#: oyjl-args.c:61 oyjl.c:135 oyjl_args.c:3460 oyjl_args_tree.c:1996
 #: oyjl_translate.c:103 oyjl_web.c:83
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:3461 oyjl_args_tree.c:1997
+#: oyjl_args.c:3462 oyjl_args_tree.c:1997
 msgid "EXIT-STATE"
 msgstr ""
 
@@ -238,13 +238,13 @@ msgid "Extract translatable Messages"
 msgstr ""
 
 #: oyjl-args.c:54 oyjl.c:127 oyjl_translate.c:79 oyjl_translate.c:81
-#: test-args.c:82 test-args.c:83 test-args.c:447 test-args.c:563
+#: test-args.c:82 test-args.c:83 test-args.c:461 test-args.c:577
 #: test-core.c:755 test-core.c:756 test.c:841 test.c:842 test.c:1007
 #: test.c:1008 oyjl-args-qml/mini-app.c:179 oyjl-args-qml/mini-app.c:180
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:3467 oyjl_args_tree.c:2000
+#: oyjl_args.c:3468 oyjl_args_tree.c:2000
 msgid "FILES"
 msgstr ""
 
@@ -303,7 +303,7 @@ msgid "GUI + Command"
 msgstr ""
 
 #: oyjl-args.c:74 oyjl.c:163 oyjl_translate.c:129 oyjl_web.c:94 test-args.c:104
-#: test-args.c:308 test-args.c:458 test-args.c:574 test-core.c:771
+#: test-args.c:308 test-args.c:472 test-args.c:588 test-core.c:771
 #: test-core.c:835 test.c:857 test.c:1021 oyjl-args-qml/mini-app.c:196
 msgid "General options"
 msgstr "Obecné volby"
@@ -349,12 +349,12 @@ msgstr ""
 msgid "Gui"
 msgstr ""
 
-#: oyjl_args.c:3465 oyjl_args_tree.c:1999
+#: oyjl_args.c:3466 oyjl_args_tree.c:1999
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl_args.c:2789 oyjl_web.c:78 test-args.c:85 test-args.c:449
-#: test-args.c:565 test-core.c:759 test.c:846 test.c:1010
+#: oyjl_args.c:2789 oyjl_web.c:78 test-args.c:85 test-args.c:463
+#: test-args.c:579 test-core.c:759 test.c:846 test.c:1010
 #: oyjl-args-qml/mini-app.c:184
 msgid "Help"
 msgstr "Nápověda"
@@ -423,7 +423,7 @@ msgstr "Mé jméno"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:3139 oyjl_args.c:3785 oyjl_args.c:4051 oyjl_args_tree.c:1958
+#: oyjl_args.c:3140 oyjl_args.c:3786 oyjl_args.c:4052 oyjl_args_tree.c:1958
 #: oyjl_args_tree.c:1994
 msgid "License"
 msgstr "Licence"
@@ -494,17 +494,17 @@ msgstr ""
 
 #. parsed and checked with -i option
 #: oyjl-args.c:74 oyjl.c:163 oyjl_translate.c:129 oyjl_web.c:94 test-args.c:104
-#: test-args.c:308 test-args.c:458 test-args.c:574 test-core.c:771
+#: test-args.c:308 test-args.c:472 test-args.c:588 test-core.c:771
 #: test-core.c:835 test.c:857 test.c:1021 oyjl-args-qml/mini-app.c:196
 msgid "Misc"
 msgstr ""
 
-#: oyjl_args.c:3071
+#: oyjl_args.c:3074
 msgid "Missing mandatory option. No usage mode in synopsis lines found."
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: test-args.c:307 test-args.c:457 test-args.c:573 test-core.c:834
+#: test-args.c:307 test-args.c:471 test-args.c:587 test-core.c:834
 #, fuzzy
 msgid "Mode"
 msgstr "Model:"
@@ -575,7 +575,7 @@ msgstr "Model:"
 msgid "Module"
 msgstr "Volby modulu:"
 
-#: oyjl_args.c:3642 oyjl_args.c:3906 oyjl_args_tree.c:1985
+#: oyjl_args.c:3643 oyjl_args.c:3907 oyjl_args_tree.c:1985
 msgid "NAME"
 msgstr ""
 
@@ -607,7 +607,7 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: oyjl_args.c:3658 oyjl_args.c:3924 oyjl_args_tree.c:1991
+#: oyjl_args.c:3659 oyjl_args.c:3925 oyjl_args_tree.c:1991
 msgid "OPTIONS"
 msgstr ""
 
@@ -814,8 +814,8 @@ msgstr "Tiskárna CUPS"
 msgid "Print type"
 msgstr "Tiskárna CUPS"
 
-#: oyjl_args.c:2671 oyjl_args.c:2710 oyjl_args.c:2969 oyjl_args.c:3028
-#: oyjl_args.c:3041
+#: oyjl_args.c:2671 oyjl_args.c:2710 oyjl_args.c:2972 oyjl_args.c:3031
+#: oyjl_args.c:3044
 msgid "Program Error:"
 msgstr ""
 
@@ -849,12 +849,12 @@ msgstr "Záměr transformace"
 msgid "Results JSON"
 msgstr ""
 
-#: oyjl-args.c:63 oyjl.c:137 oyjl_args.c:3471 oyjl_args_tree.c:2002
+#: oyjl-args.c:63 oyjl.c:137 oyjl_args.c:3472 oyjl_args_tree.c:2002
 #: oyjl_translate.c:105 oyjl_web.c:85
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:3469 oyjl_args_tree.c:2001
+#: oyjl_args.c:3470 oyjl_args_tree.c:2001
 msgid "SEE AS WELL"
 msgstr ""
 
@@ -862,7 +862,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:3644 oyjl_args.c:3909 oyjl_args_tree.c:1987
+#: oyjl_args.c:3645 oyjl_args.c:3910 oyjl_args_tree.c:1987
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -878,7 +878,7 @@ msgid ""
 "style.css\" will launch a local Web Server, which listens on local port."
 msgstr ""
 
-#: oyjl-args.c:54 test-args.c:82 test-args.c:83 test-args.c:447 test-args.c:563
+#: oyjl-args.c:54 test-args.c:82 test-args.c:83 test-args.c:461 test-args.c:577
 #: test-core.c:755 test-core.c:756 test.c:841 test.c:842 test.c:1007
 #: test.c:1008 oyjl-args-qml/mini-app.c:179 oyjl-args-qml/mini-app.c:180
 #, fuzzy
@@ -907,10 +907,11 @@ msgstr ""
 #. argc+argv are required for parsing the command line options
 #: test-args.c:110 test-args.c:247 test-args.c:260 test-args.c:276
 #: test-args.c:314 test-args.c:328 test-args.c:341 test-args.c:354
-#: test-args.c:368 test-args.c:464 test-args.c:480 test-args.c:500
-#: test-args.c:524 test-args.c:544 test-args.c:581 test-core.c:777
-#: test-core.c:803 test-core.c:841 test-core.c:855 test-core.c:868
-#: test-core.c:881 test-core.c:895 test.c:897 test.c:1028 test.c:1151
+#: test-args.c:368 test-args.c:382 test-args.c:478 test-args.c:494
+#: test-args.c:514 test-args.c:538 test-args.c:558 test-args.c:595
+#: test-core.c:777 test-core.c:803 test-core.c:841 test-core.c:855
+#: test-core.c:868 test-core.c:881 test-core.c:895 test.c:897 test.c:1028
+#: test.c:1151
 msgid "Short example tool using libOyjl"
 msgstr ""
 
@@ -1021,7 +1022,7 @@ msgstr ""
 msgid "This option expects arguments"
 msgstr ""
 
-#: oyjl_args.c:2970 oyjl_args.c:3029 oyjl_args.c:3042
+#: oyjl_args.c:2973 oyjl_args.c:3032 oyjl_args.c:3045
 msgid "This option is not defined"
 msgstr ""
 
@@ -1085,7 +1086,7 @@ msgstr "Použití"
 #: oyjl_args.c:1504 oyjl_args.c:1520 oyjl_args.c:1531 oyjl_args.c:1644
 #: oyjl_args.c:1674 oyjl_args.c:1700 oyjl_args.c:1718 oyjl_args.c:1744
 #: oyjl_args.c:1771 oyjl_args.c:1817 oyjl_args.c:1846 oyjl_args.c:1878
-#: oyjl_args.c:2001 oyjl_args.c:2717 oyjl_args.c:3070
+#: oyjl_args.c:2001 oyjl_args.c:2717 oyjl_args.c:3073
 msgid "Usage Error:"
 msgstr ""
 
@@ -1155,8 +1156,8 @@ msgid "function"
 msgstr "Dokumentace"
 
 #. default options -h, -v and -V
-#: oyjl_args.c:1275 oyjl_web.c:78 test-args.c:85 test-args.c:449
-#: test-args.c:565 test-core.c:759 test.c:846 test.c:1010
+#: oyjl_args.c:1275 oyjl_web.c:78 test-args.c:85 test-args.c:463
+#: test-args.c:579 test-core.c:759 test.c:846 test.c:1010
 #: oyjl-args-qml/mini-app.c:184
 msgid "help"
 msgstr "nápověda"
@@ -1167,7 +1168,7 @@ msgstr ""
 
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
 #. OYJL_OPTION_FLAG_EDITABLE
-#: oyjl-args.c:54 test-args.c:82 test-args.c:83 test-args.c:447 test-args.c:563
+#: oyjl-args.c:54 test-args.c:82 test-args.c:83 test-args.c:461 test-args.c:577
 #: test-core.c:755 test-core.c:756 test.c:841 test.c:842 test.c:1007
 #: test.c:1008 oyjl-args-qml/mini-app.c:179 oyjl-args-qml/mini-app.c:180
 #, fuzzy
@@ -1217,7 +1218,7 @@ msgstr ""
 msgid "number"
 msgstr ""
 
-#: test-args.c:84 test-args.c:448 test-args.c:564 test-core.c:757 test.c:843
+#: test-args.c:84 test-args.c:462 test-args.c:578 test-core.c:757 test.c:843
 #: test.c:1009 oyjl-args-qml/mini-app.c:181
 #, fuzzy
 msgid "output"
@@ -1311,7 +1312,7 @@ msgstr ""
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
-#: oyjl-args.c:58 oyjl_web.c:79 test-args.c:86 test-args.c:450 test-args.c:566
+#: oyjl-args.c:58 oyjl_web.c:79 test-args.c:86 test-args.c:464 test-args.c:580
 #: test-core.c:760 test.c:847 test.c:1011 oyjl-args-qml/mini-app.c:185
 msgid "verbose"
 msgstr "upovídaný výstup"
