@@ -50,6 +50,8 @@ AppWindow {
     signal commandsChanged( var variable ) // Commands
     property string commandsJSON: ""
     onCommandsChanged: {
+        var v = variable
+        var cJ = commandsJSON
         if(variable === "+")
           commandsJSON = appDataJsonString
         else
@@ -58,8 +60,11 @@ AppWindow {
             commandsJSON = variable;
           else
             commandsJSON = appData.readFile( variable );
+            if(commandsJSON.length === 0)
+                commandsJSON = "{ \"command_set\":\"" + variable + "\" }";
         }
         textArea2.text = commandsJSON
+        var cJ = commandsJSON
         if( commandsJSON.length )
         {
             var c = JSON.parse(commandsJSON)
