@@ -141,6 +141,8 @@ function setComboItems( combo, choices, key, defaultValue, loc, catalog )
         var desc = getTranslatedItem( item, "description", loc, catalog );
 
         var nick = item.nick;
+        if(typeof name !== "undefined" && name.length === 0)
+            name = nick;
         if(nick === defaultValue)
             current = name;
         model.append({ "key": name, "nick": nick });
