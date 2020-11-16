@@ -215,7 +215,7 @@ static oyjlOptionChoice_s * listInput ( oyjlOption_s * o OYJL_UNUSED, int * y OY
       for(i = 0; i < n; ++i)
       {
         c[i].nick = strdup( list[i] );
-        c[i].name = strdup(_(""));
+        c[i].name = strdup("");
         c[i].description = strdup("");
         c[i].help = strdup("");
       }

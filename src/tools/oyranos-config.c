@@ -93,7 +93,7 @@ static oyjlOptionChoice_s * choicesFromStringList ( char ** list, int n )
       for(i = 0; i < n; ++i)
       {
         c[i].nick = strdup( list[i] );
-        c[i].name = strdup(_(""));
+        c[i].name = strdup("");
         c[i].description = strdup("");
         c[i].help = strdup("");
       }
