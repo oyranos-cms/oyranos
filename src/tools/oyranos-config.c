@@ -205,8 +205,6 @@ const char * jcommands = "{\n\
  */
 int myMain( int argc , const char** argv )
 {
-  int i;
-
   char * v;
   int count = 0;
   oySCOPE_e scope = oySCOPE_USER_SYS;
