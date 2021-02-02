@@ -36,10 +36,8 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Vollständige Hilfe</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h -</strong></td><td># Vollständige Hilfe</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Übersicht</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Umwandlung</strong></td><td># Erzeuge Quelltext</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Verschiedenes</strong></td><td># Allgemeine Optionen</td></tr>
   </table>
   </td>
  </tr>

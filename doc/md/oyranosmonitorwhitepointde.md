@@ -114,7 +114,7 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--location</strong></td> <td>Erhalte Position von IP Adresse</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--latitude</strong> <em>WINKEL_IN_GRAD</em></td> <td>Setze Geographische Breite (WINKEL_IN_GRAD:0 [≥-90 ≤90 Δ1])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--longitude</strong> <em>WINKEL_IN_GRAD</em></td> <td>Setze Geographische Länge (WINKEL_IN_GRAD:0 [≥-180 ≤180 Δ1])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--twilight</strong> <em>WINKEL_IN_GRAD</em></td> <td>Setze Dämmerungswinkel: 0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical (WINKEL_IN_GRAD:0 [≥18 ≤-18 Δ1])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--twilight</strong> <em>WINKEL_IN_GRAD</em></td> <td>Setze Dämmerungswinkel: 0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch (WINKEL_IN_GRAD:0 [≥18 ≤-18 Δ1])</td> </tr>
 </table>
 
 <h3 id="daemon">Setze Sonnenuntergangsdienst</h3>

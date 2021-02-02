@@ -24,7 +24,7 @@ oyranos-config v0.9.7 - Konfiguration
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
-Dar Werkzeug zeigt und öndert OpenICC DB Einstellungen, und es zeigt Pfade und statische Informationen.
+Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und statische Informationen.
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
@@ -104,14 +104,8 @@ Dar Werkzeug zeigt und öndert OpenICC DB Einstellungen, und es zeigt Pfade und 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Vollständige Hilfe</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h -</strong></td><td># Vollständige Hilfe</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Übersicht</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Einstellungen</strong></td><td># Einstellungen</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Beobachten</strong></td><td># Beobachte Einstellungsänderungen</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Installationspfade</strong></td><td># Zeige Installationspfade</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Version</strong></td><td># Zeige Version</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Optionen</strong></td><td># Sonstige Optionen</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Verschiedenes</strong></td><td># Allgemeine Optionen</td></tr>
   </table>
   </td>
  </tr>

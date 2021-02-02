@@ -13,7 +13,12 @@ _oyranos_config()
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
         --get) # long option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} --get=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --get=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -24,7 +29,12 @@ _oyranos_config()
             return
             ;;
         --set) # long option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} --set=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --set=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -57,7 +67,7 @@ _oyranos_config()
             ;;
         --help) # long option with static args
             local IFS=$'\n'
-            local WORD_LIST=('1' 'synopsis' 'Einstellungen' 'Beobachten' 'Installationspfade' 'Version' 'Optionen' 'Verschiedenes')
+            local WORD_LIST=('-' 'synopsis')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
@@ -66,7 +76,12 @@ _oyranos_config()
     : "autocomplete options with choices for single letter options "$cur""
     case "$cur" in
         -g=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} -g=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -g=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -77,7 +92,12 @@ _oyranos_config()
             return
             ;;
         -s=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} -s=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -s=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -110,7 +130,7 @@ _oyranos_config()
             ;;
         -h=*) # single letter option with static args
             local IFS=$'\n'
-            local WORD_LIST=('1' 'synopsis' 'Einstellungen' 'Beobachten' 'Installationspfade' 'Version' 'Optionen' 'Verschiedenes')
+            local WORD_LIST=('-' 'synopsis')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return

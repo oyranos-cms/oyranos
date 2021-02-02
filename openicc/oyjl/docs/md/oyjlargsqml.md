@@ -37,10 +37,8 @@ The tool graphicaly renders Oyjl JSON UI files using QML.
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[ synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Full Help</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h -</strong></td><td># Full Help</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Synopsis</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h GUI</strong></td><td># QML UI</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Misc</strong></td><td># General options</td></tr>
   </table>
   </td>
  </tr>

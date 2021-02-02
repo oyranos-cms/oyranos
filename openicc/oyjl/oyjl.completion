@@ -13,7 +13,12 @@ _oyjl()
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
         --input) # long option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} --input=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --input=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -30,9 +35,18 @@ _oyjl()
             set +x +v
             return
             ;;
-        --help) # long option with static args
+        --help) # long option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --help=oyjl-list)
+            fi
             local IFS=$'\n'
-            local WORD_LIST=('1' 'synopsis' 'Eingabe' 'Zeige JSON' 'Zeige YAML' 'Zeige XML' 'Anzahl' 'Schlüsselname' 'Typ' 'Pfade' 'Format' 'Verschiedenes')
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
@@ -55,7 +69,12 @@ _oyjl()
     : "autocomplete options with choices for single letter options "$cur""
     case "$cur" in
         -i=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} -i=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -i=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -72,9 +91,18 @@ _oyjl()
             set +x +v
             return
             ;;
-        -h=*) # single letter option with static args
+        -h=*) # single letter option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -h=oyjl-list)
+            fi
             local IFS=$'\n'
-            local WORD_LIST=('1' 'synopsis' 'Eingabe' 'Zeige JSON' 'Zeige YAML' 'Zeige XML' 'Anzahl' 'Schlüsselname' 'Typ' 'Pfade' 'Format' 'Verschiedenes')
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return

@@ -20,7 +20,12 @@ _oyranos_profile_graph()
             return
             ;;
         --import) # long option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} --import=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --import=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -31,7 +36,12 @@ _oyranos_profile_graph()
             return
             ;;
         --index) # long option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} --index=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --index=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -87,7 +97,12 @@ _oyranos_profile_graph()
             return
             ;;
         -i=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} -i=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -i=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -98,7 +113,12 @@ _oyranos_profile_graph()
             return
             ;;
         -I=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} -I=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -I=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS

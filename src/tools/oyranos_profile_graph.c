@@ -3789,7 +3789,7 @@ void        oyTreeFilterColors( oyjl_val root, const char * pattern )
 {
   oyjl_val data, v;
   int index, pixels, match;
-  const char * name;
+  char * name;
   char * num;
 
   if(!pattern) return;
@@ -3805,7 +3805,7 @@ void        oyTreeFilterColors( oyjl_val root, const char * pattern )
     v = oyjlTreeGetValueF( data, 0, "[%d]/name", index );
     name = OYJL_GET_STRING(v);
     if(!name) continue;
-    match = oyjlRegExpMatch( name, pattern );
+    match = oyjlRegExpFind( name, pattern ) != NULL;
     if(pattern && !match )
     {
       sprintf( num, "[%d]", index );

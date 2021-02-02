@@ -21,7 +21,7 @@ _oyjl_translate()
             ;;
         --help) # long option with static args
             local IFS=$'\n'
-            local WORD_LIST=('1' 'synopsis' 'Gemeinsame Optionen' 'Auszug' 'Addiere' 'Verschiedenes')
+            local WORD_LIST=('-' 'synopsis')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
@@ -52,7 +52,7 @@ _oyjl_translate()
             ;;
         -h=*) # single letter option with static args
             local IFS=$'\n'
-            local WORD_LIST=('1' 'synopsis' 'Gemeinsame Optionen' 'Auszug' 'Addiere' 'Verschiedenes')
+            local WORD_LIST=('-' 'synopsis')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return

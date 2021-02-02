@@ -20,7 +20,12 @@ _oyranos_monitor_white_point()
             return
             ;;
         --white-point) # long option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} --white-point=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --white-point=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -31,7 +36,12 @@ _oyranos_monitor_white_point()
             return
             ;;
         --night-white-point) # long option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} --night-white-point=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --night-white-point=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -42,7 +52,12 @@ _oyranos_monitor_white_point()
             return
             ;;
         --sun-white-point) # long option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} --sun-white-point=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --sun-white-point=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -53,7 +68,12 @@ _oyranos_monitor_white_point()
             return
             ;;
         --night-effect) # long option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} --night-effect=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --night-effect=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -64,7 +84,12 @@ _oyranos_monitor_white_point()
             return
             ;;
         --sunlight-effect) # long option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} --sunlight-effect=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --sunlight-effect=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -99,7 +124,12 @@ _oyranos_monitor_white_point()
             return
             ;;
         -w=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} -w=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -w=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -110,7 +140,12 @@ _oyranos_monitor_white_point()
             return
             ;;
         -n=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} -n=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -n=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -121,7 +156,12 @@ _oyranos_monitor_white_point()
             return
             ;;
         -s=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} -s=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -s=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -132,7 +172,12 @@ _oyranos_monitor_white_point()
             return
             ;;
         -g=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} -g=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -g=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -143,7 +188,12 @@ _oyranos_monitor_white_point()
             return
             ;;
         -e=*) # single letter option with dynamic args
-            local OYJL_TEXTS=$(${COMP_LINE} -e=oyjl-list)
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -e=oyjl-list)
+            fi
             local IFS=$'\n'
             local WORD_LIST=()
             for OYJL_TEXT in $OYJL_TEXTS
@@ -212,11 +262,6 @@ _oyranos_monitor_white_point()
     : "suggest group options for subcommands"
     if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
       case "${COMP_WORDS[1]}" in
-        -s|--sun-white-point|-e|--sunlight-effect)
-          COMPREPLY=($(compgen -W '-z --system-wide -v --verbose -y --test' -- "$cur"))
-            set +x +v
-            return
-            ;;
         -n|--night-white-point|-g|--night-effect|-b|--night-backlight)
           COMPREPLY=($(compgen -W '-z --system-wide -v --verbose -y --test' -- "$cur"))
             set +x +v
@@ -224,6 +269,11 @@ _oyranos_monitor_white_point()
             ;;
         -w|--white-point|-a|--automatic)
           COMPREPLY=($(compgen -W '-z --system-wide -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -s|--sun-white-point|-e|--sunlight-effect)
+          COMPREPLY=($(compgen -W '-z --system-wide -v --verbose -y --test' -- "$cur"))
             set +x +v
             return
             ;;
@@ -248,7 +298,7 @@ _oyranos_monitor_white_point()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       local WORD_LIST=()
-      WORD_LIST=("${WORD_LIST[@]}" -s= --sun-white-point= -e= --sunlight-effect= -n= --night-white-point= -g= --night-effect= -b= --night-backlight= -w= --white-point= -a= --automatic= -l --location -i= --latitude= -o= --longitude= -d= --daemon= -m --modes -r --sunrise -X= --export= -h --help -V --version -R= --render=)
+      WORD_LIST=("${WORD_LIST[@]}" -n= --night-white-point= -g= --night-effect= -b= --night-backlight= -w= --white-point= -a= --automatic= -s= --sun-white-point= -e= --sunlight-effect= -l --location -i= --latitude= -o= --longitude= -d= --daemon= -m --modes -r --sunrise -X= --export= -h --help -V --version -R= --render=)
       COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return
