@@ -2324,9 +2324,8 @@ oyjlOptionChoice_s * oyjlOption_EnrichInbuildFunc_( oyjlOption_s * o, int * sele
     {
       oyjlOptionGroup_s * g = &opts->groups[i];
       h_choices[pos].nick = (char*)g->name;
-      h_choices[pos].name = (char*)(g->description?g->description:g->name);
-      h_choices[pos].description = (char*)g->description;
-      h_choices[pos].help = (char*)g->help;
+      h_choices[pos].name = (char*)g->description;
+      h_choices[pos].description = (char*)g->help;
       ++pos;
     }
 
