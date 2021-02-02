@@ -1417,6 +1417,8 @@ static int oyjlOptions_IsHelp_       ( oyjlOptions_s     * opts )
     help = *h->variable.i;
   if(h && h->variable_type == oyjlSTRING && h->variable.s)
     help = *h->variable.s && (*h->variable.s)[0];
+  if(h && h->variable_type == oyjlNONE)
+    oyjlOptions_GetResult( opts, h->o, 0, 0, &help );
   return help;
 }
 /** @brief    Obtain the specified option from option string
@@ -1698,7 +1700,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             oyjlOptions_Print_( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
-            fprintf( stderr, "%s \'%s\' (%s)\n", _("Option has a unexpected argument"), arg, t );
+            fprintf( stderr, "%s \'%s\' (%s)\n", _("Option has a unexpected argument"), arg?arg:"", t );
             free(t);
             state = oyjlOPTION_UNEXPECTED_VALUE;
             j = l;
@@ -1768,7 +1770,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           {
             char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             oyjlOptions_Print_( opts, i );
-            fprintf( stderr, "%s %s \'%s\' (%s)\n", oyjlTermColor(oyjlRED,_("Usage Error:")), _("Option has a unexpected argument"), opts->argv[i+1], t );
+            fprintf( stderr, "%s %s \'%s\' (%s)\n", oyjlTermColor(oyjlRED,_("Usage Error:")), _("Option has a unexpected argument"), value?value:"", t );
             free(t);
             state = oyjlOPTION_UNEXPECTED_VALUE;
           }
@@ -2295,6 +2297,58 @@ int oyjlOptionMandatoryIndex_         ( oyjlOption_s      * opt,
   oyjlStringListRelease( &list, n, free );
   return found;
 }
+
+oyjlOptionChoice_s * oyjlOption_EnrichInbuildFunc_( oyjlOption_s * o, int * selected OYJL_UNUSED, oyjlOptions_s * opts )
+{
+  /* enrich inbuild variables */
+  oyjlOptionChoice_s * h_choices = NULL;
+
+  if(o && strcmp(o->o, "h") == 0)
+  {
+    int ng = oyjlOptions_CountGroups(opts),
+        pos = 0, i;
+
+    h_choices = (oyjlOptionChoice_s*) calloc( sizeof(oyjlOptionChoice_s), ng + 3 );
+
+    h_choices[pos].nick = "1";
+    h_choices[pos].name = _("Full Help");
+    h_choices[pos].description = _("Print help for all groups");
+    h_choices[pos].help = "";
+    ++pos;
+    h_choices[pos].nick = "synopsis";
+    h_choices[pos].name = _("Synopsis");
+    h_choices[pos].description = _("List groups");
+    h_choices[pos].help = _("Show all groups including syntax");
+    ++pos;
+    for(i = 0; i < ng; ++i)
+    {
+      oyjlOptionGroup_s * g = &opts->groups[i];
+      h_choices[pos].nick = (char*)g->name;
+      h_choices[pos].name = (char*)(g->description?g->description:g->name);
+      h_choices[pos].description = (char*)g->description;
+      h_choices[pos].help = (char*)g->help;
+      ++pos;
+    }
+
+    if(o->value_name == NULL)
+    {
+      o->value_name = "synopsis|...";
+      if(o->name == NULL)
+      {
+        o->name = _("Help");
+        if(o->description == NULL)
+        {
+          o->description = _("Print help text");
+          if(o->help == NULL)
+            o->help = _("Show usage information and hints for the tool.");
+        }
+      }
+    }
+  }
+
+  return h_choices;
+}
+
 static oyjlOptionChoice_s ** oyjl_get_choices_list_ = NULL;
 static int * oyjl_get_choices_list_selected_;
 oyjlOptionChoice_s * oyjlOption_GetChoices_ (
@@ -2319,7 +2373,11 @@ oyjlOptionChoice_s * oyjlOption_GetChoices_ (
 
   if( !oyjl_get_choices_list_[pos] ||
       (selected && oyjl_get_choices_list_selected_[pos] == -1) )
+  {
+    if(!o->values.getChoices)
+      o->values.getChoices = oyjlOption_EnrichInbuildFunc_;
     oyjl_get_choices_list_[pos] = o->values.getChoices(o, selected ? &oyjl_get_choices_list_selected_[pos] : selected, opts );
+  }
 
   if(selected)
     *selected = oyjl_get_choices_list_selected_[pos];
@@ -2737,68 +2795,6 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
   return status;
 }
 
-void oyjlUi_EnrichInbuild_( oyjlUi_s * ui )
-{
-  /* enrich inbuild variables */
-  int nopts = oyjlOptions_Count( ui->opts ), i;
-  oyjlOption_s * o = NULL;
-
-  for(i = 0; i < nopts; ++i)
-  {
-    oyjlOption_s * o_ = &ui->opts->array[i];
-    if(o_->o && strcmp(o_->o, "h") == 0)
-    {
-      o = o_;
-      break;
-    }
-  }
-  if(o && strcmp(o->o, "h") == 0)
-  {
-    if(o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
-    {
-      int ng = oyjlOptions_CountGroups(ui->opts),
-          pos = 0;
-      oyjlOptionChoice_s * h_choices = (oyjlOptionChoice_s*) calloc( sizeof(oyjlOptionChoice_s), ng + 3 );
-
-      h_choices[pos].nick = "1";
-      h_choices[pos].name = _("Full Help");
-      h_choices[pos].description = _("Print help for all groups");
-      h_choices[pos].help = "";
-      ++pos;
-      h_choices[pos].nick = "synopsis";
-      h_choices[pos].name = _("Synopsis");
-      h_choices[pos].description = _("List groups");
-      h_choices[pos].help = _("Show all groups including syntax");
-      ++pos;
-      for(i = 0; i < ng; ++i)
-      {
-        oyjlOptionGroup_s * g = &ui->opts->groups[i];
-        h_choices[pos].nick = (char*)g->name;
-        h_choices[pos].name = (char*)(g->description?g->description:g->name);
-        h_choices[pos].description = (char*)g->description;
-        h_choices[pos].help = (char*)g->help;
-        ++pos;
-      }
-
-      o->values.choices.list = h_choices;
-      if(o->value_name == NULL)
-      {
-        o->value_name = "synopsis|...";
-        if(o->name == NULL)
-        {
-          o->name = _("Help");
-          if(o->description == NULL)
-          {
-            o->description = _("Print help text");
-            if(o->help == NULL)
-              o->help = _("Show usage information and hints for the tool.");
-          }
-        }
-      }
-    }
-  }
-}
-
 static const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
 {
   switch(i)
@@ -2871,7 +2867,8 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
 {
   int help = 0, verbose = 0, version = 0, i,ng,nopts, * rank_list = 0, max = -1, pass_group = 0;
   const char * export = NULL;
-  oyjlOption_s * v, * X, * V;
+  const char * help_string = NULL;
+  oyjlOption_s * v, * X, * V, * h = NULL;
   oyjlOptionGroup_s * g = NULL;
   oyjlOPTIONSTATE_e opt_state = oyjlOPTION_NONE;
   oyjlOptsPrivate_s * results;
@@ -2904,8 +2901,6 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
    * *documentation* what you see fit. Add new ones as needed. */
   ui->sections = info;
 
-  oyjlUi_EnrichInbuild_( ui );
-
   /* get results and check syntax ... */
   results = ui->opts->private_data;
   if(!results || !results->values)
@@ -2921,6 +2916,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   if(X && X->variable_type == oyjlSTRING && X->variable.s)
     export = *X->variable.s;
   help = oyjlOptions_IsHelp_( ui->opts );;
+  h = oyjlOptions_GetOption( ui->opts, "h" );
   v = oyjlOptions_GetOption( ui->opts, "v" );
   if(v && v->variable_type == oyjlINT && v->variable.i)
   {
@@ -3018,7 +3014,20 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       rank_list[i] = found;
       if(found && max < found)
         max = found;
-
+      if(h && h->variable_type == oyjlSTRING && h->variable.s)
+        help_string = *h->variable.s;
+      if(help_string && strcmp(help_string, "oyjl-list") == 0 && h->value_type == oyjlOPTIONTYPE_FUNCTION)
+      {
+        int selected = 0;
+        oyjlOptionChoice_s * choices = oyjlOption_EnrichInbuildFunc_( h, &selected, opts );
+        int n = oyjlOptionChoice_Count( choices );
+        for(k = 0; k < n; ++k)
+          fprintf( stdout, "%s\n", choices[k].nick );
+        oyjlUi_ReleaseArgs( &ui);
+        if(status)
+          *status |= oyjlUI_STATE_EXPORT;
+        return NULL;
+      }
     }
 
     list = oyjlStringSplit2( g->optional, "|,", &n, NULL, malloc );
