@@ -1463,13 +1463,20 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         {
           v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);
         }
-        if(getChoices)
+        if(getChoices || !use_getChoicesCompletionBash)
         {
           oyjlStrAdd( s, "        --%s) # long option with dynamic args\n", option );
           if(use_getChoicesCompletionBash)
             oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s)\n", getChoices );
           else
-            oyjlStrAdd( s, "            local OYJL_TEXTS=$(${COMP_LINE} --%s=oyjl-list)\n", option );
+          {
+            oyjlStrAdd( s, "            local OYJL_TEXTS\n" );
+            oyjlStrAdd( s, "            if [[ \"${COMP_WORDS[COMP_CWORD]}\" == \"=\" ]]; then\n" );
+            oyjlStrAdd( s, "              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)\n" );
+            oyjlStrAdd( s, "            else\n" );
+            oyjlStrAdd( s, "              OYJL_TEXTS=$(${COMP_LINE} --%s=oyjl-list)\n", option );
+            oyjlStrAdd( s, "            fi\n" );
+          }
           oyjlStrAdd( s, "            local IFS=$'\\n'\n" );
           oyjlStrAdd( s, "            local WORD_LIST=()\n" );
           oyjlStrAdd( s, "            for OYJL_TEXT in $OYJL_TEXTS\n" );
@@ -1540,7 +1547,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         {
           v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);
         }
-        if(!getChoices)
+        if(!getChoices && use_getChoicesCompletionBash)
           continue;
         if(strcmp(o,"@") == 0)
           found_at_arg_func = getChoices;
@@ -1552,7 +1559,14 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           if(use_getChoicesCompletionBash)
             oyjlStrAdd( s, "            local OYJL_TEXTS=$(%s)\n", getChoices );
           else
-            oyjlStrAdd( s, "            local OYJL_TEXTS=$(${COMP_LINE} -%s=oyjl-list)\n", o );
+          {
+            oyjlStrAdd( s, "            local OYJL_TEXTS\n" );
+            oyjlStrAdd( s, "            if [[ \"${COMP_WORDS[COMP_CWORD]}\" == \"=\" ]]; then\n" );
+            oyjlStrAdd( s, "              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)\n" );
+            oyjlStrAdd( s, "            else\n" );
+            oyjlStrAdd( s, "              OYJL_TEXTS=$(${COMP_LINE} -%s=oyjl-list)\n", o );
+            oyjlStrAdd( s, "            fi\n" );
+          }
           oyjlStrAdd( s, "            local IFS=$'\\n'\n" );
           oyjlStrAdd( s, "            local WORD_LIST=()\n" );
           oyjlStrAdd( s, "            for OYJL_TEXT in $OYJL_TEXTS\n" );
