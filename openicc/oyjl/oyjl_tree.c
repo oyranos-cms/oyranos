@@ -1795,7 +1795,7 @@ char *         oyjlTranslate         ( const char        * loc,
     for(i = 0; i < count; ++i)
     {
       path = paths[i];
-      if(oyjlRegExpMatch(path, regex))
+      if(oyjlRegExpFind(path, regex))
       {
         paths[i] = NULL;
         break;

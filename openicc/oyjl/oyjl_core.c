@@ -786,31 +786,33 @@ int          oyjlStringsToDoubles    ( const char        * text,
 
 /** @brief   search for pattern
  *
+ *  This function behaves like strstr(), but extends to regular expressions.
  *  Test for OYJL_HAVE_REGEX_H macro to see if regexec() API is
  *  used. Otherwise only C strstr() API will be called.
  *
  *  @param         text                string to search in
  *  @param         regex               regular expression to try with text
  *  @return                            result:
- *                                     - 1: found
  *                                     - 0: no match
+ *                                     - >0: first string adress in text
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/07/28
+ *  @date    2021/01/06
  *  @since   2020/07/28 (Oyjl: 1.0.0)
  */
-int        oyjlRegExpMatch           ( const char        * text,
+char *     oyjlRegExpFind            ( char              * text,
                                        const char        * regex )
 {
-  int match = 0;
+  char * match = NULL;
   if( !text || !regex )
     return match;
 
 #ifdef OYJL_HAVE_REGEX_H
   int status = 0;
   regex_t re;
+  regmatch_t re_match = {0,0};
   int error = 0;
-  if((error = regcomp(&re, regex, REG_EXTENDED|REG_NOSUB)) != 0)
+  if((error = regcomp(&re, regex, REG_EXTENDED)) != 0)
   {
     char * err_msg = calloc( 1024, sizeof(char) );
     regerror( error, &re, err_msg, 1024 );
@@ -820,14 +822,14 @@ int        oyjlRegExpMatch           ( const char        * text,
     if(err_msg) free(err_msg);
     return 0;
   }
-  status = regexec( &re, text, (size_t)0, NULL, 0 );
+  status = regexec( &re, text, (size_t)1, &re_match, 0 );
   regfree( &re );
-  if(status == 0)
-    match = 1;
+  if(status == 0 && re_match.rm_so != -1)
+    match = &text[re_match.rm_so];
 #endif
 
-  if(!match && strstr(text, regex) != NULL)
-    match = 1;
+  if(match == NULL)
+    match = strstr(text, regex);
 
   return match;
 }
