@@ -610,68 +610,70 @@ oyjlTESTRESULT_e testString ()
   }
   oyjlStringListRelease( &list, wlen, myDeAllocFunc );
 
-  text = "my_string_1_is_long";
+  char * txt = oyjlStringCopy( "my_string_1_is_long", 0 );
   const char * regexp = "*string";
-  if(!oyjlRegExpMatch(text, regexp))
+  const char * match;
+  if(oyjlRegExpFind(txt, regexp) == NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "!oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+    "!oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "!oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+    "!oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
   regexp = "_string_";
-  if(oyjlRegExpMatch(text, regexp))
+  if((match = oyjlRegExpFind(txt, regexp)) != NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+    "oyjlRegExpFind( \"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), match );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+    "oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
 
   regexp = "NONE";
-  if(!oyjlRegExpMatch(text, regexp))
+  if((match = oyjlRegExpFind(txt, regexp)) == NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "!oyjlRegExpMatch( \"%s\", \"%s\" ) ", text, oyjlNoEmpty(regexp) );
+    "!oyjlRegExpFind( \"%s\", \"%s\" ) ", txt, oyjlNoEmpty(regexp) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "!oyjlRegExpMatch( \"%s\", \"%s\" ) ", text, oyjlNoEmpty(regexp) );
+    "!oyjlRegExpFind( \"%s\", \"%s\" ) ", txt, oyjlNoEmpty(regexp) );
   }
 
   regexp = "1";
-  if(oyjlRegExpMatch(text, regexp))
+  if((match = oyjlRegExpFind(txt, regexp)) != NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlRegExpMatch( \"%s\", \"%s\" ) ", text, oyjlNoEmpty(regexp) );
+    "oyjlRegExpFind( \"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), match );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlRegExpMatch( \"%s\", \"%s\" ) ", text, oyjlNoEmpty(regexp) );
+    "oyjlRegExpFind( \"%s\", \"%s\" ) ", txt, oyjlNoEmpty(regexp) );
   }
 
   regexp = "string.1";
-  if(oyjlRegExpMatch(text, regexp))
+  if((match = oyjlRegExpFind(txt, regexp)) != NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+    "oyjlRegExpFind( \"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), match );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+    "oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
 
   regexp = "str.*lon";
-  if(oyjlRegExpMatch(text, regexp))
+  if((match = oyjlRegExpFind(txt, regexp)) != NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+    "oyjlRegExpFind( \"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), match );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlRegExpMatch( \"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+    "oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
 
   regexp = "st[.]*lo";
-  if(!oyjlRegExpMatch(text, regexp))
+  if(oyjlRegExpFind(txt, regexp) == NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "!oyjlRegExpMatch(\"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+    "!oyjlRegExpFind(\"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "!oyjlRegExpMatch(\"%s\", \"%s\" )", text, oyjlNoEmpty(regexp) );
+    "!oyjlRegExpFind(\"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
+  free(txt); txt = NULL;
 
   char * pattern = NULL;
 #define REGEX_ESCAPE( pre, regex_, escape ) \
@@ -679,12 +681,12 @@ oyjlTESTRESULT_e testString ()
     t = oyjlRegExpEscape( escape ); \
     oyjlStringAdd( &compare, 0,0, "%s%s", pre, escape ); \
     oyjlStringAdd( &pattern, 0,0, "%s%s", regex_, t ); \
-    if(oyjlRegExpMatch( compare, pattern )) \
+    if(oyjlRegExpFind( compare, pattern ) != NULL) \
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS, \
       "oyjlRegExpEscape( \"%s\" )                 ", escape ); \
     } else \
     { PRINT_SUB( oyjlTESTRESULT_FAIL, \
-      "oyjlRegExpEscape( \"%s\" ) %s -> oyjlRegExpMatch(\"%s\", \"%s\")", escape, t, compare, pattern ); \
+      "oyjlRegExpEscape( \"%s\" ) %s -> oyjlRegExpFind(\"%s\", \"%s\")", escape, t, compare, pattern ); \
     } \
     free(t); t = NULL; \
     free(compare); compare = NULL; \
