@@ -8,7 +8,7 @@ oyranos-monitor-white-point v0.9.7 \- Night Manager
 .br
 \fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFILE\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIANGLE_IN_DEGREE\fR \fB\-o\fR \fIANGLE_IN_DEGREE\fR [\fB\-t\fR \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIANGLE_IN_DEGREE\fR \fB\-o\fR \fIANGLE_IN_DEGREE\fR [\fB\-t\fR \fIANGLE_IN_DEGREE\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
 .br
@@ -48,9 +48,9 @@ A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curv
 .RE
 	\-g -		# [none]
 .br
-	\-g Effect 1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
+	\-g Effect-1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
 .br
-	\-g Effect 2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
+	\-g Effect-2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
 .br
 \fB\-b\fR|\fB\-\-night-backlight\fR \fIPERCENT\fR	Set Nightly Backlight (PERCENT:4 [≥0 ≤100 Δ1])
 .RS
@@ -106,13 +106,13 @@ A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curv
 .RE
 	\-e -		# [none]
 .br
-	\-e Effect 1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
+	\-e Effect-1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
 .br
-	\-e Effect 2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
+	\-e Effect-2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
 .br
 .SS
 Location and Twilight
-\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIANGLE_IN_DEGREE\fR \fB\-o\fR \fIANGLE_IN_DEGREE\fR [\fB\-t\fR \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIANGLE_IN_DEGREE\fR \fB\-o\fR \fIANGLE_IN_DEGREE\fR [\fB\-t\fR \fIANGLE_IN_DEGREE\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fB\-l\fR|\fB\-\-location\fR	Detect location by IP adress
 .br
@@ -120,8 +120,10 @@ Location and Twilight
 .br
 \fB\-o\fR|\fB\-\-longitude\fR \fIANGLE_IN_DEGREE\fR	Set Longitude (ANGLE_IN_DEGREE:0 [≥-180 ≤180 Δ1])
 .br
-\fB\-t\fR|\fB\-\-twilight\fR \fIANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical\fR	Set Twilight angle (ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical:0 [≥18 ≤-18 Δ1])
-.br
+\fB\-t\fR|\fB\-\-twilight\fR \fIANGLE_IN_DEGREE\fR	Set Twilight angle (ANGLE_IN_DEGREE:0 [≥18 ≤-18 Δ1])
+.RS
+0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical
+.RE
 .SS
 Run sunset daemon
 \fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]

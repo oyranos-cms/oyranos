@@ -92,12 +92,12 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
         c[i].help = strdup("");
 
         /* example profile choices */
-        c[++i].nick = strdup("Effect 1");
+        c[++i].nick = strdup("Effect-1");
         c[i].name = strdup("Example Effect 1");
         c[i].description = strdup("ICC profile of class abstract, wich affects gamma");
         c[i].help = strdup("");
 
-        c[++i].nick = strdup("Effect 2");
+        c[++i].nick = strdup("Effect-2");
         c[i].name = strdup("Example Effect 2");
         c[i].description = strdup("ICC profile of class abstract, wich affects gamma");
         c[i].help = strdup("");
@@ -360,7 +360,7 @@ int myMain( int argc , const char** argv )
     {"oiwi", 0, "o", "longitude", NULL, _("Longitude"), _("Set Longitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )}, oyjlDOUBLE, {.d=&longitude} },
     {"oiwi", 0, "r", "sunrise", NULL, _("Sunrise"), _("Show local time, used geographical location, twilight height angles, sun rise and sun set times"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&sunrise} },
-    {"oiwi", 0, "t", "twilight", NULL, _("Twilight"), _("Set Twilight angle"), NULL, _("ANGLE_IN_DEGREE|0:rise/set|-6:civil|-12:nautical|-18:astronomical"), oyjlOPTIONTYPE_DOUBLE,
+    {"oiwi", 0, "t", "twilight", NULL, _("Twilight"), _("Set Twilight angle"), _("0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical"), _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )}, oyjlDOUBLE, {.d=&twilight} },
     {"oiwi", 0, "z", "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_wide} },
     /* default option template -X|--export */

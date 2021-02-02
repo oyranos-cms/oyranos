@@ -8,7 +8,7 @@ oyranos-monitor-white-point v0.9.7 \- Nacht Manager
 .br
 \fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFIL\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
 .br
@@ -48,9 +48,9 @@ Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprof
 .RE
 	\-g -		# [kein]
 .br
-	\-g Effect 1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
+	\-g Effect-1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
 .br
-	\-g Effect 2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
+	\-g Effect-2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
 .br
 \fB\-b\fR|\fB\-\-night-backlight\fR \fIPROZENT\fR	Setze Nächtiches Monitorlicht (PROZENT:4 [≥0 ≤100 Δ1])
 .RS
@@ -106,13 +106,13 @@ Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprof
 .RE
 	\-e -		# [kein]
 .br
-	\-e Effect 1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
+	\-e Effect-1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
 .br
-	\-e Effect 2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
+	\-e Effect-2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
 .br
 .SS
 Ort und Dämmerung
-\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fB\-l\fR|\fB\-\-location\fR	Erhalte Position von IP Adresse
 .br
@@ -120,8 +120,10 @@ Ort und Dämmerung
 .br
 \fB\-o\fR|\fB\-\-longitude\fR \fIWINKEL_IN_GRAD\fR	Setze Geographische Länge (WINKEL_IN_GRAD:0 [≥-180 ≤180 Δ1])
 .br
-\fB\-t\fR|\fB\-\-twilight\fR \fIWINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch\fR	Setze Dämmerungswinkel (WINKEL_IN_GRAD|0:Auf-/Untergang|-6:zivil|-12:nautisch|-18:astronomisch:0 [≥18 ≤-18 Δ1])
-.br
+\fB\-t\fR|\fB\-\-twilight\fR \fIWINKEL_IN_GRAD\fR	Setze Dämmerungswinkel (WINKEL_IN_GRAD:0 [≥18 ≤-18 Δ1])
+.RS
+0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical
+.RE
 .SS
 Setze Sonnenuntergangsdienst
 \fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
