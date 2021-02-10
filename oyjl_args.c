@@ -1198,7 +1198,9 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
             value_name,
             (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"]":"" ); /* allow for easier word wrap in table */
       else if(style & oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP)
-        oyjlStringAdd( &text, malloc, free, "%s", oyjlTermColor(oyjlITALIC,o->value_name) );
+        oyjlStringAdd( &text, malloc, free, "%s%s",
+            (!o->o || strcmp(o->o, "@")) != 0?"=":"",
+            oyjlTermColor(oyjlITALIC,o->value_name) );
       else
       {
         char * t = NULL;
