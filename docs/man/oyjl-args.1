@@ -4,7 +4,7 @@ oyjl-args v1.0.0 \- Ui to source code
 .SH SYNOPSIS
 \fBoyjl-args\fR \fB\-i\fR \fIFILENAME\fR [\fB\-\-completion-bash\fR] [\fB\-v\fR]
 .br
-\fBoyjl-args\fR \fB\-h\fR \fI[synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
 .SH DESCRIPTION
 Tool to convert UI JSON description from *-X export* into source code.
 .SH OPTIONS
@@ -18,29 +18,29 @@ Generate source code
 .br
 .SS
 General options
-\fBoyjl-args\fR \fB\-h\fR \fI[synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
 .br
-\fB\-h\fR|\fB\-\-help\fR \fI[synopsis|...]\fR	Print help text
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Print help text
 .RS
 Show usage information and hints for the tool.
 .RE
-	\-h -		# Full Help
+	\-h -		# Full Help : Print help for all groups
 .br
-	\-h synopsis		# Synopsis - Show all groups including syntax
+	\-h synopsis		# Synopsis : List groups - Show all groups including syntax
 .br
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
 .RS
 Get UI converted into text formats
 .RE
-	\-X man		# Man - Get a unix man page
+	\-X man		# Man : Unix Man page - Get a unix man page
 .br
-	\-X markdown		# Markdown - Get formated text
+	\-X markdown		# Markdown : Formated text - Get formated text
 .br
-	\-X json		# Json - Get a Oyjl Json UI declaration
+	\-X json		# Json : GUI - Get a Oyjl Json UI declaration
 .br
-	\-X json+command		# Json + Command - Get Oyjl Json UI declaration incuding command
+	\-X json+command		# Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command
 .br
-	\-X export		# Export - Get UI data for developers
+	\-X export		# Export : All available data - Get UI data for developers
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br
@@ -59,7 +59,7 @@ https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html
 .SH AUTHOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH COPYRIGHT
-Copyright © 2017-2020 Kai-Uwe Behrmann
+Copyright © 2017-2021 Kai-Uwe Behrmann
 .br
 License: newBSD http://www.oyranos.org
 .SH BUGS

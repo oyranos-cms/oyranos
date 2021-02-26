@@ -4,7 +4,7 @@ oyjl-args v1.0.0 \- Benutzerschnittstellen nach Quelltext
 .SH ÜBERSICHT
 \fBoyjl-args\fR \fB\-i\fR \fIDATEINAME\fR [\fB\-\-completion-bash\fR] [\fB\-v\fR]
 .br
-\fBoyjl-args\fR \fB\-h\fR \fI[synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu übertragen.
 .SH OPTIONEN
@@ -18,29 +18,29 @@ Erzeuge Quelltext
 .br
 .SS
 Allgemeine Optionen
-\fBoyjl-args\fR \fB\-h\fR \fI[synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
 .br
-\fB\-h\fR|\fB\-\-help\fR \fI[synopsis|...]\fR	Zeige Hilfetext an
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Zeige Hilfetext an
 .RS
 Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
 .RE
-	\-h -		# Vollständige Hilfe
+	\-h -		# Vollständige Hilfe : Zeige Hilfe für alle Gruppen
 .br
-	\-h synopsis		# Übersicht - Zeige alle Gruppen mit Syntax
+	\-h synopsis		# Übersicht : Liste Gruppen - Zeige alle Gruppen mit Syntax
 .br
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
 .RS
 Hole Benutzerschnittstelle als Text
 .RE
-	\-X man		# Handbuch - Hole Unix Handbuchseite
+	\-X man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
 .br
-	\-X markdown		# Markdown - Hole formatierten Text
+	\-X markdown		# Markdown : Formatierter Text - Hole formatierten Text
 .br
-	\-X json		# Json - Hole Oyjl Json Benutzerschnittstelle
+	\-X json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
 .br
-	\-X json+command		# Json + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
+	\-X json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
 .br
-	\-X export		# Export - Erhalte Daten für Entwickler
+	\-X export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br
@@ -59,7 +59,7 @@ https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html
 .SH AUTOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH KOPIERRECHT
-Copyright © 2017-2020 Kai-Uwe Behrmann
+Copyright © 2017-2021 Kai-Uwe Behrmann
 .br
 Lizenz: newBSD http://www.oyranos.org
 .SH FEHLER

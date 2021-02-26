@@ -1057,6 +1057,8 @@ const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text) {
       truecolor = color = 0;
     if( getenv("FORCE_COLORTERM") )
       truecolor = color = 1;
+    if( getenv("FORCE_NO_COLORTERM") )
+      truecolor = color = 0;
   }
   if(len < 200)
   {
@@ -1184,8 +1186,8 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
       ++value_name;
     if(style & oyjlOPTIONSTYLE_MAN)
       oyjlStringAdd( &text, malloc, free, "%s\\fI%s%s%s\\fR",
-          OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#") ? " ":"",
-          (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"[":"",
+          OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#") && !(m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG) ? " ":"",
+          (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"[=":"",
           o->value_name,
           (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"]":"" );
     else
@@ -2529,10 +2531,12 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
-              fprintf( oyjl_help_zout, OYJL_HELP_ARG "  -%s %s\t\t# %s%s%s\n",
+              fprintf( oyjl_help_zout, OYJL_HELP_ARG "  -%s %s\t\t# %s%s%s%s%s\n",
                   o->o,
                   o->values.choices.list[l].nick,
                   o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
+                  o->values.choices.list[l].description&&o->values.choices.list[l].description[0]?" : ":"",
+                  o->values.choices.list[l].description?o->values.choices.list[l].description:"",
                   o->values.choices.list[l].help&&o->values.choices.list[l].help[0]?" - ":"",
                   o->values.choices.list[l].help?o->values.choices.list[l].help:"" );
           }
@@ -3721,10 +3725,12 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
             while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
-              oyjlStringAdd( &text, malloc, free, "\t\\-%s %s\t\t# %s%s%s\n.br\n",
+              oyjlStringAdd( &text, malloc, free, "\t\\-%s %s\t\t# %s%s%s%s%s\n.br\n",
                   o->o,
                   o->values.choices.list[l].nick,
                   o->values.choices.list[l].name && o->values.choices.list[l].name[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
+                  o->values.choices.list[l].description&&o->values.choices.list[l].description[0]?" : ":"",
+                  o->values.choices.list[l].description?o->values.choices.list[l].description:"",
                   o->values.choices.list[l].help&&o->values.choices.list[l].help[0]?" - ":"",
                   o->values.choices.list[l].help?o->values.choices.list[l].help:"" );
           }
@@ -3991,7 +3997,12 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
               ++n;
             if(n) oyjlStringAdd( &text, malloc, free, "\n  <table>\n");
             for(l = 0; l < n; ++l)
-              oyjlStringAdd( &text, malloc, free, "   <tr><td style='padding-left:0.5em'><strong>-%s %s</strong></td><td># %s</td></tr>\n", o->o, o->values.choices.list[l].nick, o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description );
+              oyjlStringAdd( &text, malloc, free, "   <tr><td style='padding-left:0.5em'><strong>-%s %s</strong></td><td># %s</td></tr>\n",
+                  o->o, o->values.choices.list[l].nick,
+                  o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
+                  o->values.choices.list[l].description&&o->values.choices.list[l].description[0]?" : ":"",
+                  o->values.choices.list[l].description?o->values.choices.list[l].description:""
+                  );
             if(n) oyjlStringAdd( &text, malloc, free, "  </table>\n");
             oyjlStringAdd( &text, malloc, free, "  </td>\n");
           }
