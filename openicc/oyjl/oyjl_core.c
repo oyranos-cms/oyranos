@@ -1687,6 +1687,8 @@ int oyjlMakeDir_ (const char* path)
 
   if(full_name)
     path_name = oyjlExtractPathFromFileName_(full_name);
+  if(path_name && path_name[0] == '\000')
+    oyjlStringAdd( &path_name, 0,0, "%s", full_name );
   if(path_name)
   {
     if(!oyjlIsDirFull_(path_name))
@@ -1754,6 +1756,8 @@ int  oyjlWriteFile                   ( const char        * filename,
         r = fputc ( block[pt++] , fp);
       } while (--size);
 #else
+      if(*oyjl_debug && *oyjl_debug > 1)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s(%d)", OYJL_DBG_ARGS, full_name, size );
       written_n = fwrite( mem, 1, size, fp );
       if(written_n != size)
         r = errno;
