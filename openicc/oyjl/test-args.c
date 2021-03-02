@@ -67,12 +67,12 @@ oyjlTESTRESULT_e testArgs()
                                      _("Read external storage for global data access, like downloads, music ...\nWrite external storage to create and modify global data.") );
 
   /* declare some option choices */
-  oyjlOptionChoice_s i_choices[] = {{"oyjl.json", _("oyjl.json"), _("oyjl.json"), ""},
-                                    {"oyjl2.json", _("oyjl2.json"), _("oyjl2.json"), ""},
+  oyjlOptionChoice_s i_choices[] = {{"oyjl.json", _("oyjl.json"), "First file", ""},
+                                    {"oyjl2.json", _("oyjl2.json"), "Second file", ""},
                                     {"","","",""}};
-  oyjlOptionChoice_s o_choices[] = {{"0", _("Print All"), _("Print All"), ""},
-                                    {"1", _("Print Camera"), _("Print Camera JSON"), ""},
-                                    {"2", _("Print None"), _("Print None"), ""},
+  oyjlOptionChoice_s o_choices[] = {{"0", _("Print All"), _("All Device Classes"), ""},
+                                    {"1", _("Print Camera"), _("JSON"), ""},
+                                    {"2", _("Print None"), "", ""},
                                     {"","","",""}};
 
   /* declare options - the core information; use previously declared choices */
@@ -383,13 +383,13 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups_no_args, NULL );
 
   text = oyjlUi_ToMan( ui, 0 );
-  if( text && strlen(text) == 2904 &&
+  if( text && strlen(text) == 3098 &&
       strstr(text, "\n\\fB\\-\\-candle\\fR\tCandle"))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 2904 == %lu                    ", text ? strlen(text) : 0 );
+    "oyjlUi_ToMan() 3098 == %lu                    ", text ? strlen(text) : 0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose && text)
@@ -496,7 +496,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   int size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && size == 416)
+  if(!ui && size == 471)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - sub command followed by unbound    %d  ", size );
   } else
@@ -516,12 +516,12 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && size == 416)
+  if(!ui && size == 471)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - mandatory sub command followed by unbound" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "help - mandatory sub command followed by unbound" );
+    "help - mandatory sub command followed by unbound %d", size );
   }
   oyjlUi_ReleaseArgs( &ui);
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "help-mandatorySubCommandFollowedByUnbound", "txt" )
@@ -540,7 +540,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && size == 416)
+  if(!ui && size == 471)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - mandatory integer sub command followed by unbound" );
   } else
@@ -560,7 +560,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && size == 839)
+  if(!ui && size == 894)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - mandatory integer sub command      %d  ", size );
   } else
@@ -569,14 +569,14 @@ oyjlTESTRESULT_e testArgs()
   }
   oyjlUi_ReleaseArgs( &ui);
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "help-mandatoryIntegerSubCommand", "txt" )
-  help = 0; size = 0;
+  helpstr = 0; size = 0;
   free(text); text = NULL;
 
   oyjlOption_s oarray3[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
+    {"oiwi", OYJL_OPTION_FLAG_NO_DASH,     NULL,"input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
     {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &helpstr} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_ACCEPT_NO_ARG,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &helpstr} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
@@ -584,22 +584,22 @@ oyjlTESTRESULT_e testArgs()
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups3[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,     _("Mode"), _("Actual mode"),     NULL, "i|h",       "o,v",    "i,h,o" },
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,     _("Mode"), _("Actual mode"),     NULL, "input,output",       "h,v",    "input,output" },
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },
     {"",0,0,0,0,0,0,0}
   };
-  argc = 2;
-  const char * argv3[] = {"test-args","output"};
+  argc = 4;
+  const char * argv3[] = {"test-args", "-v", "input", "file-arg"};
   setenv("OYJL_NO_EXIT", "1", 0);
   ui = oyjlUi_Create( argc, argv3, /* argc+argv are required for parsing the command line options */
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray3, groups3, NULL );
   if(!ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui not created - multiple sub commands in one group" );
+    "ui not created - wrong order sub commands          " );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui not created - multiple sub commands in one group" );
+    "ui not created - wrong order sub commands          " );
   }
   oyjlUi_ReleaseArgs( &ui);
   help = 0;
