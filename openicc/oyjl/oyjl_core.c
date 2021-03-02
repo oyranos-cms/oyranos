@@ -65,6 +65,194 @@ int * oyjl_debug = &oyjl_debug_local;
 /** @brief   set own debug variable */
 void       oyjlDebugVariableSet      ( int               * debug )
 { oyjl_debug = debug; }
+
+#ifdef OYJL_HAVE_BACKTRACE
+#include <execinfo.h>
+#define BT_BUF_SIZE 100
+#define oyjlFree_m_(x) { free(x); x = NULL; }
+char * oyjlFindApplication_(const char * app_name);
+
+/** @brief backtrace
+ *
+ *  Create backtrace of execution stack.
+ *
+ *  @param[in]      stack_limit         set limit of stack depth
+ *  @return                             one line string with function names and belonging lines of code
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/03/20
+ *  @since   2021/03/20 (Oyjl: 1.0.0)
+ */
+char *   oyjlBT                      ( int                 stack_limit )
+{
+  char * text = NULL;
+
+          int j, nptrs;
+          void *buffer[BT_BUF_SIZE];
+          char **strings;
+
+          nptrs = backtrace(buffer, BT_BUF_SIZE);
+
+          strings = backtrace_symbols(buffer, nptrs);
+          if( strings == NULL )
+          {
+            perror("backtrace_symbols");
+          } else
+          {
+            int size = 0;
+            char * prog,
+                 * main_prog = NULL;
+            char * addr_infos = NULL;
+            char * txt = NULL;
+
+            int start = nptrs-1;
+            do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) );
+            if(start < 0) start = nptrs-1; /* handle threads */
+
+            for(j = start; j >= (*oyjl_debug?0:1); j--)
+            {
+              const char * line = strings[j],
+                         * tmp = strchr( line, '(' ),
+                         * addr = strchr( tmp?tmp:line, '[' );
+
+              prog = oyjlStringCopy( line, NULL );
+              txt = strchr( prog, '(' );
+              if(txt) txt[0] = '\000';
+
+              if(j == start)
+              {
+                main_prog = oyjlStringCopy( prog, 0 );
+                if(!oyjlIsFile(main_prog, "r", NULL, 0))
+                {
+                  char *app = NULL;
+                  if((app = oyjlFindApplication_( main_prog )) != NULL &&
+                      oyjlIsFile(app, "r", NULL, 0))
+                  {
+                    if( main_prog ) oyjlFree_m_( main_prog );
+                    main_prog = app;
+                    app = NULL;
+                  }
+                  if(app) oyjlFree_m_( app );
+                }
+                if(*oyjl_debug)
+                  fprintf(stderr, "prog = %s main_prog = %s\n", prog, main_prog );
+              }
+
+
+              if( main_prog && prog && strstr(main_prog, prog) == NULL)
+              {
+                char * addr2 = NULL;
+                txt = strchr( tmp?tmp:line, '(' );
+                if(txt) addr2 = oyjlStringCopy( txt+1, NULL );
+                if(addr2) txt = strchr( addr2, ')' );
+                if(txt) txt[0] = '\000';
+                if(addr2)
+                {
+                  addr_infos = oyjlReadCommandF( &size, "r", malloc, "eu-addr2line -s --pretty-print -i -f -C -e %s %s", prog, addr2 );
+                  oyjlFree_m_(addr2);
+                  if(addr_infos)
+                  {
+                    txt = strrchr(addr_infos, ':');
+                    if(txt) txt[0] = '\000';
+                  }
+                }
+              }
+              else if(addr)
+              {
+                char * addr2 = oyjlStringCopy( addr+1, NULL );
+                addr2[strlen(addr2)-1] = '\000';
+                addr_infos = oyjlReadCommandF( &size, "r", NULL, "addr2line -spifCe %s %s", main_prog ? main_prog : prog, addr2 );
+                oyjlFree_m_(addr2);
+              }
+
+              if(*oyjl_debug > 1)
+                fprintf(stderr, "%s\n", line);
+
+              {
+                char * t = NULL, * txt = NULL, * addr_info = NULL, * line_number = NULL , * func_name = NULL, * discriminator = NULL;
+                if(addr_infos)
+                {
+                  addr_info = oyjlStringCopy( addr_infos, NULL );
+
+                  if(addr_info[strlen(addr_info)-1] == '\n') addr_info[strlen(addr_info)-1] = '\000';
+
+                  if(addr_info)
+                  {
+                    if( addr_info[strlen(addr_info)-1] == ')' &&
+                        strrchr( addr_info, '(' ) )
+                    {
+                      txt = strrchr( addr_info, '(' );
+                      discriminator = oyjlStringCopy( txt, NULL );
+                      txt[-1] = '\000';
+                    } 
+                  }
+
+                  txt = strrchr( addr_info, ' ' );
+                  if(txt && strrchr( txt, ' '))
+                  {
+                    func_name = oyjlStringCopy( addr_info, NULL );
+                    txt = strrchr( func_name, ' ' );
+                    if(txt) txt = strrchr( txt, ' ' );
+                    if(txt) txt[0] = '\000';
+                    txt = strrchr( func_name, ' ' ); /* at */
+                    if(txt) txt[0] = '\000';
+                    else oyjlFree_m_(func_name);
+
+                    if(func_name) txt = strrchr( addr_info, ' ' ) + 1;
+                    if(txt) line_number = oyjlStringCopy( txt, NULL );
+                  } else
+                  {
+                    txt = strchr( addr_info, '(' );
+                    if(txt) txt[-1] = '\000';
+                  }
+                }
+                if(func_name) t = oyjlStringCopy( func_name, NULL );
+                else
+                {
+                  if(tmp)
+                  {
+                    t = oyjlStringCopy( tmp[0] == '(' ? &tmp[1] : tmp, NULL );
+                    txt = strchr(t, '+');
+                    if(txt) txt[0] = '\000';
+                  }
+                  else
+                    t = oyjlStringCopy( addr_infos, NULL );
+                }
+                if(t)
+                {
+                  if(j == (*oyjl_debug ? 0 : 1))
+                  {
+                    oyjlStringAdd( &text, 0,0, "%s", stack_limit >= 0 ? oyjlTermColor(oyjlBOLD, t) : t );
+                    oyjlStringAdd( &text, 0,0, "(%s) ", line_number ? stack_limit >= 0 ? oyjlTermColor(oyjlITALIC, line_number ) : line_number : "");
+                  }
+                  else
+                  {
+                    oyjlStringAdd( &text, 0,0, "%s", stack_limit >= 0 ? oyjlTermColor(oyjlBOLD, t) : t );
+                    oyjlStringAdd( &text, 0,0, "(%s)->", line_number ? stack_limit >= 0 ? oyjlTermColor(oyjlITALIC, line_number ) : line_number  : "");
+                  }
+                  oyjlFree_m_(t);
+                }
+                oyjlFree_m_(addr_info);
+                if(line_number) oyjlFree_m_(line_number);
+                if(func_name) oyjlFree_m_(func_name);
+                if(discriminator) oyjlFree_m_(discriminator);
+              }
+              oyjlFree_m_( addr_infos );
+              oyjlFree_m_( prog );
+            }
+            oyjlStringAdd( &text, 0,0, "\n" );
+            free(strings);
+            oyjlFree_m_( main_prog );
+          }
+  return text;
+}
+#else
+char *   oyjlBT                      ( int                 stack_limit OYJL_UNUSED )
+{
+  return NULL;
+}
+#endif
+
 /* --- Debug_Section --- */
 
 /* --- Message_Section --- */
