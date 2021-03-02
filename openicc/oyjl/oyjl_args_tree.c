@@ -1047,6 +1047,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         oyjlStringAdd( &flag_string, 0,0, "%s", "OYJL_OPTION_FLAG_EDITABLE" );
       if(flg & OYJL_OPTION_FLAG_ACCEPT_NO_ARG)
         oyjlStringAdd( &flag_string, 0,0, "%s%s", flag_string?"|":"", "OYJL_OPTION_FLAG_ACCEPT_NO_ARG" );
+      if(flg & OYJL_OPTION_FLAG_NO_DASH)
+        oyjlStringAdd( &flag_string, 0,0, "%s%s", flag_string?"|":"", "OYJL_OPTION_FLAG_NO_DASH" );
       if(flg & OYJL_OPTION_FLAG_REPETITION)
         oyjlStringAdd( &flag_string, 0,0, "%s%s", flag_string?"|":"", "OYJL_OPTION_FLAG_REPETITION" );
       if(flg & OYJL_OPTION_FLAG_MAINTENANCE)
