@@ -19,6 +19,7 @@
 
 #cmakedefine HAVE_DL
 #cmakedefine HAVE_QT
+#cmakedefine OYJL_HAVE_BACKTRACE
 #cmakedefine OYJL_HAVE_LANGINFO_H
 #cmakedefine OYJL_HAVE_LOCALE_H
 #cmakedefine OYJL_HAVE_LIBINTL_H
