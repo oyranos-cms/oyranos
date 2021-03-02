@@ -740,12 +740,12 @@ oyjlTESTRESULT_e testArgs()
     {"",0,0,0,0}};
 
   /* declare some option choices */
-  oyjlOptionChoice_s i_choices[] = {{"oyjl.json", _("oyjl.json"), _("oyjl.json"), ""},
-                                    {"oyjl2.json", _("oyjl2.json"), _("oyjl2.json"), ""},
+  oyjlOptionChoice_s i_choices[] = {{"oyjl.json", _("oyjl.json"), "First file", ""},
+                                    {"oyjl2.json", _("oyjl2.json"), "Second file", ""},
                                     {"","","",""}};
-  oyjlOptionChoice_s o_choices[] = {{"0", _("Print All"), _("Print All"), ""},
-                                    {"1", _("Print Camera"), _("Print Camera JSON"), ""},
-                                    {"2", _("Print None"), _("Print None"), ""},
+  oyjlOptionChoice_s o_choices[] = {{"0", _("Print All"), _("All Device Classes"), ""},
+                                    {"1", _("Print Camera"), _("JSON"), ""},
+                                    {"2", _("Print None"), "", ""},
                                     {"","","",""}};
 
   /*  declare options - the core information; use previously declared choices;
@@ -897,12 +897,12 @@ oyjlTESTRESULT_e testArgs()
                                        "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 4753)
+  if(text && strlen(text) == 4698)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu                           ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson() 4753 == %lu                   ", strlen(text) );
+    "oyjlUi_ToJson() 4698 == %lu                   ", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson", "txt" )
   if(verbose && text)
@@ -910,12 +910,12 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToMan( ui, 0 );
-  if(text && strlen(text) == 778)
+  if(text && strlen(text) == 833)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 778 == %lu                     ", strlen(text) );
+    "oyjlUi_ToMan() 848 == %lu                     ", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose)
@@ -957,12 +957,12 @@ oyjlTESTRESULT_e testArgs()
   }
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6716)
+  if(text && strlen(text) == 6704)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()       %lu                 ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ExportToJson()       6716 == %lu         ", strlen(text) );
+    "oyjlUi_ExportToJson()       6704 == %lu         ", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson", "txt" )
   if(verbose && text)
