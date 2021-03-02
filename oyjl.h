@@ -451,6 +451,7 @@ typedef enum {
 } oyjlTEXTMARK_e;
 const char * oyjlTermColor           ( oyjlTEXTMARK_e      mark,
                                        const char        * text );
+char *     oyjlBT                    ( int                 stack_limit );
 
 /* --- I/O helpers --- */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,
