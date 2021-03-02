@@ -3,14 +3,14 @@
  *  oyjl - UI helpers
  *
  *  @par Copyright:
- *            2018-2020 (C) Kai-Uwe Behrmann
+ *            2018-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl argument handling
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- * Copyright (c) 2018-2020  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ * Copyright (c) 2018-2021  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -93,6 +93,10 @@ int * oyjl_debug = &my_debug;
   }                                                         \
 }
 
+char *   oyjlBT                      ( int                 stack_limit OYJL_UNUSED )
+{
+  return NULL;
+}
 extern oyjlMessage_f oyjlMessage_p;
 int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context_object OYJL_UNUSED,
@@ -1148,14 +1152,14 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
   if(!o) return oyjlStringCopy("", malloc);
   if(style & oyjlOPTIONSTYLE_OPTIONAL_START)
     oyjlStringAdd( &text, malloc, free, "[" );
-  if(style & oyjlOPTIONSTYLE_ONELETTER && o->o && OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#") && !sub_command)
+  if((style & oyjlOPTIONSTYLE_ONELETTER || !o->option) && o->o && o->o[0] && OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#") && !sub_command)
   {
     if(style & oyjlOPTIONSTYLE_MAN)
-      oyjlStringAdd( &text, malloc, free, "\\fB\\-%s\\fR", o->o );
+      oyjlStringAdd( &text, malloc, free, "\\fB\\-%s\\fR", o->o?o->o:o->option );
     else if(style & oyjlOPTIONSTYLE_MARKDOWN)
-      oyjlStringAdd( &text, malloc, free, "<strong>-%s</strong>", o->o );
+      oyjlStringAdd( &text, malloc, free, "<strong>-%s</strong>", o->o?o->o:o->option );
     else
-      oyjlStringAdd( &text, malloc, free, "-%s", oyjlTermColor( oyjlBOLD, o->o ) );
+      oyjlStringAdd( &text, malloc, free, "-%s", oyjlTermColor( oyjlBOLD, o->o?o->o:o->option ) );
   }
   if(style & oyjlOPTIONSTYLE_ONELETTER && OYJL_IS_O("#"))
     oyjlStringAdd( &text, malloc, free, "|" );
@@ -1260,6 +1264,8 @@ oyjlOptionChoice_s oyjl_R_choices_[] = {
 static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
 {
   /* enrich inbuild variables */
+  if(!o->o)
+    return;
   if(strcmp(o->o, "h") == 0)
   {
     if(o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
@@ -1825,7 +1831,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             fprintf( stderr, "%s\n", _("Options with arguments are not allowed in sub command style. A sub command has no leading '--'. It is a mandatory option of a option group.") );
             free(t);
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = "1";
+            result->values[result->count] = "0";
             state = oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND;
           }
           else if(o)
@@ -1834,6 +1840,24 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
               result->options[result->count] = strdup(o->o?o->o:o->option);
             result->values[result->count] = "1";
           }
+        } else
+        {
+          /* detect misplaced sub_command */
+          int sub_command = 0;
+          o = oyjlOptions_GetOptionL( opts, str );
+          if(o && o->flags & OYJL_OPTION_FLAG_NO_DASH)
+            sub_command = 1;
+          if(sub_command)
+          {
+            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_STRING | OYJL_GROUP_FLAG_SUBCOMMAND);
+            oyjlOptions_Print_( opts, i );
+            fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+            fprintf( stderr, "%s (%s)\n", _("A mandatory sub command option needs to be placed first"), t );
+            free(t);
+            state = oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND;
+            goto clean_parse;
+          }
+          o = NULL;
         }
 
         if(!o)
@@ -2204,12 +2228,14 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
     char next_delimiter = g->mandatory[m_index[i]];
     if(!o)
     {
-      fprintf(stdout, "\n%s: option not declared: %s\n", g->name, option);
+      fprintf(stdout, "%s %s: option not declared: \"%s\" \"%s\"\n", oyjlBT(0), g->name?oyjlTermColor(oyjlBOLD,g->name):"---", option, g->mandatory);
       if(!getenv("OYJL_NO_EXIT")) exit(1);
     }
     if(option[0] != '@' && !(option[0] == '#' && m+on == 1))
     {
-      char * t = oyjlOption_PrintArg(o, style);
+      int s = style;
+      if(i) s = style & (~OYJL_GROUP_FLAG_SUBCOMMAND);
+      char * t = oyjlOption_PrintArg(o, s);
       const char * group_id = oyjlOptions_GetGroupId_( opts, g );
       if(i == 0 && o->option && style & oyjlOPTIONSTYLE_MARKDOWN && style & oyjlOPTIONSTYLE_LINK_GROUP && group_id)
         oyjlStringAdd( &text, malloc, free, " <a href=\"#%s\">%s</a>", group_id, t );
@@ -2244,7 +2270,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
     }
     else if(!o)
     {
-      fprintf(stdout, "\n%s: option not declared: %s\n", g->name, &g->optional[i]);
+      fprintf(stdout, "%s%s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", &g->optional[i]);
       if(!getenv("OYJL_NO_EXIT")) exit(1);
     }
     {
@@ -2264,7 +2290,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
     char next_delimiter = g->mandatory[m_index[i]];
     if(next_delimiter != '|' && !o)
     {
-      fprintf(stdout, "\n%s: option not declared: %s\n", g->name, option);
+      fprintf(stdout, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", option);
       if(!getenv("OYJL_NO_EXIT")) exit(1);
     }
     if(strcmp(option, "@") == 0)
@@ -2508,7 +2534,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
         style |= g->flags;
       if(!o)
       {
-        fprintf(oyjl_help_zout, "\n%s: option not declared: %s\n", g->name, &g->detail[j]);
+        fprintf(oyjl_help_zout, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", &g->detail[j]);
         if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
       switch(o->value_type)
@@ -2727,16 +2753,6 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
     {
       int n = 0;
       char ** list = oyjlStringSplit2( g->mandatory, "|,", &n, NULL, malloc );
-      if(g->flags & OYJL_GROUP_FLAG_SUBCOMMAND)
-      {
-        if(n != 1)
-        {
-          fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
-          fprintf(stderr, "group->flags set to OYJL_GROUP_FLAG_SUBCOMMAND but more than one mandatory option: \"%s\"\n", g->mandatory );
-          status = oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND;
-          if(!getenv("OYJL_NO_EXIT")) exit(1);
-        }
-      }
       for( j = 0; j  < n; ++j )
       {
         const char * option = list[j];
@@ -2757,7 +2773,7 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
       if(!o)
       {
-        fprintf(stdout, "\n%s: option not declared: %s\n", g->name, option);
+        fprintf(stdout, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", option);
         if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
       switch(o->value_type)
@@ -2771,7 +2787,7 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
             {
               char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
               fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
-              fprintf( stderr, "%s (%s)\n", _("This option needs oyjlOption_s::value_name defined"), t );
+              fprintf( stderr, "%s%s (%s)\n", oyjlBT(0), _("This option needs oyjlOption_s::value_name defined"), t );
               if(!getenv("OYJL_NO_EXIT")) exit(1);
             }
             if( !n && !(o->flags & OYJL_OPTION_FLAG_EDITABLE) &&
@@ -3082,7 +3098,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   }
   else if(!optionless && opt_state != oyjlOPTION_NOT_SUPPORTED && !help && !pass_group && !version && !export)
   {
-    if(opt_state == oyjlOPTION_NONE)
+    if(opt_state == oyjlOPTION_NONE || opt_state)
       oyjlOptions_Print_( ui->opts, 0 );
     fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
     fputs( _("Missing mandatory option. No usage mode in synopsis lines found."), stderr );
@@ -3095,6 +3111,42 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       oyjlOptions_PrintHelp( ui->opts, ui, -2, NULL );
   }
   free(rank_list);
+  if(results && results->group >= 0)
+  {
+    i = results->group;
+    g = &ui->opts->groups[i];
+    if(g->flags & OYJL_GROUP_FLAG_SUBCOMMAND)
+    {
+      int li_n = 0, i;
+      char ** li = oyjlStringSplit2( g->mandatory, "|,", &li_n, NULL, 0 );
+      const char * first_opt = results->options[0];
+      int found_mandatory_at_first_pos = 0;
+      for( i = 0; i < li_n; ++i )
+        if(strcmp(first_opt, li[i]) == 0)
+          ++found_mandatory_at_first_pos;
+      opt_state = oyjlOPTION_SUBCOMMAND;
+
+      if(!found_mandatory_at_first_pos)
+      {
+        oyjlOptions_Print_( ui->opts, 1 );
+        fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+        fprintf(stderr, "%s:", _("A mandatory sub command option needs to be placed first") );
+        for( i = 0; i < li_n; ++i )
+        {
+          const char * option = li[i];
+          oyjlOption_s * o = oyjlOptions_GetOptionL( ui->opts, option );
+          char * t = oyjlOption_PrintArg( o, oyjlOPTIONSTYLE_STRING | OYJL_GROUP_FLAG_SUBCOMMAND );
+          fprintf(stderr, " %s", oyjlTermColor(oyjlBOLD, t));
+          free(t);
+        }
+        fprintf(stderr, "\n");
+        if(status)
+          *status |= oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND;
+        opt_state = oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND;
+      }
+      oyjlStringListRelease( &li, li_n, 0 );
+    }
+  }
 
   if(opt_state != oyjlOPTION_NONE && *oyjl_debug)
   {
@@ -3198,6 +3250,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   }
 
   nopts = oyjlOptions_Count( ui->opts );
+  if(opt_state != oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND)
   for(i = 0; i < nopts; ++i)
   {
     const char * value = NULL;
@@ -3706,7 +3759,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
         style |= g->flags;
       if(!o)
       {
-        fprintf(stdout, "\n%s: option not declared: %s\n", g->name, option);
+        fprintf(stdout, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", option);
         if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
       switch(o->value_type)
@@ -3978,7 +4031,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
         style |= g->flags;
       if(!o)
       {
-        fprintf(stdout, "\n%s: option not declared: %s\n", g->name, option );
+        fprintf(stdout, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", option );
         if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
 #define OYJL_LEFT_TD_STYLE " style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'"
