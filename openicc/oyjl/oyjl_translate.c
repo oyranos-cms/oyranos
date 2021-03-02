@@ -293,7 +293,7 @@ int myMain( int argc, const char ** argv )
         {
           if(!oyjlIsDirFull_ (localedir))
           {
-            fprintf(stderr, "ERROR: Can not find absolute path:\t%s\n", localedir);
+            fprintf(stderr, "%sERROR: Can not find absolute path:\t%s\n", oyjlBT(0), localedir);
             exit(1);
           }
           oyjl_domain_path = localedir;
@@ -401,7 +401,7 @@ int myMain( int argc, const char ** argv )
           char * sname = strdup(domain);
           if(strcmp(wrap,"C") != 0)
           {
-            fprintf(stderr,"ERROR: Only -w C is supported.\n");
+            fprintf(stderr,"%sERROR: Only -w C is supported.\n", oyjlBT(0));
             exit(1);
           }
 
