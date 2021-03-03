@@ -1728,7 +1728,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
         {
           oyjlOptions_Print_( opts, i );
           fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
-          fprintf( stderr, "%s \'%s\'\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,long_arg) );
+          fprintf( stderr, "%s \'%s\'\n", _("Option not supported with double dash"), oyjlTermColor(oyjlBOLD,long_arg) );
           state = oyjlOPTION_NOT_SUPPORTED;
           goto clean_parse;
         }
@@ -1791,8 +1791,8 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
       {
         o = NULL;
 
-        /* support first option as group selector, without value */
-        if( i == 1 && l > 2 )
+        /* support sub command group selector */
+        if( l > 2 )
         {
           o = oyjlOptions_GetOptionL( opts, str );
           if(o && o->flags & OYJL_OPTION_FLAG_ACCEPT_NO_ARG)
@@ -1840,6 +1840,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
               result->options[result->count] = strdup(o->o?o->o:o->option);
             result->values[result->count] = "1";
           }
+#if 0
         } else
         {
           /* detect misplaced sub_command */
@@ -1858,6 +1859,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             goto clean_parse;
           }
           o = NULL;
+#endif
         }
 
         if(!o)
@@ -3172,7 +3174,8 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   if( help &&
       ( opt_state == oyjlOPTION_NONE ||
         opt_state == oyjlOPTION_MISSING_VALUE ||
-        opt_state == oyjlOPTION_SUBCOMMAND )
+        opt_state == oyjlOPTION_SUBCOMMAND ||
+        opt_state == oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND )
     )
   {
     oyjlOption_s * synopsis = oyjlOptions_GetOptionL( ui->opts, "synopsis" );
@@ -3212,6 +3215,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       *status |= oyjlUI_STATE_HELP;
     return NULL;
   }
+
   if(export)
   {
     if(status)
