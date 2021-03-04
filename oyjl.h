@@ -3,7 +3,7 @@
  *  oyjl - Basic helper C API's
  *
  *  @par Copyright:
- *            2010-2020 (C) Kai-Uwe Behrmann
+ *            2010-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
  *            XML + YAML, string helpers, file reading, testing and argument handling.
@@ -631,8 +631,10 @@ int    oyjlOptions_Count             ( oyjlOptions_s     * opts );
 int    oyjlOptions_CountGroups       ( oyjlOptions_s     * opts );
 oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
                                        const char        * ol );
+#define OYJL_QUIET                     0x1000 /**< @brief be silent on error */
 oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
-                                       const char        * ostring );
+                                       const char        * ostring,
+                                       int                 flags );
 /** @brief option state */
 typedef enum {
   oyjlOPTION_NONE,                     /**< untouched */

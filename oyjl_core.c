@@ -734,7 +734,11 @@ void       oyjlStringListRelease     ( char            *** l,
       size_t i;
       for(i = 0; (int)i < size; ++i)
         if((list)[i])
+        {
+          (list)[i][0] = '?';
           deAlloc( (list)[i] );
+          (list)[i] = NULL;
+        }
       deAlloc( list );
       *l = NULL;
     }
@@ -2093,7 +2097,7 @@ static int oyjlArgsRendererSelect_  (  oyjlUi_s          * ui )
     return 1;
   }
 
-  R = oyjlOptions_GetOptionL( ui->opts, "R" );
+  R = oyjlOptions_GetOptionL( ui->opts, "R", 0 );
   if(!R)
   {
     oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no \"-R|--render\" argument found: Can not select", OYJL_DBG_ARGS );
