@@ -1435,11 +1435,12 @@ static int oyjlOptions_IsHelp_       ( oyjlOptions_s     * opts )
  *  @memberof oyjlOptions_s
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/04/25
+ *  @date    2021/03/04
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
-                                       const char        * ostring )
+                                       const char        * ostring,
+                                       int                 flags )
 {
   int i;
   int nopts = oyjlOptions_Count( opts );
@@ -1492,8 +1493,11 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
     else
       o = NULL;
   }
-  if( !oyjlOptions_IsHelp_( opts ))
-    fprintf( stderr, "%s: %s\n", _("Option not found"), str );
+  if( !(flags & OYJL_QUIET) &&
+      !oyjlOptions_IsHelp_( opts ) )
+  {
+    fprintf( stderr, "%s%s: %s %d\n", *oyjl_debug?oyjlBT(0):"", _("Option not found"), str, flags );
+  }
   free(str);
 
   return o;
@@ -1722,7 +1726,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
       else if(l > 2 && str[0] == '-' && str[1] == '-')
       {
         long_arg = &str[2];
-        o = oyjlOptions_GetOptionL( opts, long_arg );
+        o = oyjlOptions_GetOptionL( opts, long_arg, 0 );
         if( !o ||
             (o && o->flags & OYJL_OPTION_FLAG_NO_DASH) )
         {
@@ -1794,7 +1798,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
         /* support sub command group selector */
         if( l > 2 )
         {
-          o = oyjlOptions_GetOptionL( opts, str );
+          o = oyjlOptions_GetOptionL( opts, str, OYJL_QUIET );
           if(o && o->flags & OYJL_OPTION_FLAG_ACCEPT_NO_ARG)
             might_have_value = 1;
           if(o && o->value_type == oyjlOPTIONTYPE_NONE)
@@ -1840,26 +1844,6 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
               result->options[result->count] = strdup(o->o?o->o:o->option);
             result->values[result->count] = "1";
           }
-#if 0
-        } else
-        {
-          /* detect misplaced sub_command */
-          int sub_command = 0;
-          o = oyjlOptions_GetOptionL( opts, str );
-          if(o && o->flags & OYJL_OPTION_FLAG_NO_DASH)
-            sub_command = 1;
-          if(sub_command)
-          {
-            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_STRING | OYJL_GROUP_FLAG_SUBCOMMAND);
-            oyjlOptions_Print_( opts, i );
-            fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
-            fprintf( stderr, "%s (%s)\n", _("A mandatory sub command option needs to be placed first"), t );
-            free(t);
-            state = oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND;
-            goto clean_parse;
-          }
-          o = NULL;
-#endif
         }
 
         if(!o)
@@ -1889,7 +1873,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
     i = 0;
     while(result->options[i])
     {
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, result->options[i] );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, result->options[i], 0 );
       if(o)
       switch(o->variable_type)
       {
@@ -2168,7 +2152,7 @@ const char * oyjlOptions_GetGroupId_ ( oyjlOptions_s  *    opts,
   if(m_list && m)
   {
     const char * option = m_list[0];
-    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
     if(option[0] != '@' && !(option[0] == '#' && m) && o)
       group_id = o->option;
   }
@@ -2226,7 +2210,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
   for(i = 0; i < m; ++i)
   {
     char * option = m_list[i];
-    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
     char next_delimiter = g->mandatory[m_index[i]];
     if(!o)
     {
@@ -2254,7 +2238,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
   for(i = 0; i < on; ++i)
   {
     char * option = on_list[i];
-    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
     char next_delimiter = g->optional[on_index[i]];
     gstyle = style | oyjlOPTIONSTYLE_OPTIONAL;
     if(i < on - 1 && next_delimiter == '|')
@@ -2288,7 +2272,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
   for(i = 0; i < m; ++i)
   {
     char * option = m_list[i];
-    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
     char next_delimiter = g->mandatory[m_index[i]];
     if(next_delimiter != '|' && !o)
     {
@@ -2529,7 +2513,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     for(j = 0; j < d; ++j)
     {
       const char * option = d_list[j];
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
       int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
       int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING;
       if(mandatory_index == 0)
@@ -2772,7 +2756,7 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
     for(j = 0; j < d; ++j)
     {
       const char * option = d_list[j];
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
       if(!o)
       {
         fprintf(stdout, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", option);
@@ -2985,7 +2969,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       for( j = 0; j  < n; ++j )
       {
         const char * moption = list[j];
-        o = oyjlOptions_GetOptionL( ui->opts, moption );
+        o = oyjlOptions_GetOptionL( ui->opts, moption, 0 );
         if(!o)
         {
           fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
@@ -2999,7 +2983,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
             const char * v = results->values[k];
             o = NULL;
             if(strcmp(v, "1") != 0) /* skip --help no arg results */
-              o = oyjlOptions_GetOptionL( ui->opts, v );
+              o = oyjlOptions_GetOptionL( ui->opts, v, 0 );
             if(o)
               roption = o->o?o->o:o->option;
             if(g->name && strcmp(v,g->name) == 0)
@@ -3010,7 +2994,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
             ++found;
           if(i == mgoup_index && j == 0)
           {
-            o = oyjlOptions_GetOptionL( ui->opts, roption );
+            o = oyjlOptions_GetOptionL( ui->opts, roption, 0 );
             if(o && o->flags & OYJL_OPTION_FLAG_MAINTENANCE)
               ++pass_group; 
           }
@@ -3057,7 +3041,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     for( j = 0; j  < n; ++j )
     {
       option = list[j];
-      o = oyjlOptions_GetOptionL( ui->opts, option );
+      o = oyjlOptions_GetOptionL( ui->opts, option, 0 );
       if(!o)
       {
         fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
@@ -3070,7 +3054,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     for( j = 0; j  < n; ++j )
     {
       option = list[j];
-      o = oyjlOptions_GetOptionL( ui->opts, option );
+      o = oyjlOptions_GetOptionL( ui->opts, option, 0 );
       if(!o)
       {
         fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
@@ -3136,7 +3120,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         for( i = 0; i < li_n; ++i )
         {
           const char * option = li[i];
-          oyjlOption_s * o = oyjlOptions_GetOptionL( ui->opts, option );
+          oyjlOption_s * o = oyjlOptions_GetOptionL( ui->opts, option, 0 );
           char * t = oyjlOption_PrintArg( o, oyjlOPTIONSTYLE_STRING | OYJL_GROUP_FLAG_SUBCOMMAND );
           fprintf(stderr, " %s", oyjlTermColor(oyjlBOLD, t));
           free(t);
@@ -3178,7 +3162,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         opt_state == oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND )
     )
   {
-    oyjlOption_s * synopsis = oyjlOptions_GetOptionL( ui->opts, "synopsis" );
+    oyjlOption_s * synopsis = oyjlOptions_GetOptionL( ui->opts, "synopsis", 0 );
     oyjlOptions_PrintHelp( ui->opts, ui, (results && results->group >= 0) ? -1 : (results && results->count >= 1 && strcasecmp(results->values[0],"synopsis") == 0 && synopsis) ? -2 : verbose, NULL );
     oyjlUi_ReleaseArgs( &ui);
     if(status)
@@ -3513,7 +3497,7 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
                                        char            *** sections,
                                        int               * sn )
 {
-  oyjlOption_s * o = oyjlOptions_GetOptionL( opts, opt_name );
+  oyjlOption_s * o = oyjlOptions_GetOptionL( opts, opt_name, 0 );
   char * text = NULL;
   if(o)
   {
@@ -3756,7 +3740,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     {
       const char * option = d_list[j];
       char * t;
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
       int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
       int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN;
       if(mandatory_index == 0)
@@ -4028,7 +4012,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     for(j = 0; j < d; ++j)
     {
       const char * option = d_list[j];
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
       int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
       int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN;
       if(mandatory_index == 0)

@@ -1799,7 +1799,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       for(j = 0; j < mandatory_n; ++j)
       {
         const char * moption = mandatory_list[j];
-        opt = oyjlOptions_GetOptionL( ui->opts, moption );
+        opt = oyjlOptions_GetOptionL( ui->opts, moption, 0 );
         if(opt->o && (strcmp(opt->o,"#") == 0 || strcmp(opt->o,"@") == 0))
           continue;
         oyjlStrAdd( s, "%s%s%s%s%s%s", found?"|":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && opt->option)?"|":"", (opt->option && !sub)?"--":"", opt->option?opt->option:"" );
@@ -1811,7 +1811,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       for(j = 0; j < optional_n; ++j)
       {
         const char * ooption = optional_list[j];
-        opt = oyjlOptions_GetOptionL( ui->opts, ooption );
+        opt = oyjlOptions_GetOptionL( ui->opts, ooption, 0 );
         oyjlStrAdd( s, "%s%s%s%s%s%s%s%s", found?" ":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && WANT_ARG(opt))?"=":"", opt->o?" ":"", opt->option?"--":"", opt->option?opt->option:"", (opt->option && WANT_ARG(opt))?"=":"" );
         ++found;
       }
@@ -1845,7 +1845,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       for(j = 0; j < optional_n; ++j)
       {
         const char * ooption = optional_list[j];
-        opt = oyjlOptions_GetOptionL( ui->opts, ooption );
+        opt = oyjlOptions_GetOptionL( ui->opts, ooption, 0 );
         oyjlStrAdd( s, "%s%s%s%s%s%s%s%s", found?" ":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && WANT_ARG(opt))?"=":"", opt->o?" ":"", opt->option?"--":"", opt->option?opt->option:"", (opt->option && WANT_ARG(opt))?"=":"" );
         ++found;
       }
@@ -1890,7 +1890,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       for(j = 0; j < mandatory_n; ++j)
       {
         const char * moption = mandatory_list[j];
-        opt = oyjlOptions_GetOptionL( ui->opts, moption );
+        opt = oyjlOptions_GetOptionL( ui->opts, moption, 0 );
         if(opt->o && (strcmp(opt->o,"#") == 0 || strcmp(opt->o,"@") == 0))
           continue;
         oyjlStrAdd( s, "%s%s%s%s%s%s%s%s", found?" ":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && WANT_ARG(opt))?"=":"", opt->o?" ":"", (opt->option && !sub)?"--":"", opt->option?opt->option:"", (opt->option && WANT_ARG(opt))?"=":"" );
@@ -2053,7 +2053,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     if(sub_command)
     {
       /* assume the first option is the sub command name */
-      o = oyjlOptions_GetOptionL( opts, g->mandatory );
+      o = oyjlOptions_GetOptionL( opts, g->mandatory, 0 );
       oyjlValueSetString( key, o->option );
     }
     else
@@ -2079,7 +2079,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     for(j = 0; j < d; ++j)
     {
       char * option = d_list[j];
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option );
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
       int mandatory_index;
       if(!o) continue;
       mandatory_index = oyjlOptionMandatoryIndex_( o, g );

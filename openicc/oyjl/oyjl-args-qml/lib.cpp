@@ -282,7 +282,7 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
     return 1;
   }
 
-  R = oyjlOptions_GetOptionL( ui->opts, "R" );
+  R = oyjlOptions_GetOptionL( ui->opts, "R", 0 );
   if(!R)
   {
     oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no \"-R|--render\" argument found: Can not select", OYJL_DBG_ARGS );
