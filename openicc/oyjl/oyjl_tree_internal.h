@@ -62,6 +62,7 @@ oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char          * documentation,
                                        const char          * date_description );
 int oyjlOptionMandatoryIndex_        ( oyjlOption_s      * opt,
                                        oyjlOptionGroup_s * g );
+void oyjlUiCanonicaliseVariableName_ ( char             ** name );
 
 char *       oyjlStringToLower       ( const char        * t );
 char *       oyjlStringToUpper       ( const char        * t );
