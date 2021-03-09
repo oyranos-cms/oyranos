@@ -701,7 +701,7 @@ static char * oyjlGuessSingleWordFromChar_ ( char o, const char * text )
   return name;
 }
 
-static void oyjlUiCanonicaliseVariableName_( char ** name )
+void oyjlUiCanonicaliseVariableName_ ( char             ** name )
 {
   const char * txt;
   int i;
@@ -714,6 +714,7 @@ static void oyjlUiCanonicaliseVariableName_( char ** name )
   oyjlStrReplace( tmp, "+", "_plus_", 0, NULL );
   oyjlStrReplace( tmp, "=", "_", 0, NULL );
   oyjlStrReplace( tmp, "(", "_", 0, NULL );
+  oyjlStrReplace( tmp, "|", "_", 0, NULL );
   txt = oyjlStr(tmp);
   free(*name); *name = NULL;
   i = 0;
@@ -855,9 +856,9 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
   oyjl_str s = oyjlStrNew( 0, 0,0 );
   if(flags & OYJL_SOURCE_CODE_C)
   {
-    oyjl_val val;
+    oyjl_val val, v;
     char * app_type;
-    int i,n, X_found = 0, export_found = 0, help_found = 0, verbose_found = 0, version_found = 0, render_found = 0;
+    int i,n, X_found = 0, export_found = 0, h_found = 0, help_found = 0, v_found = 0, v_is_string = 0, verbose_found = 0, version_found = 0, render_found = 0;
 
     val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/app_type" ); app_type = OYJL_GET_STRING(val);
     oyjlStrAdd( s, "#include \"oyjl.h\"\n" );
@@ -877,7 +878,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/array" ) );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *value_type;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
@@ -905,7 +905,9 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     for(i = 0; i < n; ++i)
     {
       const char * type = NULL;
-      char * t = oyjlUiGetVariableNameC_( oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i ), &type );
+      char * t;
+      val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
+      t = oyjlUiGetVariableNameC_( val, &type );
       if(type && t)
       {
         oyjlStrAdd( s, "  %s %s = 0;\n", type, t );
@@ -913,8 +915,19 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           X_found = 1;
         if(strcmp(t,"export") == 0)
           export_found = 1;
+        if(strcmp(t,"h") == 0)
+          h_found = 1;
         if(strcmp(t,"help") == 0)
           help_found = 1;
+        if(strcmp(t,"v") == 0)
+        {
+          char * variable_type = NULL;
+          v_found = 1;
+          v = oyjlTreeGetValue( val, 0, "variable_type" );
+          if(v) variable_type = OYJL_GET_STRING(v);
+          if(variable_type && strcmp(variable_type, "oyjlSTRING") == 0)
+            v_is_string = 1;
+        }
         if(strcmp(t,"verbose") == 0)
           verbose_found = 1;
         if(strcmp(t,"version") == 0)
@@ -951,7 +964,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/header/sections" ) );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *nick, *label, *name, *desc;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/header/sections/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "nick" ); nick = OYJL_GET_STRING(v);
@@ -977,7 +989,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/array" ) );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *value_type, *o, *o_fallback, *option;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "o" ); o_fallback = o = OYJL_GET_STRING(v);
@@ -1036,7 +1047,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s,       " */\n" );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       char * flag_string = NULL;
       int flg, j, len;
       char oo[4] = {0,0,0,0}, *tmp_name = NULL, *tmp_variable_name = NULL;
@@ -1250,7 +1260,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/groups" ) );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *name, *desc, *help, *mandatory, *optional, *detail;
       char * flag_string = NULL;
       int flg;
@@ -1305,6 +1314,15 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "                                       sections, oarray, groups, &state );\n" );
     if(!(app_type && strcmp(app_type,"tool") == 0))
     oyjlStrAdd( s, "  if(ui) ui->app_type = \"%s\";\n", app_type ? app_type : "lib" );
+    if(!help_found && h_found)
+      oyjlStrAdd( s, "  help = h ? \"\" : NULL;\n" );
+    if(!verbose_found && v_found)
+    {
+      if(v_is_string)
+        oyjlStrAdd( s, "  verbose = v ? 1 : 0;\n" );
+      else
+        oyjlStrAdd( s, "  verbose = v;\n" );
+    }
     oyjlStrAdd( s, "  if( state & oyjlUI_STATE_EXPORT &&\n" );
     oyjlStrAdd( s, "      export &&\n" );
     oyjlStrAdd( s, "      strcmp(export,\"json+command\") != 0)\n" );
@@ -1408,7 +1426,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
   }
   else if(flags & OYJL_COMPLETION_BASH)
   {
-    oyjl_val val;
+    oyjl_val val, v;
     char * func;
     const char *nick_;
     int i,n;
@@ -1441,7 +1459,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/array" ) );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *value_type, *option, *o;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
@@ -1521,7 +1538,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStrAdd( s, "    case \"$cur\" in\n" );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *value_type, *option, *o;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
@@ -1616,7 +1632,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     int found = 0;
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *value_type, *option, *o;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
@@ -1655,7 +1670,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     found = 0;
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *value_type, *option;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
@@ -1691,7 +1705,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     found = 0;
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *value_type, *option, *o;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
@@ -1727,7 +1740,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     found = 0;
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *value_type, *option;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
@@ -1778,7 +1790,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/groups" ) );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *mandatory, *optional;
       int mandatory_n = 0, optional_n = 0, j, flg, sub = 0;
       char **mandatory_list, **optional_list;
@@ -1825,7 +1836,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     if(found_at_arg_mode) /* put '@)' at the end of cases */
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *mandatory, *optional;
       int mandatory_n = 0, optional_n = 0, j;
       char **mandatory_list, **optional_list;
@@ -1875,7 +1885,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStrAdd( s, "      WORD_LIST=(\"${WORD_LIST[@]}\" " );
     for(i = 0; i < n; ++i)
     {
-      oyjl_val v;
       const char *mandatory;
       int mandatory_n = 0, j, flg, sub = 0;
       char **mandatory_list;
@@ -2340,7 +2349,6 @@ void               oyjlUi_Translate  ( oyjlUi_s          * ui,
                                        oyjl_val            catalog,
                                        oyjlTranslate_f     translator )
 {
-  char * t = NULL;
   int i,j,n,ng;
 
   if(!ui || !loc || !catalog) return;

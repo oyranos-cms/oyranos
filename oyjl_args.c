@@ -1044,12 +1044,15 @@ static int oyjlTermColorCheck_()
 #define OYJL_CTEND "\033[0m"
 #endif
 const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text) {
-  int len = strlen(text);
+  int len = 0;
   static char t[256];
   static int colorterm_init = 0;
   static const char * oyjl_colorterm = NULL;
   static int truecolor = 0,
              color = 0;
+  if(!text)
+    return "---";
+
   if(!colorterm_init)
   {
     colorterm_init = 1;
@@ -1064,6 +1067,7 @@ const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text) {
     if( getenv("FORCE_NO_COLORTERM") )
       truecolor = color = 0;
   }
+  len = strlen(text);
   if(len < 200)
   {
     switch(rgb)
@@ -1544,8 +1548,10 @@ static oyjlOPTIONSTATE_e oyjlOptions_Check_(
         o->value_type == oyjlOPTIONTYPE_CHOICE &&
         !((o->flags & OYJL_OPTION_FLAG_EDITABLE) || o->values.choices.list))
     {
-      fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
-      fprintf( stderr, "%s \'%s\' %s\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
+      fputs( oyjlBT(0), stderr );
+      fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
+      fprintf( stderr, "%s \'%s\' %s\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o?o->o:o->option), _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
+      if(!getenv("OYJL_NO_EXIT")) exit(1);
       return oyjlOPTION_NOT_SUPPORTED;
     }
   }
@@ -2779,8 +2785,10 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
             if( !n && !(o->flags & OYJL_OPTION_FLAG_EDITABLE) &&
                 strcmp(o->o, "h") != 0 && strcmp(o->o, "X") != 0 && strcmp(o->o, "R") != 0 )
             {
-              fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
-              fprintf( stderr, "%s \'%s\' %s\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o), _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
+              fputs( oyjlBT(0), stderr );
+              fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
+              fprintf( stderr, "%s \'%s\' %s\n", _("Option not supported"), oyjlTermColor(oyjlBOLD,o->o?o->o:o->option), _("needs OYJL_OPTION_FLAG_EDITABLE or choices") );
+              if(!getenv("OYJL_NO_EXIT")) exit(1);
               status = oyjlOPTION_NOT_SUPPORTED;
             }
           }
