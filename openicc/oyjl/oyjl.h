@@ -594,6 +594,8 @@ struct oyjlOption_s {
 #define OYJL_GROUP_FLAG_SUBCOMMAND     0x080 /**< @brief This oyjlOptionGroup_s flag requires one single mandatory option with oyjlOPTIONTYPE_NONE. */
 /** For per option exception see ::OYJL_OPTION_FLAG_IMMEDIATE . The flag is intended for e.g. costly processing. */
 #define OYJL_GROUP_FLAG_EXPLICITE      0x100 /**< @brief Apply explicitely in UI */
+/** Recommend to set a special section name "GENERAL OPTIONS". Usualy it follows the "OPTIONS" section. */
+#define OYJL_GROUP_FLAG_GENERAL_OPTS   0x200 /**< @brief Hint for MAN page section */
 /**
  *  @brief Info to compile a Syntax line and check missing arguments
  *
@@ -631,7 +633,7 @@ int    oyjlOptions_Count             ( oyjlOptions_s     * opts );
 int    oyjlOptions_CountGroups       ( oyjlOptions_s     * opts );
 oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
                                        const char        * ol );
-#define OYJL_QUIET                     0x1000 /**< @brief be silent on error */
+#define OYJL_QUIET                     0x100000 /**< @brief be silent on error */
 oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
                                        const char        * ostring,
                                        int                 flags );
