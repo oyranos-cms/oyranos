@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2021-03-08 11:15+0100\n"
+"POT-Creation-Date: 2021-03-16 07:54+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -223,7 +223,7 @@ msgstr ""
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:920 oyjl_core.c:2383 test-core.c:129 test.c:141 test.c:184
+#: oyjl_args.c:920 oyjl_core.c:2385 test-core.c:129 test.c:141 test.c:184
 #: test.c:231 test.c:250
 msgid "Example"
 msgstr ""
@@ -370,7 +370,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: oyjl_core.c:2501
+#: oyjl_core.c:2503
 #, fuzzy
 msgid "Information"
 msgstr "Informazioa:"
@@ -831,7 +831,7 @@ msgstr "Puntua"
 msgid "Program Error:"
 msgstr ""
 
-#: oyjl_core.c:1679
+#: oyjl_core.c:1681
 #, fuzzy
 msgid "Program not found"
 msgstr "Profila-kolorea"

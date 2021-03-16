@@ -638,6 +638,8 @@ void       oyjlStringAddN            ( char             ** text,
   char * text_copy = NULL;
 
   if(!text) return;
+  if(!deAlloc && !alloc)
+    deAlloc = free;
 
   text_copy = oyjlStringAppendN(*text, append, append_len, alloc);
 
