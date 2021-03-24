@@ -715,6 +715,7 @@ void oyjlUiCanonicaliseVariableName_ ( char             ** name )
   oyjlStrReplace( tmp, "=", "_", 0, NULL );
   oyjlStrReplace( tmp, "(", "_", 0, NULL );
   oyjlStrReplace( tmp, "|", "_", 0, NULL );
+  oyjlStrReplace( tmp, ".", "_", 0, NULL );
   txt = oyjlStr(tmp);
   free(*name); *name = NULL;
   i = 0;
