@@ -2301,7 +2301,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
  * - >= 0 - if found
  * - -1 - if not found
  */
-int oyjlOptionMandatoryIndex_         ( oyjlOption_s      * opt,
+int oyjlOptionMandatoryIndex_        ( oyjlOption_s      * opt,
                                        oyjlOptionGroup_s * g )
 {
   int found = -1;

@@ -464,7 +464,7 @@ char *     oyjlReadCommandF          ( int               * size,
                                        const char        * format,
                                                            ... );
 int        oyjlWriteFile             ( const char        * filename,
-                                       void              * mem,
+                                       const void        * mem,
                                        int                 size );
 int        oyjlIsFile                ( const char        * fullname,
                                        const char        * mode,

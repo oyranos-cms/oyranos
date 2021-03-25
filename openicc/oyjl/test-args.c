@@ -13,6 +13,7 @@
  */
 
 #define TESTS_RUN \
+  TEST_RUN( testArgsPrint, "Options print", 1 ); \
   TEST_RUN( testArgs, "Options handling", 1 );
 
 void oyjlLibRelease();
@@ -33,6 +34,169 @@ char *    oyjlReadFile( const char * file_name,
                         int        * size_ptr );
 /* --- actual tests --- */
 
+oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
+                                   int style,
+                                   const char * res,
+                                   const char * res_man,
+                                   const char * res_mark,
+                                   const char * res_o,
+                                   const char * res_o_man,
+                                   const char * res_o_mark,
+                                   const char * res_opt,
+                                   const char * res_opt_man,
+                                   const char * res_opt_mark,
+                                   const char * res_oopt,
+                                   const char * res_oopt_man,
+                                   const char * res_oopt_mark,
+                                   oyjlTESTRESULT_e result,
+                                   oyjlTESTRESULT_e fail )
+{
+  char * txt;
+
+  txt = oyjlOption_PrintArg( o, style );
+  if(txt && strcmp(txt,res) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_MAN );
+  if(txt && strcmp(txt,res_man) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_MARKDOWN );
+  if(txt && strcmp(txt,res_mark) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER );
+  if(txt && strcmp(txt,res_o) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN );
+  if(txt && strcmp(txt,res_o_man) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
+  if(txt && strcmp(txt,res_o_mark) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_STRING );
+  if(txt && strcmp(txt,res_opt) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN );
+  if(txt && strcmp(txt,res_opt_man) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN );
+  if(txt && strcmp(txt,res_opt_mark) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING );
+  if(txt && strcmp(txt,res_oopt) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN );
+  if(txt && strcmp(txt,res_oopt_man) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+  }
+
+  txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN );
+  if(txt && strcmp(txt,res_oopt_mark) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+  }
+
+  return result;
+}
+
+oyjlTESTRESULT_e testArgsPrint()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+  setlocale(LC_ALL,"en_GB.UTF8");
+
+  char * txt;
+  int style = 0;
+  oyjlOption_s * o = NULL;
+  txt = oyjlOption_PrintArg( o, style );
+  if(txt && strcmp(txt,"") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOption_PrintArg() %s                       ", txt?txt:"---" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOption_PrintArg() %s                       ", txt?txt:"---" );
+  }
+
+  setenv("FORCE_NO_COLORTERM", "1",1);
+  oyjlOption_s o1 = {
+    "oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "o", "option", NULL, "Option", "Option Description", "Some Help", "args", oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = NULL}
+  };
+
+  result = testArgsPrintOne( &o1, 0,
+                             "[=args]",         "\\fI[=args]\\fR",                     "<em>[=args]</em>",
+                             "-o[=args]",       "\\fB\\-o\\fR\\fI[=args]\\fR",         "<strong>-o</strong><em>[=args]</em>",
+                             "--option[=args]", "\\fB\\-\\-option\\fR\\fI[=args]\\fR", "<strong>--option</strong><em>[=args]</em>",
+                             "-o|--option[=args]", "\\fB\\-o|\\-\\-option\\fR\\fI[=args]\\fR", "<strong>-o|--option</strong><em>[=args]</em>",
+                             result, oyjlTESTRESULT_XFAIL );
+
+  return result;
+}
 
 oyjlTESTRESULT_e testArgs()
 {

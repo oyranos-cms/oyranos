@@ -1923,7 +1923,7 @@ int oyjlMakeDir_ (const char* path)
 /** @brief write memory to FILE
  */
 int  oyjlWriteFile                   ( const char        * filename,
-                                       void              * mem,
+                                       const void        * mem,
                                        int                 size )
 {
   FILE *fp = 0;
