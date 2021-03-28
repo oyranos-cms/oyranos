@@ -1132,6 +1132,52 @@ int oyjlOptions_CountGroups       ( oyjlOptions_s  * opts )
   return n;
 }
 
+/**
+ *  @return                            - 1 for number
+ *                                     - 2 for symbolic */
+int oyjlManArgIsNum( const char * arg )
+{
+  int is_num_arg = 0, i = 0;
+  double dbl = 0.0;
+  char * t = oyjlStringCopy(arg, 0);
+  if(!arg) return is_num_arg;
+  if(strlen(arg) >= 3 && tolower(arg[0]) == 'n' && tolower(arg[1]) == 'u' && tolower(arg[2]) == 'm')
+    is_num_arg = 2;
+  while(t[i] && t[i] != '\000' && t[i] != '|') ++i;
+  t[i] = '\000';
+  if(t && t[0] && oyjlStringToDouble( t, &dbl ) == 0)
+    is_num_arg = 1;
+  free(t);
+  return is_num_arg;
+}
+
+int oyjlManArgIsEditable( const char * arg )
+{
+  int is_edit_arg = 0;
+  if(!arg) return is_edit_arg;
+  if(oyjlManArgIsNum(arg) == 2 && strchr(arg,'|') == NULL)
+    ++is_edit_arg;
+  /* explicite more expressions */
+  if( strstr(arg, "...") != NULL )
+    ++is_edit_arg;
+  else
+  { /* two upper letters after an other */
+    int i = 0;
+    while(arg[i])
+    {
+      char c = arg[i], c2 = arg[i+1];
+      if(isupper(c) && isupper(c2))
+      {
+        ++is_edit_arg;
+        break;
+      }
+      ++i;
+    }
+  }
+  return is_edit_arg;
+}
+
+
 #define OYJL_E(x_) (x_?x_:"")
 #define OYJL_IS_NOT_O( x ) (!o->o || strcmp(o->o,x) != 0)
 #define OYJL_IS_O( x ) (o->o && strcmp(o->o,x) == 0)
@@ -1175,7 +1221,7 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
           OYJL_IS_NOT_O("@") &&
           OYJL_IS_NOT_O("#")
         ) ||
-        sub_command
+        ( sub_command && ( style & oyjlOPTIONSTYLE_ONELETTER || style & oyjlOPTIONSTYLE_STRING ) )
       )
     )
   {
@@ -1189,45 +1235,55 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
   if(o->value_name)
   {
     const char * value_name = o->value_name;
+    int needs_edit_dots = 0;
+    int is_editable_arg = oyjlManArgIsEditable( value_name );
+    if( o->flags & OYJL_OPTION_FLAG_EDITABLE &&
+        !is_editable_arg &&
+        strstr(value_name, "...") == NULL )
+      needs_edit_dots = 1;
     int m = value_name[0] == '['; /* m=move : migth be explicitely used together with OYJL_OPTION_FLAG_ACCEPT_NO_ARG */
     if(m) /* expect optional arg(s) for this option and *move* the first opening '[' square bracket before the equal '=' sign */
       ++value_name;
     if(style & oyjlOPTIONSTYLE_MAN)
-      oyjlStringAdd( &text, malloc, free, "%s\\fI%s%s%s\\fR",
+      oyjlStringAdd( &text, malloc, free, "%s\\fI%s%s%s%s\\fR",
           OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#") && !(m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG) ? " ":"",
           (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"[=":"",
           o->value_name,
+          needs_edit_dots?"...":"",
           (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"]":"" );
     else
     {
       if(style & oyjlOPTIONSTYLE_MARKDOWN)
-        oyjlStringAdd( &text, malloc, free, "%s%s%s%s%s</em>",
+        oyjlStringAdd( &text, malloc, free, "%s%s%s%s%s%s</em>",
             (m||o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"<em>[":"",
-            OYJL_IS_NOT_O("@") && !(style & oyjlOPTIONSTYLE_STRING)?"=":" ",
+            OYJL_IS_NOT_O("@")?"=":" ",
             (m||o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG) ? "" : "<em>",
             value_name,
+            needs_edit_dots?"...":"",
             (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"]":"" ); /* allow for easier word wrap in table */
       else if(style & oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP)
-        oyjlStringAdd( &text, malloc, free, "%s%s",
+        oyjlStringAdd( &text, malloc, free, "%s%s%s",
             (!o->o || strcmp(o->o, "@")) != 0?"=":"",
-            oyjlTermColor(oyjlITALIC,o->value_name) );
+            oyjlTermColor(oyjlITALIC,o->value_name),
+            needs_edit_dots?"...":"" );
       else
       {
         char * t = NULL;
-        oyjlStringAdd( &t, malloc, free, "%s%s%s%s",
+        oyjlStringAdd( &t, malloc, free, "%s%s%s%s%s",
             (m||o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"[":"",
             (!o->o || strcmp(o->o, "@")) != 0?"=":"",
             value_name,
+            needs_edit_dots?"...":"",
             (m == 0 && o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"]":"" );
         oyjlStringAdd( &text, malloc, free, "%s", oyjlTermColor(oyjlITALIC,t) );
         free(t);
       }
     }
   }
-  if(o->flags & OYJL_OPTION_FLAG_REPETITION)
-    oyjlStringAdd( &text, malloc, free, "..." );
   if(style & oyjlOPTIONSTYLE_OPTIONAL_END)
     oyjlStringAdd( &text, malloc, free, "]" );
+  if(o->flags & OYJL_OPTION_FLAG_REPETITION)
+    oyjlStringAdd( &text, malloc, free, " ..." );
   return text;
 }
 #define oyjlHELP 0x01
@@ -2288,7 +2344,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
     if(strcmp(option, "@") == 0)
       oyjlStringAdd( &text, malloc, free, " %s%s",
           o->value_name?o->value_name:"...",
-          o->value_name && o->flags & OYJL_OPTION_FLAG_REPETITION ? "..." : "" );
+          o->value_name && o->flags & OYJL_OPTION_FLAG_REPETITION ? " ..." : "" );
   }
   oyjlStringListRelease( &m_list, m, free );
   oyjlStringListRelease( &on_list, on, free );

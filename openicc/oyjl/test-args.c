@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2019-2020  Kai-Uwe Behrmann
+ *  Copyright (C) 2019-2021  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -61,15 +61,17 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   { PRINT_SUB( fail, 
     "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_MAN );
   if(txt && strcmp(txt,res_man) == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_MARKDOWN );
   if(txt && strcmp(txt,res_mark) == 0)
@@ -79,6 +81,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   { PRINT_SUB( fail, 
     "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER );
   if(txt && strcmp(txt,res_o) == 0)
@@ -88,15 +91,17 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   { PRINT_SUB( fail, 
     "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN );
   if(txt && strcmp(txt,res_o_man) == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
   if(txt && strcmp(txt,res_o_mark) == 0)
@@ -106,6 +111,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   { PRINT_SUB( fail, 
     "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_STRING );
   if(txt && strcmp(txt,res_opt) == 0)
@@ -115,15 +121,17 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   { PRINT_SUB( fail, 
     "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN );
   if(txt && strcmp(txt,res_opt_man) == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN );
   if(txt && strcmp(txt,res_opt_mark) == 0)
@@ -133,6 +141,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   { PRINT_SUB( fail, 
     "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING );
   if(txt && strcmp(txt,res_oopt) == 0)
@@ -142,15 +151,17 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   { PRINT_SUB( fail, 
     "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN );
   if(txt && strcmp(txt,res_oopt_man) == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() %s", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN );
   if(txt && strcmp(txt,res_oopt_mark) == 0)
@@ -160,6 +171,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   { PRINT_SUB( fail, 
     "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   return result;
 }
@@ -182,6 +194,7 @@ oyjlTESTRESULT_e testArgsPrint()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlOption_PrintArg() %s                       ", txt?txt:"---" );
   }
+  if(txt) {free(txt); txt = NULL;}
 
   setenv("FORCE_NO_COLORTERM", "1",1);
   oyjlOption_s o1 = {
@@ -189,12 +202,42 @@ oyjlTESTRESULT_e testArgsPrint()
   };
 
   result = testArgsPrintOne( &o1, 0,
-                             "[=args]",         "\\fI[=args]\\fR",                     "<em>[=args]</em>",
-                             "-o[=args]",       "\\fB\\-o\\fR\\fI[=args]\\fR",         "<strong>-o</strong><em>[=args]</em>",
-                             "--option[=args]", "\\fB\\-\\-option\\fR\\fI[=args]\\fR", "<strong>--option</strong><em>[=args]</em>",
-                             "-o|--option[=args]", "\\fB\\-o|\\-\\-option\\fR\\fI[=args]\\fR", "<strong>-o|--option</strong><em>[=args]</em>",
+                             "[=args]",            "\\fI[=args]\\fR",                                  "<em>[=args]</em>",
+                             "-o[=args]",          "\\fB\\-o\\fR\\fI[=args]\\fR",                      "<strong>-o</strong><em>[=args]</em>",
+                             "--option[=args]",    "\\fB\\-\\-option\\fR\\fI[=args]\\fR",              "<strong>--option</strong><em>[=args]</em>",
+                             "-o|--option[=args]", "\\fB\\-o\\fR|\\fB\\-\\-option\\fR\\fI[=args]\\fR", "<strong>-o</strong>|<strong>--option</strong><em>[=args]</em>",
+                             result, oyjlTESTRESULT_FAIL );
+  fprintf(stdout, "OYJL_OPTION_FLAG_ACCEPT_NO_ARG, oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END\n" );
+  result = testArgsPrintOne( &o1, oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END,
+                             "[[=args]]",            "[\\fI[=args]\\fR]",                                  "[<em>[=args]</em>]",
+                             "[-o[=args]]",          "[\\fB\\-o\\fR\\fI[=args]\\fR]",                      "[<strong>-o</strong><em>[=args]</em>]",
+                             "[--option[=args]]",    "[\\fB\\-\\-option\\fR\\fI[=args]\\fR]",              "[<strong>--option</strong><em>[=args]</em>]",
+                             "[-o|--option[=args]]", "[\\fB\\-o\\fR|\\fB\\-\\-option\\fR\\fI[=args]\\fR]", "[<strong>-o</strong>|<strong>--option</strong><em>[=args]</em>]",
+                             result, oyjlTESTRESULT_FAIL );
+  o1.flags = OYJL_OPTION_FLAG_REPETITION | OYJL_OPTION_FLAG_ACCEPT_NO_ARG;
+  fprintf(stdout, "OYJL_OPTION_FLAG_REPETITION | OYJL_OPTION_FLAG_ACCEPT_NO_ARG, oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END\n" );
+  result = testArgsPrintOne( &o1, oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END,
+                             "[[=args]] ...",            "[\\fI[=args]\\fR] ...",                                  "[<em>[=args]</em>] ...",
+                             "[-o[=args]] ...",          "[\\fB\\-o\\fR\\fI[=args]\\fR] ...",                      "[<strong>-o</strong><em>[=args]</em>] ...",
+                             "[--option[=args]] ...",    "[\\fB\\-\\-option\\fR\\fI[=args]\\fR] ...",              "[<strong>--option</strong><em>[=args]</em>] ...",
+                             "[-o|--option[=args]] ...", "[\\fB\\-o\\fR|\\fB\\-\\-option\\fR\\fI[=args]\\fR] ...", "[<strong>-o</strong>|<strong>--option</strong><em>[=args]</em>] ...",
+                             result, oyjlTESTRESULT_FAIL );
+  fprintf(stdout, "OYJL_OPTION_FLAG_REPETITION | OYJL_OPTION_FLAG_ACCEPT_NO_ARG, OYJL_GROUP_FLAG_SUBCOMMAND\n" );
+  result = testArgsPrintOne( &o1, OYJL_GROUP_FLAG_SUBCOMMAND,
+                             "[=args] ...",       "\\fI[=args]\\fR ...",               "<em>[=args]</em> ...",
+                             "option[=args] ...", "\\fBoption\\fR\\fI[=args]\\fR ...", "<strong>option</strong><em>[=args]</em> ...",
+                             "option[=args] ...", "\\fBoption\\fR\\fI[=args]\\fR ...", "<strong>option</strong><em>[=args]</em> ...",
+                             "option[=args] ...", "\\fBoption\\fR\\fI[=args]\\fR ...", "<strong>option</strong><em>[=args]</em> ...",
                              result, oyjlTESTRESULT_XFAIL );
 
+  fprintf(stdout, "OYJL_OPTION_FLAG_EDITABLE | OYJL_OPTION_FLAG_ACCEPT_NO_ARG, 0\n" );
+  o1.flags = OYJL_OPTION_FLAG_ACCEPT_NO_ARG | OYJL_OPTION_FLAG_EDITABLE;
+  result = testArgsPrintOne( &o1, 0,
+                             "[=args...]",            "\\fI[=args...]\\fR",                                  "<em>[=args...]</em>",
+                             "-o[=args...]",          "\\fB\\-o\\fR\\fI[=args...]\\fR",                      "<strong>-o</strong><em>[=args...]</em>",
+                             "--option[=args...]",    "\\fB\\-\\-option\\fR\\fI[=args...]\\fR",              "<strong>--option</strong><em>[=args...]</em>",
+                             "-o|--option[=args...]", "\\fB\\-o\\fR|\\fB\\-\\-option\\fR\\fI[=args...]\\fR", "<strong>-o</strong>|<strong>--option</strong><em>[=args...]</em>",
+                             result, oyjlTESTRESULT_FAIL );
   return result;
 }
 
@@ -660,7 +703,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   int size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && size == 471)
+  if(!ui && (size == 471 || size == 359))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - sub command followed by unbound    %d  ", size );
   } else
@@ -680,7 +723,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && size == 471)
+  if(!ui && (size == 471 || size == 359))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - mandatory sub command followed by unbound" );
   } else
@@ -704,7 +747,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && size == 471)
+  if(!ui && (size == 471 || size == 359))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - mandatory integer sub command followed by unbound" );
   } else
@@ -724,7 +767,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && size == 894)
+  if(!ui && (size == 894 || size == 638))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - mandatory integer sub command      %d  ", size );
   } else
