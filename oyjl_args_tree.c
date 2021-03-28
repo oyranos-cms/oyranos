@@ -1054,7 +1054,12 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       const char *o, *option, *option_fallback, *key, *name, *desc, *help, *value_name, *value_type, *variable_type, *variable_name;
       val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
       v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
-      if(flg & OYJL_OPTION_FLAG_EDITABLE)
+      v = oyjlTreeGetValue( val, 0, "value_type" ); value_type = OYJL_GET_STRING(v);
+      if( flg & OYJL_OPTION_FLAG_EDITABLE ||
+          ( value_type && strcmp(value_type, "oyjlOPTIONTYPE_CHOICE") == 0 &&
+            oyjlValueCount( oyjlTreeGetValue( val, 0, "values/choices/list" ) ) == 0
+          )
+        )
         oyjlStringAdd( &flag_string, 0,0, "%s", "OYJL_OPTION_FLAG_EDITABLE" );
       if(flg & OYJL_OPTION_FLAG_ACCEPT_NO_ARG)
         oyjlStringAdd( &flag_string, 0,0, "%s%s", flag_string?"|":"", "OYJL_OPTION_FLAG_ACCEPT_NO_ARG" );
