@@ -72,8 +72,8 @@ typedef enum {
     oyjl_t_any = 8
 } oyjl_type;
 
-#define OYJL_NUMBER_INT_VALID    0x01
-#define OYJL_NUMBER_DOUBLE_VALID 0x02
+#define OYJL_NUMBER_INT_VALID          0x01
+#define OYJL_NUMBER_DOUBLE_VALID       0x02
 
 /** A pointer to a node in the parse tree */
 typedef struct oyjl_val_s * oyjl_val;
@@ -89,11 +89,11 @@ struct oyjl_val_s
 {
     /**
      *  Type of the value contained. Use the "OYJL_IS_*" macros to check for a
-     * specific type. */
+     *  specific type. */
     oyjl_type type;
     /**
      *  Type-specific data. You may use the "OYJL_GET_*" macros to access these
-     * members. */
+     *  members. */
     union
     {
         char * string;   /**< @brief UTF-8 text */
@@ -285,6 +285,11 @@ int        oyjlPathMatch             ( const char        * path,
 int        oyjlDataFormat            ( const char        * text );
 const char * oyjlDataFormatToString  ( int                 format );
 char *     oyjlJsonEscape            ( const char        * in );
+
+#define OYJL_OBSERVE                   0x200000 /**< @brief be verbose on change */
+#define OYJL_IS_OBSERVED(v) (((v)!= NULL) && ((v)->u.number.flags & OYJL_OBSERVE))
+#define OYJL_SET_OBSERVE(v) if((v)!= NULL) (v)->u.number.flags |= OYJL_OBSERVE;
+#define OYJL_UNSET_OBSERVE(v) if((v)!= NULL) (v)->u.number.flags &= (~OYJL_OBSERVE);
 /** @} *//* oyjl_tree */
 
 /* --- Core --- */

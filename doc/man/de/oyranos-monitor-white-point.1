@@ -12,7 +12,7 @@ oyranos-monitor-white-point v0.9.7 \- Nacht Manager
 .br
 \fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
 .SH OPTIONEN
@@ -130,15 +130,15 @@ Setze Sonnenuntergangsdienst
 .br
 \fB\-d\fR|\fB\-\-daemon\fR \fI0|1|2\fR	Setze Sonnenuntergangsdienst
 .br
-	\-d 0		# Deaktiviere
+	\-d 0		# Deaktiviere : Deaktiviere
 .br
-	\-d 1		# Automatischer Start
+	\-d 1		# Automatischer Start : Automatischer Start
 .br
-	\-d 2		# Aktiviere
+	\-d 2		# Aktiviere : Aktiviere
 .br
 .SS
 Allgemeine Optionen
-\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
 .br
 \fB\-h\fR|\fB\-\-help\fR	Hilfe
 .br
@@ -150,17 +150,17 @@ Allgemeine Optionen
 .RS
 Hole Benutzerschnittstelle als Text
 .RE
-	\-X man		# Handbuch - Hole Unix Handbuchseite
+	\-X man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
 .br
-	\-X markdown		# Markdown - Hole formatierten Text
+	\-X markdown		# Markdown : Formatierter Text - Hole formatierten Text
 .br
-	\-X json		# Json - Hole Oyjl Json Benutzerschnittstelle
+	\-X json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
 .br
-	\-X json+command		# Json + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
+	\-X json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
 .br
-	\-X export		# Export - Erhalte Daten für Entwickler
+	\-X export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
 .br
-\fB\-R\fR|\fB\-\-render\fR \fIgui|web|\fR	Wähle Darstellung
+\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	Wähle Darstellung
 .RS
 Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" wird einen Web Service starten.
 .RE

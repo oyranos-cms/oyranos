@@ -2,9 +2,9 @@
 .SH NAME
 oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .SH ÜBERSICHT
-\fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE...
+\fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE ...
 .br
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fB\-L\fR \fINUMMER\fR] [\fB\-C\fR \fINUMMER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fB\-L\fR \fINUMMER\fR] [\fB\-C\fR \fINUMMER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] ... [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
@@ -18,19 +18,19 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .br
 \fBoyranos-profile-graph\fR \fB\-i\fR \fIDATEI\fR [\fB\-I\fR \fISEITE\fR] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 .SH OPTIONEN
 .SS
 2D Zeichnung vom Farbprofil
-\fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE...
+\fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE ...
 .br
 Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 .br
 .sp
 .br
-\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...	ICC Profil
+\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR ...	ICC Profil
 .br
 \fB\-d\fR|\fB\-\-change-thickness\fR \fINUMMER\fR	Gib die Verstärkung der Liniendicke an (NUMMER:0,7 [≥0 ≤2 Δ0,05])
 .br
@@ -48,7 +48,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 .br
 .SS
 HLC Farbatlas
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fB\-L\fR \fINUMMER\fR] [\fB\-C\fR \fINUMMER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fB\-L\fR \fINUMMER\fR] [\fB\-C\fR \fINUMMER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] ... [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 Erzeuge ein 2D Farbpalette mit allen möglichen Farben innerhalb des Farbumfanges des ICC Fabprofiles. Mehr Informationen zum HLC Farbatlas sind zu finden auf www.freiefarbe.de
 .br
@@ -66,7 +66,7 @@ Wähle ein Seite des HLC Farbatlas mit der Helligkeit.
 .RS
 Wähle ein Seite des HLC Farbatlas mit der Farbsättigung.
 .RE
-\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR...	ICC Profil
+\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR ...	ICC Profil
 .br
 \fB\-m\fR|\fB\-\-swatch-format\fR \fIFORMAT\fR	Gib Ausgabeformat an
 .br
@@ -154,7 +154,7 @@ Gib einen Seitenname als Wort oder eine Seitennummer an. -1 listet alle Seitenna
 .RE
 .SS
 Allgemeine Optionen
-\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
 .br
 \fB\-t\fR|\fB\-\-thickness\fR \fINUMMER\fR	Gib die Liniendicke an (NUMMER:1 [≥0 ≤10 Δ0,05])
 .br
@@ -182,17 +182,17 @@ Allgemeine Optionen
 .RS
 Hole Benutzerschnittstelle als Text
 .RE
-	\-X man		# Handbuch - Hole Unix Handbuchseite
+	\-X man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
 .br
-	\-X markdown		# Markdown - Hole formatierten Text
+	\-X markdown		# Markdown : Formatierter Text - Hole formatierten Text
 .br
-	\-X json		# Json - Hole Oyjl Json Benutzerschnittstelle
+	\-X json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
 .br
-	\-X json+command		# Json + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
+	\-X json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
 .br
-	\-X export		# Export - Erhalte Daten für Entwickler
+	\-X export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
 .br
-\fB\-R\fR|\fB\-\-render\fR \fIgui|web|\fR	Wähle Darstellung
+\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	Wähle Darstellung
 .RS
 Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" wird einen Web Service starten.
 .RE

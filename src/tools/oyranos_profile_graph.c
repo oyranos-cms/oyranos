@@ -228,7 +228,7 @@ static oyjlOptionChoice_s * listInput ( oyjlOption_s * o OYJL_UNUSED, int * y OY
 
 static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts )
 {
-  oyjlOption_s * import = oyjlOptions_GetOptionL( opts, "import" );
+  oyjlOption_s * import = oyjlOptions_GetOptionL( opts, "import", 0 );
   const char * input = *import->variable.s;
   oyjlOptionChoice_s * cs = NULL;
 

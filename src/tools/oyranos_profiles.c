@@ -183,18 +183,18 @@ int myMain( int argc, const char ** argv )
     int n = 0,i;
     char ** path_names =  oyProfilePathsGet_( &n, oyAllocateFunc_ );
     char * text = NULL;
-    o = oyjlOptions_GetOptionL( opts, "list-paths" );
+    o = oyjlOptions_GetOptionL( opts, "list-paths", 0 );
     for(i = 0; i < n; ++i)
       oyjlStringAdd( &text, malloc, free, "%s%s", i?"\n":"",path_names[i] );
     o->help = text;
   }
-  o = oyjlOptions_GetOptionL( opts, "user" );
+  o = oyjlOptions_GetOptionL( opts, "user", 0 );
   o->help = oyGetInstallPath( oyPATH_ICC, oySCOPE_USER, malloc );
-  o = oyjlOptions_GetOptionL( opts, "system" );
+  o = oyjlOptions_GetOptionL( opts, "system", 0 );
   o->help = oyGetInstallPath( oyPATH_ICC, oySCOPE_SYSTEM, malloc );
-  o = oyjlOptions_GetOptionL( opts, "oyranos" );
+  o = oyjlOptions_GetOptionL( opts, "oyranos", 0 );
   o->help = oyGetInstallPath( oyPATH_ICC, oySCOPE_OYRANOS, malloc );
-  o = oyjlOptions_GetOptionL( opts, "machine" );
+  o = oyjlOptions_GetOptionL( opts, "machine", 0 );
   o->help = oyGetInstallPath( oyPATH_ICC, oySCOPE_MACHINE, malloc );
 
   if(verbose > 1)

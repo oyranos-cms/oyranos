@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2020 (C) Kai-Uwe Behrmann
+ *            2016-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl tree functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -1116,17 +1116,32 @@ int        oyjlPathMatch             ( const char        * path,
   return match;
 }
 
-
 /* split new root allocation from inside root manipulation */
 static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
                                        int                 flags,
                                        const char        * xpath )
 {
-  oyjl_val level = 0, parent = v, root = NULL;
+  oyjl_val level = 0, parent = v, root = NULL, result = NULL;
   int n = 0, i, found = 0;
   char ** list = oyjlStringSplit(xpath, '/', &n, malloc);
 
-  /* follow the search path term */
+  if(!oyjl_debug_node_path_)
+  {
+    const char * t = getenv("OYJL_DEBUG_NODE");
+    oyjl_debug_node_path_ = oyjlStringCopy(t?t:"", 0);
+    if(oyjl_debug_node_path_[0])
+    {
+      char * separate = strchr(oyjl_debug_node_path_, ':');
+      if(separate != NULL)
+      {
+        oyjl_debug_node_value_ = oyjlStringCopy( separate + 1, 0 );
+        separate[0] = '\000';
+      }
+      fprintf(stderr, "observing: %s:\"%s\" - OYJL_DEBUG_NODE=%s\n", oyjl_debug_node_path_, oyjlTermColor(oyjlBOLD, oyjl_debug_node_value_?oyjl_debug_node_value_:""), t);
+    }
+  }
+
+    /* follow the search path term */
   for(i = 0; i < n; ++i)
   {
     char * term = list[i];
@@ -1262,9 +1277,10 @@ clean:
     free(list);
 
   if(found && root)
-    return root;
+    result = root;
+  else
   if(found && parent)
-    return parent;
+    result = parent;
   else
   {
     if(root)
@@ -1273,6 +1289,31 @@ clean:
       oyjlTreeFree(parent);
     return NULL;
   }
+
+  if(oyjl_debug_node_path_[0])
+  {
+    if(oyjlPathMatch(xpath, oyjl_debug_node_path_, 0))
+    {
+      if(oyjl_debug_node_value_)
+      {
+        char * t = oyjlValueText(result, 0);
+        if(t && strstr(t, oyjl_debug_node_value_) != NULL)
+        {
+          OYJL_SET_OBSERVE(result)
+          if(!(flags&OYJL_QUIET))
+            oyjlValueDebug_( result, xpath, "get", 0 );
+        }
+        if(t) free(t);
+      } else
+      {
+        OYJL_SET_OBSERVE(result)
+        if(!(flags&OYJL_QUIET))
+          oyjlValueDebug_( result, xpath, "get", 0 );
+      }
+    }
+  }
+
+  return result;
 }
 /** @brief create a node by a path expression
  *
@@ -1417,16 +1458,31 @@ int        oyjlTreeSetStringF        ( oyjl_val            root,
   oyjl_val value_node = NULL;
 
   char * text = NULL;
-  int error = 0;
+  int error = 0, is_observed = 0;
 
   OYJL_CREATE_VA_STRING(format, text, malloc, return 1)
 
-  value_node = oyjlTreeGetValue( root, flags, text );
+  if(OYJL_DEBUG_NODE_IS_VALUE( text, value_text ))
+  {
+    oyjlValueDebug_( root, text, "setString", 1 );
+    ++is_observed;
+  }
+
+  value_node = oyjlTreeGetValue( root, is_observed ? flags|OYJL_QUIET : flags, text );
 
   if(text) free(text);
 
   if(value_node)
+  {
+    int is_observed_vnode = OYJL_IS_OBSERVED(value_node);
+    if(is_observed_vnode && is_observed)
+      OYJL_UNSET_OBSERVE(value_node);
+
     error = oyjlValueSetString( value_node, value_text );
+
+    if(is_observed_vnode && is_observed)
+      OYJL_SET_OBSERVE(value_node);
+  }
   else
     error = -1;
 
@@ -1537,11 +1593,46 @@ int        oyjlValueSetString        ( oyjl_val            v,
   return error;
 }
 
+/* flags - 0x01 : print always */
+void       oyjlValueDebug_           ( oyjl_val            val,
+                                       const char        * xpath,
+                                       const char        * desc,
+                                       int                 flags )
+{
+  if(OYJL_IS_OBSERVED(val) || flags & 0x01)
+  {
+    char * t = oyjlBT(0);
+    int level = 0;
+    fprintf( stderr, "%s", t );
+    free(t);
+    t = oyjlValueText(val, 0);
+    if(!t)
+      oyjlTreeToJson( val, &level, &t );
+    /* improve object print for one level xpath (without slash '/'): OYJL_DEBUG_NODE="value:key" */
+    if(val->type == oyjl_t_object)
+    {
+      size_t l = val->u.object.len, i;
+      for( i = 0; i < l; ++i)
+      {
+        const char * key = val->u.object.keys[i];
+        if(strcmp(key, xpath) == 0)
+        {
+          val = val->u.object.values[i];
+          break;
+        }
+      }
+    }
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT OYJL_PRINT_POINTER " %s:%s - %s", OYJL_DBG_ARGS, val, xpath, t, desc );
+    if(t) free(t);
+  }
+}
+
 #define Florian_Forster_SOURCE_GUARD
 /** @brief release all childs recursively */
 void oyjlValueClear          (oyjl_val v)
 {
     if (v == NULL) return;
+    oyjlValueDebug_(v, "", "clear", 0);
 
     if (OYJL_IS_STRING(v)) {
         if(v->u.string) free(v->u.string);

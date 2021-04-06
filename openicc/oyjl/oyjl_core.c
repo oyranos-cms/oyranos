@@ -2248,6 +2248,8 @@ int oyjlArgsRender                   ( int                 argc,
  *  @{ *//* oyjl */
 
 static char * oyjl_nls_path_ = NULL;
+char * oyjl_debug_node_path_ = NULL;
+char * oyjl_debug_node_value_ = NULL;
 void oyjlLibRelease() {
   if(oyjl_nls_path_)
   {
@@ -2268,6 +2270,16 @@ void oyjlLibRelease() {
   {
     oyjlTreeFree(oyjl_catalog_);
     oyjl_catalog_ = NULL;
+  }
+  if(oyjl_debug_node_path_)
+  {
+    free(oyjl_debug_node_path_);
+    oyjl_debug_node_path_ = NULL;
+  }
+  if(oyjl_debug_node_value_)
+  {
+    free(oyjl_debug_node_value_);
+    oyjl_debug_node_value_ = NULL;
   }
 }
 /* --- Render_Section --- */

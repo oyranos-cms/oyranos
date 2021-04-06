@@ -12,7 +12,7 @@ oyranos-monitor-white-point v0.9.7 \- Night Manager
 .br
 \fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
 .SH OPTIONS
@@ -130,15 +130,15 @@ Run sunset daemon
 .br
 \fB\-d\fR|\fB\-\-daemon\fR \fI0|1|2\fR	Control user daemon
 .br
-	\-d 0		# Deactivate
+	\-d 0		# Deactivate : Deactivate
 .br
-	\-d 1		# Autostart
+	\-d 1		# Autostart : Autostart
 .br
-	\-d 2		# Activate
+	\-d 2		# Activate : Activate
 .br
 .SS
 General options
-\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
 .br
 \fB\-h\fR|\fB\-\-help\fR	Help
 .br
@@ -150,17 +150,17 @@ General options
 .RS
 Get UI converted into text formats
 .RE
-	\-X man		# Man - Get a unix man page
+	\-X man		# Man : Unix Man page - Get a unix man page
 .br
-	\-X markdown		# Markdown - Get formated text
+	\-X markdown		# Markdown : Formated text - Get formated text
 .br
-	\-X json		# Json - Get a Oyjl Json UI declaration
+	\-X json		# Json : GUI - Get a Oyjl Json UI declaration
 .br
-	\-X json+command		# Json + Command - Get Oyjl Json UI declaration incuding command
+	\-X json+command		# Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command
 .br
-	\-X export		# Export - Get UI data for developers
+	\-X export		# Export : All available data - Get UI data for developers
 .br
-\fB\-R\fR|\fB\-\-render\fR \fIgui|web|\fR	Select Renderer
+\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	Select Renderer
 .RS
 Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" will launch a local Web Server, which listens on local port.
 .RE
