@@ -37,7 +37,15 @@ extern "C" {
 
 #define OYJL_LOCALE_VAR "OYJL_LOCALEDIR"
 #define OYJL_DEBUG "OYJL_DEBUG"
+#define OYJL_PRINT_POINTER "0x%tx"
 extern int * oyjl_debug;
+extern char * oyjl_debug_node_path_;
+extern char * oyjl_debug_node_value_;
+void       oyjlValueDebug_           ( oyjl_val            v,
+                                       const char        * xpath,
+                                       const char        * desc,
+                                       int                 flags );
+#define OYJL_DEBUG_NODE_IS_VALUE(xpath_,value_text_) ( oyjl_debug_node_path_ && oyjl_debug_node_path_[0] && xpath_ && oyjlPathMatch( xpath_, oyjl_debug_node_path_, 0 ) && ( (oyjl_debug_node_value_ && value_text_ && strstr( value_text_, oyjl_debug_node_value_ ) != NULL) || oyjl_debug_node_value_ == NULL))
 int oyjlIsDirFull_ (const char* name);
 
 int        oyjlTreePathsGetIndex_    ( const char        * term,
