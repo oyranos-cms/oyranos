@@ -1158,7 +1158,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStrAddSpaced_( s, help,        OYJL_QUOTE|OYJL_TRANSLATE, 6 );
       oyjlStrAddSpaced_( s, value_name,  OYJL_QUOTE|OYJL_TRANSLATE, 20 );
       oyjlStrAdd( s,       "\n        " );
-      oyjlStrAddSpaced_( s, value_type,  0,                         25 );
+      oyjlStrAddSpaced_( s, value_type && value_type[0] ? value_type : "oyjlOPTIONTYPE_NONE",  0,                         25 );
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_CHOICE") == 0)
       {
         int count = oyjlValueCount( oyjlTreeGetValue( val, 0, "values/choices/list" ) );
@@ -1194,7 +1194,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(start != -1.0 && end != -1.0)
           oyjlStrAdd( s,   "{.dbl.d = %g, .dbl.start = %g, .dbl.end = %g, .dbl.tick = %g}, ", d == -1.0 ? 0 : d, start, end, tick == -1.0 ? 0.0 : tick );
       } else
-      if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_NONE") == 0)
+      if(!value_type || (value_type && !value_type[0]) || (value_type && strcmp(value_type, "oyjlOPTIONTYPE_NONE") == 0))
       {
         oyjlStrAddSpaced_(s,"{0}",        0, 20 );
       }
