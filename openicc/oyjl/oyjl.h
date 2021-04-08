@@ -553,10 +553,10 @@ typedef union oyjlOption_u {
   } dbl;                               /**< @brief oyjlOPTIONTYPE_DOUBLE */
 } oyjlOption_u;
 
-#define OYJL_OPTION_FLAG_EDITABLE      0x001 /**< @brief The oyjlOption_s choices are merely a hint. Let users fill other strings too. */
-#define OYJL_OPTION_FLAG_ACCEPT_NO_ARG 0x002 /**< @brief Accept as well no arg */
-#define OYJL_OPTION_FLAG_NO_DASH       0x004 /**< @brief No double dash '--' acceptance; single dash can be omitted by not specifying oyjlOption_s::o */
-#define OYJL_OPTION_FLAG_REPETITION    0x008 /**< @brief Accept more than one occurence: ... */
+#define OYJL_OPTION_FLAG_EDITABLE      0x001 /**< @brief The oyjlOption_s choices are merely a hint. Let users fill other strings too: "prog --opt=arg|..." */
+#define OYJL_OPTION_FLAG_ACCEPT_NO_ARG 0x002 /**< @brief Accept as well no arg: "prog --opt[=arg]" */
+#define OYJL_OPTION_FLAG_NO_DASH       0x004 /**< @brief No double dash '--' acceptance; single dash can be omitted by not specifying oyjlOption_s::o : "prog opt" */
+#define OYJL_OPTION_FLAG_REPETITION    0x008 /**< @brief Accept more than one occurence: "prog --opt=arg ..." */
 #define OYJL_OPTION_FLAG_MAINTENANCE   0x100 /**< @brief Maintenance option; can be invisible */
 #define OYJL_OPTION_FLAG_IMMEDIATE     0x200 /**< @brief Apply instantly in UI; opposite to ::OYJL_GROUP_FLAG_EXPLICITE */
 /** @brief abstract UI option
