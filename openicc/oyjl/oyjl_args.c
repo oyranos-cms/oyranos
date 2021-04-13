@@ -3759,7 +3759,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
                    tool?1:7, date?date:"", tool?"User Commands":"Misc" );
   }
 
-  oyjlStringAdd( &text, malloc, free, ".SH %s\n%s %s%s \\- %s\n", _("NAME"), ui->nick, vers?"v":"", vers?vers:"", ui->name );
+  oyjlStringAdd( &text, malloc, free, ".SH %s\n%s%s%s%s \\- %s\n", _("NAME"), ui->nick, vers?" ":"", vers?"v":"", vers?vers:"", ui->name );
 
   oyjlStringAdd( &text, malloc, free, ".SH %s\n", _("SYNOPSIS") );
   for(i = 0; i < ng; ++i)
@@ -4025,7 +4025,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
                    tool?1:7, date?date:"", tool?"User Commands":"Misc" );
   }
 
-  ADD_SECTION( _("NAME"), "name", "%s %s%s - %s\n", ui->nick, vers?"v":"", vers?vers:"", ui->name )
+  ADD_SECTION( _("NAME"), "name", "%s%%s%s - %s\n", ui->nick, vers?" ":"", vers?"v":"", vers?vers:"", ui->name )
 
   if(ng)
   ADD_SECTION( _("SYNOPSIS"), "synopsis", "", "" )
@@ -4191,7 +4191,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     char * txt = NULL;
     int i;
 
-    oyjlStringAdd( &txt, malloc, free, "# %s %s%s %s\n<a name=\"toc\"></a>\n", ui->nick, vers?"v":"", vers?vers:"", doxy_link );
+    oyjlStringAdd( &txt, malloc, free, "# %s%s%s%s %s\n<a name=\"toc\"></a>\n", ui->nick, vers?" ":"", vers?"v":"", vers?vers:"", doxy_link );
     for(i = 0; i < sn_/2; ++i)
       oyjlStringAdd( &txt, malloc, free, "[%s](#%s) ", sections_[2*i+0], sections_[2*i+1] );
     oyjlStringAdd( &txt, malloc, free, "\n\n%s", text );
