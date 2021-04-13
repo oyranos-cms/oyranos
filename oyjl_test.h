@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2004-2020  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2021  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -410,13 +410,14 @@ int  oyjlWriteTestFile               ( const char        * filename,
     char * fns = (char*)malloc((hint?strlen(hint):0)+64); \
     sprintf( fns, "%s-%d-%d-%s-%s.%s", OYJL_TEST_NAME, oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oyjlTESTRESULT_SUCCESS,0), suffix ); \
     FILE * fp = fopen(fns, "r"); \
-    if(fp && strcmp(suffix, "txt") == 0) { \
+    if(fp && strcmp(suffix, suffix) == 0) { \
       char * diff = (char*)malloc((hint?strlen(hint)*2:0)+128); \
       sprintf( diff, "diff -aur %s %s", fns, fn ); \
       system(diff); \
       free(diff); \
       fclose(fp); \
     } \
+    free(fns); \
   } \
   free(fn); \
 }
