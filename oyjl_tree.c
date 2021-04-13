@@ -1129,6 +1129,8 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
   {
     const char * t = getenv("OYJL_DEBUG_NODE");
     oyjl_debug_node_path_ = oyjlStringCopy(t?t:"", 0);
+    if(*oyjl_debug)
+      fprintf(stderr, "allocated oyjl_debug_node_path_: %s", oyjl_debug_node_path_ );
     if(oyjl_debug_node_path_[0])
     {
       char * separate = strchr(oyjl_debug_node_path_, ':');
