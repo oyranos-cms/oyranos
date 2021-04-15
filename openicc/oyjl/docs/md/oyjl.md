@@ -10,21 +10,21 @@ oyjl v1.0.0 - Oyjl Json Manipulation
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyjl</strong> <a href="#json"><strong>json</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#json"><strong>json</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
-<strong>oyjl</strong> <a href="#yaml"><strong>yaml</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#yaml"><strong>yaml</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
-<strong>oyjl</strong> <a href="#xml"><strong>xml</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#xml"><strong>xml</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
-<strong>oyjl</strong> <a href="#count"><strong>count</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#count"><strong>count</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
-<strong>oyjl</strong> <a href="#key"><strong>key</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#key"><strong>key</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
-<strong>oyjl</strong> <a href="#type"><strong>type</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#type"><strong>type</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
-<strong>oyjl</strong> <a href="#paths"><strong>paths</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#paths"><strong>paths</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
-<strong>oyjl</strong> <a href="#format"><strong>format</strong></a> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#format"><strong>format</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
 <strong>oyjl</strong> <a href="#help"><strong>-h</strong></a> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong> [<strong>-v</strong>]
 
@@ -51,7 +51,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="json">Print JSON to stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>json</strong></td> <td>Print JSON to stdout</td> </tr>
@@ -59,7 +59,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="yaml">Print YAML to stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>yaml</strong></td> <td>Print YAML to stdout</td> </tr>
@@ -67,7 +67,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="xml">Print XML to stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>xml</strong></td> <td>Print XML to stdout</td> </tr>
@@ -75,7 +75,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="count">Print node count</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>count</strong> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>count</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>count</strong></td> <td>Print count of leafs in node</td> </tr>
@@ -83,7 +83,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="key">Print key name</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>key</strong> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>key</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>key</strong></td> <td>Print key name of node</td> </tr>
@@ -91,7 +91,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="type">Print type</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>type</strong> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>type</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>type</strong></td> <td>Get node type</td> </tr>
@@ -99,7 +99,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="paths">Print all matching paths.</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>paths</strong> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>paths</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>paths</strong></td> <td>Print all matching paths</td> </tr>
@@ -107,7 +107,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="format">Print Data Format.</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>format</strong> [<strong>-i</strong>=<em>FILENAME</em>] ... [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>format</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>format</strong></td> <td>Print Data Format</td> </tr>

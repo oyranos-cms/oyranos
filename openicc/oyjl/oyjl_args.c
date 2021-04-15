@@ -1280,10 +1280,10 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
       }
     }
   }
-  if(style & oyjlOPTIONSTYLE_OPTIONAL_END)
-    oyjlStringAdd( &text, malloc, free, "]" );
   if(o->flags & OYJL_OPTION_FLAG_REPETITION)
     oyjlStringAdd( &text, malloc, free, " ..." );
+  if(style & oyjlOPTIONSTYLE_OPTIONAL_END)
+    oyjlStringAdd( &text, malloc, free, "]" );
   return text;
 }
 #define oyjlHELP 0x01
@@ -4025,7 +4025,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
                    tool?1:7, date?date:"", tool?"User Commands":"Misc" );
   }
 
-  ADD_SECTION( _("NAME"), "name", "%s%%s%s - %s\n", ui->nick, vers?" ":"", vers?"v":"", vers?vers:"", ui->name )
+  ADD_SECTION( _("NAME"), "name", "%s%s%s%s - %s\n", ui->nick, vers?" ":"", vers?"v":"", vers?vers:"", ui->name )
 
   if(ng)
   ADD_SECTION( _("SYNOPSIS"), "synopsis", "", "" )
