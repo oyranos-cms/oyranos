@@ -217,10 +217,10 @@ oyjlTESTRESULT_e testArgsPrint()
   o1.flags = OYJL_OPTION_FLAG_REPETITION | OYJL_OPTION_FLAG_ACCEPT_NO_ARG;
   fprintf(stdout, "OYJL_OPTION_FLAG_REPETITION | OYJL_OPTION_FLAG_ACCEPT_NO_ARG, oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END\n" );
   result = testArgsPrintOne( &o1, oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END,
-                             "[[=args]] ...",            "[\\fI[=args]\\fR] ...",                                  "[<em>[=args]</em>] ...",
-                             "[-o[=args]] ...",          "[\\fB\\-o\\fR\\fI[=args]\\fR] ...",                      "[<strong>-o</strong><em>[=args]</em>] ...",
-                             "[--option[=args]] ...",    "[\\fB\\-\\-option\\fR\\fI[=args]\\fR] ...",              "[<strong>--option</strong><em>[=args]</em>] ...",
-                             "[-o|--option[=args]] ...", "[\\fB\\-o\\fR|\\fB\\-\\-option\\fR\\fI[=args]\\fR] ...", "[<strong>-o</strong>|<strong>--option</strong><em>[=args]</em>] ...",
+                             "[[=args] ...]",            "[\\fI[=args]\\fR ...]",                                  "[<em>[=args]</em> ...]",
+                             "[-o[=args] ...]",          "[\\fB\\-o\\fR\\fI[=args]\\fR ...]",                      "[<strong>-o</strong><em>[=args]</em> ...]",
+                             "[--option[=args] ...]",    "[\\fB\\-\\-option\\fR\\fI[=args]\\fR ...]",              "[<strong>--option</strong><em>[=args]</em> ...]",
+                             "[-o|--option[=args] ...]", "[\\fB\\-o\\fR|\\fB\\-\\-option\\fR\\fI[=args]\\fR ...]", "[<strong>-o</strong>|<strong>--option</strong><em>[=args]</em> ...]",
                              result, oyjlTESTRESULT_FAIL );
   fprintf(stdout, "OYJL_OPTION_FLAG_REPETITION | OYJL_OPTION_FLAG_ACCEPT_NO_ARG, OYJL_GROUP_FLAG_SUBCOMMAND\n" );
   result = testArgsPrintOne( &o1, OYJL_GROUP_FLAG_SUBCOMMAND,
