@@ -1169,32 +1169,38 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
       if(!level &&
          flags & OYJL_CREATE_NEW)
       {
-        level = oyjlValueAlloc_( oyjl_t_null );
 
         if(parent)
         {
+          int add = 0;
+          int start = parent->u.array.len;
           if(parent->type != oyjl_t_array)
           {
             oyjlValueClear( parent );
             parent->type = oyjl_t_array;
-            oyjlAllocHelper_m( parent->u.array.values, oyjl_val, 2, malloc, oyjlTreeFree( level ); goto clean );
-            parent->u.array.len = 0;
+            add = pos + 1;
+            oyjlAllocHelper_m( parent->u.array.values, oyjl_val, add, malloc, goto clean );
+            parent->u.array.len = add;
           } else
           {
             oyjl_val *tmp;
 
+            add = pos + 1  - count;
             tmp = realloc(parent->u.array.values,
-                    sizeof(*(parent->u.array.values)) * (parent->u.array.len + 1));
+                    sizeof(*(parent->u.array.values)) * (parent->u.array.len + add) + 1);
             if (tmp == NULL)
             {
               oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "could not allocate memory", OYJL_DBG_ARGS );
-              oyjlTreeFree( level );
               goto  clean;
             }
             parent->u.array.values = tmp;
+            parent->u.array.len += add;
           }
-          parent->u.array.values[parent->u.array.len] = level;
-          parent->u.array.len++;
+          for(j = 0; j < add; ++j)
+          {
+            level = oyjlValueAlloc_( oyjl_t_null );
+            parent->u.array.values[start+j] = level;
+          }
         }
       }
 
