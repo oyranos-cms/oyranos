@@ -92,6 +92,7 @@ int * oyjl_debug = &my_debug;
     action;                                                 \
   }                                                         \
 }
+#define OYJL_ENUM_CASE_TO_STRING(case_) case case_: return #case_
 
 char *   oyjlBT                      ( int                 stack_limit OYJL_UNUSED )
 {
@@ -1072,6 +1073,7 @@ const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text) {
   {
     switch(rgb)
     {
+      case oyjlNO_MARK: sprintf( t, "%s", text ); break;
       case oyjlRED: sprintf( t, "%s%s%s", truecolor ? OYJL_RED_TC : color ? OYJL_RED_B : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
       case oyjlGREEN: sprintf( t, "%s%s%s", truecolor ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
       case oyjlBLUE: sprintf( t, "%s%s%s", truecolor ? OYJL_BLUE_TC : color ? OYJL_BLUE_B : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
@@ -2870,16 +2872,16 @@ static const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
 {
   switch(i)
   {
-    case oyjlOPTION_NONE: return "oyjlOPTION_NONE";
-    case oyjlOPTION_USER_CHANGED: return "oyjlOPTION_USER_CHANGED";
-    case oyjlOPTION_MISSING_VALUE: return "oyjlOPTION_MISSING_VALUE";
-    case oyjlOPTION_UNEXPECTED_VALUE: return "oyjlOPTION_UNEXPECTED_VALUE";
-    case oyjlOPTION_NOT_SUPPORTED: return "oyjlOPTION_NOT_SUPPORTED";
-    case oyjlOPTION_DOUBLE_OCCURENCE: return "oyjlOPTION_DOUBLE_OCCURENCE";
-    case oyjlOPTIONS_MISSING: return "oyjlOPTIONS_MISSING";
-    case oyjlOPTION_NO_GROUP_FOUND: return "oyjlOPTION_NO_GROUP_FOUND";
-    case oyjlOPTION_SUBCOMMAND: return "oyjlOPTION_SUBCOMMAND";
-    case oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND: return "oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND";
+    OYJL_ENUM_CASE_TO_STRING(oyjlOPTION_NONE);
+    OYJL_ENUM_CASE_TO_STRING(oyjlOPTION_USER_CHANGED);
+    OYJL_ENUM_CASE_TO_STRING(oyjlOPTION_MISSING_VALUE);
+    OYJL_ENUM_CASE_TO_STRING(oyjlOPTION_UNEXPECTED_VALUE);
+    OYJL_ENUM_CASE_TO_STRING(oyjlOPTION_NOT_SUPPORTED);
+    OYJL_ENUM_CASE_TO_STRING(oyjlOPTION_DOUBLE_OCCURENCE);
+    OYJL_ENUM_CASE_TO_STRING(oyjlOPTIONS_MISSING);
+    OYJL_ENUM_CASE_TO_STRING(oyjlOPTION_NO_GROUP_FOUND);
+    OYJL_ENUM_CASE_TO_STRING(oyjlOPTION_SUBCOMMAND);
+    OYJL_ENUM_CASE_TO_STRING(oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND);
   }
   return "";
 }

@@ -447,6 +447,7 @@ int        oyjlStrReplace            ( oyjl_str            text,
                                        void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * user_data),
                                        void              * user_data );
 typedef enum {
+  oyjlNO_MARK,
   oyjlRED,
   oyjlGREEN,
   oyjlBLUE,
