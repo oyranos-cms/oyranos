@@ -1130,6 +1130,38 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeFree( root );
   myDeAllocFunc( text ); text = NULL;
 
+  root = oyjlTreeNew( NULL );
+  value = oyjlTreeGetValue( root, OYJL_CREATE_NEW, "arr/[3]" );
+  value = oyjlTreeGetValue( root, 0, "arr" );
+  count = oyjlValueCount( value );
+  text = oyjlTreePrint(root);
+  if(count == 4 && strlen(text) == 34)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeGetValue(OYJL_CREATE_NEW, \"arr/[3]\") oyjlValueCount() %i", count );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeGetValue(OYJL_CREATE_NEW, \"arr/[3]\") oyjlValueCount() %i", count );
+  }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeGetValue-array-4", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+  if(text) {free(text);} text = NULL;
+
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "arr/[1]/key" );
+  text = oyjlTreePrint(root);
+  if(strlen(text) == 58)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeSetStringF(OYJL_CREATE_NEW, \"arr/[1]/key\") %lu", strlen(text) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeSetStringF(OYJL_CREATE_NEW, \"arr/[1]/key\") %lu", strlen(text) );
+  }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeGetValue-array-4", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+  if(text) {free(text);} text = NULL;
+  oyjlTreeFree( root );
+
   root = oyjlTreeNew( "one" );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "one/[%d]/key1", 0 );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr1a", "one/[%d]/data/[0]", 0 );
