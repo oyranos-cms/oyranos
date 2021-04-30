@@ -70,7 +70,9 @@ char * oyjlOptions_ResultsToJson  ( oyjlOptions_s  * opts )
   root = oyjlTreeNew( "" );
   for(i = 0; i < results->count; ++i)
   {
-    value = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/[%d]", results->options[i], i );
+    oyjl_val v = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s", results->options[i] );
+    int count = oyjlValueCount( v );
+    value = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/[%d]", results->options[i], count );
     oyjlValueSetString( value, results->values[i] );
   }
 
