@@ -54,122 +54,122 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   char * txt;
 
   txt = oyjlOption_PrintArg( o, style );
-  if(txt && strcmp(txt,res) == 0)
+  if((txt && res && strcmp(txt,res) == 0) || (!txt && !res))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_MAN );
-  if(txt && strcmp(txt,res_man) == 0)
+  if((txt && res_man && strcmp(txt,res_man) == 0) || (!txt && !res_man))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_MARKDOWN );
-  if(txt && strcmp(txt,res_mark) == 0)
+  if((txt && res_mark && strcmp(txt,res_mark) == 0) || (!txt && !res_mark))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER );
-  if(txt && strcmp(txt,res_o) == 0)
+  if((txt && res_o && strcmp(txt,res_o) == 0) || (!txt && !res_o))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN );
-  if(txt && strcmp(txt,res_o_man) == 0)
+  if((txt && res_o_man && strcmp(txt,res_o_man) == 0) || (!txt && !res_o_man))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if(txt && strcmp(txt,res_o_mark) == 0)
+  if((txt && res_o_mark && strcmp(txt,res_o_mark) == 0) || (!txt && !res_o_mark))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_STRING );
-  if(txt && strcmp(txt,res_opt) == 0)
+  if((txt && res_opt && strcmp(txt,res_opt) == 0) || (!txt && !res_opt))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN );
-  if(txt && strcmp(txt,res_opt_man) == 0)
+  if((txt && res_opt_man && strcmp(txt,res_opt_man) == 0) || (!txt && !res_opt_man))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN );
-  if(txt && strcmp(txt,res_opt_mark) == 0)
+  if((txt && res_opt_mark && strcmp(txt,res_opt_mark) == 0) || (!txt && !res_opt_mark))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING );
-  if(txt && strcmp(txt,res_oopt) == 0)
+  if((txt && res_oopt && strcmp(txt,res_oopt) == 0) || (!txt && !res_oopt))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"            ", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN );
-  if(txt && strcmp(txt,res_oopt_man) == 0)
+  if((txt && res_oopt_man && strcmp(txt,res_oopt_man) == 0) || (!txt && !res_oopt_man))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN );
-  if(txt && strcmp(txt,res_oopt_mark) == 0)
+  if((txt && res_oopt_mark && strcmp(txt,res_oopt_mark) == 0) || (!txt && !res_oopt_mark))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   } else
   { PRINT_SUB( fail, 
-    "oyjlOption_PrintArg() \"%s\"", txt?txt:"---" );
+    "oyjlOption_PrintArg() \"%s\"", txt?txt:"(none)" );
   }
   if(txt) {free(txt); txt = NULL;}
 
@@ -238,6 +238,26 @@ oyjlTESTRESULT_e testArgsPrint()
                              "--option[=args...]",    "\\fB\\-\\-option\\fR\\fI[=args...]\\fR",              "<strong>--option</strong><em>[=args...]</em>",
                              "-o|--option[=args...]", "\\fB\\-o\\fR|\\fB\\-\\-option\\fR\\fI[=args...]\\fR", "<strong>-o</strong>|<strong>--option</strong><em>[=args...]</em>",
                              result, oyjlTESTRESULT_FAIL );
+
+  fprintf(stdout, "\"#\" OYJL_OPTION_FLAG_EDITABLE | OYJL_OPTION_FLAG_ACCEPT_NO_ARG, 0\n" );
+  o1.o = "#"; o1.option = "", o1.value_type = oyjlOPTIONTYPE_NONE; o1.value_name = NULL;
+  result = testArgsPrintOne( &o1, 0,
+                             NULL,                    NULL,                                                  NULL,
+                             "|",                     "|",                                                   "|",
+                             "|",                     "|",                                                   "|",
+                             "|",                     "|",                                                   "|",
+                             result, oyjlTESTRESULT_FAIL );
+
+  fprintf(stdout, "\"@\" OYJL_OPTION_FLAG_EDITABLE, 0\n" );
+  o1.o = "@"; o1.option = "", o1.value_type = oyjlOPTIONTYPE_CHOICE; o1.value_name = "ARG";
+  o1.flags = OYJL_OPTION_FLAG_EDITABLE;
+  result = testArgsPrintOne( &o1, 0,
+                             "ARG",                   "\\fIARG\\fR",                                         "<em>ARG</em>",
+                             "ARG",                   "\\fIARG\\fR",                                         "<em>ARG</em>",
+                             "ARG",                   "\\fIARG\\fR",                                         "<em>ARG</em>",
+                             "ARG",                   "\\fIARG\\fR",                                         "<em>ARG</em>",
+                             result, oyjlTESTRESULT_FAIL );
+
   return result;
 }
 
@@ -318,16 +338,25 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups_no_args, NULL );
   /* done with options handling */
 
-  if(verbose)
-    oyjlOptions_PrintHelp( ui->opts, ui, 1, "%s v%s - %s", argv[0],
+  const char * fn = "test-args-0-help.txt"; remove(fn);
+  oyjl_help_zout = fopen(fn, "w");
+  oyjlOptions_PrintHelp( ui->opts, ui, 1, "%s v%s - %s", argv[0],
                             "1.0", "Test Tool for testing" );
-  if(ui)
+  fclose(oyjl_help_zout); oyjl_help_zout = NULL;
+  int size = 0;
+  char * text;
+  text = oyjlReadFile( fn , &size );
+  if(ui && size == 2360)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui created - no args                           " );
+    "ui created - no args %d                      ", size );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui created - no args                           " );
+    "ui created - no args %d                      ", size );
   }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlOptions_PrintHelp", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+  if(text) {free(text);} text = NULL;
 
   char * syn = ui ? oyjlOptions_PrintHelpSynopsis_( ui->opts, &ui->opts->groups[0], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
   if(syn && strcmp(syn,"<strong>test-args</strong> | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
@@ -476,7 +505,6 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_ReleaseArgs( &ui);
 
 
-  char * text;
   const char * argv_anonymous[] = {"test","-v","file-name.json","file-name2.json"};
   int argc_anonymous = 4;
   ui = oyjlUi_Create( argc_anonymous, argv_anonymous, /* argc+argv are required for parsing the command line options */
@@ -590,13 +618,13 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups_no_args, NULL );
 
   text = oyjlUi_ToMan( ui, 0 );
-  if( text && strlen(text) == 3098 &&
+  if( text && strlen(text) == 3068 &&
       strstr(text, "\n\\fB\\-\\-candle\\fR\tCandle"))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 3098 == %lu                    ", text ? strlen(text) : 0 );
+    "oyjlUi_ToMan() 3068 == %lu                    ", text ? strlen(text) : 0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose && text)
@@ -604,7 +632,7 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToMarkdown( ui, 0 );
-  if( text && strlen(text) == 8381 &&
+  if( text && strlen(text) == 8331 &&
       strstr(text, "><strong>--candle</strong><") )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMarkdown() %lu                       ", strlen(text) );
@@ -695,13 +723,12 @@ oyjlTESTRESULT_e testArgs()
   help = 0;
 
   oarray2[2].flags = OYJL_OPTION_FLAG_EDITABLE | OYJL_OPTION_FLAG_ACCEPT_NO_ARG;
-  const char * fn = "test-args-0-help.txt"; remove(fn);
   oyjl_help_zout = fopen(fn, "w");
   ui = oyjlUi_Create( argc, argv2, /* argc+argv are required for parsing the command line options */
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray2, groups2, NULL );
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
-  int size = 0;
+  size = 0;
   text = oyjlReadFile( fn , &size );
   if(!ui && (size == 471 || size == 359))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 

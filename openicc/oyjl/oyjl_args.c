@@ -1213,11 +1213,11 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
     else
       oyjlStringAdd( &text, malloc, free, "-%s", oyjlTermColor( oyjlBOLD, o->o?o->o:o->option ) );
   }
-  if(style & oyjlOPTIONSTYLE_ONELETTER && OYJL_IS_O("#"))
+  if((style & oyjlOPTIONSTYLE_ONELETTER || style & oyjlOPTIONSTYLE_STRING) && OYJL_IS_O("#"))
     oyjlStringAdd( &text, malloc, free, "|" );
   if(style & oyjlOPTIONSTYLE_ONELETTER && style & oyjlOPTIONSTYLE_STRING && OYJL_IS_NOT_O("@") && OYJL_IS_NOT_O("#") && o->o && o->o[0] && o->option && !sub_command)
-    oyjlStringAdd( &text, malloc, free, "|" );
-  if( o->option &&
+    oyjlStringAddN( &text, "|", 1, malloc, free );
+  if( o->option && o->option[0] &&
       ( style & oyjlOPTIONSTYLE_STRING ||
         ( !(o->o && o->o[0]) &&
           OYJL_IS_NOT_O("@") &&
@@ -1234,7 +1234,8 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
     else
       oyjlStringAdd( &text, malloc, free, "%s%s", sub_command ? "" : "--", oyjlTermColor( oyjlBOLD, o->option ) );
   }
-  if(o->value_name)
+
+  if(o->value_name && o->value_name[0])
   {
     const char * value_name = o->value_name;
     int needs_edit_dots = 0;
@@ -1258,7 +1259,7 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
       if(style & oyjlOPTIONSTYLE_MARKDOWN)
         oyjlStringAdd( &text, malloc, free, "%s%s%s%s%s%s</em>",
             (m||o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG)?"<em>[":"",
-            OYJL_IS_NOT_O("@")?"=":" ",
+            OYJL_IS_NOT_O("@")?"=":"",
             (m||o->flags&OYJL_OPTION_FLAG_ACCEPT_NO_ARG) ? "" : "<em>",
             value_name,
             needs_edit_dots?"...":"",
@@ -2602,8 +2603,6 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
                 fprintf(oyjl_help_zout,OYJL_HELP_HELP "%s\n", o->help );
               free(t);
             }
-            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
-              break;
             while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
@@ -3752,18 +3751,19 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   }
 
   ng = oyjlOptions_CountGroups(opts);
-  if(!ng) return NULL;
+  if(!ng && !(flags & oyjlUI_STATE_NO_CHECKS)) return NULL;
 
-  if(ui->app_type && ui->app_type[0])
+  if((ui->app_type && ui->app_type[0]) || date || ui->nick)
   {
-    int tool = strcmp( ui->app_type, "tool" ) == 0;
+    int tool = ui->app_type && strcmp( ui->app_type, "tool" ) == 0;
     oyjlStringAdd( &text, malloc, free, ".TH \"%s\" %d \"%s\" \"%s\"\n", ui->nick,
                    tool?1:7, date?date:"", tool?"User Commands":"Misc" );
   }
 
   oyjlStringAdd( &text, malloc, free, ".SH %s\n%s%s%s%s \\- %s\n", _("NAME"), ui->nick, vers?" ":"", vers?"v":"", vers?vers:"", ui->name );
 
-  oyjlStringAdd( &text, malloc, free, ".SH %s\n", _("SYNOPSIS") );
+  if(ng)
+    oyjlStringAdd( &text, malloc, free, ".SH %s\n", _("SYNOPSIS") );
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
@@ -3777,7 +3777,8 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   if(desc)
     oyjlStringAdd( &text, malloc, free, ".SH %s\n%s\n", _("DESCRIPTION"), desc );
 
-  oyjlStringAdd( &text, malloc, free, ".SH %s\n", _("OPTIONS") );
+  if(ng)
+    oyjlStringAdd( &text, malloc, free, ".SH %s\n", _("OPTIONS") );
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
@@ -3827,9 +3828,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
             if(o->name && !o->description)
               oyjlStringAdd( &text, malloc, free, "\t%s", o->name );
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", o->description ? o->description:"", o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
-            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
-              break;
-            while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
+            while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
               oyjlStringAdd( &text, malloc, free, "\t\\-%s %s\t\t# %s%s%s%s%s\n.br\n",
@@ -4098,9 +4097,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
             oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
             free(t);
             oyjlStringAdd( &text, malloc, free, " <td>%s%s%s", o->description ? o->description:"", o->help?"<br />":"", o->help?o->help :"" );
-            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
-              break;
-            while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
+            while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             if(n) oyjlStringAdd( &text, malloc, free, "\n  <table>\n");
             for(l = 0; l < n; ++l)
