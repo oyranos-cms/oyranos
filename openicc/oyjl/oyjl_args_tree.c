@@ -718,6 +718,7 @@ void oyjlUiCanonicaliseVariableName_ ( char             ** name )
   oyjlStrReplace( tmp, "(", "_", 0, NULL );
   oyjlStrReplace( tmp, "|", "_", 0, NULL );
   oyjlStrReplace( tmp, ".", "_", 0, NULL );
+  oyjlStrReplace( tmp, "?", "_", 0, NULL );
   txt = oyjlStr(tmp);
   free(*name); *name = NULL;
   i = 0;
@@ -788,6 +789,7 @@ static char * oyjlUiGetVariableNameC_( oyjl_val            val,
   /* replace some reserved C names */
   if('0' <= t[0] && t[0] <= '9') { char * name = NULL; oyjlStringAdd( &name, 0,0, "var_%s", t ); free(t); t = name; }
   if(strcmp(t,"#") == 0) { free(t); t = oyjlStringCopy("no_arg_var",0); }
+  if(strcmp(t,"?") == 0) { free(t); t = oyjlStringCopy("question_var",0); }
   if(strcmp(t,"break") == 0) { free(t); t = oyjlStringCopy("break_var",0); }
   if(strcmp(t,"case") == 0) { free(t); t = oyjlStringCopy("case_var",0); }
   if(strcmp(t,"char") == 0) { free(t); t = oyjlStringCopy("char_var",0); }
@@ -1193,8 +1195,10 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         v = oyjlTreeGetValue( val, 0, "values/dbl/start" ); start = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
         v = oyjlTreeGetValue( val, 0, "values/dbl/tick" ); tick = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
         v = oyjlTreeGetValue( val, 0, "values/dbl/end" ); end = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
-        if(start != -1.0 && end != -1.0)
+        if(!(start == -1.0 && end == -1.0 && tick == -1.0 && d == 1.0))
           oyjlStrAdd( s,   "{.dbl.d = %g, .dbl.start = %g, .dbl.end = %g, .dbl.tick = %g}, ", d == -1.0 ? 0 : d, start, end, tick == -1.0 ? 0.0 : tick );
+        else
+          oyjlStrAdd( s,   "{0}, " );
       } else
       if(!value_type || (value_type && !value_type[0]) || (value_type && strcmp(value_type, "oyjlOPTIONTYPE_NONE") == 0))
       {
