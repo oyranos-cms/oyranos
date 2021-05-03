@@ -80,7 +80,7 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&input}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Output"),   _("File or Stream"),          _("A JSON file name or a output stream like \"stdout\"."),_("FILENAME"),      
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&output}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("Format string"),           _("A output format string."),_("'_(\"%s\"); '"), 
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("Format string"),           _("A output format string."),_("FORMAT"), 
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&format}},
     {"oiwi", 0,                          "a","add",           NULL,     _("Add"),      _("Add Translation"),         _("Add gettext translated keys to JSON"),NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&add}},
