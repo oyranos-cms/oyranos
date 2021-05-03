@@ -41,8 +41,23 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong></td> <td>Wähle Eingangsprofile</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-2</strong>|<strong>--icc-version-2</strong></td> <td>Wähle ICC V2 Profile</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-4</strong>|<strong>--icc-version-4</strong></td> <td>Wähle ICC V4 Profile</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--path</strong>=<em>PFAD_WORT_TEIL</em></td> <td>Zeige Profile, welche ein Wort in ihrem Pfadnamen enthalten. </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-T</strong>|<strong>--meta</strong>=<em>SCHLÜSSEL;WERT</em></td> <td>Suche nach Schlüssel/Werte Paar in Meta Element<br />Zeige Profile welche ein bestimmtes Schlüssel/Werte Paar im meta Tag enthalten. WERT kann '*' enthalten für das Filtern von Wortteilen. </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--path</strong>=<em>PFAD_WORT_TEIL</em></td> <td>Zeige Profile, welche ein Wort in ihrem Pfadnamen enthalten.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-P basICColor</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-P colord</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-P edid</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-P OpenICC</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-P oyra</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-P xorg</strong></td><td># </td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-T</strong>|<strong>--meta</strong>=<em>SCHLÜSSEL;WERT</em></td> <td>Suche nach Schlüssel/Werte Paar in Meta Element<br />Zeige Profile welche ein bestimmtes Schlüssel/Werte Paar im meta Tag enthalten. WERT kann '*' enthalten für das Filtern von Wortteilen.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-T EFFECT_class;sepia</strong></td><td># </td></tr>
+  </table>
+  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-D</strong>|<strong>--duplicates</strong></td> <td>Zeige identische mehrfach installierte Profile an</td> </tr>
 </table>
 
@@ -63,8 +78,10 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <a href="#install"><strong>-I</strong>=<em>ICC_PROFIL</em></a> | <strong>-t</strong>=<em>TAXI_ID</em> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-g</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-I</strong>|<strong>--install</strong>=<em>ICC_PROFIL</em></td> <td>Installiere Profil </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--taxi</strong>=<em>TAXI_ID</em></td> <td>ICC Taxi Profile DatenBank </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-I</strong>|<strong>--install</strong>=<em>ICC_PROFIL</em></td> <td>Installiere Profil  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--taxi</strong>=<em>TAXI_ID</em></td> <td>ICC Taxi Profile DatenBank  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-u</strong>|<strong>--user</strong></td> <td>Benutzerpfad</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--system</strong></td> <td>Systempfad</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-y</strong>|<strong>--oyranos</strong></td> <td>Oyranospfad</td> </tr>

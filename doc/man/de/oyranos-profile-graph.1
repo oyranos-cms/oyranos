@@ -4,7 +4,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .SH ÜBERSICHT
 \fBoyranos-profile-graph\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-c\fR] [\fB\-x\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-n\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE ...
 .br
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fB\-L\fR \fINUMMER\fR] [\fB\-C\fR \fINUMMER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] ... [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fB\-L\fR \fINUMMER\fR] [\fB\-C\fR \fINUMMER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR ...] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profile-graph\fR \fB\-S\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR]
 .br
@@ -48,7 +48,7 @@ Erzeuge aus einem ICC Profil eine Grafik mit seiner Sättigungslinie.
 .br
 .SS
 HLC Farbatlas
-\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fB\-L\fR \fINUMMER\fR] [\fB\-C\fR \fINUMMER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR] ... [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-H\fR \fINUMMER\fR [\fB\-L\fR \fINUMMER\fR] [\fB\-C\fR \fINUMMER\fR] [\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR ...] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-m\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-p\fR \fIFORMAT\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-r\fR] [\fB\-v\fR]
 .br
 Erzeuge ein 2D Farbpalette mit allen möglichen Farben innerhalb des Farbumfanges des ICC Fabprofiles. Mehr Informationen zum HLC Farbatlas sind zu finden auf www.freiefarbe.de
 .br
@@ -196,6 +196,12 @@ Hole Benutzerschnittstelle als Text
 .RS
 Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" wird einen Web Service starten.
 .RE
+	\-R gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
+.br
+	\-R web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser
+.br
+	\-R -		# 
+.br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br
 \fB\-v\fR|\fB\-\-verbose\fR	plaudernd
