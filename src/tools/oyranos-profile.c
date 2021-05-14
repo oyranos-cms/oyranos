@@ -32,12 +32,11 @@
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_version.h"
+#include "oyProfiles_s.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-void* oyAllocFunc(size_t size) {return malloc (size);}
 
 #define OPENICC_DEVICE_JSON_HEADER \
   "{\n" \
@@ -59,200 +58,246 @@ void* oyAllocFunc(size_t size) {return malloc (size);}
 #define OPENICC_DEVICE_PRINTER "printer"
 #define OPENICC_DEVICE_CAMERA  "camera"
 
+#include "oyjl.h"
+#include "oyjl_version.h"
+extern char **environ;
+#ifdef OYJL_HAVE_LOCALE_H
+#include <locale.h>
+#endif
+#ifdef OYJL_USE_GETTEXT
+# ifdef OYJL_HAVE_LIBINTL_H
+#  include <libintl.h> /* bindtextdomain() */
+# endif
+#endif
 
-void  printfHelp (int argc OY_UNUSED, char** argv)
+static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * z OYJL_UNUSED )
 {
-  char * version = oyVersionString(1,0);
-  char * id = oyVersionString(2,0);
-  char * cfg_date =  oyVersionString(3,0);
-  char * devel_time = oyVersionString(4,0);
+  oyProfiles_s * ps = oyProfiles_Create( NULL, 0, 0 );
+  int n = oyProfiles_Count( ps ), i;
+  oyjlOptionChoice_s * cs = (oyjlOptionChoice_s*) calloc( (unsigned int)n+20, sizeof(oyjlOptionChoice_s) );
+  for(i = 0; i < n; ++i)
+  {
+    oyProfile_s * p = oyProfiles_Get(ps, i);
+    const char * desc = oyProfile_GetText(p, oyNAME_DESCRIPTION);
+    const char * fn = oyProfile_GetFileName(p, -1);
+    if(desc)
+      cs[i].name = oyjlStringCopy( desc, 0 );
+    if(fn)
+      cs[i].nick = oyjlStringCopy( fn, 0 );
+    oyProfile_Release( &p );
+  }
+  oyProfiles_Release( &ps );
 
-  fprintf( stderr, "\n");
-  fprintf( stderr, "oyranos-profile %s\n",
-                                _("is a ICC profile information tool"));
-  fprintf( stderr, "  Oyranos v%s config: %s devel period: %s\n",
-                  oyNoEmptyName_m_(version),
-                  oyNoEmptyName_m_(cfg_date), oyNoEmptyName_m_(devel_time) );
-  if(id)
-  fprintf( stderr, "  Oyranos git id %s\n", oyNoEmptyName_m_(id) );
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",
-                                           _("Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "%s\n",                 _("Usage"));
-  fprintf( stderr, "  %s\n",               _("List included ICC tags:"));
-  fprintf( stderr, "      %s -l %s\n",        argv[0], _("ICC_FILE_NAME"));
-  fprintf( stderr, "      -p %s\t%s\n",  _("NUMBER"), _("select tag"));
-  fprintf( stderr, "      -n %s\t%s\n",  _("NAME"), _("select tag"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Remove included ICC tag:"));
-  fprintf( stderr, "      %s -r %s %s\n",     argv[0], _("NUMBER"), _("ICC_FILE_NAME"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Dump Device Infos to OpenICC device JSON:"));
-  fprintf( stderr, "      %s -o %s\n",        argv[0], _("ICC_FILE_NAME"));
-  fprintf( stderr, "      -c NAME       %s scanner, monitor, printer, camera ...\n",  _("use device class") );
-  fprintf( stderr, "      -f xml        %s\n",  _("use IccXML format") );
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Show Profile ID:"));
-  fprintf( stderr, "      %s -m %s\n",        argv[0], _("ICC_FILE_NAME"));
-  fprintf( stderr, "      -w %s\t%s\n", _("ICC_FILE_NAME"),  _("write profile with correct ID"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Show CIE*xy chromaticities:"));
-  fprintf( stderr, "      %s --ppmcie %s\n",        argv[0], _("ICC_FILE_NAME"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Write to ICC profile:"));
-  fprintf( stderr, "      %s -w %s [-j %s] %s\n",        argv[0], _("NAME"), _("FILE_NAME"), _("ICC_FILE_NAME"));
-  fprintf( stderr, "      -w %s\t%s\n", _("NAME"),  _("use new name"));
-  fprintf( stderr, "      -j %s\t%s\n", _("FILE_NAME"),  _("embed OpenICC device JSON from file"));
-  fprintf( stderr, "      -s %s\t%s\n", _("NAME"),  _("add prefix"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("Print a help text:"));
-  fprintf( stderr, "      %s -h\n",        argv[0]);
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s\n",               _("General options:"));
-  fprintf( stderr, "      %s \t%s\n", _("ICC_FILE_NAME"), _("can be file name, internal description string, ICC profile ID or" \
-                   " wildcard \"rgb\", \"cmyk\", \"gray\", \"lab\", \"xyz\", \"web\", \"rgbi\", \"cmyki\", \"grayi\", \"labi\", \"xyzi\"." \
-                   " Wildcards ending with \"i\" are assumed profiles. \"web\" is a sRGB profile. The other wildcards are editing profiles."));
-  fprintf( stderr, "      -v %s\n",        _("verbose"));
-  fprintf( stderr, "      -i=%s\t%s\n",    _("ICC_FILE_NAME"), _("read file or use '-' for stdin input stream"));
-  fprintf( stderr, "      -2 %s\n",        _("select a ICC v2 profile"));
-  fprintf( stderr, "      -4 %s\n",        _("select a ICC v4 profile"));
-  fprintf( stderr, "      --short %s\n",   _("print only the file name"));
-  fprintf( stderr, "      --path %s\n",    _("print the full file name"));
-  fprintf( stderr, "\n");
-  fprintf( stderr, "  %s:\n",               _("Example"));
-  fprintf( stderr, "      oyranos-profile -lv -p=1 sRGB.icc\n");
-  fprintf( stderr, "      oyranos-profile -w test -j test.json sRGB.icc\n");
-  fprintf( stderr, "      oyranos-profile -mv sRGB.icc\n");
-  fprintf( stderr, "      ppmcie `oyranos-profile --ppmcie sRGB.icc` > sRGB-cie-xy.ppm\n");
-  fprintf( stderr, "    %s:\n", _("Count all profiles with Lab PCS"));
-  fprintf( stderr, "      LANG=en_GB; n=0; SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do if [ \"`oyranos-profile -l \"$file\" | grep -a \"PCS Color Space:  Lab\"`\" != \"\" ]; then n=$((n+1)); fi; done; echo PCS-CIE*Lab: $n\n");
-  fprintf( stderr, "\n");
-                        printf(_("For more information read the man page:"));
-                        printf("\n");
-                        printf("      man oyranos-profile\n");
+  cs[i].nick = cs[i].name = "rgb"; ++i;
+  cs[i].nick = cs[i].name = "cmyk"; ++i;
+  cs[i].nick = cs[i].name = "gray"; ++i;
+  cs[i].nick = cs[i].name = "lab"; ++i;
+  cs[i].nick = cs[i].name = "xyz"; ++i;
+  cs[i].nick = cs[i].name = "web"; ++i;
+  cs[i].nick = cs[i].name = "effect"; ++i;
+  cs[i].nick = cs[i].name = "proof"; ++i;
 
-  if(version) oyDeAllocateFunc_(version);
-  if(id) oyDeAllocateFunc_(id);
-  if(cfg_date) oyDeAllocateFunc_(cfg_date);
-  if(devel_time) oyDeAllocateFunc_(devel_time);
+  return cs;
 }
 
-
-int main( int argc , char** argv )
+/* This function is called the
+ * * first time for GUI generation and then
+ * * for executing the tool.
+ */
+int myMain( int argc, const char ** argv )
 {
   int error = 0;
-  int flags = OY_NO_REPAIR,
-      list_tags = 0,
-      list_hash = 0,
-      tag_pos = -1,
-      remove_tag = 0,
-      dump_openicc_json = 0,
-      dump_chromaticities = 0,
-      verbose = 0;
-  const char * file_name = 0,
-             * profile_desc = 0,
-             * tag_name = 0,
-             * name_space = 0,
-             * json_name = 0,
-             * format = "openicc",
-             * profile_name = 0;
-  const char * prefixes[24] = {0}; int pn = 0;
-  const char * device_class = "unknown";
-  int read_stdin = 0;
-  oyProfile_s * p;
-  oyProfileTag_s * tag;
-  int simple = 0;
+  int state = 0;
+  int path = 0;
+  int short_var = 0;
+  const char * file_name = NULL,
+             * profile_desc = 0;
+  int list_tags = 0;
+  int tag_pos = -1;
+  const char * tag_name = 0;
+  int remove_tag = 0;
+  int list_hash = 0;
+  const char * profile_name = 0;
+  int ppmcie = 0;
+  int verbose = 0;
+  const char * dump_openicc_json = 0;
+  const char * output = NULL;
+  const char * device_class = 0;
+  const char * format = 0;
+  const char * json_name = 0;
+  const char * name_space = 0;
+  int icc_version_2 = 0;
+  int icc_version_4 = 0;
+  int help = 0;
+  int version = 0;
+  const char * render = NULL;
+  const char * export = 0;
 
-#ifdef USE_GETTEXT
-  setlocale(LC_ALL,"");
+  /* handle options */
+  /* declare the option choices  *   nick,          name,               description,                  help */
+  oyjlOptionChoice_s E_choices[] = {{_("OY_DEBUG"), _("set the Oyranos debug level. Alternatively the -v option can be used."),NULL,                         NULL},
+                                    {_("XDG_DATA_HOME XDG_DATA_DIRS"),_("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended."),_("http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"),NULL},
+                                    {"","","",""}};
+
+  oyjlOptionChoice_s A_choices[] = {{_("Show overview and header of profile"),_("oyranos-profile sRGB.icc"),NULL,                         NULL},
+                                    {_("Show first tags content of profile"),_("oyranos-profile -lv -p=1 sRGB.icc"),NULL,                         NULL},
+                                    {_("Show the profile hash sum"),_("oyranos-profile -m sRGB.icc"),NULL,                         NULL},
+                                    {_("Show the RGB primaries of a matrix profile inside a CIE*xy diagram"),_("ppmcie `oyranos-profile --ppmcie sRGB.icc` > sRGB_cie-xy.ppm"),NULL,                         NULL},
+                                    {_("Add calibration data to meta tag of a device profile"),_("oyranos-profile -w my_profile -j my_device.json my_profile.icc"),NULL,                         NULL},
+                                    {_("Pass the profile to a external tool"),_("iccdump \"`oyranos-profile --path cmyk`\""),NULL,                         NULL},
+                                    {"","","",""}};
+
+  oyjlOptionChoice_s S_choices[] = {{_("oyranos-profiles(1) oyranos-profile-graph(1) oyranos-config-fltk(1) oyranos-config(1) oyranos(3) ppmcie(1)"),NULL,               NULL,                         NULL},
+                                    {_("http://www.oyranos.org"),NULL,               NULL,                         NULL},
+                                    {"","","",""}};
+
+  /* declare options - the core information; use previously declared choices */
+  oyjlOption_s oarray[] = {
+  /* type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,         
+        value_type,              values,             variable_type, variable_name */
+    {"oiwi", 0,                          NULL,"path",         NULL,     _("Path"),     _("show the full ICC profile path and file name"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&path}},
+    {"oiwi", 0,                          NULL,"short",        NULL,     _("Short"),    _("show only the ICC profiles file name"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&short_var}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "@", NULL,           NULL,     _("Input"),    _("ICC Profile"),             _("can  be  file  name,  internal  description  string,  ICC profile ID or wildcard \"rgb\", \"cmyk\", \"gray\", \"lab\", \"xyz\", \"web\", \"rgbi\", \"cmyki\", \"grayi\", \"labi\", \"xyzi\".  Wildcards ending with \"i\" are assumed profiles. \"web\" is a sRGB profile. The other wildcards are editing profiles."), "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE",
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = listProfiles}, oyjlSTRING,    {.s=&file_name}},
+    {"oiwi", 0,                          "l","list-tags",     NULL,     _("List Tags"),_("list contained tags additional to overview and header."),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list_tags}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "p","tag-pos",       NULL,     _("Tag Pos"),  _("select tag"),              NULL, _("NUMBER"),        
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlINT,       {.i=&tag_pos}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "n","tag-name",      NULL,     _("Tag Name"), _("select tag"),              NULL, _("NAME"),          
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&tag_name}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "r","remove-tag",    NULL,     _("Remove Tag"),NULL,                         _("remove selected tag number."),_("NUMBER"),        
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlINT,       {.i=&remove_tag}},
+    {"oiwi", 0,                          "m","list-hash",     NULL,     _("List Hash"),_("show internal hash value."),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list_hash}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "w","profile-name",  NULL,     _("Profile Name"),_("write profile with correct ID hash"),_("The -w option specifies the new internal and external profile name. PROFILENAME specifies the source profile."),_("ICC_FILE_NAME"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&profile_name}},
+    {"oiwi", 0,                          NULL,"ppmcie",        NULL,     _("Ppmcie"),   _("show CIE*xy chromaticities, if available, for use with ppmcie."),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&ppmcie}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Dump Openicc Json"),NULL,                 _("write device informations to OpenICC JSON."),_("FILENAME"),      
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&output}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "c","device-class",  NULL,     _("Device Class"),_("use device class. Useful device classes are monitor, scanner, printer, camera."),NULL, _("CLASS"),         
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&device_class}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("use IccXML format"),       NULL, _("xml"),        
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&format}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "j","json-name",     NULL,     _("Json Name"),_("embed OpenICC JSON device from file"),NULL, _("FILENAME"),      
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&json_name}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","name-space",    NULL,     _("Name Space"),_("add prefix"),              NULL, _("NAME"),          
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&name_space}},
+    {"oiwi", 0,                          "2","icc-version-2", NULL,     _("Icc Version 2"),_("Select ICC v2 Profiles"),  NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&icc_version_2}},
+    {"oiwi", 0,                          "4","icc-version-4", NULL,     _("Icc Version 4"),_("Select ICC v4 Profiles"),  NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&icc_version_4}},
+    {"oiwi", 0,                          "E","man-environment",NULL,    NULL,          NULL,                         NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)E_choices, sizeof(E_choices), malloc ), 0}}, oyjlNONE,      {}},
+    {"oiwi", 0,                          "A","man-examples",  NULL,     NULL,          NULL,                         NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {}},
+    {"oiwi", 0,                          "S","man-see_also",  NULL,     NULL,          NULL,                         NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc ), 0}}, oyjlNONE,      {}},
+    /* default options -h and -v */
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
+    {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0} },
+    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
+    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
+    /* default option template -X|--export */
+    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices = {NULL, 0}}, oyjlSTRING, {.s=&export} },
+    /* The --render option can be hidden and used only internally. */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE, "R", "render", NULL, NULL,  NULL,  NULL, "gui|web|...", oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
+    {"",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}
+  };
+
+  /* declare option groups, for better syntax checking and UI groups */
+  oyjlOptionGroup_s groups[] = {
+  /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
+    {"oiwg", 0,     NULL,               _("Show ICC Profile"),        NULL,               "@",           "path,short",  "@,path,short"},
+    {"oiwg", 0,     NULL,               _("List included ICC tags"),  NULL,               "l,@",         "p,n",         "l,p,n"},
+    {"oiwg", 0,     NULL,               _("Remove included ICC tag"), NULL,               "r,@",         NULL,          "r"},
+    {"oiwg", 0,     NULL,               _("Show Profile ID"),         NULL,               "m,@",         "w",           "m,w"},
+    {"oiwg", 0,     NULL,               _("Show CIE*xy chromaticities"),NULL,             "ppmcie,@",    "v",           "ppmcie"},
+    {"oiwg", 0,     NULL,               _("Dump Device Infos to OpenICC device JSON"),NULL,"o,@",        "c,f",         "o,c,f"},
+    {"oiwg", 0,     NULL,               _("Write to ICC profile"),    NULL,               "w,@",         "j|m,s,2,4",   "w,j|m,s,2,4"},
+    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, NULL, _("General options"),NULL,               "h|X|V|R",     "v",           "h,X,V,R,v"},
+    {"",0,0,0,0,0,0,0}
+  };
+
+  oyjlUiHeaderSection_s * sections = oyUiInfo(_("The oyranos-profile programm shows informations about a ICC profile and allows some modifications."),
+                  "2015-03-06T12:00:00", "March 06, 2015");
+  oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oyranos-profile", _("Oyranos Profile"), _("The Tool gives information of a ICC color profile."),
+#ifdef __ANDROID__
+                                       ":/images/logo.svg", // use qrc
+#else
+                                       "oyranos_logo",
 #endif
-  oyExportStart_(EXPORT_CHECK_NO);
-
-  if(argc >= 2)
+                                       sections, oarray, groups, &state );
+  if( state & oyjlUI_STATE_EXPORT &&
+      export &&
+      strcmp(export,"json+command") != 0)
+    goto clean_main;
+  if(state & oyjlUI_STATE_HELP)
   {
-    int pos = 1;
-    unsigned i;
-    char *wrong_arg = 0;
-    DBG_PROG1_S("argc: %d\n", argc);
-    while(pos < argc)
+    fprintf( stderr, "%s\n\tman oyranos-profile\n\n", _("For more information read the man page:") );
+    goto clean_main;
+  }
+
+  if(ui && verbose)
+  {
+    char * json = oyjlOptions_ResultsToJson( ui->opts );
+    if(json)
+      fputs( json, stderr );
+    fputs( "\n", stderr );
+
+    char * text = oyjlOptions_ResultsToText( ui->opts );
+    if(text)
+      fputs( text, stderr );
+    fputs( "\n", stderr );
+  }
+
+  if(ui && (export && strcmp(export,"json+command") == 0))
+  {
+    char * json = oyjlUi_ToJson( ui, 0 ),
+         * json_commands = NULL;
+    oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"%s\"", argv[0] );
+    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] ); /* skip opening '{' */
+    puts( json_commands );
+    goto clean_main;
+  }
+
+  /* Render boilerplate */
+  if(ui && render)
+  {
+#if !defined(NO_OYJL_ARGS_RENDER)
+    int debug = verbose;
+    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
+#else
+    fprintf( stderr, "No render support compiled in. For a GUI use -X json and load into oyjl-args-render viewer." );
+#endif
+  } else if(ui)
+  {
+    /* ... working code goes here ... */
+    int read_stdin = 0;
+    oyProfile_s * p = NULL;
+    oyProfileTag_s * tag = NULL;
+    int simple = 0;
+    int flags = OY_NO_REPAIR,
+        dump_chromaticities = 0;
+    const char * prefixes[24] = {0}; int pn = 0;
+    const char * device_class = "unknown";
+
+    dump_openicc_json = output;
+    dump_chromaticities = ppmcie;
+    if(path)
+      simple = 2;
+    if(short_var)
+      simple = 1;
+    if(remove_tag)
     {
-      switch(argv[pos][0])
-      {
-        case '-':
-            for(i = 1; pos < argc && i < strlen(argv[pos]); ++i)
-            switch (argv[pos][i])
-            {
-              case '2': flags |= OY_ICC_VERSION_2; break;
-              case '4': flags |= OY_ICC_VERSION_4; break;
-              case 'c': OY_PARSE_STRING_ARG(device_class); break;
-              case 'f': OY_PARSE_STRING_ARG(format); break;
-              case 'i': OY_PARSE_STRING_ARG(file_name); break;
-              case 'j': OY_PARSE_STRING_ARG(json_name); break;
-              case 'l': list_tags = 1; break;
-              case 'm': list_hash = 1; break;
-              case 'n': OY_PARSE_STRING_ARG(tag_name); break;
-              case 'o': dump_openicc_json = 1; break;
-              case 'p': OY_PARSE_INT_ARG( tag_pos ); break;
-              case 'r': OY_PARSE_INT_ARG( tag_pos ); remove_tag = 1; break;
-              case 's': OY_PARSE_STRING_ARG(name_space);
-                        if(name_space)
-                        {
-                          int n = pn - 1, found = 0;
-                          while(n >= 0)
-                            if(strcmp( prefixes[n--], name_space ) == 0)
-                              found = 1;
-                          if( !found )
-                            prefixes[pn++] = name_space;
-                        }
-                        break;
-              case 'v': if(!verbose) verbose = 1; else oy_debug += 1; break;
-              case 'w': OY_PARSE_STRING_ARG(profile_name); break;
-              case 'h':
-              case '-':
-                        if(i == 1)
-                        {
-                             if(OY_IS_ARG("ppmcie"))
-                        { dump_chromaticities = 1; i=100; break; }
-                        else if(OY_IS_ARG("path"))
-                        { simple = 2; i=100; break;}
-                        else if(OY_IS_ARG("short"))
-                        { simple = 1; i=100; break;}
-                        } OY_FALLTHROUGH
-              default:
-                        printfHelp(argc, argv);
-                        exit (0);
-                        break;
-            }
-            break;
-        default:
-                        file_name = argv[pos];
-                        break;
-      }
-      if( wrong_arg )
-      {
-       fprintf(stderr, "%s %s\n", _("wrong argument to option:"), wrong_arg);
-       printfHelp(argc, argv);
-       exit(1);
-      }
-      ++pos;
+      if(tag_pos != -1)
+        remove_tag = tag_pos;
+      else
+        tag_pos = remove_tag;
     }
-  } else
-  {
-                        printfHelp(argc, argv);
-                        exit (0);
-  }
-
-  if(verbose)
-    fprintf( stderr, "  Oyranos v%s\n",
-                  oyNoEmptyName_m_(oyVersionString(1,0)));
-
-  if(json_name && !profile_name)
-  {
-    fprintf(stderr, "%s %s\n", _("missed -w option to write a ICC profile"), _("Exit!"));
-                        printfHelp(argc, argv);
-    exit(1);
-  }
 
   if(file_name && strcmp(file_name,"-") == 0)
     read_stdin = 1;
@@ -267,17 +312,11 @@ int main( int argc , char** argv )
     } else
     {
       fprintf(stderr, "%s: %s %s\n", _("read input stream"), _("failed!"), _("Exit!"));
-      exit(1);
+      return 1;
     }
     oyFree_m_( data );
   } else if(file_name)
     p = oyProfile_FromName( file_name, (verbose?OY_COMPUTE:0) | flags, 0 );
-  else
-  {
-    fprintf(stderr, "%s %s\n", _("Need a ICC profile argument."), _("Exit!"));
-                        printfHelp(argc, argv);
-    exit(1);
-  }
 
   if(p)
   {
@@ -287,11 +326,10 @@ int main( int argc , char** argv )
       profile_desc = oyProfile_GetText( p, oyNAME_DESCRIPTION );
   }
 
-  if(profile_name && !p)
+  if((profile_name || list_hash || list_tags || remove_tag || dump_chromaticities || dump_openicc_json) && !p)
   {
-    fprintf(stderr, "%s %s\n", _("Need a ICC profile to modify."), _("Exit!"));
-    printfHelp(argc, argv);
-    exit(1);
+    fprintf(stderr, "%s %s %s\n", oyjlTermColor(oyjlRED, _("Usage Error")), _("Need a ICC profile argument."), _("Exit!"));
+    return 1;
   }
 
   if(p && profile_name)
@@ -353,13 +391,12 @@ int main( int argc , char** argv )
       if(test)
       {
         fprintf(stderr, "%s: \"%s\" - %s\n", _("Profile exists already"), pn, _("Exit!"));
-        printfHelp(argc, argv);
-        exit(1);
+        return 1;
       }
     }
 
     if(!p)
-      exit(1);
+      return 1;
 
     error = oyProfile_AddTagText( p, icSigProfileDescriptionTag, profile_name );
 
@@ -404,7 +441,7 @@ int main( int argc , char** argv )
       oyStringAddPrintf( &report, 0,0,
                          "%s", filename ? (simple == 1)?(strrchr(filename,OY_SLASH_C) ? strrchr(filename,OY_SLASH_C)+1:filename):filename : OY_PROFILE_NONE );
       fprintf( stdout, "%s\n", report );
-      exit(0);
+      return 0;
     }
 
     /* print header infos */
@@ -484,7 +521,7 @@ int main( int argc , char** argv )
       sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_MAGIC));
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %c%c%c%c\n",_("Magic:           "),
-               f[0],f[1],f[2],f[3]);
+               f[0]?f[0]:' ',f[1]?f[1]:' ',f[2]?f[2]:' ',f[3]?f[3]:' ');
 
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %s\n",_("Platform:        "),
@@ -500,12 +537,12 @@ int main( int argc , char** argv )
       sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_MANUFACTURER));
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %c%c%c%c\n",_("Manufacturer:    "),
-               f[0],f[1],f[2],f[3]);
+               f[0]?f[0]:' ',f[1]?f[1]:' ',f[2]?f[2]:' ',f[3]?f[3]:' ');
 
       sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_MODEL));
       /* keep total number of chars equal to original for cli print */
       fprintf( stdout, "%s %c%c%c%c\n", _("Model:           "),
-               f[0],f[1],f[2],f[3]);
+               f[0]?f[0]:' ',f[1]?f[1]:' ',f[2]?f[2]:' ',f[3]?f[3]:' ');
 
       sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_ATTRIBUTES));
       /* keep total number of chars equal to original for cli print */
@@ -525,7 +562,8 @@ int main( int argc , char** argv )
              (float)oyProfile_GetSignature(p,oySIGNATURE_ILLUMINANT_Y)/65535.0,
              (float)oyProfile_GetSignature(p,oySIGNATURE_ILLUMINANT_Z)/65535.0 );
       sig = oyValueUInt32(oyProfile_GetSignature(p,oySIGNATURE_CREATOR));
-      fprintf( stdout, "Creator:          %c%c%c%c\n", f[0],f[1],f[2],f[3]);
+      fprintf( stdout, "%s %c%c%c%c\n", _("Creator:         "),
+               f[0]?f[0]:' ',f[1]?f[1]:' ',f[2]?f[2]:' ',f[3]?f[3]:' ');
 
       oyProfile_GetMD5(p, OY_FROM_PROFILE, id);
       /* keep total number of chars equal to original for cli print */
@@ -595,8 +633,7 @@ int main( int argc , char** argv )
           fprintf( stderr, "%s %s\n%s\n",
                    _("Allowed option values are -f openicc and -f xml. unknown format:"),
                    format, _("Exit!") );
-          printfHelp(argc, argv);
-          exit(1);
+          return 1;
         }
         texts = oyProfileTag_GetText( tag, &texts_n, NULL, NULL,
                                       &tag_size, malloc );
@@ -730,8 +767,7 @@ int main( int argc , char** argv )
       if(!tags[0] || !tags[1] || !tags[2] || !tags[3])
       {
         fprintf(stderr, "%s: \"%s\" - %s\n", _("RGB primaries missed"), profile_desc, _("Exit!"));
-        printfHelp(argc, argv);
-        exit(1);
+        return 1;
       }
 
 #ifdef USE_GETTEXT
@@ -794,9 +830,55 @@ int main( int argc , char** argv )
   if(!p)
     error = 1;
 
+  }
+  else error = 1;
 
-
-  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+  clean_main:
+  {
+    int i = 0;
+    while(oarray[i].type[0])
+    {
+      if(oarray[i].value_type == oyjlOPTIONTYPE_CHOICE && oarray[i].values.choices.list)
+        free(oarray[i].values.choices.list);
+      ++i;
+    }
+  }
+  oyjlLibRelease();
 
   return error;
 }
+
+extern int * oyjl_debug;
+char ** environment = NULL;
+int main( int argc_, char**argv_, char ** envv )
+{
+  int argc = argc_;
+  char ** argv = argv_;
+
+#ifdef __ANDROID__
+  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
+  argv = calloc( argc + 2, sizeof(char*) );
+  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
+  argv[argc++] = "--render=gui"; /* start Renderer (e.g. QML) */
+  environment = environ;
+#else
+  environment = envv;
+#endif
+
+  /* language needs to be initialised before setup of data structures */
+#ifdef USE_GETTEXT
+  setlocale(LC_ALL,"");
+#endif
+  oyExportStart_(EXPORT_CHECK_NO);
+
+  myMain(argc, (const char **)argv);
+
+#ifdef __ANDROID__
+  free( argv );
+#endif
+
+  return 0;
+}
+
+

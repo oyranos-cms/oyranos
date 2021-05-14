@@ -1,0 +1,183 @@
+.TH "oyranos-profile" 1 "March 06, 2015" "User Commands"
+.SH NAME
+oyranos-profile v0.9.7 \- Oyranos Profil
+.SH ÜBERSICHT
+\fBoyranos-profile\fR [\fB\-\-path\fR] [\fB\-\-short\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fBoyranos-profile\fR \fB\-l\fR [\fB\-p\fR \fINUMMER\fR] [\fB\-n\fR \fINAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fBoyranos-profile\fR \fB\-r\fR \fINUMMER\fR l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fBoyranos-profile\fR \fB\-m\fR [\fB\-w\fR \fIICC_DATEINAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fBoyranos-profile\fR \fB\-\-ppmcie\fR [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fBoyranos-profile\fR \fB\-o\fR \fIDATEINAME\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-f\fR \fIxml...\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fBoyranos-profile\fR \fB\-w\fR \fIICC_DATEINAME\fR [\fB\-j\fR \fIDATEINAME\fR|\fB\-m\fR] [\fB\-s\fR \fINAME\fR] [\fB\-2\fR] [\fB\-4\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fBoyranos-profile\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+.SH BESCHREIBUNG
+Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und erlaubt Änderungen.
+.SH OPTIONEN
+.SS
+Zeige ICC Profil
+\fBoyranos-profile\fR [\fB\-\-path\fR] [\fB\-\-short\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profil
+.RS
+kann ein Dateiname, interner Name, ICC Profil ID oder ein Namenkürzel sein "rgb", "cmyk", "gray", "lab", "xyz", "web", "rgbi", "cmyki", "grayi", "labi", "xyzi". Kürzel endend auf "i" sind vermutete Profile. "web" ist ein sRGB Profile. Die anderen Kürzel sind Editierprofile.
+.RE
+\fB\-\-path\fR	kompletter Pfad- und Dateiname
+.br
+\fB\-\-short\fR	Zeige nur den Profilnamen
+.br
+.SS
+Liste der enthaltenen ICC Elemente
+\fBoyranos-profile\fR \fB\-l\fR [\fB\-p\fR \fINUMMER\fR] [\fB\-n\fR \fINAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fB\-l\fR|\fB\-\-list-tags\fR	Liste die enthaltenen Elemente zusätzlich zur Übersicht und Dateikopf.
+.br
+\fB\-p\fR|\fB\-\-tag-pos\fR \fINUMMER\fR	wähle Eintrag
+.br
+\fB\-n\fR|\fB\-\-tag-name\fR \fINAME\fR	wähle Eintrag
+.br
+.SS
+Lösche enthaltenes ICC Element
+\fBoyranos-profile\fR \fB\-r\fR \fINUMMER\fR l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fB\-r\fR|\fB\-\-remove-tag\fR \fINUMMER\fR	Lösche Element	
+.RS
+lösche nummeriertes Element
+.RE
+.SS
+Zeige Profil ID
+\fBoyranos-profile\fR \fB\-m\fR [\fB\-w\fR \fIICC_DATEINAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fB\-m\fR|\fB\-\-list-hash\fR	Zeige internen Hashwert
+.br
+\fB\-w\fR|\fB\-\-profile-name\fR \fIICC_DATEINAME\fR	schreibe Profil mit korrekter ID
+.RS
+Die -w Option gibt den inneren und äußeren Profilename an.PROFILNAME gibt das Quellprofile an.
+.RE
+.SS
+Zeige CIE*xy Primärfarben
+\fBoyranos-profile\fR \fB\-\-ppmcie\fR [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fB\-\-ppmcie\fR	zeige CIE*xy Farbwerte, falls vorhanden. Zur Benutzung mit ppmcie.
+.br
+.SS
+Schreibe Geräteinformationen nach OpenICC JSON
+\fBoyranos-profile\fR \fB\-o\fR \fIDATEINAME\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-f\fR \fIxml...\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fB\-o\fR|\fB\-\-output\fR \fIDATEINAME\fR	Schreibe OpenICC Json	
+.RS
+Schreibe Geräteinformationen nach OpenICC JSON.
+.RE
+\fB\-c\fR|\fB\-\-device-class\fR \fIKLASSE\fR	nutze Geräteklasse. Nützliche Klassen sind monitor, scanner, printer, camera
+.br
+\fB\-f\fR|\fB\-\-format\fR \fIxml...\fR	benutze IccXML Format
+.br
+.SS
+Schreibe ICC Profil
+\fBoyranos-profile\fR \fB\-w\fR \fIICC_DATEINAME\fR [\fB\-j\fR \fIDATEINAME\fR|\fB\-m\fR] [\fB\-s\fR \fINAME\fR] [\fB\-2\fR] [\fB\-4\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+.br
+\fB\-w\fR|\fB\-\-profile-name\fR \fIICC_DATEINAME\fR	schreibe Profil mit korrekter ID
+.RS
+Die -w Option gibt den inneren und äußeren Profilename an.PROFILNAME gibt das Quellprofile an.
+.RE
+\fB\-j\fR|\fB\-\-json-name\fR \fIDATEINAME\fR	bette OpenICC JSON Gerät von Datei ein
+.br
+\fB\-m\fR|\fB\-\-list-hash\fR	Zeige internen Hashwert
+.br
+\fB\-s\fR|\fB\-\-name-space\fR \fINAME\fR	füge Vorsilbe hinzu
+.br
+\fB\-2\fR|\fB\-\-icc-version-2\fR	Wähle ICC V2 Profile
+.br
+\fB\-4\fR|\fB\-\-icc-version-4\fR	Wähle ICC V4 Profile
+.br
+.SH ALLGEMEINE OPTIONEN
+.SS
+Allgemeine Optionen
+\fBoyranos-profile\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+.br
+\fB\-h\fR|\fB\-\-help\fR	Hilfe
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+.RS
+Hole Benutzerschnittstelle als Text
+.RE
+	\-X man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
+.br
+	\-X markdown		# Markdown : Formatierter Text - Hole formatierten Text
+.br
+	\-X json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
+.br
+\fB\-V\fR|\fB\-\-version\fR	Version
+.br
+\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	
+.br
+	\-R gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
+.br
+	\-R web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser
+.br
+	\-R -		# 
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	plaudernd
+.br
+.SH ENVIRONMENT
+.TP
+OY_DEBUG
+.br
+setze den Oyranos Fehlersuchniveau. Die -v Option kann alternativ benutzt werden.
+.TP
+XDG_DATA_HOME XDG_DATA_DIRS
+.br
+richte Oyranos auf obere Verzeichnisse, welche Resourcen enthalten. An die Pfade für ICC Profile wird "color/icc" angehangen. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html
+.br
+http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+.SH BEISPIELE
+.TP
+Zeige Übersicht und Dateikopf des ICC Profiles
+.br
+oyranos-profile sRGB.icc
+.TP
+Zeige Inhalt des ersten Elementes eines Profiles
+.br
+oyranos-profile -lv -p=1 sRGB.icc
+.TP
+Zeige nur die Profilprüfsumme
+.br
+oyranos-profile -m sRGB.icc
+.TP
+Zeige die RGB Primärfarben eines Matrixprofiles innerhalb eines CIE*xy Diagrammes
+.br
+ppmcie `oyranos-profile --ppmcie sRGB.icc` > sRGB_cie-xy.ppm
+.TP
+Füge Kalibrierungsdaten zum meta Element eines Profiles
+.br
+oyranos-profile -w my_profile -j my_device.json my_profile.icc
+.TP
+Benene das Profil einem externen Werkzeug.
+.br
+iccdump "`oyranos-profile --path cmyk`"
+.SH SIEHE AUCH
+.TP
+oyranos-profiles(1) oyranos-profile-graph(1) oyranos-config-fltk(1) oyranos-config(1) oyranos(3) ppmcie(1)
+.br
+.TP
+http://www.oyranos.org
+.br
+.SH AUTOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH KOPIERRECHT
+© 2005-2020 Kai-Uwe Behrmann and others
+.br
+Lizenz: newBSD http://www.oyranos.org
+.SH FEHLER
+https://www.github.com/oyranos-cms/oyranos/issues 
+

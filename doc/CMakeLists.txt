@@ -42,12 +42,16 @@ SET( MAN1_PAGES
 SET( MAN1CS_PAGES
      man/cs/oyranos-config.1
      man/cs/oyranos-monitor-white-point.1
+     man/cs/oyranos-policy.1
+     man/cs/oyranos-profile.1
      man/cs/oyranos-profile-graph.1
      man/cs/oyranos-profiles.1
    )
 SET( MAN1DE_PAGES
      man/de/oyranos-config.1
      man/de/oyranos-monitor-white-point.1
+     man/de/oyranos-policy.1
+     man/de/oyranos-profile.1
      man/de/oyranos-profile-graph.1
      man/de/oyranos-profiles.1
    )
