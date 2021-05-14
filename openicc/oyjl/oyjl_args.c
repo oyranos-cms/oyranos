@@ -785,6 +785,27 @@ void       oyjlStringListRelease  ( char            *** l,
     }
   }
 }
+void     oyjlStringListAddList       ( char            *** list,
+                                       int               * n,
+                                       const char       ** append,
+                                       int                 n_app,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  int alt_n = 0;
+  char ** tmp;
+
+  if(!list) return;
+
+  if(n) alt_n = *n;
+  tmp = oyjlStringListCatList((const char**)*list, alt_n, append, n_app,
+                                     n, alloc);
+
+  oyjlStringListRelease(list, alt_n, deAlloc);
+
+  *list = tmp;
+}
+
 #include "oyjl_version.h"
 int            oyjlVersion           ( int                 type OYJL_UNUSED )
 {
@@ -2763,12 +2784,109 @@ oyjlUi_s *         oyjlUi_Copy       ( oyjlUi_s          * src )
   return ui;
 }
 
+int oyjlManAddOptionToGroupList_     ( char            *** group,
+                                       int               * group_n,
+                                       char                o,
+                                       const char        * option,
+                                       int                 flags )
+{
+  char * double_string = NULL; /* detect and skip */
+  int is_double_string = 0, i;
+  char ** g = *group;
+  char oo[] = {o,0,0,0};
+  const char * opt[2];
+
+  if(g)
+  {
+    for(i = 0; i < *group_n; ++i)
+    {
+      char * goption = g[i];
+      if(o)
+      {
+        if(strlen(goption) == 1 && goption[0] == o)
+          double_string = goption;
+      }
+      else if(option)
+        if(strcmp(goption, option) == 0)
+          double_string = goption;
+      if(double_string)
+      {
+        is_double_string = 1;
+        break;
+      }
+    }
+  }
+
+  if(is_double_string)
+  {
+    if(!(flags & OYJL_QUIET))
+    {
+      fprintf( stderr, OYJL_DBG_FORMAT "attempt to add pre existing option \"%s\" to group ", OYJL_DBG_ARGS, double_string );
+      for(i = 0; i < *group_n; ++i)
+      {
+        fprintf( stderr, "%s", i?",":"" );
+        if(o)
+          fprintf( stderr, "%c", o );
+        else
+          fprintf( stderr, "%s", option?option:"" ); 
+      }
+      fprintf( stderr, "; ignoring\n" );
+    }
+    return is_double_string;
+  }
+
+  if(o)
+    opt[0] = oo;
+  else
+    opt[0] = option;
+
+  oyjlStringListAddList( group, group_n, opt, 1, 0,0 );
+
+  return 0;
+}
+
+int oyjlManAddOptionToGroup_         ( char             ** group,
+                                       char                o,
+                                       const char        * option,
+                                       const char        * delimiter,
+                                       int                 flags )
+{
+  int is_double_string = 0;
+  char * g = *group;
+  if(g)
+  {
+    int list_n = 0;
+    char ** list = oyjlStringSplit2( *group, "|,", &list_n, NULL, malloc );
+    is_double_string = oyjlManAddOptionToGroupList_( &list, &list_n, o, option, flags );
+
+    oyjlStringListRelease( &list, list_n, free );
+    if(is_double_string)
+    {
+      if(!(flags & OYJL_QUIET))
+        fprintf( stderr, OYJL_DBG_FORMAT "attempt to add pre existing option \"%s\" to group \"%s\"; ignoring\n", OYJL_DBG_ARGS, option?option:"", *group );
+      return is_double_string;
+    }
+  }
+
+  if(g && g[0])
+    oyjlStringAdd( group, 0,0, delimiter?delimiter:"," );
+  if(o)
+    oyjlStringAdd( group, 0,0, "%c", o );
+  else
+    oyjlStringAdd( group, 0,0, "%s", option );
+
+  return 0;
+}
+
 static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
                                        int                 flags OYJL_UNUSED )
 {
   oyjlOPTIONSTATE_e status = oyjlOPTION_NONE;
   int i,ng;
   oyjlOptions_s * opts;
+  char * mandatory_all = NULL,
+       * optional_all = NULL,
+       * detail_all = NULL;
  
   if(!ui) return status;
   opts = ui->opts;
@@ -2795,6 +2913,76 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
   for(i = 0; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
+    char ** list;
+    int j, n;
+    if(g->mandatory && g->mandatory[0])
+    {
+      n = 0;
+      list = oyjlStringSplit2( g->mandatory, "|,", &n, NULL, malloc );
+      for( j = 0; j  < n; ++j )
+      {
+        const char * option = list[j];
+        oyjlManAddOptionToGroup_( &mandatory_all, 0, option, ",", flags );
+      }
+      oyjlStringListRelease( &list, n, free );
+    }
+    if(g->optional && g->optional[0])
+    {
+      n = 0;
+      list = oyjlStringSplit2( g->optional, "|,", &n, NULL, malloc );
+      for( j = 0; j  < n; ++j )
+      {
+        const char * option = list[j];
+        oyjlManAddOptionToGroup_( &optional_all, 0, option, ",", flags );
+      }
+      oyjlStringListRelease( &list, n, free );
+    }
+    if(g->detail && g->detail[0])
+    {
+      n = 0;
+      list = oyjlStringSplit2( g->detail, "|,", &n, NULL, malloc );
+      for( j = 0; j  < n; ++j )
+      {
+        const char * option = list[j];
+        oyjlManAddOptionToGroup_( &detail_all, 0, option, ",", flags );
+      }
+      oyjlStringListRelease( &list, n, free );
+    }
+  }
+  if(mandatory_all && detail_all)
+  {
+    char ** mlist;
+    int mn;
+    char ** list;
+    int j, n;
+    mlist = oyjlStringSplit2( mandatory_all, "|,", &mn, NULL, malloc );
+    for(i = 0; i < mn; ++i)
+    {
+      int found = 0;
+      char * moption = mlist[i];
+      if(strcmp(moption,"#") == 0) continue;
+      n = 0;
+      list = oyjlStringSplit2( detail_all, "|,", &n, NULL, malloc );
+      for( j = 0; j  < n; ++j )
+      {
+        const char * option = list[j];
+        if(strcmp(option, moption) == 0)
+          ++found;
+      }
+      if(!found)
+      {
+        fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
+        fprintf(stderr, "\"%s\" not found in any group->details\n", oyjlTermColor(oyjlBOLD, moption) );
+        status = oyjlOPTION_MISSING_VALUE;
+      }
+      oyjlStringListRelease( &list, n, free );
+    }
+    oyjlStringListRelease( &mlist, mn, free );
+  }
+
+  for(i = 0; i < ng; ++i)
+  {
+    oyjlOptionGroup_s * g = &opts->groups[i];
     int * d_index = NULL, d = 0;
     char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, &d_index, malloc );
     int j;
@@ -2805,11 +2993,9 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
       for( j = 0; j  < n; ++j )
       {
         const char * option = list[j];
-        if( !g->detail ||
-            (!strstr(g->detail, option) &&
-             strcmp(option, "|") &&
-             strcmp(option, "#")) )
+        if( !g->detail )
         {
+          fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
           fprintf(stderr, "\"%s\" not found in group->details\n", option );
           status = oyjlOPTION_MISSING_VALUE;
         }
@@ -2863,6 +3049,10 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
     oyjlStringListRelease( &d_list, d, free );
     free( d_index );
   }
+
+  if(mandatory_all) free(mandatory_all);
+  if(optional_all) free(optional_all);
+  if(detail_all) free(detail_all);
 
   return status;
 }
@@ -3218,7 +3408,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         opt_state == oyjlOPTION_SUBCOMMAND ) &&
       !(flags & oyjlUI_STATE_NO_CHECKS)
     )
-    opt_state = oyjlUi_Check_(ui, 0);
+    opt_state = oyjlUi_Check_(ui, *oyjl_debug?0:OYJL_QUIET );
 
   if( help &&
       ( opt_state == oyjlOPTION_NONE ||
@@ -3570,7 +3760,14 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
     if(o->value_type == oyjlOPTIONTYPE_CHOICE)
     {
       oyjlOptionChoice_s * list = o->values.choices.list;
-      while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000') ++n;
+      if(!list)
+      {
+        fprintf( stderr, "%s %s", oyjlTermColor(oyjlRED,_("Program Error:")), _("Missing choices list") );
+        char * t = oyjlOption_PrintArg( o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING );
+        fprintf( stderr, " %s\n", oyjlTermColor(oyjlBOLD, t) );
+        free(t);
+      }
+      while(list[n].nick && list[n].nick[0] != '\000') ++n;
       if(n)
       {
         char * up = oyjlStringToUpper( &opt_name[4] );
@@ -3785,6 +3982,8 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     int dn = 0,
         j;
     char ** d_list = oyjlStringSplit2( g->detail, "|,", &dn, NULL, malloc );
+    if(g->flags & OYJL_GROUP_FLAG_GENERAL_OPTS)
+      oyjlStringAdd( &text, malloc, free, ".SH %s\n", _("GENERAL OPTIONS") );
     if(g->description)
       oyjlStringAdd( &text, malloc, free, ".SS\n%s\n", g->description  );
     else
@@ -3812,6 +4011,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
       int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN;
       if(mandatory_index == 0)
         style |= g->flags;
+
       if(!o)
       {
         fprintf(stdout, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", option);
@@ -4052,6 +4252,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
         j;
     char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc ),
          * t;
+    if(g->flags & OYJL_GROUP_FLAG_GENERAL_OPTS)
+      ADD_SECTION( _("GENERAL OPTIONS"), "general_options", "", "" )
     if(g->description)
     {
       const char * group_id = oyjlOptions_GetGroupId_( opts, g );

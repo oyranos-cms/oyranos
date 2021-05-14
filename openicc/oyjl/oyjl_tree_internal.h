@@ -76,6 +76,11 @@ int oyjlOptionMandatoryIndex_        ( oyjlOption_s      * opt,
 void oyjlUiCanonicaliseVariableName_ ( char             ** name );
 int  oyjlManArgIsNum                 ( const char        * arg );
 int  oyjlManArgIsEditable            ( const char        * arg );
+int  oyjlManAddOptionToGroup_        ( char             ** group,
+                                       char                o,
+                                       const char        * option,
+                                       const char        * delimiter,
+                                       int                 flags );
 
 char *       oyjlStringToLower       ( const char        * t );
 char *       oyjlStringToUpper       ( const char        * t );
