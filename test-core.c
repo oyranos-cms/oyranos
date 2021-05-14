@@ -33,6 +33,7 @@ void oyjlLibRelease();
 #include "oyjl_i18n.h"
 
 #define oyjlNoEmpty(x) ((x)?(x):"---")
+char *     oyjlTreePrint             ( oyjl_val            v );
 
 /* --- actual tests --- */
 
@@ -350,6 +351,26 @@ oyjlTESTRESULT_e testString ()
   }
   oyjlStringListRelease( &list, list_n, myDeAllocFunc );
 
+  test = "element";
+  const char * slist[] = { test, NULL };
+  list_n = 0;
+  oyjlStringListAddList( &list, &list_n, slist, 1, 0, 0 );
+  oyjlStringListAddList( &list, &list_n, slist, 1, 0, 0 );
+  char * t = NULL;
+  for(i = 0; i < list_n; ++i)
+    oyjlStringAdd( &t, 0,0, "%s%s", i?",":"", list[i] );
+  if(strcmp(t, "element,element") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringListAddList(list, &string)                " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringListAddList(list, &string)                " );
+  }
+  free(t); t = NULL;
+  oyjlStringListRelease( &list, list_n, 0 );
+  list_n = 0;
+
+
   long l = 0;
   int error = oyjlStringToLong( "2", &l );
   if( !error &&
@@ -525,7 +546,6 @@ oyjlTESTRESULT_e testString ()
   if(doubles) { free(doubles); } doubles = NULL;
 
   double clck = oyjlClock();
-  char * t = NULL;
   n = 10000;
   for(i = 0; i < n; ++i)
     oyjlStringAdd( &t, 0,0, "/%s/%s", "more", "and" );
