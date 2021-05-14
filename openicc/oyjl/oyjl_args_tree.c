@@ -1286,6 +1286,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
       if(flg & OYJL_GROUP_FLAG_SUBCOMMAND)
         oyjlStringAdd( &flag_string, 0,0, "%s", "OYJL_GROUP_FLAG_SUBCOMMAND" );
+      if(flg & OYJL_GROUP_FLAG_GENERAL_OPTS)
+        oyjlStringAdd( &flag_string, 0,0, "%s%s", flag_string?"|":"", "OYJL_GROUP_FLAG_GENERAL_OPTS" );
       if(!flag_string)
         flag_string = oyjlStringCopy("0",0);
       oyjlStrAddSpaced_( s, flag_string, 0,                         7 );
