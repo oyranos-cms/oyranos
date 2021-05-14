@@ -14,6 +14,7 @@
 
 #define TESTS_RUN \
   TEST_RUN( testArgsPrint, "Options print", 1 ); \
+  TEST_RUN( testArgsCheck, "Options checking", 1 ); \
   TEST_RUN( testArgs, "Options handling", 1 );
 
 void oyjlLibRelease();
@@ -257,6 +258,71 @@ oyjlTESTRESULT_e testArgsPrint()
                              "ARG",                   "\\fIARG\\fR",                                         "<em>ARG</em>",
                              "ARG",                   "\\fIARG\\fR",                                         "<em>ARG</em>",
                              result, oyjlTESTRESULT_FAIL );
+
+  return result;
+}
+
+oyjlTESTRESULT_e testArgsCheck()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+  setlocale(LC_ALL,"en_GB.UTF8");
+
+  char * group = NULL;
+  const char * option = "opt";
+  const char * delimiter = ",";
+  int flags = verbose ? 0 : OYJL_QUIET;
+  int error = oyjlManAddOptionToGroup_( &group, 0, option, delimiter, flags );
+  if(error == 0 && group && strcmp(group, "opt") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlManAddOptionToGroup_(NULL,\"opt\")           " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlManAddOptionToGroup_(NULL,\"opt\")           " );
+  }
+
+  error = oyjlManAddOptionToGroup_( &group, 0, option, delimiter, flags );
+  if(error == 1 && group && strcmp(group, "opt") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlManAddOptionToGroup_(\"opt\" ,\"opt\")         " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlManAddOptionToGroup_(\"opt\" ,\"opt\")         " );
+  }
+
+  option = "pt";
+  error = oyjlManAddOptionToGroup_( &group, 0, option, delimiter, flags );
+  if(error == 0 && group && strcmp(group, "opt,pt") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlManAddOptionToGroup_(\"opt\" ,\"pt\") = %s ", group );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlManAddOptionToGroup_(\"opt\" ,\"pt\") = %s ", group );
+  }
+
+  option = "o";
+  error = oyjlManAddOptionToGroup_( &group, 0, option, delimiter, flags );
+  if(error == 0 && group && strcmp(group, "opt,pt,o") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlManAddOptionToGroup_(\"opt\" ,\"pt\") = %s", group );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlManAddOptionToGroup_(\"opt\" ,\"pt\") = %s", group );
+  }
+  if(group) { free(group); group = NULL; }
+
+  group = oyjlStringCopy("d|device-name,short,path", 0);
+  option = NULL;
+  error = oyjlManAddOptionToGroup_( &group, 'r', option, delimiter, flags );
+  if(error == 0 && group && strcmp(group, "d|device-name,short,path,r") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlManAddOptionToGroup_(\"d|device-name,short,path\" ,\"r\") = %s", group );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlManAddOptionToGroup_(\"d|device-name,short,path\" ,\"r\") = %s", group );
+  }
+  if(group) { free(group); group = NULL; }
 
   return result;
 }
