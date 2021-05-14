@@ -381,6 +381,8 @@ int myMain( int argc, const char ** argv )
   }
   oyjlLibRelease();
 
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+
   return error;
 }
 
@@ -403,6 +405,9 @@ int main( int argc_, char**argv_, char ** envv )
 #endif
 
   /* language needs to be initialised before setup of data structures */
+#ifdef USE_GETTEXT
+  setlocale(LC_ALL,"");
+#endif
   oyExportStart_(EXPORT_CHECK_NO);
 
   myMain(argc, (const char **)argv);

@@ -1,4 +1,4 @@
-# oyranos\-policy v0.9.7 {#oyranospolicy}
+# oyranos\-policy v0.9.7 {#oyranospolicycs}
 <a name="toc"></a>
 [NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [GENERAL OPTIONS](#general_options) [ENVIRONMENT](#environment) [EXAMPLES](#examples) [SEE ALSO](#seealso) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
@@ -85,7 +85,7 @@ The tool dumps out / read a configuration of the Oyranos color management system
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--system-wide</strong></td> <td>Do system wide, might need admin or root privileges</td> </tr>
 </table>
 
-<h3 id="long-help">Documentation</h3>
+<h3 id="long-help">Dokumentace</h3>
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-policy</strong></a> <strong>--long-help</strong> | <strong>--docbook</strong> [<strong>--doc-title</strong>=<em>TEXT</em>] [<strong>--doc-version</strong>=<em>TEXT</em>]
 
@@ -132,7 +132,7 @@ The tool dumps out / read a configuration of the Oyranos color management system
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-V</strong>|<strong>--version</strong></td> <td>Version</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>verbose</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>upovídaný výstup</td> </tr>
 </table>
 
 
@@ -177,7 +177,7 @@ Kai-Uwe Behrmann http://www.oyranos.org
 
 
 <a name="license"></a>
-### License
+### Licence
 newBSD <a href="http://www.oyranos.org">http://www.oyranos.org</a>
 
 <h2>BUGS <a href="#toc" name="bugs">&uarr;</a></h2>
