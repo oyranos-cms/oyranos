@@ -1,6 +1,6 @@
 # oyranos-config v0.9.7 {#oyranosconfigcs}
 <a name="toc"></a>
-[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
+[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [GENERAL OPTIONS](#general_options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
 <strong>"oyranos-config"</strong> *1* <em>"September 23, 2020"</em> "User Commands"
 
@@ -20,7 +20,7 @@ oyranos-config v0.9.7 - Config
 <br />
 <strong>oyranos-config</strong> <a href="#cflags"><strong>--cflags</strong></a> | <strong>--ldflags</strong> | <strong>--ldstaticflags</strong> | <strong>--sourcedir</strong> | <strong>--builddir</strong> [<strong>-v</strong>]
 <br />
-<strong>oyranos-config</strong> <a href="#export"><strong>-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|web|...</em> [<strong>-v</strong>]
+ <a href="#synopsis"><strong>oyranos-config</strong></a> <a href="#export"><strong>-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|web|...</em> [<strong>-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -96,6 +96,9 @@ The tool can read and set OpenICC DB options, and display paths and static infor
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--sourcedir</strong></td> <td>Oyranos local source directory name</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--builddir</strong></td> <td>Oyranos local build directory name</td> </tr>
 </table>
+
+
+<h2>GENERAL OPTIONS <a href="#toc" name="general_options">&uarr;</a></h2>
 
 <h3 id="export">General options</h3>
 

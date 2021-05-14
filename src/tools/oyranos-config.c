@@ -338,7 +338,7 @@ int myMain( int argc , const char** argv )
     {"oiwg", 0,     _("Install Paths"), _("Show Install Paths"),      NULL,               "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir","v,z",         "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir"},
     {"oiwg", 0,     _("Version"),       _("Show Version"),            _("Release Version follow of a Major(API|ABI)-Minor(Feature)-Micro(Patch|Bug Fix) scheme. For orientation in git the last release, commit number, SHA1 ID and Year-month-day parts are available."), "Version|api-version|num-version|git-version","v",           "Version|api-version|num-version|git-version"},
     {"oiwg", 0,     _("Options"),       _("Miscellaneous options"),   _("These strings can be used to compile programs."),"cflags|ldflags|ldstaticflags|sourcedir|builddir","v",           "cflags|ldflags|ldstaticflags|sourcedir|builddir"},
-    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "X|h|V|R",     "v",           "h,X,R,V,z,v"},
+    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL,         "X|h|V|R",     "v",           "h,X,R,V,z,v"},
     {"",0,0,0,0,0,0,0}
   };
 

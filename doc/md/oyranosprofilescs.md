@@ -1,6 +1,6 @@
 # oyranos-profiles v0.9.7 {#oyranosprofilescs}
 <a name="toc"></a>
-[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
+[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [GENERAL OPTIONS](#general_options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
 <strong>"oyranos-profiles"</strong> *1* <em>"October 11, 2018"</em> "User Commands"
 
@@ -16,7 +16,7 @@ oyranos-profiles v0.9.7 - Oyranos Profiles
 <br />
 <strong>oyranos-profiles</strong> <a href="#install"><strong>-I</strong>=<em>ICC_PROFILE</em></a> | <strong>-t</strong>=<em>TAXI_ID</em> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-g</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos-profiles</strong> <a href="#help"><strong>-h</strong></a> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong>
+ <a href="#synopsis"><strong>oyranos-profiles</strong></a> <a href="#help"><strong>-h</strong></a> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong>
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -90,6 +90,9 @@ The tool can list installed profiles, search paths and can help install a ICC co
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--test</strong></td> <td>No Action</td> </tr>
 </table>
 
+
+<h2>GENERAL OPTIONS <a href="#toc" name="general_options">&uarr;</a></h2>
+
 <h3 id="help">General options</h3>
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-h</strong> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong>
@@ -107,7 +110,14 @@ The tool can list installed profiles, search paths and can help install a ICC co
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-V</strong>|<strong>--version</strong></td> <td>Version</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--no-repair</strong></td> <td>No Profile repair of ICC profile ID</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" will launch a local Web Server, which listens on local port.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
+  </table>
+  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-v</strong>|<strong>--verbose</strong></td> <td>upovídaný výstup</td> </tr>
 </table>
 

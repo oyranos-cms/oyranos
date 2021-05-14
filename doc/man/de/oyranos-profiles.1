@@ -100,6 +100,7 @@ Installiere Profil
 .br
 \fB\-\-test\fR	Keine Ausführung
 .br
+.SH ALLGEMEINE OPTIONEN
 .SS
 Allgemeine Optionen
 \fBoyranos-profiles\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR
@@ -122,7 +123,15 @@ Hole Benutzerschnittstelle als Text
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br
-\fB\-r\fR|\fB\-\-no-repair\fR	Lasse Reparatur der Profil ID weg
+\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	Wähle Darstellung
+.RS
+Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" wird einen Web Service starten.
+.RE
+	\-R gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
+.br
+	\-R web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser
+.br
+	\-R -		# 
 .br
 \fB\-v\fR|\fB\-\-verbose\fR	plaudernd
 .br

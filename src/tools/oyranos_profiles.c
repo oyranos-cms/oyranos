@@ -154,7 +154,7 @@ int myMain( int argc, const char ** argv )
     {"oiwg", 0,     _("List"),          _("List of available ICC color profiles"), NULL,  "l",           "f,e,a,c,d,k,n,o,i,2,4,P,T,v", "l,f,e,a,c,d,k,n,o,i,2,4,P,T,D" },
     {"oiwg", 0,     _("Paths"),         _("List search paths"),       NULL,               "p",           "u|s|y|m,v",   "p,u,s,y,m"},
     {"oiwg", OYJL_GROUP_FLAG_EXPLICITE,_("Install"),_("Install Profile"), NULL,           "I|t",         "u|s|y|m,g,v", "I,t,u,s,y,m,g,test"},
-    {"oiwg", 0,     _("Misc"),          _("General options"),         NULL,               "h|X|V",       "",            "h,X,V,r,v"},
+    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL,         "h|X|V",       "",            "h,X,V,R,v"},
     {"",0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);

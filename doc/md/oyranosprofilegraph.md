@@ -1,6 +1,6 @@
 # oyranos\-profile\-graph v0.9.7 {#oyranosprofilegraph}
 <a name="toc"></a>
-[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
+[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [GENERAL OPTIONS](#general_options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE AS WELL](#seeaswell) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
 <strong>"oyranos-profile-graph"</strong> *1* <em>"June 2, 2020"</em> "User Commands"
 
@@ -26,7 +26,7 @@ oyranos-profile-graph v0.9.7 - Oyranos Profile Graph
 <br />
 <strong>oyranos-profile-graph</strong> <a href="#import"><strong>-i</strong>=<em>FILE</em></a> [<strong>-I</strong>=<em>PAGE</em>] [<strong>-t</strong>=<em>NUMBER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMBER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMBER</em>] [<strong>-T</strong>] [<strong>-f</strong>=<em>FORMAT</em>] [<strong>-o</strong>=<em>-|FILE</em>] [<strong>-v</strong>]
 <br />
-<strong>oyranos-profile-graph</strong> <a href="#export"><strong>-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>-h</strong> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|web|...</em> [<strong>-v</strong>]
+ <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <a href="#export"><strong>-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>-h</strong> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|web|...</em> [<strong>-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -147,6 +147,9 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--import</strong>=<em>FILE</em></td> <td>Color Page Input<br />Supported is a color page in NCC format, which contains pages layout with referenced rgb values. Those are placed on a sheed. Such pages are created by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-I</strong>|<strong>--index</strong>=<em>PAGE</em></td> <td>Page Selection<br />Specify a page name as string or page index as number. -1 will list all page names of the imported file. </tr>
 </table>
+
+
+<h2>GENERAL OPTIONS <a href="#toc" name="general_options">&uarr;</a></h2>
 
 <h3 id="export">General options</h3>
 
