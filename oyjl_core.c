@@ -557,7 +557,7 @@ int        oyjlStringAdd             ( char             ** string,
 
   OYJL_CREATE_VA_STRING(format, text, alloc, return 1)
 
-  if(string && *string)
+  if(string && *string && text)
   {
     int l = strlen(*string),
         l2 = strlen(text);
