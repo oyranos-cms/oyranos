@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2021-05-20 01:38+0200\n"
+"POT-Creation-Date: 2021-05-21 11:01+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -211,7 +211,7 @@ msgstr ""
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:942 oyjl_core.c:2397 test-core.c:130 test.c:141 test.c:184
+#: oyjl_args.c:942 oyjl_core.c:2451 test-core.c:130 test.c:141 test.c:184
 #: test.c:231 test.c:250
 msgid "Example"
 msgstr "приме́р"
@@ -358,7 +358,7 @@ msgstr ""
 msgid "Help"
 msgstr "Справка"
 
-#: oyjl_core.c:2515
+#: oyjl_core.c:2569
 msgid "Information"
 msgstr ""
 
@@ -773,7 +773,7 @@ msgstr ""
 msgid "Program Error:"
 msgstr ""
 
-#: oyjl_core.c:1681
+#: oyjl_core.c:1735
 msgid "Program not found"
 msgstr ""
 

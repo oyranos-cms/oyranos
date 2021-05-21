@@ -322,7 +322,7 @@ typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context,
                                        const char        * format,
                                        ... );
-int            oyjlMessageFuncSet    ( oyjlMessage_f      message_func );
+int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func );
 
 /* --- i18n helpers --- */
 int oyjlInitLanguageDebug            ( const char        * project_name,
@@ -457,7 +457,14 @@ typedef enum {
 } oyjlTEXTMARK_e;
 const char * oyjlTermColor           ( oyjlTEXTMARK_e      mark,
                                        const char        * text );
-char *     oyjlBT                    ( int                 stack_limit );
+char *       oyjlBT                  ( int                 stack_limit );
+#define OYJL_DATE           0x01
+#define OYJL_TIME           0x02
+#define OYJL_TIME_ZONE      0x04
+#define OYJL_TIME_ZONE_DIFF 0x08
+#define OYJL_BRACKETS       0x001
+const char * oyjlPrintTime           ( int                 flags,
+                                       oyjlTEXTMARK_e      mark );
 
 /* --- I/O helpers --- */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,

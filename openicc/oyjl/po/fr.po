@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2021-05-20 01:38+0200\n"
+"POT-Creation-Date: 2021-05-21 11:01+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -213,7 +213,7 @@ msgstr ""
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:942 oyjl_core.c:2397 test-core.c:130 test.c:141 test.c:184
+#: oyjl_args.c:942 oyjl_core.c:2451 test-core.c:130 test.c:141 test.c:184
 #: test.c:231 test.c:250
 msgid "Example"
 msgstr ""
@@ -362,7 +362,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: oyjl_core.c:2515
+#: oyjl_core.c:2569
 #, fuzzy
 msgid "Information"
 msgstr "Description"
@@ -822,7 +822,7 @@ msgstr "Fichier"
 msgid "Program Error:"
 msgstr ""
 
-#: oyjl_core.c:1681
+#: oyjl_core.c:1735
 #, fuzzy
 msgid "Program not found"
 msgstr "Fichier"

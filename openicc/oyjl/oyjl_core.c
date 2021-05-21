@@ -3,14 +3,14 @@
  *  oyjl - string, file i/o and other basic helpers
  *
  *  @par Copyright:
- *            2016-2020 (C) Kai-Uwe Behrmann
+ *            2016-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl core functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- * Copyright (c) 2004-2020  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ * Copyright (c) 2004-2021  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>   /* time_t localtime() */
 #include <unistd.h>
 #include <errno.h>
 #include <wchar.h>  /* wcslen() */
@@ -252,6 +253,59 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
   return NULL;
 }
 #endif
+
+/** @brief print current date time
+ *
+ *  Create a static string to contain ISO conforming date/time string.
+ *
+ *  @param[in]      flags               0 default so ISO dateTtime+-TimeZoneDiff == OYJL_DATE | OYJL_TIME | OYJL_OYJL_TIME_ZONE_DIFF
+ *                                      - OYJL_DATE : %F
+ *                                      - OYJL_TIME : %H:%M:%S
+ *                                      - OYJL_OYJL_TIME_ZONE : %Z
+ *                                      - OYJL_OYJL_TIME_ZONE_DIFF : %z
+ *                                      - OYJL_BRACKETS : [datetime]
+ *  @param[in]      mark                set text marking
+ *  @return                             one line string with function names and belonging lines of code
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/05/21
+ *  @since   2021/05/21 (Oyjl: 1.0.0)
+ */
+const char * oyjlPrintTime           ( int                 flags,
+                                       oyjlTEXTMARK_e      mark )
+{
+  static char t[64] = {0,0};
+  struct tm * gmt;
+  time_t cutime = time(NULL); /* time right NOW */
+  gmt = localtime( &cutime );
+  if(flags == 0)
+    strftime( t, 64, "%FT%H:%M:%S%z", gmt );
+  else
+  {
+    /** One can use OYJL_BRACKETS alone and has dateTtime+-TimeZoneDiff included. */
+    if(flags == OYJL_BRACKETS)
+      flags |= OYJL_DATE | OYJL_TIME | OYJL_TIME_ZONE_DIFF;
+    /** One can use OYJL_TIME_ZONE or OYJL_TIME_ZONE_DIFF alone and has dateTtime included. */
+    if(!(flags & OYJL_DATE && flags & OYJL_TIME))
+      flags |= OYJL_DATE | OYJL_TIME;
+
+    if(flags & OYJL_BRACKETS)
+      sprintf( &t[strlen(t)], "[" );
+    if(flags & OYJL_DATE)
+      strftime( &t[strlen(t)], 64, "%F", gmt );
+    if(flags & OYJL_DATE && flags & OYJL_TIME)
+      sprintf( &t[strlen(t)], "T" );
+    if(flags & OYJL_TIME)
+      strftime( &t[strlen(t)], 50, "%H:%M:%S", gmt );
+    if(flags & OYJL_TIME_ZONE)
+      strftime( &t[strlen(t)], 40, "%Z", gmt );
+    if(flags & OYJL_TIME_ZONE_DIFF)
+      strftime( &t[strlen(t)], 40, "%z", gmt );
+    if(flags & OYJL_BRACKETS)
+      sprintf( &t[strlen(t)], "]" );
+  }
+  return oyjlTermColor(mark,t);
+}
 
 /* --- Debug_Section --- */
 
