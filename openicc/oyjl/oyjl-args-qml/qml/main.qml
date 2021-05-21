@@ -790,10 +790,10 @@ AppWindow {
             if(typeof opt.value_name !== "undefined")
               value_name = opt.value_name;
             // see mandatory key
-            if(group.mandatory.length && group.mandatory.match(opt.key))
+            if(typeof group.mandatory !== "undefined" && group.mandatory.length && group.mandatory.match(opt.key))
                 run = 1
             // detect optonal active role
-            else if(group.mandatory.length === 0 && group.optional.length && group.optional.match(opt.key))
+            else if(typeof group.mandatory !== "undefined" && group.mandatory.length === 0 && group.optional.length && group.optional.match(opt.key))
                 run = 2
             if( type === "double" )
                 // try slider
