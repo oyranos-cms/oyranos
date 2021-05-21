@@ -306,11 +306,17 @@ char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
     oyjlOptionGroup_s * g = &ui->opts->groups[i];
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->type, OYJL_REG "/ui/options/groups/[%d]/%s", i, "type" );
     oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, g->flags, OYJL_REG "/ui/options/groups/[%d]/%s", i, "flags" );
+    if(g->name)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->name, OYJL_REG "/ui/options/groups/[%d]/%s", i, "name" );
+    if(g->description)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->description, OYJL_REG "/ui/options/groups/[%d]/%s", i, "description" );
+    if(g->help)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->help, OYJL_REG "/ui/options/groups/[%d]/%s", i, "help" );
+    if(g->mandatory)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->mandatory, OYJL_REG "/ui/options/groups/[%d]/%s", i, "mandatory" );
+    if(g->optional)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->optional, OYJL_REG "/ui/options/groups/[%d]/%s", i, "optional" );
+    if(g->detail)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->detail, OYJL_REG "/ui/options/groups/[%d]/%s", i, "detail" );
   }
 
@@ -1975,9 +1981,12 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     else if(strcmp( ui->app_type, "module" ) == 0)
       oyjlTreeSetStringF( root, OYJL_CREATE_NEW, _("Module"), OYJL_REG "/modules/[0]/label" );
   }
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->nick, OYJL_REG "/modules/[0]/nick" );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->name, OYJL_REG "/modules/[0]/name" );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->description, OYJL_REG "/modules/[0]/description" );
+  if(ui->nick)
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->nick, OYJL_REG "/modules/[0]/nick" );
+  if(ui->name)
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->name, OYJL_REG "/modules/[0]/name" );
+  if(ui->description)
+    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->description, OYJL_REG "/modules/[0]/description" );
   if(ui->logo)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, ui->logo, OYJL_REG "/modules/[0]/logo" );
 
@@ -2007,8 +2016,11 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       else if(strcmp(s->nick, "permissions") == 0) oyjlValueSetString( key, _("Permissions") );
       else oyjlValueSetString( key, _(s->nick) );
     }
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/information/[%d]/%s", i, "name" );
-    oyjlValueSetString( key, s->name );
+    if(s->name)
+    {
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/information/[%d]/%s", i, "name" );
+      oyjlValueSetString( key, s->name );
+    }
     if(s->description)
     {
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/information/[%d]/%s", i, "description" );
@@ -2052,10 +2064,16 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       continue;
 
     sub_command = (g->flags & OYJL_GROUP_FLAG_SUBCOMMAND) ? OYJL_GROUP_FLAG_SUBCOMMAND : 0;
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "name" );
-    oyjlValueSetString( key, g->name );
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "description" );
-    oyjlValueSetString( key, g->description );
+    if(g->name)
+    {
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "name" );
+      oyjlValueSetString( key, g->name );
+    }
+    if(g->description)
+    {
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "description" );
+      oyjlValueSetString( key, g->description );
+    }
     if(g->help)
     {
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "help" );
@@ -2072,17 +2090,21 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "explicite" );
       oyjlValueSetString( key, "1" );
     }
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "mandatory" );
+    if(sub_command || g->mandatory)
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "mandatory" );
     if(sub_command)
     {
       /* assume the first option is the sub command name */
       o = oyjlOptions_GetOptionL( opts, g->mandatory, 0 );
       oyjlValueSetString( key, o->option );
     }
-    else
+    else if(g->mandatory)
       oyjlValueSetString( key, g->mandatory );
-    key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "optional" );
-    oyjlValueSetString( key, g->optional );
+    if(g->optional)
+    {
+      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "optional" );
+      oyjlValueSetString( key, g->optional );
+    }
     {
       char ** results = oyjlOptions_ResultsToList( opts, 0, &n );
       char * changed = NULL;
@@ -2107,18 +2129,27 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       if(!o) continue;
       mandatory_index = oyjlOptionMandatoryIndex_( o, g );
       num[0] = '\000';
-      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "key" );
       if(!o->key)
         sprintf(num, "%s", OYJL_E(option));
       if(sub_command && mandatory_index == 0)
         sprintf(num, "%s", OYJL_E(o->option));
       if(*oyjl_debug)
         fprintf( stderr, "%d %d %s\n", sub_command, mandatory_index, num );
-      oyjlValueSetString( key, num[0] ? num : o->key );
-      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "name" );
-      oyjlValueSetString( key, o->name );
-      key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "description" );
-      oyjlValueSetString( key, o->description );
+      if(num[0] || o->key)
+      {
+        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "key" );
+        oyjlValueSetString( key, num[0] ? num : o->key );
+      }
+      if(o->name)
+      {
+        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "name" );
+        oyjlValueSetString( key, o->name );
+      }
+      if(o->description)
+      {
+        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "description" );
+        oyjlValueSetString( key, o->description );
+      }
       if(o->help)
       {
         key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "help" );
@@ -2151,6 +2182,8 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
               char ** results = oyjlOptions_ResultsToList( opts, o->o, &count );
               for( l = 0; l < count; ++l )
               {
+                if(!results[l])
+                  continue;
                 key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
                 oyjlValueSetString( key, results[l] );
                 key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
@@ -2170,10 +2203,16 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
                 ++n;
               for(l = pos; l < n+pos; ++l)
               {
-                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
-                oyjlValueSetString( key, o->values.choices.list[l-pos].nick );
-                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-                oyjlValueSetString( key, o->values.choices.list[l-pos].name );
+                if(o->values.choices.list[l-pos].nick)
+                {
+                  key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
+                  oyjlValueSetString( key, o->values.choices.list[l-pos].nick );
+                }
+                if(o->values.choices.list[l-pos].name)
+                {
+                  key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
+                  oyjlValueSetString( key, o->values.choices.list[l-pos].name );
+                }
                 if(o->values.choices.list[l-pos].description && o->values.choices.list[l-pos].description[0])
                 {
                   key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "description" );
@@ -2231,10 +2270,16 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
             }
             for(l = pos; l < n+pos; ++l)
             {
-              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
-              oyjlValueSetString( key, list[l-pos].nick );
-              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-              oyjlValueSetString( key, list[l-pos].name );
+              if(list[l-pos].nick)
+              {
+                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
+                oyjlValueSetString( key, list[l-pos].nick );
+              }
+              if(list[l-pos].name)
+              {
+                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
+                oyjlValueSetString( key, list[l-pos].name );
+              }
             }
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
           }
@@ -2313,10 +2358,16 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
                 ++n;
               for(l = pos; l < n+pos; ++l)
               {
-                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "label" );
-                oyjlValueSetString( key, o->values.choices.list[l-pos].nick );
-                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-                oyjlValueSetString( key, o->values.choices.list[l-pos].name );
+                if(o->values.choices.list[l-pos].nick)
+                {
+                  key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "label" );
+                  oyjlValueSetString( key, o->values.choices.list[l-pos].nick );
+                }
+                if(o->values.choices.list[l-pos].name)
+                {
+                  key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
+                  oyjlValueSetString( key, o->values.choices.list[l-pos].name );
+                }
                 if(o->values.choices.list[l-pos].description && o->values.choices.list[l-pos].description[0])
                 {
                   key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "description" );

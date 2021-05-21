@@ -977,12 +977,12 @@ oyjlTESTRESULT_e testArgs()
   }
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6704)
+  if(text && strlen(text) == 6644)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()       %lu                 ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ExportToJson()       6704 == %lu         ", strlen(text) );
+    "oyjlUi_ExportToJson()       6644 == %lu         ", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson", "txt" )
   if(verbose && text)

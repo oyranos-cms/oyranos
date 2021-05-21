@@ -897,7 +897,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   oyjlUi_s * ui = oyjlUi_FromOptions( "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                   sections, &opts, NULL );
   char * text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 8809)
+  if(text && strlen(text) == 8689)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()                  %lu", text?strlen(text):0 );
   } else
@@ -941,7 +941,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
 
   ui = oyjlUi_ImportFromJson( json, 0 );
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 8809)
+  if(text && strlen(text) == 8689)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ImportFromJson()                %lu", text?strlen(text):0 );
   } else
@@ -1041,7 +1041,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6809)
+  if(text && strlen(text) == 6689)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson(en_GB)           %lu", text?strlen(text):0 );
   } else
@@ -1074,7 +1074,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   oyjlTreeFree( json ); json = NULL;
 
   text = oyjlUi_ExportToJson( ui_en, 0 );
-  if(text && strlen(text) == 6809)
+  if(text && strlen(text) == 6689)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson(copy)            %lu", text?strlen(text):0 );
   } else
@@ -1164,7 +1164,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6815)
+  if(text && strlen(text) == 6695)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson(de)              %lu", text?strlen(text):0 );
   } else
@@ -1211,7 +1211,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6809)
+  if(text && strlen(text) == 6689)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson(back)            %lu", text?strlen(text):0 );
   } else
@@ -1238,7 +1238,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6882)
+  if(text && strlen(text) == 6762)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson(cs)              %lu", text?strlen(text):0 );
   } else
