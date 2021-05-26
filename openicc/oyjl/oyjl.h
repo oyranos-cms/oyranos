@@ -462,7 +462,7 @@ char *       oyjlBT                  ( int                 stack_limit );
 #define OYJL_TIME           0x02
 #define OYJL_TIME_ZONE      0x04
 #define OYJL_TIME_ZONE_DIFF 0x08
-#define OYJL_BRACKETS       0x001
+#define OYJL_BRACKETS       0x10
 const char * oyjlPrintTime           ( int                 flags,
                                        oyjlTEXTMARK_e      mark );
 

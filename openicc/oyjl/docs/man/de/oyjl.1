@@ -18,7 +18,7 @@ oyjl v1.0.0 \- Oyjl Json Bearbeitung
 .br
 \fBoyjl\fR \fBformat\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
+\fBoyjl\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und Wertveränderung in einem JSON Text.
 .SH OPTIONEN
@@ -89,10 +89,12 @@ Zeige Datenformat.
 .br
 .SS
 Allgemeine Optionen
-\fBoyjl\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
+\fBoyjl\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
 .br
-\fB\-h\fR|\fB\-\-help\fR	
-.br
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Zeige Hilfetext an
+.RS
+Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+.RE
 	\-h 1		# Vollständige Hilfe - Zeige Hilfe für alle Gruppen
 .br
 	\-h synopsis		# Übersicht - Liste Gruppen

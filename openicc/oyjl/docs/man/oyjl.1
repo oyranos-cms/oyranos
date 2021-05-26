@@ -18,7 +18,7 @@ oyjl v1.0.0 \- Oyjl Json Manipulation
 .br
 \fBoyjl\fR \fBformat\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
-\fBoyjl\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
+\fBoyjl\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON texts.
 .SH OPTIONS
@@ -89,10 +89,12 @@ Print Data Format.
 .br
 .SS
 General options
-\fBoyjl\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
+\fBoyjl\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
 .br
-\fB\-h\fR|\fB\-\-help\fR	
-.br
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Print help text
+.RS
+Show usage information and hints for the tool.
+.RE
 	\-h 1		# Full Help - Print help for all groups
 .br
 	\-h synopsis		# Synopsis - List groups
