@@ -145,6 +145,6 @@ _oyjl_translate()
 
     set +x +v
 } &&
-complete -F _oyjl_translate -o nospace oyjl-translate
+complete -o nosort -F _oyjl_translate -o nospace oyjl-translate
 
 
