@@ -1,0 +1,11 @@
+/** @file  oyjl_version.h
+ *  @brief automatic generated variables
+ */
+#ifndef OYJL_INTERNAL_H
+#define OYJL_INTERNAL_H
+
+#define OYJL_SOURCEDIR "@CMAKE_SOURCE_DIR@"
+#define OYJL_BUILDDIR  "@CMAKE_BINARY_DIR@"
+
+#endif /*OYJL_INTERNAL_H*/
+
