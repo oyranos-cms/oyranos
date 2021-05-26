@@ -31,6 +31,8 @@ void oyjlLibRelease();
 #include <locale.h>
 #endif
 #include "oyjl_i18n.h"
+#include "oyjl_internal.h"
+#include "oyjl_tree_internal.h"
 
 #define oyjlNoEmpty(x) ((x)?(x):"---")
 char *     oyjlTreePrint             ( oyjl_val            v );
@@ -730,6 +732,167 @@ oyjlTESTRESULT_e testString ()
   return result;
 }
 
+oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
+                                       const char        * prog,
+                                       size_t              code_size,
+                                       size_t              help_size,
+                                       size_t              man_size,
+                                       size_t              markdown_size,
+                                       size_t              json_size,
+                                       size_t              json_command_size,
+                                       size_t              export_size,
+                                       size_t              bash_size,
+                                       oyjlTESTRESULT_e    result,
+                                       oyjlTESTRESULT_e    fail )
+{
+  char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
+  size_t len = c_source ? strlen(c_source) : 0;
+  char * name = NULL;
+  char info[48];
+  const char * lib_so = "libOyjl.so";
+  int lib_so_size = oyjlIsFile( lib_so, "r", info, 48 );
+  const char * lib_a = "liboyjl-static.a";
+  int lib_a_size = oyjlIsFile( lib_a, "r", info, 48 ),
+      size;
+  char * command = NULL;
+  char * t;
+
+  fprintf( zout, "compiling and testing: %s\n", oyjlTermColor(oyjlBOLD, prog) );
+
+  if(c_source && len == code_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)   %lu", len );
+  } else
+  { PRINT_SUB( fail,
+    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)   %lu", len );
+  }
+  OYJL_TEST_WRITE_RESULT( c_source, len, "oyjlUiJsonToCode", "txt" )
+  if(verbose && c_source)
+    fprintf( zout, "%s\n", c_source );
+  oyjlStringAdd( &name, 0,0, "%s.c", prog );
+  oyjlWriteFile( name, c_source, len );
+  if(c_source) {free(c_source);} c_source = NULL;
+  /* compile */
+  if(lib_a_size)
+    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -loyjl-static -loyjl-core-static `pkg-config -libs-only-L openicc` -lopenicc-static -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, prog );
+  else if(lib_so_size)
+    oyjlStringAdd( &command, 0,0, "cc %s -g -O0 -I %s -I %s %s -L %s -lOyjl -lOyjlCore -o %s", verbose?"-Wall -Wextra":"", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, prog );
+  if(command)
+  {
+    if(verbose)
+      fprintf( stderr, "compiling: %s\n", oyjlTermColor( oyjlBOLD, command ) );
+    system(command);
+    if(command) {free(command); command = NULL;}
+    int size = oyjlIsFile( prog, "r", info, 48 );
+    if(!size || verbose)
+    {
+      fprintf(stderr, "%scompile: %s %s %d\n", size == 0?"Could not ":"", oyjlTermColor(oyjlBOLD,prog), info, size);
+    }
+  }
+  if(name) {free(name);} name = NULL;
+
+  c_source = oyjlUiJsonToCode( json, OYJL_COMPLETION_BASH );
+  len = c_source ? strlen(c_source) : 0;
+  if(len == bash_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH) %lu", len );
+  } else
+  { PRINT_SUB( fail,
+    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH) %lu", len );
+  }
+  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode-Completion", "txt" )
+  if(verbose && c_source)
+    fprintf( zout, "%s\n", c_source );
+  if(c_source) {free(c_source);} c_source = NULL;
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s --help", prog );
+  len = t ? strlen(t) : 0;
+  if(len == help_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s --help                        %lu", prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s --help                        %lu", prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "txt" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X man > %s.1 && COLUMNS=%d man ./%s.1", prog, prog, 400, prog );
+  len = t ? strlen(t) : 0;
+  if(len == man_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s -X man && man %s.1          %lu", prog, prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s -X man && man %s.1          %lu", prog, prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "man" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X markdown", prog );
+  len = t ? strlen(t) : 0;
+  if(len == markdown_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s -X markdown                   %lu", prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s -X markdown                   %lu", prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "md" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
+  len = t ? strlen(t) : 0;
+  if(len == json_size && oyjlDataFormat(t) == 7)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s -X json                       %lu", prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s -X json                       %lu %d", prog, len, oyjlDataFormat(t) );
+  system("ls -l oyjl");
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json+command | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
+  len = t ? strlen(t) : 0;
+  if(len == json_command_size && oyjlDataFormat(t) == 7)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s -X json+command               %lu", prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s -X json+command               %lu", prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X export | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
+  len = t ? strlen(t) : 0;
+  if(len == export_size && oyjlDataFormat(t) == 7)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s -X export                    %lu", prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s -X export                    %lu", prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  return result;
+}
+
 oyjlTESTRESULT_e testArgs()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -816,7 +979,23 @@ oyjlTESTRESULT_e testArgs()
   if(verbose)
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
+
+  oyjl_val json = oyjlUi_ExportToJson_( ui, 0/*flags*/ );
   oyjlUi_Release( &ui);
+
+  result = testCode( json, "oiCR"                    /*prog*/,
+                           8501                      /*code_size*/,
+                           1082                      /*help_size*/,
+                           1967                      /*man_size*/,
+                           3788                      /*markdown_size*/,
+                           6649                      /*json_size*/,
+                           6676                      /*json_command_size*/,
+                           10356                     /*export_size*/,
+                           3163                      /*bash_size*/,
+                           result,
+                           oyjlTESTRESULT_FAIL       /*fail*/ );
+
+  oyjlTreeFree( json ); json = NULL;
 
 
   const char * argv_anonymous[] = {"test","-v","file-name.json","file-name2.json"};
@@ -870,6 +1049,7 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui not created - missing mandatory option      " );
   }
+
   oyjlUi_Release( &ui);
 
   argc = 3;
@@ -896,7 +1076,22 @@ oyjlTESTRESULT_e testArgs()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui created - parse string                      " );
   }
+  json = oyjlUi_ExportToJson_( ui, 0/*flags*/ );
   oyjlUi_Release( &ui);
+
+  result = testCode( json, "oiCR"                    /*prog*/,
+                           8246                      /*code_size*/,
+                            615                      /*help_size*/,
+                           1451                      /*man_size*/,
+                           2300                      /*markdown_size*/,
+                           4580                      /*json_size*/,
+                           4607                      /*json_command_size*/,
+                           9841                      /*export_size*/,
+                           3030                      /*bash_size*/,
+                           result,
+                           oyjlTESTRESULT_FAIL       /*fail*/ );
+
+  oyjlTreeFree( json ); json = NULL;
 
   argc = 5;
   ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
