@@ -274,10 +274,12 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
 const char * oyjlPrintTime           ( int                 flags,
                                        oyjlTEXTMARK_e      mark )
 {
-  static char t[64] = {0,0};
+  static char t[64];
   struct tm * gmt;
   time_t cutime = time(NULL); /* time right NOW */
   gmt = localtime( &cutime );
+  t[0] = '\000';
+
   if(flags == 0)
     strftime( t, 64, "%FT%H:%M:%S%z", gmt );
   else
@@ -286,7 +288,7 @@ const char * oyjlPrintTime           ( int                 flags,
     if(flags == OYJL_BRACKETS)
       flags |= OYJL_DATE | OYJL_TIME | OYJL_TIME_ZONE_DIFF;
     /** One can use OYJL_TIME_ZONE or OYJL_TIME_ZONE_DIFF alone and has dateTtime included. */
-    if(!(flags & OYJL_DATE && flags & OYJL_TIME))
+    if(!(flags & OYJL_DATE || flags & OYJL_TIME))
       flags |= OYJL_DATE | OYJL_TIME;
 
     if(flags & OYJL_BRACKETS)
@@ -1732,7 +1734,7 @@ char * oyjlReadCmdToMem_             ( const char        * command,
 
         if((app = oyjlFindApplication_( t )) == NULL)
           oyjlMessage_p( oyjlMSG_ERROR,0, OYJL_DBG_FORMAT "%s: \"%s\"",
-                         OYJL_DBG_ARGS, _("Program not found"), t?t:"");
+                         OYJL_DBG_ARGS, _("Program not found"), command?command:"");
 
         if(t) free(t);
         if(app) free(app);
