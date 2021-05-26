@@ -250,7 +250,7 @@ AppWindow {
                 if(changed === true &&
                    !opt.value.length)
                     opt.value = opt.default
-                if(!key.match(akey))
+                if(!(key == akey))
                 {
                     key = opt.key
                     value = opt.value
@@ -798,10 +798,14 @@ AppWindow {
             if( type === "double" )
                 // try slider
             {
-                var start = opt.start
-                var end = opt.end
-                var tick = opt.tick
-                current = opt.default
+                var start
+                var end
+                var tick
+                var current
+                if(typeof opt.start !== "undefined") var start = opt.start
+                if(typeof opt.end !== "undefined") var end = opt.end
+                if(typeof opt.tick !== "undefined") var tick = opt.tick
+                if(typeof opt.default !== "undefined") current = opt.default
                 if(typeof tick !== "undefined")
                 {
                     dbl["start"] = start
