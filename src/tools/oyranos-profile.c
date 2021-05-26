@@ -210,8 +210,8 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     NULL,               _("Show ICC Profile"),        NULL,               "@",           "path,short",  "@,path,short"},
-    {"oiwg", 0,     NULL,               _("List included ICC tags"),  NULL,               "l,@",         "p,n",         "l,p,n"},
+    {"oiwg", 0,     NULL,               _("Show ICC Profile"),        NULL,               "@",           "path,short,v",  "@,path,short"},
+    {"oiwg", 0,     NULL,               _("List included ICC tags"),  NULL,               "l,@",         "p,n,v",         "l,p,n"},
     {"oiwg", 0,     NULL,               _("Remove included ICC tag"), NULL,               "r,@",         NULL,          "r"},
     {"oiwg", 0,     NULL,               _("Show Profile ID"),         NULL,               "m,@",         "w",           "m,w"},
     {"oiwg", 0,     NULL,               _("Show CIE*xy chromaticities"),NULL,             "ppmcie,@",    "v",           "ppmcie"},

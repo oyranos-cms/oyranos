@@ -10,9 +10,9 @@ oyranos-profile v0.9.7 - Oyranos Profile
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos-profile</strong> [<strong>--path</strong>] [<strong>--short</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> [<strong>--path</strong>] [<strong>--short</strong>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
-<strong>oyranos-profile</strong> <a href="#list-tags"><strong>-l</strong></a> [<strong>-p</strong>=<em>NUMBER</em>] [<strong>-n</strong>=<em>NAME</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> <a href="#list-tags"><strong>-l</strong></a> [<strong>-p</strong>=<em>NUMBER</em>] [<strong>-n</strong>=<em>NAME</em>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
 <strong>oyranos-profile</strong> <a href="#remove-tag"><strong>-r</strong>=<em>NUMBER</em></a> l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
@@ -34,7 +34,7 @@ The oyranos-profile programm shows informations about a ICC profile and allows s
 
 <h3>Show ICC Profile</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> [<strong>--path</strong>] [<strong>--short</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> [<strong>--path</strong>] [<strong>--short</strong>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em></td> <td>ICC Profile<br />can  be  file  name,  internal  description  string,  ICC profile ID or wildcard "rgb", "cmyk", "gray", "lab", "xyz", "web", "rgbi", "cmyki", "grayi", "labi", "xyzi".  Wildcards ending with "i" are assumed profiles. "web" is a sRGB profile. The other wildcards are editing profiles. </tr>
@@ -44,7 +44,7 @@ The oyranos-profile programm shows informations about a ICC profile and allows s
 
 <h3 id="list-tags">List included ICC tags</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-l</strong> [<strong>-p</strong>=<em>NUMBER</em>] [<strong>-n</strong>=<em>NAME</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-l</strong> [<strong>-p</strong>=<em>NUMBER</em>] [<strong>-n</strong>=<em>NAME</em>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list-tags</strong></td> <td>list contained tags additional to overview and header.</td> </tr>

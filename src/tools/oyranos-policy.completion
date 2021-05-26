@@ -156,6 +156,6 @@ _oyranos_policy()
 
     set +x +v
 } &&
-complete -F _oyranos_policy -o nospace oyranos-policy
+complete -o nosort -F _oyranos_policy -o nospace oyranos-policy
 
 

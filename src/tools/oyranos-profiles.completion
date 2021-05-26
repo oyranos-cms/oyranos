@@ -145,6 +145,6 @@ _oyranos_profiles()
 
     set +x +v
 } &&
-complete -F _oyranos_profiles -o nospace oyranos-profiles
+complete -o nosort -F _oyranos_profiles -o nospace oyranos-profiles
 
 

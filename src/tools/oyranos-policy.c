@@ -155,11 +155,11 @@ int myMain( int argc, const char ** argv )
   oyjlUiHeaderSection_s * sections = oyUiInfo(_("The tool dumps out / read a configuration of the Oyranos color management system (CMS)."),
                   "2015-02-13T12:00:00", "February 13, 2015");
   oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
-                                       "oyranos-policy", _("Oyranos CMS policy tool"), NULL,
+                                       "oyranos-policy", _("Oyranos CMS policy tool"), _("The Tool gives information of Oyranos CMS policies."),
 #ifdef __ANDROID__
                                        ":/images/logo.svg", // use qrc
 #else
-                                       NULL,
+                                       "oyranos_logo",
 #endif
                                        sections, oarray, groups, &state );
   verbose = v;

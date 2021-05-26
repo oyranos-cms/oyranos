@@ -89,7 +89,7 @@ _oyranos_profile()
     if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
       case "${COMP_WORDS[1]}" in
         -l|--list-tags)
-          COMPREPLY=($(compgen -W '-p= --tag-pos= -n= --tag-name=' -- "$cur"))
+          COMPREPLY=($(compgen -W '-p= --tag-pos= -n= --tag-name= -v --verbose' -- "$cur"))
             set +x +v
             return
             ;;
@@ -119,7 +119,7 @@ _oyranos_profile()
             return
             ;;
         .*)
-          COMPREPLY=($(compgen -W '--path --short' -- "$cur"))
+          COMPREPLY=($(compgen -W '--path --short -v --verbose' -- "$cur"))
             set +x +v
             return
             ;;
@@ -143,6 +143,6 @@ _oyranos_profile()
 
     set +x +v
 } &&
-complete -F _oyranos_profile -o nospace oyranos-profile
+complete -o nosort -F _oyranos_profile -o nospace oyranos-profile
 
 

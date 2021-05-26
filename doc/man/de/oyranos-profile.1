@@ -2,9 +2,9 @@
 .SH NAME
 oyranos-profile v0.9.7 \- Oyranos Profil
 .SH ÜBERSICHT
-\fBoyranos-profile\fR [\fB\-\-path\fR] [\fB\-\-short\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR [\fB\-\-path\fR] [\fB\-\-short\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-\fBoyranos-profile\fR \fB\-l\fR [\fB\-p\fR \fINUMMER\fR] [\fB\-n\fR \fINAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-l\fR [\fB\-p\fR \fINUMMER\fR] [\fB\-n\fR \fINAME\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
 \fBoyranos-profile\fR \fB\-r\fR \fINUMMER\fR l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
@@ -22,7 +22,7 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 .SH OPTIONEN
 .SS
 Zeige ICC Profil
-\fBoyranos-profile\fR [\fB\-\-path\fR] [\fB\-\-short\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR [\fB\-\-path\fR] [\fB\-\-short\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
 \fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profil
 .RS
@@ -34,7 +34,7 @@ kann ein Dateiname, interner Name, ICC Profil ID oder ein Namenkürzel sein "rgb
 .br
 .SS
 Liste der enthaltenen ICC Elemente
-\fBoyranos-profile\fR \fB\-l\fR [\fB\-p\fR \fINUMMER\fR] [\fB\-n\fR \fINAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-l\fR [\fB\-p\fR \fINUMMER\fR] [\fB\-n\fR \fINAME\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
 \fB\-l\fR|\fB\-\-list-tags\fR	Liste die enthaltenen Elemente zusätzlich zur Übersicht und Dateikopf.
 .br
@@ -70,7 +70,7 @@ Zeige CIE*xy Primärfarben
 Schreibe Geräteinformationen nach OpenICC JSON
 \fBoyranos-profile\fR \fB\-o\fR \fIDATEINAME\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-f\fR \fIxml...\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-\fB\-o\fR|\fB\-\-output\fR \fIDATEINAME\fR	Schreibe OpenICC Json	
+\fB\-o\fR|\fB\-\-output\fR \fIDATEINAME\fR	Ausgabe von OpenICC Json	
 .RS
 Schreibe Geräteinformationen nach OpenICC JSON.
 .RE

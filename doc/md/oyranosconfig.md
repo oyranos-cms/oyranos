@@ -10,7 +10,7 @@ oyranos-config v0.9.7 - Config
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos-config</strong> <a href="#get"><strong>-g</strong>=<em>XPATH</em></a> | <strong>-s</strong>=<em>XPATH:VALUE</em> | <strong>-l</strong> | <strong>-p</strong> [<strong>-v</strong>] [<strong>-z</strong>]
+<strong>oyranos-config</strong> <a href="#get"><strong>-g</strong>=<em>XPATH</em></a> | <strong>-s</strong>=<em>XPATH:VALUE</em> | <strong>-l</strong> | <strong>--dump-db</strong> | <strong>-p</strong> [<strong>-v</strong>] [<strong>-z</strong>]
 <br />
 <strong>oyranos-config</strong> <a href="#daemon"><strong>-d</strong>=<em>0|1</em></a> [<strong>-v</strong>]
 <br />
@@ -30,7 +30,7 @@ The tool can read and set OpenICC DB options, and display paths and static infor
 
 <h3 id="get">Persistent Settings</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>-g</strong>=<em>XPATH</em> | <strong>-s</strong>=<em>XPATH:VALUE</em> | <strong>-l</strong> | <strong>-p</strong> [<strong>-v</strong>] [<strong>-z</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>-g</strong>=<em>XPATH</em> | <strong>-s</strong>=<em>XPATH:VALUE</em> | <strong>-l</strong> | <strong>--dump-db</strong> | <strong>-p</strong> [<strong>-v</strong>] [<strong>-z</strong>]
 
 &nbsp;&nbsp;Handle OpenICC DB configuration on low level.
 
@@ -38,6 +38,7 @@ The tool can read and set OpenICC DB options, and display paths and static infor
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--get</strong>=<em>XPATH</em></td> <td>Get a Value </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong>=<em>XPATH:VALUE</em></td> <td>Set a Value </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list</strong></td> <td>List existing paths</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--dump-db</strong></td> <td>Dump OpenICC DB</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--path</strong></td> <td>Show DB File</td> </tr>
 </table>
 
@@ -60,6 +61,8 @@ The tool can read and set OpenICC DB options, and display paths and static infor
 <h3 id="syscolordir">Show Install Paths</h3>
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>--syscolordir</strong> | <strong>--usercolordir</strong> | <strong>--iccdirname</strong> | <strong>--settingsdirname</strong> | <strong>--cmmdir</strong> | <strong>--metadir</strong> [<strong>-v</strong>] [<strong>-z</strong>]
+
+&nbsp;&nbsp;Show statically configured and compiled in paths of Oyranos CMS.
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--syscolordir</strong></td> <td>Path to system main color directory</td> </tr>

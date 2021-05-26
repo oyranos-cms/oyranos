@@ -2,7 +2,7 @@
 .SH NAME
 oyranos-config v0.9.7 \- Config
 .SH SYNOPSIS
-\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:VALUE\fR | \fB\-l\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR]
+\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:VALUE\fR | \fB\-l\fR | \fB\-\-dump-db\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR]
 .br
 \fBoyranos-config\fR \fB\-d\fR \fI0|1\fR [\fB\-v\fR]
 .br
@@ -18,7 +18,7 @@ The tool can read and set OpenICC DB options, and display paths and static infor
 .SH OPTIONS
 .SS
 Persistent Settings
-\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:VALUE\fR | \fB\-l\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR]
+\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:VALUE\fR | \fB\-l\fR | \fB\-\-dump-db\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR]
 .br
 Handle OpenICC DB configuration on low level.
 .br
@@ -29,6 +29,8 @@ Handle OpenICC DB configuration on low level.
 \fB\-s\fR|\fB\-\-set\fR \fIXPATH:VALUE\fR	Set a Value
 .br
 \fB\-l\fR|\fB\-\-list\fR	List existing paths
+.br
+\fB\-\-dump-db\fR	Dump OpenICC DB
 .br
 \fB\-p\fR|\fB\-\-path\fR	Show DB File
 .br
@@ -49,6 +51,10 @@ Will only work on command line.
 .SS
 Show Install Paths
 \fBoyranos-config\fR \fB\-\-syscolordir\fR | \fB\-\-usercolordir\fR | \fB\-\-iccdirname\fR | \fB\-\-settingsdirname\fR | \fB\-\-cmmdir\fR | \fB\-\-metadir\fR [\fB\-v\fR] [\fB\-z\fR]
+.br
+Show statically configured and compiled in paths of Oyranos CMS.
+.br
+.sp
 .br
 \fB\-\-syscolordir\fR	Path to system main color directory
 .br

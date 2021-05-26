@@ -10,9 +10,9 @@ oyranos-profile v0.9.7 - Oyranos Profil
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos-profile</strong> [<strong>--path</strong>] [<strong>--short</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> [<strong>--path</strong>] [<strong>--short</strong>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
-<strong>oyranos-profile</strong> <a href="#list-tags"><strong>-l</strong></a> [<strong>-p</strong>=<em>NUMMER</em>] [<strong>-n</strong>=<em>NAME</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> <a href="#list-tags"><strong>-l</strong></a> [<strong>-p</strong>=<em>NUMMER</em>] [<strong>-n</strong>=<em>NAME</em>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
 <strong>oyranos-profile</strong> <a href="#remove-tag"><strong>-r</strong>=<em>NUMMER</em></a> l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
@@ -34,7 +34,7 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 
 <h3>Zeige ICC Profil</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> [<strong>--path</strong>] [<strong>--short</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> [<strong>--path</strong>] [<strong>--short</strong>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em></td> <td>ICC Profil<br />kann ein Dateiname, interner Name, ICC Profil ID oder ein Namenkürzel sein "rgb", "cmyk", "gray", "lab", "xyz", "web", "rgbi", "cmyki", "grayi", "labi", "xyzi". Kürzel endend auf "i" sind vermutete Profile. "web" ist ein sRGB Profile. Die anderen Kürzel sind Editierprofile. </tr>
@@ -44,7 +44,7 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 
 <h3 id="list-tags">Liste der enthaltenen ICC Elemente</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-l</strong> [<strong>-p</strong>=<em>NUMMER</em>] [<strong>-n</strong>=<em>NAME</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-l</strong> [<strong>-p</strong>=<em>NUMMER</em>] [<strong>-n</strong>=<em>NAME</em>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list-tags</strong></td> <td>Liste die enthaltenen Elemente zusätzlich zur Übersicht und Dateikopf.</td> </tr>
