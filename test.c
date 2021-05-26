@@ -38,6 +38,7 @@ void oyjlLibRelease();
 #include <locale.h>
 #endif
 #include "oyjl_i18n.h"
+#include "oyjl_internal.h"
 
 
 /* --- actual tests --- */
@@ -796,6 +797,209 @@ oyjlTESTRESULT_e testJsonRoundtrip ()
   return result;
 }
 
+oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
+                                       const char        * prog,
+                                       size_t              code_size,
+                                       size_t              help_size,
+                                       size_t              man_size,
+                                       size_t              markdown_size,
+                                       size_t              json_size,
+                                       size_t              json_command_size,
+                                       size_t              export_size,
+                                       size_t              bash_size,
+                                       oyjlTESTRESULT_e    result,
+                                       oyjlTESTRESULT_e    fail )
+{
+  char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
+  size_t len = c_source ? strlen(c_source) : 0;
+  char * name = NULL;
+  char info[48];
+  const char * lib_so = "libOyjl.so";
+  int lib_so_size = oyjlIsFile( lib_so, "r", info, 48 );
+  const char * lib_a = "liboyjl-static.a";
+  int lib_a_size = oyjlIsFile( lib_a, "r", info, 48 ),
+      size;
+  char * command = NULL;
+  char * t;
+
+  fprintf( zout, "compiling and testing: %s\n", oyjlTermColor(oyjlBOLD, prog) );
+
+  if(c_source && len == code_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)   %lu", len );
+  } else
+  { PRINT_SUB( fail,
+    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)   %lu", len );
+  }
+  OYJL_TEST_WRITE_RESULT( c_source, len, "oyjlUiJsonToCode", "txt" )
+  if(verbose && c_source)
+    fprintf( zout, "%s\n", c_source );
+  oyjlStringAdd( &name, 0,0, "%s.c", prog );
+  oyjlWriteFile( name, c_source, len );
+  if(c_source) {free(c_source);} c_source = NULL;
+  /* compile */
+  if(lib_a_size)
+    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -loyjl-static -loyjl-core-static `pkg-config -libs-only-L openicc` -lopenicc-static -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, prog );
+  else if(lib_so_size)
+    oyjlStringAdd( &command, 0,0, "cc %s -g -O0 -I %s -I %s %s -L %s -lOyjl -lOyjlCore -o %s", verbose?"-Wall -Wextra":"", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, prog );
+  if(command)
+  {
+    if(verbose)
+      fprintf( stderr, "compiling: %s\n", oyjlTermColor( oyjlBOLD, command ) );
+    system(command);
+    if(command) {free(command); command = NULL;}
+    int size = oyjlIsFile( prog, "r", info, 48 );
+    if(!size || verbose)
+    {
+      fprintf(stderr, "%scompile: %s %s %d\n", size == 0?"Could not ":"", oyjlTermColor(oyjlBOLD,prog), info, size);
+    }
+  }
+  if(name) {free(name);} name = NULL;
+
+  c_source = oyjlUiJsonToCode( json, OYJL_COMPLETION_BASH );
+  len = c_source ? strlen(c_source) : 0;
+  if(len == bash_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH) %lu", len );
+  } else
+  { PRINT_SUB( fail,
+    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH) %lu", len );
+  }
+  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode-Completion", "txt" )
+  if(verbose && c_source)
+    fprintf( zout, "%s\n", c_source );
+  if(c_source) {free(c_source);} c_source = NULL;
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s --help", prog );
+  len = t ? strlen(t) : 0;
+  if(len == help_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s --help                        %lu", prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s --help                        %lu", prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "txt" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X man > %s.1 && COLUMNS=%d man ./%s.1", prog, prog, 400, prog );
+  len = t ? strlen(t) : 0;
+  if(len == man_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s -X man && man %s.1          %lu", prog, prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s -X man && man %s.1          %lu", prog, prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "man" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X markdown", prog );
+  len = t ? strlen(t) : 0;
+  if(len == markdown_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s -X markdown                   %lu", prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s -X markdown                   %lu", prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "md" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json", prog );
+  len = t ? strlen(t) : 0;
+  if(len == json_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s -X json                       %lu", prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s -X json                       %lu", prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json+command", prog );
+  len = t ? strlen(t) : 0;
+  if(len == json_command_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s -X json+command               %lu", prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s -X json+command               %lu", prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+  if(t) {free(t);}
+
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X export", prog );
+  len = t ? strlen(t) : 0;
+  if(len == export_size)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s -X export                    %lu", prog, len );
+  } else
+  { PRINT_SUB( fail,
+    "%s -X export                    %lu", prog, len );
+  }
+  OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
+  if(verbose && len)
+    fprintf( zout, "%s\n", t );
+
+  char error_buffer[128] = {0};
+  char * export_text = t; t = NULL;
+  size_t export_len = len;
+  oyjl_val root = oyjlTreeParse( export_text, error_buffer, 128 );
+
+  oyjlUi_s * ui = oyjlUi_ImportFromJson( root, 0 );
+  t = oyjlUi_ExportToJson( ui, 0 );
+  len = t ? strlen(t) : 0;
+  if(abs((int)len - (int)export_len) <= 1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlUi_ImportFromJson()                %lu", len );
+  } else
+  { PRINT_SUB( fail,
+    "oyjlUi_ImportFromJson()                %lu", len );
+  }
+  if(ui) oyjlOptions_SetAttributes( ui->opts, NULL );
+  oyjlUi_Release( &ui);
+  OYJL_TEST_WRITE_RESULT( t, len, "oyjlUi_ImportFromJson", "txt" )
+  if(verbose && t)
+    fprintf( zout, "%s\n", t );
+
+  oyjlStringAdd( &name, 0,0, "%s-import.json", prog );
+  oyjlWriteFile( name, t, len );
+  if(name) {free(name);} name = NULL;
+  oyjlStringAdd( &name, 0,0, "%s-export.json", prog );
+  oyjlWriteFile( name, t, len );
+  if(name) {free(name);} name = NULL;
+  if(t) {free(t);} t = NULL;
+  t = oyjlReadCommandF( &size, "r", malloc, "diff -aur %s-export.json %s-import.json", prog, prog );
+  if(verbose)
+    fprintf( zout, "Checking diff: \"%s\"\n", t );
+  if(!t || (t && strlen(t) == 0))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "%s roundtrip  of reimported JSON   %s", prog, t );
+  } else
+  { PRINT_SUB( fail,
+    "%s roundtrip  of reimported JSON   %s", prog, t );
+  }
+
+  if(t) {free(t);} t = NULL;
+  oyjlTreeFree( root ); root = NULL;
+  if(export_text) {free(export_text);}
+
+
+  return result;
+}
+
 #include "oyjl_i18n.h"
 oyjlTESTRESULT_e testUiRoundtrip ()
 {
@@ -913,47 +1117,18 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
   if(text) {free(text);} text = NULL;
 
-  char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 9263)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)   %lu", c_source?strlen(c_source):0 );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)   %lu", c_source?strlen(c_source):0 );
-  }
-  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode", "txt" )
-  if(verbose && c_source)
-    fprintf( zout, "%s\n", c_source );
-  if(c_source) {free(c_source);} c_source = NULL;
+  result = testCode( json, "oiCR"                    /*prog*/,
+                           9353                      /*code_size*/,
+                           1284                      /*help_size*/,
+                           2174                      /*man_size*/,
+                           4316                      /*markdown_size*/,
+                           7398                      /*json_size*/,
+                           7425                      /*json_command_size*/,
+                           11457                     /*export_size*/,
+                           4144                      /*bash_size*/,
+                           result,
+                           oyjlTESTRESULT_FAIL       /*fail*/ );
 
-  c_source = oyjlUiJsonToCode( json, OYJL_COMPLETION_BASH );
-  if(c_source && strlen(c_source) == 4134)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH) %lu", c_source?strlen(c_source):0 );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH) %lu", c_source?strlen(c_source):0 );
-  }
-  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode-Completion", "txt" )
-  if(verbose && c_source)
-    fprintf( zout, "%s\n", c_source );
-  if(c_source) {free(c_source);} c_source = NULL;
-
-  ui = oyjlUi_ImportFromJson( json, 0 );
-  text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 8689)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ImportFromJson()                %lu", text?strlen(text):0 );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ImportFromJson()                %lu", text?strlen(text):0 );
-  }
-  if(ui) oyjlOptions_SetAttributes( ui->opts, NULL );
-  oyjlUi_Release( &ui);
-  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ImportFromJson", "txt" )
-  if(verbose && text)
-    fprintf( zout, "%s\n", text );
-  if(text) {free(text);} text = NULL;
 
   oyjlTreeFree( json ); json = NULL;
 
@@ -979,6 +1154,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   int show_status = 0;
   int help = 0;
   int verbose_ = 0;
+  const char * catalog_json = NULL;
 
   /* handle options */
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
@@ -1058,18 +1234,17 @@ oyjlTESTRESULT_e testUiTranslation ()
   oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
   if(text) {free(text);} text = NULL;
 
-  char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 8347)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUiJsonToCode(en_GB)              %lu", c_source?strlen(c_source):0 );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUiJsonToCode(en_GB)              %lu", c_source?strlen(c_source):0 );
-  }
-  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode-en_GB", "txt" )
-  if(verbose && c_source)
-    fprintf( zout, "%s\n", c_source );
-  if(c_source) {free(c_source);} c_source = NULL;
+  result = testCode( json, "oiCR_enGB"               /*prog*/,
+                           8409                      /*code_size*/,
+                           1187                      /*help_size*/,
+                           2075                      /*man_size*/,
+                           3874                      /*markdown_size*/,
+                           6831                      /*json_size*/,
+                           6863                      /*json_command_size*/,
+                           10381                     /*export_size*/,
+                           3150                      /*bash_size*/,
+                           result,
+                           oyjlTESTRESULT_FAIL       /*fail*/ );
 
   oyjlTreeFree( json ); json = NULL;
 
@@ -1087,8 +1262,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
   oyjlUi_Release( &ui_en );
 
-  {
-    const char * catalog_json = "{\n\
+  catalog_json = "{\n\
   \"org\": {\n\
     \"freedesktop\": {\n\
       \"oyjl\": {\n\
@@ -1108,7 +1282,7 @@ oyjlTESTRESULT_e testUiTranslation ()
           \"de_DE.UTF8\": {\n\
             \"Example\": \"Beispiel\",\n\
             \"The example tool demonstrates the usage of the libOyjl API's.\": \"Das Beispielwerkzeug zeigt die Benutzung der libOyjl APIs.\",\n\
-            \"help\": \"Hilfe\",\n\
+            \"help\": \"hilfe\",\n\
             \"increase verbosity\": \"mehr Infos\",\n\
             \"Help\": \"Hilfe\",\n\
             \"Actual mode\": \"Aktueller Modus\",\n\
@@ -1141,11 +1315,10 @@ oyjlTESTRESULT_e testUiTranslation ()
     }\n\
   }\n\
 }";
-    oyjl_val catalog = oyjlTreeParse( catalog_json, NULL, 0 );
-    oyjlCatalog( &catalog );
+  oyjl_val catalog = oyjlTreeParse( catalog_json, NULL, 0 );
+  oyjlCatalog( &catalog );
 
-    oyjlLang( "de_DE" );
-  }
+  oyjlLang( "de_DE" );
 
   ui = oyjlUi_Create( argc_anonymous, argv_anonymous, /* argc+argv are required for parsing the command line options */
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
@@ -1179,8 +1352,8 @@ oyjlTESTRESULT_e testUiTranslation ()
   json = oyjlTreeParse( text, error_buffer, 128 );
   if(text) {free(text);} text = NULL;
 
-  c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 8353)
+  char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
+  if(c_source && strlen(c_source) == 8415)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUiJsonToCode(de)                 %lu", c_source?strlen(c_source):0 );
   } else
@@ -1194,8 +1367,22 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   oyjlTreeFree( json ); json = NULL;
 
-  oyjl_val catalog = NULL;
+  catalog = NULL;
   oyjlTranslate_f tr = oyjlTranslate;
+  oyjlUi_Translate( ui, "de_DE", oyjlCatalog(&catalog), tr );
+  text = oyjlUi_ToJson( ui, 0 );
+  if(text && strlen(text) == 7353)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlUi_ToJson(de+)                   %lu", text?strlen(text):0 );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlUi_ToJson(de+)                   %lu", text?strlen(text):0 );
+  }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson-de", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+  if(text) {free(text);} text = NULL;
+
   oyjlUi_Translate( ui, "back", oyjlCatalog(&catalog), tr );
   text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 7280)
@@ -1225,7 +1412,7 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   oyjlUi_Translate( ui, "cs_CZ", oyjlCatalog(&catalog), tr );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7411)
+  if(text && strlen(text) == 7381)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson(cs)                    %lu", text?strlen(text):0 );
   } else
@@ -1238,7 +1425,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6762)
+  if(text && strlen(text) == 6752)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson(cs)              %lu", text?strlen(text):0 );
   } else
@@ -1254,6 +1441,28 @@ oyjlTESTRESULT_e testUiTranslation ()
   int level = 0;
   oyjlTreeToJson( catalog, &level, &text );
   //puts(text);
+  if(text && strlen(text) == 2683 && strlen(catalog_json) == 1797)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "catalog: %lu catalog_json: %lu        ", strlen(text), strlen(catalog_json) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "catalog: %lu catalog_json: %lu        ", strlen(text), strlen(catalog_json) );
+  }
+  if(oy_test_last_result != oyjlTESTRESULT_SUCCESS || verbose)
+  {
+    char * name = NULL, * t = NULL;
+    int size = 0;
+    oyjlStringAdd( &name, 0,0, "catalog_parsed.json" );
+    oyjlWriteFile( name, text, strlen(text) );
+    if(name) {free(name);} name = NULL;
+    oyjlStringAdd( &name, 0,0, "catalog_json.json" );
+    oyjlWriteFile( name, catalog_json, strlen(catalog_json) );
+    if(name) {free(name);} name = NULL;
+    if(t) {free(t);} t = NULL;
+    t = oyjlReadCommandF( &size, "r", malloc, "diff -aur catalog_json.json catalog_parsed.json" );
+    fprintf( zout, "%s\n", t );
+    if(t) {free(t);} t = NULL;
+  }
   if(text) {free(text);} text = NULL;
 
   oyjlUi_Release( &ui);
