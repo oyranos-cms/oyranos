@@ -72,6 +72,7 @@ static void oyConfigCallbackDBus     ( double              progress_zero_till_on
 
   if(strstr(key,OY_STD) == NULL) return;
 
+  fprintf(stdout, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
   getKey( key, oySCOPE_USER_SYS, verbose, 1/*print*/ );
 
   /* Clear the changed state, before a new check. */
@@ -217,6 +218,7 @@ int myMain( int argc , const char** argv )
   int list = 0;
   const char * get = 0;
   const char * set = 0;
+  int dump_db = 0;
   int daemon = 0;
   int system_wide = 0;
   int syscolordir = 0;
@@ -267,49 +269,51 @@ int myMain( int argc , const char** argv )
   oyjlOption_s oarray[] = {
   /* type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,         
         value_type,              values,             variable_type, variable_name */
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,"#",NULL,            NULL,     _("name"),     _("Project Name"),            NULL, NULL,               
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,"#",NULL,            NULL,    _("Name"),     _("Project Name"),            NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&no_arg_var}},
-    {"oiwi", 0,                          "p","path",          NULL,     _("path"),     _("Show DB File"),            NULL, NULL,               
+    {"oiwi", 0,                          "p","path",          NULL,     _("Path"),     _("Show DB File"),            NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&path}},
-    {"oiwi", 0,                          "l","list",          NULL,     _("paths"),    _("List existing paths"),     NULL, NULL,               
+    {"oiwi", 0,                          "l","list",          NULL,     _("Paths"),    _("List existing paths"),     NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "g","get",           NULL,     _("get"),      _("Get a Value"),             NULL, _("XPATH"),         
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "g","get",           NULL,     _("Get"),      _("Get a Value"),             NULL, _("XPATH"),         
         oyjlOPTIONTYPE_FUNCTION, {.getChoices=listKeys}, oyjlSTRING,{.s=&get}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","set",           NULL,     _("set"),      _("Set a Value"),             NULL, _("XPATH:VALUE"),   
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","set",           NULL,     _("Get"),      _("Set a Value"),             NULL, _("XPATH:VALUE"),   
         oyjlOPTIONTYPE_FUNCTION, {.getChoices=listVals}, oyjlSTRING,{.s=&set}},
-    {"oiwi", 0,                          "d","daemon",        NULL,     _("daemon"),   _("Watch DB changes"),        NULL, _("0|1"),           
+    {"oiwi", 0,                          NULL,"dump-db",      NULL,     _("Dump DB"),  _("Dump OpenICC DB"),         NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&dump_db}},
+    {"oiwi", 0,                          "d","daemon",        NULL,     _("Daemon"),   _("Watch DB changes"),        NULL, _("0|1"),           
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)d_choices, sizeof(d_choices), malloc ), 0}}, oyjlINT,       {.i=&daemon}},
-    {"oiwi", 0,                          "z","system-wide",   NULL,     _("system wide"),_("System wide DB setting"),  NULL, NULL,               
+    {"oiwi", 0,                          "z","system-wide",   NULL,     _("System Wide"),_("System wide DB setting"),  NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&system_wide}},
-    {"oiwi", 0,                          NULL,"syscolordir",   NULL,     _("syscolordir"),_("Path to system main color directory"),NULL, NULL,               
+    {"oiwi", 0,                          NULL,"syscolordir",   NULL,    "syscolordir", _("Path to system main color directory"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&syscolordir}},
-    {"oiwi", 0,                          NULL,"usercolordir",  NULL,     _("usercolordir"),_("Path to users main color directory"),NULL, NULL,               
+    {"oiwi", 0,                          NULL,"usercolordir",  NULL,    "usercolordir",_("Path to users main color directory"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&usercolordir}},
-    {"oiwi", 0,                          NULL,"iccdirname",    NULL,     _("iccdirname"),_("ICC profile directory name"),NULL, NULL,               
+    {"oiwi", 0,                          NULL,"iccdirname",    NULL,    "iccdirname",  _("ICC profile directory name"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&iccdirname}},
-    {"oiwi", 0,                          NULL,"settingsdirname",NULL,     _("settingsdirname"),_("Oyranos settings directory name"),NULL, NULL,               
+    {"oiwi", 0,                          NULL,"settingsdirname",NULL,   "settingsdirname",_("Oyranos settings directory name"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&settingsdirname}},
-    {"oiwi", 0,                          NULL,"cmmdir",        NULL,     _("cmmdir"),   _("Oyranos CMM directory name"),NULL, NULL,               
+    {"oiwi", 0,                          NULL,"cmmdir",        NULL,    "cmmdir",      _("Oyranos CMM directory name"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&cmmdir}},
-    {"oiwi", 0,                          NULL,"metadir",       NULL,     _("metadir"),  _("Oyranos meta module directory name"),NULL, NULL,               
+    {"oiwi", 0,                          NULL,"metadir",       NULL,    "metadir",     _("Oyranos meta module directory name"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&metadir}},
-    {"oiwi", 0,                          NULL,"Version",       NULL,     _("Version"),  _("Show official version"),   _("API|ABI-Feature-Patch|BugFix Release"), NULL,               
+    {"oiwi", 0,                          NULL,"Version",       NULL,     _("Version"), _("Show official version"),   _("API|ABI-Feature-Patch|BugFix Release"), NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&Version}},
-    {"oiwi", 0,                          NULL,"api-version",   NULL,     _("api-version"),_("Show version of API"),     NULL, NULL,               
+    {"oiwi", 0,                          NULL,"api-version",   NULL,    "api-version", _("Show version of API"),     NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&api_version}},
-    {"oiwi", 0,                          NULL,"num-version",   NULL,     _("num-version"),_("Show version as a simple number"),_("10000*API+100*Feature+Patch"), NULL,               
+    {"oiwi", 0,                          NULL,"num-version",   NULL,    "num-version", _("Show version as a simple number"),_("10000*API+100*Feature+Patch"), NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&num_version}},
-    {"oiwi", 0,                          NULL,"git-version",   NULL,     _("git-version"),_("Show version as in git"),  _("lastReleaseVersion-gitCommitNumber-gitCommitSHA1ID-Year-month-day"), NULL,               
+    {"oiwi", 0,                          NULL,"git-version",   NULL,    "git-version", _("Show version as in git"),  _("lastReleaseVersion-gitCommitNumber-gitCommitSHA1ID-Year-month-day"), NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&git_version}},
-    {"oiwi", 0,                          NULL,"cflags",        NULL,     _("cflags"),   _("compiler flags"),          NULL, NULL,               
+    {"oiwi", 0,                          NULL,"cflags",        NULL,    "cflags",      _("compiler flags"),          NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&cflags}},
-    {"oiwi", 0,                          NULL,"ldflags",       NULL,     _("ldflags"),  _("dynamic link flags"),      NULL, NULL,               
+    {"oiwi", 0,                          NULL,"ldflags",       NULL,    "ldflags",     _("dynamic link flags"),      NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&ldflags}},
-    {"oiwi", 0,                          NULL,"ldstaticflags", NULL,     _("ldstaticflags"),_("static linking flags"),    NULL, NULL,               
+    {"oiwi", 0,                          NULL,"ldstaticflags", NULL,    "ldstaticflags",_("static linking flags"),    NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&ldstaticflags}},
-    {"oiwi", 0,                          NULL,"sourcedir",     NULL,     _("sourcedir"),_("Oyranos local source directory name"),NULL, NULL,               
+    {"oiwi", 0,                          NULL,"sourcedir",     NULL,    "sourcedir",   _("Oyranos local source directory name"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&sourcedir}},
-    {"oiwi", 0,                          NULL,"builddir",      NULL,     _("builddir"), _("Oyranos local build directory name"),NULL, NULL,               
+    {"oiwi", 0,                          NULL,"builddir",      NULL,    "builddir",    _("Oyranos local build directory name"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&builddir}},
     {"oiwi", 0,                          "E","man-environment_variables",NULL,     "",         "",                        NULL, NULL,               
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)E_choices, sizeof(E_choices), malloc ), 0}}, oyjlNONE,      {}},
@@ -331,11 +335,11 @@ int myMain( int argc , const char** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     _("Settings"),      _("Persistent Settings"),     _("Handle OpenICC DB configuration on low level."),"g|s|l|p","v,z","g,s,l,p"},
+    {"oiwg", 0,     _("Settings"),      _("Persistent Settings"),     _("Handle OpenICC DB configuration on low level."),"g|s|l|dump-db|p","v,z","g,s,l,dump-db,p"},
 #ifdef HAVE_DBUS
     {"oiwg", 0,     _("Watch"),         _("Observe config changes"),  _("Will only work on command line."),"d",           "v",           "d" },
 #endif
-    {"oiwg", 0,     _("Install Paths"), _("Show Install Paths"),      NULL,               "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir","v,z",         "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir"},
+    {"oiwg", 0,     _("Install Paths"), _("Show Install Paths"),      _("Show statically configured and compiled in paths of Oyranos CMS."),               "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir","v,z",         "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir"},
     {"oiwg", 0,     _("Version"),       _("Show Version"),            _("Release Version follow of a Major(API|ABI)-Minor(Feature)-Micro(Patch|Bug Fix) scheme. For orientation in git the last release, commit number, SHA1 ID and Year-month-day parts are available."), "Version|api-version|num-version|git-version","v",           "Version|api-version|num-version|git-version"},
     {"oiwg", 0,     _("Options"),       _("Miscellaneous options"),   _("These strings can be used to compile programs."),"cflags|ldflags|ldstaticflags|sourcedir|builddir","v",           "cflags|ldflags|ldstaticflags|sourcedir|builddir"},
     {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL,         "X|h|V|R",     "v",           "h,X,R,V,z,v"},
@@ -481,6 +485,27 @@ int myMain( int argc , const char** argv )
     if(v)
       STRING_ADD( v, "/openicc.json" );
     fprintf( stdout, "%s\n", oyNoEmptyString_m_(v) );
+    if(v) oyFree_m_(v);
+  }
+
+  if(dump_db)
+  {
+    if(scope == oySCOPE_USER_SYS) scope = oySCOPE_USER;
+    v = oyGetInstallPath( oyPATH_POLICY, scope, oyAllocateFunc_ );
+    if(v)
+    {
+      size_t size = 0;
+      int count = 0;
+      char * db;
+
+      STRING_ADD( v, "/openicc.json" );
+      db = oyReadFileToMem_( v, &size, oyAllocateFunc_ );
+      if(db)
+      {
+        puts(db);
+        oyFree_m_(db);
+      }
+    }
     if(v) oyFree_m_(v);
   }
 

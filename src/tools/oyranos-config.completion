@@ -15,9 +15,9 @@ _oyranos_config()
         --get) # long option with dynamic args
             local OYJL_TEXTS
             if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
-              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             else
-              OYJL_TEXTS=$(${COMP_LINE} --get=oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE} --get=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             fi
             local IFS=$'\n'
             local WORD_LIST=()
@@ -31,9 +31,9 @@ _oyranos_config()
         --set) # long option with dynamic args
             local OYJL_TEXTS
             if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
-              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             else
-              OYJL_TEXTS=$(${COMP_LINE} --set=oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE} --set=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             fi
             local IFS=$'\n'
             local WORD_LIST=()
@@ -78,9 +78,9 @@ _oyranos_config()
         -g=*) # single letter option with dynamic args
             local OYJL_TEXTS
             if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
-              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             else
-              OYJL_TEXTS=$(${COMP_LINE} -g=oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE} -g=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             fi
             local IFS=$'\n'
             local WORD_LIST=()
@@ -94,9 +94,9 @@ _oyranos_config()
         -s=*) # single letter option with dynamic args
             local OYJL_TEXTS
             if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
-              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             else
-              OYJL_TEXTS=$(${COMP_LINE} -s=oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE} -s=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             fi
             local IFS=$'\n'
             local WORD_LIST=()
@@ -158,7 +158,7 @@ _oyranos_config()
             set +x +v
             return
             ;;
-        --path|--list|--system-wide|--syscolordir|--usercolordir|--iccdirname|--settingsdirname|--cmmdir|--metadir|--Version|--api-version|--num-version|--git-version|--cflags|--ldflags|--ldstaticflags|--sourcedir|--builddir|--synopsis|--verbose|--version)
+        --path|--list|--dump-db|--system-wide|--syscolordir|--usercolordir|--iccdirname|--settingsdirname|--cmmdir|--metadir|--Version|--api-version|--num-version|--git-version|--cflags|--ldflags|--ldstaticflags|--sourcedir|--builddir|--synopsis|--verbose|--version)
             : "finish long options without choices"
             COMPREPLY=("$cur ")
             set +x +v
@@ -180,7 +180,7 @@ _oyranos_config()
     : "suggest group options for subcommands"
     if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
       case "${COMP_WORDS[1]}" in
-        -g|--get|-s|--set|-l|--list|-p|--path)
+        -g|--get|-s|--set|-l|--list|--dump-db|-p|--path)
           COMPREPLY=($(compgen -W '-v --verbose -z --system-wide' -- "$cur"))
             set +x +v
             return
@@ -216,7 +216,7 @@ _oyranos_config()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       local WORD_LIST=()
-      WORD_LIST=("${WORD_LIST[@]}" -g= --get= -s= --set= -l --list -p --path -d= --daemon= --syscolordir --usercolordir --iccdirname --settingsdirname --cmmdir --metadir --Version --api-version --num-version --git-version --cflags --ldflags --ldstaticflags --sourcedir --builddir -X= --export= -h= --help= -V --version -R= --render=)
+      WORD_LIST=("${WORD_LIST[@]}" -g= --get= -s= --set= -l --list --dump-db -p --path -d= --daemon= --syscolordir --usercolordir --iccdirname --settingsdirname --cmmdir --metadir --Version --api-version --num-version --git-version --cflags --ldflags --ldstaticflags --sourcedir --builddir -X= --export= -h= --help= -V --version -R= --render=)
       COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return
@@ -224,6 +224,6 @@ _oyranos_config()
 
     set +x +v
 } &&
-complete -F _oyranos_config -o nospace oyranos-config
+complete -o nosort -F _oyranos_config -o nospace oyranos-config
 
 
