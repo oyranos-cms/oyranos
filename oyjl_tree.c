@@ -1896,8 +1896,13 @@ char *         oyjlTranslate         ( const char        * loc,
       path = paths[i];
       if(oyjlRegExpFind(path, regex))
       {
-        paths[i] = NULL;
-        break;
+        const char * p = strrchr(path, '/');
+        if(p) ++p;
+        if(strcmp(p, text) == 0)
+        {
+          paths[i] = NULL;
+          break;
+        }
       }
     }
 
