@@ -272,6 +272,12 @@ CONFIGURE_FILE(
     "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_DOWN_NAME}_version.h"
     IMMEDIATE @ONLY)
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
+CONFIGURE_FILE(
+    "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_internal.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_DOWN_NAME}_internal.h"
+    IMMEDIATE @ONLY)
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
+
 
 #cmake settings for use by find_package + OYJL_DOCUMENT_TOOL
 CONFIGURE_FILE (
@@ -501,7 +507,7 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
   ADD_CUSTOM_TARGET(check-core
         COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-core-static
         COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static
-        DEPENDS oyjl-test-core-static check-oyjl-args-ui
+        DEPENDS oyjl-test-core-static check-oyjl-args-ui oyjl
         COMMENT "Test libOyjlCore" VERBATIM )
   ADD_CUSTOM_TARGET(check
         LOCPATH=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-static
