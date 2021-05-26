@@ -15,9 +15,9 @@ _oyjl()
         --input) # long option with dynamic args
             local OYJL_TEXTS
             if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
-              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             else
-              OYJL_TEXTS=$(${COMP_LINE} --input=oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE} --input=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             fi
             local IFS=$'\n'
             local WORD_LIST=()
@@ -38,9 +38,9 @@ _oyjl()
         --help) # long option with dynamic args
             local OYJL_TEXTS
             if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
-              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             else
-              OYJL_TEXTS=$(${COMP_LINE} --help=oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE} --help=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             fi
             local IFS=$'\n'
             local WORD_LIST=()
@@ -71,9 +71,9 @@ _oyjl()
         -i=*) # single letter option with dynamic args
             local OYJL_TEXTS
             if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
-              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             else
-              OYJL_TEXTS=$(${COMP_LINE} -i=oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE} -i=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             fi
             local IFS=$'\n'
             local WORD_LIST=()
@@ -94,9 +94,9 @@ _oyjl()
         -h=*) # single letter option with dynamic args
             local OYJL_TEXTS
             if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
-              OYJL_TEXTS=$(${COMP_LINE}oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             else
-              OYJL_TEXTS=$(${COMP_LINE} -h=oyjl-list)
+              OYJL_TEXTS=$(${COMP_LINE} -h=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
             fi
             local IFS=$'\n'
             local WORD_LIST=()
@@ -225,6 +225,6 @@ _oyjl()
 
     set +x +v
 } &&
-complete -F _oyjl -o nospace oyjl
+complete -o nosort -F _oyjl -o nospace oyjl
 
 

@@ -68,9 +68,11 @@ typedef struct {
   int           memory_allocation; /* 0: as usual; 1 - sections, 2 - opts->groups and 4 - opts->array are owned and need to be released */
 } oyjlOptsPrivate_s;
 
-oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char          * documentation,
-                                       const char          * date_name,
-                                       const char          * date_description );
+oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char        * documentation,
+                                       const char        * date_name,
+                                       const char        * date_description );
+oyjl_val     oyjlUi_ExportToJson_    ( oyjlUi_s          * ui,
+                                       int                 flags OYJL_UNUSED );
 int oyjlOptionMandatoryIndex_        ( oyjlOption_s      * opt,
                                        oyjlOptionGroup_s * g );
 void oyjlUiCanonicaliseVariableName_ ( char             ** name );

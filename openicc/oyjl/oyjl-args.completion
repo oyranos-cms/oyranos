@@ -126,6 +126,6 @@ _oyjl_args()
 
     set +x +v
 } &&
-complete -F _oyjl_args -o nospace oyjl-args
+complete -o nosort -F _oyjl_args -o nospace oyjl-args
 
 
