@@ -64,7 +64,7 @@ AppWindow {
                 commandsJSON = "{ \"command_set\":\"" + variable + "\" }";
         }
         textArea2.text = commandsJSON
-        var cJ = commandsJSON
+        cJ = commandsJSON
         if( commandsJSON.length )
         {
             var c = JSON.parse(commandsJSON)
@@ -129,7 +129,8 @@ AppWindow {
                     setHelpText( data, true )
             }
             var text = readErr();
-            textArea2.text = text;
+            if(text.length)
+                textArea2.text = text;
             unsetBusyTimer.start()
         }
     }
@@ -215,22 +216,24 @@ AppWindow {
         var explicite = typeof group.explicite !== "undefined"
         var pass = !explicite
         var mkey = false
+        var arr = []
+        var arrn = 0
 
         var sub_command = false
         if(typeof group.sub_command !== "undefined")
             sub_command = true
         var mandatory_found = false
-        if(!sub_command && group.mandatory.length && group.mandatory.match(key))
+        if(!sub_command && typeof group.mandatory !== "undefined" && group.mandatory.length && group.mandatory.match(key))
         {
             mandatory_found = true
             mkey = key;
         }
         // passed in key might be not a mandatory one ...
-        if(!mandatory_found && group.options.length)
+        if(!mandatory_found && typeof group.mandatory !== "undefined" && group.mandatory.length)
         {
             // put mandatory in front especially for sub_command style
-            var arr = group.mandatory.split(new RegExp('[,|]', 'g'))
-            var arrn = arr.length
+            arr = group.mandatory.split(new RegExp('[,|]', 'g'))
+            arrn = arr.length
             if(arrn)
                 mkey = arr[0];
             mandatory_found = true
@@ -273,7 +276,7 @@ AppWindow {
             return
 
         var mandatory_exclusive = false
-        if(group.mandatory.length && group.mandatory.match(/[|]/))
+        if(typeof group.mandatory !== "undefined" && group.mandatory.length && group.mandatory.match(/[|]/))
             mandatory_exclusive = true
 
         var args = []
@@ -301,8 +304,11 @@ AppWindow {
                 if(mkey && arg.match(mkey))
                     continue
 
-                arr = group.mandatory.split(new RegExp('[,|]', 'g'))
-                arrn = arr.length
+                if(typeof group.mandatory !== "undefined")
+                {
+                    arr = group.mandatory.split(new RegExp('[,|]', 'g'))
+                    arrn = arr.length
+                }
                 var j
                 for( j = 0; j < arrn; ++j )
                 {
@@ -316,8 +322,11 @@ AppWindow {
                 }
                 if(!found && group.optional !== null)
                 {
-                    arr = group.optional.split(new RegExp('[,|]', 'g'))
-                    arrn = arr.length
+                    if(typeof group.optional !== "undefined")
+                    {
+                        arr = group.optional.split(new RegExp('[,|]', 'g'))
+                        arrn = arr.length
+                    }
                     for( j = 0; j < arrn; ++j )
                         if(arr[j] === arg)
                             found = 1
@@ -350,11 +359,20 @@ AppWindow {
             setBusyTimer.start()
             processSet.waitForFinished()
         }
+
+        var pGC = processGetCommand
+
+        // add all actual args in order to show them the pGC
+        var pGA = processGetArgs
+        n = args.length
+        for(i = 0; i < n; ++i)
+            pGA.push(args[i])
+
         if(processGetCommand.length && setOnly <= 0)
         {
             if(app_debug)
                 statusText = "command_get: " + processGetCommand + " " + processGetArgs + " ex:" + mandatory_exclusive
-            processGet.start( processGetCommand, processGetArgs )
+            processGet.start( processGetCommand, pGA )
         }
     }
 
@@ -776,17 +794,23 @@ AppWindow {
         {
             var opt = options[index];
             var def = opt.default;
+            var key = opt.key
+            var nick = opt.nick;
             var current = "";
-            var suggest;
-            var choices = opt.choices
-            var type = opt.type
+            var suggest = "";
+            var choices = [];
+            var type = "";
             var dbl = {"start":0,"end":1}
             var immediate = typeof opt.immediate !== "undefined"
             var repetition = typeof opt.repetition !== "undefined"
             var run = 0
             var value = ""
             var value_name = ""
+            var default_var = opt.default
+            var loc_var = loc
 
+            if(typeof opt.type !== "undefined")
+                type = opt.type
             if(typeof opt.value_name !== "undefined")
               value_name = opt.value_name;
             // see mandatory key
@@ -798,13 +822,12 @@ AppWindow {
             if( type === "double" )
                 // try slider
             {
-                var start
-                var end
-                var tick
-                var current
-                if(typeof opt.start !== "undefined") var start = opt.start
-                if(typeof opt.end !== "undefined") var end = opt.end
-                if(typeof opt.tick !== "undefined") var tick = opt.tick
+                var start = 0
+                var end = 1
+                var tick = 0
+                if(typeof opt.start !== "undefined") start = opt.start
+                if(typeof opt.end !== "undefined") end = opt.end
+                if(typeof opt.tick !== "undefined") tick = opt.tick
                 if(typeof opt.default !== "undefined") current = opt.default
                 if(typeof tick !== "undefined")
                 {
@@ -828,6 +851,8 @@ AppWindow {
                     suggest = opt_.suggest;
             }
 
+            if(typeof opt.choices !== "undefined")
+                choices = opt.choices;
             var name
             if(type === "choice")
             for( var i in choices )
@@ -835,8 +860,8 @@ AppWindow {
                 if( typeof choices[i].name != "string" )
                     continue;
                 var item = choices[i];
-                var nick = item.nick;
-                if(nick === def)
+                var cnick = item.nick;
+                if(cnick === def)
                     current = name;
             }
 
@@ -848,26 +873,34 @@ AppWindow {
               name = opt.key;
             var desc = P.getTranslatedItem( opt, "description", loc, catalog );
             var help = P.getTranslatedItem( opt, "help", loc, catalog );
-            //if(typeof help === "undefined")
-            //    help = ""
+            if(typeof groupName === "undefined")
+                groupName = ""
+            if(typeof nick === "undefined")
+                nick = ""
+            if(typeof desc === "undefined")
+                desc = ""
+            if(typeof help === "undefined")
+                help = ""
+            if(typeof default_var === "undefined")
+                default_var = "0"
             var o = {
-                key: opt.key,
-                name: name,
-                type: type,
-                choices: opt.choices,
-                dbl: dbl,
+                choices: choices,
                 current: current,
-                suggest: suggest,
-                immediate: immediate,
-                repetition: repetition,
-                nick: opt.nick,
-                loc: loc,
-                groupName: groupName,
+                dbl: dbl,
+                default: default_var,
                 description: desc,
-                help: help,
-                default: opt.default,
                 group: group,
+                groupName: groupName,
+                help: help,
+                immediate: immediate,
+                key: key,
+                loc: loc_var,
+                name: name,
+                nick: nick,
+                repetition: repetition,
                 run: run,
+                suggest: suggest,
+                type: type,
                 value: value,
                 value_name: value_name
             }
