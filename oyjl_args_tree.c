@@ -1991,7 +1991,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
  *  The JSON data shall be useable with oyjl-args-qml options renderer.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/04/15
+ *  @date    2020/05/29
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
@@ -2062,6 +2062,8 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
   }
 
   i = 0;
+  key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/sections/[%d]/%s", 0, "comment" ); \
+  oyjlValueSetString( key, "The \"name\" strings are here to initialy feed oyjl-translate tool for generating message catalogs." );
 #define ADD_SECTIONS( name_ ) \
   key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/sections/[%d]/%s", i++, "name" ); \
   oyjlValueSetString( key, name_ );
@@ -2138,12 +2140,19 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "optional" );
       oyjlValueSetString( key, g->optional );
     }
+
     {
       char ** results = oyjlOptions_ResultsToList( opts, 0, &n );
       char * changed = NULL;
+      int pos = 0;
       for(j = 0; j < n; ++j)
-        if(results[j][0] != 'X')
-          oyjlStringAdd( &changed, 0,0, "%c", results[j][0] );
+      {
+        if(!(strlen(results[j]) >= 3 && memcmp(results[j], "-X=", 3) == 0))
+        {
+          oyjlStringAdd( &changed, 0,0, "%s%s", pos?",":"", results[j] );
+          ++pos;
+        }
+      }
       if(changed)
       {
         key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "changed" );
@@ -2152,6 +2161,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       if(changed) free(changed);
       oyjlStringListRelease( &results, n, free );
     }
+
     int d = 0;
     char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc );
     for(j = 0; j < d; ++j)
