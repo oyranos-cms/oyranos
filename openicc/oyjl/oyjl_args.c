@@ -2140,15 +2140,16 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
  *                                     e.g. use "@" for all anonymous results
  *  @param[out]    count               the number of matched results
  *  @return                            a possibly filterd string list of results;
- *                                     Without a filter it contains the argument
- *                                     Id followed by double point and the
- *                                     result following.
- *                                     With filter it contains only results if
- *                                     apply and without Id.
+ *                                     Without a filter it contains the dash(es),
+ *                                     the argument Id possibly followed by equal sign '='
+ *                                     and the result following. Building a
+ *                                     command line call is easy.
+ *                                     With oc filter it contains only results
+ *                                     if apply and without Id.
  *                                     The memory is owned by caller.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/08/06
+ *  @date    2021/05/28
  *  @since   2019/03/25 (Oyjl: 1.0.0)
  */
 char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
@@ -2177,8 +2178,31 @@ char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
   {
     const char * option = results->options[i];
     const char * value = results->values[i];
+    oyjlOption_s * opt = oyjlOptions_GetOptionL( opts, option, 0 );
+    int no_arg = 0;
+    /** Keep the -@=XXX unbound option around in order to simplify interpreting the options.
+     *  Thus sub commands like "prog opt" can be easily separated from "prog unbound.txt" .
+     *  For a correct command line the "-@=" must be omitted.
+     */
+    int no_opt = 0; /*(opt && opt->o && (strcmp(opt->o,"#") == 0 || strcmp(opt->o,"@") == 0)); */
+    int dash = 0;
+    if(opt)
+    {
+      if(opt->value_type == oyjlOPTIONTYPE_NONE)
+        no_arg = 1;
+
+      if(opt->flags & OYJL_OPTION_FLAG_NO_DASH || no_opt)
+        dash = 0;
+      else if(option && option[0])
+      {
+        if(strlen(option) == 1)
+          dash = 1;
+        else dash = 2;
+      }
+    }
+
     if(oc == NULL)
-      oyjlStringAdd( &text, malloc, free, "%s:%s", option, value );
+      oyjlStringAdd( &text, malloc, free, "%s%s%s%s", dash?((dash == 1)?"-":"--"):"", no_opt?"":option, no_arg || no_opt?"":"=", no_arg?"":value );
     else if(option && option[0] &&
             ((o->o && o->o[0] && strcmp(option,o->o) == 0) ||
              (o->option && o->option[0] && strcmp(option,o->option) == 0)))
@@ -2199,7 +2223,7 @@ char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
  *  @memberof oyjlOptions_s
  *
  *  @version Oyjl: 1.0.0
- *  @date    2018/08/14
+ *  @date    2021/05/29
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 char * oyjlOptions_ResultsToText  ( oyjlOptions_s  * opts )
@@ -2222,7 +2246,7 @@ char * oyjlOptions_ResultsToText  ( oyjlOptions_s  * opts )
   {
     const char * option = results->options[i];
     const char * value = results->values[i];
-    oyjlStringAdd( &text, malloc, free, "%s:%s\n", option, value );
+    oyjlStringAdd( &text, malloc, free, "%s=%s\n", option, value );
   }
 
   return text;
