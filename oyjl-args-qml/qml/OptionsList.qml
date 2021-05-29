@@ -78,7 +78,7 @@ Rectangle {
             x: dens
             width:  parent.width - 2*dens
             height: h
-            color: run ? (bright ? Qt.lighter("steelblue") : "steelblue") : "transparent"
+            color: run ? (bright ? Qt.lighter("steelblue") : "steelblue") : immediate ? (bright ? Qt.lighter("grey") : "grey") : "transparent"
 
             Combo {
                 id: comboBox
@@ -287,7 +287,12 @@ Rectangle {
                     if(typeof key !== "undefined" && key !== "@" && key !== "#")
                         named_option = 1
                     if( named_option )
-                        helpText = "[-" + key
+                    {
+                        if(key.length === 1)
+                            helpText = "[-" + key
+                        else
+                            helpText = "[--" + key
+                    }
                     else if(typeof key !== "undefined")
                         helpText = "[" + key
                     if( value_name.length !== 0 )
