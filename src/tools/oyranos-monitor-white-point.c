@@ -264,7 +264,7 @@ const char * jcommands = "{\n\
   \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
   \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
   \"command_get\": \"oyranos-monitor-white-point\",\n\
-  \"command_get_args\": [\"-X\",\"json\"]\n\
+  \"command_get_args\": [\"-X\",\"json+command\"]\n\
 }";
 void myOptionsRelease                ( oyjlOptions_s    ** opts )
 {
@@ -467,7 +467,7 @@ int myMain( int argc , const char** argv )
   if(render)
   { 
     int debug = verbose;
-    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
+    oyjlArgsRender( argc, argv, NULL, jcommands, NULL, debug, ui, myMain );
     oyjlUi_Release( &ui);
     return 0;
   }
