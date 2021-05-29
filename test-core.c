@@ -988,8 +988,8 @@ oyjlTESTRESULT_e testArgs()
                            1082                      /*help_size*/,
                            1967                      /*man_size*/,
                            3788                      /*markdown_size*/,
-                           6649                      /*json_size*/,
-                           6676                      /*json_command_size*/,
+                           6779                      /*json_size*/,
+                           6806                      /*json_command_size*/,
                            10356                     /*export_size*/,
                            3163                      /*bash_size*/,
                            result,
@@ -1084,8 +1084,8 @@ oyjlTESTRESULT_e testArgs()
                             615                      /*help_size*/,
                            1451                      /*man_size*/,
                            2300                      /*markdown_size*/,
-                           4580                      /*json_size*/,
-                           4607                      /*json_command_size*/,
+                           4710                      /*json_size*/,
+                           4737                      /*json_command_size*/,
                            9841                      /*export_size*/,
                            3030                      /*bash_size*/,
                            result,
@@ -1112,12 +1112,12 @@ oyjlTESTRESULT_e testArgs()
                                        "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 4698)
+  if(text && strlen(text) == 4884)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu                           ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson() 4698 == %lu                   ", strlen(text) );
+    "oyjlUi_ToJson() 4884 == %lu                   ", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson", "txt" )
   if(verbose && text)

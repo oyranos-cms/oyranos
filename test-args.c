@@ -571,8 +571,8 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_ReleaseArgs( &ui);
 
 
-  const char * argv_anonymous[] = {"test","-v","file-name.json","file-name2.json"};
-  int argc_anonymous = 4;
+  const char * argv_anonymous[] = {"test","-v","file-name.json","file-name2.json", "--candle"};
+  int argc_anonymous = 5;
   ui = oyjlUi_Create( argc_anonymous, argv_anonymous, /* argc+argv are required for parsing the command line options */
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups_no_args, NULL );
@@ -599,8 +599,33 @@ oyjlTESTRESULT_e testArgs()
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
   for(i = 0; i < count; ++i)
     fprintf( zout, "%s\n", results[i] );
-  oyjlUi_ReleaseArgs( &ui);
   oyjlStringListRelease( &results, count, 0 );
+
+  count = 0;
+  char ** text_array = oyjlOptions_ResultsToList( ui->opts, NULL, &count );
+  if( text_array && count == 4 &&
+      strcmp(text_array[0], "-v") == 0 &&
+      strcmp(text_array[1], "-@=file-name.json") == 0 &&
+      strcmp(text_array[2], "-@=file-name2.json") == 0 &&
+      strcmp(text_array[3], "--candle") == 0
+      )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_ResultsToList() %d                  ", count );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_ResultsToList() %d                  ", count );
+  }
+  if(text_array)
+  {
+    if(oy_test_last_result != oyjlTESTRESULT_SUCCESS || verbose)
+      for(i = 0; i < count; ++i)
+        fprintf( stdout, "[%d]:\t%s\n", i, text_array[i] );
+    for(i = 0; i < count; ++i)
+      free(text_array[i]);
+    free(text_array); text_array = NULL;
+  }
+
+  oyjlUi_ReleaseArgs( &ui);
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
@@ -725,7 +750,7 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   count = 0;
-  char ** text_array = oyjlOptions_ResultsToList( ui->opts, "v", &count );
+  text_array = oyjlOptions_ResultsToList( ui->opts, "v", &count );
   if(text_array && count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOptions_ResultsToList() %d                  ", count );
@@ -742,6 +767,26 @@ oyjlTESTRESULT_e testArgs()
       free(text_array[i]);
     free(text_array); text_array = NULL;
   }
+
+  count = 0;
+  text_array = oyjlOptions_ResultsToList( ui->opts, NULL, &count );
+  if(text_array && count == 4)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_ResultsToList() %d                  ", count );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_ResultsToList() %d                  ", count );
+  }
+  if(text_array)
+  {
+    if(verbose)
+      for(i = 0; i < count; ++i)
+        fprintf( stdout, "[%d]:\t%s\n", i, text_array[i] );
+    for(i = 0; i < count; ++i)
+      free(text_array[i]);
+    free(text_array); text_array = NULL;
+  }
+
 
   if(verbose)
   {
