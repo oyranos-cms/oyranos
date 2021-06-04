@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2019 (C) Kai-Uwe Behrmann
+ *            2018-2021 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -63,7 +63,7 @@ Rectangle {
             text: "<html><head></head><body> <p align=\"center\">" +
                           "Version " + ApplicationVersion + "<br \>" +
                           qsTr("Oyjl Options Renderer") +
-                          "<br \>Copyright © 2018-2020 Kai-Uwe Behrmann<br \>" +
+                          "<br \>Copyright © 2018-2021 Kai-Uwe Behrmann<br \>" +
                           qsTr("All Rights reserved.") +
                           "<br \><a href=\"http://www.oyranos.org\">www.oyranos.org</a></p>" +
                           "<hr /><p align=\"center\">" +
