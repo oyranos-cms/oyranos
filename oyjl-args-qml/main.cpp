@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2019 (C) Kai-Uwe Behrmann
+ *            2018-2021 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -98,7 +98,7 @@ int main(int argc, const char *argv[])
     oyjlOptions_PrintHelp( ui->opts, ui, 4, "%s v%s - %s", argv[0],
                             "1.0", "Test Tool for testing" );
 
-  int debug = 0;
+  int debug = verbose;
   oyjlArgsRender( argc, argv, json, command, output, debug, ui, NULL );
 
   oyjlUi_Release( &ui);

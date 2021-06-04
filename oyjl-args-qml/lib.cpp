@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2019 (C) Kai-Uwe Behrmann
+ *            2018-2021 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -138,6 +138,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
       QObject::connect( &mgr, SIGNAL(uriChanged(QVariant)), o, SIGNAL(fileChanged(QVariant)) );
       QObject::connect( &mgr, SIGNAL(outputChanged(QVariant)), o, SIGNAL(outputChanged(QVariant)) );
       QObject::connect( &mgr, SIGNAL(commandsChanged(QVariant)), o, SIGNAL(commandsChanged(QVariant)) );
+      QObject::connect( &mgr, SIGNAL(debugChanged(QVariant)), o, SIGNAL(debugChanged(QVariant)) );
 
 #if defined(QT_DBUS_LIB) && defined(OPENICC_LIB)
       if( QDBusConnection::sessionBus().connect( QString(), "/org/libelektra/configuration", "org.libelektra", QString(),
@@ -151,7 +152,11 @@ int oyjlArgsQmlStart__               ( int                 argc,
 
       app_init = 1;
       if(app_debug)
+      {
           LOG( QString("qml root objects: ") + QString::number( qmlObjects.count() ) );
+          mgr.setDebug( app_debug );
+          LOG( QString("setDebug: ") + QString::number( app_debug ) );
+      }
     }
 
     processCallback_p = callback;

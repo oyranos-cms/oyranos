@@ -3,7 +3,7 @@
  *  OpenICC JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2021 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -44,6 +44,7 @@ public:
     QString getUri() { return uri_; }
     void setOutput( QString output ) { emit outputChanged(output); }
     void setCommands( QString commands ) { emit commandsChanged(commands); }
+    void setDebug( qint64 debug ) { emit debugChanged(debug); }
 
 public slots:
     void setFullLog(QString text) { emit fullLogMessage( QVariant::fromValue( text ) ); }
@@ -77,6 +78,7 @@ Q_SIGNALS:
     void uriChanged(QVariant);
     void outputChanged(QVariant);
     void commandsChanged(QVariant);
+    void debugChanged(QVariant);
 };
 
 #endif // APP_MANAGER_H

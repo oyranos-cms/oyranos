@@ -1,7 +1,7 @@
 /** @file AppWindow.qml
  *
  *  @par Copyright:
- *            2014-2018 (C) Kai-Uwe Behrmann
+ *            2014-2021 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -82,7 +82,6 @@ ApplicationWindow {
 
     Settings {
         objectName: "Settings"
-        property alias app_debug: mainWindow.app_debug
         property alias prefered_theme: mainWindow.prefered_theme
         property alias accent: mainWindow.accent
     }
@@ -101,7 +100,11 @@ ApplicationWindow {
 
     // DEBUG
     property int app_debug: 0
-    onApp_debugChanged: appData.setDebug( app_debug )
+    signal debugChanged(var debug)
+    onDebugChanged: {
+        app_debug = debug;
+        statusText = "app_debug: " + debug
+    }
 
     Screen.onPrimaryOrientationChanged: {
         if(app_debug)

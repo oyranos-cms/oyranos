@@ -30,7 +30,6 @@
 
 #include "utils.h"
 extern QApplication * a;
-extern int app_debug;
 
 class AppData : public QObject
 {
@@ -87,7 +86,6 @@ public:
     Q_INVOKABLE QString readFile(QString url);
     Q_INVOKABLE QString requestPermission( QString name );
     Q_INVOKABLE int hasPermission( QString name );
-    Q_INVOKABLE void setDebug( int debug ) { app_debug = debug; LOG(QString::number(debug)); }
 
 public slots:
     void readBattery();
