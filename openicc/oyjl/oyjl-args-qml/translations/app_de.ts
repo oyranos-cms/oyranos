@@ -71,49 +71,49 @@
 <context>
     <name>AppWindow</name>
     <message>
-        <location filename="../qml/AppWindow.qml" line="122"/>
-        <location filename="../qml/AppWindow.qml" line="162"/>
+        <location filename="../qml/AppWindow.qml" line="125"/>
+        <location filename="../qml/AppWindow.qml" line="165"/>
         <source>discharging</source>
         <translation>entladend</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="122"/>
+        <location filename="../qml/AppWindow.qml" line="125"/>
         <source>charging</source>
         <translation>aufladend</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="122"/>
+        <location filename="../qml/AppWindow.qml" line="125"/>
         <source>full</source>
         <translation>voll</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="123"/>
-        <location filename="../qml/AppWindow.qml" line="162"/>
+        <location filename="../qml/AppWindow.qml" line="126"/>
+        <location filename="../qml/AppWindow.qml" line="165"/>
         <source>Battery</source>
         <translation>Batterie</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="142"/>
+        <location filename="../qml/AppWindow.qml" line="145"/>
         <source>Night</source>
         <translation>Nacht</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="144"/>
+        <location filename="../qml/AppWindow.qml" line="147"/>
         <source>Day</source>
         <translation>Tag</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="162"/>
+        <location filename="../qml/AppWindow.qml" line="165"/>
         <source>not used</source>
         <translation>nicht benutzt</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="182"/>
+        <location filename="../qml/AppWindow.qml" line="185"/>
         <source>Busy</source>
         <translation>Beschäftigt</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="452"/>
+        <location filename="../qml/AppWindow.qml" line="455"/>
         <source>Ok</source>
         <translation>Ja</translation>
     </message>
@@ -174,22 +174,22 @@
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="940"/>
+        <location filename="../qml/main.qml" line="943"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="992"/>
+        <location filename="../qml/main.qml" line="995"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="992"/>
+        <location filename="../qml/main.qml" line="995"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="994"/>
+        <location filename="../qml/main.qml" line="997"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>
