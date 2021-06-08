@@ -75,6 +75,10 @@ oyjl_val     oyjlUi_ExportToJson_    ( oyjlUi_s          * ui,
                                        int                 flags OYJL_UNUSED );
 int oyjlOptionMandatoryIndex_        ( oyjlOption_s      * opt,
                                        oyjlOptionGroup_s * g );
+char *         oyjlOptionGetKey_     ( const char        * ostring );
+int oyjlOptions_GroupHasOptionL_     ( oyjlOptions_s     * opts,
+                                       int                 group_pos,
+                                       const char        * option );
 void oyjlUiCanonicaliseVariableName_ ( char             ** name );
 int  oyjlManArgIsNum                 ( const char        * arg );
 int  oyjlManArgIsEditable            ( const char        * arg );
