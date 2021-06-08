@@ -640,7 +640,7 @@ struct oyjlOptions_s {
   void * user_data;                    /**< @brief will be passed to functions; optional */
   int argc;                            /**< @brief plain reference from main(argc,argv) */
   const char ** argv;                  /**< @brief plain reference from main(argc,argv) */
-  void * private_data;                 /**< internal state; private, do not use */
+  void * private_data;                 /**< internal state; private to OyjlArgs API, do not use */
 };
 int    oyjlOptions_Count             ( oyjlOptions_s     * opts );
 int    oyjlOptions_CountGroups       ( oyjlOptions_s     * opts );
@@ -713,7 +713,7 @@ enum {
   oyjlUI_STATE_NONE,                   /**< @brief nothing to report */
   oyjlUI_STATE_HELP,                   /**< @brief --help printed */
   oyjlUI_STATE_VERBOSE = 2,            /**< @brief --verbose option detected */
-  oyjlUI_STATE_EXPORT = 4,             /**< @brief --export=XXX or other stuff printed printed */
+  oyjlUI_STATE_EXPORT = 4,             /**< @brief --export=XXX or other stuff printed */
   oyjlUI_STATE_OPTION = 24,            /**< @brief bit shift for detected error from option parser */
   oyjlUI_STATE_NO_CHECKS = 0x1000      /**< @brief skip any checks */
 };
@@ -734,8 +734,6 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
                                        oyjlUiHeaderSection_s * info,
                                        oyjlOptions_s     * opts,
                                        int               * status );
-oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
-                                       int                 flags );
 void               oyjlUi_ReleaseArgs( oyjlUi_s         ** ui );
 void               oyjlUi_Release    ( oyjlUi_s         ** ui );
 int      oyjlUiHeaderSection_Count   ( oyjlUiHeaderSection_s * sections );
@@ -755,6 +753,9 @@ char *             oyjlUi_ToMan      ( oyjlUi_s          * ui,
 char *             oyjlUi_ToMarkdown ( oyjlUi_s          * ui,
                                        int                 flags );
 char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
+                                       int                 flags );
+oyjlUi_s *         oyjlUi_ImportFromJson(
+                                       oyjl_val            root,
                                        int                 flags );
 #define OYJL_SOURCE_CODE_C             0x01 /**< @brief C programming language source code */
 #define OYJL_NO_DEFAULT_OPTIONS        0x02 /**< @brief omit automatic options generation for --help, --X export or --verbose */
