@@ -338,6 +338,7 @@ oyjlTESTRESULT_e testArgs()
   const char * file = NULL;
   int file_count = 0;
   int show_status = 0;
+  double degree = 0;
   int help = 0;
   int verbose_ = 0;
   int state = 0;
@@ -379,6 +380,7 @@ oyjlTESTRESULT_e testArgs()
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
     {"oiwi", 0,     "b", NULL,      NULL, "blabla",     "BlaBla",            NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output} },
     {"oiwi", 0,     NULL,"candle",  NULL, "candle",     "Candle",            _("This options explanation text."), NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output} },
+    {"oiwi", 0,     NULL,"degree",  NULL, "Degree",     "Degree",            _("This options explanation text."), "DEGREE",      oyjlOPTIONTYPE_DOUBLE, {.dbl.d = 0, .dbl.start = 0, .dbl.end = 25000, .dbl.tick = 100}, oyjlDOUBLE, {.d = &degree} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
 
@@ -392,7 +394,7 @@ oyjlTESTRESULT_e testArgs()
     {"oiwg", 0,     _("Mode5"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o"},/* accepted if anonymous arguments are set */
     {"oiwg", 0,     _("Mode6"),_("Actual mode"),     NULL, "i",       "o,v",    "i,o" },/* parsed and checked with -i option */
     {"oiwg", 0,     _("Mode7"),_("Alternate"),       NULL, "i|o",     "h|v",    "i,o,h,v" },
-    {"oiwg", 0,     _("Mode8"),_("Long"),            _("This Group handles Long options"), "b",       "candle,v","b,candle,v" },
+    {"oiwg", 0,     _("Mode8"),_("Long"),            _("This Group handles Long options"), "b",       "candle,degree,v","b,candle,degree,v" },
     {"oiwg", 0,     _("Mode9"),_("Double mandatory"),_("This Group checks correct constraints."), "b,candle",  "v","b,candle,v" },
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },/* just show in documentation */
     {"",0,0,0,0,0,0,0}
@@ -412,7 +414,7 @@ oyjlTESTRESULT_e testArgs()
   int size = 0;
   char * text;
   text = oyjlReadFile( fn , &size );
-  if(ui && size == 2360)
+  if(ui && size == 2490)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "ui created - no args %d                      ", size );
   } else
@@ -516,12 +518,12 @@ oyjlTESTRESULT_e testArgs()
   free(syn);
 
   syn = ui ? oyjlOptions_PrintHelpSynopsis_( ui->opts, &ui->opts->groups[7], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
-  if(syn && strcmp(syn,"<strong>test-args</strong> <strong>-b</strong> [<strong>--candle</strong>] [<strong>-v</strong>]") == 0)
+  if(syn && strcmp(syn,"<strong>test-args</strong> <strong>-b</strong> [<strong>--candle</strong>] [<strong>--degree</strong>=<em>DEGREE</em>] [<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "SynopsisMode8  b,      candle, b,candle,v      " );
+    "SynopsisMode8  b,      candle,degree,v, b,candle,degree,v" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "SynopsisMode8  b,      candle, b,candle,v      " );
+    "SynopsisMode8  b,      candle,degree,v, b,candle,degree,v" );
   }
   OYJL_TEST_WRITE_RESULT( syn, strlen(syn), "SynopsisMode8", "txt" )
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
@@ -571,8 +573,8 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_ReleaseArgs( &ui);
 
 
-  const char * argv_anonymous[] = {"test","-v","file-name.json","file-name2.json", "--candle"};
-  int argc_anonymous = 5;
+  const char * argv_anonymous[] = {"test","-v","file-name.json","file-name2.json", "--candle", "--degree=200"};
+  int argc_anonymous = 6;
   ui = oyjlUi_Create( argc_anonymous, argv_anonymous, /* argc+argv are required for parsing the command line options */
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups_no_args, NULL );
@@ -603,11 +605,12 @@ oyjlTESTRESULT_e testArgs()
 
   count = 0;
   char ** text_array = oyjlOptions_ResultsToList( ui->opts, NULL, &count );
-  if( text_array && count == 4 &&
+  if( text_array && count == 5 &&
       strcmp(text_array[0], "-v") == 0 &&
       strcmp(text_array[1], "-@=file-name.json") == 0 &&
       strcmp(text_array[2], "-@=file-name2.json") == 0 &&
-      strcmp(text_array[3], "--candle") == 0
+      strcmp(text_array[3], "--candle") == 0 &&
+      strcmp(text_array[4], "--degree=200") == 0
       )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOptions_ResultsToList() %d                  ", count );
@@ -620,11 +623,137 @@ oyjlTESTRESULT_e testArgs()
     if(oy_test_last_result != oyjlTESTRESULT_SUCCESS || verbose)
       for(i = 0; i < count; ++i)
         fprintf( stdout, "[%d]:\t%s\n", i, text_array[i] );
-    for(i = 0; i < count; ++i)
-      free(text_array[i]);
-    free(text_array); text_array = NULL;
+  }
+  if(oy_test_last_result == oyjlTESTRESULT_SUCCESS)
+  {
+    oyjlOption_s * v = oyjlOptions_GetOptionL( ui->opts, text_array[0], 0/* flags */ ), /* "-v" single letter opt */
+                 * at = oyjlOptions_GetOptionL( ui->opts, text_array[1], 0/* flags */ ), /* "-@=file-name.json" non cli opt with arg */
+                 * candle = oyjlOptions_GetOptionL( ui->opts, text_array[3], 0/* flags */ ), /* "--candle" long opt */
+                 * degree = oyjlOptions_GetOptionL( ui->opts, text_array[4], 0/* flags */ ); /* "--degree=200" long opt */
+    if(v && strcmp(v->o,"v") == 0)
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+      "oyjlOptions_GetOptionL(\"%s\")                 ", text_array[0] );
+    } else
+    { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+      "oyjlOptions_GetOptionL(\"%s\")                 ", text_array[0] );
+    }
+    if(at && strcmp(at->o,"@") == 0)
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+      "oyjlOptions_GetOptionL(\"%s\")        ", text_array[1] );
+    } else
+    { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+      "oyjlOptions_GetOptionL(\"%s\")        ", text_array[1] );
+    }
+    if(candle && strcmp(candle->option,"candle") == 0)
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+      "oyjlOptions_GetOptionL(\"%s\")                 ", text_array[3] );
+    } else
+    { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+      "oyjlOptions_GetOptionL(\"%s\")                 ", text_array[3] );
+    }
+    if(candle && strcmp(degree->option,"degree") == 0)
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+      "oyjlOptions_GetOptionL(\"%s\")             ", text_array[4] );
+    } else
+    { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+      "oyjlOptions_GetOptionL(\"%s\")             ", text_array[4] );
+    }
   }
 
+  int group = 1;
+  int found = oyjlOptions_GroupHasOptionL_( ui->opts, group, text_array[0] );
+  if(found > 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_GroupHasOptionL_( %d,%s ) = %d       ", group, text_array[0], found );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_GroupHasOptionL_( %d,%s ) = %d       ", group, text_array[0], found );
+  }
+  group = 4;
+  found = oyjlOptions_GroupHasOptionL_( ui->opts, group, text_array[1] );
+  if(found > 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_GroupHasOptionL_( %d,%s)=%d", group, text_array[1], found );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_GroupHasOptionL_( %d,%s)=%d", group, text_array[1], found );
+  }
+  group = 7;
+  found = oyjlOptions_GroupHasOptionL_( ui->opts, group, text_array[3] );
+  if(found > 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_GroupHasOptionL_( %d,%s ) = %d", group, text_array[3], found );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_GroupHasOptionL_( %d,%s ) = %d", group, text_array[3], found );
+  }
+  found = oyjlOptions_GroupHasOptionL_( ui->opts, group, text_array[4] );
+  if(found > 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_GroupHasOptionL_( %d,%s ) = %d", group, text_array[4], found );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_GroupHasOptionL_( %d,%s ) = %d", group, text_array[4], found );
+  }
+
+  int n = -1;
+  double d = -1.0;
+  const char * s = "-1";
+  int pos = 0;
+  oyjlOPTIONSTATE_e st;
+  st = oyjlOptions_GetResult( ui->opts, text_array[pos], NULL, NULL, &n );
+  if(st == oyjlOPTION_USER_CHANGED && n == 1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_GetResult( %s ) = %s i:%d", text_array[pos], oyjlOPTIONSTATE_eToString_(st), n );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_GetResult( %s ) = %s i:%d", text_array[pos], oyjlOPTIONSTATE_eToString_(st), n );
+  }
+  pos = 2;
+  st = oyjlOptions_GetResult( ui->opts, text_array[pos], &s,   NULL, NULL );
+  if(st == oyjlOPTION_USER_CHANGED && s && strcmp(s,"file-name2.json") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_GetResult( %s ) = %s s:%s", text_array[pos], oyjlOPTIONSTATE_eToString_(st), "file-name2.json" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_GetResult( %s ) = %s s:%s", text_array[pos], oyjlOPTIONSTATE_eToString_(st), "file-name2.json" );
+  }
+  pos = 3;
+  st = oyjlOptions_GetResult( ui->opts, text_array[pos], NULL, NULL, &n );
+  if(st == oyjlOPTION_USER_CHANGED && n == 1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_GetResult( %s ) = %s i:%d", text_array[pos], oyjlOPTIONSTATE_eToString_(st), n );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_GetResult( %s ) = %s i:%d", text_array[pos], oyjlOPTIONSTATE_eToString_(st), n );
+  }
+  pos = 4;
+  st = oyjlOptions_GetResult( ui->opts, text_array[pos], NULL, &d,   NULL );
+  if(st == oyjlOPTION_USER_CHANGED && d == 200)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_GetResult( %s ) = %s d:%g", text_array[pos], oyjlOPTIONSTATE_eToString_(st), d );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_GetResult( %s ) = %s d:%g", text_array[pos], oyjlOPTIONSTATE_eToString_(st), d );
+  }
+  st = oyjlOptions_GetResult( ui->opts, "none",        NULL, NULL, &n );
+  if(st == oyjlOPTION_NONE)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_GetResult( %s ) = %s", "none", oyjlOPTIONSTATE_eToString_(st) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_GetResult( %s ) = %s", "none", oyjlOPTIONSTATE_eToString_(st) );
+  }
+  st = oyjlOptions_GetResult( ui->opts, "i",           &s,   NULL, NULL );
+  if(st == oyjlOPTION_NONE)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptions_GetResult( %s ) = %s    ", "i", oyjlOPTIONSTATE_eToString_(st) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlOptions_GetResult( %s ) = %s    ", "i", oyjlOPTIONSTATE_eToString_(st) );
+  }
+
+  oyjlStringListRelease( &text_array, count, free );
   oyjlUi_ReleaseArgs( &ui);
 
   /* declare option groups, for better syntax checking and UI groups */
@@ -709,13 +838,13 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups_no_args, NULL );
 
   text = oyjlUi_ToMan( ui, 0 );
-  if( text && strlen(text) == 3068 &&
+  if( text && strlen(text) == 3241 &&
       strstr(text, "\n\\fB\\-\\-candle\\fR\tCandle"))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu                            ", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 3068 == %lu                    ", text ? strlen(text) : 0 );
+    "oyjlUi_ToMan() 3241 == %lu                    ", text ? strlen(text) : 0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose && text)
@@ -723,7 +852,7 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToMarkdown( ui, 0 );
-  if( text && strlen(text) == 8331 &&
+  if( text && strlen(text) == 8634 &&
       strstr(text, "><strong>--candle</strong><") )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMarkdown() %lu                       ", strlen(text) );
@@ -753,10 +882,10 @@ oyjlTESTRESULT_e testArgs()
   text_array = oyjlOptions_ResultsToList( ui->opts, "v", &count );
   if(text_array && count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOptions_ResultsToList() %d                  ", count );
+    "oyjlOptions_ResultsToList(\"v\") %d               ", count );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlOptions_ResultsToList() %d                  ", count );
+    "oyjlOptions_ResultsToList(\"v\") %d               ", count );
   }
   if(text_array)
   {
@@ -772,10 +901,10 @@ oyjlTESTRESULT_e testArgs()
   text_array = oyjlOptions_ResultsToList( ui->opts, NULL, &count );
   if(text_array && count == 4)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOptions_ResultsToList() %d                  ", count );
+    "oyjlOptions_ResultsToList(NULL) %d              ", count );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlOptions_ResultsToList() %d                  ", count );
+    "oyjlOptions_ResultsToList(NULL) %d              ", count );
   }
   if(text_array)
   {
