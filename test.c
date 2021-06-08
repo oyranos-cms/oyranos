@@ -1204,7 +1204,7 @@ oyjlTESTRESULT_e testUiTranslation ()
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups_no_args, NULL );
   char * text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7554)
+  if(text && strlen(text) == 7511)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson(en_GB)                 %lu", text?strlen(text):0 );
   } else
@@ -1324,7 +1324,7 @@ oyjlTESTRESULT_e testUiTranslation ()
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups_no_args, NULL );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7560)
+  if(text && strlen(text) == 7517)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson(de)                    %lu", text?strlen(text):0 );
   } else
@@ -1371,7 +1371,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   oyjlTranslate_f tr = oyjlTranslate;
   oyjlUi_Translate( ui, "de_DE", oyjlCatalog(&catalog), tr );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7627)
+  if(text && strlen(text) == 7584)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson(de+)                   %lu", text?strlen(text):0 );
   } else
@@ -1385,7 +1385,7 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   oyjlUi_Translate( ui, "back", oyjlCatalog(&catalog), tr );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7554)
+  if(text && strlen(text) == 7511)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson(back)                  %lu", text?strlen(text):0 );
   } else
@@ -1412,7 +1412,7 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   oyjlUi_Translate( ui, "cs_CZ", oyjlCatalog(&catalog), tr );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7655)
+  if(text && strlen(text) == 7612)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson(cs)                    %lu", text?strlen(text):0 );
   } else
