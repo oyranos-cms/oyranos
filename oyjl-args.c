@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2019-2020  Kai-Uwe Behrmann
+ *  Copyright (C) 2019-2021  Kai-Uwe Behrmann
  *
  *  @brief    Oyjl Args Tool
  *  @internal
@@ -31,6 +31,7 @@ int myMain( int argc, const char ** argv )
 
   const char * file = NULL;
   int completion_bash = 0;
+  int test = 0;
   const char * export = NULL;
   const char * render = NULL;
   const char * help = NULL;
@@ -53,6 +54,11 @@ int myMain( int argc, const char ** argv )
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file} },
     {"oiwi", 0,    NULL, "completion-bash",NULL, _("Completion Bash"),_("Generate bash completion code"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &completion_bash} },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL,"test",    NULL, _("Test"),    _("Generate test Args Export"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &test} },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  "o",NULL,    NULL, "O",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL, "option",    NULL, "Option",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  "t",NULL,    NULL, "T",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL, "format",    NULL, "Format",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"h", "help", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE,{0}, oyjlSTRING, {.s = &help} },
     {"oiwi", 0,    NULL, "synopsis",NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &verbose} },
@@ -123,6 +129,98 @@ int myMain( int argc, const char ** argv )
 #else
     fprintf( stderr, "No render support compiled in. Use a GUI use -X json and load into oyjl-args-qml viewer." );
 #endif
+  } else
+  if(ui && test)
+  {
+    puts("{");
+    puts("  \"command_set\": \"oyjl-args\",");
+    puts("  \"command_get\": \"oyjl-args\",");
+    puts("  \"command_get_args\": [\"-X\",\"json+command\"],");
+    puts("  \"org\": {");
+    puts("    \"freedesktop\": {");
+    puts("      \"oyjl\": {");
+    puts("        \"modules\": [{");
+    puts("            \"oyjl_module_api_version\": \"1\",");
+    puts("            \"type\": \"tool\",");
+    puts("            \"label\": \"Werkzeug\",");
+    puts("            \"nick\": \"oyjl-test\",");
+    puts("            \"name\": \"Test OyjlArgsUi\",");
+    puts("            \"description\": \"Test file for various Oyjl Args Ui elements.\",");
+    puts("            \"logo\": \"oyjl\",");
+    puts("            \"information\": [{");
+    puts("                \"type\": \"version\",");
+    puts("                \"label\": \"Version\",");
+    puts("                \"name\": \"1.0.0\"");
+    puts("              }],");
+    puts("            \"groups\": [{");
+    puts("                \"name\": \"Group\",");
+    puts("                \"description\": \"Simple Group\",");
+    puts("                \"help\": \"Simple Group help text\",");
+    puts("                \"mandatory\": \"o\",");
+    puts("                \"optional\": \"option,t,format\",");
+    puts("                \"changed\": \"-o=ARG2,--option,-t=-3\",");
+    puts("                \"options\": [{");
+    puts("                    \"key\": \"o\",");
+    puts("                    \"name\": \"Option\",");
+    puts("                    \"description\": \"Option with single dash and single letter\",");
+    puts("                    \"help\": \"Option help text\",");
+    puts("                    \"value_name\": \"ARGUMENT\",");
+    puts("                    \"choices\": [{");
+    puts("                        \"nick\": \"ARG1\",");
+    puts("                        \"name\": \"ARG1\"");
+    puts("                      },{");
+    puts("                        \"nick\": \"ARG2\",");
+    puts("                        \"name\": \"ARG2\"");
+    puts("                      }],");
+    puts("                    \"default\": \"ARG2\",");
+    puts("                    \"changed\": \"ARG2\",");
+    puts("                    \"type\": \"string\"");
+    puts("                  },{");
+    puts("                    \"key\": \"option\",");
+    puts("                    \"name\": \"Long Option\",");
+    puts("                    \"description\": \"Option with double dash and multiple letters [a-z,A-Z,0-9,-,+]\",");
+    puts("                    \"default\": \"1\",");
+    puts("                    \"changed\": \"1\",");
+    puts("                    \"type\": \"bool\",");
+    puts("                    \"choices\": [{");
+    puts("                        \"nick\": \"0\",");
+    puts("                        \"name\": \"No\"");
+    puts("                      },{");
+    puts("                        \"nick\": \"1\",");
+    puts("                        \"name\": \"Yes\"");
+    puts("                      }]");
+    puts("                  },{");
+    puts("                    \"key\": \"t\",");
+    puts("                    \"name\": \"Twilight\",");
+    puts("                    \"description\": \"Set Twilight angle\",");
+    puts("                    \"help\": \"0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical\",");
+    puts("                    \"value_name\": \"ANGLE_IN_DEGREE\",");
+    puts("                    \"default\": \"-3\",");
+    puts("                    \"changed\": \"-3\",");
+    puts("                    \"start\": -18,");
+    puts("                    \"end\": 18,");
+    puts("                    \"tick\": 1,");
+    puts("                    \"type\": \"double\"");
+    puts("                  },{");
+    puts("                    \"key\": \"format\",");
+    puts("                    \"name\": \"Format\",");
+    puts("                    \"description\": \"Option with single dash and single letter\",");
+    puts("                    \"value_name\": \"ARGUMENT\",");
+    puts("                    \"choices\": [{");
+    puts("                        \"nick\": \"ARG1\",");
+    puts("                        \"name\": \"ARG1\"");
+    puts("                      },{");
+    puts("                        \"nick\": \"ARG2\",");
+    puts("                        \"name\": \"ARG2\"");
+    puts("                      }],");
+    puts("                    \"type\": \"choice\"");
+    puts("                  }]");
+    puts("              }]");
+    puts("          }]");
+    puts("      }");
+    puts("    }");
+    puts("  }");
+    puts("}");
   } else
   if(ui && !file)
   {
