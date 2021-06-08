@@ -3,14 +3,14 @@
  *  oyjl - UI helpers
  *
  *  @par Copyright:
- *            2018-2020 (C) Kai-Uwe Behrmann
+ *            2018-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl argument handling with libOyjlCore
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- *  Copyright (c) 2018-2020  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ *  Copyright (c) 2018-2021  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -2141,15 +2141,19 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       oyjlValueSetString( key, g->optional );
     }
 
+    int arn = 0;
+    char ** aresults = oyjlOptions_ResultsToList( opts, 0, &arn ); /* all results */
     {
-      char ** results = oyjlOptions_ResultsToList( opts, 0, &n );
       char * changed = NULL;
       int pos = 0;
-      for(j = 0; j < n; ++j)
+      for(j = 0; j < arn; ++j)
       {
-        if(!(strlen(results[j]) >= 3 && memcmp(results[j], "-X=", 3) == 0))
+        const char * opt = aresults[j];
+        int found = oyjlOptions_GroupHasOptionL_( opts, i, opt );
+        if( !(strlen(opt) >= 3 && memcmp(opt, "-X=", 3) == 0) &&
+            found )
         {
-          oyjlStringAdd( &changed, 0,0, "%s%s", pos?",":"", results[j] );
+          oyjlStringAdd( &changed, 0,0, "%s%s", pos?",":"", opt );
           ++pos;
         }
       }
@@ -2159,7 +2163,6 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
         oyjlValueSetString( key, changed );
       }
       if(changed) free(changed);
-      oyjlStringListRelease( &results, n, free );
     }
 
     int d = 0;
@@ -2219,10 +2222,10 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_CHOICE:
           {
             int l = 0, pos = 0;
+            int count = 0;
+            char ** results = oyjlOptions_ResultsToList( opts, o->o?o->o:o->option, &count );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
             {
-              int count = 0;
-              char ** results = oyjlOptions_ResultsToList( opts, o->o, &count );
               for( l = 0; l < count; ++l )
               {
                 if(!results[l])
@@ -2232,16 +2235,32 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
                 key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
                 oyjlValueSetString( key, results[l] );
               }
-              oyjlStringListRelease( &results, count, free );
               pos = l;
             }
+            char * changed = NULL;
+            for(l = 0; l < count; ++l)
+            {
+              const char * opt = results[l];
+              if(strchr(opt, '='))
+                opt = strchr(opt, '=') + 1;
+              oyjlStringAdd( &changed, 0,0, "%s%s", l?",":"", opt );
+            }
+            if(changed)
+            {
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "changed" );
+              oyjlValueSetString( key, changed );
+            }
+            oyjlStringListRelease( &results, count, free );
 
             if(o->values.choices.list)
             {
               n = 0;
               key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
               sprintf( num, "%d", o->values.choices.selected );
-              oyjlValueSetString( key, num );
+              if(changed)
+                oyjlValueSetString( key, changed );
+              else
+                oyjlValueSetString( key, num );
               while(o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
                 ++n;
               for(l = pos; l < n+pos; ++l)
@@ -2280,6 +2299,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
               oyjlValueSetString( key, "string" );
             else
               oyjlValueSetString( key, "choice" );
+            if(changed) free(changed);
           }
           break;
         case oyjlOPTIONTYPE_FUNCTION:
@@ -2291,10 +2311,10 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
               while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
 
+            int count = 0;
+            char ** results = oyjlOptions_ResultsToList( opts, o->o?o->o:o->option, &count );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
             {
-              int count = 0;
-              char ** results = oyjlOptions_ResultsToList( opts, o->o, &count );
               for( l = 0; l < count; ++l )
               {
                 key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
@@ -2302,15 +2322,32 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
                 key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
                 oyjlValueSetString( key, results[l] );
               }
-              oyjlStringListRelease( &results, count, free );
               pos = l;
             }
+            char * changed = NULL;
+            for(l = 0; l < count; ++l)
+            {
+              const char * opt = results[l];
+              if(strchr(opt, '='))
+                opt = strchr(opt, '=') + 1;
+              oyjlStringAdd( &changed, 0,0, "%s%s", l?",":"", opt );
+            }
+            if(changed)
+            {
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "changed" );
+              oyjlValueSetString( key, changed );
+            }
+            oyjlStringListRelease( &results, count, free );
 
-            if(0 <= selected && selected < n && strlen(list[selected].nick))
+            if((0 <= selected && selected < n && strlen(list[selected].nick)) || changed)
             {
               key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
-              oyjlValueSetString( key, list[selected].nick );
+              if(changed)
+                oyjlValueSetString( key, changed );
+              else
+                oyjlValueSetString( key, list[selected].nick );
             }
+            if(changed) free(changed);
             for(l = pos; l < n+pos; ++l)
             {
               if(list[l-pos].nick)
@@ -2333,14 +2370,17 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
             oyjlValueSetString( key, "choice" );
           break;
         case oyjlOPTIONTYPE_DOUBLE:
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
           {
               int count = 0;
-              char ** results = oyjlOptions_ResultsToList( opts, o->o, &count );
+              char ** results = oyjlOptions_ResultsToList( opts, o->o?o->o:o->option, &count );
               if( count )
+              {
                 sprintf( num, "%s", results[0] );
-              else
+                key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "changed" );
+                oyjlValueSetString( key, num );
+              } else
                 sprintf( num, "%g", o->values.dbl.d );
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
               oyjlValueSetString( key, num );
               oyjlStringListRelease( &results, count, free );
           }
@@ -2351,6 +2391,17 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
           oyjlValueSetString( key, "double" );
           break;
         case oyjlOPTIONTYPE_NONE:
+          {
+            int count = 0;
+            char ** results = oyjlOptions_ResultsToList( opts, o->o?o->o:o->option, &count );
+            if( count )
+            {
+              sprintf( num, "%s", results[0] );
+              key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "changed" );
+              oyjlValueSetString( key, num );
+            }
+            oyjlStringListRelease( &results, count, free );
+          }
           key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
           oyjlValueSetString( key, "0" );
           key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
@@ -2371,6 +2422,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_END: break;
       }
     }
+    oyjlStringListRelease( &aresults, arn, free );
     oyjlStringListRelease( &d_list, d, free );
   }
 
