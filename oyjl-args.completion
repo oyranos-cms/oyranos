@@ -74,13 +74,13 @@ _oyjl_args()
             set +x +v
             return
             ;;
-        -v|-V)
+        -o|-t|-v|-V)
             : "finish short options without choices"
             COMPREPLY=("$cur ")
             set +x +v
             return
             ;;
-        --completion-bash|--synopsis|--verbose|--version)
+        --completion-bash|--test|--option|--format|--synopsis|--verbose|--version)
             : "finish long options without choices"
             COMPREPLY=("$cur ")
             set +x +v
