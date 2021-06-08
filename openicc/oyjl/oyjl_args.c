@@ -1155,6 +1155,75 @@ int oyjlOptions_CountGroups       ( oyjlOptions_s  * opts )
   return n;
 }
 
+char *         oyjlOptionGetKey_     ( const char        * ostring )
+{
+  char * str = NULL, * t;
+
+  if(!(ostring && ostring[0]))
+    return str;
+
+  if(ostring[0] == '-') ++ostring; /** Interprete "-o". */
+  if(ostring[0] == '-') ++ostring; /** Interprete "--option" */
+
+  str = oyjlStringCopy(ostring, malloc);
+  t = strchr(str, '='); /** Interprete "--option=arg" with arg */
+
+  if(t)
+    t[0] = '\000';
+  t = strchr(str, '.'); /** Interprete "--option.attr" with attribute */
+  if(t)
+    t[0] = '\000';
+
+  return str;
+}
+int oyjlOptions_GroupHasOptionL_     ( oyjlOptions_s     * opts,
+                                       int                 group_pos,
+                                       const char        * option )
+{
+  int found = 0;
+  char ** list;
+  int i, n;
+  oyjlOptionGroup_s * g = &opts->groups[group_pos];
+  char * copt = oyjlOptionGetKey_( option );
+  if(g->mandatory && g->mandatory[0])
+  {
+    n = 0;
+    list = oyjlStringSplit2( g->mandatory, "|,", &n, NULL, malloc );
+    for( i = 0; i  < n; ++i )
+    {
+      const char * opt = list[i];
+      if(strcmp(opt, copt) == 0)
+      {
+        found = 1;
+        if(*oyjl_debug)
+          fprintf( stderr, "%s found inside %s\n", option, g->mandatory );
+        break;
+      }
+    }
+    oyjlStringListRelease( &list, n, free );
+  }
+
+  if(g->optional && g->optional[0] && found == 0)
+  {
+    n = 0;
+    list = oyjlStringSplit2( g->optional, "|,", &n, NULL, malloc );
+    for( i = 0; i  < n; ++i )
+    {
+      const char * opt = list[i];
+      if(strcmp(opt, copt) == 0)
+      {
+        found = 2;
+        break;
+      }
+    }
+    oyjlStringListRelease( &list, n, free );
+  }
+
+  free(copt);
+
+  return found;
+}
+
 /**
  *  @return                            - 1 for number
  *                                     - 2 for symbolic */
@@ -1519,6 +1588,7 @@ static int oyjlOptions_IsHelp_       ( oyjlOptions_s     * opts )
     oyjlOptions_GetResult( opts, h->o, 0, 0, &help );
   return help;
 }
+
 /** @brief    Obtain the specified option from option string
  *  @memberof oyjlOptions_s
  *
@@ -1536,16 +1606,20 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
   char * str, * t;
   char ol[8];
 
+  memset(ol, 0, 8);
+
   if(!(ostring && ostring[0]))
     return o;
 
-  str = oyjlStringCopy(ostring, malloc);
-  t = strchr(str, '=');
+  if(ostring[0] == '-') ++ostring; /** Interprete "-o". */
+  if(ostring[0] == '-') ++ostring; /** Interprete "--option" */
 
-  memset(ol, 0, 8);
+  str = oyjlStringCopy(ostring, malloc);
+  t = strchr(str, '='); /** Interprete "--option=arg" with arg */
+
   if(t)
     t[0] = '\000';
-  t = strchr(str, '.');
+  t = strchr(str, '.'); /** Interprete "--option.attr" with attribute */
   if(t)
     t[0] = '\000';
 
@@ -1590,7 +1664,7 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
   if( !(flags & OYJL_QUIET) &&
       !oyjlOptions_IsHelp_( opts ) )
   {
-    fprintf( stderr, "%s%s: %s %d\n", *oyjl_debug?oyjlBT(0):"", _("Option not found"), str, flags );
+    fprintf( stderr, "%s%s: %s %d\n", *oyjl_debug?oyjlBT(0):"", _("Option not found"), oyjlTermColor(oyjlBOLD,str), flags );
   }
   free(str);
 
@@ -1974,9 +2048,9 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
       switch(o->variable_type)
       {
         case oyjlNONE:   break;
-        case oyjlSTRING: oyjlOptions_GetResult( opts, o->o, o->variable.s, 0, 0 ); break;
-        case oyjlDOUBLE: oyjlOptions_GetResult( opts, o->o, 0, o->variable.d, 0 ); break;
-        case oyjlINT:    oyjlOptions_GetResult( opts, o->o, 0, 0, o->variable.i ); break;
+        case oyjlSTRING: oyjlOptions_GetResult( opts, o->o?o->o:o->option, o->variable.s, 0, 0 ); break;
+        case oyjlDOUBLE: oyjlOptions_GetResult( opts, o->o?o->o:o->option, 0, o->variable.d, 0 ); break;
+        case oyjlINT:    oyjlOptions_GetResult( opts, o->o?o->o:o->option, 0, 0, o->variable.i ); break;
       }
       ++i;
     }
@@ -2046,9 +2120,9 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
   int pos = -1, i, hits = 0;
   const char * t;
   oyjlOptsPrivate_s * results;
-  oyjlOption_s * o = oyjlOptions_GetOption( opts, opt );
+  oyjlOption_s * o = oyjlOptions_GetOptionL( opts, opt, 0 );
 
-  if(!opts) return state;
+  if(!opts || !o) return state;
   results = opts->private_data;
 
   if(!results || !results->values)
@@ -3377,8 +3451,8 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     if(opt_state == oyjlOPTION_NONE || opt_state)
       oyjlOptions_Print_( ui->opts, 0 );
     fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
-    fputs( _("Missing mandatory option. No usage mode in synopsis lines found."), stderr );
-    fputs( "\n", stderr );
+    /* "Missing mandatory option. No usage mode in synopsis lines found." */
+    fprintf( stderr, "%s %s %s\n", _("Missing mandatory option. No usage mode in"), oyjlTermColor(oyjlBOLD,_("Synopsis")), _("lines found.") );
 
     if(opt_state == oyjlOPTION_NONE)
       opt_state = oyjlOPTION_NO_GROUP_FOUND;
