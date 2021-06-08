@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2020 (C) Kai-Uwe Behrmann
+ *            2018-2021 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -301,7 +301,7 @@ AppWindow {
                 var found = 0
                 var first_mandatory = false
                 arg = opt.key
-                if(mkey && arg.match(mkey))
+                if(mkey == arg)
                     continue
 
                 if(typeof group.mandatory !== "undefined")
@@ -808,6 +808,7 @@ AppWindow {
             var value_name = ""
             var default_var = opt.default
             var loc_var = loc
+            var changed = ""
 
             if(typeof opt.type !== "undefined")
                 type = opt.type
@@ -865,6 +866,12 @@ AppWindow {
                     current = name;
             }
 
+            if(typeof opt.changed !== "undefined")
+            {
+                current = opt.changed;
+                changed = opt.changed;
+            }
+
             name = P.getTranslatedItem( opt, "name", loc, catalog );
             var l = 0;
             if(typeof name !== "undefined" && name !== null)
@@ -886,6 +893,7 @@ AppWindow {
             var o = {
                 choices: choices,
                 current: current,
+                changed: changed,
                 dbl: dbl,
                 default: default_var,
                 description: desc,

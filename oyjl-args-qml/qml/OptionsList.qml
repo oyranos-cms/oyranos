@@ -98,6 +98,7 @@ Rectangle {
                         init = false
                     } else
                         visible = false
+                    if(changed.length) labelFont.bold = true
                 }
                 combo.onCurrentIndexChanged: {
                     var role = combo.textRole
@@ -146,6 +147,7 @@ Rectangle {
                         init = false
                     } else
                         visible = false
+                    if(changed.length) labelFont.bold = true
                 }
                 slider.onValueChanged: {
                     var cV = currentValue
@@ -185,6 +187,7 @@ Rectangle {
                         init = false
                     } else
                         visible = false
+                    if(changed.length) labelFont.bold = true
                 }
                 switcher.onCheckedChanged: {
                     var cV = currentValue
@@ -237,6 +240,7 @@ Rectangle {
                         init = false
                     } else
                         visible = false
+                    if(changed.length) labelFont.bold = true
                 }
                 combo.onCurrentTextChanged: value = combo.currentText
                 combo.onEditTextChanged: value = combo.editText
