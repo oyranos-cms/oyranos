@@ -25,7 +25,7 @@ Rectangle {
     property real labelWidth: 20
     property var getLabelWidthMin: function() { return all.labelWidth }
     property var getLabelWidth: function() { return all.labelWidth }
-    property var labelFont: label_.font
+    property alias labelFont: label_.font
 
     property alias slider: slider
 
