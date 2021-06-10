@@ -62,25 +62,25 @@ _oyjl_args()
 
     : "autocomplete options "$cur""
     case "$cur" in
-        -i|-h|-X|-R)
+        -i|-o|-t|-h|-X|-R)
             : "finish short options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
-        --input|--help|--export|--render)
+        --input|--format|--help|--export|--render)
             : "finish long options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
-        -o|-t|-v|-V)
+        -v|-V)
             : "finish short options without choices"
             COMPREPLY=("$cur ")
             set +x +v
             return
             ;;
-        --completion-bash|--test|--option|--format|--synopsis|--verbose|--version)
+        --completion-bash|--test|--option|--synopsis|--verbose|--version)
             : "finish long options without choices"
             COMPREPLY=("$cur ")
             set +x +v

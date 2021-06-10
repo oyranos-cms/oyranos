@@ -32,6 +32,8 @@ int myMain( int argc, const char ** argv )
   const char * file = NULL;
   int completion_bash = 0;
   int test = 0;
+  double d = 0;
+  const char * s = NULL;
   const char * export = NULL;
   const char * render = NULL;
   const char * help = NULL;
@@ -55,10 +57,10 @@ int myMain( int argc, const char ** argv )
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file} },
     {"oiwi", 0,    NULL, "completion-bash",NULL, _("Completion Bash"),_("Generate bash completion code"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &completion_bash} },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL,"test",    NULL, _("Test"),    _("Generate test Args Export"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &test} },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  "o",NULL,    NULL, "O",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE,  "o",NULL,    NULL, "O",    NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {0} },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL, "option",    NULL, "Option",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  "t",NULL,    NULL, "T",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL, "format",    NULL, "Format",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  "t",NULL,    NULL, "T",    NULL, NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {0},oyjlDOUBLE, {.d=&d} },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE,  NULL, "format",    NULL, "Format",    NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {.s=&s} },
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"h", "help", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE,{0}, oyjlSTRING, {.s = &help} },
     {"oiwi", 0,    NULL, "synopsis",NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &verbose} },
