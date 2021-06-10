@@ -41,6 +41,8 @@ AppWindow {
         statusText = qsTr("Loaded") + " " + fn
         if(processSetCommand.length)
             processSet.start( processSetCommand, processSetArgs );
+        var json = appData.dumpOptions();
+        setHelpText(json);
     }
 
     signal outputChanged( var variable ) // Output
@@ -107,6 +109,7 @@ AppWindow {
     }
     property string processGetCommand: ""
     property var processGetArgs: [ ]
+    onProcessGetArgs: statusText = "processGetArgs: " + processGetArgs
 
     property string image_data: ""
     Process { id: processSet;
@@ -251,7 +254,8 @@ AppWindow {
                 if(typeof group.changed !== "undefined")
                     changed = (group.changed.match(arg) !== null)
                 if(changed === true &&
-                   !opt.value.length)
+                   !opt.value.length &&
+                   opt.changed.length)
                     opt.value = opt.default
                 if(!(key == akey))
                 {
@@ -339,7 +343,8 @@ AppWindow {
                 if(typeof group.changed !== "undefined")
                     changed = (group.changed.match(arg) !== null)
                 if(changed === true &&
-                   !opt.value.length)
+                   !opt.value.length &&
+                   opt.changed.length)
                     opt.value = opt.default
 
                 if( !(first_mandatory && !mandatory_found) &&
@@ -351,7 +356,7 @@ AppWindow {
                 addArg( args, opt.key, opt.value, opt.type, sub_command, opt.repetition )
             }
 
-            if(app_debug)
+            //if(app_debug)
                 statusText = "command_set: " + processSetCommand + " " + args + " ex:" + mandatory_exclusive + " mand:" + group.mandatory
 
             statusText = JSON.stringify(args)
@@ -363,7 +368,10 @@ AppWindow {
         var pGC = processGetCommand
 
         // add all actual args in order to show them the pGC
-        var pGA = processGetArgs
+        var pGA = []
+        n = processGetArgs.length
+        for(i = 0; i < n; ++i)
+            pGA.push(processGetArgs[i])
         n = args.length
         for(i = 0; i < n; ++i)
             pGA.push(args[i])
@@ -570,6 +578,7 @@ AppWindow {
             initialHelpTextFontPointSize = n;
         }
 
+        var t = JSON.stringify(text)
         helpTextArea.readOnly = true // deselect selection and it's font attributes
         helpTextArea.font.pointSize = initialHelpTextFontPointSize; // reset font size
         helpTextArea.readOnly = false
@@ -829,7 +838,11 @@ AppWindow {
                 if(typeof opt.start !== "undefined") start = opt.start
                 if(typeof opt.end !== "undefined") end = opt.end
                 if(typeof opt.tick !== "undefined") tick = opt.tick
-                if(typeof opt.default !== "undefined") current = opt.default
+                if(typeof opt.default !== "undefined")
+                {
+                    current = opt.default
+                    value = current;
+                }
                 if(typeof tick !== "undefined")
                 {
                     dbl["start"] = start
@@ -871,6 +884,9 @@ AppWindow {
                 current = opt.changed;
                 changed = opt.changed;
             }
+
+            if(changed.length)
+                appData.setOption(key, changed);
 
             name = P.getTranslatedItem( opt, "name", loc, catalog );
             var l = 0;

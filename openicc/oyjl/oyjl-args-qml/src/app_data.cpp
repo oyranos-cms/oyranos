@@ -25,6 +25,7 @@
 #include <QJsonDocument>
 #include <oyjl_version.h>
 #include <oyjl.h>
+#include <oyjl_macros.h>
 #if defined(Q_OS_ANDROID)
 # include <QtAndroidExtras/QtAndroid>
 #endif
@@ -254,7 +255,7 @@ QString AppData::getLibDescription(int type)
     return QString("no description found for type ") + QString::number(type);
 }
 
-/** @brief modify the JSON model
+/** @brief modify the internal JSON model
  *
  *  @param key    object name levels separated by slash '/';
  *                e.g.: "org/freedesktop/oyjl/keyA" ;
@@ -284,7 +285,52 @@ void AppData::setOption(QString key, QString value)
     if(v) free(v);
 #endif
 }
+/** @brief obtain the internal JSON model
+ *
+ *  @param key    object name levels separated by slash '/';
+ *                e.g.: "org/freedesktop/oyjl/keyA" ;
+ *                The key can contain as well array indices:
+ *                e.g.: "org/freedesktop/oyjl/[0]/firstKey"
+ *  @return       the actual string for the object
+ *
+ * @see setOption()
+ */
+QString AppData::getOption(QString key)
+{
+    oyjl_val o;
+    char * k = oyjlStringCopy(key.toLocal8Bit().constData(), malloc);
+    const char * v;
+    if(!m_model)
+        m_model = oyjlTreeNew(k);
 
+    o = oyjlTreeGetValue(m_model, OYJL_CREATE_NEW, k);
+    v = OYJL_GET_STRING(o);
+
+#if 0 // debuging
+    char * json = NULL;
+    int levels = 0;
+    oyjlTreeToJson(m_model, &levels, &json);
+    LOG(QString(json) + " \n" + k + ":" + v);
+    if(json) free(json);
+    if(k) free(k);
+    if(v) free(v);
+#endif
+
+    return QString(v);
+}
+QString AppData::dumpOptions()
+{
+    QString qstring;
+    if(m_model)
+    {
+        int level = 0;
+        char * t = NULL;
+        oyjlTreeToJson( m_model, &level, &t );
+        qstring = t;
+        if(t) free(t);
+    }
+    return qstring;
+}
 /** @brief obtain status on Linux
  */
 void AppData::readBattery()

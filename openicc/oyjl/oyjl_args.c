@@ -1873,7 +1873,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             result->values[result->count] = value?value:"1";
             ++result->count;
           }
-          else if(!require_value && !(j < l-1 && str[j+1] == '='))
+          else if(!require_value && !value)
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
             result->values[result->count] = "1";

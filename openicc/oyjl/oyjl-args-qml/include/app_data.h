@@ -81,7 +81,9 @@ public:
     Q_INVOKABLE QString getJSON(QString url);
     Q_INVOKABLE void  writeJSON(QString url);
     Q_INVOKABLE QString getLibDescription(int);
-    Q_INVOKABLE void setOption(QString key, QString value);
+    Q_INVOKABLE void    setOption(QString key, QString value);
+    Q_INVOKABLE QString getOption(QString key);
+    Q_INVOKABLE QString dumpOptions();
     Q_INVOKABLE QString findLogo(QString pattern);
     Q_INVOKABLE QString readFile(QString url);
     Q_INVOKABLE QString requestPermission( QString name );
