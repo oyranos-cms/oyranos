@@ -21,6 +21,7 @@ Rectangle {
     property string key
     property real defaultValue
     property real currentValue
+    property var  changedValue
     property real space: textMetrics.font.pixelSize
     property real labelWidth: 20
     property var getLabelWidthMin: function() { return all.labelWidth }
