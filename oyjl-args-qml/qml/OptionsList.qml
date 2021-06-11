@@ -80,6 +80,23 @@ Rectangle {
             height: h
             color: run ? (bright ? Qt.lighter("steelblue") : "steelblue") : immediate ? (bright ? Qt.lighter("grey") : "grey") : "transparent"
 
+            function setModified()
+            {
+                var v = appData.getOption(key);
+                var set;
+                set = (v === "true");
+                if(!set && v === "1")
+                    set = true;
+                if(!set && v === 1)
+                    set = true;
+                if(!set && v === true)
+                    set = true;
+                lswitch.labelFont.bold = set;
+                lslider.labelFont.bold = set;
+                comboBox.labelFont.bold = set;
+                linput.labelFont.bold = set;
+            }
+
             Combo {
                 id: comboBox
                 objectName: "comboBox"
@@ -98,7 +115,7 @@ Rectangle {
                         init = false
                     } else
                         visible = false
-                    labelFont.bold = changed.length ? true : false
+                    labelFont.bold = appData.getOption(key).length ? true : false
                 }
                 combo.onCurrentIndexChanged: {
                     var role = combo.textRole
@@ -107,7 +124,7 @@ Rectangle {
                     var i = combo.find(t)
                     var item = combo.model.get(i)
                     var nick = item.nick
-                    labelFont.bold = changed.length ? true : false
+                    labelFont.bold = appData.getOption(k).length ? true : false
                     if(nick === currentValue || init)
                         return;
                     statusText = key + ":" + nick + " " + combo.textAt(combo.currentIndex) + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + nick + "/" + currentValue
@@ -145,16 +162,15 @@ Rectangle {
                             slider.value = v
                         if(app_debug)
                             statusText = key + " double " + slider.from + " - " + slider.to + " , " + slider.stepSize
+                        labelFont.bold = appData.getOption(key).length ? true : false
                         visible = true
                         init = false
                     } else
                         visible = false
-                    labelFont.bold = changed.length ? true : false
                 }
                 slider.onValueChanged: {
                     var cV = currentValue
                     var sv = slider.value
-                    labelFont.bold = changed.length ? true : false
                     if(slider.value === currentValue || init)
                         return;
                     statusText = key + ":" + currentValue + " " + slider.value + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + slider.value + "/" + currentValue
@@ -165,7 +181,7 @@ Rectangle {
                     value = JSON.stringify(slider.value)
                     changed = value
                     callback( key, value, type, group, 1 )
-                    labelFont.bold = changed.length ? true : false
+                    labelFont.bold = appData.getOption(k).length ? true : false
                 }
             }
             LSwitch {
@@ -191,16 +207,16 @@ Rectangle {
                         button = run
                         visible = true
                         init = false
+                        changedValue = changed
                     } else
                         visible = false
-                    labelFont.bold = changed.length ? true : false
                 }
                 switcher.onCheckedChanged: {
                     var cV = currentValue
                     var sv = switcher.checked
                     if(sv === currentValue || init)
                         return;
-                    statusText = key + ":" + currentValue + " " + sv + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + sv + "/" + currentValue
+                    statusText = key + ":" + currentValue + " " + sv + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + currentValue + "/" + sv
                     currentValue = sv;
                     appData.setOption(key, sv)
                     var k = key
@@ -217,13 +233,26 @@ Rectangle {
                     }
                     else
                         changed = ""
-                    labelFont.bold = changed.length ? true : false
+                    changedValue = changed
                 }
                 butt.onPressed: {
                     if(init) return;
                     statusText = key + ":" + qsTr("selected")
                     appData.setOption(key, true)
                     callback( key, JSON.stringify(true), type, group, 1 )
+                }
+                onChangedValueChanged: // just for fun as a Changed event; could alternatively be handled in onCheckedChanged as well
+                {
+                    var v = appData.getOption(key);
+                    var set;
+                    set = (v === "true");
+                    if(!set && v === "1")
+                        set = true;
+                    if(!set && v === 1)
+                        set = true;
+                    if(!set && v === true)
+                        set = true;
+                    labelFont.bold = set;
                 }
             }
             LInput {
@@ -253,7 +282,7 @@ Rectangle {
                         init = false
                     } else
                         visible = false
-                    labelFont.bold = changed.length ? true : false
+                    labelFont.bold = appData.getOption(key).length ? true : false
                 }
                 combo.onCurrentTextChanged: { value = combo.currentText; changed = value; }
                 combo.onEditTextChanged: { value = combo.editText; changed = value; }
@@ -291,8 +320,9 @@ Rectangle {
                     i.editText = t;
                     //i.currentText = t;
                     value_old = value
+                    appData.setOption(key, value)
                     callback( key, value, type, group, 0 )
-                    labelFont.bold = changed.length ? true : false
+                    labelFont.bold = appData.getOption(k).length ? true : false
                 }
             }
             MouseArea {
@@ -370,7 +400,8 @@ Rectangle {
                 }
                 onDoubleClicked:
                 {
-                    statusText = "onDoubleClicked: " + key + ":" + value + " " + type
+                    if(app_debug)
+                        statusText = "onDoubleClicked: " + key + ":" + value + " " + type
                     appData.setOption(key, false)
                     current = ""
                     value = ""
@@ -378,15 +409,12 @@ Rectangle {
                     if( type === "bool" && lswitch.switcher.checked)
                         lswitch.switcher.checked = false;
                     if( type === "double" )
-                        lslider.labelFont.bold = changed.length ? true : false;
+                        lslider.labelFont.bold = appData.getOption(key).length ? true : false;
                     if( type === "choice" && comboBox.combo.currentIndex >= 0 )
                         comboBox.combo.currentIndex = -1;
                     if( type === "string" && linput.combo.currentIndex >= 0 )
                         linput.combo.currentIndex = -1;
-                    lswitch.labelFont.bold = changed.length ? true : false;
-                    lslider.labelFont.bold = changed.length ? true : false;
-                    comboBox.labelFont.bold = changed.length ? true : false;
-                    linput.labelFont.bold = changed.length ? true : false;
+                    setModified()
                 }
             }
         }
