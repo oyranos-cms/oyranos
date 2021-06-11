@@ -25,7 +25,6 @@
 #include <QJsonDocument>
 #include <oyjl_version.h>
 #include <oyjl.h>
-#include <oyjl_macros.h>
 #if defined(Q_OS_ANDROID)
 # include <QtAndroidExtras/QtAndroid>
 #endif
