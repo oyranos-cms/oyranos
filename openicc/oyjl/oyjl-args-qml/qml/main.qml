@@ -156,6 +156,10 @@ AppWindow {
 
         var v = JSON.stringify(value);
 
+        var av = appData.getOption(key);
+        if(av !== value)
+            return
+
         if(v.length)
         {
             if(typeof command_set_delimiter !== "undefined")
@@ -356,7 +360,7 @@ AppWindow {
                 addArg( args, opt.key, opt.value, opt.type, sub_command, opt.repetition )
             }
 
-            //if(app_debug)
+            if(app_debug)
                 statusText = "command_set: " + processSetCommand + " " + args + " ex:" + mandatory_exclusive + " mand:" + group.mandatory
 
             statusText = JSON.stringify(args)
@@ -881,8 +885,8 @@ AppWindow {
 
             if(typeof opt.changed !== "undefined")
             {
-                current = opt.changed;
-                changed = opt.changed;
+                current = value.length ? value : opt.changed;
+                changed = current;
             }
 
             if(changed.length)
@@ -943,6 +947,7 @@ AppWindow {
     function setDataText( t )
     {
         optionsModel.clear()
+        appData.clearOptions()
         dataText = t;
         appDataJsonString = t;
         appJsonObject = JSON.parse(t);
