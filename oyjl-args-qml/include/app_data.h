@@ -84,6 +84,7 @@ public:
     Q_INVOKABLE void    setOption(QString key, QString value);
     Q_INVOKABLE QString getOption(QString key);
     Q_INVOKABLE QString dumpOptions();
+    Q_INVOKABLE void    clearOptions() { oyjlTreeFree(m_model); m_model = nullptr; }
     Q_INVOKABLE QString findLogo(QString pattern);
     Q_INVOKABLE QString readFile(QString url);
     Q_INVOKABLE QString requestPermission( QString name );
