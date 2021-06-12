@@ -482,7 +482,7 @@ AppWindow {
             t = t.replace(/\033\[00;36m/g, "<font color=cyan>")
             t = t.replace(/\033\[01;36m/g, "<font color=cyan>")
 
-            t = "<div style\"word-wrap:nowhere;\"" + t + "</div>"
+            t = "<div style\"word-wrap:nowhere;\">" + t + "</div>"
             helpText = Link.linkify( t );
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
