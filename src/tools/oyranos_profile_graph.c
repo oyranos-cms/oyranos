@@ -1025,7 +1025,7 @@ int myMain( int argc, const char ** argv )
             i = l * ccount + c;
           if(outside && outside[i])
           {
-            oyjlTreeGetValueF( specT, OYJL_CREATE_NEW, "collection/[0]/pages/%s/rows/%s/[%d]", page_id, row_id, c );
+            oyjlTreeGetValueF( specT, OYJL_CREATE_NEW, "collection/[0]/pages/%s/rows/%s/[%d]", page_id, row_id, count == 1 ? 0 : c );
             if(count == 1) break;
             continue;
           }
@@ -1121,7 +1121,7 @@ int myMain( int argc, const char ** argv )
           }
 
           /* position in colors array */
-          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, index, "collection/[0]/pages/%s/rows/%s/[%d]", page_id, row_id, c );
+          oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, index, "collection/[0]/pages/%s/rows/%s/[%d]", page_id, row_id, count == 1 ? 0 : c );
 
           ++index;
           if(count == 1)
