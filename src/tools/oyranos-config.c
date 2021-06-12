@@ -379,13 +379,22 @@ int myMain( int argc , const char** argv )
     fputs( "\n", stderr );
   }
 
+  const char * jcommands = "{\n\
+  \"command_set\": \"oyranos-config\",\n\
+  \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
+  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
+  \"command_get\": \"oyranos-config\",\n\
+  \"command_get_args\": [\"-X\",\"json+command\"]\n\
+}";
   if(ui && (export && strcmp(export,"json+command") == 0))
   {
     char * json = oyjlUi_ToJson( ui, 0 ),
-         * json_commands = NULL;
-    oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"%s\"", argv[0] );
+         * json_commands = strdup( jcommands );
+    json_commands[strlen(json_commands)-2] = ',';
+    json_commands[strlen(json_commands)-1] = '\000';
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] ); /* skip opening '{' */
     puts( json_commands );
+    free( json_commands );
     goto clean_main;
   }
 

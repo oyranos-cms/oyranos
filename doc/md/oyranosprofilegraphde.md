@@ -30,7 +30,7 @@ oyranos-profile-graph v0.9.7 - Oyranos Profile Zeichner
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
-Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder eingebetteten ICC Profil in eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
+Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder in Bildern eingebetteten ICC Profilen eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 
