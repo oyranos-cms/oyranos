@@ -1576,17 +1576,18 @@ oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
   return o;
 }
 
-static int oyjlOptions_IsHelp_       ( oyjlOptions_s     * opts )
+static int oyjlOptions_IsOn_         ( oyjlOptions_s     * opts,
+                                       const char        * opt )
 {
-  int help = 0;
-  oyjlOption_s * h = oyjlOptions_GetOption( opts, "h" );
-  if(h && h->variable_type == oyjlINT && h->variable.i)
-    help = *h->variable.i;
-  if(h && h->variable_type == oyjlSTRING && h->variable.s)
-    help = *h->variable.s && (*h->variable.s)[0];
-  if(h && h->variable_type == oyjlNONE)
-    oyjlOptions_GetResult( opts, h->o, 0, 0, &help );
-  return help;
+  int found = 0;
+  oyjlOption_s * o = oyjlOptions_GetOptionL( opts, opt, 0 );
+  if(o && o->variable_type == oyjlINT && o->variable.i)
+    found = *o->variable.i;
+  if(o && o->variable_type == oyjlSTRING && o->variable.s)
+    found = *o->variable.s && (*o->variable.s)[0];
+  if(o && o->variable_type == oyjlNONE)
+    oyjlOptions_GetResult( opts, o->o?o->o:o->option, 0, 0, &found );
+  return found;
 }
 
 /** @brief    Obtain the specified option from option string
@@ -1662,7 +1663,7 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
       o = NULL;
   }
   if( !(flags & OYJL_QUIET) &&
-      !oyjlOptions_IsHelp_( opts ) )
+      !oyjlOptions_IsOn_( opts, "h" ) )
   {
     fprintf( stderr, "%s%s: %s %d\n", *oyjl_debug?oyjlBT(0):"", _("Option not found"), oyjlTermColor(oyjlBOLD,str), flags );
   }
@@ -3239,7 +3240,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   int help = 0, verbose = 0, version = 0, i,ng,nopts, * rank_list = 0, max = -1, pass_group = 0;
   const char * export = NULL;
   const char * help_string = NULL;
-  oyjlOption_s * v, * X, * V, * h = NULL;
+  oyjlOption_s * X, * h = NULL;
   oyjlOptionGroup_s * g = NULL;
   oyjlOPTIONSTATE_e opt_state = oyjlOPTION_NONE;
   oyjlOptsPrivate_s * results;
@@ -3280,18 +3281,15 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     goto FromOptions_done;
   results = ui->opts->private_data;
 
-  V = oyjlOptions_GetOption( ui->opts, "V" );
-  if(V && V->variable_type == oyjlINT && V->variable.i)
-    version = *V->variable.i;
+  version = oyjlOptions_IsOn_( ui->opts, "V" );
   X = oyjlOptions_GetOption( ui->opts, "X" );
   if(X && X->variable_type == oyjlSTRING && X->variable.s)
     export = *X->variable.s;
-  help = oyjlOptions_IsHelp_( ui->opts );;
+  help = oyjlOptions_IsOn_( ui->opts, "h" );;
   h = oyjlOptions_GetOption( ui->opts, "h" );
-  v = oyjlOptions_GetOption( ui->opts, "v" );
-  if(v && v->variable_type == oyjlINT && v->variable.i)
+  verbose = oyjlOptions_IsOn_( ui->opts, "v" );
+  if(verbose)
   {
-    verbose = *v->variable.i;
     if(status && verbose)
       *status |= oyjlUI_STATE_VERBOSE;
     if(verbose)
