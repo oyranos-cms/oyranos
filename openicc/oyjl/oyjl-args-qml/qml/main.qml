@@ -144,7 +144,7 @@ AppWindow {
     property string command_key: ""
 
 
-    function addArg1( args, key, value, type, sub_command )
+    function addArg1( args, key, value, type, sub_command, split )
     {
         var arg = null;
         if(key === "#" || key === "@")
@@ -157,8 +157,13 @@ AppWindow {
         var v = JSON.stringify(value);
 
         var av = appData.getOption(key);
-        if(av !== value)
-            return
+        if(split)
+        {
+            if(!av.match(value))
+                return
+        } else
+            if(av !== value)
+                return
 
         if(v.length)
         {
@@ -209,9 +214,9 @@ AppWindow {
             var arrn = arr.length;
             var i;
             for( i = 0; i < arrn; ++i )
-                addArg1( args, key, arr[i], type, sub_command );
+                addArg1( args, key, arr[i], type, sub_command, arrn > 1 );
         } else
-            addArg1( args, key, value, type, sub_command );
+            addArg1( args, key, value, type, sub_command, false );
     }
 
     function interactiveCallback( key, value, type, group, setOnly )
