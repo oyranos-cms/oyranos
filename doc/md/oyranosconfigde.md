@@ -37,7 +37,7 @@ Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--get</strong>=<em>XPATH</em></td> <td>Lese einen Wert </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong>=<em>XPATH:WERT</em></td> <td>Setze einen Wert </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list</strong></td> <td>Zeige vorhandene Pfade</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list</strong></td> <td>Zeige vorhandene Pfade innerhalb der OpenICC DB</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--dump-db</strong></td> <td>Ausgabe der OpenICC DB</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--path</strong></td> <td>Zeige DB Dateipfad</td> </tr>
 </table>
@@ -62,7 +62,7 @@ Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und 
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>--syscolordir</strong> | <strong>--usercolordir</strong> | <strong>--iccdirname</strong> | <strong>--settingsdirname</strong> | <strong>--cmmdir</strong> | <strong>--metadir</strong> [<strong>-v</strong>] [<strong>-z</strong>]
 
-&nbsp;&nbsp;Show statically configured and compiled in paths of Oyranos CMS.
+&nbsp;&nbsp;Zeige statisch konfigurierte und unterstützte Pfade von Oyranos CMS.
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--syscolordir</strong></td> <td>Pfad zum Hauptfarbverzeichnis im System</td> </tr>
