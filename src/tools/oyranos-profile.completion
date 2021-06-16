@@ -12,6 +12,38 @@ _oyranos_profile()
 
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
+        --tag-pos) # long option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --tag-pos=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            fi
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --tag-name) # long option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --tag-name=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            fi
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --export) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
@@ -29,6 +61,38 @@ _oyranos_profile()
     esac
     : "autocomplete options with choices for single letter options "$cur""
     case "$cur" in
+        -p=*) # single letter option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -p=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            fi
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -n=*) # single letter option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -n=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            fi
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
         -X=*) # single letter option with static args
             local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')

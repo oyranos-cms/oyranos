@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2011-2020 (C) Kai-Uwe Behrmann
+ *            2011-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -100,6 +100,89 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
   return cs;
 }
 
+#define OYJL_GET_RESULT_STRING( options_, optionL_, default_, variable_ ) const char * variable_; if(oyjlOptions_GetResult( options_, optionL_, &variable_, NULL, NULL ) != oyjlOPTION_USER_CHANGED) variable_ = default_;
+#define OYJL_GET_RESULT_DOUBLE( options_, optionL_, default_, variable_ ) double variable_; if(oyjlOptions_GetResult( options_, optionL_, NULL, &variable_, NULL ) != oyjlOPTION_USER_CHANGED) variable_ = default_;
+#define OYJL_GET_RESULT_INT( options_, optionL_, default_, variable_ ) int variable_; if(oyjlOptions_GetResult( options_, optionL_, NULL, NULL, &variable_ ) != oyjlOPTION_USER_CHANGED) variable_ = default_;
+oyjlOptionChoice_s * listTagPos                 ( oyjlOption_s      * o OYJL_UNUSED,
+                                                  int               * selected OYJL_UNUSED,
+                                                  oyjlOptions_s     * opts )
+{
+  oyjlOptionChoice_s * c = NULL;
+  int i,
+      choices = 0;
+  oyProfile_s * p = NULL;
+  OYJL_GET_RESULT_STRING( opts, "@", NULL, profile_name );
+  fputs( "listTagPos\n", stderr );
+  if(!profile_name) return c;
+
+  p = oyProfile_FromName( profile_name, 0,0 );
+  choices = oyProfile_GetTagCount( p );
+  c = calloc(choices+1, sizeof(oyjlOptionChoice_s));
+
+  if(c)
+  {
+    for(i = 0; i < choices; ++i)
+    {
+      char * v = malloc(12);
+
+      sprintf(v, "%d", i);
+      c[i].nick = v;
+      c[i].name = strdup(v);
+      c[i].description = strdup("");
+      c[i].help = strdup("");
+    }
+  }
+  /*if(selected)
+    *selected = current;*/
+
+  oyProfile_Release( &p );
+
+  return c;
+}
+
+oyjlOptionChoice_s * listTagName                ( oyjlOption_s      * o OYJL_UNUSED,
+                                                  int               * selected OYJL_UNUSED,
+                                                  oyjlOptions_s     * opts )
+{
+  oyjlOptionChoice_s * c = NULL;
+  int i,
+      choices = 0;
+  oyProfile_s * p = NULL;
+  OYJL_GET_RESULT_STRING( opts, "@", NULL, profile_name );
+  if(!profile_name) return c;
+
+  p = oyProfile_FromName( profile_name, 0,0 );
+  choices = oyProfile_GetTagCount( p );
+  c = calloc(choices+1, sizeof(oyjlOptionChoice_s));
+
+  if(c)
+  {
+    for(i = 0; i < choices; ++i)
+    {
+      char * v;
+      oyProfileTag_s * tag = oyProfile_GetTagByPos( p, i );
+      icTagSignature ts = oyProfileTag_GetUse( tag );
+      const char * tn = oyICCTagName( ts );
+
+      v = oyjlStringCopy( tn, 0 );
+
+      c[i].nick = v;
+      c[i].name = strdup(v);
+      c[i].description = strdup("");
+      c[i].help = strdup("");
+
+      oyProfileTag_Release( &tag );
+    }
+  }
+  /*if(selected)
+    *selected = current;*/
+
+  oyProfile_Release( &p );
+
+  return c;
+}
+
+
 /* This function is called the
  * * first time for GUI generation and then
  * * for executing the tool.
@@ -164,9 +247,9 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0,                          "l","list-tags",     NULL,     _("List Tags"),_("list contained tags additional to overview and header."),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list_tags}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "p","tag-pos",       NULL,     _("Tag Pos"),  _("select tag"),              NULL, _("NUMBER"),        
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlINT,       {.i=&tag_pos}},
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = listTagPos},   oyjlINT,       {.i=&tag_pos}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "n","tag-name",      NULL,     _("Tag Name"), _("select tag"),              NULL, _("NAME"),          
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&tag_name}},
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = listTagName},  oyjlSTRING,    {.s=&tag_name}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "r","remove-tag",    NULL,     _("Remove Tag"),NULL,                         _("remove selected tag number."),_("NUMBER"),        
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlINT,       {.i=&remove_tag}},
     {"oiwi", 0,                          "m","list-hash",     NULL,     _("List Hash"),_("show internal hash value."),NULL, NULL,               
@@ -254,13 +337,22 @@ int myMain( int argc, const char ** argv )
     fputs( "\n", stderr );
   }
 
+  const char * jcommands = "{\n\
+  \"command_set\": \"oyranos-profile\",\n\
+  \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
+  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
+  \"command_get\": \"oyranos-profile\",\n\
+  \"command_get_args\": [\"-X\",\"json+command\"]\n\
+}";
   if(ui && (export && strcmp(export,"json+command") == 0))
   {
     char * json = oyjlUi_ToJson( ui, 0 ),
-         * json_commands = NULL;
-    oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"%s\"", argv[0] );
+         * json_commands = strdup( jcommands );
+    json_commands[strlen(json_commands)-2] = ',';
+    json_commands[strlen(json_commands)-1] = '\000';
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] ); /* skip opening '{' */
     puts( json_commands );
+    free( json_commands );
     goto clean_main;
   }
 
@@ -269,7 +361,7 @@ int myMain( int argc, const char ** argv )
   {
 #if !defined(NO_OYJL_ARGS_RENDER)
     int debug = verbose;
-    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
+    oyjlArgsRender( argc, argv, NULL, jcommands, NULL, debug, ui, myMain );
 #else
     fprintf( stderr, "No render support compiled in. For a GUI use -X json and load into oyjl-args-render viewer." );
 #endif
@@ -843,9 +935,6 @@ int myMain( int argc, const char ** argv )
       ++i;
     }
   }
-  oyjlLibRelease();
-
-  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return error;
 }
@@ -879,6 +968,10 @@ int main( int argc_, char**argv_, char ** envv )
 #ifdef __ANDROID__
   free( argv );
 #endif
+
+  oyjlLibRelease();
+
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return 0;
 }

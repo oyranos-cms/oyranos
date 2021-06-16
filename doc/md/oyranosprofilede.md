@@ -48,10 +48,8 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list-tags</strong></td> <td>Liste die enthaltenen Elemente zusätzlich zur Übersicht und Dateikopf.</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--tag-pos</strong>=<em>NUMMER</em></td> <td>wähle Eintrag  </td>
- </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--tag-name</strong>=<em>NAME</em></td> <td>wähle Eintrag  </td>
- </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--tag-pos</strong>=<em>NUMMER</em></td> <td>wähle Eintrag </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--tag-name</strong>=<em>NAME</em></td> <td>wähle Eintrag </tr>
 </table>
 
 <h3 id="remove-tag">Lösche enthaltenes ICC Element</h3>

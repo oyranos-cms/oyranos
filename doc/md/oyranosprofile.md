@@ -48,10 +48,8 @@ The oyranos-profile programm shows informations about a ICC profile and allows s
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list-tags</strong></td> <td>list contained tags additional to overview and header.</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--tag-pos</strong>=<em>NUMBER</em></td> <td>select tag  </td>
- </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--tag-name</strong>=<em>NAME</em></td> <td>select tag  </td>
- </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--tag-pos</strong>=<em>NUMBER</em></td> <td>select tag </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--tag-name</strong>=<em>NAME</em></td> <td>select tag </tr>
 </table>
 
 <h3 id="remove-tag">Remove included ICC tag</h3>
