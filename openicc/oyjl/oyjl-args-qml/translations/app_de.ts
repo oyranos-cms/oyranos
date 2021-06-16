@@ -167,29 +167,29 @@
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="691"/>
-        <location filename="../qml/main.qml" line="742"/>
-        <location filename="../qml/main.qml" line="775"/>
+        <location filename="../qml/main.qml" line="708"/>
+        <location filename="../qml/main.qml" line="759"/>
+        <location filename="../qml/main.qml" line="792"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="974"/>
+        <location filename="../qml/main.qml" line="991"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1026"/>
+        <location filename="../qml/main.qml" line="1043"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1026"/>
+        <location filename="../qml/main.qml" line="1043"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1028"/>
+        <location filename="../qml/main.qml" line="1045"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>

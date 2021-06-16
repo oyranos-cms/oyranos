@@ -100,6 +100,7 @@ AppWindow {
         statusText = qsTr("commands enabled") + " = " + variable
     }
 
+    property var currentArgs: [] // args for the command_set_option + active options
     Process { id: processGet;
         onReadChannelFinished: {
             var text = readAll();
@@ -134,6 +135,32 @@ AppWindow {
             var text = readErr();
             if(text.length)
                 textArea2.text = text;
+
+            // The next process needs to be in serial for stdout and stderr to work.
+            var pGC = processGetCommand
+
+            // add all actual args in order to show them the pGC
+            var pGA = []
+            var n = processGetArgs.length
+            var i
+            for(i = 0; i < n; ++i)
+                pGA.push(processGetArgs[i])
+            var cA = currentArgs
+            n = cA.length
+            for(i = 0; i < n; ++i)
+                pGA.push(cA[i])
+
+            if(processGetCommand.length && setOnly <= 0)
+            {
+                if(app_debug)
+                    statusText = "command_get: " + processGetCommand + " " + pGA + " ex:" + mandatory_exclusive
+                processGet.start( processGetCommand, pGA, "getUi" )
+                processGet.waitForFinished()
+                if(app_debug)
+                    statusText = "command_get: " + processGetCommand + " " + pGA + " finished"
+            }
+            currentArgs = []
+
             unsetBusyTimer.start()
         }
     }
@@ -219,7 +246,8 @@ AppWindow {
             addArg1( args, key, value, type, sub_command, false );
     }
 
-    function interactiveCallback( key, value, type, group, setOnly )
+    property var setOnly: false
+    function interactiveCallback( key, value, type, group, setOnly_ )
     {
         var opts = optionsModel
         var n = optionsModel.count
@@ -230,6 +258,8 @@ AppWindow {
         var mkey = false
         var arr = []
         var arrn = 0
+
+        setOnly = setOnly_
 
         var sub_command = false
         if(typeof group.sub_command !== "undefined")
@@ -368,28 +398,15 @@ AppWindow {
             if(app_debug)
                 statusText = "command_set: " + processSetCommand + " " + args + " ex:" + mandatory_exclusive + " mand:" + group.mandatory
 
+            currentArgs = [];
+            currentArgs = args;
+
             statusText = JSON.stringify(args)
-            processSet.start( processSetCommand, args )
+            processSet.start( processSetCommand, currentArgs, "set" )
             setBusyTimer.start()
             processSet.waitForFinished()
-        }
-
-        var pGC = processGetCommand
-
-        // add all actual args in order to show them the pGC
-        var pGA = []
-        n = processGetArgs.length
-        for(i = 0; i < n; ++i)
-            pGA.push(processGetArgs[i])
-        n = args.length
-        for(i = 0; i < n; ++i)
-            pGA.push(args[i])
-
-        if(processGetCommand.length && setOnly <= 0)
-        {
             if(app_debug)
-                statusText = "command_get: " + processGetCommand + " " + processGetArgs + " ex:" + mandatory_exclusive
-            processGet.start( processGetCommand, pGA )
+                statusText = "command_set: " + processSetCommand + " " + currentArgs + " finished"
         }
     }
 
