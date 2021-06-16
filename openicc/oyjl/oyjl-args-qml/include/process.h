@@ -18,11 +18,12 @@ class Thread : public QThread
     int argc_;
     const char ** argv_;
 
-    Thread( ) { }
 public:
+    Thread( ) { }
     Thread( int argc, const char ** argv ) {argc_=argc;argv_=argv;};
     ~Thread( ) { }
 
+    void setData( int argc, const char ** argv ) {argc_=argc;argv_=argv;};
 signals:
     void finishedSignal();
 
@@ -41,11 +42,15 @@ class Process : public QProcess {
     FILE * fme_cb;
     int saved_stdout = -1;
     int saved_stderr = -1;
+    Thread thread_cb;
 
 public:
-    Process(QObject *parent = 0) : QProcess(parent) { fm_cb = fme_cb = NULL; }
+    Process(QObject *parent = 0) : QProcess(parent) {
+        fm_cb = fme_cb = NULL;
+        connect( &thread_cb, SIGNAL(finishedSignal()), this, SLOT( setData()));
+    }
 
-    Q_INVOKABLE void start(const QString &program, const QVariantList &arguments)
+    Q_INVOKABLE void start(const QString &program, const QVariantList &arguments , const QString &mark)
     {
         QStringList args;
 
@@ -59,12 +64,12 @@ public:
 
         if(processCallback_p != NULL)
         {
-            //fprintf(stderr, "starting callback\n");
+            //fprintf(stderr, "starting callback %s\n", program.toUtf8().data());
             QString tempName;
             {
                 QTemporaryFile temp;
                 if (temp.open()) {
-                    tempName_ = temp.fileName() + "2";
+                    tempName_ = temp.fileName() + "2" + mark;
                 }
             }
             char * tfn = oyjlStringCopy( tempName_.toUtf8().data(), malloc );
@@ -93,9 +98,8 @@ public:
             for( int i = 0; i < count; ++i )
               argv[1+i] = oyjlStringCopy( args[i].toUtf8(), malloc );
 
-            Thread * t = new Thread( 1+count, (const char**)argv );
-            connect( t, SIGNAL(finishedSignal()), this, SLOT( setData()));
-            t->start();
+            thread_cb.setData( 1+count, (const char**)argv );
+            thread_cb.start();
             free(tfn);
 
         } else
@@ -169,6 +173,11 @@ public Q_SLOTS:
       a_cb = f.read(size);
       f.close();
       FILE * fp = fopen(cfn,"rb");
+      if(!fp)
+      {
+          fprintf(stderr, OYJL_DBG_FORMAT "filed to open: %s\n", OYJL_DBG_ARGS, cfn );
+          return;
+      }
       fseek(fp, 0, SEEK_END);
       size = ftell(fp);
       f.remove();
@@ -188,6 +197,7 @@ public Q_SLOTS:
         dup2(saved_stdout, STDOUT_FILENO);
       if(saved_stderr >= 0)
         dup2(saved_stderr, STDERR_FILENO);
+
       emit readChannelFinished();
       free(cfn);
     }
