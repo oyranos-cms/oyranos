@@ -226,6 +226,36 @@ static oyjlOptionChoice_s * listInput ( oyjlOption_s * o OYJL_UNUSED, int * y OY
   return c;
 }
 
+/* find ncc/cgats/json/cxf files */
+static oyjlOptionChoice_s * listSpectral ( oyjlOption_s * o OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
+{
+  oyjlOptionChoice_s * c = NULL;
+
+  if(oy_debug)
+    fputs("listSpectral", stderr);
+  int size = 0, i,n = 0;
+  char * result = oyjlReadCommandF( &size, "r", malloc, "ls -1 *.[N,n][C,c][C,c] *.[C,c][G,g][A,a][T,t][S,s] *.[J,j][S,s][O,o][N,n] *.[C,c][X,x][F,f]" );
+  char ** list = oyjlStringSplit( result, '\n', &n, 0 );
+
+  if(list)
+  {
+    c = calloc(n+1, sizeof(oyjlOptionChoice_s));
+    if(c)
+    {
+      for(i = 0; i < n; ++i)
+      {
+        c[i].nick = strdup( list[i] );
+        c[i].name = strdup("");
+        c[i].description = strdup("");
+        c[i].help = strdup("");
+      }
+    }
+    free(list);
+  }
+
+  return c;
+}
+
 static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts )
 {
   oyjlOption_s * import = oyjlOptions_GetOptionL( opts, "import", 0 );
@@ -449,7 +479,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "m", "swatch-format", NULL, _("Format"),      _("Specify output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)p_format, sizeof(p_format), 0 )}, oyjlSTRING, {.s=&format} },
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&pattern} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "s", "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&input} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "s", "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = listSpectral}, oyjlSTRING, {.s=&input} },
     {"oiwi", 0, "S", "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&standardobs} },
     {"oiwi", 0, "O", "observer-64",   NULL, _("10° Observer"),  _("CIE Observer 1964 10°"),  NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&observer64} },
 
@@ -1229,8 +1259,6 @@ int myMain( int argc, const char ** argv )
     }
     else if(format)
       oyMessageFunc_p( oyMSG_ERROR, NULL, "export format not supported: %s", format );
-
-    oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
     return 0;
   }
@@ -2038,9 +2066,6 @@ int myMain( int argc, const char ** argv )
   oyProfile_Release( &p_lab );
   oyProfile_Release( &p_xyz );
 
-
-  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-
   return 0;
 }
 #undef pflags
@@ -2079,6 +2104,7 @@ int main( int argc_, char**argv_, char ** envv )
 #ifdef __ANDROID__
   free( argv );
 #endif
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return 0;
 }

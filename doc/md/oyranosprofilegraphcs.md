@@ -120,8 +120,7 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>-s</strong>=<em>FILE</em> <strong>-p</strong>=<em>FORMAT</em> [<strong>-t</strong>=<em>NUMBER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMBER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMBER</em>] [<strong>-T</strong>] [<strong>-P</strong>=<em>STRING</em>] [<strong>-o</strong>=<em>-|FILE</em>] [<strong>-v</strong>] [<strong>-z</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--spectral</strong>=<em>FILE</em></td> <td>Spectral Input  </td>
- </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--spectral</strong>=<em>FILE</em></td> <td>Spectral Input </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--spectral-format</strong>=<em>FORMAT</em></td> <td>Specify spectral output file format
   <table>
    <tr><td style='padding-left:0.5em'><strong>-p png</strong></td><td># PNG</td></tr>

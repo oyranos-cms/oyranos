@@ -72,6 +72,22 @@ _oyranos_profile_graph()
             set +x +v
             return
             ;;
+        --spectral) # long option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --spectral=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            fi
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --export) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
@@ -145,6 +161,22 @@ _oyranos_profile_graph()
         -m=*) # single letter option with static args
             local IFS=$'\n'
             local WORD_LIST=('png' 'svg' 'ncc')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -s=*) # single letter option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            else
+              OYJL_TEXTS=$(${COMP_LINE} -s=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            fi
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
