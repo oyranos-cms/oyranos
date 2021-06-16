@@ -192,14 +192,6 @@ static oyjlOptionChoice_s * listVals ( oyjlOption_s * o OYJL_UNUSED, int * y OYJ
 }
 #endif
 
-const char * jcommands = "{\n\
-  \"command_set\": \"oyranos-config\",\n\
-  \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
-  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
-  \"command_get\": \"oyranos-config\",\n\
-  \"command_get_args\": [\"-X\",\"json\"]\n\
-}";
-
 /* This function is called the
  * * first time for GUI generation and then
  * * for executing the tool.
