@@ -2399,11 +2399,12 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
               sprintf( num, "%s", results[0] );
               key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "changed" );
               oyjlValueSetString( key, num );
-            }
+            } else
+              sprintf( num, "0" );
+            key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
+            oyjlValueSetString( key, num );
             oyjlStringListRelease( &results, count, free );
           }
-          key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "default" );
-          oyjlValueSetString( key, "0" );
           key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
           oyjlValueSetString( key, "bool" );
           {

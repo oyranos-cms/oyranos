@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2021-06-12 18:18+0200\n"
+"POT-Creation-Date: 2021-06-19 08:59+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -597,7 +597,7 @@ msgstr ""
 msgid "Name"
 msgstr "Nom"
 
-#: oyjl_args_tree.c:2417
+#: oyjl_args_tree.c:2418
 msgid "No"
 msgstr ""
 
@@ -1135,7 +1135,7 @@ msgstr ""
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:2417
+#: oyjl_args_tree.c:2418
 msgid "Yes"
 msgstr "Oui"
 
