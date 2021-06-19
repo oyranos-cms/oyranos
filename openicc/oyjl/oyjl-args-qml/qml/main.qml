@@ -183,6 +183,9 @@ AppWindow {
 
         var v = JSON.stringify(value);
 
+        if(type === "bool" && value === "false")
+            return
+
         var av = appData.getOption(key);
         if(split)
         {
@@ -324,6 +327,11 @@ AppWindow {
 
         var args = []
         args = processSetArgs.slice()
+
+        // set mandatory switch when no other mandatory option is visible in group
+        if(!(args.length && args[0].match(mkey)) && key === mkey && opt.type === "bool" && value === "false")
+            args[0] = sub_command ? "" : mkey.length === 1 ? "-" + mkey : "--" + mkey;
+
 
         var sCb = processSetCommand
         command_key = key
