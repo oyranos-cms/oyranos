@@ -537,7 +537,7 @@ int myMain( int argc, const char ** argv )
     }
 
     /* print header infos */
-    if(error <= 0 && !dump_chromaticities && !dump_openicc_json && !list_hash)
+    if(error <= 0 && !dump_chromaticities && !dump_openicc_json && !list_hash && !list_tags)
     if(tag_name == NULL && tag_pos == -1)
     {
       uint32_t id[4],
