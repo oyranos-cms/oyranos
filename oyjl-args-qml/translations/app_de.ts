@@ -144,12 +144,12 @@
         <translation>alt/neu</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="393"/>
+        <location filename="../qml/OptionsList.qml" line="396"/>
         <source>Multiple Options Hint</source>
         <translation>Hinweis für Mehrfachoptionen</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="395"/>
+        <location filename="../qml/OptionsList.qml" line="398"/>
         <source>Enter first value, append &apos;;&apos; and confirm. The final &apos;;&apos; is not executed. Then select next value. Repeat as needed. A final confirm without ending &apos;;&apos; can execute.</source>
         <translation>Zunächst einen Wert eingeben, dann ein Semikolon &apos;;&apos; anhängen und bestätigen. Anschließend den nächsten Wert wählen. Das Auswählen bei Bedarf wiederholen. Ein Bestätigen ohne Semikolon  &apos;;&apos; am Ende kann den Befehl ausführen.</translation>
     </message>
@@ -167,29 +167,29 @@
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="716"/>
-        <location filename="../qml/main.qml" line="767"/>
-        <location filename="../qml/main.qml" line="800"/>
+        <location filename="../qml/main.qml" line="758"/>
+        <location filename="../qml/main.qml" line="809"/>
+        <location filename="../qml/main.qml" line="842"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="999"/>
+        <location filename="../qml/main.qml" line="1041"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1051"/>
+        <location filename="../qml/main.qml" line="1093"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1051"/>
+        <location filename="../qml/main.qml" line="1093"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1053"/>
+        <location filename="../qml/main.qml" line="1095"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>
