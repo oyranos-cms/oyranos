@@ -294,6 +294,9 @@ Rectangle {
                     if(repetition && c === ";")
                     {
                         value_old = t
+                        combo.displayText = ""
+                        combo.editText = ""
+                        combo.currentText = ""
                         return
                     }
                     var old = value_old
