@@ -302,7 +302,7 @@ QString AppData::getOption(QString key)
     if(!m_model)
         m_model = oyjlTreeNew(k);
 
-    o = oyjlTreeGetValue(m_model, OYJL_CREATE_NEW, k);
+    o = oyjlTreeGetValue(m_model, 0, k);
     v = OYJL_GET_STRING(o);
 
 #if 0 // debuging
