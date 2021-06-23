@@ -148,7 +148,8 @@ AppWindow {
             var cA = currentArgs
             n = cA.length
             for(i = 0; i < n; ++i)
-                pGA.push(cA[i])
+                if(!hasArg(pGA,cA[i]))
+                    pGA.push(cA[i])
 
             if(processGetCommand.length && setOnly <= 0)
             {
@@ -171,6 +172,30 @@ AppWindow {
     property string command_key: ""
 
 
+    function argToKey(arg)
+    {
+        var okey = arg
+        if(okey[0] === '-')
+            okey = okey.substr(1,okey.length-1)
+        if(okey[0] === '-')
+            okey = okey.substr(1,okey.length-1)
+        if(okey.match('='))
+            okey = okey.substr(0,okey.indexOf('='))
+        return okey;
+    }
+
+    function hasArg(args, key)
+    {
+        for( var o in args )
+        {
+            var okey = argToKey(args[o])
+            var k = argToKey(key)
+            if(okey == k)
+                return true;
+        }
+        return false;
+    }
+
     function addArg1( args, key, value, type, sub_command, split )
     {
         var arg = null;
@@ -187,16 +212,20 @@ AppWindow {
             return
 
         var av = appData.getOption(key);
+        if(av === "false")
+            return
         if(split)
         {
             if(!av.match(value))
                 return
         } else
-            if(av !== value)
+            if(typeof value !== "undefined" && av !== value)
                 return
 
-        if(v.length)
+        if(av.length)
         {
+            if(!split)
+                value = av
             if(typeof command_set_delimiter !== "undefined")
             {
                 if(typeof value === "string" && type !== "bool")
@@ -263,6 +292,8 @@ AppWindow {
         var arrn = 0
 
         setOnly = setOnly_
+
+        statusText = group.description
 
         var sub_command = false
         if(typeof group.sub_command !== "undefined")
@@ -339,7 +370,9 @@ AppWindow {
         {
             arg = key
 
-            addArg( args, key, value, type, sub_command, opt.repetition )
+            if( hasArg(args, key) === false ||
+                opt.repetition === true )
+                addArg( args, key, value, type, sub_command, opt.repetition )
 
             if(app_debug)
                 statusText = "command_set: " + processSetCommand + " " + args
@@ -400,7 +433,16 @@ AppWindow {
                        opt.value === "false")))
                     continue
 
-                addArg( args, opt.key, opt.value, opt.type, sub_command, opt.repetition )
+                if( hasArg(args, opt.key) === false ||
+                    opt.repetition === true )
+                    addArg( args, opt.key, opt.value, opt.type, sub_command, opt.repetition )
+            }
+            n = group.options.length
+            for( i = 0; i < n; ++i )
+            {
+                opt = group.options[i]
+                if( typeof opt.changed != "undefined" && opt.changed.length && hasArg(args, opt.key) === false )
+                    addArg( args, opt.key, opt.value, opt.type, sub_command, opt.repetition )
             }
 
             if(app_debug)
