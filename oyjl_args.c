@@ -2946,10 +2946,11 @@ int oyjlManAddOptionToGroupList_     ( char            *** group,
 
   if(o)
     opt[0] = oo;
-  else
+  else if(option)
     opt[0] = option;
 
-  oyjlStringListAddList( group, group_n, opt, 1, 0,0 );
+  if(opt[0])
+    oyjlStringListAddList( group, group_n, opt, 1, 0,0 );
 
   return 0;
 }
@@ -2977,11 +2978,11 @@ int oyjlManAddOptionToGroup_         ( char             ** group,
     }
   }
 
-  if(g && g[0])
+  if(g && g[0] && (o || option))
     oyjlStringAdd( group, 0,0, delimiter?delimiter:"," );
   if(o)
     oyjlStringAdd( group, 0,0, "%c", o );
-  else
+  else if(option)
     oyjlStringAdd( group, 0,0, "%s", option );
 
   return 0;

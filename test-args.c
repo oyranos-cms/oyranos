@@ -291,6 +291,15 @@ oyjlTESTRESULT_e testArgsCheck()
     "oyjlManAddOptionToGroup_(\"opt\" ,\"opt\")         " );
   }
 
+  error = oyjlManAddOptionToGroup_( &group, 0, NULL, delimiter, flags );
+  if(error == 0 && group && strcmp(group, "opt") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlManAddOptionToGroup_(NULL ,NULL)         " );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyjlManAddOptionToGroup_(NULL ,NULL) = %s    ", group );
+  }
+
   option = "pt";
   error = oyjlManAddOptionToGroup_( &group, 0, option, delimiter, flags );
   if(error == 0 && group && strcmp(group, "opt,pt") == 0)
