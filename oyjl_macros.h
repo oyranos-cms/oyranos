@@ -65,6 +65,14 @@
                         (strlen(argv[pos])-2 >= strlen(arg) && \
                          memcmp(&argv[pos][2],arg, strlen(arg)) == 0)
 
+/** Obtain result from oyjlOptions_s by name e.g. inside ::oyjlOPTIONTYPE_FUNCTION callbacks.
+ *  Example: OYJL_GET_RESULT_STRING( opts, "o", NULL, my_o_string_variable ); */
+#define OYJL_GET_RESULT_STRING( options_, optionL_, default_, variable_ ) const char * variable_; if(oyjlOptions_GetResult( options_, optionL_, &variable_, NULL, NULL ) != oyjlOPTION_USER_CHANGED) variable_ = default_;
+/** obtain result from oyjlOptions_s by name e.g. inside ::oyjlOPTIONTYPE_FUNCTION callbacks */
+#define OYJL_GET_RESULT_DOUBLE( options_, optionL_, default_, variable_ ) double       variable_; if(oyjlOptions_GetResult( options_, optionL_, NULL, &variable_, NULL ) != oyjlOPTION_USER_CHANGED) variable_ = default_;
+/** obtain result from oyjlOptions_s by name e.g. inside ::oyjlOPTIONTYPE_FUNCTION callbacks */
+#define OYJL_GET_RESULT_INT( options_, optionL_, default_, variable_ )    int          variable_; if(oyjlOptions_GetResult( options_, optionL_, NULL, NULL, &variable_ ) != oyjlOPTION_USER_CHANGED) variable_ = default_;
+
 #if defined(__GNUC__)
 # define  OYJL_DBG_FORMAT "%s(%s:%d) "
 # define  OYJL_DBG_ARGS   oyjlTermColor(oyjlBOLD, __func__), strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
