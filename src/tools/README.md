@@ -6,5 +6,6 @@ TOOLS
 * [oyranos-profile](../../doc/md/oyranosprofile.md) [cs](../../doc/md/oyranosprofilecs.md) [de](../../doc/md/oyranosprofilede.md) - The Tool shows internal information of a ICC color profile.
 * [oyranos-profiles](../../doc/md/oyranosprofiles.md) [cs](../../doc/md/oyranosprofilescs.md) [de](../../doc/md/oyranosprofilesde.md) - The Tool gives information around installed ICC color profiles. Download and Install.
 * [oyranos-profile-graph](../../doc/md/oyranosprofilegraph.md) [cs](../../doc/md/oyranosprofilegraphcs.md) [de](../../doc/md/oyranosprofilegraphde.md) - The Tool draws 2D graphs from ICC profiles and spectral data.
+* [oyranos-device](../../doc/md/oyranosdevice.md) [cs](../../doc/md/oyranosdevicecs.md) [de](../../doc/md/oyranosdevicede.md) - The Tool shows and administrates ICC profiles for color devices.
 * [oyranos-monitor](../../doc/md/oyranosmonitor.md) - The Tool handles monitor device ICC color profiles.
 * [oyranos-monitor-white-point](../../doc/md/oyranosmonitorwhitepoint.md) [cs](../../doc/md/oyranosmonitorwhitepointcs.md) [de](../../doc/md/oyranosmonitorwhitepointde.md) - The Tool handles nightly red light monitor white point.

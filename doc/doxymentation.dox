@@ -41,6 +41,7 @@
     - @ref oyranosprofile - a command line tool to show internal profile information
     - @ref oyranosprofiles - lookup profiles in the systems color paths, download and install
     - @ref oyranosprofilegraph - draw a 2D graph from ICC profiles and spectral data
+    - @ref oyranosdevice - a command line tool showing and administrating ICC profiles for color devices
     - @ref oyranosmonitor - a command line tool to handle monitor device ICC color profiles.
       Affected are default profiles and some behaviour settings.
     - @ref oyranosmonitorwhitepoint - a command line tool to handle nightly red light monitor white point

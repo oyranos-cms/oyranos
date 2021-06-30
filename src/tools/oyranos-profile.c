@@ -59,6 +59,7 @@
 #define OPENICC_DEVICE_CAMERA  "camera"
 
 #include "oyjl.h"
+#include "oyjl_macros.h"
 #include "oyjl_version.h"
 extern char **environ;
 #ifdef OYJL_HAVE_LOCALE_H
@@ -100,9 +101,6 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
   return cs;
 }
 
-#define OYJL_GET_RESULT_STRING( options_, optionL_, default_, variable_ ) const char * variable_; if(oyjlOptions_GetResult( options_, optionL_, &variable_, NULL, NULL ) != oyjlOPTION_USER_CHANGED) variable_ = default_;
-#define OYJL_GET_RESULT_DOUBLE( options_, optionL_, default_, variable_ ) double variable_; if(oyjlOptions_GetResult( options_, optionL_, NULL, &variable_, NULL ) != oyjlOPTION_USER_CHANGED) variable_ = default_;
-#define OYJL_GET_RESULT_INT( options_, optionL_, default_, variable_ ) int variable_; if(oyjlOptions_GetResult( options_, optionL_, NULL, NULL, &variable_ ) != oyjlOPTION_USER_CHANGED) variable_ = default_;
 oyjlOptionChoice_s * listTagPos                 ( oyjlOption_s      * o OYJL_UNUSED,
                                                   int               * selected OYJL_UNUSED,
                                                   oyjlOptions_s     * opts )

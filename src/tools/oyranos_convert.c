@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2012-2018 (C) Kai-Uwe Behrmann
+ *            2012-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC conversion - on the command line
  *  @internal

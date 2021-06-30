@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2012-2018 (C) Kai-Uwe Behrmann
+ *            2012-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    device manipulation tool
  *  @internal
@@ -16,9 +16,6 @@
 /* !cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --cflags --ldstaticflags` -lm -lltdl */
 
 /* cc -Wall -g test_device.c -o test_device2 -L. `oyranos-config --cflags --ldstaticflags` `pkg-config --cflags --libs libxml-2.0` -lm -I ../../ -I ../../API_generated/ */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "oyranos.h"
 #include "oyranos_db.h"
@@ -34,234 +31,538 @@
 #include "oyranos_config_internal.h"
 #include "oyProfiles_s.h"
 
-#include <locale.h>
+#include "oyjl.h"
+#include "oyjl_macros.h"
+#include "oyjl_version.h"
+extern char **environ;
 
 void* oyAllocFunc(size_t size) {return malloc (size);}
 void  oyDeAllocFunc ( oyPointer ptr) { if(ptr) free (ptr); }
 
-
-void displayHelp(char ** argv)
+oyjlOptionChoice_s * getDevicePosChoices        ( oyjlOption_s      * o OYJL_UNUSED,
+                                                  int               * selected,
+                                                  oyjlOptions_s     * opts )
 {
-  printf("\n");
-  printf("oyranos-device v%d.%d.%d %s\n",
-         OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C,
-         _("is a color profile administration tool for color devices"));
-  printf("%s:\n",                 _("Usage"));
-  printf("  %s\n",               _("Assign profile to device:"));
-  printf("      %s -a -c class -d number [--system-wide] -p file.icc\n", argv[0]);
-  printf("         -p %s\t%s\n",    _("FILE"),   _("profile file name"));
-  printf("\n");
-  printf("  %s\n",               _("Unassign profile from device:"));
-  printf("      %s -e -c class -d number [--system-wide]\n", argv[0]);
-  printf("\n");
-  printf("  %s\n",               _("Setup device:"));
-  printf("      %s -s -c class -d number\n", argv[0]);
-  printf("\n");
-  printf("  %s\n",               _("Unset device:"));
-  printf("      %s -u -c class -d number\n", argv[0]);
-  printf("\n");
-  printf("  %s\n",               _("List device classes:"));
-  printf("      %s -l [-v | --short | --class]\n", argv[0]);
-  printf("         -v      \t%s\n", _("print the full module name"));
-  printf("         --short \t%s\n", _("print the module ID"));
-  printf("         --class \t%s\n", _("print the modules device class"));
-  printf("\n");
-  printf("  %s\n",               _("List devices:"));
-  printf("      %s -l -c class [-d %s | --device-name %s] [-v | --short | --path] [-r]\n", argv[0], _("NUMBER"), _("NAME"));
-                        /* --short argument */
-  printf("         --short \t%s\n", _("print only the profile name"));
-                        /* --path argument */
-  printf("         --path  \t%s\n", _("print the full file name"));
-  printf("\n");
-  printf("  %s\n",               _("List local DB profiles for selected device:"));
-  printf("      %s --list-profiles -c class -d number [--show-non-device-related]\n", argv[0]);
-  printf("         --show-non-device-related\t%s\n",_("show as well non matching profiles"));
-  printf("\n");
-  printf("  %s\n",               _("List Taxi DB profiles for selected device:"));
-  printf("      %s --list-taxi-profiles -c class -d number [--show-non-device-related]\n", argv[0]);
-  printf("         --show-non-device-related\t%s\n",_("show as well non matching profiles"));
-  printf("\n");
-  printf("  %s\n",               _("Dump device color state:"));
-  printf("      %s -f=[icc|openicc+rank-map|openicc|openicc-rank-map] [-o=file.json] -c class -d number | -j device.json [--only-db] [-m]\n", argv[0]);
-  printf("         -f icc  \t%s\n",              _("write assigned ICC profile"));
-  printf("         -f fallback-icc  \t%s\n",     _("create fallback ICC profile"));
-  printf("         -f openicc+rank-map\t%s\n",   _("create OpenICC device color state JSON including the rank map"));
-  printf("         -f openicc\t%s\n",            _("create OpenICC device color state JSON"));
-  printf("            --only-db\t%s\n",_("use only DB keys for -f=openicc"));
-  printf("         -f openicc-rank-map\t%s\n",   _("create OpenICC device color state rank map JSON"));
-  printf("         -o %s\t%s\n",    _("FILE"),   _("write to specified file"));
-  printf("         -j %s\t%s\n",    _("FILE"),   _("use device JSON alternatively to -c and -d options"));
-  printf("         -k %s\t%s\n",    _("FILE"),   _("use rank map JSON alternatively to -c and -d options"));
-  printf("         -m \t%s\n",       _("embedd device and driver information into ICC meta tag"));
-  printf("\n");
-  printf("  %s\n",               _("Show Help:"));
-  printf("      %s [-h]\n", argv[0]);
-  printf("\n");
-  printf("  %s\n",               _("General options:"));
-  printf("         -v      \t%s\n", _("verbose"));
-  printf("         -c %s\t%s\n",    _("CLASS"),  _("device class"));
-  printf("         -d %s\t%s\n",    _("NUMBER"), _("device position start from zero"));
-  printf("         --device-name %s\t%s\n",    _("NAME"), _("alternatively specify the name of a device"));
-  printf("         -r      \t%s\n", _("skip X Color Management device profile"));
-  printf("         -2      \t%s\n", _("Select ICC v2 Profiles"));
-  printf("         -4      \t%s\n", _("Select ICC v4 Profiles"));
-  printf("\n");
-  printf(_("For more information read the man page:"));
-  printf("\n");
-  printf("      man oyranos-device\n");
-}
-
-int main(int argc, char *argv[])
-{
-  int error = 0;
-
-  /* the functional switches */
-  int assign = 0;
-  int erase = 0;
-  int unset = 0;
-  int list = 0;
-  int list_profiles = 0;
-  int list_taxi_profiles = 0;
-  int list_rank_paths = 0;
-  int show_non_device_related = 0;
-  int setup = 0;
-  int device_pos = -1;
-  char * format = 0;
-  char * output = 0;
-  int only_db = 0;
-  int skip_x_color_region_target = 0;
-  int device_meta_tag = 0;
-  char * prof_name = 0,
-       * new_profile_name = 0;
-  const char * device_class = 0,
-             * device_json = 0,
-             * rank_json = NULL;
-  int verbose = 0;
-  int simple = 0;
-
-  oyProfile_s * prof = 0;
+  oyjlOptionChoice_s * c = NULL;
   oyConfigs_s * devices = 0;
   oyOptions_s * options = 0;
-  oyConfig_s * c = 0,
-             * dt = 0;
-  size_t size = 0;
-  const char * filename = 0,
-             * device_name = 0;
-  char * data = 0, *t;
-  uint32_t n = 0;
-  unsigned i;
-  uint32_t flags = 0;
-  oySCOPE_e scope = oySCOPE_USER;
+  int i,
+      flags = 0,
+      choices = 0;
+  OYJL_GET_RESULT_INT( opts, "r", 0, skip_x_color_region_target );
+  OYJL_GET_RESULT_INT( opts, "2", 0, icc_version_2 );
+  OYJL_GET_RESULT_INT( opts, "4", 0, icc_version_4 );
+  OYJL_GET_RESULT_STRING( opts, "c", NULL, device_class );
+  if(!device_class) return c;
 
-  if(getenv(OY_DEBUG))
+  if(!skip_x_color_region_target)
+    oyOptions_SetFromString( &options,
+              "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes",
+                                     OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
+                                     "list", OY_CREATE_NEW );
+  if(icc_version_2) flags |= OY_ICC_VERSION_2;
+  if(icc_version_4) flags |= OY_ICC_VERSION_4;
+  oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
+  oyDevicesGet( OY_TYPE_STD, device_class, options, &devices );
+  choices = oyConfigs_Count( devices );
+  c = calloc(choices+1, sizeof(oyjlOptionChoice_s));
+
+  if(c)
   {
-    int value = atoi(getenv(OY_DEBUG));
-    if(value > 0)
-      oy_debug += value;
-  }
-
-#ifdef USE_GETTEXT
-  setlocale(LC_ALL,"");
-#endif
-  oyI18NInit_();
-
-  {
-    int pos = 1;
-    const char *wrong_arg = 0;
-    while(pos < argc)
+    for(i = 0; i < choices; ++i)
     {
-      switch(argv[pos][0])
-      {
-        case '-':
-            for(i = 1; i < strlen(argv[pos]); ++i)
-            switch (argv[pos][i])
-            {
-              case '2': flags |= OY_ICC_VERSION_2; break;
-              case '4': flags |= OY_ICC_VERSION_4; break;
-              case 'a': assign = 1; break;
-              case 'e': erase = 1; break;
-              case 'c': OY_PARSE_STRING_ARG( device_class ); break;
-              case 'd': OY_PARSE_INT_ARG(    device_pos ); break;
-              case 'j': OY_PARSE_STRING_ARG( device_json ); break;
-              case 'k': OY_PARSE_STRING_ARG( rank_json ); break;
-              case 'f': OY_PARSE_STRING_ARG( format ); break;
-              case 'l': list = 1; break;
-              case 'm': device_meta_tag = 1; break;
-              case 'o': OY_PARSE_STRING_ARG( output ); break;
-              case 'p': OY_PARSE_STRING_ARG( prof_name ); break;
-              case 'r': skip_x_color_region_target = 1; break;
-              case 'u': unset = 1; break;
-              case 'v': if(verbose) oy_debug += 1; verbose = 1; break;
-              case 's': setup = 1; break;
-              case 'h':
-              case '-':
-                        if(i == 1)
-                        {
-                             if(OY_IS_ARG("assign"))
-                        { assign = 1; i=100; break; }
-                        else if(OY_IS_ARG("erase"))
-                        { erase = 1; i=100; break; }
-                        else if(OY_IS_ARG("unset"))
-                        { unset = 1; i=100; break; }
-                        else if(OY_IS_ARG("skip-x-color-region-target"))
-                        { skip_x_color_region_target = 1; i=100; break; }
-                        else if(OY_IS_ARG("setup"))
-                        { setup = 1; i=100; break; }
-                        else if(OY_IS_ARG("format"))
-                        { OY_PARSE_STRING_ARG2(format, "format"); break; }
-                        else if(OY_IS_ARG("output"))
-                        { OY_PARSE_STRING_ARG2(output, "output"); break; }
-                        else if(OY_IS_ARG("only-db"))
-                        { only_db = 1; i=100; break; }
-                        else if(OY_IS_ARG("name"))
-                        { OY_PARSE_STRING_ARG2(new_profile_name, "name"); break; }
-                        else if(OY_IS_ARG("device-name"))
-                        { OY_PARSE_STRING_ARG2(device_name, "device-name"); break; }
-                        else if(OY_IS_ARG("profile"))
-                        { OY_PARSE_STRING_ARG2(prof_name, "profile"); break; }
-                        else if(OY_IS_ARG("list"))
-                        { list = 1; i=100; break; }
-                        else if(OY_IS_ARG("list-profiles"))
-                        { list_profiles = 1; i=100; break; }
-                        else if(OY_IS_ARG("list-taxi-profiles"))
-                        { list_taxi_profiles = 1; i=100; break; }
-                        else if(OY_IS_ARG("show-non-device-related"))
-                        { show_non_device_related = 1; i=100; break; }
-                        else if(OY_IS_ARG("class"))
-                        { simple = 2; i=100; break;}
-                        else if(OY_IS_ARG("path"))
-                        { simple = 2; list_rank_paths = 1; i=100; break;}
-                        else if(OY_IS_ARG("short"))
-                        { simple = 1; i=100; break;}
-                        else if(OY_IS_ARG("verbose"))
-                        { if(verbose) oy_debug += 1; verbose = 1; i=100; break;}
-                        else if(OY_IS_ARG("system-wide"))
-                        { scope = oySCOPE_SYSTEM; i=100; break; }
-                        } OY_FALLTHROUGH
-              default:
-                        displayHelp(argv);
-                        exit (0);
-                        break;
-            }
-            break;
-        default:
-                        displayHelp(argv);
-                        exit (0);
-      }
-      if( wrong_arg )
-      {
-        printf("%s %s\n", _("wrong argument to option:"), wrong_arg);
-        exit(1);
-      }
-      ++pos;
+      char * v = malloc(12);
+
+      sprintf(v, "%d", i);
+      c[i].nick = v;
+      c[i].name = strdup(v);
+      c[i].description = strdup("");
+      c[i].help = strdup("");
     }
-    if(oy_debug) printf( "%s\n", argv[1] );
   }
-  if(argc == 1)
+  if(selected)
+    *selected = -1;
+
+  oyConfigs_Release( &devices );
+  oyOptions_Release( &options );
+
+  return c;
+}
+
+icSignature  getProfileClass         ( const char        * device_class,
+                                       int                 verbose )
+{
+  icSignature profile_class = icSigDisplayClass;
+      oyConfDomain_s * d = oyConfDomain_FromReg( device_class, 0 );
+      const char * icc_profile_class = oyConfDomain_GetText( d,
+                                             "icc_profile_class", oyNAME_NICK );
+      if(icc_profile_class && strcmp(icc_profile_class,"display") == 0)
+        profile_class = icSigDisplayClass;
+      else if(icc_profile_class && strcmp(icc_profile_class,"output") == 0)
+        profile_class = icSigOutputClass;
+      else if(icc_profile_class && strcmp(icc_profile_class,"input") == 0)
+        profile_class = icSigInputClass;
+      else if(strcmp(device_class,"monitor") == 0)
+        profile_class = icSigDisplayClass;
+      else if(strcmp(device_class,"printer") == 0)
+        profile_class = icSigOutputClass;
+      else if(strcmp(device_class,"camera") == 0)
+        profile_class = icSigInputClass;
+      else if(strcmp(device_class,"scanner") == 0)
+        profile_class = icSigInputClass;
+
+      if(verbose)
+        fprintf( stderr, "icc_profile_class: %s\n", icc_profile_class ? icc_profile_class : device_class );
+      oyConfDomain_Release( &d );
+  return profile_class;
+}
+
+char **  listProfiles                ( oyConfig_s        * c, /* device */
+                                       icSignature         profile_class,
+                                       const char        * device_class,
+                                       int                 flags,
+                                       int                 verbose,
+                                       int                 show_non_device_related,
+                                       oyOptions_s       * options,
+                                       int               * count )
+{
+      int size, i, current = -1, current_tmp = 0, pos = 0;
+      oyProfile_s * profile = 0, * temp_profile = 0;
+      oyProfiles_s * patterns = 0, * iccs = 0;
+      const char * profile_file_name = 0;
+      int32_t * rank_list;
+      int empty_added;
+      char ** list = NULL;
+
+      *count = 0;
+      profile = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
+      patterns = oyProfiles_New( 0 );
+      oyProfiles_MoveIn( patterns, &profile, -1 );
+
+      iccs = oyProfiles_Create( patterns, flags, 0 );
+      oyProfiles_Release( &patterns );
+
+
+      size = oyProfiles_Count(iccs);
+      if(verbose)
+        fprintf( stderr, "%s %s: %d\n",
+                 _("found profiles for device class"), device_class, size );
+      rank_list = (int32_t*) malloc( size * sizeof(int32_t) );
+      oyProfiles_DeviceRank( iccs, c, rank_list );
+
+      size = oyProfiles_Count(iccs);
+
+      oyDeviceGetProfile( c, options, &profile );
+      profile_file_name = oyProfile_GetFileName( profile, 0 );
+
+      empty_added = -1;
+
+      for( i = 0; i < size; ++i)
+      {
+        const char * temp_profile_file_name, * description;
+        {
+           temp_profile = oyProfiles_Get( iccs, i );
+           description = oyProfile_GetText( temp_profile, oyNAME_DESCRIPTION );
+           temp_profile_file_name = oyProfile_GetFileName( temp_profile, 0);
+
+           current_tmp = -1;
+
+           if(profile_file_name && temp_profile_file_name &&
+              strcmp( profile_file_name, temp_profile_file_name ) == 0)
+             current_tmp = pos;
+
+           if(current == -1 && current_tmp != -1)
+             current = current_tmp;
+
+           if(empty_added == -1 &&
+              rank_list[i] < 1)
+           {
+             //fprintf(stdout, "automatic\n");
+             oyjlStringListAddStaticString( &list, count, "automatic", malloc,free );
+             empty_added = pos;
+             if(current != -1 &&
+                current == pos)
+               ++current;
+             ++pos;
+           }
+
+           if(show_non_device_related == 1 ||
+              rank_list[i] > 0 ||
+              current_tmp != -1)
+           {
+             char * t = NULL;
+             oyjlStringAdd( &t, 0,0, "[%d-%d] %s (%s)",
+              pos+1, rank_list[i], description, temp_profile_file_name);
+             oyjlStringListAddStaticString( &list, count, t, malloc,free );
+             free(t);
+ 
+             ++pos;
+           }
+        }
+        oyProfile_Release( &temp_profile );
+      }
+      if(empty_added == -1)
+      {
+        ++pos;
+        if(current == -1 && current_tmp != -1)
+          current = pos;
+      }
+      if(verbose)
+        fprintf( stderr, "current: %d\n", current );
+
+      oyProfile_Release( &profile );
+      oyProfiles_Release( &iccs );
+      *count = pos;
+
+  return list;
+}
+
+oyjlOptionChoice_s * getDeviceProfileChoices    ( oyjlOption_s      * o OYJL_UNUSED,
+                                                  int               * selected,
+                                                  oyjlOptions_s     * opts )
+{
+  oyjlOptionChoice_s * c = NULL;
+  oyConfigs_s * devices = 0;
+  oyOptions_s * options = 0;
+  int i,n,
+      flags = 0,
+      choices = 0;
+  oyjlOption_s * skip_x = oyjlOptions_GetOptionL( opts, "r", 0 );
+  int skip_x_color_region_target = *skip_x->variable.i;
+  OYJL_GET_RESULT_INT( opts, "2", 0, icc_version_2 );
+  OYJL_GET_RESULT_INT( opts, "4", 0, icc_version_4 );
+  OYJL_GET_RESULT_STRING( opts, "c", NULL, device_class );
+  OYJL_GET_RESULT_INT( opts, "d", -1, device_pos );
+  OYJL_GET_RESULT_STRING( opts, "device-name", NULL, device_name );
+  OYJL_GET_RESULT_INT( opts, "v", 0, verbose );
+  OYJL_GET_RESULT_INT( opts, "show-non-device-related", 0, show_non_device_related );
+
+  icSignature profile_class;
+  char ** list;
+  oyConfig_s * d = NULL;
+
+  if(!device_class) return c;
+  if(device_pos == -1 && !device_name) return c;
+
+  profile_class = getProfileClass( device_class, verbose );
+
+  if(!skip_x_color_region_target)
+    oyOptions_SetFromString( &options,
+              "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes",
+                                     OY_CREATE_NEW );
+  oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
+                                     "list", OY_CREATE_NEW );
+  if(icc_version_2) flags |= OY_ICC_VERSION_2;
+  if(icc_version_4) flags |= OY_ICC_VERSION_4;
+  oyOptions_SetFromInt( &options,
+                                    "//" OY_TYPE_STD "/icc_profile_flags",
+                                    flags, 0, OY_CREATE_NEW );
+  if(device_name)
+    oyDeviceGet( OY_TYPE_STD, device_class, device_name, options, &d );
+  else
   {
-                        displayHelp(argv);
-                        exit (0);
+    oyDevicesGet( OY_TYPE_STD, device_class, options, &devices );
+    d = oyConfigs_Get( devices, device_pos );
   }
+
+  list = listProfiles( d, profile_class, device_class, flags, verbose, show_non_device_related, options, &n );
+  choices = n;
+
+  c = calloc(choices+1, sizeof(oyjlOptionChoice_s));
+
+  if(c)
+  {
+    for(i = 0; i < choices; ++i)
+    {
+      c[i].nick = strdup(list[i]);
+      c[i].name = strdup(list[i]);
+      c[i].description = strdup("");
+      c[i].help = strdup("");
+    }
+  }
+  if(selected)
+    *selected = -1;
+
+  oyConfigs_Release( &devices );
+  oyOptions_Release( &options );
+
+  return c;
+}
+
+/* This function is called the
+ * * first time for GUI generation and then
+ * * for executing the tool.
+ */
+int myMain( int argc, const char ** argv )
+{
+  int error = 0;
+  int state = 0;
+  int assign = 0;
+  const char * device_class = 0;
+  int device_pos = -1;
+  const char * profile_name = 0;
+  const char * new_profile_name = 0;
+  int system_wide = 0;
+  int erase = 0;
+  int setup = 0;
+  int unset = 0;
+  int list = 0;
+  int verbose = 0;
+  int short_var = 0;
+  int print_class = 0;
+  const char * device_name = 0;
+  int path = 0;
+  int skip_x_color_region_target = 0;
+  int list_profiles = 0;
+  int show_non_device_related = 0;
+  int list_taxi_profiles = 0;
+  const char * format = 0;
+  const char * device_json = 0;
+  const char * rank_json = 0;
+  const char * output = 0;
+  int icc_version_2 = 0;
+  int icc_version_4 = 0;
+  int only_db = 0;
+  int device_meta_tag = 0;
+  const char * export = 0;
+  const char * render = 0;
+
+  int list_rank_paths = 0;
+
+  /* handle options */
+  /* declare the option choices  *   nick,          name,               description,                  help */
+  oyjlOptionChoice_s c_choices[] = {{"monitor",     _("Monitor"),       "",                           ""},
+                                    {"printer",     _("Printer"),       "",                           ""},
+                                    {"camera",      _("Camera"),        "",                           ""},
+                                    {"scanner",     _("Scanner"),       "",                           ""},
+                                    {"","","",""}};
+  oyjlOptionChoice_s f_choices[] = {{"icc",         _("write assigned ICC profile"),"",                        ""},
+                                    {"fallback-icc",_("create fallback ICC profile"),"",                        ""},
+                                    {"openicc+rank-map",_("create OpenICC device color state JSON including the rank map"),"",                        ""},
+                                    {"openicc",     _("create OpenICC device color state JSON"),"",                        ""},
+                                    {"openicc-rank-map",_("create OpenICC device color state rank map JSON"),"",                        ""},
+                                    {"","","",""}};
+
+  oyjlOptionChoice_s E_choices[] = {{_("OY_DEBUG"), _("set the Oyranos debug level. Alternatively the -v option can be used."),NULL,                         NULL},
+                                    {_("XDG_DATA_HOME XDG_DATA_DIRS"),_("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended."),_("http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"),NULL},
+                                    {"","","",""}};
+
+  oyjlOptionChoice_s S_choices[] = {{_("oyranos-policy(1) oyranos-config(1) oyranos-profiles(1) oyranos-profile(1) oyranos(3)"),NULL,               NULL,                         NULL},
+                                    {_("http://www.oyranos.org"),NULL,               NULL,                         NULL},
+                                    {"","","",""}};
+
+  /* declare options - the core information; use previously declared choices */
+  oyjlOption_s oarray[] = {
+  /* type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,         
+        value_type,              values,             variable_type, variable_name */
+    {"oiwi", 0,                          "a","assign",        NULL,     _("Assign"),   _("add configuration to OpenICC DB"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&assign}},
+    {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE, "c","device-class",  NULL,     _("Device Class"),_("use device class. Useful device classes are monitor, scanner, printer, camera."),NULL, _("CLASS"),         
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)c_choices, sizeof(c_choices), malloc ), 0}}, oyjlSTRING,    {.s=&device_class}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_IMMEDIATE,  "d","device-pos",    NULL,     _("Device Pos"),  _("device position start from zero"),NULL, _("NUMBER"),        
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = getDevicePosChoices},                oyjlINT,       {.i=&device_pos}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "p","profile-name",  NULL,     _("Profile Name"),_("profile file name"),    _("Can be \"\" empty string or \"automatic\" or a real profile name."), _("ICC_FILE_NAME"), 
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = getDeviceProfileChoices},                oyjlSTRING,    {.s=&profile_name}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "n","new-profile-name",  NULL, _("New Profile Name"),_("profile file name"),   NULL, _("ICC_FILE_NAME"), 
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&new_profile_name}},
+    {"oiwi", 0,                          NULL,"system-wide",   NULL,     _("System Wide"),_("add computer wide"),       NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&system_wide}},
+    {"oiwi", 0,                          "e","erase",         NULL,     _("Erase"),    _("remove configuration from OpenICC DB"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&erase}},
+    {"oiwi", 0,                          "s","setup",         NULL,     _("Setup"),    _("configure session from OpenICC DB"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&setup}},
+    {"oiwi", 0,                          "u","unset",         NULL,     _("Unset"),    _("reset session configuration to zero"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&unset}},
+    {"oiwi", 0,                          "l","list",          NULL,     _("List"),     _("List device classes"),     NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list}},
+    {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE, "v","verbose",       NULL,     _("Verbose"),  _("verbose"),                 NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&verbose}},
+    {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE, NULL,"short",        NULL,     _("Short"),    _("print module ID or profile name"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&short_var}},
+    {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE, NULL,"print-class",  NULL,     _("Print Class"),_("print the modules device class"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&print_class}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  NULL,"device-name",  NULL,     _("Device Name"),_("alternatively specify the name of a device"),NULL, _("NAME"),          
+        oyjlOPTIONTYPE_FUNCTION, {0},                oyjlSTRING,    {.s=&device_name}},
+    {"oiwi", 0,                          NULL,"path",         NULL,     _("Path"),     _("print the full file name"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&path}},
+    {"oiwi", 0,                          "r","skip-x-color-region-target",NULL,     _("Skip X Color Region Target"),_("skip X Color Management device profile"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&skip_x_color_region_target}},
+    {"oiwi", 0,                          NULL,"list-profiles", NULL,     _("List Profiles"),_("List local DB profiles for selected device"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list_profiles}},
+    {"oiwi", 0,                          NULL,"show-non-device-related",NULL,     _("Show Non Device Related"),_("show as well non matching profiles"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&show_non_device_related}},
+    {"oiwi", 0,                          NULL,"list-taxi-profiles",NULL,     _("List Taxi Profiles"),_("List Taxi DB profiles for selected device"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list_taxi_profiles}},
+    {"oiwi", 0,                          "f","format",        NULL,     _("Format"),   _("dump configuration data"), NULL, _("icc|openicc+rank-map|openicc|openicc-rank-map"),
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)f_choices, sizeof(f_choices), malloc ), 0}}, oyjlSTRING,    {.s=&format}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "j","device-json",   NULL,     _("Device Json"),_("use device JSON alternatively to -c and -d options"),NULL, _("FILENAME"),      
+        oyjlOPTIONTYPE_FUNCTION, {0},                oyjlSTRING,    {.s=&device_json}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "k","rank-json",     NULL,     _("Rank Json"),_("use rank map JSON alternatively to -c and -d options"),NULL, _("FILENAME"),      
+        oyjlOPTIONTYPE_FUNCTION, {0},                oyjlSTRING,    {.s=&rank_json}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Output"),   _("write to specified file"), NULL, _("FILENAME"),      
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&output}},
+    {"oiwi", 0,                          NULL,"only-db",       NULL,     _("Only Db"),  _("use only DB keys for -f=openicc"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&only_db}},
+    {"oiwi", 0,                          "m","device-meta-tag",NULL,     _("Device Meta Tag"),_("embedd device and driver information into ICC meta tag"),NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&device_meta_tag}},
+    {"oiwi", 0,                          "h","help",          NULL,     _("Help"),     _("Help"),                    NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {}},
+    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    {"oiwi", 0,                          "V","version",       NULL,     _("Version"),  _("Version"),                 NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
+    {"oiwi", 0,                          "2","icc-version-2", NULL,     _("Icc Version 2"),_("Select ICC v2 Profiles"),  NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&icc_version_2}},
+    {"oiwi", 0,                          "4","icc-version-4", NULL,     _("Icc Version 4"),_("Select ICC v4 Profiles"),  NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&icc_version_4}},
+    {"oiwi", 0,                          "E","man-environment",NULL,    NULL,          NULL,                         NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)E_choices, sizeof(E_choices), malloc ), 0}}, oyjlNONE,      {}},
+    {"oiwi", 0,                          "S","man-see_also",  NULL,     NULL,          NULL,                         NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc ), 0}}, oyjlNONE,      {}},
+    /* default option template -X|--export */
+    {"",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}
+  };
+
+  /* declare option groups, for better syntax checking and UI groups */
+  oyjlOptionGroup_s groups[] = {
+  /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
+    {"oiwg", 0,     NULL,               _("Set basic parameters"),    NULL,               NULL,          NULL,          "c,d,device-name,2,4,r"},
+    {"oiwg", 0,     NULL,               _("Assign profile to device"),NULL,               "a,c,d,p",     "system-wide", "a,p,system-wide"},
+    {"oiwg", 0,     NULL,               _("Unassign profile from device"),NULL,               "e,c,d",       "system-wide", "e" },
+    {"oiwg", 0,     NULL,               _("Setup device"),            NULL,               "s,c,d",       NULL,          "s" },
+    {"oiwg", 0,     NULL,               _("Unset device"),            NULL,               "u,c,d",       NULL,          "u" },
+    {"oiwg", 0,     NULL,               _("List device classes"),     NULL,               "l",           "v,short,print-class","l,v,short,print-class"},
+    {"oiwg", 0,     NULL,               _("List devices"),            _("Needs -c option."),               "l",         "c,d|device-name,short,path,r,v","l,c,short,path"},
+    {"oiwg", 0,     NULL,               _("List local DB profiles for selected device"),_("Needs -c and -d options."),               "list-profiles","c,d,show-non-device-related","list-profiles,show-non-device-related"},
+    {"oiwg", 0,     NULL,               _("List Taxi DB profiles for selected device"),_("Needs -c and -d options."),               "list-taxi-profiles","c,d,show-non-device-related","list-taxi-profiles,show-non-device-related"},
+    {"oiwg", 0,     NULL,               _("Dump device color state"), _("Needs -c and -d options."),               "f,c,d,j,k",   "o,only-db,m", "f,o,j,k,only-db,m"},
+    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, NULL, _("General options"),NULL,               "h|X|V|R",     "v",           "h,X,V,R,v"},
+    {"",0,0,0,0,0,0,0}
+  };
+
+  oyjlUiHeaderSection_s * sections = oyUiInfo(_("The oyranos-device program shows and administrates ICC profiles for color devices."),
+                  "2021-05-13T12:00:00", "May 13, 2021");
+  oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
+                                       "oyranos-device", _("Oyranos Color Devices"), _("The Tool handles Oyranos CMS Color Devices."),
+#ifdef __ANDROID__
+                                       ":/images/logo.svg", // use qrc
+#else
+                                       "oyranos_logo",
+#endif
+                                       sections, oarray, groups, &state );
+  if( state & oyjlUI_STATE_EXPORT &&
+      export &&
+      strcmp(export,"json+command") != 0)
+    goto clean_main;
+
+  if(state & oyjlUI_STATE_HELP)
+  {
+    fprintf( stderr, "%s\n\tman oyranos-device\n\n", _("For more information read the man page:") );
+    goto clean_main;
+  }
+
+  if(ui && verbose)
+  {
+    char * json = oyjlOptions_ResultsToJson( ui->opts );
+    if(json)
+      fputs( json, stderr );
+    fputs( "\n", stderr );
+
+    char * text = oyjlOptions_ResultsToText( ui->opts );
+    if(text)
+      fputs( text, stderr );
+    fputs( "\n", stderr );
+  }
+
+  const char * jcommands = "{\n\
+  \"command_set\": \"oyranos-device\",\n\
+  \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
+  \"comment\": \"command_set_option - use \\\"-s\\\" \\\"key\\\"; skip \\\"--\\\" direct in front of key\",\n\
+  \"command_get\": \"oyranos-device\",\n\
+  \"command_get_args\": [\"-X\",\"json+command\"]\n\
+}";
+  if(ui && (export && strcmp(export,"json+command") == 0))
+  {
+    char * json = oyjlUi_ToJson( ui, 0 ),
+         * json_commands = strdup( jcommands );
+    json_commands[strlen(json_commands)-2] = ',';
+    json_commands[strlen(json_commands)-1] = '\000';
+    oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] ); /* skip opening '{' */
+    puts( json_commands );
+    free( json_commands );
+    goto clean_main;
+  }
+
+  /* Render boilerplate */
+  if(ui && render)
+  {
+#if !defined(NO_OYJL_ARGS_RENDER)
+    int debug = verbose;
+    oyjlArgsRender( argc, argv, NULL, jcommands, NULL, debug, ui, myMain );
+#else
+    fprintf( stderr, "No render support compiled in. For a GUI use -X json and load into oyjl-args-render viewer." );
+#endif
+  } else if(ui)
+  {
+    /* ... working code goes here ... */
+    const char * prof_name = profile_name;
+    int simple = 0;
+    int flags = 0;
+    oySCOPE_e scope = oySCOPE_USER;
+
+    oyProfile_s * prof = 0;
+    oyConfigs_s * devices = 0;
+    oyOptions_s * options = 0;
+    oyConfig_s * c = 0,
+               * dt = 0;
+    size_t size = 0;
+    const char * filename = 0,
+               * device_name = 0;
+    char * data = 0, *t;
+    int n = 0;
+
+    if(print_class) simple = 2;
+    if(path)
+    { simple = 2; list_rank_paths = 1;}
+    if(icc_version_2) flags |= OY_ICC_VERSION_2;
+    if(icc_version_4) flags |= OY_ICC_VERSION_4;
+    if(short_var)
+      simple = 1;
+    if(system_wide)
+      scope = oySCOPE_SYSTEM;
+    char ** results = oyjlOptions_ResultsToList( ui->opts, "d", &n );
+    if(n && strcmp(results[0],"oyjl-list") == 0)
+    {
+      device_pos = -2;
+      if(verbose)
+        fprintf( stderr, "device_pos: %d %d \"%s\"\n", device_pos, n, results?results[0]:"---" );
+    }
+    oyjlStringListRelease( &results, n, free );
+    results = oyjlOptions_ResultsToList( ui->opts, "device-name", &n );
+    if(n && strcmp(results[0],"oyjl-list") == 0)
+    {
+      device_pos = -3;
+      if(verbose)
+        fprintf( stderr, "device_pos: %d %d \"%s\"\n", device_pos, n, results?results[0]:"---" );
+    }
+    oyjlStringListRelease( &results, n, free );
+    if( profile_name && strcmp(profile_name,"oyjl-list") == 0 )
+    {
+      assign = 0;
+      list_profiles = 1;
+      if(verbose)
+      {
+        results = oyjlOptions_ResultsToList( ui->opts, "device-name", &n );
+        fprintf( stderr, "profile_name: \"%s\" assign: %d list_profiles: %d\n", profile_name, assign, list_profiles );
+        oyjlStringListRelease( &results, n, free );
+        prof_name = NULL;
+      }
+    }
+    n = 0;
+
 
 #define TEST_CAT_FILE( string, fn ) {\
   size_t size = 0; \
@@ -302,7 +603,7 @@ int main(int argc, char *argv[])
        oyStringListRelease_( &path_names, path_names_n, free );
 
        oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-       exit( 0 );
+       return 0;
      }
 
      if(verbose)
@@ -334,7 +635,7 @@ int main(int argc, char *argv[])
        }
      }
      oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-     exit(0);
+     return 0;
   }
 
   /* resolve device_class */
@@ -355,7 +656,7 @@ int main(int argc, char *argv[])
                                     "//" OY_TYPE_STD "/icc_profile_flags",
                                     flags, 0, OY_CREATE_NEW );
 
-    if(device_name)
+    if(device_name && strcmp(device_name, "oyjl-list") != 0)
       error = oyDeviceGet( OY_TYPE_STD, device_class, device_name, options, &c );
     else
       error = oyDevicesGet( OY_TYPE_STD, device_class, options, &devices );
@@ -363,20 +664,20 @@ int main(int argc, char *argv[])
     oyOptions_Release( &options );
 
     n = oyConfigs_Count( devices );
-    if( device_pos != -1 &&
-        (device_pos >= (int)n || device_pos < -1) )
+    if( device_pos >= 0 &&
+        (device_pos >= (int)n || device_pos < -3) )
     {
       device_name = 0;
       fprintf( stderr, "%s %s\n  device_class: \"%s\" device_pos: \"%d\"  %s: %d\n", _("!!! ERROR"), _("Could not resolve device."),
                device_class?device_class:"????", device_pos,
                _("Available devices"), n);
       oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-      exit(1);
+      return 1;
     }
   }
 
   /* resolve device_name */
-  if(device_pos != -1)
+  if(device_pos >= 0)
   {
     char * t;
 
@@ -387,7 +688,7 @@ int main(int argc, char *argv[])
                device_class?device_class:"????", device_pos,
                _("Available devices"), n);
       oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-      exit(1);
+      return 1;
     }
 
     device_name = oyConfig_FindString( c, "device_name", 0 );
@@ -402,8 +703,14 @@ int main(int argc, char *argv[])
                device_class?device_class:"????", device_pos,
                _("Available devices"), n);
       oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-      exit(1);
+      return 1;
     }
+  } else
+    if(device_pos == -2) /* "oyjl-list" */
+  {
+    int i;
+    for(i = 0; i < n; ++i)
+      printf( "%d\n", i );
   }
 
   if(device_json)
@@ -423,7 +730,7 @@ int main(int argc, char *argv[])
       fprintf( stderr, OY_DBG_FORMAT_ "%s %s: %s  %d\n", OY_DBG_ARGS_, _("!!! ERROR"), _("Could not resolve device_json"),
                device_json, error);
       oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-      exit(1);
+      return 1;
     }
     device_class = oyStringCopy_( oyConfig_FindString( c, "device_class", 0 ), NULL );
     if(!device_class)
@@ -464,8 +771,7 @@ int main(int argc, char *argv[])
       {
         fprintf( stderr, "%s: %s  %d\n", _("!!! ERROR"),
                  _("Could not resolve rank_json"), error );
-        displayHelp(argv);
-        exit(1);
+        return 1;
       }
     }
 
@@ -497,7 +803,7 @@ int main(int argc, char *argv[])
         if(n != 0)
           c = oyConfigs_Get( devices, i );
 
-        if( device_pos != -1 && device_pos != i )
+        if( device_pos >= 0 && device_pos != i )
         {
           oyConfig_Release( &c );
           continue;
@@ -510,17 +816,29 @@ int main(int argc, char *argv[])
                                  oyAllocFunc );
         oyDeviceAskProfile2( c, options, &prof );
 
-        if(!simple)
+        if(simple == 0)
         {
-          oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+          if(device_pos >= -1)
+            oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
                               "%d: ", i );
+          if(device_pos >= -1)
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
-                              "\"%s\" ", text ? text : "???" );
+                              "\"" );
+          oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                              "%s", text ? text : "???" );
+          if(device_pos >= -1)
+          oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                              "\" " );
+          if(device_pos >= -1)
           error = oyDeviceGetInfo( c, oyNAME_NAME, options, &text,
                                    oyAllocFunc );
+          if(device_pos >= -1)
           oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
                               "%s%s", text ? text : "???",
                               (i+1 == n) || device_pos != -1 ? "" : "\n" );
+          else if(i < n-1)
+          oyStringAddPrintf_( &report, oyAllocFunc, oyDeAllocFunc,
+                              "\n" );
         } else
         {
           data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc);
@@ -593,7 +911,7 @@ int main(int argc, char *argv[])
     oyOptions_Release( &options );
 
     oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-    exit(0);
+    return 0;
 
   } else
   if( list )
@@ -661,7 +979,7 @@ int main(int argc, char *argv[])
     }
 
     oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-    exit(0);
+    return 0;
 
   } else
   if( (setup || unset || erase || assign) &&
@@ -736,10 +1054,20 @@ int main(int argc, char *argv[])
         }
       } else
       {
-        error = oyDeviceSetProfile( c, scope, prof_name );
+        char * file_name = NULL;
+        if(prof_name && strchr(prof_name, '(') != NULL && strchr(prof_name, '(') < strchr(prof_name, ')') )
+        {
+          char * t;
+          file_name = oyjlStringCopy( strchr(prof_name,'(') + 1, 0 );
+          t = strchr(file_name, ')');
+          t[0] = '\000';
+        } else
+          file_name = oyjlStringCopy( prof_name, 0 );
+        error = oyDeviceSetProfile( c, scope, file_name );
         if(error)
           fprintf( stdout, "profile assignment failed\n" );
         error = oyDeviceUnset( c );
+        free(file_name);
       }
 
       error = oyOptions_SetFromInt( &options,
@@ -751,8 +1079,7 @@ int main(int argc, char *argv[])
     }
     else if(assign)
     {
-      displayHelp(argv);
-      exit (1);
+      return 1;
     }
 
     if(unset || erase)
@@ -773,7 +1100,7 @@ int main(int argc, char *argv[])
 
     oyConfig_Release( &c );
     oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-    exit(0);
+    return 0;
 
   } else
   if((list_profiles || list_taxi_profiles) && (c || (device_class && device_name)))
@@ -829,7 +1156,7 @@ int main(int argc, char *argv[])
                device_class?device_class:"????", device_name,
                _("Available devices"), n);
       
-      exit (1);
+      return 1;
     }
 
     if(!skip_x_color_region_target)
@@ -854,87 +1181,11 @@ int main(int argc, char *argv[])
 
     if(list_profiles)
     {
-      int size, i, current = -1, current_tmp = 0, pos = 0;
-      oyProfile_s * profile = 0, * temp_profile = 0;
-      oyProfiles_s * patterns = 0, * iccs = 0;
-      const char * profile_file_name = 0;
-      int32_t * rank_list;
-      int empty_added;
-
-      profile = oyProfile_FromSignature( profile_class, oySIGNATURE_CLASS, 0 );
-      patterns = oyProfiles_New( 0 );
-      oyProfiles_MoveIn( patterns, &profile, -1 );
-
-      iccs = oyProfiles_Create( patterns, flags, 0 );
-      oyProfiles_Release( &patterns );
-
-
-      size = oyProfiles_Count(iccs);
-      if(verbose)
-        fprintf( stderr, "%s %s: %d\n",
-                 _("found profiles for device class"), device_class, size );
-      rank_list = (int32_t*) malloc( size * sizeof(int32_t) );
-      oyProfiles_DeviceRank( iccs, c, rank_list );
-
-      size = oyProfiles_Count(iccs);
-
-      error = oyDeviceGetProfile( c, options, &profile );
-      profile_file_name = oyProfile_GetFileName( profile, 0 );
-
-      empty_added = -1;
-
-      for( i = 0; i < size; ++i)
-      {
-        const char * temp_profile_file_name, * description;
-        {
-           temp_profile = oyProfiles_Get( iccs, i );
-           description = oyProfile_GetText( temp_profile, oyNAME_DESCRIPTION );
-           temp_profile_file_name = oyProfile_GetFileName( temp_profile, 0);
-
-           current_tmp = -1;
-
-           if(profile_file_name && temp_profile_file_name &&
-              strcmp( profile_file_name, temp_profile_file_name ) == 0)
-             current_tmp = pos;
-
-           if(current == -1 && current_tmp != -1)
-             current = current_tmp;
-
-           if(empty_added == -1 &&
-              rank_list[i] < 1)
-           {
-             fprintf(stdout, "automatic\n");
-             empty_added = pos;
-             if(current != -1 &&
-                current == pos)
-               ++current;
-             ++pos;
-           }
-
-           if(show_non_device_related == 1 ||
-              rank_list[i] > 0 ||
-              current_tmp != -1)
-           {
-             fprintf( stdout, "[%d] %s (%s)\n",
-                  rank_list[i], description, temp_profile_file_name);
- 
-             ++pos;
-           }
-        }
-        oyProfile_Release( &temp_profile );
-      }
-      if(empty_added == -1)
-      {
-        ++pos;
-        if(current == -1 && current_tmp != -1)
-          current = pos;
-      }
-      if(verbose)
-        fprintf( stderr, "current: %d\n", current );
-
-      oyProfile_Release( &profile );
-      oyProfiles_Release( &iccs );
-      oyOptions_Release( &options );
+      char ** list = listProfiles( c, profile_class, device_class, flags, verbose, show_non_device_related, options, &n );
+      int i;
+      for(i = 0; i < n; ++i)
+        puts( list[i] );
+      oyjlStringListRelease( &list, n, free );
 
     } else if(list_taxi_profiles)
     {
@@ -987,7 +1238,7 @@ int main(int argc, char *argv[])
 
     oyConfig_Release( &c );
     oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-    exit(0);
+    return 0;
 
 
   } else if(format && c)
@@ -1026,7 +1277,7 @@ int main(int argc, char *argv[])
                device_class?device_class:"????", device_name,
                _("Available devices"), n);
       
-      exit (1);
+      return 1;
     }
 
     /* query the full device information from DB */
@@ -1070,7 +1321,7 @@ int main(int argc, char *argv[])
         {
           fprintf( stderr, "no DB data available\n" );
           oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-          exit(0);
+          return 0;
         }
 
         t = oyAllocateFunc_(256);
@@ -1088,7 +1339,7 @@ int main(int argc, char *argv[])
         oyConfDomain_Release( &domain );
 
         if(!map)
-        { fprintf( stderr, "no RankMap found\n" ); exit(0);
+        { fprintf( stderr, "no RankMap found\n" ); return 0;
         }
 
         error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/options/device_class",
@@ -1096,7 +1347,7 @@ int main(int argc, char *argv[])
         oyRankMapToJSON( map, options, &json, oyAllocFunc );
         oyOptions_Release( &options );
         if(!json)
-        { fprintf( stderr, "no JSON from RankMap available\n" ); exit(0);
+        { fprintf( stderr, "no JSON from RankMap available\n" ); return 0;
         }
 
         t = oyAllocateFunc_(256);
@@ -1259,7 +1510,7 @@ int main(int argc, char *argv[])
 
     } else {
       fprintf( stderr, "%s unsupported format: %s\n", _("!!! ERROR"), format );
-      exit (1);
+      return 1;
     }
 
     if(verbose || (error && !size) || !size)
@@ -1270,13 +1521,12 @@ int main(int argc, char *argv[])
     oyConfDomain_Release( &d );
 
     oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-    exit(0);
+    return 0;
   }
 
 
   /* This point should not be reached */
-  displayHelp(argv);
-  exit (1);
+  return 1;
 
   /* device profile */
   if(0)
@@ -1389,9 +1639,59 @@ int main(int argc, char *argv[])
       oyProfile_Release( &prof );
     }
   }
+  }
+  else error = 1;
 
-  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+  clean_main:
+  {
+    int i = 0;
+    while(oarray[i].type[0])
+    {
+      if(oarray[i].value_type == oyjlOPTIONTYPE_CHOICE && oarray[i].values.choices.list)
+        free(oarray[i].values.choices.list);
+      ++i;
+    }
+  }
+  //oyjlLibRelease();
+
+  //oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
+
+  return error;
+}
+
+extern int * oyjl_debug;
+char ** environment = NULL;
+int main( int argc_, char**argv_, char ** envv )
+{
+  int argc = argc_;
+  char ** argv = argv_;
+
+#ifdef __ANDROID__
+  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
+  argv = calloc( argc + 2, sizeof(char*) );
+  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
+  argv[argc++] = "--render=gui"; /* start Renderer (e.g. QML) */
+  environment = environ;
+#else
+  environment = envv;
+#endif
+
+  /* language needs to be initialised before setup of data structures */
+#ifdef USE_GETTEXT
+#ifdef HAVE_LOCALE_H
+  setlocale(LC_ALL,"");
+#endif
+#endif
+
+  oyExportStart_(EXPORT_CHECK_NO);
+  myMain(argc, (const char **)argv);
+
+#ifdef __ANDROID__
+  free( argv );
+#endif
 
   return 0;
 }
+
 

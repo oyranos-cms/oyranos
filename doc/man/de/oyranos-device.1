@@ -1,0 +1,231 @@
+.TH "oyranos-device" 1 "May 13, 2021" "User Commands"
+.SH NAME
+oyranos-device v0.9.7 \- Oyranos Farbgerät
+.SH ÜBERSICHT
+\fBoyranos-device\fR \fB\-a\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR \fB\-p\fR \fIICC_DATEINAME\fR [\fB\-\-system-wide\fR]
+.br
+\fBoyranos-device\fR \fB\-e\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR [\fB\-\-system-wide\fR]
+.br
+\fBoyranos-device\fR \fB\-s\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR
+.br
+\fBoyranos-device\fR \fB\-u\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR
+.br
+\fBoyranos-device\fR \fB\-l\fR [\fB\-v\fR] [\fB\-\-short\fR] [\fB\-\-print-class\fR]
+.br
+\fBoyranos-device\fR \fB\-l\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-d\fR \fINUMMER\fR|\fB\-\-device-name\fR \fINAME\fR] [\fB\-\-short\fR] [\fB\-\-path\fR] [\fB\-r\fR] [\fB\-v\fR]
+.br
+\fBoyranos-device\fR \fB\-\-list-profiles\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-\-show-non-device-related\fR]
+.br
+\fBoyranos-device\fR \fB\-\-list-taxi-profiles\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-\-show-non-device-related\fR]
+.br
+\fBoyranos-device\fR \fB\-f\fR \fIicc|openicc+rank-map|openicc|openicc-rank-map\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR \fB\-j\fR \fIDATEINAME\fR \fB\-k\fR \fIDATEINAME\fR [\fB\-o\fR \fIDATEINAME\fR] [\fB\-\-only-db\fR] [\fB\-m\fR]
+.br
+\fBoyranos-device\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+.SH BESCHREIBUNG
+Das oyranos-device Program zeigt und ändert Einstellungen zu ICC Geräteprofilen.
+.SH OPTIONEN
+.SS
+Setze grundlegende Parameter
+.br
+\fB\-c\fR|\fB\-\-device-class\fR \fIKLASSE\fR	nutze Geräteklasse. Nützliche Klassen sind monitor, scanner, printer, camera
+.br
+	\-c monitor		# Bildschirm
+.br
+	\-c printer		# Drucker
+.br
+	\-c camera		# Kamera
+.br
+	\-c scanner		# Scanner
+.br
+\fB\-d\fR|\fB\-\-device-pos\fR \fINUMMER\fR	Geräteposition started von Null
+.br
+\fB\-\-device-name\fR \fINAME\fR	geben Sie alternativ den Namen des Gerätes an
+.br
+\fB\-2\fR|\fB\-\-icc-version-2\fR	Wähle ICC V2 Profile
+.br
+\fB\-4\fR|\fB\-\-icc-version-4\fR	Wähle ICC V4 Profile
+.br
+\fB\-r\fR|\fB\-\-skip-x-color-region-target\fR	ignoriere X Color Management Geräteprofil
+.br
+.SS
+Weise Farbprofil einem Gerät zu
+\fBoyranos-device\fR \fB\-a\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR \fB\-p\fR \fIICC_DATEINAME\fR [\fB\-\-system-wide\fR]
+.br
+\fB\-a\fR|\fB\-\-assign\fR	Füge Konfiguration zu OpenICC DB hinzu
+.br
+\fB\-p\fR|\fB\-\-profile-name\fR \fIICC_DATEINAME\fR	Profildateiname
+.RS
+Can be "" empty string or "automatic" or a real profile name.
+.RE
+\fB\-\-system-wide\fR	Füge systemweit hinzu
+.br
+.SS
+Löse Profil vom Gerät
+\fBoyranos-device\fR \fB\-e\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR [\fB\-\-system-wide\fR]
+.br
+\fB\-e\fR|\fB\-\-erase\fR	Lösche Geräteinformationen von OpenICC DB
+.br
+.SS
+Initialisiere Gerät
+\fBoyranos-device\fR \fB\-s\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR
+.br
+\fB\-s\fR|\fB\-\-setup\fR	stelle Sitzung ein mit OpenICC DB Daten
+.br
+.SS
+Setze Gerät zurück
+\fBoyranos-device\fR \fB\-u\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR
+.br
+\fB\-u\fR|\fB\-\-unset\fR	Setze Sitzungseinstellung zurück zu keinen Einstellungen
+.br
+.SS
+Zeige Geräteklassen
+\fBoyranos-device\fR \fB\-l\fR [\fB\-v\fR] [\fB\-\-short\fR] [\fB\-\-print-class\fR]
+.br
+\fB\-l\fR|\fB\-\-list\fR	Zeige Geräteklassen
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	plaudernd
+.br
+\fB\-\-short\fR	zeige Modul ID oder Profilnamen
+.br
+\fB\-\-print-class\fR	zeige die Geräteklasse des Modules
+.br
+.SS
+Geräteliste
+\fBoyranos-device\fR \fB\-l\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-d\fR \fINUMMER\fR|\fB\-\-device-name\fR \fINAME\fR] [\fB\-\-short\fR] [\fB\-\-path\fR] [\fB\-r\fR] [\fB\-v\fR]
+.br
+Benötigt die -c Option
+.br
+.sp
+.br
+\fB\-l\fR|\fB\-\-list\fR	Zeige Geräteklassen
+.br
+\fB\-c\fR|\fB\-\-device-class\fR \fIKLASSE\fR	nutze Geräteklasse. Nützliche Klassen sind monitor, scanner, printer, camera
+.br
+	\-c monitor		# Bildschirm
+.br
+	\-c printer		# Drucker
+.br
+	\-c camera		# Kamera
+.br
+	\-c scanner		# Scanner
+.br
+\fB\-\-short\fR	zeige Modul ID oder Profilnamen
+.br
+\fB\-\-path\fR	zeige den vollständigen Dateiname
+.br
+.SS
+Liste lokale DB Profile für gewähltes Gerät
+\fBoyranos-device\fR \fB\-\-list-profiles\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-\-show-non-device-related\fR]
+.br
+Benötigt -c und -d Optionen.
+.br
+.sp
+.br
+\fB\-\-list-profiles\fR	Liste lokale DB Profile für gewähltes Gerät
+.br
+\fB\-\-show-non-device-related\fR	zeige auch nicht passende Profile
+.br
+.SS
+Liste Profile von Taxi für gewähltes Gerät
+\fBoyranos-device\fR \fB\-\-list-taxi-profiles\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-d\fR \fINUMMER\fR] [\fB\-\-show-non-device-related\fR]
+.br
+Benötigt -c und -d Optionen.
+.br
+.sp
+.br
+\fB\-\-list-taxi-profiles\fR	Liste Profile von Taxi für gewähltes Gerät
+.br
+\fB\-\-show-non-device-related\fR	zeige auch nicht passende Profile
+.br
+.SS
+Schreibe Gerätefarbeinstellungen
+\fBoyranos-device\fR \fB\-f\fR \fIicc|openicc+rank-map|openicc|openicc-rank-map\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR \fB\-j\fR \fIDATEINAME\fR \fB\-k\fR \fIDATEINAME\fR [\fB\-o\fR \fIDATEINAME\fR] [\fB\-\-only-db\fR] [\fB\-m\fR]
+.br
+Benötigt -c und -d Optionen.
+.br
+.sp
+.br
+\fB\-f\fR|\fB\-\-format\fR \fIicc|openicc+rank-map|openicc|openicc-rank-map\fR	Schreibe OpenICC Konfigurationdaten
+.br
+	\-f icc		# Schreibe zugewiesenes ICC Profil
+.br
+	\-f fallback-icc		# erzeuge alternatives ICC Profil
+.br
+	\-f openicc+rank-map		# erzeuge OpenICC Gerätefarbeinstellungs JSON mit Wichtungstabelle
+.br
+	\-f openicc		# erzeuge OpenICC Gerätefarbeinstellungs JSON
+.br
+	\-f openicc-rank-map		# erzeuge OpenICC Wichtungstabelle JSON zu Gerätefarbeinstellungen
+.br
+\fB\-o\fR|\fB\-\-output\fR \fIDATEINAME\fR	schreibe nach Datei
+.br
+\fB\-j\fR|\fB\-\-device-json\fR \fIDATEINAME\fR	benutze Geräte JSON alternativ zu den -c und -d Optionen
+.br
+\fB\-k\fR|\fB\-\-rank-json\fR \fIDATEINAME\fR	benutze Wichtungstabelle im JSON-Format alternativ zu den -c und -d Optionen
+.br
+\fB\-\-only-db\fR	benutze nur DB Schlüssel/Wertepaare für -f=openicc
+.br
+\fB\-m\fR|\fB\-\-device-meta-tag\fR	bette Geräte-und Treiberinformationen in ICC meta Block ein
+.br
+.SH ALLGEMEINE OPTIONEN
+.SS
+Allgemeine Optionen
+\fBoyranos-device\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+.br
+\fB\-h\fR|\fB\-\-help\fR	Hilfe
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+.RS
+Hole Benutzerschnittstelle als Text
+.RE
+	\-X man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
+.br
+	\-X markdown		# Markdown : Formatierter Text - Hole formatierten Text
+.br
+	\-X json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
+.br
+	\-X json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\-X export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
+.br
+\fB\-V\fR|\fB\-\-version\fR	Version
+.br
+\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	Wähle Darstellung
+.RS
+Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" wird einen Web Service starten.
+.RE
+	\-R gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
+.br
+	\-R web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser
+.br
+	\-R -		# 
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	plaudernd
+.br
+.SH ENVIRONMENT
+.TP
+OY_DEBUG
+.br
+setze den Oyranos Fehlersuchniveau. Die -v Option kann alternativ benutzt werden.
+.TP
+XDG_DATA_HOME XDG_DATA_DIRS
+.br
+richte Oyranos auf obere Verzeichnisse, welche Resourcen enthalten. An die Pfade für ICC Profile wird "color/icc" angehangen. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html
+.br
+http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+.SH SIEHE AUCH
+.TP
+oyranos-policy(1) oyranos-config(1) oyranos-profiles(1) oyranos-profile(1) oyranos(3)
+.br
+.TP
+http://www.oyranos.org
+.br
+.SH AUTOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH KOPIERRECHT
+© 2005-2020 Kai-Uwe Behrmann and others
+.br
+Lizenz: newBSD http://www.oyranos.org
+.SH FEHLER
+https://www.github.com/oyranos-cms/oyranos/issues 
+
