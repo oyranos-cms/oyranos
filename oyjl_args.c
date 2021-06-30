@@ -2893,6 +2893,8 @@ oyjlUi_s *         oyjlUi_Copy       ( oyjlUi_s          * src )
   return ui;
 }
 
+/**
+ *  @return                            is_double_string  */
 int oyjlManAddOptionToGroupList_     ( char            *** group,
                                        int               * group_n,
                                        char                o,
