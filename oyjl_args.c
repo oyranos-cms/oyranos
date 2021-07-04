@@ -1972,6 +1972,14 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           o = oyjlOptions_GetOptionL( opts, str, OYJL_QUIET );
           if(o && o->flags & OYJL_OPTION_FLAG_ACCEPT_NO_ARG)
             might_have_value = 1;
+          if(o && !(o->flags & OYJL_OPTION_FLAG_NO_DASH))
+          {
+            oyjlOptions_Print_( opts, i );
+            fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
+            fprintf( stderr, "%s \'%s\'\n", _("Option not supported without double dash"), oyjlTermColor(oyjlBOLD,str) );
+            state = oyjlOPTION_NOT_SUPPORTED;
+            goto clean_parse;
+          }
           if(o && o->value_type == oyjlOPTIONTYPE_NONE)
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
@@ -2905,7 +2913,7 @@ int oyjlManAddOptionToGroupList_     ( char            *** group,
   int is_double_string = 0, i;
   char ** g = *group;
   char oo[] = {o,0,0,0};
-  const char * opt[2];
+  const char * opt[2] = {NULL,NULL};
 
   if(g)
   {
