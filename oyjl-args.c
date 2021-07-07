@@ -54,7 +54,7 @@ int myMain( int argc, const char ** argv )
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input", NULL, _("input"), _("Set Input"), _("For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON."), _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file} },
     {"oiwi", 0,    NULL, "completion-bash",NULL, _("Completion Bash"),_("Generate bash completion code"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &completion_bash} },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL,"test",    NULL, _("Test"),    _("Generate test Args Export"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &test} },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE,  "o",NULL,    NULL, "O",    NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {0} },
@@ -71,7 +71,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,      {}},
     /* The --render option can be hidden and used only internally. */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE,     "R", "render",  NULL, NULL,  NULL,         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "R", "render",  NULL, NULL,  NULL,         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render} },
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
 
@@ -79,7 +79,7 @@ int myMain( int argc, const char ** argv )
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
     {"oiwg", 0,     _("Convert"),_("Generate source code"),NULL, "i", "completion-bash,v","i,completion-bash" }, /* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X,V",   "v",      "h,X,V,v" }, /* just show in documentation */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X,R,V",   "i,v",      "h,X,R,V,v" }, /* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
 
@@ -123,7 +123,7 @@ int myMain( int argc, const char ** argv )
   }
 
   /* Render boilerplate */
-  if(ui && render)
+  if(ui && render && !file)
   {
 #if !defined(NO_OYJL_ARGS_RENDER)
     int debug = verbose;
@@ -245,13 +245,24 @@ int myMain( int argc, const char ** argv )
       text = oyjlReadFileStreamToMem( fp, &size ); 
       if(fp != stdin) fclose( fp );
     }
-    
-    char error_buffer[128] = {0};
-    oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
-    char * sources = oyjlUiJsonToCode( json, completion_bash ? OYJL_COMPLETION_BASH : OYJL_SOURCE_CODE_C );
-    fprintf( stderr, "wrote %d to stdout\n", sources&&strlen(sources)?(int)strlen(sources):0 );
-    if(sources)
-      puts( sources );
+
+    if(render)
+    {    
+#if !defined(NO_OYJL_ARGS_RENDER)
+      int debug = verbose;
+      oyjlArgsRender( argc, argv, text, NULL,NULL, debug, ui, NULL );
+#else
+      fprintf( stderr, "No render support compiled in. Use a GUI use -X json and load into oyjl-args-qml viewer." );
+#endif
+    } else
+    {
+      char error_buffer[128] = {0};
+      oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
+      char * sources = oyjlUiJsonToCode( json, completion_bash ? OYJL_COMPLETION_BASH : OYJL_SOURCE_CODE_C );
+      fprintf( stderr, "wrote %d to stdout\n", sources&&strlen(sources)?(int)strlen(sources):0 );
+      if(sources)
+        puts( sources );
+    }
   }
 
   oyjlUi_Release( &ui);
