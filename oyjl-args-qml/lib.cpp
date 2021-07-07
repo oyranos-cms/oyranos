@@ -10,7 +10,7 @@
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *  @since    2019/04/18
  *
- *  basic QML handling and environment setup
+ *  basic QML handling and environment setup for the -R=qml option
  */
 
 #include <QApplication>
