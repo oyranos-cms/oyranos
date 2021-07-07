@@ -957,7 +957,7 @@ oyjlTESTRESULT_e testArgs()
     {"",0,0,0,0,0,0,0}
   };
   argc = 3;
-  const char * argv2[] = {"test-args","help","input"};
+  const char * argv2[] = {"test-args","--help","input"};
   ui = oyjlUi_Create( argc, argv2, /* argc+argv are required for parsing the command line options */
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray2, groups2, NULL );

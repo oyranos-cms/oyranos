@@ -2187,6 +2187,9 @@ static int oyjlArgsRendererSelect_  (  oyjlUi_s          * ui )
         if(strlen(low) >= strlen("qml") && memcmp("qml",low,strlen("qml")) == 0)
           name = "OyjlArgsQml";
         else
+        if(strlen(low) >= strlen("cli") && memcmp("cli",low,strlen("cli")) == 0)
+          name = "OyjlArgsCli";
+        else
         if(strlen(low) >= strlen("web") && memcmp("web",low,strlen("web")) == 0)
           name = "OyjlArgsWeb";
         if(!name)
@@ -2203,6 +2206,8 @@ static int oyjlArgsRendererSelect_  (  oyjlUi_s          * ui )
     {
       if(oyjlArgsRendererLoad_( "OyjlArgsQml" ) == 0)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsQml found - option -R=\"gui\"", OYJL_DBG_ARGS );
+      if(oyjlArgsRendererLoad_( "OyjlArgsCli" ) == 0)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsCli found - option -R=\"cli\"", OYJL_DBG_ARGS );
       if(oyjlArgsRendererLoad_( "OyjlArgsWeb" ) == 0)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsWeb found - option -R=\"web\"", OYJL_DBG_ARGS );
     }

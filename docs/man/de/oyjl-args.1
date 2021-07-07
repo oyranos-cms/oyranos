@@ -4,7 +4,7 @@ oyjl-args v1.0.0 \- Benutzerschnittstellen nach Quelltext
 .SH ÜBERSICHT
 \fBoyjl-args\fR \fB\-i\fR \fIDATEINAME\fR [\fB\-\-completion-bash\fR] [\fB\-v\fR]
 .br
-\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-R\fR \fIgui|cli|web|...\fR \fB\-V\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-v\fR]
 .SH BESCHREIBUNG
 Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu übertragen.
 .SH OPTIONEN
@@ -13,12 +13,14 @@ Erzeuge Quelltext
 \fBoyjl-args\fR \fB\-i\fR \fIDATEINAME\fR [\fB\-\-completion-bash\fR] [\fB\-v\fR]
 .br
 \fB\-i\fR|\fB\-\-input\fR \fIDATEINAME\fR	Setze Eingabe
-.br
+.RS
+Für C Quelltext Ausgabe(voreingestellt) und --completion-bash Ausgabe nutze -X=export JSON. Für --render=XXX nutze -X=json JSON.
+.RE
 \fB\-\-completion-bash\fR	Erzeuge Bash Vervollständigungsskript
 .br
 .SS
 Allgemeine Optionen
-\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-R\fR \fIgui|cli|web|...\fR \fB\-V\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-v\fR]
 .br
 \fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Zeige Hilfetext an
 .RS
@@ -41,6 +43,18 @@ Hole Benutzerschnittstelle als Text
 	\-X json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
 .br
 	\-X export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
+.br
+\fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Wähle Darstellung
+.RS
+Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten.
+.RE
+	\-R gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
+.br
+	\-R cli		# Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.
+.br
+	\-R web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser
+.br
+	\-R -		# 
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br

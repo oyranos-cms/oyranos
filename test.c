@@ -1124,7 +1124,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
                            4316                      /*markdown_size*/,
                            7528                      /*json_size*/,
                            7555                      /*json_command_size*/,
-                           11457                     /*export_size*/,
+                           11682                     /*export_size*/,
                            4144                      /*bash_size*/,
                            result,
                            oyjlTESTRESULT_FAIL       /*fail*/ );
@@ -1241,7 +1241,7 @@ oyjlTESTRESULT_e testUiTranslation ()
                            3874                      /*markdown_size*/,
                            6961                      /*json_size*/,
                            6993                      /*json_command_size*/,
-                           10381                     /*export_size*/,
+                           10606                     /*export_size*/,
                            3150                      /*bash_size*/,
                            result,
                            oyjlTESTRESULT_FAIL       /*fail*/ );

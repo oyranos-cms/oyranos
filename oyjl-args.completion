@@ -28,7 +28,7 @@ _oyjl_args()
             ;;
         --render) # long option with static args
             local IFS=$'\n'
-            local WORD_LIST=('gui' 'web' '-')
+            local WORD_LIST=('gui' 'cli' 'web' '-')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
@@ -52,7 +52,7 @@ _oyjl_args()
             ;;
         -R=*) # single letter option with static args
             local IFS=$'\n'
-            local WORD_LIST=('gui' 'web' '-')
+            local WORD_LIST=('gui' 'cli' 'web' '-')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
@@ -107,8 +107,8 @@ _oyjl_args()
             set +x +v
             return
             ;;
-        -h|--help|-X|--export|-V|--version)
-          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+        -h|--help|-X|--export|-R|--render|-V|--version)
+          COMPREPLY=($(compgen -W '-i= --input= -v --verbose' -- "$cur"))
             set +x +v
             return
             ;;
@@ -118,7 +118,7 @@ _oyjl_args()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       local WORD_LIST=()
-      WORD_LIST=("${WORD_LIST[@]}" -i= --input= -h= --help= -X= --export= -V --version)
+      WORD_LIST=("${WORD_LIST[@]}" -i= --input= -h= --help= -X= --export= -R= --render= -V --version)
       COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return

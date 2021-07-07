@@ -990,7 +990,7 @@ oyjlTESTRESULT_e testArgs()
                            3788                      /*markdown_size*/,
                            6779                      /*json_size*/,
                            6806                      /*json_command_size*/,
-                           10356                     /*export_size*/,
+                           10581                     /*export_size*/,
                            3163                      /*bash_size*/,
                            result,
                            oyjlTESTRESULT_FAIL       /*fail*/ );
@@ -1086,7 +1086,7 @@ oyjlTESTRESULT_e testArgs()
                            2300                      /*markdown_size*/,
                            4710                      /*json_size*/,
                            4737                      /*json_command_size*/,
-                           9841                      /*export_size*/,
+                           10066                     /*export_size*/,
                            3030                      /*bash_size*/,
                            result,
                            oyjlTESTRESULT_FAIL       /*fail*/ );
