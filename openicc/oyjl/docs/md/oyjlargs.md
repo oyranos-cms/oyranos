@@ -12,7 +12,7 @@ oyjl-args v1.0.0 - Ui to source code
 
 <strong>oyjl-args</strong> <a href="#input"><strong>-i</strong>=<em>FILENAME</em></a> [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyjl-args</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-V</strong> [<strong>-v</strong>]
+<strong>oyjl-args</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-R</strong>=<em>gui|cli|web|...</em> <strong>-V</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -25,14 +25,14 @@ Tool to convert UI JSON description from *-X export* into source code.
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>FILENAME</em> [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>FILENAME</em></td> <td>Set Input  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>FILENAME</em></td> <td>Set Input<br />For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON.  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--completion-bash</strong></td> <td>Generate bash completion code</td> </tr>
 </table>
 
 <h3 id="help">General options</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-V</strong> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-R</strong>=<em>gui|cli|web|...</em> <strong>-V</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.
@@ -49,6 +49,15 @@ Tool to convert UI JSON description from *-X export* into source code.
    <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Command</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
   </table>
   </td>
  </tr>

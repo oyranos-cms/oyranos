@@ -4,7 +4,7 @@ oyjl-args v1.0.0 \- Ui to source code
 .SH SYNOPSIS
 \fBoyjl-args\fR \fB\-i\fR \fIFILENAME\fR [\fB\-\-completion-bash\fR] [\fB\-v\fR]
 .br
-\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-R\fR \fIgui|cli|web|...\fR \fB\-V\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-v\fR]
 .SH DESCRIPTION
 Tool to convert UI JSON description from *-X export* into source code.
 .SH OPTIONS
@@ -13,12 +13,14 @@ Generate source code
 \fBoyjl-args\fR \fB\-i\fR \fIFILENAME\fR [\fB\-\-completion-bash\fR] [\fB\-v\fR]
 .br
 \fB\-i\fR|\fB\-\-input\fR \fIFILENAME\fR	Set Input
-.br
+.RS
+For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON.
+.RE
 \fB\-\-completion-bash\fR	Generate bash completion code
 .br
 .SS
 General options
-\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-R\fR \fIgui|cli|web|...\fR \fB\-V\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-v\fR]
 .br
 \fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Print help text
 .RS
@@ -41,6 +43,18 @@ Get UI converted into text formats
 	\-X json+command		# Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command
 .br
 	\-X export		# Export : All available data - Get UI data for developers
+.br
+\fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Select Renderer
+.RS
+Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
+.RE
+	\-R gui		# Gui : Show UI - Display a interactive graphical User Interface.
+.br
+	\-R cli		# Cli : Show UI - Print on Command Line Interface.
+.br
+	\-R web		# Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.
+.br
+	\-R -		# 
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br

@@ -1411,6 +1411,7 @@ oyjlOptionChoice_s oyjl_X_choices_[] = {
                                     {"","","",""}};
 oyjlOptionChoice_s oyjl_R_choices_[] = {
                                     {"gui", "", "", ""},
+                                    {"cli", "", "", ""},
                                     {"web", "", "", ""},
                                     {"-","","",""},
                                     {"","","",""}};
@@ -1422,7 +1423,8 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
   if(strcmp(o->o, "h") == 0)
   {
     if((o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL) ||
-        o->value_type == oyjlOPTIONTYPE_FUNCTION
+        o->value_type == oyjlOPTIONTYPE_FUNCTION ||
+        o->value_type == oyjlOPTIONTYPE_NONE
       )
     {
       if(o->value_type == oyjlOPTIONTYPE_CHOICE)
@@ -1503,15 +1505,18 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
       oyjl_R_choices_[0].name = _("Gui");
       oyjl_R_choices_[0].description = _("Show UI");
       oyjl_R_choices_[0].help = _("Display a interactive graphical User Interface.");
-      oyjl_R_choices_[1].name = _("Web");
-      oyjl_R_choices_[1].description = _("Start Web Server");
-      oyjl_R_choices_[1].help = _("Start a local Web Service to connect a Webbrowser with.");
+      oyjl_R_choices_[1].name = _("Cli");
+      oyjl_R_choices_[1].description = _("Show UI");
+      oyjl_R_choices_[1].help = _("Print on Command Line Interface.");
+      oyjl_R_choices_[2].name = _("Web");
+      oyjl_R_choices_[2].description = _("Start Web Server");
+      oyjl_R_choices_[2].help = _("Start a local Web Service to connect a Webbrowser with.");
 #endif
       o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_R_choices_, sizeof(oyjl_R_choices_), malloc );
       if(o->value_name == NULL)
       {
 #if defined(OYJL_INTERNAL)
-        o->value_name = "gui|web|";
+        o->value_name = "gui|cli|web|";
 #endif
         if(o->name == NULL)
         {
@@ -1520,7 +1525,7 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
           {
             o->description = _("Select Renderer");
             if(o->help == NULL)
-              o->help = _("Select and possibly configure Renderer. -R=\"gui\" will just launch a graphical UI. -R=\"port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css\" will launch a local Web Server, which listens on local port.");
+              o->help = _("Select and possibly configure Renderer. -R=\"gui\" will just launch a graphical UI."); /* -R=\"web:port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css\" will launch a local Web Server, which listens on local port."); web is not yet implemented. */
           }
         }
       }
@@ -1561,7 +1566,8 @@ oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
     if(o->o && strcmp(o->o, ol) == 0)
     {
       if( strcmp(ol, "h") == 0 && ((o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL) ||
-                                    o->value_type == oyjlOPTIONTYPE_FUNCTION) )
+                                    o->value_type == oyjlOPTIONTYPE_FUNCTION ||
+                                    o->value_type == oyjlOPTIONTYPE_NONE) )
         oyjlOptions_EnrichInbuild_(o);
       if( strcmp(ol, "X") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL )
         oyjlOptions_EnrichInbuild_(o);

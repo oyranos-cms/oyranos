@@ -12,7 +12,7 @@ oyjl-args v1.0.0 - Benutzerschnittstellen nach Quelltext
 
 <strong>oyjl-args</strong> <a href="#input"><strong>-i</strong>=<em>DATEINAME</em></a> [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyjl-args</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-V</strong> [<strong>-v</strong>]
+<strong>oyjl-args</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-R</strong>=<em>gui|cli|web|...</em> <strong>-V</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -25,14 +25,14 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>DATEINAME</em> [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>DATEINAME</em></td> <td>Setze Eingabe  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>DATEINAME</em></td> <td>Setze Eingabe<br />Für C Quelltext Ausgabe(voreingestellt) und --completion-bash Ausgabe nutze -X=export JSON. Für --render=XXX nutze -X=json JSON.  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--completion-bash</strong></td> <td>Erzeuge Bash Vervollständigungsskript</td> </tr>
 </table>
 
 <h3 id="help">Allgemeine Optionen</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-V</strong> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-R</strong>=<em>gui|cli|web|...</em> <strong>-V</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
@@ -49,6 +49,15 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
    <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Kommando</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Wähle Darstellung<br />Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
   </table>
   </td>
  </tr>
