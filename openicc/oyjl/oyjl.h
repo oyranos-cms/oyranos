@@ -543,6 +543,7 @@ typedef union oyjlVariable_u {
  *  The type is declared inside the ::oyjlOPTIONTYPE_e enum range. */
 typedef union oyjlOption_u {
   /** @brief oyjlOPTIONTYPE_FUNCTION
+   *  The function is well called inside -h for generating help texts. Use OYJL_OPTION_FLAG_EDITABLE to supress this callback with -h.
    *  @param[in]   opt                 the option context
    *  @param[out]  selected            show the default; optional
    *  @param[in]   context             for more information
@@ -770,7 +771,7 @@ void               oyjlUi_Translate  ( oyjlUi_s          * ui,
 
 /** link with libOyjlArgsWeb and use microhttps WWW renderer as library \n
  *  link with libOyjlArgsQml and use Qt's QML to render in a GUI
- *  @see oyjlUi_ToJson()i
+ *  @see oyjlUi_ToJson()
  */
 int                oyjlArgsRender    ( int                 argc,
                                        const char       ** argv,
