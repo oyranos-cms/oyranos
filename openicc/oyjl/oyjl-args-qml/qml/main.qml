@@ -1123,7 +1123,15 @@ AppWindow {
             var optional  = group.optional
             var groupName = P.getTranslatedItem( group, "name", loc, catalog );
             var help = P.getTranslatedItem( group, "help", loc, catalog );
-            if( typeof options === "undefined" )
+            if(typeof options !== "undefined")
+            {
+                desc = P.getTranslatedItem( group, "description", loc, catalog )
+                if(typeof desc !== "undefined")
+                    groupName = desc
+                setOptions( group, groupName, help )
+            }
+            // render one group level below
+            if( typeof group.groups !== "undefined" )
                 for( var g2 in group.groups )
                 {
                     var g = group.groups[g2]
@@ -1134,16 +1142,9 @@ AppWindow {
                         groupName2 += " " + desc
                     var help2 = help
                     if(typeof groupName2 !== "undefined")
-                        help2 += " <i>" + P.getTranslatedItem( g, "help", loc, catalog ) + "</i>";
-                    setOptions( group, groupName2, help2 )
+                        help2 += "\n\n" + P.getTranslatedItem( g, "help", loc, catalog );
+                    setOptions( g, groupName2, help2 )
                 }
-            else
-            {
-                desc = P.getTranslatedItem( group, "description", loc, catalog )
-                if(typeof desc !== "undefined")
-                    groupName = desc
-                setOptions( group, groupName, help )
-            }
         }
     }
 
