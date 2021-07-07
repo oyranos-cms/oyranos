@@ -2113,6 +2113,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     {
       key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "help" );
       oyjlValueSetString( key, g->help );
+      if(*oyjl_debug)
         fprintf(stderr, "found help: %s\n", g->help);
     }
     if(sub_command)
@@ -2214,6 +2215,11 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       if(o->flags & OYJL_OPTION_FLAG_REPETITION)
       {
         key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "repetition" );
+        oyjlValueSetString( key, "1" );
+      }
+      if(o->flags & OYJL_OPTION_FLAG_NO_DASH)
+      {
+        key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "no_dash" );
         oyjlValueSetString( key, "1" );
       }
 
