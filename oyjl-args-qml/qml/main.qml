@@ -1122,27 +1122,32 @@ AppWindow {
             var mandatory = group.mandatory
             var optional  = group.optional
             var groupName = P.getTranslatedItem( group, "name", loc, catalog );
-            var help = P.getTranslatedItem( group, "help", loc, catalog );
-            if(typeof options !== "undefined")
+            if(typeof groupName === "undefined")
             {
                 desc = P.getTranslatedItem( group, "description", loc, catalog )
                 if(typeof desc !== "undefined")
                     groupName = desc
-                setOptions( group, groupName, help )
             }
+            var help = P.getTranslatedItem( group, "help", loc, catalog );
+
+            if(typeof options !== "undefined")
+                setOptions( group, groupName, help )
+
             // render one group level below
             if( typeof group.groups !== "undefined" )
                 for( var g2 in group.groups )
                 {
                     var g = group.groups[g2]
                     options = g.options
-                    var groupName2 = groupName + " : " + P.getTranslatedItem( g, "name", loc, catalog );
-                    desc = P.getTranslatedItem( g, "description", loc, catalog )
-                    if(typeof desc !== "undefined")
-                        groupName2 += " " + desc
-                    var help2 = help
+                    desc = P.getTranslatedItem( g, "name", loc, catalog )
+                    if(typeof desc === "undefined")
+                        desc = P.getTranslatedItem( g, "description", loc, catalog )
+                    var groupName2 = groupName + " : " + desc
+                    var help2 = ""
+                    if(typeof help !== "undefined")
+                        help2 = help + "\n\n"
                     if(typeof groupName2 !== "undefined")
-                        help2 += "\n\n" + P.getTranslatedItem( g, "help", loc, catalog );
+                        help2 += P.getTranslatedItem( g, "help", loc, catalog );
                     setOptions( g, groupName2, help2 )
                 }
         }
