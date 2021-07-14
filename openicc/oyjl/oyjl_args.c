@@ -1280,11 +1280,13 @@ enum {
   oyjlOPTIONSTYLE_OPTIONAL_END = 0x08,                  /* print the option as optional: EBNF [--option] */
   oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP = 0x10,         /* add second level grouping: [[--option1|--option2]] */
   oyjlOPTIONSTYLE_MAN = 0x20,                           /* add Unix MAN page groff syntax decoration */
-  oyjlOPTIONSTYLE_MARKDOWN = 0x40                       /* add markdown syntax decoration */
+  oyjlOPTIONSTYLE_MARKDOWN = 0x40,                      /* add markdown syntax decoration */
+  oyjlOPTIONSTYLE_GROUP_SUBCOMMAND = 0x080,             /* supresses dash(es): option */
+  oyjlOPTIONSTYLE_OPTION_ONLY = 0x100                   /* print the option without any args */
 };
 #define oyjlOPTIONSTYLE_OPTIONAL (oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END)
-#define oyjlOPTIONSTYLE_LINK_GROUP     0x100            /* add link to group, e.g. from synopsis line in markdown */
-#define oyjlOPTIONSTYLE_LINK_SYNOPSIS  0x200            /* add link to synopsis, e.g. in markdown */
+#define oyjlOPTIONSTYLE_LINK_GROUP     0x2000           /* add link to group, e.g. from synopsis line in markdown */
+#define oyjlOPTIONSTYLE_LINK_SYNOPSIS  0x4000           /* add link to synopsis, e.g. in markdown */
 static
 char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
                                        int                 style )
@@ -1325,7 +1327,7 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
       oyjlStringAdd( &text, malloc, free, "%s%s", sub_command ? "" : "--", oyjlTermColor( oyjlBOLD, o->option ) );
   }
 
-  if(o->value_name && o->value_name[0])
+  if(o->value_name && o->value_name[0] && !(style & oyjlOPTIONSTYLE_OPTION_ONLY))
   {
     const char * value_name = o->value_name;
     int needs_edit_dots = 0;
@@ -2750,14 +2752,19 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
-              fprintf( oyjl_help_zout, OYJL_HELP_ARG "  -%s %s\t\t# %s%s%s%s%s\n",
-                  o->o,
+            {
+              char * t = NULL;
+              t = oyjlOption_PrintArg( o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_OPTION_ONLY );
+              fprintf( oyjl_help_zout, OYJL_HELP_ARG "  %s %s\t\t# %s%s%s%s%s\n",
+                  t,
                   o->values.choices.list[l].nick,
                   o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
                   o->values.choices.list[l].description&&o->values.choices.list[l].description[0]?" : ":"",
                   o->values.choices.list[l].description?o->values.choices.list[l].description:"",
                   o->values.choices.list[l].help&&o->values.choices.list[l].help[0]?" - ":"",
                   o->values.choices.list[l].help?o->values.choices.list[l].help:"" );
+              if(t) free(t);
+            }
           }
           break;
         case oyjlOPTIONTYPE_FUNCTION:
