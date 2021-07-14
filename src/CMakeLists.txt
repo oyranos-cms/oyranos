@@ -467,7 +467,7 @@ IF( GETTEXT_FOUND )
         liboyranos_object/*.c
         liboyranos_modules/*.c
         liboyranos_config/*.c
-        modules/oyranos/*.c
+        modules/oyranos*.c
         modules/color/modules/*.c
         modules/color/modules/devices/*.c
         modules/color/modules/lcms2/oyranos_cmm_lcm2.c
