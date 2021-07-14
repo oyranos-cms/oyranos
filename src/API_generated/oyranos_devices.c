@@ -1358,7 +1358,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
 
   oyOptions_FindInt( options, "pos", 0, &pos );
 
-  json_class = oyjlTreeGetValue( json, 0, "org/freedesktop/openicc/device" );
+  json_class = oyjlTreeGetValue( json, 0, "org/freedesktop/oyjl/device" );
   if(json_class && json_class->type == oyjl_t_object)
     device_class = json_class->u.object.keys[0];
 
@@ -2679,15 +2679,15 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
       root9 && root4 )
   {
     /* add api9 groups to api4 declaration */
-    oyjl_val g9 = oyjlTreeGetValue( root9, 0, "org/freedesktop/openicc/modules/[0]/groups" ),
-             g4 = oyjlTreeGetValue( root4, 0, "org/freedesktop/openicc/modules/[0]/groups" );
+    oyjl_val g9 = oyjlTreeGetValue( root9, 0, "org/freedesktop/oyjl/modules/[0]/groups" ),
+             g4 = oyjlTreeGetValue( root4, 0, "org/freedesktop/oyjl/modules/[0]/groups" );
     int n9 = oyjlValueCount( g9 ),
         n4 = oyjlValueCount( g4 ), i;
     for(i = 0; i < n9; ++i)
     {
-      oyjl_val group9 = oyjlTreeGetValueF( root9, 0, "org/freedesktop/openicc/modules/[0]/groups/[%d]", i );
+      oyjl_val group9 = oyjlTreeGetValueF( root9, 0, "org/freedesktop/oyjl/modules/[0]/groups/[%d]", i );
       /* allocate new array member */
-      oyjl_val g4new = oyjlTreeGetValueF( root4, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]", n4 + i );
+      oyjl_val g4new = oyjlTreeGetValueF( root4, OYJL_CREATE_NEW, "org/freedesktop/oyjl/modules/[0]/groups/[%d]", n4 + i );
       /* move the node to the new tree */
       if(g4new && OYJL_IS_ARRAY(g4) && g4->u.array.values)
       {
