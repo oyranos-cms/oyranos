@@ -1953,5 +1953,71 @@ oyjl_val       oyjlCatalog           ( oyjl_val          * catalog )
   }
   return oyjl_catalog_;
 }
+
+/** @brief   translate JSON
+ *
+ *  Typically translation occur at initialisation time.
+ *  However, it might be desireable to update the Ui due
+ *  to later language change. This function helps to replace
+ *  the previous language.
+ *
+ *  @param[in,out] root               the tree to translate strings inside
+ *  @param[in]     loc                the desired language; optional, without the function will return
+ *  @param[in]     catalog            the message catalog; optional, without the function will return
+ *  @param[in]     key_list           comma separate list of keys to translate; optional, without the function will return
+ *  @param[in]     translator         the translation function; optional, defaut is oyjlTranslate()
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/07/09
+ *  @since   2021/07/09 (Oyjl: 1.0.0)
+ */
+void               oyjlTranslateJson ( oyjl_val            root,
+                                       const char        * loc,
+                                       oyjl_val            catalog,
+                                       const char        * key_list,
+                                       oyjlTranslate_f     translator )
+{
+  if(root && loc && catalog)
+  {
+    char ** paths = NULL;
+    int count = 0, i;
+
+    oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
+    while(paths && paths[count]) ++count;
+    if(!translator)
+      translator = oyjlTranslate;
+
+    if(count)
+    {
+      int n = 0;
+      char ** list = oyjlStringSplit( key_list, ',', &n, malloc );
+
+      for(i = 0; i < count; ++i)
+      {
+        char * path = paths[i];
+        int j;
+        for(j = 0; j < n; ++j)
+        {
+          char * key = list[j];
+          if(oyjlPathMatch(path, key, OYJL_PATH_MATCH_LAST_ITEMS ))
+          {
+            const char * t = NULL;
+            oyjl_val v = oyjlTreeGetValue( root, 0, path );
+            if(v)
+              t = OYJL_GET_STRING(v);
+            if(t)
+            {
+              const char * i18n = oyjlTranslate( loc, catalog, t );
+              if(i18n && t && strcmp(i18n,t) != 0)
+                oyjlValueSetString(v,i18n);
+            }
+          }
+        }
+      }
+      oyjlStringListRelease( &list, n, free );
+    }
+    oyjlStringListRelease( &paths, count, free );
+  }
+}
 /** @} *//* oyjl */
 
