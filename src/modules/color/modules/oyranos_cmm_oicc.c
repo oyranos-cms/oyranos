@@ -265,10 +265,13 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
               }
               if(aflags & oyNAME_JSON)
               {
+                char * t = NULL;
+                oyjlStringAdd( &t, 0,0, "Oyranos %s", section_names[0] );
                 ++jgroup;
-                group = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OY_STD "/modules/[0]/groups/[%d]", jgroup );
-                jADD( "Oyranos", "%s", "name" )
-                jADD( section_names[0], "%s", "description" )
+                group = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "org/freedesktop/oyjl/modules/[0]/groups/[%d]", jgroup );
+                jADD( t, "%s", "name" )
+                free(t); t = NULL;
+                jADD( section_tooltips[0], "%s", "description" )
                 jADD( section_description[0], "%s", "help" )
                 jADD( "frame.h3", "%s", "properties" )
                 jopt = -1;
@@ -347,6 +350,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
               ++jopt;
               jADD( t->config_string, "options/[%d]/%s", jopt, "key" )
               jADD( d, "options/[%d]/%s", jopt, "default" )
+              jADD( "choice", "options/[%d]/%s", jopt, "type" )
               jADD( name, "options/[%d]/%s", jopt, "name" )
               jADD( tooltip, "options/[%d]/%s", jopt, "description" )
               jADD( description, "options/[%d]/%s", jopt, "help" )
