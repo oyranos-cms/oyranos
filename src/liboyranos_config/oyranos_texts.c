@@ -272,7 +272,7 @@ oyOptionStringsTranslate_ ()
     oySET_OPTIONS_M_( oyWIDGETTYPE_GROUP_TREE, oyWIDGET_GROUP_CMM, 0,
       0, 0, 0,
       _("CMM"),
-      _("Select a CMM in Oyranos"),
+      _("Select a Color Matching Module (CMM)"),
       _("A Color Matching Module (CMM) does the computational work to transform colors. It can provide alternative features regarding appearance, security, speed or resource overhead."),
       0, /* choices */
       NULL, NULL, NULL, NULL,
