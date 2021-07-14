@@ -343,6 +343,11 @@ char *         oyjlTranslate         ( const char        * loc,
 typedef char*(*oyjlTranslate_f)      ( const char        * loc,
                                        oyjl_val            catalog,
                                        const char        * string );
+void               oyjlTranslateJson ( oyjl_val            root,
+                                       const char        * loc,
+                                       oyjl_val            catalog,
+                                       const char        * key_list,
+                                       oyjlTranslate_f     translator );
 
 void       oyjlDebugVariableSet      ( int               * debug );
 
