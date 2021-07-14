@@ -16,7 +16,7 @@ oyranos-profile v0.9.7 \- Oyranos Profil
 .br
 \fBoyranos-profile\fR \fB\-w\fR \fIICC_DATEINAME\fR [\fB\-j\fR \fIDATEINAME\fR|\fB\-m\fR] [\fB\-s\fR \fINAME\fR] [\fB\-2\fR] [\fB\-4\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-\fBoyranos-profile\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+\fBoyranos-profile\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und erlaubt Änderungen.
 .SH OPTIONEN
@@ -99,10 +99,12 @@ Die -w Option gibt den inneren und äußeren Profilename an.PROFILNAME gibt das 
 .SH ALLGEMEINE OPTIONEN
 .SS
 Allgemeine Optionen
-\fBoyranos-profile\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+\fBoyranos-profile\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .br
-\fB\-h\fR|\fB\-\-help\fR	Hilfe
-.br
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Zeige Hilfetext an
+.RS
+Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+.RE
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
 .RS
 Hole Benutzerschnittstelle als Text
@@ -119,9 +121,13 @@ Hole Benutzerschnittstelle als Text
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br
-\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	
-.br
+\fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Wähle Darstellung
+.RS
+Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten.
+.RE
 	\-R gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
+.br
+	\-R cli		# Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.
 .br
 	\-R web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser
 .br
@@ -175,7 +181,7 @@ http://www.oyranos.org
 .SH AUTOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH KOPIERRECHT
-© 2005-2020 Kai-Uwe Behrmann and others
+© 2005-2021 Kai-Uwe Behrmann and others
 .br
 Lizenz: newBSD http://www.oyranos.org
 .SH FEHLER

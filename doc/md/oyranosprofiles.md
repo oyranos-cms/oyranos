@@ -14,9 +14,9 @@ oyranos-profiles v0.9.7 - Oyranos Profiles
 <br />
 <strong>oyranos-profiles</strong> <a href="#list-paths"><strong>-p</strong></a> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos-profiles</strong> <a href="#install"><strong>-I</strong>=<em>ICC_PROFILE</em></a> | <strong>-t</strong>=<em>TAXI_ID</em> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-g</strong>] [<strong>-v</strong>]
+<strong>oyranos-profiles</strong> <a href="#install"><strong>-I</strong></a> | <strong>-t</strong> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-g</strong>] [<strong>-v</strong>]
 <br />
- <a href="#synopsis"><strong>oyranos-profiles</strong></a> <a href="#help"><strong>-h</strong></a> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong>
+<strong>oyranos-profiles</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong>
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -75,10 +75,10 @@ The tool can list installed profiles, search paths and can help install a ICC co
 
 <h3 id="install">Install Profile</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <a href="#install"><strong>-I</strong>=<em>ICC_PROFILE</em></a> | <strong>-t</strong>=<em>TAXI_ID</em> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-g</strong>] [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-I</strong> | <strong>-t</strong> [<strong>-u</strong>|<strong>-s</strong>|<strong>-y</strong>|<strong>-m</strong>] [<strong>-g</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-I</strong>|<strong>--install</strong>=<em>ICC_PROFILE</em></td> <td>Install Profile  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-I</strong>|<strong>--install</strong></td> <td>Install Profile  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--taxi</strong>=<em>TAXI_ID</em></td> <td>ICC Taxi Profile DataBase  </td>
  </tr>
@@ -95,10 +95,10 @@ The tool can list installed profiles, search paths and can help install a ICC co
 
 <h3 id="help">General options</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-h</strong> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong>
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profiles</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong>
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong></td> <td>Help</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
   <table>
    <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
@@ -110,9 +110,10 @@ The tool can list installed profiles, search paths and can help install a ICC co
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-V</strong>|<strong>--version</strong></td> <td>Version</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" will launch a local Web Server, which listens on local port.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
   </table>
@@ -161,7 +162,7 @@ Kai-Uwe Behrmann http://www.oyranos.org
 
 <h2>COPYRIGHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*© 2005-2020 Kai-Uwe Behrmann and others*
+*© 2005-2021 Kai-Uwe Behrmann and others*
 
 
 <a name="license"></a>

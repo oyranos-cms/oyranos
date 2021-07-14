@@ -18,7 +18,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .br
 \fBoyranos-profile-graph\fR \fB\-i\fR \fIDATEI\fR [\fB\-I\fR \fISEITE\fR] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder in Bildern eingebetteten ICC Profilen eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
 .SH OPTIONEN
@@ -155,7 +155,7 @@ Gib einen Seitenname als Wort oder eine Seitennummer an. -1 listet alle Seitenna
 .SH ALLGEMEINE OPTIONEN
 .SS
 Allgemeine Optionen
-\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .br
 \fB\-t\fR|\fB\-\-thickness\fR \fINUMMER\fR	Gib die Liniendicke an (NUMMER:1 [≥0 ≤10 Δ0,05])
 .br
@@ -177,8 +177,10 @@ Allgemeine Optionen
 .br
 	\-f svg		# SVG - SVG Vektor
 .br
-\fB\-h\fR|\fB\-\-help\fR	Hilfe
-.br
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Zeige Hilfetext an
+.RS
+Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+.RE
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
 .RS
 Hole Benutzerschnittstelle als Text
@@ -193,11 +195,13 @@ Hole Benutzerschnittstelle als Text
 .br
 	\-X export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
 .br
-\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	Wähle Darstellung
+\fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Wähle Darstellung
 .RS
-Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" wird einen Web Service starten.
+Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten.
 .RE
 	\-R gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
+.br
+	\-R cli		# Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.
 .br
 	\-R web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser
 .br
@@ -249,7 +253,7 @@ http://www.oyranos.org
 .SH AUTOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH KOPIERRECHT
-© 2005-2020 Kai-Uwe Behrmann and others
+© 2005-2021 Kai-Uwe Behrmann and others
 .br
 Lizenz: newBSD http://www.oyranos.org
 .SH FEHLER

@@ -28,7 +28,7 @@ oyranos-device v0.9.7 - Oyranos Color Devices
 <br />
 <strong>oyranos-device</strong> <a href="#format"><strong>-f</strong>=<em>icc|openicc+rank-map|openicc|openicc-rank-map</em></a> <strong>-c</strong>=<em>CLASS</em> <strong>-d</strong>=<em>NUMBER</em> <strong>-j</strong>=<em>FILENAME</em> <strong>-k</strong>=<em>FILENAME</em> [<strong>-o</strong>=<em>FILENAME</em>] [<strong>--only-db</strong>] [<strong>-m</strong>]
 <br />
- <a href="#synopsis"><strong>oyranos-device</strong></a> <a href="#help"><strong>-h</strong></a> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|web|...</em> [<strong>-v</strong>]
+<strong>oyranos-device</strong> <a href="#help"><strong>-h</strong>=<em>synopsis|...</em></a> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -174,10 +174,10 @@ The oyranos-device program shows and administrates ICC profiles for color device
 
 <h3 id="help">General options</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-device</strong></a> <strong>-h</strong> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|web|...</em> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-device</strong></a> <strong>-h</strong>=<em>synopsis|...</em> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong></td> <td>Help</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong>=<em>synopsis|...</em></td> <td>Print help text<br />Show usage information and hints for the tool.</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
   <table>
    <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
@@ -189,9 +189,10 @@ The oyranos-device program shows and administrates ICC profiles for color device
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-V</strong>|<strong>--version</strong></td> <td>Version</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" will launch a local Web Server, which listens on local port.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
   </table>
@@ -223,7 +224,7 @@ Kai-Uwe Behrmann http://www.oyranos.org
 
 <h2>COPYRIGHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*© 2005-2020 Kai-Uwe Behrmann and others*
+*© 2005-2021 Kai-Uwe Behrmann and others*
 
 
 <a name="license"></a>

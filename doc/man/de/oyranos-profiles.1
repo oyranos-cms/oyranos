@@ -6,9 +6,9 @@ oyranos-profiles v0.9.7 \- Oyranos Profile
 .br
 \fBoyranos-profiles\fR \fB\-p\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profiles\fR \fB\-I\fR \fIICC_PROFIL\fR | \fB\-t\fR \fITAXI_ID\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
+\fBoyranos-profiles\fR \fB\-I\fR | \fB\-t\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profiles\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR
+\fBoyranos-profiles\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR
 .SH BESCHREIBUNG
 Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profil in einen Suchpfad installieren.
 .SH OPTIONEN
@@ -82,9 +82,9 @@ Zeige Suchpfade
 .br
 .SS
 Installiere Profil
-\fBoyranos-profiles\fR \fB\-I\fR \fIICC_PROFIL\fR | \fB\-t\fR \fITAXI_ID\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
+\fBoyranos-profiles\fR \fB\-I\fR | \fB\-t\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-g\fR] [\fB\-v\fR]
 .br
-\fB\-I\fR|\fB\-\-install\fR \fIICC_PROFIL\fR	Installiere Profil
+\fB\-I\fR|\fB\-\-install\fR	Installiere Profil
 .br
 \fB\-t\fR|\fB\-\-taxi\fR \fITAXI_ID\fR	ICC Taxi Profile DatenBank
 .br
@@ -103,10 +103,12 @@ Installiere Profil
 .SH ALLGEMEINE OPTIONEN
 .SS
 Allgemeine Optionen
-\fBoyranos-profiles\fR \fB\-h\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR
+\fBoyranos-profiles\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR
 .br
-\fB\-h\fR|\fB\-\-help\fR	Hilfe
-.br
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Zeige Hilfetext an
+.RS
+Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+.RE
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
 .RS
 Hole Benutzerschnittstelle als Text
@@ -123,11 +125,13 @@ Hole Benutzerschnittstelle als Text
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br
-\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	Wähle Darstellung
+\fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Wähle Darstellung
 .RS
-Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" wird einen Web Service starten.
+Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten.
 .RE
 	\-R gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
+.br
+	\-R cli		# Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.
 .br
 	\-R web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser
 .br
@@ -183,7 +187,7 @@ http://www.oyranos.org
 .SH AUTOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH KOPIERRECHT
-© 2005-2020 Kai-Uwe Behrmann and others
+© 2005-2021 Kai-Uwe Behrmann and others
 .br
 Lizenz: newBSD http://www.oyranos.org
 .SH FEHLER

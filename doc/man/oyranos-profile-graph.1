@@ -18,7 +18,7 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .br
 \fBoyranos-profile-graph\fR \fB\-i\fR \fIFILE\fR [\fB\-I\fR \fIPAGE\fR] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
 .br
-\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
 .SH OPTIONS
@@ -155,7 +155,7 @@ Specify a page name as string or page index as number. -1 will list all page nam
 .SH GENERAL OPTIONS
 .SS
 General options
-\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+\fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .br
 \fB\-t\fR|\fB\-\-thickness\fR \fINUMBER\fR	Specify the thickness of the graph lines (NUMBER:1 [≥0 ≤10 Δ0.05])
 .br
@@ -177,8 +177,10 @@ General options
 .br
 	\-f svg		# SVG - SVG Vector
 .br
-\fB\-h\fR|\fB\-\-help\fR	Help
-.br
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Print help text
+.RS
+Show usage information and hints for the tool.
+.RE
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
 .RS
 Get UI converted into text formats
@@ -193,11 +195,13 @@ Get UI converted into text formats
 .br
 	\-X export		# Export : All available data - Get UI data for developers
 .br
-\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	Select Renderer
+\fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Select Renderer
 .RS
-Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" will launch a local Web Server, which listens on local port.
+Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
 .RE
 	\-R gui		# Gui : Show UI - Display a interactive graphical User Interface.
+.br
+	\-R cli		# Cli : Show UI - Print on Command Line Interface.
 .br
 	\-R web		# Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.
 .br
@@ -249,7 +253,7 @@ http://www.oyranos.org
 .SH AUTHOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH COPYRIGHT
-© 2005-2020 Kai-Uwe Behrmann and others
+© 2005-2021 Kai-Uwe Behrmann and others
 .br
 License: newBSD http://www.oyranos.org
 .SH BUGS

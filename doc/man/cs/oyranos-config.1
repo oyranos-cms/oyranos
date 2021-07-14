@@ -12,7 +12,7 @@ oyranos-config v0.9.7 \- Config
 .br
 \fBoyranos-config\fR \fB\-\-cflags\fR | \fB\-\-ldflags\fR | \fB\-\-ldstaticflags\fR | \fB\-\-sourcedir\fR | \fB\-\-builddir\fR [\fB\-v\fR]
 .br
-\fBoyranos-config\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+\fBoyranos-config\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The tool can read and set OpenICC DB options, and display paths and static information.
 .SH OPTIONS
@@ -111,7 +111,7 @@ These strings can be used to compile programs.
 .SH GENERAL OPTIONS
 .SS
 General options
-\fBoyranos-config\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|web|...\fR [\fB\-v\fR]
+\fBoyranos-config\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .br
 \fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Print help text
 .RS
@@ -135,11 +135,13 @@ Get UI converted into text formats
 .br
 	\-X export		# Export : All available data - Get UI data for developers
 .br
-\fB\-R\fR|\fB\-\-render\fR \fIgui|web|...\fR	Select Renderer
+\fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Select Renderer
 .RS
-Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css" will launch a local Web Server, which listens on local port.
+Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
 .RE
 	\-R gui		# Gui : Show UI - Display a interactive graphical User Interface.
+.br
+	\-R cli		# Cli : Show UI - Print on Command Line Interface.
 .br
 	\-R web		# Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.
 .br
@@ -199,7 +201,7 @@ http://www.oyranos.org
 .SH AUTHOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH COPYRIGHT
-© 2005-2020 Kai-Uwe Behrmann and others
+© 2005-2021 Kai-Uwe Behrmann and others
 .br
 Licence: newBSD http://www.oyranos.org
 .SH BUGS

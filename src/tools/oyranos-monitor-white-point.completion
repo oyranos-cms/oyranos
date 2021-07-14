@@ -108,7 +108,7 @@ _oyranos_monitor_white_point()
             ;;
         --render) # long option with static args
             local IFS=$'\n'
-            local WORD_LIST=('gui' 'web' '-')
+            local WORD_LIST=('gui' 'cli' 'web' '-')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
@@ -212,7 +212,7 @@ _oyranos_monitor_white_point()
             ;;
         -R=*) # single letter option with static args
             local IFS=$'\n'
-            local WORD_LIST=('gui' 'web' '-')
+            local WORD_LIST=('gui' 'cli' 'web' '-')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
