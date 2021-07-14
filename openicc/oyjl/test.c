@@ -267,8 +267,6 @@ oyjlTESTRESULT_e testI18N()
     "oyjlTranslate(%s) \"de\":\"%s\"              ", lang, text );
   }
 
-  oyjlTreeFree( catalog );
-
 #undef _
 #ifdef OYJL_USE_GETTEXT
 # define _(text) dgettext( OYJL_DOMAIN, text )
@@ -277,6 +275,30 @@ oyjlTESTRESULT_e testI18N()
 #endif
 
   setlocale(LC_ALL,"");
+
+  oyjl_val root = oyjlTreeNew( "" );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Example", "one/[%d]/name", 0 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Color", "one/[%d]/description", 0 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Example2", "one/[%d]/label", 0 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Nonsense", "one/[%d]/help", 0 );
+  const char * key_list = "name,description,help,label";
+  oyjlTranslateJson( root, "de_DE", catalog, key_list, NULL );
+  int i = 0;
+  char * txt = NULL;
+  oyjlTreeToJson( root, &i, &txt );
+  if( txt && strlen( txt ) == 131 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTranslateJson()                             %ld", strlen(txt) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslateJson()                             %ld", strlen(txt) );
+  }
+  OYJL_TEST_WRITE_RESULT( txt, strlen(txt), "oyjlTranslateJson", "txt" )
+  if(verbose && txt)
+    fprintf( zout, "%s\n", txt );
+  myDeAllocFunc( txt ); txt = NULL;
+  oyjlTreeFree( root );
+  oyjlTreeFree( catalog );
 
 
   return result;
