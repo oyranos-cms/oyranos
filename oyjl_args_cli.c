@@ -229,7 +229,13 @@ int oyjlArgsCliStart__               ( int                 argc,
     oyjl_val val = oyjlTreeGetValue(v, 0, "nick");
     const char * nick = OYJL_GET_STRING(val),
                * desc = NULL, * version = NULL, * docu = NULL, * txt;
-    int i,n;
+    int i = 0, n;
+    const char * key_list = "name,description,help,label";
+    const char * lang = oyjlLang("");
+    if(debug)
+      fprintf( stderr, "using lang: %s\n", lang );
+    oyjlTranslateJson( root, lang, root, key_list, NULL );
+
     val = oyjlTreeGetValue(v, 0, "description");
     desc = OYJL_GET_STRING(val);
     val = oyjlTreeGetValue(v, 0, "information");
