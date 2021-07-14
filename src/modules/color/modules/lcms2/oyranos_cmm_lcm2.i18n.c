@@ -1,13 +1,13 @@
 #define oyranos_json "{\n\
   \"org\": {\n\
     \"freedesktop\": {\n\
-      \"openicc\": {\n\
-        \"comment\": \"This is the OpenICC namespace\",\n\
+      \"oyjl\": {\n\
+        \"comment\": \"This is the Oyjl namespace\",\n\
         \"modules\": [{\n\
-            \"comment\": \"This is the OpenICC-CMM-API namespace\",\n\
-            \"comment\": \"Internationalisation: Please translate only the following keys label, name, description, help. The translated strings shall be add as new keys at the same paths level by appending .lang_country identifier. e.g. org/freedesktop/openicc/modules/[0]/name=ExampleCMM => org/freedesktop/openicc/modules/[0]/name.de=BeispielCMM\",\n\
-            \"openicc_module_api_version\": \"1\",\n\
-            \"comment\": \"We describe here a particular CMM. Each property object contains at least one 'name' key. All values shall be strings. *nick* or *description* keys are optional. If they are not contained, fall back to *name*. Well known objects are *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *openicc_modules_author*, *documentation* and *logo*. The *modules/[]/nick* shall contain a four byte string in as the CMM identifier.\",\n\
+            \"comment\": \"This is the Oyjl-Module-API namespace\",\n\
+            \"comment\": \"Internationalisation: Please translate only the following keys label, name, description, help. The translated strings shall be add as new keys at the same paths level by appending .lang_country identifier. e.g. org/freedesktop/oyjl/modules/[0]/name=ExampleCMM => org/freedesktop/oyjl/modules/[0]/name.de=BeispielCMM\",\n\
+            \"oyjl_module_api_version\": \"1\",\n\
+            \"comment\": \"We describe here a particular CMM. Each property object contains at least one 'name' key. All values shall be strings. *nick* or *description* keys are optional. If they are not contained, fall back to *name*. Well known objects are *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *oyjl_modules_author*, *documentation* and *logo*. The *modules/[]/nick* shall contain a four byte string in as the CMM identifier.\",\n\
             \"type\": \"CMM\",\n\
             \"label\": \"CMM\",\n\
             \"nick\": \"lcm2\",\n\
@@ -49,8 +49,8 @@
                 \"label\": \"Development\",\n\
                 \"name\": \"https://github.com/mm2/little-cms\"\n\
               },{\n\
-                \"type\": \"openicc_module_author\",\n\
-                \"label\": \"OpenICC CMM Author\",\n\
+                \"type\": \"oyjl_module_author\",\n\
+                \"label\": \"Oyjl Module Author\",\n\
                 \"name\": \"Kai-Uwe Behrmann\",\n\
                 \"description\": \"http://www.behrmann.name\"\n\
               },{\n\
@@ -63,19 +63,18 @@
             \"groups\": [{\n\
                 \"comment\": \"Logical group\",\n\
                 \"name\": \"Little CMS 2\",\n\
-                \"description\": \"Extended Options\",\n\
-                \"help\": \"Additional options.\",\n\
                 \"properties\": \"h3.frame\",\n\
                 \"groups\": [{\n\
                     \"comment\": \"Logical sub group for presentation. *name* might be shown as label alone or together with *description*.\",\n\
-                    \"name\": \"CMM\",\n\
-                    \"description\": \"Options\",\n\
-                    \"help\": \"CMM behaviour options for color rendering, precission and fixes.\",\n\
+                    \"name\": \"lcm2 Specific Options\",\n\
+                    \"description\": \"Set lcm2 Options\",\n\
+                    \"help\": \"CMM options for color rendering, precission and fixes.\",\n\
                     \"properties\": \"h4\",\n\
                     \"options\": [{\n\
                         \"key\": \"org/freedesktop/openicc/icc_color/cmyk_cmyk_black_preservation\",\n\
                         \"default\": \"0\",\n\
                         \"properties\": \"rendering\",\n\
+                        \"type\": \"choice\",\n\
                         \"choices\": [{\n\
                             \"nick\": \"0\",\n\
                             \"name\": \"[none]\"\n\
@@ -93,6 +92,7 @@
                         \"key\": \"org/freedesktop/openicc/icc_color/precalculation\",\n\
                         \"default\": \"0\",\n\
                         \"properties\": \"rendering.advanced\",\n\
+                        \"type\": \"choice\",\n\
                         \"choices\": [{\n\
                             \"nick\": \"0\",\n\
                             \"name\": \"normal\"\n\
@@ -116,6 +116,7 @@
                         \"key\": \"org/freedesktop/openicc/icc_color/precalculation_curves\",\n\
                         \"default\": \"1\",\n\
                         \"properties\": \"rendering.advanced.boolean\",\n\
+                        \"type\": \"choice\",\n\
                         \"choices\": [{\n\
                             \"nick\": \"0\",\n\
                             \"name\": \"[none]\"\n\
@@ -130,6 +131,7 @@
                         \"key\": \"org/freedesktop/openicc/icc_color/adaption_state\",\n\
                         \"default\": \"1\",\n\
                         \"properties\": \"rendering.advanced\",\n\
+                        \"type\": \"choice\",\n\
                         \"choices\": [{\n\
                             \"nick\": \"0\",\n\
                             \"name\": \"0.0\"\n\
@@ -144,6 +146,7 @@
                         \"key\": \"org/freedesktop/openicc/icc_color/no_white_on_white_fixup\",\n\
                         \"default\": \"1\",\n\
                         \"properties\": \"rendering.advanced\",\n\
+                        \"type\": \"bool\",\n\
                         \"choices\": [{\n\
                             \"nick\": \"0\",\n\
                             \"name\": \"No\"\n\
@@ -157,9 +160,7 @@
                       }]\n\
                   }]\n\
               }]\n\
-          }]\n\
-      },\n\
-      \"oyjl\": {\n\
+          }],\n\
         \"translations\": {\n\
           \"cs_CZ\": {\n\
             \"CMM\": \"CMM\",\n\
@@ -171,7 +172,6 @@
             \"MIT\": \"MIT\",\n\
             \"Kai-Uwe Behrmann\": \"Kai-Uwe Behrmann\",\n\
             \"Documentation\": \"Dokumentace\",\n\
-            \"Extended Options\": \"Rozšířené volby:\",\n\
             \"[none]\": \"[žádný]\",\n\
             \"Black Preservation\": \"Zachování černé\",\n\
             \"Decide how to preserve the black channel for Cmyk to Cmyk transforms\": \"Rozhodnout, jakým způsobem zachovat černý kanál při transformaci CMYK -> CMYK.\",\n\
@@ -202,14 +202,14 @@
             \"Download\": \"Bezugsquelle\",\n\
             \"Sources\": \"Quellen\",\n\
             \"Development\": \"Entwicklung\",\n\
-            \"OpenICC CMM Author\": \"OpenICC CMM Autor\",\n\
+            \"Oyjl Module Author\": \"Oyjl Modul Autor\",\n\
             \"http:%37%37www.behrmann.name\": \"http://www.behrmann.name\",\n\
             \"Documentation\": \"Dokumente\",\n\
             \"http:%37%37www.openicc.info\": \"http://www.openicc.info\",\n\
-            \"Extended Options\": \"Erweiterte Optionen\",\n\
-            \"Additional options.\": \"Zusätzliche Optionen.\",\n\
-            \"Options\": \"Optionen\",\n\
-            \"CMM behaviour options for color rendering, precission and fixes.\": \"CMM Verhalten für Farbumwandlung, Präzission und Verbesserungen.\",\n\
+            \"The module expects options for profiles and rendering_intent. Optional are rendering_bpc, cmyk_cmyk_black_preservation, precalculation_curves, adaption_state, no_white_on_white_fixup.\": \"Das Modul erwartet Optionen für Profile und Übertragungsfunktion. Optional sind rendering_bpc, cmyk_cmyk_black_preservation, precalculation_curves, adaption_state, no_white_on_white_fixup.\",\n\
+            \"lcm2 Specific Options\": \"lcm2 Spezifische Optionen\",\n\
+            \"Set lcm2 Options\": \"Editiere lcm2 Optionen\",\n\
+            \"CMM options for color rendering, precission and fixes.\": \"CMM Optionen für Farbumwandlung, Präzission und Verbesserungen.\",\n\
             \"[none]\": \"[kein]\",\n\
             \"Black Preservation\": \"Schwarzerhalt\",\n\
             \"Decide how to preserve the black channel for Cmyk to Cmyk transforms\": \"Entscheide wie der Schwarzkanal erhalten wird bei Umwandlungen von einem Druckfarbraum in einen Anderen\",\n\

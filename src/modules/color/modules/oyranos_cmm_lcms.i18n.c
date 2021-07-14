@@ -1,12 +1,12 @@
 #define oyranos_json "{\n\
   \"org\": {\n\
     \"freedesktop\": {\n\
-      \"openicc\": {\n\
-        \"comment\": \"This is the OpenICC namespace\",\n\
+      \"oyjl\": {\n\
+        \"comment\": \"This is the Oyjl namespace\",\n\
         \"modules\": [{\n\
-            \"comment\": \"This is the OpenICC-CMM-API namespace\",\n\
-            \"comment\": \"Internationalisation: Please translate only the following keys label, name, description, help. The translated strings shall be add as new keys at the same paths level by appending .lang_country identifier. e.g. org/freedesktop/openicc/modules/[0]/name=ExampleCMM => org/freedesktop/openicc/modules/[0]/name.de=BeispielCMM\",\n\
-            \"openicc_module_api_version\": \"1\",\n\
+            \"comment\": \"This is the Oyjl-Module-API namespace\",\n\
+            \"comment\": \"Internationalisation: Please translate only the following keys label, name, description, help. The translated strings shall be add as new keys at the same paths level by appending .lang_country identifier. e.g. org/freedesktop/oyjl/modules/[0]/name=ExampleCMM => org/freedesktop/oyjl/modules/[0]/name.de=BeispielCMM\",\n\
+            \"oyjl_module_api_version\": \"1\",\n\
             \"comment\": \"We describe here a particular CMM. Each property object contains at least one 'name' key. All values shall be strings. *nick* or *description* keys are optional. If they are not contained, fall back to *name*. Well known objects are *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *openicc_modules_author*, *documentation* and *logo*. The *modules/[]/nick* shall contain a four byte string in as the CMM identifier.\",\n\
             \"type\": \"CMM\",\n\
             \"label\": \"CMM\",\n\
@@ -49,8 +49,8 @@
                 \"label\": \"Development\",\n\
                 \"name\": \"stalled\"\n\
               },{\n\
-                \"type\": \"openicc_module_author\",\n\
-                \"label\": \"OpenICC CMM Author\",\n\
+                \"type\": \"oyjl_module_author\",\n\
+                \"label\": \"Oyjl Module Author\",\n\
                 \"name\": \"Kai-Uwe Behrmann\",\n\
                 \"description\": \"http://www.behrmann.name\"\n\
               },{\n\
@@ -76,6 +76,7 @@
                         \"key\": \"org/freedesktop/openicc/icc_color/cmyk_cmyk_black_preservation\",\n\
                         \"default\": \"0\",\n\
                         \"properties\": \"rendering\",\n\
+                        \"type\": \"choice\",\n\
                         \"choices\": [{\n\
                             \"nick\": \"0\",\n\
                             \"name\": \"[none]\"\n\
@@ -93,6 +94,7 @@
                         \"key\": \"org/freedesktop/openicc/icc_color/precalculation\",\n\
                         \"default\": \"0\",\n\
                         \"properties\": \"rendering.advanced\",\n\
+                        \"type\": \"choice\",\n\
                         \"choices\": [{\n\
                             \"nick\": \"0\",\n\
                             \"name\": \"normal\"\n\
@@ -112,9 +114,7 @@
                       }]\n\
                   }]\n\
               }]\n\
-          }]\n\
-      },\n\
-      \"oyjl\": {\n\
+          }],\n\
         \"translations\": {\n\
           \"cs_CZ\": {\n\
             \"CMM\": \"CMM\",\n\
@@ -152,7 +152,6 @@
             \"http:%37%37www.littlecms.com%37downloads.htm\": \"http://www.littlecms.com/downloads.htm\",\n\
             \"Development\": \"Entwicklung\",\n\
             \"stalled\": \"nicht aktiv\",\n\
-            \"OpenICC CMM Author\": \"OpenICC CMM Autor\",\n\
             \"http:%37%37www.behrmann.name\": \"http://www.behrmann.name\",\n\
             \"Documentation\": \"Dokumente\",\n\
             \"http:%37%37www.openicc.info\": \"http://www.openicc.info\",\n\

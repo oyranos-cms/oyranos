@@ -1,13 +1,13 @@
 {
   "org": {
     "freedesktop": {
-      "openicc": {
-        "comment": "This is the OpenICC namespace",
+      "oyjl": {
+        "comment": "This is the Oyjl namespace",
         "modules": [{
-            "comment": "This is the OpenICC-CMM-API namespace",
-            "comment": "Internationalisation: Please translate only the following keys label, name, description, help. The translated strings shall be add as new keys at the same paths level by appending .lang_country identifier. e.g. org/freedesktop/openicc/modules/[0]/name=ExampleCMM => org/freedesktop/openicc/modules/[0]/name.de=BeispielCMM",
-            "openicc_module_api_version": "1",
-            "comment": "We describe here a particular CMM. Each property object contains at least one 'name' key. All values shall be strings. *nick* or *description* keys are optional. If they are not contained, fall back to *name*. Well known objects are *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *openicc_modules_author*, *documentation* and *logo*. The *modules/[]/nick* shall contain a four byte string in as the CMM identifier.",
+            "comment": "This is the Oyjl-Module-API namespace",
+            "comment": "Internationalisation: Please translate only the following keys label, name, description, help. The translated strings shall be add as new keys at the same paths level by appending .lang_country identifier. e.g. org/freedesktop/oyjl/modules/[0]/name=ExampleCMM => org/freedesktop/oyjl/modules/[0]/name.de=BeispielCMM",
+            "oyjl_module_api_version": "1",
+            "comment": "We describe here a particular CMM. Each property object contains at least one 'name' key. All values shall be strings. *nick* or *description* keys are optional. If they are not contained, fall back to *name*. Well known objects are *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *oyjl_modules_author*, *documentation* and *logo*. The *modules/[]/nick* shall contain a four byte string in as the CMM identifier.",
             "type": "CMM",
             "label": "CMM",
             "nick": "lcm2",
@@ -49,8 +49,8 @@
                 "label": "Development",
                 "name": "https://github.com/mm2/little-cms"
               },{
-                "type": "openicc_module_author",
-                "label": "OpenICC CMM Author",
+                "type": "oyjl_module_author",
+                "label": "Oyjl Module Author",
                 "name": "Kai-Uwe Behrmann",
                 "description": "http://www.behrmann.name"
               },{
@@ -63,19 +63,18 @@
             "groups": [{
                 "comment": "Logical group",
                 "name": "Little CMS 2",
-                "description": "Extended Options",
-                "help": "Additional options.",
                 "properties": "h3.frame",
                 "groups": [{
                     "comment": "Logical sub group for presentation. *name* might be shown as label alone or together with *description*.",
-                    "name": "CMM",
-                    "description": "Options",
-                    "help": "CMM behaviour options for color rendering, precission and fixes.",
+                    "name": "lcm2 Specific Options",
+                    "description": "Set lcm2 Options",
+                    "help": "CMM options for color rendering, precission and fixes.",
                     "properties": "h4",
                     "options": [{
                         "key": "org/freedesktop/openicc/icc_color/cmyk_cmyk_black_preservation",
                         "default": "0",
                         "properties": "rendering",
+                        "type": "choice",
                         "choices": [{
                             "nick": "0",
                             "name": "[none]"
@@ -93,6 +92,7 @@
                         "key": "org/freedesktop/openicc/icc_color/precalculation",
                         "default": "0",
                         "properties": "rendering.advanced",
+                        "type": "choice",
                         "choices": [{
                             "nick": "0",
                             "name": "normal"
@@ -116,6 +116,7 @@
                         "key": "org/freedesktop/openicc/icc_color/precalculation_curves",
                         "default": "1",
                         "properties": "rendering.advanced.boolean",
+                        "type": "choice",
                         "choices": [{
                             "nick": "0",
                             "name": "[none]"
@@ -130,6 +131,7 @@
                         "key": "org/freedesktop/openicc/icc_color/adaption_state",
                         "default": "1",
                         "properties": "rendering.advanced",
+                        "type": "choice",
                         "choices": [{
                             "nick": "0",
                             "name": "0.0"
@@ -144,6 +146,7 @@
                         "key": "org/freedesktop/openicc/icc_color/no_white_on_white_fixup",
                         "default": "1",
                         "properties": "rendering.advanced",
+                        "type": "bool",
                         "choices": [{
                             "nick": "0",
                             "name": "No"
