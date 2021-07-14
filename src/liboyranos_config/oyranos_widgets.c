@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2008-2019  Kai-Uwe Behrmann
+ *  Copyright (C) 2008-2021  Kai-Uwe Behrmann
  *
  */
 
@@ -27,7 +27,7 @@ oyjlUiHeaderSection_s *    oyUiInfo  ( const char          * documentation,
     { "oihs", "version", NULL, OYRANOS_VERSION_NAME, oyVersionString( 2, 0 ) },
     { "oihs", "date", NULL, iso_dateTtime, date_description },
     { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.oyranos.org" },
-    { "oihs", "copyright", NULL, "© 2005-2020 Kai-Uwe Behrmann and others", NULL },
+    { "oihs", "copyright", NULL, "© 2005-2021 Kai-Uwe Behrmann and others", NULL },
     { "oihs", "license", NULL, "newBSD", "http://www.oyranos.org" },
     { "oihs", "url", NULL, "http://www.oyranos.org", NULL },
     { "oihs", "support", NULL, "https://www.github.com/oyranos-cms/oyranos/issues", NULL },
