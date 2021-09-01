@@ -14,7 +14,7 @@
  */
 
 #include <stdlib.h> // free()
-#include <oyjl.h>
+#include "oyjl.h"
 #include "oyjl_macros.h"
 #include "oyjl_i18n.h"
 
