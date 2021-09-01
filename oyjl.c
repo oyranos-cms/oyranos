@@ -25,6 +25,8 @@ extern char **environ;
 # include "oyjl.i18n.c"
 #endif
 
+#include <ctype.h>   /* isspace() */
+
 static oyjlOptionChoice_s * listInput ( oyjlOption_s * o OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
 {
   oyjlOptionChoice_s * c = NULL;
@@ -52,18 +54,146 @@ static oyjlOptionChoice_s * listInput ( oyjlOption_s * o OYJL_UNUSED, int * y OY
   return c;
 }
 
+char *     oyjlReadFileToMem         ( const char        * filename,
+                                       int               * size )
+{
+  char * text = NULL;
+  FILE * fp;
+
+  if(strcmp(filename,"-") == 0)
+    fp = stdin;
+  else
+    fp = fopen(filename,"rb");
+
+  if(fp)
+  {
+    text = oyjlReadFileStreamToMem( fp, size );
+    if(fp != stdin) fclose( fp );
+  }
+  else
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "no data input: \"%s\"", OYJL_DBG_ARGS, filename );
+
+  return text;
+}
+
+oyjl_val oyjlTreeParse2              ( const char        * input,
+                                       int                 size,
+                                       const char        * xpath,
+                                       char             ** first_path, /* provide first path together with xpath */
+                                       oyjl_val          * root,
+                                       char            *** path_list,
+                                       const char        * try_format,
+                                       int                 paths,
+                                       const char        * error_name,
+                                       int                 verbose )
+{
+  oyjl_val value = NULL, root_ = NULL;
+  const char * text = input;
+  char * text_tmp = NULL;
+
+  if(text && try_format && strcasecmp(try_format, "JSON") == 0 && text[0] != '{' && strstr(text, "\n{"))
+    text = strstr(text, "\n{") + 1;
+
+  if(text)
+  {
+    char error_buffer[256] = {0};
+    char ** path_list_ = NULL;
+    int count = 0, i = 0;
+    char * first_path_ = NULL;
+    const char * xpath_full = NULL;
+
+    if(verbose)
+      fprintf(stderr, "file read:\t\"%s\" %d\n", error_name, size);
+
+    /* convert exported C declarated string into plain text using cc compiler */
+    if(text && strlen(text) > 8 && memcmp(text, "#define ", 8) == 0)
+    {
+      int size = 0;
+      char * t = oyjlStringCopy( text, 0 ), * name;
+      while(t[i] && !isspace(t[i])) ++i;
+      while(t[i] && isspace(t[i])) ++i;
+      name = oyjlStringCopy( &t[i], 0 );
+      i = 0;while(name[i] && !isspace(name[i]) && name[i] != '{') ++i;
+      name[i] = '\000';
+      if(verbose)
+        fprintf( stderr, "Found C object: %s\n", name );
+
+      oyjlStringAdd( &t, 0,0, "\n#include <stdio.h>\nint main(int argc, char**argv)\n{\nputs(%s);\n}\n", name );
+      oyjlWriteFile( "oyjl_tmp.c", t, strlen(t) );
+      free(t);
+      free(name);
+      text_tmp = oyjlReadCommandF( &size, "r", malloc, "cc -g oyjl_tmp.c -o oyjl-tmp; ./oyjl-tmp" );
+      if(!verbose)
+      { remove("oyjl-tmp"); remove("oyjl_tmp.c"); }
+      text = text_tmp;
+    }
+
+    root_ = oyjlTreeParse( text, error_buffer, 256 );
+    if(error_buffer[0] != '\000')
+      fprintf(stderr, "%s\t\"%s\"\n", oyjlTermColor(oyjlRED,_("Usage Error:")), error_buffer);
+    else if(!root_)
+      fprintf(stderr, "%s\tparsing \"%s\":\n%s", oyjlTermColor(oyjlRED,_("Usage Error:")), error_name, text);
+    if(verbose)
+      fprintf(stderr, "file parsed:\t\"%s\"\n", error_name);
+
+    oyjlTreeToPaths( root_, 1000000, xpath, 0, &path_list_ );
+    while(path_list_ && path_list_[count]) ++count;
+
+    if(paths)
+      for(i = 0; i < count; ++i)
+        fprintf(stdout,"%s\n", path_list_[i]);
+    if(xpath)
+    {
+      xpath_full = (count && path_list_[0]) ? path_list_[0] : "";
+      first_path_ = oyjlStringCopy((count && path_list_[0]) ? strchr(path_list_[0],'/') ? strrchr(path_list_[0],'/') + 1 : path_list_[0] : "", malloc);
+      if(first_path)
+        *first_path = first_path_;
+
+      if(verbose)
+        fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
+
+      if(verbose)
+        fprintf(stderr, "processed:\t\"%s\"\n", error_name);
+
+      value = oyjlTreeGetValue( root_, 0, xpath_full );
+    }
+    else
+      value = root_;
+
+    if(path_list)
+      *path_list = path_list_;
+    else
+      oyjlStringListRelease( &path_list_, count, free );
+
+    if(!first_path && first_path_)
+      free(first_path_);
+
+  } else
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "no data input", OYJL_DBG_ARGS );
+
+  if(root)
+    *root = root_;
+  else
+  {
+    value = NULL;
+    oyjlTreeFree(root_);
+  }
+  if(text_tmp)
+    free(text_tmp);
+
+  return value;
+}
+
 /* This function is called the
  * * first time for GUI generation and then
  * * for executing the tool.
  */
 int myMain( int argc, const char ** argv )
 {
-  char * text = NULL,
-       * text_tmp = NULL;
+  char * text = NULL;
   int size = 0;
   oyjl_val root = NULL;
   oyjl_val value = NULL;
-  int index = 0;
 
   int error = 0;
   int state = 0;
@@ -227,74 +357,80 @@ int myMain( int argc, const char ** argv )
       yaml = 1;
     if(strstr(argv[0],"jsontoxml") && xml == 0)
       xml = 1;
-    if(!json && !yaml && !xml && !paths && !key && !count && !type )
+    if(!json && !yaml && !xml && !paths && !key && !count && !type && !format)
       json = 1;
 
     if(i_filename)
     {
-      FILE * fp;
+      int i_files_n = 0, i;
+      char ** i_files = oyjlOptions_ResultsToList( ui->opts, "i", &i_files_n );
+      if(verbose)
+      for(i = 0; i < i_files_n; ++i)
+        fprintf(stderr, "going to union: %s\n", i_files[i] );
 
-      if(strcmp(i_filename,"-") == 0)
-        fp = stdin;
-      else
-        fp = fopen(i_filename,"rb");
-
-      if(fp)
+      if(i_files_n > 1 && (!(json || xml || yaml || paths || help || version) || set))
       {
-        text = oyjlReadFileStreamToMem( fp, &size ); 
-        if(fp != stdin) fclose( fp );
+        char * t = oyjlStringCopy(oyjlTermColor(oyjlBOLD, set?"--set":argv[1]), 0);
+        oyjlOption_s * o = oyjlOptions_GetOptionL( ui->opts, "input", 0/* flags */ );
+        char * t2 = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+        oyjlOptions_Print_( ui->opts, 1 );
+        fprintf( stderr, "%s %s %d - %s: %s\n", oyjlTermColor(oyjlRED,_("Usage Error:")), t2, i_files_n, _("Too many input files for option"), t );
+        free(t);
+        return 1;
       }
-    }
-
-    if(text && try_format && strcasecmp(try_format, "JSON") == 0 && text[0] != '{' && strstr(text, "\n{"))
-    {
-      text_tmp = text;
-      text = strstr(text, "\n{") + 1;
-    }
-
-    if(format)
-    {
-      int type = oyjlDataFormat(text);
-      const char * r = oyjlDataFormatToString(type);
-      fprintf(stdout, "%s\n", r);
-
-    } else
-    if(text)
-    {
-      char error_buffer[256] = {0};
-      if(verbose)
-        fprintf(stderr, "file read:\t\"%s\" %d\n", i_filename, size);
-
-      root = oyjlTreeParse( text, error_buffer, 256 );
-      if(error_buffer[0] != '\000')
-        fprintf(stderr, "ERROR:\t\"%s\"\n", error_buffer);
-      else if(!root)
-        fprintf(stderr, "ERROR:\tparsing \"%s\":\n%s", i_filename, text);
-      if(verbose)
-        fprintf(stderr, "file parsed:\t\"%s\"\n", i_filename);
-
-      if(xpath)
+      if(set && (!xpath || count || key || type || paths || format))
       {
-        char ** path_list = NULL;
-        int count = 0, i;
+        if(count || key || type || paths || format)
+        {
+          char * t = oyjlStringCopy(oyjlTermColor(oyjlBOLD, argv[1]), 0);
+          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "--set option not allowed with: %s", OYJL_DBG_ARGS, t );
+          free(t); t = NULL;
+        }
+        else
+          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "--set option needs as well a --xpath option", OYJL_DBG_ARGS );
+        return 1;
+      }
 
-        oyjlTreeToPaths( root, 1000000, xpath, 0, &path_list );
-        while(path_list && path_list[count]) ++count;
+      if(json || xml || yaml || count || key || type || paths)
+      {
+        const char * filename;
+        char * first_path = NULL;
+        oyjl_val root_union = i_files_n > 1 && !paths ? oyjlTreeNew("") : NULL;
+        for(i = 0; i < i_files_n; ++i)
+        {
+          int path_list_n = 0, j;
+          char ** path_list = NULL;
 
-        if(paths)
-          for(i = 0; i < count; ++i)
-            fprintf(stdout,"%s\n", path_list[i]);
-        else if(key)
-          fprintf(stdout,"%s\n", (count && path_list[0]) ? strchr(path_list[0],'/') ? strrchr(path_list[0],'/') + 1 : path_list[0] : "");
+          filename = i_files[i];
 
-        if(path_list || set)
-          value = oyjlTreeGetValue( root,
-                                     set ? OYJL_CREATE_NEW : 0,
-                                     path_list?path_list[0]:xpath );
-        if(verbose)
-          fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
+          text = oyjlReadFileToMem( filename, &size );
+          if(!text)
+            return 1;
+          value = oyjlTreeParse2( text, size, xpath, key || set ? &first_path : NULL, !paths ? &root : NULL, root_union ? &path_list : NULL, try_format, paths, filename, verbose );
+          while(path_list && path_list[path_list_n]) ++path_list_n;
 
-        oyjlStringListRelease( &path_list, count, free );
+          if(root_union)
+          for(j = 0; j < path_list_n; ++j)
+          {
+            const char * p = path_list[j];
+            oyjl_val src = oyjlTreeGetValue( root, 0, p ),
+                     v = oyjlTreeGetValue( root_union, OYJL_CREATE_NEW, p );
+            oyjlValueCopy( v, src );
+          }
+
+          oyjlStringListRelease( &path_list, path_list_n, free );
+          if(text) { free(text); text = NULL; }
+          if(root_union)
+          {
+            oyjlTreeFree(root);
+            root = NULL;
+            value = NULL;
+          }
+        }
+
+        if(root_union)
+          value = root = root_union;
+        root_union = NULL;
 
         if(set)
         {
@@ -305,21 +441,10 @@ int myMain( int argc, const char ** argv )
                            OYJL_DBG_ARGS, xpath, i_filename );
         }
 
-        if(verbose)
-          fprintf(stderr, "processed:\t\"%s\"\n", i_filename);
-      }
-      else if(set)
-        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "set argument needs as well a xpath argument", OYJL_DBG_ARGS );
-      else
-        value = root;
-    } else
-      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "no data input", OYJL_DBG_ARGS );
+        if(key)
+          fprintf(stdout,"%s\n", first_path);
 
-    if(value)
-    {
-      if(json || yaml || xml)
-      {
-        char * text = NULL;
+        if(text) { free(text); text = NULL; }
         int level = 0;
         if(json)
           oyjlTreeToJson( set ? root : value, &level, &text );
@@ -342,9 +467,24 @@ int myMain( int argc, const char ** argv )
         {
           fwrite( text, sizeof(char), strlen(text), stdout );
           free(text);
+          text = NULL;
         }
       }
+    }
 
+    if(format)
+    {
+      int type;
+      const char * r;
+      text = oyjlReadFileToMem( i_filename, &size );
+      type = oyjlDataFormat(text);
+      r = oyjlDataFormatToString(type);
+      fprintf(stdout, "%s\n", r);
+
+    }
+
+    if(value)
+    {
       if(type)
       switch(value->type)
       {
@@ -364,36 +504,9 @@ int myMain( int argc, const char ** argv )
         sprintf(n, "%d", oyjlValueCount(value));
         puts( n );
       }
-
-      if(key)
-      {
-      if(!xpath && value->type == oyjl_t_object && oyjlValueCount(value) > index)
-        puts( value->u.object.keys[index] );
-      }
-
-      if(paths)
-      {
-        if(!xpath)
-        {
-          char ** paths = NULL;
-          int count = 0, i;
-
-          oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
-          if(verbose)
-            fprintf(stderr, "processed:\t\"%s\"\n", i_filename);
-          while(paths && paths[count]) ++count;
-
-          for(i = 0; i < count; ++i)
-            fprintf(stdout,"%s\n", paths[i]);
-
-          oyjlStringListRelease( &paths, count, free );
-        }
-      }
     }
 
     if(root) oyjlTreeFree( root );
-    if(text_tmp) free(text_tmp);
-    else if(text) free(text);
   }
   else error = 1;
 
