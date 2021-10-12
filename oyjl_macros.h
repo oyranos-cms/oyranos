@@ -73,17 +73,20 @@
 /** obtain result from oyjlOptions_s by name e.g. inside ::oyjlOPTIONTYPE_FUNCTION callbacks */
 #define OYJL_GET_RESULT_INT( options_, optionL_, default_, variable_ )    int          variable_; if(oyjlOptions_GetResult( options_, optionL_, NULL, NULL, &variable_ ) != oyjlOPTION_USER_CHANGED) variable_ = default_;
 
-#if defined(__GNUC__)
-# define  OYJL_DBG_FORMAT "%s(%s:%d) "
-# define  OYJL_DBG_ARGS   oyjlTermColor(oyjlBOLD, __func__), strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
-#else
-# define  OYJL_DBG_FORMAT "%s:%d "
-# define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+#ifndef OYJL_DBG_FORMAT
+# if defined(__GNUC__)
+#  define  OYJL_DBG_FORMAT "%s(%s:%d) "
+#  define  OYJL_DBG_ARGS   oyjlTermColor(oyjlBOLD, __func__), strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+# else
+#  define  OYJL_DBG_FORMAT "%s:%d "
+#  define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+# endif
 #endif
 
 
 extern oyjlMessage_f oyjlMessage_p;
 /** convert ( const char * format, ... ) function args into a string */
+#ifndef OYJL_CREATE_VA_STRING
 #define OYJL_CREATE_VA_STRING(format_, text_, alloc_, error_action) \
 if(format_ && strchr(format_,'%') != NULL) { \
   va_list list; \
@@ -113,6 +116,7 @@ if(format_ && strchr(format_,'%') != NULL) { \
 { \
   text_ = oyjlStringCopy( format_, alloc_ );\
 }
+#endif
 
 #define oyjlAllocHelper_m(ptr_, type, size_, alloc_func, action) { \
   if ((size_) <= 0) {                                       \
