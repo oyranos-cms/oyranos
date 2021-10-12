@@ -5,7 +5,7 @@
  *  oyjl - convinient tree JSON APIs
  *
  *  @par Copyright:
- *            2019-2020 (C) Kai-Uwe Behrmann
+ *            2019-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    translations
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -24,7 +24,11 @@
 # endif
 # define _(text) dgettext( OYJL_DOMAIN, text )
 #else
-# define _(text) oyjlTranslate( oyjl_lang_, oyjl_catalog_, text )
+# ifndef OYJL_SKIP_TRANSLATE
+#  define _(text) oyjlTranslate( oyjl_lang_, oyjl_catalog_, text, 0 )
+# else
+#  define _(text) text
+# endif
 #endif
 
 #ifdef OYJL_HAVE_LOCALE_H
