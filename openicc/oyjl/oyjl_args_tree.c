@@ -613,7 +613,6 @@ oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
 }
 
 #define OYJL_TRANSLATE 0x01
-#define OYJL_QUOTE     0x02
 #define OYJL_SQUOTE    0x04
 #define OYJL_LAST      0x08
 static void oyjlStrAddSpaced_( oyjl_str s, const char * text, int flags, int space )
@@ -1067,7 +1066,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         }
         if(count)
         {
-          oyjlStrAdd( s, "                                    {\"\",\"\",\"\",\"\"}};\n" );
+          oyjlStrAdd( s, "                                    {NULL,NULL,NULL,NULL}};\n" );
           oyjlStrAdd( s, "\n" );
         }
       }
@@ -2314,8 +2313,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
             oyjlOptionChoice_s * list = oyjlOption_GetChoices_(o, &selected, opts );
             n = 0;
             if(list)
-              while(list[n].nick && list[n].nick[0] != '\000')
-                ++n;
+              while(list[n].nick && list[n].nick[0] != '\000') ++n;
 
             int count = 0;
             char ** results = oyjlOptions_ResultsToList( opts, o->o?o->o:o->option, &count );
@@ -2356,15 +2354,18 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
             if(changed) free(changed);
             for(l = pos; l < n+pos; ++l)
             {
+              const char * value;
               if(list[l-pos].nick)
               {
+                value = list[l-pos].nick;
                 key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "nick" );
-                oyjlValueSetString( key, list[l-pos].nick );
+                oyjlValueSetString( key, value );
               }
               if(list[l-pos].name)
               {
+                value = list[l-pos].name;
                 key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/choices/[%d]/%s", i,j,l, "name" );
-                oyjlValueSetString( key, list[l-pos].name );
+                oyjlValueSetString( key, value );
               }
             }
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
@@ -2506,15 +2507,17 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
  *  @param[in]     loc                the desired language, the locale "back" will inverse the translation; optional, without the function will return
  *  @param[int]    catalog            the message catalog; optional, without the function will return
  *  @param[int]    translator         the translation function; optional, defaut is oyjlTranslate()
+ *  @param[in]     flags              for oyjlTranslate()
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/08/18
+ *  @date    2021/09/06
  *  @since   2020/07/30 (Oyjl: 1.0.0)
  */
 void               oyjlUi_Translate  ( oyjlUi_s          * ui,
                                        const char        * loc,
                                        oyjl_val            catalog,
-                                       oyjlTranslate_f     translator )
+                                       oyjlTranslate_f     translator,
+                                       int                 flags )
 {
   int i,j,n,ng;
 
@@ -2523,7 +2526,7 @@ void               oyjlUi_Translate  ( oyjlUi_s          * ui,
   if(!translator)
     translator = oyjlTranslate;
 
-#define tr( text ) text = translator(loc, catalog, text)
+#define tr( text ) text = translator(loc, catalog, text, flags)
   tr(ui->name);
   tr(ui->description);
   n = oyjlUiHeaderSection_Count( ui->sections );
