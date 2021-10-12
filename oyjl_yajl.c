@@ -448,6 +448,9 @@ static int handle_null (void *ctx)
 oyjl_val oyjlTreeParse   (const char *input,
                           char *error_buffer, size_t error_buffer_size)
 {
+  if(input && strlen(input) > 4 && memcmp(input, "oiJS", 4) == 0)
+    return (oyjl_val)input;
+
 #if (YAJL_VERSION) > 20000
 static yajl_callbacks oyjl_tree_callbacks_ = {
   handle_null,
@@ -696,6 +699,7 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
       const char * val = (const char *) cur->content;
       double d;
       int err = -1;
+
       if(flags & OYJL_NUMBER_DETECTION)
         err = oyjlStringToDouble( val, &d );
       if(err == 0)
@@ -708,9 +712,22 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
         root->u.number.i = strtol(root->u.number.r, 0, 10);
         if (errno == 0)
           root->u.number.flags |= OYJL_NUMBER_INT_VALID;
+      } else if(flags & OYJL_NUMBER_DETECTION)
+      {
+        if(strcmp(val,"true") == 0)
+        {
+          err = 0;
+          root->type = oyjl_t_true;
+        } else if(strcmp(val,"false") == 0)
+        {
+          err = 0;
+          root->type = oyjl_t_false;
+        }
       }
-      else
+
+      if(err != 0)
         oyjlValueSetString( root, val );
+
     } else
     if( oyjlXMLNodeIsCData(cur) )
     {
