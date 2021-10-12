@@ -49,7 +49,7 @@ int verbose = 0;
 #ifndef OYJL_TEST_MAIN_FINISH
 /** @brief end your test program as you need by defining this macro
  *
- *  Place this macro in front of your #include oyjl_test_main.h.
+ *  Place this macro in front of your \#include oyjl_test_main.h.
  *  The macro is called as last entry inside oyjl_test_main.h defined main().
  *  @code
     #define OYJL_TEST_MAIN_FINISH printf("\n    My Test Program finished\n\n");
@@ -158,7 +158,7 @@ int main(int argc, char** argv)
 
   return error;
 }
-/*  @} *//* oyjl_test */
+/** @} *//* oyjl_test */
 /** @} *//* oyjl */
 
 #endif /* OYJL_TEST_MAIN_H */
