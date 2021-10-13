@@ -1,8 +1,8 @@
-/** @file test.c
+/** @file test-core.c
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2004-2019  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2021  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -22,11 +22,10 @@
 
 void oyjlLibRelease();
 #define OYJL_TEST_MAIN_SETUP  printf("\n    OyjlCore Test Program\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    OyjlCore Test Program finished\n\n"); oyjlLibRelease();
+#define OYJL_TEST_MAIN_FINISH printf("\n    OyjlCore Test Program finished\n\n"); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub);
 #define OYJL_TEST_NAME "test-core"
-#include "oyjl_test_main.h"
 #include "oyjl.h"
-#include "oyjl_version.h"
+#include "oyjl_test_main.h"
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
@@ -66,10 +65,10 @@ oyjlTESTRESULT_e testI18N()
   clang = setlocale(LC_ALL, NULL);
   if((clang && (strcmp(clang, "C") == 0)) || !clang)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "Language uninitialised good \"C\"              " );
+    "Language uninitialised good \"C\"" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "Language uninitialised failed                 " );
+    "Language uninitialised good \"C\"" );
   }
 
   clang = getenv("LANG");
@@ -86,29 +85,29 @@ oyjlTESTRESULT_e testI18N()
 
   if(clang && (strstr(clang, "de_DE") != 0))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "Language initialised good %s            ", clang?clang:"---" );
+    "Language initialised good %s", clang?clang:"---" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "Language initialised failed %s          ", clang?clang:"---" );
+    "Language initialised failed %s", clang?clang:"---" );
   }
 
   char * language = oyjlLanguage( clang );
   if(language && (strstr(language, "de") != 0))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlLanguage() good %s                             ", language?language:"---" );
+    "oyjlLanguage() good %s", language?language:"---" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlLanguage() good %s                             ", language?language:"---" );
+    "oyjlLanguage() good %s", language?language:"---" );
   }
   if(language) free(language);
 
   char * country = oyjlCountry( clang );
   if(country && (strstr(country, "DE") != 0))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlCountry() good %s                              ", country?country:"---" );
+    "oyjlCountry() good %s", country?country:"---" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlCountry() good %s                              ", country?country:"---" );
+    "oyjlCountry() good %s", country?country:"---" );
   }
   if(country) free(country);
 
@@ -123,19 +122,19 @@ oyjlTESTRESULT_e testI18N()
   const char * lang = setlocale(LC_ALL, NULL);
   if(lang && (strcmp(lang, "C") != 0))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "setlocale() initialised good %s            ", lang );
+    "setlocale() initialised good %s", lang );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "setlocale() initialised failed %s          ", lang );
+    "setlocale() initialised failed %s", lang );
   }
 
   const char * text = _("Example");
   if(strcmp(text,"Beispiel") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "dgettext() good \"%s\"                      ", text );
+    "dgettext() good \"%s\"", text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "dgettext() failed \"%s\"                    ", text );
+    "dgettext() failed \"%s\"", text );
   }
 
   setlocale(LC_ALL,"");
@@ -189,10 +188,10 @@ oyjlTESTRESULT_e testString ()
   if( strstr(test_out, TEST_DOMAIN2 ) != NULL &&
       strlen(test_out) == 59 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(start) %d 59 == %d                 ", n, (int)strlen(test_out) );
+    "oyjlStringReplace(start) %d 59 == %d", n, (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(start) %d 59 == %d                 ", n, (int)strlen(test_out) );
+    "oyjlStringReplace(start) %d 59 == %d", n, (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
@@ -204,10 +203,10 @@ oyjlTESTRESULT_e testString ()
       strlen(test_out) == 51 &&
       n == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(middle) 51 == %d                  ", (int)strlen(test_out) );
+    "oyjlStringReplace(middle) 51 == %d", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(middle) 51 == %d                  ", (int)strlen(test_out) );
+    "oyjlStringReplace(middle) 51 == %d", (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
@@ -220,10 +219,10 @@ oyjlTESTRESULT_e testString ()
       strlen(test_out) == 46 &&
       n == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(end)    46 == %d                  ", (int)strlen(test_out) );
+    "oyjlStringReplace(end)    46 == %d", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(end)    46 == %d                  ", (int)strlen(test_out) );
+    "oyjlStringReplace(end)    46 == %d", (int)strlen(test_out) );
   }
   if(verbose)
     fprintf( stderr, "%s \"display_name\"->\"bar\" %s\n", test, test_out );
@@ -238,10 +237,10 @@ oyjlTESTRESULT_e testString ()
       strlen(test_out) == 6 &&
       n == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(end)      6 == %d                  ", (int)strlen(test_out) );
+    "oyjlStringReplace(end)      6 == %d", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(end)      6 == %d                  ", (int)strlen(test_out) );
+    "oyjlStringReplace(end)      6 == %d", (int)strlen(test_out) );
   }
   if(verbose)
     fprintf( stderr, "\"%s\" \"]\"->\" ] \" \"%s\"\n", "abc]", test_out );
@@ -256,10 +255,10 @@ oyjlTESTRESULT_e testString ()
       n == 0 &&
       strcmp(compare,test) == 0 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(none)                             " );
+    "oyjlStringReplace(none)" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(none)                             " );
+    "oyjlStringReplace(none)" );
   }
   myDeAllocFunc(test_out);
   compare = NULL;
@@ -272,10 +271,10 @@ oyjlTESTRESULT_e testString ()
       strlen(test_out) == 49 &&
       n == 2 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(shorter) 49 == %d                 ", (int)strlen(test_out) );
+    "oyjlStringReplace(shorter) 49 == %d", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(shorter) 49 == %d                 ", (int)strlen(test_out) );
+    "oyjlStringReplace(shorter) 49 == %d", (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
@@ -287,10 +286,10 @@ oyjlTESTRESULT_e testString ()
       strlen(test_out) == 61 &&
       n == 2 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringReplace(longer) 61 == %d                  ", (int)strlen(test_out) );
+    "oyjlStringReplace(longer) 61 == %d", (int)strlen(test_out) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringReplace(longer) 61 == %d                  ", (int)strlen(test_out) );
+    "oyjlStringReplace(longer) 61 == %d", (int)strlen(test_out) );
   }
   myDeAllocFunc(test_out);
 
@@ -308,10 +307,10 @@ oyjlTESTRESULT_e testString ()
       (index && text[index[5]] == ';')
     )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringSplit2()                                  " );
+    "oyjlStringSplit2()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringSplit2()                                  " );
+    "oyjlStringSplit2()" );
   }
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
   {
@@ -328,10 +327,10 @@ oyjlTESTRESULT_e testString ()
   oyjlStringListFreeDoubles( list, &list_n, myDeAllocFunc );
   if( list_n == 6 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringListFreeDoubles()                         " );
+    "oyjlStringListFreeDoubles()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringListFreeDoubles()                         " );
+    "oyjlStringListFreeDoubles()" );
     for(i = 0; i < list_n; ++i)
       fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
   }
@@ -341,10 +340,10 @@ oyjlTESTRESULT_e testString ()
   list = oyjlStringSplit( "a a b c\td\ne", 0, &list_n, myAllocFunc );
   if(list_n == 6)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringSplit(0)                                  " );
+    "oyjlStringSplit(0)" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringSplit(0)                                  " );
+    "oyjlStringSplit(0)" );
   }
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
   {
@@ -363,10 +362,10 @@ oyjlTESTRESULT_e testString ()
     oyjlStringAdd( &t, 0,0, "%s%s", i?",":"", list[i] );
   if(strcmp(t, "element,element") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringListAddList(list, &string)                " );
+    "oyjlStringListAddList(list, &string)" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringListAddList(list, &string)                " );
+    "oyjlStringListAddList(list, &string)" );
   }
   free(t); t = NULL;
   oyjlStringListRelease( &list, list_n, 0 );
@@ -378,21 +377,32 @@ oyjlTESTRESULT_e testString ()
   if( !error &&
       l == 2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringToLong(\"2\") = %ld                          ", l );
+    "oyjlStringToLong(\"2\") = %ld  error = %d", l, error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringToLong(\"2\") = %ld                          ", l );
+    "oyjlStringToLong(\"2\") = %ld  error = %d", l, error );
   }
 
   l = 0;
   error = oyjlStringToLong( "2\n", &l );
-  if( !error &&
+  if( error == -1 &&
       l == 2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringToLong(\"2\n\") = %ld                         ", l );
+    "oyjlStringToLong(\"2\n\") = %ld  error = %d", l, error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringToLong(\"2\n\") = %ld                         ", l );
+    "oyjlStringToLong(\"2\n\") = %ld", l );
+  }
+
+  l = -2;
+  error = oyjlStringToLong( "", &l );
+  if( error == 1 &&
+      l == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringToLong(\"\") = %ld  error = %d", l, error );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringToLong(\"\") = %ld", l );
   }
 
   double d = 0.0;
@@ -400,31 +410,31 @@ oyjlTESTRESULT_e testString ()
   if( !error &&
       d == 0.2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringToDouble(\"0.2\") = %g                     ", d );
+    "oyjlStringToDouble(\"0.2\") = %g  error = %d", d, error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringToDouble(\"0.2\") = %g  error = %d           ", d, error );
+    "oyjlStringToDouble(\"0.2\") = %g  error = %d", d, error );
   }
 
   d = 0.0;
   error = oyjlStringToDouble( "0.2#", &d );
-  if( !error &&
+  if( error == -1 &&
       d == 0.2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringToDouble(\"0.2#\") = %g                    ", d );
+    "oyjlStringToDouble(\"0.2#\") = %g  error = %d", d, error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringToDouble(\"0.2#\") = %g  error = %d          ", d, error );
+    "oyjlStringToDouble(\"0.2#\") = %g  error = %d", d, error );
   }
 
   d = 0.0;
   error = oyjlStringToDouble( "val_a", &d );
   if( error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringToDouble(\"val_a\")   error: %d              ", error );
+    "oyjlStringToDouble(\"val_a\")   error = %d", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringToDouble(\"val_a\") = %g  error = %d         ", d, error );
+    "oyjlStringToDouble(\"val_a\") = %g  error = %d", d, error );
   }
 
   double * doubles = NULL;
@@ -436,10 +446,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 3.5 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"0.2 1 3.5\") error = %d         ", error );
+    "oyjlStringsToDoubles(\"0.2 1 3.5\") error = %d", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"0.2 1 3.5\") error = %d         ", error );
+    "oyjlStringsToDoubles(\"0.2 1 3.5\") error = %d", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -448,10 +458,10 @@ oyjlTESTRESULT_e testString ()
       doubles[0] == 0.2 &&
       count == 1)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"0.2\") error = %d               ", error );
+    "oyjlStringsToDoubles(\"0.2\") error = %d", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"0.2\") error = %d               ", error );
+    "oyjlStringsToDoubles(\"0.2\") error = %d", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -462,10 +472,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 3.5 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"0.2;1;3.5\") error = %d         ", error );
+    "oyjlStringsToDoubles(\"0.2;1;3.5\") error = %d", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"0.2;1;3.5\") error = %d         ", error );
+    "oyjlStringsToDoubles(\"0.2;1;3.5\") error = %d", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -475,10 +485,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 3.5 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"0.2 ; 1; 3.5 cm\") error = %d  ", error );
+    "oyjlStringsToDoubles(\"0.2 ; 1; 3.5 cm\") error = %d", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"0.2 ; 1; 3.5 cm\") error = %d  ", error );
+    "oyjlStringsToDoubles(\"0.2 ; 1; 3.5 cm\") error = %d", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -489,10 +499,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 3.5 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d         ", error );
+    "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d         ", error );
+    "oyjlStringsToDoubles(\"0.2,1,3.5\") error = %d", error );
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
@@ -503,10 +513,10 @@ oyjlTESTRESULT_e testString ()
       doubles[2] == 27 &&
       count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringsToDoubles(\"2\\t1.2\\t 27\") error = %d       ", error );
+    "oyjlStringsToDoubles(\"2\\t1.2\\t 27\") error = %d", error );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringsToDoubles(\"2\\t1.2\\t 27\") error = %d       ", error );
+    "oyjlStringsToDoubles(\"2\\t1.2\\t 27\") error = %d", error );
   }
   if(verbose)
   {
@@ -602,10 +612,10 @@ oyjlTESTRESULT_e testString ()
   const char * tmp = oyjlStr(string);
   if(strstr(tmp, "/more\\/and/more"))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStrReplace(callback,user_data)                  " );
+    "oyjlStrReplace(callback,user_data)" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStrReplace(callback,user_data)                  " );
+    "oyjlStrReplace(callback,user_data)" );
   }
   oyjlStrRelease( &string );
 
@@ -654,10 +664,10 @@ oyjlTESTRESULT_e testString ()
   regexp = "NONE";
   if((match = oyjlRegExpFind(txt, regexp)) == NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "!oyjlRegExpFind( \"%s\", \"%s\" ) ", txt, oyjlNoEmpty(regexp) );
+    "!oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "!oyjlRegExpFind( \"%s\", \"%s\" ) ", txt, oyjlNoEmpty(regexp) );
+    "!oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
 
   regexp = "1";
@@ -695,6 +705,16 @@ oyjlTESTRESULT_e testString ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "!oyjlRegExpFind(\"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
+
+  regexp = "/de.*/The API's\\.";
+  oyjlStringAdd( &txt, 0,0, "/de_DE.UTF8/The API's." );
+  if((match = oyjlRegExpFind(txt, regexp)) != NULL)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlRegExpFind(\"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), oyjlNoEmpty(match) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlRegExpFind(\"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), oyjlNoEmpty(match) );
+  }
   free(txt); txt = NULL;
 
   char * pattern = NULL;
@@ -705,7 +725,7 @@ oyjlTESTRESULT_e testString ()
     oyjlStringAdd( &pattern, 0,0, "%s%s", regex_, t ); \
     if(oyjlRegExpFind( compare, pattern ) != NULL) \
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS, \
-      "oyjlRegExpEscape( \"%s\" )                 ", escape ); \
+      "oyjlRegExpEscape( \"%s\" )", escape ); \
     } else \
     { PRINT_SUB( oyjlTESTRESULT_FAIL, \
       "oyjlRegExpEscape( \"%s\" ) %s -> oyjlRegExpFind(\"%s\", \"%s\")", escape, t, compare, pattern ); \
@@ -728,6 +748,46 @@ oyjlTESTRESULT_e testString ()
   REGEX_ESCAPE( "/stri/n/g_", "str.*", "string.+" )
   REGEX_ESCAPE( "/stri/n/g_", "str.*", "string{3,}" )
   REGEX_ESCAPE( "/stri/n/g_", "str.*", "(ring|Ring)" )
+
+#if 0
+  { char * text = oyjlStringCopy( "rotation", 0 ); \
+    oyjlRegExpReplace( &text, "tat", "" ); \
+    if(text && strcmp( text, "roion" ) == 0) \
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, \
+      "oyjlRegExpReplace( \"%s\" )", "tat" ); \
+    } else \
+    { PRINT_SUB( oyjlTESTRESULT_FAIL, \
+      "oyjlRegExpReplace( \"%s\" )", "tat" ); \
+    } \
+    free(text); text = NULL; \
+  }
+#endif
+
+  regexp = "tat";
+  txt = "rotation";
+  if((match = oyjlRegExpFind( txt, regexp)) != NULL)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlRegExpFind( \"%s\", \"%s\" ) = %s", txt, oyjlNoEmpty(regexp), match );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
+  }
+#define REGEX_REPLACE( string_, regex_, replacement, check ) \
+  { char * text = oyjlStringCopy( string_, 0 ); \
+    char * escape = oyjlRegExpEscape( regex_ ); \
+    oyjlRegExpReplace( &text, regex_, replacement ); \
+    if(text && strcmp( text, check ) == 0) \
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS, \
+      "oyjlRegExpReplace( \"%s\", \"%s\" )", string_, escape ); \
+    } else \
+    { PRINT_SUB( oyjlTESTRESULT_FAIL, \
+      "oyjlRegExpReplace( \"%s\", \"%s\" ) = %s", string_, regex_, text ); \
+    } \
+    free(text); text = NULL; \
+    free(escape); escape = NULL; \
+  }
+  REGEX_REPLACE( "rotation", "tat", "", "roion" )
+  REGEX_REPLACE( "\033[1mSomeText\033[0m \033[38;2;0;200;0mSomeMoreText\033[0m", "\033[[0-9;]*[a-zA-Z]", "", "SomeText SomeMoreText" )
 
   return result;
 }
@@ -760,11 +820,11 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   fprintf( zout, "compiling and testing: %s\n", oyjlTermColor(oyjlBOLD, prog) );
 
   if(c_source && len == code_size)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)   %lu", len );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)" );
   } else
-  { PRINT_SUB( fail,
-    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)   %lu", len );
+  { PRINT_SUB_INT( fail, len,
+    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)" );
   }
   OYJL_TEST_WRITE_RESULT( c_source, len, "oyjlUiJsonToCode", "txt" )
   if(verbose && c_source)
@@ -794,11 +854,11 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   c_source = oyjlUiJsonToCode( json, OYJL_COMPLETION_BASH );
   len = c_source ? strlen(c_source) : 0;
   if(len == bash_size)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH) %lu", len );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH)" );
   } else
-  { PRINT_SUB( fail,
-    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH) %lu", len );
+  { PRINT_SUB_INT( fail, len,
+    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH)" );
   }
   OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode-Completion", "txt" )
   if(verbose && c_source)
@@ -808,11 +868,11 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s --help", prog );
   len = t ? strlen(t) : 0;
   if(len == help_size)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "%s --help                        %lu", prog, len );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "%s --help", prog );
   } else
-  { PRINT_SUB( fail,
-    "%s --help                        %lu", prog, len );
+  { PRINT_SUB_INT( fail, len,
+    "%s --help", prog );
   }
   OYJL_TEST_WRITE_RESULT( t, len, prog, "txt" )
   if(verbose && len)
@@ -822,11 +882,11 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X man > %s.1 && COLUMNS=%d man ./%s.1", prog, prog, 400, prog );
   len = t ? strlen(t) : 0;
   if(len == man_size)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "%s -X man && man %s.1          %lu", prog, prog, len );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "%s -X man && man %s.1", prog, prog );
   } else
-  { PRINT_SUB( fail,
-    "%s -X man && man %s.1          %lu", prog, prog, len );
+  { PRINT_SUB_INT( fail, len,
+    "%s -X man && man %s.1", prog, prog );
   }
   OYJL_TEST_WRITE_RESULT( t, len, prog, "man" )
   if(verbose && len)
@@ -836,11 +896,11 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X markdown", prog );
   len = t ? strlen(t) : 0;
   if(len == markdown_size)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "%s -X markdown                   %lu", prog, len );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "%s -X markdown", prog );
   } else
-  { PRINT_SUB( fail,
-    "%s -X markdown                   %lu", prog, len );
+  { PRINT_SUB_INT( fail, len,
+    "%s -X markdown", prog );
   }
   OYJL_TEST_WRITE_RESULT( t, len, prog, "md" )
   if(verbose && len)
@@ -850,8 +910,8 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
   len = t ? strlen(t) : 0;
   if(len == json_size && oyjlDataFormat(t) == 7)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "%s -X json                       %lu", prog, len );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "%s -X json", prog );
   } else
   { PRINT_SUB( fail,
     "%s -X json                       %lu %d", prog, len, oyjlDataFormat(t) );
@@ -865,11 +925,11 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json+command | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
   len = t ? strlen(t) : 0;
   if(len == json_command_size && oyjlDataFormat(t) == 7)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "%s -X json+command               %lu", prog, len );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "%s -X json+command", prog );
   } else
-  { PRINT_SUB( fail,
-    "%s -X json+command               %lu", prog, len );
+  { PRINT_SUB_INT( fail, len,
+    "%s -X json+command", prog );
   }
   OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
   if(verbose && len)
@@ -879,11 +939,11 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X export | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
   len = t ? strlen(t) : 0;
   if(len == export_size && oyjlDataFormat(t) == 7)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "%s -X export                    %lu", prog, len );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "%s -X export", prog );
   } else
-  { PRINT_SUB( fail,
-    "%s -X export                    %lu", prog, len );
+  { PRINT_SUB_INT( fail, len,
+    "%s -X export", prog );
   }
   OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
   if(verbose && len)
@@ -925,11 +985,11 @@ oyjlTESTRESULT_e testArgs()
   /* declare some option choices */
   oyjlOptionChoice_s i_choices[] = {{"oyjl.json", _("oyjl.json"), "First file", ""},
                                     {"oyjl2.json", _("oyjl2.json"), "Second file", ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s o_choices[] = {{"0", _("Print All"), _("All Device Classes"), ""},
                                     {"1", _("Print Camera"), _("JSON"), ""},
                                     {"2", _("Print None"), "", ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
 
   /*  declare options - the core information; use previously declared choices;
    *  only declared options are parsed
@@ -968,10 +1028,10 @@ oyjlTESTRESULT_e testArgs()
                             "1.0", "Test Tool for testing" );
   if(ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui created - no args                           " );
+    "ui created - no args" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui created - no args                           " );
+    "ui created - no args" );
   }
   char * text = oyjlUi_ToJson( ui, 0 );
   if(text)
@@ -984,7 +1044,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           8501                      /*code_size*/,
+                           8517                      /*code_size*/,
                            1082                      /*help_size*/,
                            1967                      /*man_size*/,
                            3788                      /*markdown_size*/,
@@ -1005,10 +1065,10 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups_no_args, NULL );
   if(ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui created - anonymous args                    " );
+    "ui created - anonymous args" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui created - anonymous args                    " );
+    "ui created - anonymous args" );
   }
   int count = 0, i;
   /* detect all anonymous arguments */
@@ -1018,10 +1078,10 @@ oyjlTESTRESULT_e testArgs()
      strcmp(argv_anonymous[2],results[0]) == 0 &&
      strcmp(argv_anonymous[3],results[1]) == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "anonymous args correctly detected  %d          ", count );
+    "anonymous args correctly detected  %d", count );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "anonymous args correctly detected  %d          ", count );
+    "anonymous args correctly detected  %d", count );
   }
   if(verbose)
   for(i = 0; i < count; ++i)
@@ -1044,10 +1104,10 @@ oyjlTESTRESULT_e testArgs()
 
   if(!ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui not created - missing mandatory option      " );
+    "ui not created - missing mandatory option" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui not created - missing mandatory option      " );
+    "ui not created - missing mandatory option" );
   }
 
   oyjlUi_Release( &ui);
@@ -1058,10 +1118,10 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups, &state );
   if(!ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui not created - missing arg %d                " , state >> oyjlUI_STATE_OPTION );
+    "ui not created - missing arg %d" , state >> oyjlUI_STATE_OPTION );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui not created - missing arg                   " );
+    "ui not created - missing arg" );
   }
   oyjlUi_Release( &ui);
 
@@ -1071,7 +1131,7 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups, NULL );
   if(ui && strcmp(file,"file-name.json") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui created - parse string                      " );
+    "ui created - parse string" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "ui created - parse string                      " );
@@ -1080,7 +1140,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           8246                      /*code_size*/,
+                           8262                      /*code_size*/,
                             615                      /*help_size*/,
                            1451                      /*man_size*/,
                            2300                      /*markdown_size*/,
@@ -1099,10 +1159,10 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups, &state );
   if(!ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui not created - wrong arg  %d                 ", state >> oyjlUI_STATE_OPTION );
+    "ui not created - wrong arg  %d", state >> oyjlUI_STATE_OPTION );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui not created - wrong arg                     " );
+    "ui not created - wrong arg" );
   }
   oyjlUi_Release( &ui);
 
@@ -1114,10 +1174,10 @@ oyjlTESTRESULT_e testArgs()
   text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 4916)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ToJson() %lu                           ", strlen(text) );
+    "oyjlUi_ToJson() %lu", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson() 4903 == %lu                   ", strlen(text) );
+    "oyjlUi_ToJson() 4903 == %lu", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson", "txt" )
   if(verbose && text)
@@ -1127,10 +1187,10 @@ oyjlTESTRESULT_e testArgs()
   text = oyjlUi_ToMan( ui, 0 );
   if(text && strlen(text) == 833)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ToMan() %lu                            ", strlen(text) );
+    "oyjlUi_ToMan() %lu", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 848 == %lu                     ", strlen(text) );
+    "oyjlUi_ToMan() 848 == %lu", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose)
@@ -1140,10 +1200,10 @@ oyjlTESTRESULT_e testArgs()
   text = oyjlOptions_ResultsToJson( ui->opts );
   if(text && strlen(text) == 63)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOptions_ResultsToJson() %lu                 ", strlen(text) );
+    "oyjlOptions_ResultsToJson() %lu", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlOptions_ResultsToJson() %lu                 ", strlen(text) );
+    "oyjlOptions_ResultsToJson() %lu", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlOptions_ResultsToJson", "txt" )
   if(verbose)
@@ -1154,10 +1214,10 @@ oyjlTESTRESULT_e testArgs()
   text = oyjlOptions_ResultsToText( ui->opts );
   if(text && strlen(text) == 41)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOptions_ResultsToText() %lu                 ", strlen(text) );
+    "oyjlOptions_ResultsToText() %lu", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlOptions_ResultsToText() %lu                 ", strlen(text) );
+    "oyjlOptions_ResultsToText() %lu", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlOptions_ResultsToText", "txt" )
   if(verbose)
@@ -1174,10 +1234,10 @@ oyjlTESTRESULT_e testArgs()
   text = oyjlUi_ExportToJson( ui, 0 );
   if(text && strlen(text) == 6644)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ExportToJson()       %lu                 ", strlen(text) );
+    "oyjlUi_ExportToJson()       %lu", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ExportToJson()       6644 == %lu         ", strlen(text) );
+    "oyjlUi_ExportToJson()       6644 == %lu", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson", "txt" )
   if(verbose && text)
@@ -1197,6 +1257,66 @@ oyjlTESTRESULT_e testArgs()
 
 
 void oyjlTreeToJson2_(oyjl_val v, int * level, char ** json);
+
+
+
+oyjlTESTRESULT_e testTreePath        ( oyjl_val            root,
+                                       const char        * key,
+                                       const char        * name,
+                                       oyjlTESTRESULT_e    result,
+                                       oyjlTESTRESULT_e    fail )
+{
+  oyjl_val value = oyjlTreeGetValueF( root, 0, key );
+  char * path = oyjlTreeGetPath( root, value );
+  if( path && strcmp(path, name) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeToPath() \"%s\"", path );
+  } else
+  { PRINT_SUB( fail,
+    "oyjlTreeToPath() \"%s\"", path );
+  }
+  if(path) {free(path); path = NULL;}
+
+  return result;
+}
+
+oyjlTESTRESULT_e testTreeToPaths     ( oyjl_val            root,
+                                       int                 flags,
+                                       int                 count_,
+                                       const char        * name,
+                                       oyjlTESTRESULT_e    result,
+                                       oyjlTESTRESULT_e    fail )
+{
+  char ** paths = NULL;
+  oyjlTreeToPaths( root, 10000000, NULL, flags, &paths );
+  int count, i;
+  count = 0; while(paths && paths[count]) ++count;
+
+  if( count == count_ )
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, count,
+    "oyjlTreeToPaths(\"%s\" %s %s)                  %s", name?name:"NULL", flags&OYJL_KEY ? "k":"", flags&OYJL_PATH ? "p":"", name&&!name[0]?"   ":"" );
+  } else
+  { PRINT_SUB_INT( fail, count,
+    "oyjlTreeToPaths(\"%s\" %s %s)", name?name:"NULL", flags&OYJL_KEY ? "k":"", flags&OYJL_PATH ? "p":"" );
+  }
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL || verbose)
+  {
+    char * text = NULL; i = 0;
+    oyjlTreeToJson( root, &i, &text ); i = 0;
+    fprintf( zout, "%s\n", text );
+    free(text);
+    for(i = 0; i < count; ++i)
+    {
+      char * path = paths[i];
+      fprintf( zout, "paths[%d]: %s\n", i, path );
+    }
+  }
+
+  if(paths && count)
+    oyjlStringListRelease( &paths, count, free );
+
+  return result;
+}
 
 oyjlTESTRESULT_e testTree ()
 {
@@ -1223,10 +1343,10 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeToJson( root, &i, &text ); i = 0;
   if(root && text && strcmp(text,"null") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlTreeNew( NULL )                     " );
+    "oyjlTreeNew( NULL )" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlTreeNew( NULL )                     " );
+    "oyjlTreeNew( NULL )" );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeNew_NULL", "txt" )
   if(verbose && text)
@@ -1238,10 +1358,10 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeToJson( root, &i, &text ); i = 0;
   if(root && text && strcmp(text,"null") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlTreeNew( \"\" )                       " );
+    "oyjlTreeNew( \"\" )" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlTreeNew( \"\" )                       " );
+    "oyjlTreeNew( \"\" )" );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeNew_", "txt" )
   if(verbose && text)
@@ -1254,11 +1374,11 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeToJson( root, &i, &text ); i = 0;
   size_t len = strlen(text);
   if(root && len == 56)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlTreeNew( \"new/tree/key\" )       %d", (int)len );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "oyjlTreeNew( \"new/tree/key\" )" );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlTreeNew( \"new/tree/key\" )       %d", (int)len );
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, len,
+    "oyjlTreeNew( \"new/tree/key\" )" );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeNew_new_tree_key", "txt" )
   if(verbose && text)
@@ -1301,11 +1421,11 @@ oyjlTESTRESULT_e testTree ()
   oyjlValueSetString( value, VALUE );
   oyjlTreeToJson( root, &i, &text ); i = 0;
   if(len < strlen(text))
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlValueSetString( %s )         %d", VALUE, (int)strlen(text) );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
+    "oyjlValueSetString( %s )", VALUE );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlValueSetString( %s )         %d", VALUE, (int)strlen(text) );
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(text),
+    "oyjlValueSetString( %s )", VALUE );
   }
   if(verbose)
     fprintf( zout, "%s\n", text );
@@ -1366,7 +1486,7 @@ oyjlTESTRESULT_e testTree ()
   text = oyjlTreePrint(root);
   if(strlen(text) == 58)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlTreeSetStringF(OYJL_CREATE_NEW, \"arr/[1]/key\") %lu", strlen(text) );
+    "oyjlTreeSetStringF(OYJL_CREATE_NEW,\"arr/[1]/key\") %lu", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTreeSetStringF(OYJL_CREATE_NEW, \"arr/[1]/key\") %lu", strlen(text) );
@@ -1391,11 +1511,11 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, 1.2,     "one/[%d]/data/[2]", 1 );
   oyjlTreeToJson( root, &i, &text ); i = 0;
   if( text && strlen( text ) == 238 )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "add array                                      %ld", strlen(text) );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
+    "add array" );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "add array                                      %ld", strlen(text) );
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, text?strlen(text):0,
+    "add array" );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeSetStringF", "txt" )
   if(verbose && text)
@@ -1409,23 +1529,129 @@ oyjlTESTRESULT_e testTree ()
   for(i = 0; i < n; ++i)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "data/key-%d", i );
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjlTreeSetStringF()\t%dx              \t\%s\n", n,
-                 oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"node"));
+  fprintf( zout, "%s\n",
+    oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"node",
+    "oyjlTreeSetStringF()  %dx", n) );
   i = 0;
 
   clck = oyjlClock();
   oyjlTreeToJson2_( root, &i, &text ); i = 0;
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjlTreeToJson2_()      \t1x %d            \t\%s\n", (int)strlen(text),
-                 oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"dump"));
+  fprintf( zout, "%s\n",
+    oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
+    "oyjlTreeToJson2_()       1x %d", (int)strlen(text)) );
   myDeAllocFunc( text ); text = NULL;
 
   clck = oyjlClock();
   oyjlTreeToJson( root, &i, &text ); i = 0;
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjlTreeToJson()        \t1x %d            \t\%s\n", (int)strlen(text),
-                 oyjlProfilingToString(1,clck/(double)CLOCKS_PER_SEC,"dump"));
+  fprintf( zout, "%s\n",
+    oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
+    "oyjlTreeToJson()         1x %d", (int)strlen(text)) );
   myDeAllocFunc( text ); text = NULL;
+  oyjlTreeFree( root );
+
+
+#if 1
+  root = oyjlTreeNew("");
+  const char * key = "Color";
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "data/key-%s", key );
+  value = oyjlTreeGetValueF( root, 0, "data/key-%s", key );
+  char ** paths = NULL;
+  int flags = 0;
+  oyjlTreeToPaths( root, 10000000, NULL, flags, &paths );
+  count = 0; while(paths && paths[count]) ++count;
+  char * path = oyjlTreeGetPath( root, value );
+  oyjlTreeFree( root );
+  if( count == 2 && path)
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, count,
+    "oyjlTreeToPaths(\"%s\")", key );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, count,
+    "oyjlTreeToPaths(\"%s\")", key );
+  }
+  if(path) {free(path);} path = NULL;
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL || verbose)
+  for(i = 0; i < count; ++i)
+  {
+    char * path = paths[i];
+    fprintf( zout, "paths[%d]: %s\n", i, path );
+  }
+  if(paths && count)
+    oyjlStringListRelease( &paths, count, free );
+#endif
+
+  fprintf( zout, "\n       creation key    k(OYJL_KEY) p(OYJL_PATH) count \n" );
+  const char * json = NULL;
+  root = oyjlTreeNew(json);
+  result = testTreeToPaths( root, 0, 0, json, result, oyjlTESTRESULT_FAIL );
+  oyjlTreeFree( root );
+
+  json = "";
+  root = oyjlTreeNew(json);
+  result = testTreeToPaths( root, 0, 0, json, result, oyjlTESTRESULT_FAIL );
+  oyjlTreeFree( root );
+
+  json = "data";
+  root = oyjlTreeNew(json);
+  result = testTreeToPaths( root, 0, 1, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY|OYJL_PATH, 1, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY, 1, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_PATH, 0, json, result, oyjlTESTRESULT_FAIL );
+  oyjlTreeFree( root );
+
+  json = "d/key";
+  root = oyjlTreeNew(json);
+  result = testTreeToPaths( root, 0, 2, json, result, oyjlTESTRESULT_FAIL );
+  oyjlTreeFree( root );
+
+  json = "d/e/k";
+  root = oyjlTreeNew(json);
+  result = testTreeToPaths( root, 0, 3, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY|OYJL_PATH, 3, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY, 1, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_PATH, 2, json, result, oyjlTESTRESULT_FAIL );
+  oyjlTreeFree( root );
+
+  json = "d/1. key";
+  root = oyjlTreeNew(json);
+  result = testTreeToPaths( root, 0, 2, json, result, oyjlTESTRESULT_XFAIL );
+  result = testTreeToPaths( root, OYJL_KEY|OYJL_PATH, 2, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY, 1, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_PATH, 1, json, result, oyjlTESTRESULT_FAIL );
+  oyjlTreeFree( root );
+
+  json = "d/k\\\\[3]";
+  root = oyjlTreeNew(json);
+  result = testTreeToPaths( root, 0, 2, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY|OYJL_PATH, 2, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY, 1, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_PATH, 1, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreePath( root, json, json, result, oyjlTESTRESULT_FAIL );
+  oyjlTreeFree( root );
+
+  json = "d/[3]/k";
+  root = oyjlTreeNew(json);
+  result = testTreeToPaths( root, 0, 6, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY|OYJL_PATH, 6, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY, 1, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_PATH, 5, json, result, oyjlTESTRESULT_FAIL );
+  oyjlTreeFree( root );
+
+  json = "d/[3]";
+  root = oyjlTreeNew(json);
+  result = testTreeToPaths( root, 0, 5, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY|OYJL_PATH, 5, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY, 0, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_PATH, 5, json, result, oyjlTESTRESULT_FAIL );
+  oyjlTreeFree( root );
+
+  json = "d/e.f/k";
+  root = oyjlTreeNew(json);
+  result = testTreeToPaths( root, 0, 3, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY|OYJL_PATH, 3, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_KEY, 1, json, result, oyjlTESTRESULT_FAIL );
+  result = testTreeToPaths( root, OYJL_PATH, 2, json, result, oyjlTESTRESULT_FAIL );
   oyjlTreeFree( root );
 
   return result;
@@ -1447,37 +1673,37 @@ oyjlTESTRESULT_e testIO ()
 
   if(r && r2 && size == 5 && size2 == 6)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlWriteFile()                         " );
+    "oyjlWriteFile()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlWriteFile()                         " );
+    "oyjlWriteFile()" );
   }
 
   if(strlen(info) && strlen(info2))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlIsFile()                            " );
+    "oyjlIsFile()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlIsFile()                            " );
+    "oyjlIsFile()" );
   }
 
   char * text = oyjlReadFile( "test2.txt", &size );
   if(text && strcmp(text, "test2") == 0 && size == 6)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlReadFile()                          " );
+    "oyjlReadFile()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlReadFile()                          " );
+    "oyjlReadFile()" );
   }
   if(text) { free(text); text = NULL; }
 
   text = oyjlReadCommandF( &size, "r", malloc, "echo ABC" );
   if(text && strcmp(text, "ABC\n") == 0 && size == 4)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlReadCommandF()                      " );
+    "oyjlReadCommandF()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlReadCommandF() %s %d                ", text, size );
+    "oyjlReadCommandF() %s %d", text, size );
   }
   if(text) { free(text); text = NULL; }
 
