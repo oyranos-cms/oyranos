@@ -124,7 +124,7 @@ Rectangle {
                     var i = combo.find(t)
                     var item = combo.model.get(i)
                     var nick = item.nick
-                    labelFont.bold = appData.getOption(k).length ? true : false
+                    labelFont.bold = appData.getOption(key).length ? true : false
                     if(nick === currentValue || init)
                         return;
                     statusText = key + ":" + nick + " " + combo.textAt(combo.currentIndex) + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + nick + "/" + currentValue
