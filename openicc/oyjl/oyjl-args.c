@@ -47,10 +47,10 @@ int myMain( int argc, const char ** argv )
 
   /* declare the option choices  *   nick,          name,               description,                  help */
   oyjlOptionChoice_s A_choices[] = {{_("Convert eXported developer JSON to C source"),_("oyjl-args -X export | oyjl-args -i -"),NULL,                         NULL},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
 
   oyjlOptionChoice_s S_choices[] = {{"oyjl(1) oyjl-translate(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
@@ -290,7 +290,6 @@ int main( int argc_, char**argv_, char ** envv )
 {
   int argc = argc_;
   char ** argv = argv_;
-  char * loc;
 
 #ifdef __ANDROID__
   setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
@@ -308,6 +307,7 @@ int main( int argc_, char**argv_, char ** envv )
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;
 #ifdef OYJL_HAVE_LOCALE_H
+  char * loc;
   loc = setlocale(LC_ALL,"");
   oyjlLang( loc ); /* is needed in OyjlArgsCli for oyjlTranslateJson() */
 #endif
