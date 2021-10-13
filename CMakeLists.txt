@@ -266,6 +266,7 @@ IF( GETTEXT_FOUND AND OYJL_HAVE_LIBINTL_H )
   ENDFOREACH( lang )
   SET( OYJL_LINGUAS_FULL cs_CZ de_DE eo eu fr_FR ru_RU )
 ENDIF()
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/po )
 
 CONFIGURE_FILE(
     "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_version.h.in"
@@ -548,6 +549,20 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         DEPENDS oyjl-test-extra-static check
         COMMENT "Test Extra" VERBATIM )
   ENDIF()
+  ADD_CUSTOM_TARGET( check-fast
+        COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-test
+        COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-args
+        COMMAND ./oyjl-args-ui -h
+        COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static
+        COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale ./oyjl-test-static
+        COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-extra-static
+        DEPENDS oyjl-test-test
+        DEPENDS oyjl-test-args
+        DEPENDS oyjl-args-ui
+        DEPENDS oyjl-test-core-static
+        DEPENDS oyjl-test-static
+        DEPENDS oyjl-test-extra-static
+        COMMENT "Check Fast" VERBATIM )
 ENDIF( ENABLE_TESTS_${PROJECT_UP_NAME} )
 
 IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
@@ -611,6 +626,25 @@ IF( GETTEXT_FOUND AND OYJL_USE_GETTEXT )
     ADD_CUSTOM_TARGET( ${TOOL}_i18n ALL
       DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${TOOL}.i18n.json  )
   ENDFOREACH()
+  SET( COLLECT_I18N "" )
+  SET( COLLECT_I18N_DEPENDS "" )
+  FOREACH( lang ${${PROJECT_UP_NAME}_LINGUAS} )
+    GET_FILENAME_COMPONENT(_absFile ${lang} ABSOLUTE)
+    GET_FILENAME_COMPONENT(_abs_PATH ${_absFile} PATH)
+    GET_FILENAME_COMPONENT(_lang ${_absFile} NAME_WE)
+    SET( COLLECT_I18N ${COLLECT_I18N} -i ${_lang}.i18n.json )
+    SET( COLLECT_I18N_DEPENDS ${COLLECT_I18N_DEPENDS} ${_lang}.i18n.json )
+    ADD_CUSTOM_COMMAND( OUTPUT ${_lang}.i18n.json
+      COMMAND oyjl-translate -c -i ${CMAKE_CURRENT_SOURCE_DIR}/po/${_lang}.po -o ${_lang}.i18n.json --locale=${_lang}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/po/${_lang}.po
+      COMMENT "generate ${_lang}.i18n.json" )
+  ENDFOREACH( lang )
+  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.c
+    COMMAND oyjl json ${COLLECT_I18N} -w C -W lib${PROJECT_DOWN_NAME}_i18n > ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.c
+      DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${COLLECT_I18N_DEPENDS}
+      COMMENT "generate lib${PROJECT_DOWN_NAME}.i18n.c" )
+  ADD_CUSTOM_TARGET( lib${PROJECT_DOWN_NAME}_i18n ALL
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.c )
 ENDIF()
 
 
