@@ -82,15 +82,17 @@ typedef void * (*oyAlloc_f)          ( size_t              size );
 typedef void (*oyDeAlloc_f)          ( void              * data );
 
 
-#if   defined(__clang__)
-#define OY_FALLTHROUGH
-#elif __GNUC__ >= 7 
+#if   __GNUC__ >= 7 
 #define OY_FALLTHROUGH                 __attribute__ ((fallthrough));
+#elif defined(__clang__)
+#define OY_FALLTHROUGH
 #else
 #define OY_FALLTHROUGH
 #endif
 
 #if   __GNUC__ >= 7
+#define OY_DEPRECATED                  __attribute__ ((deprecated))
+#elif defined(__clang__)
 #define OY_DEPRECATED                  __attribute__ ((deprecated))
 #elif defined(_MSC_VER)
 #define OY_DEPRECATED                  __declspec(deprecated)
@@ -99,6 +101,8 @@ typedef void (*oyDeAlloc_f)          ( void              * data );
 #endif
 
 #if   (__GNUC__*100 + __GNUC_MINOR__) >= 406
+#define OY_UNUSED                      __attribute__ ((unused))
+#elif defined(__clang__)
 #define OY_UNUSED                      __attribute__ ((unused))
 #elif defined(_MSC_VER)
 #define OY_UNUSED                      __declspec(unused)
