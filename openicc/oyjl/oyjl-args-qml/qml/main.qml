@@ -1069,7 +1069,7 @@ AppWindow {
             var label = P.getTranslatedItem( item, "label", loc, catalog );
             name = P.getTranslatedItem( item, "name", loc, catalog );
             var desc = P.getTranslatedItem( item, "description", loc, catalog );
-            if(!(name === null && item.type === "documentation"))
+            if(!((typeof(name) === "undefined" || name === null) && item.type === "documentation"))
                 html += "<tr><td align=\"right\" style=\"padding-right:10;word-wrap:break-word;\">" + label + ":</td><td style=\"font-weight:bold;\">" + name
             if( typeof desc !== "undefined" && item.type !== "documentation" )
                 html += "<br /> " + desc
