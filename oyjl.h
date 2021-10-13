@@ -85,7 +85,7 @@ typedef struct oyjl_val_s * oyjl_val;
  * and "OYJL_GET_*" macros below allow type checking and convenient
  * value extraction.
  */
-struct oyjl_val_s
+typedef struct oyjl_val_s
 {
     /**
      *  Type of the value contained. Use the "OYJL_IS_*" macros to check for a
@@ -116,7 +116,7 @@ struct oyjl_val_s
             size_t len; /**< @brief Number of elements. */
         } array;         /**< @brief series of values */
     } u;
-};
+} oyjl_val_s;
 
 /**
  * @brief Parse a string. (libOyjl)
@@ -266,6 +266,9 @@ int        oyjlTreeSetDoubleF        ( oyjl_val            root,
                                        double              value,
                                        const char        * format,
                                                            ... );
+oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
+                                       int                 flags,
+                                       int               * size );
 char *     oyjlValueText             ( oyjl_val            v,
                                        void*             (*alloc)(size_t));
 int        oyjlValueCount            ( oyjl_val            v );
@@ -275,6 +278,8 @@ int        oyjlValueSetString        ( oyjl_val            v,
                                        const char        * string );
 int        oyjlValueSetDouble        ( oyjl_val            v,
                                        double              value );
+void       oyjlValueCopy             ( oyjl_val            v,
+                                       oyjl_val            src );
 void       oyjlValueClear            ( oyjl_val            v );
 #define    OYJL_PATH_MATCH_LEN         0x20   /**< @brief  flag to test if the specified path match with the full length. */
 #define    OYJL_PATH_MATCH_LAST_ITEMS  0x40   /**< @brief  flag to test only the last path segments, which are separated by slash '/'. */
@@ -284,7 +289,13 @@ int        oyjlPathMatch             ( const char        * path,
 
 int        oyjlDataFormat            ( const char        * text );
 const char * oyjlDataFormatToString  ( int                 format );
-char *     oyjlJsonEscape            ( const char        * in );
+#define    OYJL_NO_INDEX               0x20 /**< @brief omit index resolving by squared brackets [] */
+#define    OYJL_QUOTE                  0x40 /**< @brief quotation marks '"' */
+#define    OYJL_NO_BACKSLASH           0x80 /**< @brief skip back slash '\' */
+#define    OYJL_REVERSE                0x100/**< @brief undo */
+#define    OYJL_REGEXP                 0x200/**< @brief handle regexp sequences */
+char *     oyjlJsonEscape            ( const char        * in,
+                                       int                 flags );
 
 #define OYJL_OBSERVE                   0x200000 /**< @brief be verbose on change */
 #define OYJL_IS_OBSERVED(v) (((v)!= NULL) && ((v)->u.number.flags & OYJL_OBSERVE))
@@ -339,15 +350,18 @@ const char *   oyjlLang              ( const char        * loc );
 oyjl_val       oyjlCatalog           ( oyjl_val          * catalog );
 char *         oyjlTranslate         ( const char        * loc,
                                        oyjl_val            catalog,
-                                       const char        * string );
+                                       const char        * string,
+                                       int                 flags );
 typedef char*(*oyjlTranslate_f)      ( const char        * loc,
                                        oyjl_val            catalog,
-                                       const char        * string );
+                                       const char        * string,
+                                       int                 flags );
 void               oyjlTranslateJson ( oyjl_val            root,
                                        const char        * loc,
                                        oyjl_val            catalog,
                                        const char        * key_list,
-                                       oyjlTranslate_f     translator );
+                                       oyjlTranslate_f     translator,
+                                       int                 flags );
 
 void       oyjlDebugVariableSet      ( int               * debug );
 
@@ -428,6 +442,9 @@ int        oyjlStringsToDoubles      ( const char        * text,
 char *     oyjlRegExpFind            ( char              * text,
                                        const char        * regex );
 char *     oyjlRegExpEscape          ( const char        * text );
+int        oyjlRegExpReplace         ( char             ** text,
+                                       const char        * regex,
+                                       const char        * replacement );
 typedef struct oyjl_string_s * oyjl_str;
 oyjl_str   oyjlStrNew                ( size_t              length,
                                        void*            (* alloc)(size_t),
@@ -495,13 +512,15 @@ void       oyjlLibRelease            ( );
 
  *  @{ */
 
+/** @brief Types of known objects */
 typedef enum {
   oyjlOBJECT_NONE,
   oyjlOBJECT_OPTION = 1769433455,      /**< @brief oyjlOption_s */
   oyjlOBJECT_OPTION_GROUP = 1735879023,/**< @brief oyjlOptionGroup_s */
   oyjlOBJECT_OPTIONS = 1937205615,     /**< @brief oyjlOptions_s */
   oyjlOBJECT_UI_HEADER_SECTION = 1936222575, /**< @brief oyjlUiHeaderSection_s */
-  oyjlOBJECT_UI = 1769302383           /**< @brief oyjlUi_s */
+  oyjlOBJECT_UI = 1769302383,          /**< @brief oyjlUi_s */
+  oyjlOBJECT_JSON = 1397385583         /**< @brief oyjlNodes_s */
 } oyjlOBJECT_e;
 
 /** @brief Type of option */
@@ -514,6 +533,7 @@ typedef enum oyjlOPTIONTYPE_e {
     oyjlOPTIONTYPE_END                 /**< */
 } oyjlOPTIONTYPE_e;
 
+/** @brief Types for oyjlVariable_u */
 typedef enum oyjlVARIABLETYPE_e {
     oyjlNONE,                          /**< no variable given, will be asked later with oyjlOptions_GetResult() */
     oyjlSTRING,                        /**< pointer to a array of char */
@@ -596,7 +616,7 @@ struct oyjlOption_s {
    *  If zero '\000' terminated, this short :o: option name is not enabled and a long :option: name shall be provided.
    */
   const char * o;                      /**< @brief One letter UTF-8 option name; optional if *option* is present */
-  /** The same reserved letters apply as for the ::o member letter. */
+  /** The same reserved letters apply as for the oyjlOption_s::o member letter. */
   const char * option;                 /**< @brief String without white space, "my-option"; optional if *o* is present */
   const char * key;                    /**< @brief DB key; optional */
   const char * name;                   /**< @brief i18n label string */
@@ -765,14 +785,15 @@ oyjlUi_s *         oyjlUi_ImportFromJson(
                                        int                 flags );
 #define OYJL_SOURCE_CODE_C             0x01 /**< @brief C programming language source code */
 #define OYJL_NO_DEFAULT_OPTIONS        0x02 /**< @brief omit automatic options generation for --help, --X export or --verbose */
-#define OYJL_SUGGEST_VARIABLE_NAMES    0x04 /**< @brief automatic suggestion of variable names for missing ::o and ::option members */
+#define OYJL_SUGGEST_VARIABLE_NAMES    0x04 /**< @brief automatic suggestion of variable names for missing oyjlOption_s::o and oyjlOption_s::option members */
 #define OYJL_COMPLETION_BASH           0x100 /**< @brief bash completion source code */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
 void               oyjlUi_Translate  ( oyjlUi_s          * ui,
                                        const char        * new_loc,
                                        oyjl_val            catalog,
-                                       oyjlTranslate_f     translator );
+                                       oyjlTranslate_f     translator,
+                                       int                 flags );
 
 /** link with libOyjlArgsWeb and use microhttps WWW renderer as library \n
  *  link with libOyjlArgsQml and use Qt's QML to render in a GUI
@@ -793,15 +814,17 @@ int                oyjlArgsRender    ( int                 argc,
 
 
 /* --- compile helpers --- */
-#if   defined(__clang__)
-#define OYJL_FALLTHROUGH
-#elif __GNUC__ >= 7 
+#if   __GNUC__ >= 7 
 #define OYJL_FALLTHROUGH              __attribute__ ((fallthrough));
+#elif defined(__clang__)
+#define OYJL_FALLTHROUGH
 #else
 #define OYJL_FALLTHROUGH
 #endif
 
 #if   __GNUC__ >= 7
+#define OYJL_DEPRECATED                __attribute__ ((deprecated))
+#elif defined(__clang__)
 #define OYJL_DEPRECATED                __attribute__ ((deprecated))
 #elif defined(_MSC_VER)
 #define OYJL_DEPRECATED                __declspec(deprecated)
@@ -810,6 +833,8 @@ int                oyjlArgsRender    ( int                 argc,
 #endif
 
 #if   (__GNUC__*100 + __GNUC_MINOR__) >= 406
+#define OYJL_UNUSED                    __attribute__ ((unused))
+#elif defined(__clang__)
 #define OYJL_UNUSED                    __attribute__ ((unused))
 #elif defined(_MSC_VER)
 #define OYJL_UNUSED                    __declspec(unused)
