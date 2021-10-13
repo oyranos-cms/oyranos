@@ -906,17 +906,31 @@ void     oyjlStringListAddList       ( char            *** list,
 
 /** show better const behaviour and return instant error status over strtol()
  *
+ *  @param[in]     text                string
+ *  @param[out]    value               resulting number
  *  @return                            error
+ *                                     - 0 : text input was completely read as number
+ *                                     - -1 : text input was read as number with white space or other text after
+ *                                     - 1 : missed text input
+ *                                     - 2 : no number detected
+ *
  */
 int      oyjlStringToLong            ( const char        * text,
                                        long              * value )
 {
   char * end = 0;
+  int error = -1;
   *value = strtol( text, &end, 0 );
   if(end && end != text && isdigit(text[0]) && !isdigit(end[0]) )
-    return 0;
+  {
+    if(end[0] && end != text)
+      error = -1;
+    else
+      error = 0;
+  }
   else
-    return 1;
+    error = 1;
+  return error;
 }
 
 /** @brief   text to double conversion
@@ -929,8 +943,8 @@ int      oyjlStringToLong            ( const char        * text,
  *                                     - 1 : missed text input
  *                                     - 2 : no number detected
  *
- *  @version Oyranos: 0.9.7
- *  @date    2018/03/18
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/10/04
  *  @since   2011/11/17 (Oyranos: 0.2.0)
  */
 int          oyjlStringToDouble      ( const char        * text,
@@ -965,7 +979,12 @@ int          oyjlStringToDouble      ( const char        * text,
   *value = strtod( t, &end );
 
   if(end && end != text && isdigit(text[0]) && !isdigit(end[0]) )
-    error = 0;
+  {
+    if(end[0] && end != text)
+      error = -1;
+    else
+      error = 0;
+  }
   else if(end && end == t)
   {
     *value = NAN;
@@ -987,12 +1006,16 @@ clean_oyjlStringToDouble:
 /** @brief   text to double list
  *
  *  @param[in]     text                source string
- *  @param[in]     delimiter           the ASCII char(s) which mark the split; e.g. comma ","
+ *  @param[in]     delimiter           the ASCII char(s) which mark the split;
+ *                                     e.g. comma ","
  *  @param[out]    count               number of detected string segments; optional
  *  @param[in]     alloc               custom allocator; optional, default is malloc
+ *  @param[out]    value               array of detected number of count elements
  *  @return                            error
- *                                     - 0 : text input was completely read as number
- *                                     - -1 : text input was read as number with white space or other text after
+ *                                     - 0 : text input was completely read as
+ *                                           number
+ *                                     - -1 : text input was read as number with
+ *                                           white space or other text after
  *                                     - 1 : missed text input
  *                                     - 2 : no number detected
  *
@@ -1084,6 +1107,113 @@ char *     oyjlRegExpFind            ( char              * text,
   return match;
 }
 
+/** @brief   replace pattern
+ *
+ *  Test for OYJL_HAVE_REGEX_H macro to see if regexec() API is
+ *  used.
+ *
+ *  @param         text                string to search in
+ *  @param         regex               regular expression to try with text
+ *  @param         replacement         substitute all matches of regex in text
+ *  @return                            count of replacements
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/09/29
+ *  @since   2021/09/29 (Oyjl: 1.0.0)
+ */
+int        oyjlRegExpReplace         ( char             ** text,
+                                       const char        * regex,
+                                       const char        * replacement )
+{
+  int count = 0;
+  if( !text || !*text || !regex || !replacement )
+    return 0;
+
+#ifdef OYJL_HAVE_REGEX_H
+  int status = 0;
+  regex_t re;
+  int n;
+  regmatch_t re_match = {0,0};
+  oyjl_str str;
+  const char * txt;
+  int error = 0;
+  if((error = regcomp(&re, regex, REG_EXTENDED)) != 0)
+  {
+    char * err_msg = calloc( 1024, sizeof(char) );
+    regerror( error, &re, err_msg, 1024 );
+    oyjlMessage_p( oyjlMSG_INFO, 0,
+                   OYJL_DBG_FORMAT "regcomp(\"%s\") %s",
+                   OYJL_DBG_ARGS,  regex, err_msg );
+    if(err_msg) free(err_msg);
+    return 0;
+  }
+
+  str = oyjlStrNewFrom(text, 0, malloc, free);
+  n = re.re_nsub;
+  txt = oyjlStr(str);
+  while((status = regexec( &re, txt, (size_t)1, &re_match, 0 )) == 0)
+  {
+    int len = strlen(txt);
+    char * tail = NULL;
+    if(len > re_match.rm_eo)
+      tail = oyjlStringCopy( &txt[re_match.rm_eo], 0 );
+    n = oyjlStrReplace( str, &txt[re_match.rm_so], replacement, 0, NULL );
+    if(len > re_match.rm_eo)
+    {
+      oyjlStrAdd( str, tail );
+      free(tail);
+    }
+    txt = oyjlStr(str);
+    ++count;
+    if(!n) break;
+  }
+  regfree( &re );
+  *text = oyjlStrPull( str );
+  oyjlStrRelease( &str );
+
+#else
+
+  count = oyjlStringReplace(&text, regex, replacement, 0,0);
+
+#endif
+  return count;
+}
+
+
+void oyjlNoBracketCb(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, void * data OYJL_UNUSED)
+{
+  if(start < end)
+  {
+    const char * word = start;
+    while(word && (word = strstr(word+1,"\\[")) != NULL && word < end)
+      *replace = search;
+  }
+}
+void       oyjlRegExpEscape2         ( oyjl_str            text )
+{
+  oyjl_str tmp = text;
+  if(!text) return;
+
+#ifdef OYJL_HAVE_REGEX_H
+  oyjlStrReplace( tmp, "\\", "\\\\", oyjlNoBracketCb, NULL );
+  oyjlStrReplace( tmp, ".", "\\.", 0, NULL );
+  oyjlStrReplace( tmp, "^", "\\^", 0, NULL );
+  oyjlStrReplace( tmp, "$", "\\$", 0, NULL );
+  oyjlStrReplace( tmp, "*", "\\*", 0, NULL );
+  oyjlStrReplace( tmp, "+", "\\+", 0, NULL );
+  oyjlStrReplace( tmp, "?", "\\?", 0, NULL );
+  //oyjlStrReplace( tmp, "!", "\\!", 0, NULL );
+  oyjlStrReplace( tmp, "(", "\\(", 0, NULL );
+  oyjlStrReplace( tmp, ")", "\\)", 0, NULL );
+  oyjlStrReplace( tmp, "[", "\\[", 0, NULL );
+  //oyjlStrReplace( tmp, "]", "\\]", 0, NULL );
+  oyjlStrReplace( tmp, "{", "\\{", 0, NULL );
+  //oyjlStrReplace( tmp, "}", "\\}", 0, NULL );
+  //oyjlStrReplace( tmp, ",", "\\,", 0, NULL );
+  oyjlStrReplace( tmp, "|", "\\|", 0, NULL );
+#endif
+}
+
 /** @brief   use a pattern literaly
  *
  *  This function detects OYJL_HAVE_REGEX_H macro internally to
@@ -1108,29 +1238,11 @@ char *     oyjlRegExpEscape          ( const char        * text )
 
   tmp = oyjlStrNew(10,0,0);
   oyjlStrAppendN( tmp, t, strlen(t) );
-#ifdef OYJL_HAVE_REGEX_H
-  oyjlStrReplace( tmp, "\\", "\\\\", 0, NULL );
-  oyjlStrReplace( tmp, ".", "\\.", 0, NULL );
-  oyjlStrReplace( tmp, "^", "\\^", 0, NULL );
-  oyjlStrReplace( tmp, "$", "\\$", 0, NULL );
-  oyjlStrReplace( tmp, "*", "\\*", 0, NULL );
-  oyjlStrReplace( tmp, "+", "\\+", 0, NULL );
-  oyjlStrReplace( tmp, "?", "\\?", 0, NULL );
-  //oyjlStrReplace( tmp, "!", "\\!", 0, NULL );
-  oyjlStrReplace( tmp, "(", "\\(", 0, NULL );
-  oyjlStrReplace( tmp, ")", "\\)", 0, NULL );
-  oyjlStrReplace( tmp, "[", "\\[", 0, NULL );
-  //oyjlStrReplace( tmp, "]", "\\]", 0, NULL );
-  oyjlStrReplace( tmp, "{", "\\{", 0, NULL );
-  //oyjlStrReplace( tmp, "}", "\\}", 0, NULL );
-  //oyjlStrReplace( tmp, ",", "\\,", 0, NULL );
-  oyjlStrReplace( tmp, "|", "\\|", 0, NULL );
-#endif
+  oyjlRegExpEscape2( tmp );
   out = oyjlStrPull(tmp); 
   oyjlStrRelease( &tmp );
   return out;
 }
-
 
 /*
 * Index into the table below with the first byte of a UTF-8 sequence to
@@ -1354,7 +1466,7 @@ int        oyjlStrAdd                ( oyjl_str            string,
  *                                     - search: used term to find actual start
  *                                     - replace: possibly modified replacement text
  *                                     - context: user data
- *  @param[in,out] context             optional user data for modifyReplacement
+ *  @param[in,out] user_data           optional user data for modifyReplacement
  *  @return                            number of occurences
  *
  *  @version Oyjl: 1.0.0
@@ -2286,21 +2398,21 @@ int oyjlArgsRender                   ( int                 argc,
 
 
 /** \addtogroup oyjl
-    @section intro Introduction
+    @section oyjl_intro Introduction
   
     Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
     XML + YAML, string helpers, file reading, testing and argument handling.
 
     The API's are quite independent. 
 
-    @section api API Documentation
+    @section oyjl_api API Documentation
     The API of the @ref oyjl is declared in the oyjl.h header file.
     - @ref oyjl_tree - JSON modeled C data structure with data I/O API: *libOyjlCore*, all parsers (JSON,YAML,XML) reside in *libOyjl*
     - @ref oyjl_core - Core API: *libOyjlCore*
     - @ref oyjl_test - Test API: header only implementation in *oyjl_test.h* and *oyjl_test_main.h*
     - @ref oyjl_args - Argument Handling API: link to *libOyjlCore* or with slightly reduced functionality in the stand alone *oyjl_args.c* version
 
-    @section tools Tools Documentation
+    @section oyjl_tools Tools Documentation
     Oyjl comes with a few tools, which use the Oyjl API's.
     - @ref oyjl - JSON manipulation
     - @ref oyjltranslate - localisation helper tool
@@ -2357,12 +2469,16 @@ void oyjlLibRelease() {
  *  a expected fall back directory from \em default_locdir is used.
  *
  *  @param         project_name        project name display string; e.g. "MyProject"
- *  @param         environment_debug_variable string; e.g. "MP_DEBUG"
+ *  @param         env_var_debug       environment debug variable string;
+ *                                     e.g. "MP_DEBUG"
  *  @param         debug_variable      int C variable; e.g. my_project_debug
  *  @param         use_gettext         switch gettext support on or off
- *  @param         env_var_locdir      environment variable string for locale path; e.g. "MP_LOCALEDIR"
- *  @param         default_locdir      default locale path C string; e.g. "/usr/local/share/locale"
- *  @param         loc_domain          locale domain string related to your pot, po and mo files; e.g. "myproject"
+ *  @param         env_var_locdir      environment variable string for locale path;
+ *                                     e.g. "MP_LOCALEDIR"
+ *  @param         default_locdir      default locale path C string;
+ *                                     e.g. "/usr/local/share/locale"
+ *  @param         loc_domain          locale domain string related to your pot,
+ *                                     po and mo files; e.g. "myproject"
  *  @param         msg                 your message function of type oyjlMessage_f; optional - default is Oyjl message function
  *  @return                            error
  *                                     - -1 : issue
@@ -2376,10 +2492,10 @@ void oyjlLibRelease() {
 int oyjlInitLanguageDebug            ( const char        * project_name,
                                        const char        * env_var_debug,
                                        int               * debug_variable,
-                                       int                 use_gettext,
-                                       const char        * env_var_locdir,
-                                       const char        * default_locdir,
-                                       const char        * loc_domain,
+                                       int                 use_gettext OYJL_UNUSED,
+                                       const char        * env_var_locdir OYJL_UNUSED,
+                                       const char        * default_locdir OYJL_UNUSED,
+                                       const char        * loc_domain OYJL_UNUSED,
                                        oyjlMessage_f       msg )
 {
   int error = -1;
@@ -2554,14 +2670,14 @@ const char *   oyjlLang              ( const char        * loc )
 #include <yajl/yajl_version.h>
 /** @brief  give the compiled in library version
  *
- *  @param[in]  type           request API type
+ *  @param[in]  vtype          request API type
  *                             - 0 - Oyjl API
  *                             - 1 - Yajl API
  *  @return                    OYJL_VERSION at library compile time
  */
-int            oyjlVersion           ( int                 type )
+int            oyjlVersion           ( int                 vtype )
 {
-  if(type == 1)
+  if(vtype == 1)
     return YAJL_VERSION;
 
   return OYJL_VERSION;
