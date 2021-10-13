@@ -25,6 +25,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#ifndef OYJL_ARGS_C
+#define OYJL_ARGS_C
 
 #include <stddef.h>
 #include <ctype.h> /* toupper() */
@@ -33,6 +35,16 @@
 #ifdef OYJL_HAVE_LANGINFO_H
 #include <langinfo.h> /* nl_langinfo() */
 #endif
+#include <stdarg.h>
+
+/* C++ includes and definitions */
+#ifdef __cplusplus
+#include <cmath>
+#define USE_NEW
+#else
+#include <math.h>
+#endif
+
 
 #if defined(OYJL_INTERNAL)
 #include "oyjl.h"
@@ -44,13 +56,16 @@ extern int * oyjl_debug;
 #else /* OYJL_INTERNAL */
 int my_debug = 0;
 int * oyjl_debug = &my_debug;
-#if defined(__GNUC__)
-# define  OYJL_DBG_FORMAT "%s:%d %s() "
-# define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
-#else
-# define  OYJL_DBG_FORMAT "%s:%d "
-# define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+#ifndef OYJL_DBG_FORMAT
+# if defined(__GNUC__)
+#  define  OYJL_DBG_FORMAT "%s:%d %s() "
+#  define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
+# else
+#  define  OYJL_DBG_FORMAT "%s:%d "
+#  define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+# endif
 #endif
+#ifndef OYJL_CREATE_VA_STRING
 #define OYJL_CREATE_VA_STRING(format_, text_, alloc_, error_action) \
 { \
   va_list list; \
@@ -77,6 +92,7 @@ int * oyjl_debug = &my_debug;
     va_end  ( list ); \
   } \
 }
+#endif
 
 #define oyjlAllocHelper_m(ptr_, type, size_, alloc_func, action) { \
   if ((size_) <= 0) {                                       \
@@ -862,10 +878,10 @@ void oyjlLibRelease() { if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_
 int oyjlInitLanguageDebug            ( const char        * project_name,
                                        const char        * env_var_debug,
                                        int               * debug_variable,
-                                       int                 use_gettext,
-                                       const char        * env_var_locdir,
-                                       const char        * default_locdir,
-                                       const char        * loc_domain,
+                                       int                 use_gettext OYJL_UNUSED,
+                                       const char        * env_var_locdir OYJL_UNUSED,
+                                       const char        * default_locdir OYJL_UNUSED,
+                                       const char        * loc_domain OYJL_UNUSED,
                                        oyjlMessage_f       msg )
 {
   int error = -1;
@@ -956,6 +972,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 #define oyjlMEMORY_ALLOCATION_GROUPS   0x04
 #define oyjlMEMORY_ALLOCATION_OPTIONS  0x08
 
+#if !defined(OYJL_TREE_INTERNAL_H)
 typedef struct {
   char       ** options; /* detected vanilla args + probably "@" for anonymous args */
   const char ** values; /* the vanilla args from main(argv[]) */
@@ -964,6 +981,7 @@ typedef struct {
   void        * attr; /* oyjl_val attributes */
   int           memory_allocation; /* 0: as usual; 1 - sections, 2 - opts->groups and 4 - opts->array are owned and need to be released */
 } oyjlOptsPrivate_s;
+#endif
 #endif /* OYJL_INTERNAL */
 
 #ifdef OYJL_HAVE_LANGINFO_H
@@ -1118,9 +1136,8 @@ int  oyjlOptionChoice_Count          ( oyjlOptionChoice_s* list )
 {
   int n = 0;
   if(!list) return 0;
-  if(list)
-    while(list[n].nick && list[n].nick[0] != '\000')
-      ++n;
+  while(list[n].nick)
+    ++n;
   return n;
 }
 
@@ -1273,6 +1290,7 @@ int oyjlManArgIsEditable( const char * arg )
 #define OYJL_E(x_) (x_?x_:"")
 #define OYJL_IS_NOT_O( x ) (!o || !o->o || strcmp(o->o,x) != 0)
 #define OYJL_IS_O( x ) (o && o->o && strcmp(o->o,x) == 0)
+#if !defined(OYJL_TREE_INTERNAL_H)
 enum {
   oyjlOPTIONSTYLE_ONELETTER = 0x01,                     /* the single dash '-' style option is prefered: -o */
   oyjlOPTIONSTYLE_STRING = 0x02,                        /* add double dash '-' style option as well: --long-option */
@@ -1284,11 +1302,11 @@ enum {
   oyjlOPTIONSTYLE_GROUP_SUBCOMMAND = 0x080,             /* supresses dash(es): option */
   oyjlOPTIONSTYLE_OPTION_ONLY = 0x100                   /* print the option without any args */
 };
+#endif
 #define oyjlOPTIONSTYLE_OPTIONAL (oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END)
 #define oyjlOPTIONSTYLE_LINK_GROUP     0x2000           /* add link to group, e.g. from synopsis line in markdown */
 #define oyjlOPTIONSTYLE_LINK_SYNOPSIS  0x4000           /* add link to synopsis, e.g. in markdown */
-static
-char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
+char *       oyjlOption_PrintArg_    ( oyjlOption_s      * o,
                                        int                 style )
 {
   char * text = NULL;
@@ -1389,7 +1407,7 @@ char *       oyjlOption_PrintArg     ( oyjlOption_s      * o,
  *                                     - oyjlDESCRIPTION
  *                                     - oyjlHELP
  */
-static char* oyjlOption_PrintArgDouble_( oyjlOption_s    * o,
+static char* oyjlOption_PrintArg_Double_( oyjlOption_s    * o,
                                        int                 flags )
 {
   char * text = NULL;
@@ -1403,20 +1421,20 @@ static char* oyjlOption_PrintArgDouble_( oyjlOption_s    * o,
 oyjlOptionChoice_s oyjl_h_choices_[] = {
                                     {"-", "", "", ""},
                                     {"synopsis", "", "", ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
 oyjlOptionChoice_s oyjl_X_choices_[] = {
                                     {"man", "", "", ""},
                                     {"markdown", "", "", ""},
                                     {"json", "", "", ""},
                                     {"json+command", "", "", ""},
                                     {"export", "", "", ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
 oyjlOptionChoice_s oyjl_R_choices_[] = {
                                     {"gui", "", "", ""},
                                     {"cli", "", "", ""},
                                     {"web", "", "", ""},
                                     {"-","","",""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
 static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
 {
   /* enrich inbuild variables */
@@ -1864,7 +1882,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           {
             if(!(value && value[0]) && !might_have_value)
             {
-                char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+                char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
                 oyjlOptions_Print_( opts, i );
                 fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
                 fprintf( stderr, "%s \'%s\' (%s)\n", _("Option needs a argument"), oyjlTermColor(oyjlBOLD,arg), t );
@@ -1890,7 +1908,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           }
           else
           {
-            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             oyjlOptions_Print_( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
             fprintf( stderr, "%s \'%s\' (%s)\n", _("Option has a unexpected argument"), arg?arg:"", t );
@@ -1934,7 +1952,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
         {
           if( !(value && value[0]) && !might_have_value )
           {
-            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             oyjlOptions_Print_( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
             fprintf( stderr, "%s \'%s\' (%s)\n", _("Option needs a argument"), oyjlTermColor(oyjlBOLD,long_arg), t );
@@ -1961,7 +1979,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           }
           else
           {
-            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             oyjlOptions_Print_( opts, i );
             fprintf( stderr, "%s %s \'%s\' (%s)\n", oyjlTermColor(oyjlRED,_("Usage Error:")), _("Option has a unexpected argument"), value?value:"", t );
             free(t);
@@ -2015,7 +2033,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           }
           else if( o && !might_have_value && value )
           {
-            char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
             oyjlOptions_Print_( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
             fprintf( stderr, "%s (%s)\n", _("This option expects arguments"), t );
@@ -2113,7 +2131,7 @@ clean_parse:
  *  @memberof oyjlOptions_s
  *
  *  This function is only useful, if the results shall be obtained
- *  independently from oyjlOptions_Parse().
+ *  independently from oyjlOption_s::variable after oyjlOptions_Parse().
  *
  *  If the option was not specified the state oyjlOPTION_NONE will be
  *  returned and otherwise oyjlOPTION_USER_CHANGED. With result_int and
@@ -2197,8 +2215,8 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
         ( o->values.dbl.start > *result_dbl ||
           o->values.dbl.end < *result_dbl) )
     {
-      char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
-      char * desc = oyjlOption_PrintArgDouble_( o, 0 );
+      char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+      char * desc = oyjlOption_PrintArg_Double_( o, 0 );
       i = pos + 1;
       oyjlOptions_Print_( opts, i );
       fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
@@ -2432,7 +2450,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
     {
       int s = style;
       if(i) s = style & (~OYJL_GROUP_FLAG_SUBCOMMAND);
-      char * t = oyjlOption_PrintArg(o, s);
+      char * t = oyjlOption_PrintArg_(o, s);
       const char * group_id = oyjlOptions_GetGroupId_( opts, g );
       if(i == 0 && o->option && style & oyjlOPTIONSTYLE_MARKDOWN && style & oyjlOPTIONSTYLE_LINK_GROUP && group_id)
         oyjlStringAdd( &text, malloc, free, " <a href=\"#%s\">%s</a>", group_id, t );
@@ -2471,7 +2489,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
       if(!getenv("OYJL_NO_EXIT")) exit(1);
     }
     {
-      char * t = oyjlOption_PrintArg(o, gstyle);
+      char * t = oyjlOption_PrintArg_(o, gstyle);
       oyjlStringAdd( &text, malloc, free, "%s%s", gstyle & oyjlOPTIONSTYLE_OPTIONAL_START ? " ":"", t );
       free(t);
     }
@@ -2741,7 +2759,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             int n = 0,l;
             if(o->value_name)
             {
-              char * t = oyjlOption_PrintArg(o, style);
+              char * t = oyjlOption_PrintArg_(o, style);
               fprintf( oyjl_help_zout, OYJL_HELP_OPTION );
               fprintf( oyjl_help_zout, "%s", t );
               fprintf( oyjl_help_zout, "\t%s\n", o->description ? o->description:"" );
@@ -2754,7 +2772,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             for(l = 0; l < n; ++l)
             {
               char * t = NULL;
-              t = oyjlOption_PrintArg( o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_OPTION_ONLY );
+              t = oyjlOption_PrintArg_( o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_OPTION_ONLY );
               fprintf( oyjl_help_zout, OYJL_HELP_ARG "  %s %s\t\t# %s%s%s%s%s\n",
                   t,
                   o->values.choices.list[l].nick,
@@ -2773,7 +2791,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             oyjlOptionChoice_s * list;
             if(o->value_name)
             {
-              char * t = oyjlOption_PrintArg(o, style);
+              char * t = oyjlOption_PrintArg_(o, style);
               fprintf( oyjl_help_zout, OYJL_HELP_OPTION );
               fprintf( oyjl_help_zout, "%s", t );
               fprintf( oyjl_help_zout, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
@@ -2792,17 +2810,17 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           {
-            char * t = oyjlOption_PrintArg(o, style);
+            char * t = oyjlOption_PrintArg_(o, style);
             
             fprintf( oyjl_help_zout, OYJL_HELP_OPTION );
             fprintf( oyjl_help_zout, "%s", t );
-            { char * desc = oyjlOption_PrintArgDouble_( o, oyjlDESCRIPTION | oyjlHELP ); fprintf( oyjl_help_zout, "\t%s\n", desc ); free(desc); }
+            { char * desc = oyjlOption_PrintArg_Double_( o, oyjlDESCRIPTION | oyjlHELP ); fprintf( oyjl_help_zout, "\t%s\n", desc ); free(desc); }
             free(t);
           }
           break;
         case oyjlOPTIONTYPE_NONE:
           {
-            char * t = oyjlOption_PrintArg(o, style);
+            char * t = oyjlOption_PrintArg_(o, style);
             fprintf( oyjl_help_zout, OYJL_HELP_OPTION );
             fprintf( oyjl_help_zout, "%s", t );
             fprintf( oyjl_help_zout, "\t%s\n", o->description ? o->description:"" );
@@ -3153,7 +3171,7 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
               ++n;
             if(!o->value_name)
             {
-              char * t = oyjlOption_PrintArg(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+              char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
               fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
               fprintf( stderr, "%s%s (%s)\n", oyjlBT(0), _("This option needs oyjlOption_s::value_name defined"), t );
               if(!getenv("OYJL_NO_EXIT")) exit(1);
@@ -3241,7 +3259,7 @@ static const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
  *                 syntax declaration and variable passing for setting results.
  *                 The option grouping declares
  *                 dependencies of options and provides a UI layout.
- *  @param[in,out] state               inform about processing
+ *  @param[in,out] status              inform about processing
  *                                     - ::oyjlUI_STATE_HELP : help was detected, printed and oyjlUi_s was released
  *                                     - ::oyjlUI_STATE_EXPORT : export of json, man or markdown was detected, printed and oyjlUi_s was released
  *                                     - ::oyjlUI_STATE_VERBOSE : verbose was detected
@@ -3507,7 +3525,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         {
           const char * option = li[i];
           oyjlOption_s * o = oyjlOptions_GetOptionL( ui->opts, option, 0 );
-          char * t = oyjlOption_PrintArg( o, oyjlOPTIONSTYLE_STRING | OYJL_GROUP_FLAG_SUBCOMMAND );
+          char * t = oyjlOption_PrintArg_( o, oyjlOPTIONSTYLE_STRING | OYJL_GROUP_FLAG_SUBCOMMAND );
           fprintf(stderr, " %s", oyjlTermColor(oyjlBOLD, t));
           free(t);
         }
@@ -3719,7 +3737,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
  *                 syntax declaration and variable passing for setting results
  *  @param[in]     groups              the option grouping declares
  *                 dependencies of options and provides a UI layout
- *  @param[in,out] state               inform about processing
+ *  @param[in,out] status              inform about processing
  *                                     - ::oyjlUI_STATE_HELP : help was detected, printed and oyjlUi_s was released
  *                                     - ::oyjlUI_STATE_EXPORT : export of json, man or markdown was detected, printed and oyjlUi_s was released
  *                                     - ::oyjlUI_STATE_VERBOSE : verbose was detected
@@ -3911,11 +3929,11 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
       if(!list)
       {
         fprintf( stderr, "%s %s", oyjlTermColor(oyjlRED,_("Program Error:")), _("Missing choices list") );
-        char * t = oyjlOption_PrintArg( o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING );
+        char * t = oyjlOption_PrintArg_( o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING );
         fprintf( stderr, " %s\n", oyjlTermColor(oyjlBOLD, t) );
         free(t);
       }
-      while(list[n].nick && list[n].nick[0] != '\000') ++n;
+      while((list[n].nick && list[n].nick[0] != '\000') || (list[n].name && list[n].name[0] != '\000')) ++n;
       if(n)
       {
         char * up = oyjlStringToUpper( &opt_name[4] );
@@ -3995,7 +4013,9 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
           }
           else
           {
-            oyjlStringAdd( &text, malloc, free, ".TP\n%s\n.br\n", list[l].nick );
+            oyjlStringAdd( &text, malloc, free, ".TP\n" );
+            if(list[l].nick && list[l].nick[0])
+            oyjlStringAdd( &text, malloc, free, "%s\n.br\n", list[l].nick );
             if(list[l].name && list[l].name[0])
             oyjlStringAdd( &text, malloc, free, "%s\n", list[l].name );
             if(list[l].description && list[l].description[0])
@@ -4170,7 +4190,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_CHOICE:
           {
             int n = 0,l;
-            t = oyjlOption_PrintArg(o, style);
+            t = oyjlOption_PrintArg_(o, style);
             oyjlStringAdd( &text, malloc, free, "%s", t );
             free(t);
             if(o->name && !o->description)
@@ -4193,7 +4213,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
           {
             int n = 0,l;
             oyjlOptionChoice_s * list;
-            t = oyjlOption_PrintArg(o, style);
+            t = oyjlOption_PrintArg_(o, style);
             oyjlStringAdd( &text, malloc, free, "%s", t );
             free(t);
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", o->description ? o->description:"", o->help && o->help[0]?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
@@ -4216,8 +4236,8 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           {
-            char * desc = oyjlOption_PrintArgDouble_( o, oyjlDESCRIPTION );
-            t = oyjlOption_PrintArg(o, style);
+            char * desc = oyjlOption_PrintArg_Double_( o, oyjlDESCRIPTION );
+            t = oyjlOption_PrintArg_(o, style);
             oyjlStringAdd( &text, malloc, free, "%s", t );
             free(t);
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", desc, o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
@@ -4226,7 +4246,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
           break;
         case oyjlOPTIONTYPE_NONE:
           {
-            t = oyjlOption_PrintArg(o, style);
+            t = oyjlOption_PrintArg_(o, style);
             oyjlStringAdd( &text, malloc, free, "%s", t );
             free(t);
             oyjlStringAdd( &text, malloc, free, "\t%s%s%s%s", o->description ? o->description:"", o->help?"\n.RS\n":"", o->help?o->help:"", o->help?"\n.RE\n":"\n.br\n" );
@@ -4443,7 +4463,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_CHOICE:
           {
             int n = 0,l;
-            t = oyjlOption_PrintArg(o, style);
+            t = oyjlOption_PrintArg_(o, style);
             oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
             free(t);
             oyjlStringAdd( &text, malloc, free, " <td>%s%s%s", o->description ? o->description:"", o->help?"<br />":"", o->help?o->help :"" );
@@ -4465,7 +4485,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
           {
             int n = 0,l;
             oyjlOptionChoice_s * list;
-            t = oyjlOption_PrintArg(o, style);
+            t = oyjlOption_PrintArg_(o, style);
             oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
             free(t);
             oyjlStringAdd( &text, malloc, free, " <td>%s%s%s", o->description ? o->description:"", o->help?"<br />":"", o->help?o->help :"" );
@@ -4485,8 +4505,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
           break;
         case oyjlOPTIONTYPE_DOUBLE:
           {
-            char * desc = oyjlOption_PrintArgDouble_( o, oyjlDESCRIPTION | oyjlHELP );
-            t = oyjlOption_PrintArg(o, style);
+            char * desc = oyjlOption_PrintArg_Double_( o, oyjlDESCRIPTION | oyjlHELP );
+            t = oyjlOption_PrintArg_(o, style);
             oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
             free(t);
             oyjlStringAdd( &text, malloc, free, " <td>%s</td>", desc );
@@ -4494,7 +4514,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
           }
           break;
         case oyjlOPTIONTYPE_NONE:
-          t = oyjlOption_PrintArg(o, style);
+          t = oyjlOption_PrintArg_(o, style);
           oyjlStringAdd( &text, malloc, free, " <tr><td" OYJL_LEFT_TD_STYLE ">%s</td>", t );
           free(t);
           oyjlStringAdd( &text, malloc, free, " <td>%s%s%s</td>", o->description ? o->description:"", o->help?"<br />":"", o->help?o->help :"" );
@@ -4573,3 +4593,4 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
  *  @} *//* oyjl_args
  */
 
+#endif /* OYJL_ARGS_C */
