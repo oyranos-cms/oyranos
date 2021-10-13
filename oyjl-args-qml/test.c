@@ -18,8 +18,8 @@
 
 #define OYJL_TEST_MAIN_SETUP  printf("\n    OyjlArgsQml Test Program\n");
 #define OYJL_TEST_MAIN_FINISH printf("\n    OyjlArgsQml Test Program finished\n\n");
-#include "oyjl_test_main.h"
 #include "oyjl.h"
+#include "oyjl_test_main.h"
 #include "oyjl_version.h"
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
