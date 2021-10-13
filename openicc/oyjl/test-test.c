@@ -16,7 +16,7 @@
   TEST_RUN( testB, "B Test", 1 );
 
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Test Program\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    Test Program finished\n\n");
+#define OYJL_TEST_MAIN_FINISH printf("\n    Test Program finished\n\n"); if(oyjl_print_sub) free(oyjl_print_sub);
 #include "oyjl_test_main.h"
 
 int local_debug = 0;
@@ -31,11 +31,11 @@ oyjlTESTRESULT_e testA()
   fprintf(stdout, "\n" );
 
   if(__LINE__ == 33)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "line %d                                        ", (__LINE__-2) );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, __LINE__-2,
+    "line" );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "line %d                                        ", (__LINE__-5) );
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "line %d", (__LINE__-5) );
   }
 
   return result;
@@ -49,11 +49,11 @@ oyjlTESTRESULT_e testB()
   fprintf(stdout, "\n" );
 
   if(__LINE__ == -1)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "line %d                                        ", (__LINE__-2) );
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, __LINE__-2, 
+    "line" );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "line %d                                        ", (__LINE__-5) );
+  { PRINT_SUB_INT( oyjlTESTRESULT_XFAIL, __LINE__-5, 
+    "line" );
   }
 
   int i, n = 100;
@@ -69,10 +69,12 @@ oyjlTESTRESULT_e testB()
   clck = oyjlClock() - clck;
   if(__LINE__ == 70)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "line %d    %s                     ", (__LINE__-2), oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"alloc") );
+    oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"alloc",
+    "line %d", (__LINE__-1) ) );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "line %d    %s                     ", (__LINE__-5), oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"alloc") );
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_XFAIL,
+    n,clck/(double)CLOCKS_PER_SEC,"alloc", 
+    "line %d", (__LINE__-5) );
   }
 
   return result;
