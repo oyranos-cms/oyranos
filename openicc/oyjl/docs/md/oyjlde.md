@@ -10,11 +10,11 @@ oyjl v1.0.0 - Oyjl Json Bearbeitung
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyjl</strong> <a href="#json"><strong>json</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#json"><strong>json</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 <br />
-<strong>oyjl</strong> <a href="#yaml"><strong>yaml</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#yaml"><strong>yaml</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 <br />
-<strong>oyjl</strong> <a href="#xml"><strong>xml</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+<strong>oyjl</strong> <a href="#xml"><strong>xml</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 <br />
 <strong>oyjl</strong> <a href="#count"><strong>count</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
@@ -49,11 +49,23 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
   </table>
   </td>
  </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--wrap</strong>=<em>TYP</em></td> <td>sprachspezifische Formatierung
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-w C</strong></td><td># C statischer Text</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-W</strong>|<strong>--wrap-name</strong>=<em>NAME</em></td> <td>Ein Name für das zu definierende Symbol.<br />Benutze nur Buchstaben aus den Alphabet [A-Z,a-z] einschließlich möglichem Understrich '_'.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-W wrap</strong></td><td># wrap</td></tr>
+  </table>
+  </td>
+ </tr>
 </table>
 
 <h3 id="json">Zeige JSON auf stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>json</strong></td> <td>Zeige JSON auf stdout</td> </tr>
@@ -61,7 +73,7 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h3 id="yaml">Zeige YAML auf stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>yaml</strong></td> <td>Zeige YAML auf stdout</td> </tr>
@@ -69,7 +81,7 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h3 id="xml">Zeige XML auf stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>xml</strong></td> <td>Zeige XML auf stdout</td> </tr>
@@ -154,15 +166,25 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
 
-#### Zeige JSON auf stdout
+#### 
+&nbsp;&nbsp;Zeige JSON auf stdout
+  <br />
 &nbsp;&nbsp;oyjl -i text.json -x ///[0]
-#### Zeige Anzahl der Knotenzweige
+#### 
+&nbsp;&nbsp;Zeige Anzahl der Knotenzweige
+  <br />
 &nbsp;&nbsp;oyjl -c -i text.json -x mein/Pfad/
-#### Zeige Schlüsselname des Knotens
+#### 
+&nbsp;&nbsp;Zeige Schlüsselname des Knotens
+  <br />
 &nbsp;&nbsp;oyjl -k -i text.json -x ///[0]
-#### Zeige alle zutreffenden Pfade
+#### 
+&nbsp;&nbsp;Zeige alle zutreffenden Pfade
+  <br />
 &nbsp;&nbsp;oyjl -p -i text.json -x //
-#### Setze Wert des Schlüssels
+#### 
+&nbsp;&nbsp;Setze Wert des Schlüssels
+  <br />
 &nbsp;&nbsp;oyjl -i text.json -x mein/Pfad/zum/Schlüssel -s Wert
 
 <h2>SIEHE AUCH <a href="#toc" name="seealso">&uarr;</a></h2>
