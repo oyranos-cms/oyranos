@@ -33,19 +33,19 @@ ApplicationWindow {
     objectName: "mainWindow"
     color: bg
     visible: true
+    readonly property int dens: Math.round(Screen.logicalPixelDensity)
     readonly property bool fullscreen: (Qt.platform.os === "android" ||
                                         Qt.platform.os === "blackberry" ||
                                         Qt.platform.os === "ios" ||
                                         Qt.platform.os === "tvos" ||
                                         Qt.platform.os === "windowsphone")
-    width: if( !fullscreen )
-               200*dens
-    height: if( !fullscreen )
-                150*dens
+
+
+    width: fullscreen === false ? 200*dens : width
+    height: fullscreen === false ? 150*dens : height
     minimumWidth: 100*dens
     minimumHeight: 75*dens
 
-    readonly property int dens: Math.round(Screen.logicalPixelDensity)
     readonly property string dpiName: {
 //        if(density >= 21.26) // 560
 //            "xxxxhdpi"
