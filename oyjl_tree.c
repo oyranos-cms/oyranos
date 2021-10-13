@@ -31,6 +31,7 @@
 #include <stdarg.h>  /* va_list */
 #include <stddef.h>  /* ptrdiff_t size_t */
 #include <stdlib.h>
+#include <stdint.h>  /* portable: uint64_t   MSVC: __int64 */
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -199,9 +200,9 @@ char * oyjlValueText (oyjl_val v, void*(*alloc)(size_t size))
          oyjlStringAdd (&t, 0,0, "%s", v->u.number.r);
          break;
     case oyjl_t_true:
-         oyjlStringAdd (&t, 0,0, "1"); break;
+         oyjlStringAdd (&t, 0,0, "true"); break;
     case oyjl_t_false:
-         oyjlStringAdd (&t, 0,0, "0"); break;
+         oyjlStringAdd (&t, 0,0, "false"); break;
     case oyjl_t_string:
          oyjlStringAdd (&t, 0,0, "%s", v->u.string); break;
     case oyjl_t_array:
@@ -220,6 +221,32 @@ char * oyjlValueText (oyjl_val v, void*(*alloc)(size_t size))
 
   return text;
 }
+
+struct oyjlXPath_s
+{
+  uint32_t v_offset;                   /* start of v from start of oyjlXPath_s */
+  char * xpath;                        /* OYJL_KEY escaped string. see oyjlTreeToPaths() */
+  /* Only a subset of oyjl_t is allowed.
+   * - The u.string member is a null terminated array of UTF-8 char.
+   * - The u.number.r member is alway NULL. The plain unparsed string is appended.
+   * - oyjl_t_false, oyjl_t_true and oyjl_t_null are compatible */
+  oyjl_val v;
+};
+
+/* Serialisation of a oyjl_val tree as linear list.
+ *
+ * oyjlXPath_s follow the oyjlNodes_s::offsets
+ * at the oyjlNodes_s::offsets[count].v_offset position. */
+typedef struct oyjlNodes_s
+{
+  char type [8];                       /* place 'oiJS' here for oyjl static Json */
+  int32_t count;                       /* number of entries */
+  int32_t flags;
+  /* offset from begin of the oyjlNodes_s::offsets array to a oyjlXPath_s element.
+   * elements can be of type oyjl_t_null, oyjl_t_string, oyjl_t_true, oyjl_t_false or oyjl_t_number.
+   * Nested elements like oyjl_t_array of oyjl_t_object are not allowed. */
+  uint64_t offsets[];                  /* distance from oyjlNodes_s to oyjlXPath_s */
+} oyjlNodes_s;
 
 static void  oyjlTreeFind_           ( oyjl_val            root,
                                        int                 level,
@@ -256,12 +283,17 @@ static void  oyjlTreeFind_           ( oyjl_val            root,
          {
            for(i = 0; i < count; ++i)
            {
+             oyjl_val v = root->u.array.values[i];
+             oyjl_type type = v->type;
              if(pos >= 0 && pos != i) continue;
 
              if(base)
                oyjlStringAdd( &xpath, 0,0, "%s%s[%d]",base,base[0]?"/":"",i );
 
-             if(flags & OYJL_PATH)
+             if( flags & OYJL_PATH ||
+                 ( flags & OYJL_KEY &&
+                   type != oyjl_t_null && type != oyjl_t_array && type != oyjl_t_object)
+               )
              {
                n = 0; while(paths && *paths && (*paths)[n]) ++n;
                if(tn-1 <= level)
@@ -288,7 +320,14 @@ static void  oyjlTreeFind_           ( oyjl_val            root,
                continue;
 
              if(base && key)
-               oyjlStringAdd( &xpath, 0,0, "%s%s%s", base,base[0]?"/":"", key );
+             {
+               char * escape = NULL;
+               if(strpbrk(key, "[].^$*+?(){|/"))
+                 escape = oyjlJsonEscape(key, OYJL_KEY | OYJL_NO_INDEX | OYJL_REGEXP);
+               oyjlStringAdd( &xpath, 0,0, "%s%s%s", base,base[0]?"/":"", escape?escape:key );
+               if(escape)
+                 free(escape);
+             }
 
              if( (flags & OYJL_PATH && ocount) ||
                  (flags & OYJL_KEY && ocount == 0) )
@@ -323,8 +362,8 @@ static void  oyjlTreeFind_           ( oyjl_val            root,
  *                                     - 0 for both, paths and keys
  *  @param         paths               the resulting string list
  *
- *  @version Oyranos: 0.9.7
- *  @date    2017/11/12
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/09/22
  *  @since   2017/11/10 (Oyranos: 0.9.7)
  */
 void       oyjlTreeToPaths           ( oyjl_val            root,
@@ -339,6 +378,24 @@ void       oyjlTreeToPaths           ( oyjl_val            root,
   char ** terms = oyjlStringSplit(xpath, '/', &n, malloc);
 
   if(!root) return;
+
+  if((long)root->type == oyjlOBJECT_JSON)
+  {
+    int count = 0, i,
+        n = 0;
+    oyjlNodes_s * nodes = (oyjlNodes_s *)root;
+
+    count = nodes->count;
+    for(i = 0; i < count; ++i)
+    {
+      struct oyjlXPath_s * node = (struct oyjlXPath_s *)&((char*)nodes)[nodes->offsets[i]];
+      const char * xpath = (const char*)node + sizeof(uint32_t);
+      if(flags & OYJL_OBSERVE)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "xpath[%d]: \"%s\"", OYJL_DBG_ARGS, i, xpath );
+      oyjlStringListAddStaticString( paths, &n, xpath, malloc,free );
+    }
+    return;
+  }
 
   if(!flags) flags = OYJL_PATH | OYJL_KEY;
 
@@ -391,7 +448,26 @@ static void oyjlJsonIndent_( char ** json, const char * before, int level, const
   *json = njson;
 }
 
-char * oyjlJsonEscape( const char * in )
+void       oyjlRegExpEscape2         ( oyjl_str            text );
+void       oyjlNoBracketCb(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * data OYJL_UNUSED);
+/** @brief Convert strings to pass through JSON
+ *
+ *  @param         in                  input string
+ *  @param         flags               support filters:
+ *                                     - ::OYJL_KEY: handle input as a key string
+ *                                     - ::OYJL_NO_INDEX: escape square brackets
+ *                                     - ::OYJL_QUOTE: escape quotation marks '"'
+ *                                     - ::OYJL_REGEXP: oyjlRegExpEscape()
+ *                                     - ::OYJL_REVERSE: undo all escaping for storing JSON keys
+ *                                     - 0 apply common basic JSON VALUE escaping
+ *  @return                            the resulting string
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/09/11
+ *  @since   2021/09/01 (Oyjl: 1.0.0)
+ */
+char *     oyjlJsonEscape            ( const char        * in,
+                                       int                 flags )
 {
   char * out = NULL;
   const char * t = in;
@@ -400,13 +476,59 @@ char * oyjlJsonEscape( const char * in )
 
   tmp = oyjlStrNew(10,0,0);
   oyjlStrAppendN( tmp, t, strlen(t) );
-  oyjlStrReplace( tmp, "\\", "\\\\", 0, NULL );
-  oyjlStrReplace( tmp, "\"", "\\\"", 0, NULL );
-  oyjlStrReplace( tmp, "\b", "\\b", 0, NULL );
-  oyjlStrReplace( tmp, "\f", "\\f", 0, NULL );
-  oyjlStrReplace( tmp, "\n", "\\n", 0, NULL );
-  oyjlStrReplace( tmp, "\r", "\\r", 0, NULL );
-  oyjlStrReplace( tmp, "\t", "\\t", 0, NULL );
+  if(flags & OYJL_REVERSE)
+  {
+    if(flags & OYJL_NO_INDEX || flags & OYJL_KEY)
+    {
+      oyjlStrReplace( tmp, "\\\\[", "[", 0, NULL );
+      oyjlStrReplace( tmp, "\\[", "[", 0, NULL );
+      oyjlStrReplace( tmp, "\\]", "]", 0, NULL );
+    }
+    if(!(flags & OYJL_NO_BACKSLASH))
+      oyjlStrReplace( tmp, "\\\\", "\\", 0, NULL );
+    if(flags & OYJL_QUOTE)
+      oyjlStrReplace( tmp, "\\\"", "\"", 0, NULL );
+    oyjlStrReplace( tmp, "\\b", "\b", 0, NULL );
+    oyjlStrReplace( tmp, "\\f", "\f", 0, NULL );
+    oyjlStrReplace( tmp, "\\n", "\n", 0, NULL );
+    oyjlStrReplace( tmp, "\\r", "\r", 0, NULL );
+    oyjlStrReplace( tmp, "\\t", "\t", 0, NULL );
+    if(flags & OYJL_KEY)
+      oyjlStrReplace( tmp, "%37", "/", NULL,NULL );
+    /* undo RegExp */
+    oyjlStrReplace( tmp, "\\.", ".", 0, NULL );
+    oyjlStrReplace( tmp, "\\^", "^", 0, NULL );
+    oyjlStrReplace( tmp, "\\$", "$", 0, NULL );
+    oyjlStrReplace( tmp, "\\*", "*", 0, NULL );
+    oyjlStrReplace( tmp, "\\+", "+", 0, NULL );
+    oyjlStrReplace( tmp, "\\?", "?", 0, NULL );
+    oyjlStrReplace( tmp, "\\(", "(", 0, NULL );
+    oyjlStrReplace( tmp, "\\)", ")", 0, NULL );
+    oyjlStrReplace( tmp, "\\{", "{", 0, NULL );
+    oyjlStrReplace( tmp, "\\|", "|", 0, NULL );
+  } else
+  {
+    if(!(flags & OYJL_NO_BACKSLASH) || !(flags & OYJL_REGEXP))
+      oyjlStrReplace( tmp, "\\", "\\\\", oyjlNoBracketCb, NULL );
+    if(flags & OYJL_REGEXP)
+      oyjlRegExpEscape2( tmp );
+    if(flags & OYJL_QUOTE)
+      oyjlStrReplace( tmp, "\"", "\\\"", 0, NULL );
+    oyjlStrReplace( tmp, "\b", "\\b", 0, NULL );
+    oyjlStrReplace( tmp, "\f", "\\f", 0, NULL );
+    oyjlStrReplace( tmp, "\n", "\\n", 0, NULL );
+    oyjlStrReplace( tmp, "\r", "\\r", 0, NULL );
+    oyjlStrReplace( tmp, "\t", "\\t", 0, NULL );
+    if(flags & OYJL_KEY)
+      oyjlStrReplace( tmp, "/", "%37", NULL,NULL );
+    if(flags & OYJL_REGEXP)
+      oyjlStrReplace( tmp, "\\[", "\\\\[", 0, NULL );
+    else if(flags & OYJL_NO_INDEX || flags & OYJL_KEY)
+    {
+      oyjlStrReplace( tmp, "[", "\\\\[", 0, NULL );
+      //oyjlStrReplace( tmp, "]", "\\\\]", 0, NULL );
+    }
+  }
   out = oyjlStrPull(tmp); 
   oyjlStrRelease( &tmp );
   return out;
@@ -425,12 +547,12 @@ int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
          oyjlStrAppendN (json, v->u.number.r, strlen(v->u.number.r));
          break;
     case oyjl_t_true:
-         oyjlStrAppendN (json, "1", 1); break;
+         oyjlStrAppendN (json, "true", 4); break;
     case oyjl_t_false:
-         oyjlStrAppendN (json, "0", 1); break;
+         oyjlStrAppendN (json, "false", 5); break;
     case oyjl_t_string:
          {
-          char * escaped = oyjlJsonEscape( v->u.string );
+          char * escaped = oyjlJsonEscape( v->u.string, OYJL_QUOTE | OYJL_NO_BACKSLASH );
           oyjlStrAppendN( json, "\"", 1 );
           oyjlStrAppendN( json, escaped, strlen(escaped) );
           oyjlStrAppendN( json, "\"", 1 );
@@ -477,7 +599,7 @@ int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
              }
              oyjlStrAppendN( json, "\"", 1 );
              {
-              char * escaped = oyjlJsonEscape( v->u.object.keys[i] );
+              char * escaped = oyjlJsonEscape( v->u.object.keys[i], OYJL_QUOTE | OYJL_NO_BACKSLASH );
               oyjlStrAppendN( json, escaped, strlen(escaped) );
               free( escaped );
              }
@@ -529,9 +651,9 @@ void oyjlTreeToJson2_ (oyjl_val v, int * level, char ** json)
          oyjlStringAdd (json, 0,0, "%s", v->u.number.r);
          break;
     case oyjl_t_true:
-         oyjlStringAdd (json, 0,0, "1"); break;
+         oyjlStringAdd (json, 0,0, "true"); break;
     case oyjl_t_false:
-         oyjlStringAdd (json, 0,0, "0"); break;
+         oyjlStringAdd (json, 0,0, "false"); break;
     case oyjl_t_string:
          {
           const char * t = v->u.string;
@@ -646,9 +768,9 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
          oyjlStringAdd (text, 0,0, "%s", v->u.number.r);
          break;
     case oyjl_t_true:
-         oyjlStringAdd (text, 0,0, "1"); break;
+         oyjlStringAdd (text, 0,0, "true"); break;
     case oyjl_t_false:
-         oyjlStringAdd (text, 0,0, "0"); break;
+         oyjlStringAdd (text, 0,0, "false"); break;
     case oyjl_t_string:
          {
           const char * t = v->u.string;
@@ -718,9 +840,9 @@ static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oy
          oyjlStrAppendN (text, v->u.number.r, strlen(v->u.number.r));
          break;
     case oyjl_t_true:
-         oyjlStrAppendN (text, "1", 1); break;
+         oyjlStrAppendN (text, "true", 4); break;
     case oyjl_t_false:
-         oyjlStrAppendN (text, "0", 1); break;
+         oyjlStrAppendN (text, "false", 5); break;
     case oyjl_t_string:
          {
           const char * t = v->u.string;
@@ -1031,6 +1153,11 @@ int        oyjlPathTermGetIndex_     ( const char        * term,
     error = 0;
   }
   else
+  if(tindex != NULL && tindex > term && tindex[-1] == '\\')
+  {
+    error = 0;
+  }
+  else
   if(tindex != NULL)
   {
     ptrdiff_t size;
@@ -1210,14 +1337,21 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
       /* search for name in object */
       for(j = 0; j < count; ++j)
       {
-        if((parent->type == oyjl_t_object && strcmp( parent->u.object.keys[j], term ) == 0) ||
+        const char * key = parent->u.object.keys[j];
+        char * regex = NULL;
+        /* search for regex escaped key */
+        if(strpbrk(key, "[].^$*+?(){|/"))
+          regex = oyjlJsonEscape(key, OYJL_KEY | OYJL_REGEXP);
+        if((parent->type == oyjl_t_object && strcmp( regex?regex:key, term ) == 0) ||
             /* a empty term matches to everything */
            term[0] == '\000')
         {
           found = 1;
           level = oyjlValuePosGet( parent, j );
+          if(regex) free(regex);
           break;
         }
+        if(regex) { free(regex); regex = NULL; }
       }
 
       /* add new leave */
@@ -1260,7 +1394,7 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
             }
             parent->u.object.keys = keys;
           }
-          parent->u.object.keys[parent->u.object.len] = oyjlStringCopy( term, malloc );
+          parent->u.object.keys[parent->u.object.len] = oyjlJsonEscape( term, /*OYJL_KEY |*/ OYJL_REVERSE | OYJL_REGEXP | OYJL_KEY );
           parent->u.object.values[parent->u.object.len] = level;
           parent->u.object.len++;
         }
@@ -1343,7 +1477,7 @@ oyjl_val   oyjlTreeNew               ( const char        * path )
  *  expressions to full paths.
  *
  *  @param[in]     v                   the oyjl node
- *  @param[in]     value               the node to search for inside the v tree
+ *  @param[in]     node                the node to search for inside the v tree
  *  @return                            the path or zero
  *
  *  @version Oyranos: 0.9.7
@@ -1657,6 +1791,27 @@ void oyjlValueClear          (oyjl_val v)
 }
 #undef Florian_Forster_SOURCE_GUARD
 
+/** @brief copy only one level of allocation */
+void       oyjlValueCopy             ( oyjl_val            v,
+                                       oyjl_val            src )
+{
+    if( v == NULL || src == NULL )
+      return;
+    oyjlValueDebug_(src, "", "copy", 0);
+
+    v->type = src->type;
+    if( OYJL_IS_STRING(src) )
+    {
+      if(src->u.string)
+        v->u.string = oyjlStringCopy(src->u.string, 0);
+    } else
+      if( OYJL_IS_NUMBER(v) )
+    {
+      memcpy( v, src, sizeof( oyjl_val_s ) );
+      if(src->u.number.r) v->u.number.r = oyjlStringCopy(src->u.number.r, 0);
+    }
+}
+
 /** @brief release a specific node and all its childs
  *
  *  In case parents have no children, release them or clear root.
@@ -1780,7 +1935,9 @@ void oyjlTreeFree (oyjl_val v)
 {
     if (v == NULL) return;
 
-    oyjlValueClear (v);
+    if((long)v->type != oyjlOBJECT_JSON)
+      oyjlValueClear (v);
+
     free(v);
 }
 
@@ -1790,6 +1947,10 @@ void oyjlTreeFree (oyjl_val v)
 /** \addtogroup oyjl
  *  @{ *//* oyjl */
 
+const char*oyjlTreeGetStringF        ( oyjl_val            v,
+                                       int                 flags,
+                                       const char        * format,
+                                                           ... );
 /** @brief   translate string from catalog
  *
  *  The passed in catalog shall contain its translations in the
@@ -1798,21 +1959,32 @@ void oyjlTreeFree (oyjl_val v)
  *  @param         loc                 locale name as from setlocale(""), the special locale "back" will inverse the translation; optional, will return without
  *  @param         catalog             the parsed catalog as tree; optional, will return without
  *  @param         text                the to be translated text; optional, will return without
+ *  @param[in]     flags               supported:
+ *                                     - OYJL_OBSERVE : to print verbose info message
  *  @return                            translated item; must not be freed
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/07/27
+ *  @date    2021/09/06
  *  @since   2020/07/27 (Oyjl: 1.0.0)
  */
 char *         oyjlTranslate         ( const char        * loc,
                                        oyjl_val            catalog,
-                                       const char        * text )
+                                       const char        * text,
+                                       int                 flags )
 {
   const char * translated = NULL;
   oyjl_val v;
+  char * key = NULL, * tmp = NULL, * loc_ = NULL;
 
-  if(!loc || strcmp(loc,"C") == 0 || !catalog || !text || (text && !text[0]))
+  if(!loc || !loc[0] || strcmp(loc,"C") == 0 || !catalog || !text || (text && !text[0]))
     return (char*)text;
+
+  //tmp = oyjlJsonEscape( text, 0 );
+  //key = oyjlRegExpEscape( tmp );
+  key = oyjlJsonEscape( text, OYJL_KEY | OYJL_REGEXP );
+  if(flags & OYJL_OBSERVE)
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "text: \"%s\" escape: \"%s\" key: \"%s\"", OYJL_DBG_ARGS, text, tmp, key );
+  if(tmp) {free(tmp); tmp = NULL;}
 
   if(strcmp(loc,"back") == 0 && text[0])
   {
@@ -1825,6 +1997,7 @@ char *         oyjlTranslate         ( const char        * loc,
     if(v)
     {
       translated = OYJL_GET_STRING(v);
+      if(key) {free(key); key = NULL;}
       return translated ? (char*)translated : (char*)text;
     }
 
@@ -1838,10 +2011,14 @@ char *         oyjlTranslate         ( const char        * loc,
         continue;
       v = oyjlTreeGetValueF( catalog, 0, "%s", path );
       current = OYJL_GET_STRING(v);
+      if(flags & OYJL_OBSERVE)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\tcurrent: \"%s\"", OYJL_DBG_ARGS, current );
       if(strcmp(current, text) == 0)
       {
-        oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, strrchr(path,'/')+1, "org/freedesktop/oyjl/translations/back/%s", text );
-        v = oyjlTreeGetValueF( catalog, OYJL_CREATE_NEW, "org/freedesktop/oyjl/translations/back/%s", text );
+        char * value = oyjlJsonEscape(strrchr(path,'/')+1, OYJL_REVERSE | OYJL_REGEXP);
+        oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, value, "org/freedesktop/oyjl/translations/back/%s", key );
+        free(value);
+        v = oyjlTreeGetValueF( catalog, OYJL_CREATE_NEW, "org/freedesktop/oyjl/translations/back/%s", key );
         translated = OYJL_GET_STRING(v);
         break;
       }
@@ -1850,41 +2027,36 @@ char *         oyjlTranslate         ( const char        * loc,
     if(paths && count)
       oyjlStringListRelease( &paths, count, free );
 
+    if(key) {free(key); key = NULL;}
     return translated ? (char*)translated : (char*)text;
   }
 
-  v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", loc, text );
-  if(v)
-    translated = OYJL_GET_STRING(v);
+  loc_ = oyjlJsonEscape( loc, OYJL_KEY | OYJL_REGEXP );
+  translated = oyjlTreeGetStringF(catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", loc_, key );
   if(!translated)
   {
     char * language = oyjlLanguage(loc),
          * country = oyjlCountry(loc);
     if(language && country)
-      v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s_%s/%s", language, country, text );
-    if(v)
-      translated = OYJL_GET_STRING(v);
+        translated = oyjlTreeGetStringF(catalog, 0, "org/freedesktop/oyjl/translations/%s_%s/%s", language, country, key );
     if(language) free(language);
     if(country) free(country);
   }
   if(!translated)
   {
     char * language = oyjlLanguage(loc);
-    v = oyjlTreeGetValueF( catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", language, text );
-    if(v)
-      translated = OYJL_GET_STRING(v);
+    translated = oyjlTreeGetStringF(catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", language, key );
     if(language) free(language);
   }
   if(!translated && text[0])
   {
     char * language = oyjlLanguage(loc);
-    char * path = NULL;
+    char * path = NULL,
+         * plain;
     char ** paths = NULL;
     int count, i;
     char * regex = NULL,
-         * json = oyjlJsonEscape( text ),
-         * escape = oyjlRegExpEscape( json );
-    free(json); json = NULL;
+         * escape = oyjlRegExpEscape( text );
     oyjlStringAdd( &regex, 0,0, "org/freedesktop/oyjl/translations/%s.*/%s", language, escape );
     free(escape); escape = NULL;
 
@@ -1894,16 +2066,27 @@ char *         oyjlTranslate         ( const char        * loc,
     for(i = 0; i < count; ++i)
     {
       path = paths[i];
-      if(oyjlRegExpFind(path, regex))
+      plain = oyjlJsonEscape( path, OYJL_REVERSE | OYJL_REGEXP | OYJL_KEY );
+      if(flags & OYJL_OBSERVE)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\tpath[%d]: \"%s\" regex: \"%s\"", OYJL_DBG_ARGS, i, path, regex );
+      if(oyjlRegExpFind(plain, regex))
       {
-        const char * p = strrchr(path, '/');
+        char * p = strrchr(plain, '/');
         if(p) ++p;
+        if(flags & OYJL_OBSERVE)
+          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\tp[%d]: p:\"%s\" text: \"%s\"", OYJL_DBG_ARGS, i, p, text );
         if(strcmp(p, text) == 0)
         {
+          p = strrchr(path, '/');
+          if(p) ++p;
           paths[i] = NULL;
+          p[0] = '\000';
+          oyjlStringAdd( &path, 0,0, "%s", key );
+          free(plain);
           break;
         }
       }
+      free(plain);
     }
 
     if(paths && count)
@@ -1915,16 +2098,280 @@ char *         oyjlTranslate         ( const char        * loc,
     v = NULL;
     if(path)
     {
-      v = oyjlTreeGetValueF( catalog, 0, "%s", path );
+      translated = oyjlTreeGetStringF( catalog, 0, "%s", path );
+      if(flags & OYJL_OBSERVE)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\tpath:\"%s\" %s", OYJL_DBG_ARGS, path, translated?"found":"not found" );
       free(path);
     }
-    if(v)
-      translated = OYJL_GET_STRING(v);
     if(language) free(language);
     if(regex) free(regex);
   }
+  if(key) {free(key); key = NULL;}
+  if(loc_) {free(loc_); loc_ = NULL;}
   return translated ? (char*)translated : (char*)text;
 }
+
+int  oyjlXPathGetSize                ( oyjl_val            v,
+                                       const char        * xpath,
+                                       uint32_t          * v_offset )
+{
+  int size = sizeof(uint32_t),
+      /* allow for ending '\000' byte */
+      v_offset_ = size + strlen( xpath ) + 1;
+  oyjl_type type = v->type;
+
+  size = v_offset_;
+  if(v_offset)
+    *v_offset = v_offset_;
+
+  switch(type)
+  {
+    case oyjl_t_null:
+    case oyjl_t_true:
+    case oyjl_t_false:
+      size += sizeof(oyjl_type);
+      break;
+    case oyjl_t_number:
+      size += sizeof(oyjl_val_s) + strlen(v->u.number.r) + 1;
+      break;
+    case oyjl_t_string:
+      size += sizeof(oyjl_type) + strlen(v->u.string) + 1;
+      break;
+    default: break;
+  }
+
+  return size;
+}
+
+/** @brief   write tree to data block
+ *
+ *  @param         v                   tree to serialise
+ *  @param[in]     flags               supported:
+ *                                     - OYJL_OBSERVE : to print verbose info message
+ *  @param[out]    size                the size of the returned data block
+ *
+ *  @return                            serialised tree
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/09/21
+ *  @since   2021/09/16 (Oyjl: 1.0.0)
+ */
+oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
+                                       int                 flags,
+                                       int               * size )
+{
+  oyjlNodes_s * nodes = NULL;
+  if(v)
+  {
+    char ** paths = NULL;
+    int count = 0, i,
+        max_u_size = sizeof(oyjl_val),
+        size_ = 0;
+
+    oyjlTreeToPaths( v, 1000000, NULL, OYJL_KEY, &paths );
+    while(paths != NULL && paths[count] != NULL) ++count;
+    for(i = 0; i < count; ++i)
+    {
+      const char * xpath = paths[i];
+      oyjl_val val = oyjlTreeGetValue( v, 0, xpath );
+      uint32_t v_offset = 0;
+      int size__ = size_;
+      size_ += oyjlXPathGetSize( val, xpath, &v_offset );
+      if(flags & OYJL_OBSERVE)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\txpath:\"%s\" %s v_offset: %d offset2: %d", OYJL_DBG_ARGS, xpath, val?"found":"not found", v_offset, size__ );
+    }
+
+    size_ += sizeof(oyjlNodes_s) + sizeof(struct oyjlXPath_s) * (count+2);
+    if(size)
+      *size = size_;
+
+    nodes = (oyjlNodes_s*)calloc(size_, sizeof(char));
+    if(!nodes) return NULL;
+    memcpy( nodes, "oiJS", 4 );
+
+    size_ = sizeof(oyjlNodes_s) + sizeof(struct oyjlXPath_s) * (count+2);
+    nodes->count = count;
+    for(i = 0; i < count; ++i)
+    {
+      const char * xpath = paths[i];
+      oyjl_val val = oyjlTreeGetValue( v, 0, xpath );
+      oyjl_type type = val->type;
+      int len = strlen(xpath);
+      uint32_t v_offset = 0;
+      nodes->offsets[i] = size_;
+      size_ += oyjlXPathGetSize( val, xpath, &v_offset );
+      struct oyjlXPath_s * node = (struct oyjlXPath_s *)&((char*)nodes)[nodes->offsets[i]];
+      node->v_offset = v_offset;
+      oyjl_val node_v = (oyjl_val)((char*)node + v_offset);
+      strcpy( (char*)node + sizeof(uint32_t), xpath );
+      if(flags & OYJL_OBSERVE)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\txpath:\"%s\" len:%d type:%d offsets:%d %d %d v_offset:%d", OYJL_DBG_ARGS, xpath, len, type, size_, nodes->offsets[i], (char*)node - (char*)nodes, v_offset );
+      node_v->type = type;
+      switch(type)
+      {
+        case oyjl_t_null:
+        case oyjl_t_true:
+        case oyjl_t_false:
+          break;
+        case oyjl_t_number:
+          {
+            int i = val->u.number.i;
+            double d = val->u.number.d;
+            memcpy( node_v, val, max_u_size );
+            strcpy( (char*)node_v + sizeof(oyjl_val_s), val->u.number.r );
+            if(flags & OYJL_OBSERVE)
+              oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\tnumber.i:%d number.d:%f number.r:%d", OYJL_DBG_ARGS, i, d, (char*)&node_v->u.number.r );
+            break;
+          }
+        case oyjl_t_string:
+          {
+            const char * t = val->u.string;
+            memcpy( node_v, val, sizeof(oyjl_type) );
+            strcpy( (char*)node + v_offset + sizeof(oyjl_type), t );
+            if(flags & OYJL_OBSERVE)
+              oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\toffset %d %s", OYJL_DBG_ARGS, max_u_size + len + 1 + v_offset, t );
+          }
+          break;
+        default: break;
+      }
+    }
+
+    oyjlStringListRelease( &paths, count, free );
+  }
+
+  return (oyjl_val)nodes;
+}
+
+/** @brief   print
+ *
+ *  @param         v                   block to decode
+ *  @param[in]     flags               supported:
+ *                                     - OYJL_OBSERVE : to print verbose info message
+ *
+ *  @return                            text
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/09/17
+ *  @since   2021/09/17 (Oyjl: 1.0.0)
+ */
+char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
+                                       int                 flags OYJL_UNUSED )
+{
+  char * text = NULL;
+  if(v && (long)v->type == oyjlOBJECT_JSON)
+  {
+    int count = 0, i,
+        max_u_size = sizeof(oyjl_val_s);
+    oyjlNodes_s * nodes = (oyjlNodes_s *)v;
+
+    count = nodes->count;
+    oyjlStringAdd( &text, 0,0, "oiJS:\ncount: %d\n", count );
+    for(i = 0; i < count; ++i)
+    {
+      struct oyjlXPath_s * node = (struct oyjlXPath_s *)&((char*)nodes)[nodes->offsets[i]];
+      const char * xpath = ((const char*)node) + sizeof(uint32_t);
+      uint32_t v_offset = node->v_offset;
+      oyjl_val val = (oyjl_val)((char*)node + v_offset);
+      oyjl_type type = val->type;
+      oyjlStringAdd( &text, 0,0, "%s", xpath );
+      switch(type)
+      {
+        case oyjl_t_null:
+          oyjlStringAdd( &text, 0,0, ":null\n" );
+          break;
+        case oyjl_t_true:
+          oyjlStringAdd( &text, 0,0, ":true\n" );
+          break;
+        case oyjl_t_false:
+          oyjlStringAdd( &text, 0,0, ":false\n" );
+          break;
+        case oyjl_t_number:
+          oyjlStringAdd( &text, 0,0, ":%s\n", (char*)val + max_u_size );
+          break;
+        case oyjl_t_string:
+          oyjlStringAdd( &text, 0,0, ":\"%s\"\n", (char*)node + v_offset + sizeof(oyjl_type) );
+          break;
+        default:
+          oyjlStringAdd( &text, 0,0, ":---\n" );
+          break;
+      }
+    }
+  }
+
+  return text;
+}
+
+const char * oyjlTreeGetString       ( oyjl_val            v,
+                                       int                 flags OYJL_UNUSED,
+                                       const char        * path )
+{
+  const char * text = NULL;
+  if(v && (long)v->type == oyjlOBJECT_JSON)
+  {
+    int count = 0, i,
+        max_u_size = sizeof(oyjl_val_s);
+    oyjlNodes_s * nodes = (oyjlNodes_s *)v;
+
+    count = nodes->count;
+    for(i = 0; i < count; ++i)
+    {
+      struct oyjlXPath_s * node = (struct oyjlXPath_s *)&((char*)nodes)[nodes->offsets[i]];
+      const char * xpath = ((const char*)node) + sizeof(uint32_t);
+      if(strcmp(path, xpath) != 0)
+        continue;
+      uint32_t v_offset = node->v_offset;
+      oyjl_val val = (oyjl_val)((char*)node + v_offset);
+      oyjl_type type = val->type;
+      switch(type)
+      {
+        case oyjl_t_null:
+          text = "null";
+          break;
+        case oyjl_t_true:
+          text = "true";
+          break;
+        case oyjl_t_false:
+          text = "false";
+          break;
+        case oyjl_t_number:
+          text = (const char*)val + max_u_size;
+          break;
+        case oyjl_t_string:
+          text = (const char*)node + v_offset + sizeof(oyjl_type);
+          break;
+        default:
+          text = ":---";
+          break;
+      }
+      break;
+    }
+  } else
+  {
+    oyjl_val val = oyjlTreeGetValue( v, 0, path );
+    if(val)
+      text = OYJL_GET_STRING(val);
+  }
+
+  return text;
+}
+
+const char*oyjlTreeGetStringF        ( oyjl_val            v,
+                                       int                 flags,
+                                       const char        * format,
+                                                           ... )
+{
+  const char * value = NULL;
+  char * text = NULL;
+
+  OYJL_CREATE_VA_STRING(format, text, malloc, return value)
+
+  value = oyjlTreeGetString( v, flags, text );
+
+  if(text) free(text);
+
+  return value;
+}
+
 
 oyjl_val oyjl_catalog_ = NULL;
 /** @brief   set message translation catalog
@@ -1966,24 +2413,26 @@ oyjl_val       oyjlCatalog           ( oyjl_val          * catalog )
  *  @param[in]     catalog            the message catalog; optional, without the function will return
  *  @param[in]     key_list           comma separate list of keys to translate; optional, without the function will return
  *  @param[in]     translator         the translation function; optional, defaut is oyjlTranslate()
+ *  @param[in]     flags              for oyjlTranslate()
  *
  *  @version Oyjl: 1.0.0
- *  @date    2021/07/09
+ *  @date    2021/09/06
  *  @since   2021/07/09 (Oyjl: 1.0.0)
  */
 void               oyjlTranslateJson ( oyjl_val            root,
                                        const char        * loc,
                                        oyjl_val            catalog,
                                        const char        * key_list,
-                                       oyjlTranslate_f     translator )
+                                       oyjlTranslate_f     translator,
+                                       int                 flags )
 {
   if(root && loc && catalog)
   {
     char ** paths = NULL;
     int count = 0, i;
 
-    oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
-    while(paths && paths[count]) ++count;
+    oyjlTreeToPaths( root, 1000000, NULL,  OYJL_KEY, &paths );
+    while(paths != NULL && paths[count] != NULL) ++count;
     if(!translator)
       translator = oyjlTranslate;
 
@@ -1994,11 +2443,11 @@ void               oyjlTranslateJson ( oyjl_val            root,
 
       for(i = 0; i < count; ++i)
       {
-        char * path = paths[i];
+        const char * path = paths[i];
         int j;
         for(j = 0; j < n; ++j)
         {
-          char * key = list[j];
+          const char * key = list[j];
           if(oyjlPathMatch(path, key, OYJL_PATH_MATCH_LAST_ITEMS ))
           {
             const char * t = NULL;
@@ -2007,9 +2456,10 @@ void               oyjlTranslateJson ( oyjl_val            root,
               t = OYJL_GET_STRING(v);
             if(t)
             {
-              const char * i18n = oyjlTranslate( loc, catalog, t );
+              const char * i18n = translator( loc, catalog, t, flags );
               if(i18n && t && strcmp(i18n,t) != 0)
                 oyjlValueSetString(v,i18n);
+              break;
             }
           }
         }
