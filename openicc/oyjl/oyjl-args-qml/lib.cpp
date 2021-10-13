@@ -119,6 +119,12 @@ int oyjlArgsQmlStart__               ( int                 argc,
     qmlRegisterType<Process>("Process", 1, 0, "Process");
 
     QQmlApplicationEngine engine;
+    QQmlContext *ctxt = engine.rootContext();
+    ctxt->setContextProperty("ApplicationVersion", QVariant::fromValue( app.applicationVersion() ));
+    ctxt->setContextProperty("SysProductInfo", QVariant::fromValue( QSysInfo::prettyProductName() ));
+    ctxt->setContextProperty("QtRuntimeVersion", QVariant::fromValue( QString(qVersion()) ));
+    ctxt->setContextProperty("QtCompileVersion", QVariant::fromValue( QString(QT_VERSION_STR) ));
+
     engine.load(QUrl(QStringLiteral("qrc:qml/main.qml")));
 
     // extract the app data from QML
@@ -247,12 +253,6 @@ int oyjlArgsQmlStart__               ( int                 argc,
 
     if( output )
       mgr.setOutput( output );
-
-    QQmlContext *ctxt = engine.rootContext();
-    ctxt->setContextProperty("ApplicationVersion", QVariant::fromValue( app.applicationVersion() ));
-    ctxt->setContextProperty("SysProductInfo", QVariant::fromValue( QSysInfo::prettyProductName() ));
-    ctxt->setContextProperty("QtRuntimeVersion", QVariant::fromValue( QString(qVersion()) ));
-    ctxt->setContextProperty("QtCompileVersion", QVariant::fromValue( QString(QT_VERSION_STR) ));
 
     int result = app.exec();
     return result;
