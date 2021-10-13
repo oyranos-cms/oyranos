@@ -208,7 +208,9 @@ int myMain( int argc, const char ** argv )
   const char * i_filename = NULL;
   const char * xpath = NULL;
   int format = 0;
-  const char * try_format = NULL;
+  const char * try_format = NULL,
+             * wrap = NULL,
+             * wrap_name = "wrap";
   int verbose = 0;
   const char * help = NULL;
   int version = 0;
@@ -223,16 +225,20 @@ int myMain( int argc, const char ** argv )
   oyjlOptionChoice_s r_choices[] = {{"JSON",        "JSON",             NULL,                         NULL},
                                     /*{"XML",         "XML",              NULL,                         NULL},
                                     {"YAML",        "YAML",             NULL,                         NULL},*/
-                                    {"","","",""}};
-  oyjlOptionChoice_s A_choices[] = {{_("Print JSON to stdout"),_("oyjl -i text.json -x ///[0]"),NULL,                         NULL},
-                                    {_("Print count of leafs in node"),_("oyjl -c -i text.json -x my/path/"),NULL,                         NULL},
-                                    {_("Print key name of node"),_("oyjl -k -i text.json -x ///[0]"),NULL,                         NULL},
-                                    {_("Print all matching paths"),_("oyjl -p -i text.json -x //"),NULL,                         NULL},
-                                    {_("Set a key name to a value"),_("oyjl -i text.json -x my/path/to/key -s value"),NULL,                         NULL},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
+  oyjlOptionChoice_s w_choices[] = {{"C",           _("C static char"), NULL,                         NULL},
+                                    {NULL,NULL,NULL,NULL}};
+  oyjlOptionChoice_s W_choices[] = {{"wrap",        "wrap",             NULL,                         NULL},
+                                    {NULL,NULL,NULL,NULL}};
+  oyjlOptionChoice_s A_choices[] = {{"",_("Print JSON to stdout"),_("oyjl -i text.json -x ///[0]"),                         NULL},
+                                    {"",_("Print count of leafs in node"),_("oyjl -c -i text.json -x my/path/"),                         NULL},
+                                    {"",_("Print key name of node"),_("oyjl -k -i text.json -x ///[0]"),                         NULL},
+                                    {"",_("Print all matching paths"),_("oyjl -p -i text.json -x //"),                         NULL},
+                                    {"",_("Set a key name to a value"),_("oyjl -i text.json -x my/path/to/key -s value"),                         NULL},
+                                    {NULL,NULL,NULL,NULL}};
 
   oyjlOptionChoice_s S_choices[] = {{"oyjl-args(1) oyjl-translate(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
 
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
@@ -262,6 +268,10 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&format}},
     {"oiwi", 0,                          "r","try-format",    NULL,     _("Try Format"),_("Try to find data format, even with offset."), NULL, _("FORMAT"),
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), malloc )}, oyjlSTRING,    {.s=&try_format}},
+    {"oiwi", 0,                          "w","wrap",          NULL,     _("Wrap Type"),_("language specific wrap"),  NULL, _("TYPE"),          
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)w_choices, sizeof(w_choices), malloc ), 0}}, oyjlSTRING,    {.s=&wrap}},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "W","wrap-name",     NULL,     _("Wrap Name"),_("A name for the symbol to be defined."), _("Use only letters from alphabet [A-Z,a-z] including optional underscore '_'."), _("NAME"),          
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)W_choices, sizeof(W_choices), malloc ), 0}}, oyjlSTRING,    {.s=&wrap_name}},
     {"oiwi", 0,                          "A","man-examples",  NULL,     _("EXAMPLES"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc )}, oyjlNONE,      {}},
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
@@ -281,10 +291,10 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s,r"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s,r",     "j"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s,r",     "y"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s,r",     "m"},
+    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s,r,w,W"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s,r,w,W", "j"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s,r,w,W", "y"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s,r,w,W", "m"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Count"),      _("Print node count"),    NULL,  "c",           "i,x,r",       "c"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Key Name"),   _("Print key name"),      NULL,  "k",           "i,x,r",       "k"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Type"),       _("Print type"),          NULL,  "t",           "i,x,r",       "t"},
@@ -294,6 +304,9 @@ int myMain( int argc, const char ** argv )
     {"",0,0,0,0,0,0,0}
   };
 
+#ifndef OYJL_USE_GETTEXT
+  //fprintf(stderr,"%s myMain() static OyjlArgs structures initialised.\n", oyjlPrintTime(OYJL_TIME|OYJL_BRACKETS, oyjlNO_MARK));
+#endif
   oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
                                        "oyjl", _("Oyjl Json Manipulation"), _("Light weight JSON parse and manipulation tool"),
 #ifdef __ANDROID__
@@ -302,6 +315,7 @@ int myMain( int argc, const char ** argv )
                                        NULL,
 #endif
                                        sections, oarray, groups, &state );
+  //fprintf(stderr,"%s myMain() oyjlUi_s created.\n", oyjlPrintTime(OYJL_TIME|OYJL_BRACKETS, oyjlNO_MARK));
   if( state & oyjlUI_STATE_EXPORT &&
       export &&
       strcmp(export,"json+command") != 0)
@@ -465,6 +479,29 @@ int myMain( int argc, const char ** argv )
         }
         if(text)
         {
+          if(wrap)
+          {
+            char * tmp = NULL;
+            if(strcmp(wrap,"C") != 0)
+            {
+              fprintf(stderr,"%sERROR: Only -w C is supported.\n", oyjlBT(0));
+              error = 1;
+              goto clean_main;
+            }
+
+            if(!wrap_name || !wrap_name[0] || strchr(wrap_name,'-') != NULL)
+            {
+              fprintf(stderr, "%s%s\t\"%s\"\n", oyjlBT(0), oyjlTermColor(oyjlRED,_("Usage Error:")), wrap_name);
+              error = 1;
+              goto clean_main;
+            }
+            oyjlStringReplace( &text, "\\", "\\\\", NULL,NULL );
+            oyjlStringReplace( &text, "\"", "\\\"", NULL,NULL );
+            oyjlStringReplace( &text, "\n", "\\\n", NULL,NULL );
+            oyjlStringAdd( &tmp, malloc, free, "#define %s_json \"%s\"\n", wrap_name, text );
+            free(text); text = tmp; tmp = NULL;
+          }
+
           fwrite( text, sizeof(char), strlen(text), stdout );
           free(text);
           text = NULL;
@@ -551,12 +588,31 @@ int main( int argc_, char**argv_, char ** envv )
   setlocale(LC_ALL,"");
 #endif
 #endif
+
+  const char * lang = getenv("LANG");
+#ifndef OYJL_USE_GETTEXT
+#include "liboyjl.i18n.c"
+  //fprintf(stderr,"%s Parsing liboyjl_i18n_json catalog.\n", oyjlPrintTime(OYJL_TIME|OYJL_BRACKETS, oyjlNO_MARK));
+  oyjl_val catalog = oyjlTreeParse( liboyjl_i18n_json, NULL, 0 );
+  const char * loc = setlocale(LC_ALL,"");
+  if(loc && lang && strcmp(loc,lang) != 0)
+    loc = lang;
+  oyjlLang(loc);
+  oyjlCatalog( &catalog );
+  //fprintf(stderr,"%s Done liboyjl_i18n_json catalog.\n", oyjlPrintTime(OYJL_TIME|OYJL_BRACKETS, oyjlNO_MARK));
+#endif
+
   oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
+  if(*oyjl_debug)
+    fprintf(stderr,"oyjlLang: %s use_gettext: %d LANG:%s\n", oyjlLang(""), use_gettext, lang);
 
   myMain(argc, (const char **)argv);
 
 #ifdef __ANDROID__
   free( argv );
+#endif
+#ifndef OYJL_USE_GETTEXT
+  //fprintf(stderr,"%s Done myMain().\n", oyjlPrintTime(OYJL_TIME|OYJL_BRACKETS, oyjlNO_MARK));
 #endif
 
   return 0;

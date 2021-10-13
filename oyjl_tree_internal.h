@@ -79,6 +79,21 @@ char *         oyjlOptionGetKey_     ( const char        * ostring );
 int oyjlOptions_GroupHasOptionL_     ( oyjlOptions_s     * opts,
                                        int                 group_pos,
                                        const char        * option );
+void oyjlOptions_Print_              ( oyjlOptions_s     * opts,
+                                       int                 pos );
+enum {
+  oyjlOPTIONSTYLE_ONELETTER = 0x01,                     /* the single dash '-' style option is prefered: -o */
+  oyjlOPTIONSTYLE_STRING = 0x02,                        /* add double dash '-' style option as well: --long-option */
+  oyjlOPTIONSTYLE_OPTIONAL_START = 0x04,                /* print the option as optional: EBNF [--option] */
+  oyjlOPTIONSTYLE_OPTIONAL_END = 0x08,                  /* print the option as optional: EBNF [--option] */
+  oyjlOPTIONSTYLE_OPTIONAL_INSIDE_GROUP = 0x10,         /* add second level grouping: [[--option1|--option2]] */
+  oyjlOPTIONSTYLE_MAN = 0x20,                           /* add Unix MAN page groff syntax decoration */
+  oyjlOPTIONSTYLE_MARKDOWN = 0x40,                      /* add markdown syntax decoration */
+  oyjlOPTIONSTYLE_GROUP_SUBCOMMAND = 0x080,             /* supresses dash(es): option */
+  oyjlOPTIONSTYLE_OPTION_ONLY = 0x100                   /* print the option without any args */
+};
+char *       oyjlOption_PrintArg_    ( oyjlOption_s      * o,
+                                       int                 style );
 void oyjlUiCanonicaliseVariableName_ ( char             ** name );
 int  oyjlManArgIsNum                 ( const char        * arg );
 int  oyjlManArgIsEditable            ( const char        * arg );

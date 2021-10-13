@@ -2,11 +2,11 @@
 .SH NAME
 oyjl v1.0.0 \- Oyjl Json Bearbeitung
 .SH ÜBERSICHT
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
@@ -39,21 +39,31 @@ Der Pfad besteht aus Namen, welche durch Schrägstrich '/' getrennt sind. Jeder 
 .br
 	\-r JSON		# JSON
 .br
+\fB\-w\fR|\fB\-\-wrap\fR \fITYP\fR	sprachspezifische Formatierung
+.br
+	\-w C		# C statischer Text
+.br
+\fB\-W\fR|\fB\-\-wrap-name\fR \fINAME\fR	Ein Name für das zu definierende Symbol.
+.RS
+Benutze nur Buchstaben aus den Alphabet [A-Z,a-z] einschließlich möglichem Understrich '_'.
+.RE
+	\-W wrap		# wrap
+.br
 .SS
 Zeige JSON auf stdout
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBjson\fR	Zeige JSON auf stdout
 .br
 .SS
 Zeige YAML auf stdout
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fByaml\fR	Zeige YAML auf stdout
 .br
 .SS
 Zeige XML auf stdout
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBxml\fR	Zeige XML auf stdout
 .br

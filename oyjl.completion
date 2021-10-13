@@ -35,6 +35,20 @@ _oyjl()
             set +x +v
             return
             ;;
+        --wrap) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('C')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --wrap-name) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('wrap')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --help) # long option with dynamic args
             local OYJL_TEXTS
             if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
@@ -91,6 +105,20 @@ _oyjl()
             set +x +v
             return
             ;;
+        -w=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('C')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -W=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('wrap')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
         -h=*) # single letter option with dynamic args
             local OYJL_TEXTS
             if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
@@ -126,13 +154,13 @@ _oyjl()
 
     : "autocomplete options "$cur""
     case "$cur" in
-        -s|-i|-x|-r|-h|-R|-X)
+        -s|-i|-x|-r|-w|-W|-h|-R|-X)
             : "finish short options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
-        --set|--input|--xpath|--try-format|--help|--render|--export)
+        --set|--input|--xpath|--try-format|--wrap|--wrap-name|--help|--render|--export)
             : "finish long options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
@@ -167,17 +195,17 @@ _oyjl()
     if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
       case "${COMP_WORDS[1]}" in
         -j|json)
-          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format=' -- "$cur"))
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -w= --wrap= -W= --wrap-name=' -- "$cur"))
             set +x +v
             return
             ;;
         -y|yaml)
-          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format=' -- "$cur"))
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -w= --wrap= -W= --wrap-name=' -- "$cur"))
             set +x +v
             return
             ;;
         -m|xml)
-          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format=' -- "$cur"))
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -w= --wrap= -W= --wrap-name=' -- "$cur"))
             set +x +v
             return
             ;;
