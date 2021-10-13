@@ -83,7 +83,7 @@ QString AppData::getJSON(QString url)
         if(!size)
         {
           char * error = NULL;
-          oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", oyjlJsonEscape(fn) );
+          oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", oyjlJsonEscape(fn,0) );
           LOG(QString("No size of: %1").arg(fn));
           return QString(error);
         }
