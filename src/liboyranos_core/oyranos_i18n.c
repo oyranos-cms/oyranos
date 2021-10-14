@@ -21,6 +21,8 @@
 #ifdef USE_GETTEXT
 #include <libintl.h>
 #include <locale.h>
+#else
+#include "oyranos.i18n.h"
 #endif
 
 #include "oyranos.h"
