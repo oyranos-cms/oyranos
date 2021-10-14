@@ -50,6 +50,7 @@
 
 #include "oyArray2d_s_.h"
 #include "oyRectangle_s_.h"
+#include "oyOption_s_.h"
 
 static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = NULL;
 static oyStruct_RegisterStaticFreeFunc_f * oy_static_free_funcs_ = NULL;
@@ -419,6 +420,15 @@ OYAPI const char * OYEXPORT  oyObject_Show (
           oyRectangle_s_ * s = (oyRectangle_s_ *)st;
           sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], " %gx%g+%g+%g",
                    s->width, s->height, s->x, s->y);
+          break;
+        }
+      case oyOBJECT_OPTION_S:
+        {
+          oyOption_s_ * s = (oyOption_s_ *)st;
+          oyValue_u * v = s->value;
+          const char * t = s->value_type==oyVAL_STRING?v->string:"";
+          sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], " %s%s%s",
+                   t?"\"":"", oyNoEmptyString_m_(t), t?"\"":"" );
           break;
         }
       default:
