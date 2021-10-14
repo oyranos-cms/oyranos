@@ -562,6 +562,34 @@ int myMain( int argc , const char** argv )
     if(error)
       printf("send_native_update_event failed\n");
     }
+    else if(count == 1)
+    {
+      const char * key_name = list[0];
+      const char * value = NULL,
+                 * comment = NULL;
+      if(scope == oySCOPE_USER_SYS) scope = oySCOPE_USER;
+      if(verbose) getKey( key_name, scope, verbose, 0 );
+      error = oySetPersistentString( key_name, scope, value, comment );
+      if(verbose)
+        fprintf( stderr, "erase %s\n", oyNoEmptyString_m_(key_name) );
+      if(verbose) getKey( key_name, scope, verbose, 0 );
+
+      oyStringListRelease( &list, count, oyDeAllocateFunc_ );
+
+      {
+        /* ping X11 observers about option change
+         * ... by setting a known property again to its old value
+         */
+        oyOptions_s * opts = oyOptions_New(NULL), * results = 0;
+        error = oyOptions_Handle( "//" OY_TYPE_STD "/send_native_update_event",
+                      opts,"send_native_update_event",
+                      &results );
+        oyOptions_Release( &opts );
+      }
+
+      if(error)
+        printf("send_native_update_event failed\n");
+    }
     else
     {
       oyjlOptions_PrintHelp( ui->opts, ui, verbose, NULL );
