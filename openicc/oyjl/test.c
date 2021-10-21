@@ -67,6 +67,35 @@ oyjlTESTRESULT_e testVersion()
   return result;
 }
 
+char *   testTranslateJson           ( const char        * json,
+                                       const char        * loc,
+                                       oyjl_val            catalog,
+                                       const char        * key_list,
+                                       int                 flags,
+                                       int                 count,
+                                       double            * clock )
+{
+  char * txt = 0;
+  int i;
+  oyjl_val array[count];
+  for(i = 0; i < count; ++i)
+  {
+    array[i] = oyjlTreeParse( json, NULL,0 );
+  }
+  double clck = oyjlClock();
+  for( i = 0; i < count; ++i )
+    oyjlTranslateJson( array[i], loc, catalog, key_list, NULL, flags );
+  clck = oyjlClock() - clck;
+  *clock = clck;
+
+  i = 0;
+  oyjlTreeToJson( array[0], &i, &txt );
+
+  for(i=0;i<count;++i) oyjlTreeFree( array[i] );
+
+  return txt;
+}
+
 extern oyjlMessage_f oyjlMessage_p;
 oyjlTESTRESULT_e testI18N()
 {
@@ -129,7 +158,7 @@ oyjlTESTRESULT_e testI18N()
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;
 #endif
-  int debug = 0;
+  int debug = verbose;
   oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", &debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, oyjlMessage_p );
 
   const char * lang = setlocale(LC_ALL, NULL);
@@ -344,6 +373,7 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
   }
+  oyjlTreeFree( catalog );
 
 #undef _
 #ifdef OYJL_USE_GETTEXT
@@ -355,57 +385,163 @@ oyjlTESTRESULT_e testI18N()
   setlocale(LC_ALL,"");
   oyjlLang("C");
 
-  oyjl_val root = oyjlTreeNew( "" );
-  int i = 0;
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Example", "one/[%d]/name", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Color", "one/[%d]/description", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Example2", "one/[%d]/label", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Nonsense", "one/[%d]/help", i );
-  i = 1;
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Color [3]", "one/[%d]/name", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Color \"Rose\"", "one/[%d]/description", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "2. Color", "one/[%d]/label", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Color", "one/[%d]/help", i );
-  i = 2;
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "prog -i test.json ///my/path/", "one/[%d]/name", i );
+#ifndef liboyjl_i18n_json
+  #include "liboyjl.i18n.c"
+#endif
+  catalog = oyjlTreeParse( liboyjl_i18n_json, NULL, 0 );
+  catalog = oyjlCatalog( &catalog );
+  loc = setlocale(LC_ALL,"de_DE.UTF8");
+  oyjlLang(loc);
+
+  char * oyjl_export, * txt;
+  int size = 0;
+  oyjl_export = txt = oyjlReadCommandF( &size, "r", malloc, "LANG=C PATH=%s:$PATH %s --export export", OYJL_BUILDDIR, "oyjl" );
+  if(!txt || strlen(txt) != 22471)
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(txt),
+    "LANG=C oyjl --export export" );
+  }
+
   const char * key_list = "name,description,help,label,value_name";
-  oyjlTranslateJson( root, "de_DE", catalog, key_list, NULL, flags );
-  char * txt = NULL;
+
+  int count, i;
+  double clck = oyjlClock();
+  char ** paths = oyjlTreeToPaths( catalog, 10000000, NULL, OYJL_KEY, &count );
+  clck = oyjlClock() - clck;
+  count = 0; while(paths && paths[count]) ++count;
+  if( count == 335 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,1,clck/(double)CLOCKS_PER_SEC,"wr",
+    "oyjlTreeToPaths(catalog) = %d", count );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, count,
+    "oyjlTreeToPaths(catalog)" );
+  }
+  if(paths && count)
+    oyjlStringListRelease( &paths, count, free );
+
+  const char * name = "catalog";
+  loc = "de_DE.UTF8";
+  clck = oyjlClock();
+  for( i = 0; i < 100; ++i )
+    text = oyjlTranslate( loc, catalog, "render", 0 );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+  loc = "de_DE";
+  clck = oyjlClock();
+  for( i = 0; i < 100; ++i )
+    text = oyjlTranslate( loc, catalog, "render", 0 );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+  loc = "de";
+  clck = oyjlClock();
+  for( i = 0; i < 100; ++i )
+    text = oyjlTranslate( loc, catalog, "render", 0 );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+  loc = "cs";
+  clck = oyjlClock();
+  for( i = 0; i < 10000; ++i )
+    text = oyjlTranslate( loc, catalog, "Color", 0 );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Barva") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"Color\")", loc, name );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"Color\")", loc, name );
+  }
+
+  int n = 1;
+  txt = testTranslateJson( oyjl_export,"de_DE",catalog,key_list, flags, n,&clck);
   i = 0;
-  oyjlTreeToJson( root, &i, &txt );
-  if( txt && strlen( txt ) == 310 )
-  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(txt),
-    "oyjlTranslateJson()" );
+  if( txt && strlen( txt ) == 22846 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
+    "oyjlTranslateJson(catalog)" );
   } else
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(txt),
-    "oyjlTranslateJson()" );
+    "oyjlTranslateJson(catalog)" );
   }
   OYJL_TEST_WRITE_RESULT( txt, strlen(txt), "oyjlTranslateJson", "txt" )
   if(verbose && txt)
     fprintf( zout, "%s\n", txt );
   myDeAllocFunc( txt ); txt = NULL;
-  oyjlTreeFree( root );
 
-  root = oyjlTreeNew( "" );
-  i = 0;
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Example", "one/[%d]/name", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Color", "one/[%d]/description", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Example2", "one/[%d]/label", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Nonsense", "one/[%d]/help", i );
-  i = 1;
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Color [3]", "one/[%d]/name", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Color \"Rose\"", "one/[%d]/description", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "2. Color", "one/[%d]/label", i );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "Color", "one/[%d]/help", i );
-  i = 2;
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "prog -i test.json ///my/path/", "one/[%d]/name", i );
-  int size = 0;
+  size = 0;
   oyjl_val static_catalog = oyjlTreeSerialise( catalog, flags, &size );
-  oyjlTranslateJson( root, "de_DE", static_catalog, key_list, NULL, flags );
-  i = 0;
-  oyjlTreeToJson( root, &i, &txt );
-  if( txt && strlen( txt ) == 310 )
-  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(txt),
+  clck = oyjlClock();
+  for( i = 0; i < 100; ++i )
+  {
+    paths = oyjlTreeToPaths( static_catalog, 10000000, NULL, OYJL_KEY, &count );
+    if(paths && count)
+      oyjlStringListRelease( &paths, count, free );
+  }
+  clck = oyjlClock() - clck;
+  if( count == 335 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"wr",
+    "oyjlTreeToPaths(static_catalog) = %d", count );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, count,
+    "oyjlTreeToPaths(static_catalog)" );
+  }
+
+  name = "static_catalog";
+  loc = "de_DE.UTF8";
+  clck = oyjlClock();
+  for( i = 0; i < 1000; ++i )
+    text = oyjlTranslate( loc, static_catalog, "render", 0 );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+  loc = "de_DE";
+  clck = oyjlClock();
+  for( i = 0; i < 1000; ++i )
+    text = oyjlTranslate( loc, static_catalog, "render", 0 );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+  loc = "de";
+  clck = oyjlClock();
+  for( i = 0; i < 1000; ++i )
+    text = oyjlTranslate( loc, static_catalog, "render", 0 );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+
+  txt = testTranslateJson( oyjl_export,"de_DE",static_catalog,key_list, flags, n,&clck );
+  if( txt && strlen( txt ) == 22846 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
     "oyjlTranslateJson(static_catalog)" );
   } else
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(txt),
@@ -415,31 +551,70 @@ oyjlTESTRESULT_e testI18N()
   if(/*oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL ||*/ verbose)
     fprintf( zout, "%s\n", txt );
   myDeAllocFunc( txt ); txt = NULL;
-  oyjlTreeFree( root );
   oyjlTreeFree( static_catalog );
 
-  oyjlTreeFree( catalog );
   //return result;
+
+#ifdef OYJL_USE_GETTEXT
+  n = 100000;
+  name = "gettext";
+  loc = "de_DE.UTF8";
+  clck = oyjlClock();
+  for( i = 0; i < n; ++i )
+    text = oyjlTranslate( loc, NULL, "render", OYJL_GETTEXT );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+  loc = "de_DE";
+  clck = oyjlClock();
+  for( i = 0; i < n; ++i )
+    text = oyjlTranslate( loc, NULL, "render", OYJL_GETTEXT );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+  loc = "de";
+  clck = oyjlClock();
+  for( i = 0; i < n; ++i )
+    text = oyjlTranslate( loc, NULL, "render", OYJL_GETTEXT );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+
+  n = 1;
+  txt = testTranslateJson( oyjl_export,"de_DE",NULL,key_list, flags | OYJL_GETTEXT, n,&clck );
+  if( txt && strlen( txt ) == 22846 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
+    "oyjlTranslateJson(gettext)" );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(txt),
+    "oyjlTranslateJson(gettext)" );
+  }
+  OYJL_TEST_WRITE_RESULT( txt, strlen(txt), "oyjlTranslateJson", "txt" )
+  if(/*oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL ||*/ verbose)
+    fprintf( zout, "%s\n", txt );
+  myDeAllocFunc( txt ); txt = NULL;
+#endif
 
   double tmp_d;
 #define printtime oyjlPrintTime(OYJL_TIME, oyjlNO_MARK), (int)(modf(oyjlSeconds(),&tmp_d)*1000)
 #define timeformat "[%s.%04d] "
   fprintf( zout, timeformat "before oyjlTreeParse(liboyjl_i18n_json)\n", printtime);
-#ifndef liboyjl_i18n_json
-  #include "liboyjl.i18n.c"
-#endif
-  catalog = oyjlTreeParse( liboyjl_i18n_json, NULL, 0 );
-  catalog = oyjlCatalog( &catalog );
-  loc = setlocale(LC_ALL,"de_DE.UTF8");
-  oyjlLang(loc);
-  char * oyjl_export;
-  size = 0;
-  oyjl_export = txt = oyjlReadCommandF( &size, "r", malloc, "LANG=C PATH=%s:$PATH %s --export export", OYJL_BUILDDIR, "oyjl" );
-  if(!txt || strlen(txt) != 22471)
-  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(txt),
-    "LANG=C oyjl --export export" );
-  }
-  root = oyjlTreeParse( txt, NULL, 0 );
+  oyjl_val root = oyjlTreeParse( oyjl_export, NULL, 0 );
   fprintf( zout, timeformat "before while\n", printtime );
   size = 0; while(size < 1000) ++size;
   fprintf( zout, timeformat "after while; before oyjlTranslateJson\n", printtime );
@@ -480,9 +655,7 @@ char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
     fprintf( zout, "parsed: \"%s\"\n", t );
   free(t); t = NULL;
 
-  char ** paths = NULL;
-  oyjlTreeToPaths( static_catalog, 10000000, NULL, flags | OYJL_KEY, &paths );
-  int count = 0; while(paths && paths[count]) ++count;
+  paths = oyjlTreeToPaths( static_catalog, 10000000, NULL, flags | OYJL_KEY,&count);
   int j = 0;
   if(count == 10 &&
       strcmp(paths[j++],"org/freedesktop/oyjl/translations/de_DE\\.UTF8/Example") == 0 &&
@@ -539,7 +712,7 @@ char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
   fprintf( zout, timeformat "before while\n", printtime );
   size = 0; while(size < 1000) ++size;
   fprintf( zout, timeformat "after while; before oyjlTranslateJson\n", printtime );
-  oyjlTranslateJson( root, "de_DE", static_catalog, key_list, NULL, flags );
+  oyjlTranslateJson( root, "de_DE", oyjlCatalog(NULL), key_list, NULL, flags );
   fprintf( zout, timeformat "after oyjlTranslateJson\n", printtime );
   i = 0;
   txt = NULL;
@@ -757,11 +930,8 @@ oyjlTESTRESULT_e testEscapeJson      ( const char        * text_,
   myDeAllocFunc( expect ); expect = NULL;
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL || verbose)
   {
-    char ** paths = NULL;
     int count, i;
-
-    oyjlTreeToPaths( root, 10000000, NULL, OYJL_KEY, &paths );
-    count = 0; while(paths && paths[count]) ++count;
+    char ** paths = oyjlTreeToPaths( root, 10000000, NULL, OYJL_KEY, &count );
 
     for(i = 0; i < count; ++i)
     {
@@ -887,9 +1057,8 @@ oyjlTESTRESULT_e testJson ()
       }
       myDeAllocFunc(rjson);
 
-      char ** paths = NULL;
-      oyjlTreeToPaths( root, 10, NULL, 0, &paths );
-      int count = 0; while(paths && paths[count]) ++count;
+      int count;
+      char ** paths = oyjlTreeToPaths( root, 10, NULL, 0, &count );
       int j = 0;
       if( count == 10 &&
           strcmp(paths[j++],"org") == 0 &&
@@ -917,7 +1086,7 @@ oyjlTESTRESULT_e testJson ()
       if(paths && count)
         oyjlStringListRelease( &paths, count, free );
 
-      oyjlTreeToPaths( root, 10, NULL, OYJL_KEY, &paths );
+      paths = oyjlTreeToPaths( root, 10, NULL, OYJL_KEY, &count );
       count = 0; while(paths && paths[count]) ++count;
       j = 0;
       if( count == 6 &&
@@ -952,8 +1121,7 @@ oyjlTESTRESULT_e testJson ()
       if(paths && count)
         oyjlStringListRelease( &paths, count, free );
 
-      oyjlTreeToPaths( root, 10, NULL, OYJL_PATH, &paths );
-      count = 0; while(paths && paths[count]) ++count;
+      paths = oyjlTreeToPaths( root, 10, NULL, OYJL_PATH, &count );
       j = 0;
       if(count == 4 &&
           strcmp(paths[j++],"org") == 0 &&
@@ -1078,8 +1246,9 @@ oyjlTESTRESULT_e testJson ()
   result = testEscapeJson( "Color(1)", "Color\\(1\\)", OYJL_REGEXP, 47, result, oyjlTESTRESULT_XFAIL );
 
   result = testEscapeJsonVal( "my.value", "my\\.value", OYJL_REGEXP, 25, result, oyjlTESTRESULT_XFAIL );
-  result = testEscapeJsonVal( "my.value", "my\.value", 0, 23, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJsonVal( "my.value", "my.value", 0, 23, result, oyjlTESTRESULT_XFAIL );
   result = testEscapeJsonVal( "my\\.value", "my\\\\.value", OYJL_QUOTE | OYJL_NO_BACKSLASH, 27, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJsonVal( "my/value", "my%37value", OYJL_KEY, 25, result, oyjlTESTRESULT_XFAIL );
 
   char error_buffer[128];
   const char * json2 = "{\n\
@@ -1134,9 +1303,8 @@ char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
     fprintf( zout, "parsed: \"%s\"\n", text );
   free(text);
 
-  char ** paths = NULL;
-  oyjlTreeToPaths( value, 10000000, NULL, flags | OYJL_KEY, &paths );
-  int count = 0; while(paths && paths[count]) ++count;
+  int count;
+  char ** paths = oyjlTreeToPaths( value, 10000000, NULL, flags | OYJL_KEY, &count );
   int j = 0;
   if(count == 8 &&
       strcmp(paths[j++],"org/free/[0]/s1key_a") == 0 &&
@@ -1925,7 +2093,7 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   catalog = NULL;
   oyjlTranslate_f tr = oyjlTranslate;
-  oyjlUi_Translate( ui, "de_DE", oyjlCatalog(&catalog), tr, flags );
+  oyjlUi_Translate( ui, "de_DE", oyjlCatalog(NULL), tr, flags );
   text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 7588)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
@@ -1939,7 +2107,7 @@ oyjlTESTRESULT_e testUiTranslation ()
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
-  oyjlUi_Translate( ui, "back", oyjlCatalog(&catalog), tr, flags );
+  oyjlUi_Translate( ui, "back", oyjlCatalog(NULL), tr, flags );
   text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 7511)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
@@ -1966,7 +2134,7 @@ oyjlTESTRESULT_e testUiTranslation ()
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
-  oyjlUi_Translate( ui, "cs_CZ", oyjlCatalog(&catalog), tr, flags );
+  oyjlUi_Translate( ui, "cs_CZ", oyjlCatalog(NULL), tr, flags );
   text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 7612)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
