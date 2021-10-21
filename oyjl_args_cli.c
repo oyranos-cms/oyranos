@@ -53,7 +53,7 @@ void oyjlArgsCliGroupPrint_          ( oyjl_val            g )
   for(j = 0; j < count; ++j)
   {
     int k, kn = 0;
-    const char * key, * name, * desc, * help, * value_name, * default_var, * type, * no_dash;
+    const char * key, * name, * desc, * help, * value_name/*, * default_var*/, * type, * no_dash;
     char * text;
     oyjl_val opt = oyjlTreeGetValueF(v, 0, "[%d]", j);
     oyjl_val o = oyjlTreeGetValue(opt, 0, "option");
@@ -72,8 +72,8 @@ void oyjlArgsCliGroupPrint_          ( oyjl_val            g )
     o = oyjlTreeGetValue(opt, 0, "value_name");
     value_name = OYJL_GET_STRING(o);
     if(value_name) text = oyjlStringCopy(oyjlTermColor(oyjlITALIC,value_name),0); else text = NULL;
-    o = oyjlTreeGetValue(opt, 0, "default");
-    default_var = OYJL_GET_STRING(o);
+    /*o = oyjlTreeGetValue(opt, 0, "default");
+    default_var = OYJL_GET_STRING(o);*/
     o = oyjlTreeGetValue(opt, 0, "type");
     type = OYJL_GET_STRING(o);
     o = oyjlTreeGetValue(opt, 0, "no_dash");
