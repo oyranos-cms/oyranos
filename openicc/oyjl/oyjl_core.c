@@ -804,8 +804,7 @@ void       oyjlStringListRelease     ( char            *** l,
 }
 
 /** @brief append a string to a string list */
-void       oyjlStringListAddStaticString (
-                                       char            *** list,
+void       oyjlStringListAddString   ( char            *** list,
                                        int               * n,
                                        const char        * string,
                                        void*            (* alloc)(size_t),
@@ -2557,21 +2556,23 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
        * so it is set here to bindtextdomain(). */
       path = domain_path ? domain_path : locpath;
 # ifdef OYJL_HAVE_LIBINTL_H
+      const char * d = textdomain( loc_domain );
       const char * dpath = bindtextdomain( loc_domain, path );
       if(*debug_variable)
-        msg( oyjlMSG_INFO, 0,"bindtextdomain( \"%s\", \"%s\" ) = ", loc_domain, path, dpath );
+        msg( oyjlMSG_INFO, 0,"bindtextdomain( \"%s\", \"%s\"/%s ) = ", loc_domain, path, dpath, d );
 #endif
       if(*debug_variable)
       {
         char * fn = NULL;
         int stat = -1;
         const char * gettext_call = OyjlToString2_M(_());
+        const char * domain = textdomain(NULL);
 
         if(path)
           oyjlStringAdd( &fn, 0,0, "%s/de/LC_MESSAGES/%s.mo", path ? path : "", loc_domain);
         if(fn)
           stat = oyjlIsFileFull_( fn, "r" );
-        msg( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\") to %s\"%s\" %s for %s  test:%s", loc_domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call, _("Example") );
+        msg( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\"/%s) to %s\"%s\" %s for %s  test:%s", loc_domain, domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call, _("Example") );
         if(fn) free(fn);
       }
       if(tmp)
