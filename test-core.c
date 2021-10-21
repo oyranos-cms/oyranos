@@ -371,6 +371,19 @@ oyjlTESTRESULT_e testString ()
   oyjlStringListRelease( &list, list_n, 0 );
   list_n = 0;
 
+  double clck = oyjlClock();
+  for( i = 0; i < 10000; ++i )
+    oyjlStringListAddString( &list, &list_n, NULL, malloc,free );
+  if(list && list_n)
+    oyjlStringListRelease( &list, list_n, free );
+  clck = oyjlClock() - clck;
+  if( list_n == 10000 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"wr",
+    "oyjlStringListAddString()" );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, list_n,
+    "oyjlStringListAddString()" );
+  }
 
   long l = 0;
   int error = oyjlStringToLong( "2", &l );
@@ -557,7 +570,7 @@ oyjlTESTRESULT_e testString ()
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
-  double clck = oyjlClock();
+  clck = oyjlClock();
   n = 10000;
   for(i = 0; i < n; ++i)
     oyjlStringAdd( &t, 0,0, "/%s/%s", "more", "and" );
@@ -1287,10 +1300,8 @@ oyjlTESTRESULT_e testTreeToPaths     ( oyjl_val            root,
                                        oyjlTESTRESULT_e    result,
                                        oyjlTESTRESULT_e    fail )
 {
-  char ** paths = NULL;
-  oyjlTreeToPaths( root, 10000000, NULL, flags, &paths );
   int count, i;
-  count = 0; while(paths && paths[count]) ++count;
+  char ** paths = oyjlTreeToPaths( root, 10000000, NULL, flags, &count );
 
   if( count == count_ )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, count,
@@ -1325,6 +1336,30 @@ oyjlTESTRESULT_e testTree ()
   fprintf(stdout, "\n" );
 
   int i;
+
+  double clck = oyjlClock();
+  for( i = 0; i < 10000; ++i )
+    oyjlPathMatch( "my/path/to/a/longer/and/more/detailed/key", "my/path/to/a/longer/and/more/detailed/key", 0 );
+  clck = oyjlClock() - clck;
+  if( i == 10000 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"match",
+    "oyjlPathMatch( )" );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, i,
+    "oyjlPathMatch( )" );
+  }
+
+  clck = oyjlClock();
+  for( i = 0; i < 100000; ++i )
+    oyjlPathMatch( "my/path/to/a/longer/and/more/detailed/key", "other/path/to/a/longer/and/more/detailed/key", OYJL_PATH_MATCH_LAST_ITEMS );
+  clck = oyjlClock() - clck;
+  if( i == 100000 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"match",
+    "oyjlPathMatch( OYJL_PATH_MATCH_LAST_ITEMS )" );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, i,
+    "oyjlPathMatch( OYJL_PATH_MATCH_LAST_ITEMS )" );
+  }
 
   oyjl_val value = 0;
   oyjl_val root = 0;
@@ -1521,9 +1556,47 @@ oyjlTESTRESULT_e testTree ()
   if(verbose && text)
     fprintf( zout, "%s\n", text );
   myDeAllocFunc( text ); text = NULL;
+
+  int size = 0;
+  int flags = verbose ? OYJL_OBSERVE : 0;
+  oyjl_val catalog = oyjlTreeNew( "" );
+  oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "Beispiel", "org/freedesktop/oyjl/translations/de_DE.UTF8/Example" );
+  oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "Beispiel2", "org/freedesktop/oyjl/translations/de_DE/Example2" );
+  oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "Schmarrn", "org/freedesktop/oyjl/translations/de_AT/Nonsense" );
+  oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "Farbe", "org/freedesktop/oyjl/translations/de/Color" );
+  oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "2. Farbe", "org/freedesktop/oyjl/translations/de/2. Color" );
+  oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "Farbe [3]", "org/freedesktop/oyjl/translations/de/Color\\[3]" );
+  oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "Farbe \"Rosa\"", "org/freedesktop/oyjl/translations/de/Color \"Rose\"" );
+  oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "Benutze [A-Z,a-z] Understrich '_'.", "org/freedesktop/oyjl/translations/de/Use \\[A-Z,a-z] underscore '_'." );
+  oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "Modus(1)", "org/freedesktop/oyjl/translations/de/Mode(1)" );
+  oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "prog -i test.json ///mein/Pfad/", "org/freedesktop/oyjl/translations/de/prog -i test.json %%37%%37%%37my%%37path%%37" );
+
+  oyjl_val static_catalog = oyjlTreeSerialise( catalog, flags, &size );
+  if( static_catalog && size == 1061 )
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, size,
+    "oyjlTreeSerialise() oiJS" );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, size,
+    "oyjlTreeSerialise() oiJS" );
+  }
+  OYJL_TEST_WRITE_RESULT( static_catalog, size, "oyjlTreeSerialise", "oiJS" )
+  if(verbose)
+  {
+char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
+                                       int                 flags OYJL_UNUSED );
+    char * t = oyjlTreeSerialisedPrint( static_catalog, 0 );
+    fprintf( zout, "parsed: %s\n", t );
+    free(t); t = NULL;
+    i = 0;
+    oyjlTreeToJson( catalog, &i, &t ); i = 0;
+    fprintf( zout, "%s\n", t );
+  }
+
+  oyjlTreeFree( static_catalog );
+  oyjlTreeFree( catalog );
   oyjlTreeFree( root );
 
-  double clck = oyjlClock();
+  clck = oyjlClock();
   root = oyjlTreeNew("");
   int n = 2000;
   for(i = 0; i < n; ++i)
@@ -1557,10 +1630,8 @@ oyjlTESTRESULT_e testTree ()
   const char * key = "Color";
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "data/key-%s", key );
   value = oyjlTreeGetValueF( root, 0, "data/key-%s", key );
-  char ** paths = NULL;
-  int flags = 0;
-  oyjlTreeToPaths( root, 10000000, NULL, flags, &paths );
-  count = 0; while(paths && paths[count]) ++count;
+  flags = 0;
+  char ** paths = oyjlTreeToPaths( root, 10000000, NULL, flags, &count );
   char * path = oyjlTreeGetPath( root, value );
   oyjlTreeFree( root );
   if( count == 2 && path)
