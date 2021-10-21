@@ -323,11 +323,8 @@ oyjl_val       oyjlUi_ExportToJson_  ( oyjlUi_s          * ui,
   /** Merge in the JSON strings and numbers from oyjlOptions_SetAttributes(). */
   if(attr)
   {
-    char ** attr_paths = NULL;
     oyjl_val v;
-    n = 0;
-    oyjlTreeToPaths( attr, 0, NULL, 0, &attr_paths );
-    while(attr_paths && attr_paths[n]) ++n;
+    char ** attr_paths = oyjlTreeToPaths( attr, 0, NULL, 0, &n );
     for(i = 0; i < n; ++i)
     {
       oyjl_type type;
@@ -572,11 +569,8 @@ oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
     val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/attr" );
     if(val)
     {
-      char ** attr_paths = NULL;
       oyjl_val attr = oyjlTreeNew( "" );
-      n = 0;
-      oyjlTreeToPaths( val, 0, NULL, 0, &attr_paths );
-      while(attr_paths && attr_paths[n]) ++n;
+      char ** attr_paths = oyjlTreeToPaths( val, 0, NULL, 0, &n );
       for(i = 0; i < n; ++i)
       {
         const char * path = attr_paths[i];
