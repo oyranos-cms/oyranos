@@ -241,11 +241,12 @@ void       oyjlTreeToXml             ( oyjl_val            v,
                                        char             ** xml );
 #define    OYJL_PATH                   0x08   /**< @brief  flag to obtain only path */
 #define    OYJL_KEY                    0x10   /**< @brief  flat to obtain only keys */
-void       oyjlTreeToPaths           ( oyjl_val            v,
+#define    OYJL_NO_ALLOC               0x800  /**< @brief  avoid malloc for oyjlOBJECT_JSON */
+char **    oyjlTreeToPaths           ( oyjl_val            v,
                                        int                 child_levels,
                                        const char        * xpath,
                                        int                 flags,
-                                       char            *** paths );
+                                       int               * count );
 char *     oyjlTreeGetPath           ( oyjl_val            v,
                                        oyjl_val            node );
 #define    OYJL_CREATE_NEW             0x02   /**< @brief  flag to allocate a new tree node, in case it is not inside */
@@ -348,6 +349,7 @@ char *         oyjlLanguage          ( const char        * loc );
 char *         oyjlCountry           ( const char        * loc );
 const char *   oyjlLang              ( const char        * loc );
 oyjl_val       oyjlCatalog           ( oyjl_val          * catalog );
+#define OYJL_GETTEXT                   0x400000 /**< @brief use gettext */
 char *         oyjlTranslate         ( const char        * loc,
                                        oyjl_val            catalog,
                                        const char        * string,
@@ -424,8 +426,7 @@ char **    oyjlStringListCatList     ( const char       ** list,
                                        int                 n_app,
                                        int               * count,
                                        void*            (* alloc)(size_t) );
-void       oyjlStringListAddStaticString (
-                                       char            *** list,
+void       oyjlStringListAddString   ( char            *** list,
                                        int               * n,
                                        const char        * string,
                                        void*            (* alloc)(size_t),

@@ -530,7 +530,7 @@ clean_oyjlStringToDouble:
 
   return error;
 }
-void       oyjlStringListAddStaticString (
+void       oyjlStringListAddString (
                                        char            *** list,
                                        int               * n,
                                        const char        * string,
@@ -2318,7 +2318,7 @@ char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
       oyjlStringAdd( &text, malloc, free, "%s", value );
     if(text)
     {
-      oyjlStringListAddStaticString( &list, &list_len, text, malloc, free );
+      oyjlStringListAddString( &list, &list_len, text, malloc, free );
       free(text); text = NULL;
     }
   }
@@ -3909,8 +3909,8 @@ char *       oyjlStringToLower       ( const char        * t )
 
 #define ADD_SECTION( sec, link, format, ... ) { \
   oyjlStringAdd( &text, malloc, free, "\n<h2>%s <a href=\"#toc\" name=\"%s\">&uarr;</a></h2>\n\n" format, sec, link, __VA_ARGS__ ); \
-  oyjlStringListAddStaticString( sections, sn, sec, 0,0 ); \
-  oyjlStringListAddStaticString( sections, sn, link, 0,0 ); }
+  oyjlStringListAddString( sections, sn, sec, 0,0 ); \
+  oyjlStringListAddString( sections, sn, link, 0,0 ); }
 
 static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
                                        const char        * opt_name,
