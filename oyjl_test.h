@@ -592,6 +592,9 @@ const char  *  oyjlProfilingToString ( int                 integer,
 char * oyjl_print_sub = 0;
 /** @brief print test results in a canonical way
  *
+ *  The funktion is not reentrant. You need to copy the result if
+ *  calling repeatedly.
+ *
  *  @param[in]     space               number line width: use -1 for default of 51
  *  @param[in]     right               number for right alignment: use -1 to omit
  *  @param[in]     format              printf format
@@ -655,6 +658,9 @@ const char * oyjlPrintSub            ( int                 space,
 
 /** @brief print test results with profiling in a canonical way
  *
+ *  The funktion is not reentrant. You need to copy the result if
+ *  calling repeatedly.
+ *
  *  @param[in]     space               number line width: use -1 for default
  *                                     columns or 51
  *  @param[in]     integer             arg like for oyjlProfilingToString()
@@ -704,9 +710,9 @@ const char * oyjlPrintSubProfiling   ( int                 space,
 
   if(vlen-1 < space)
   {
-    tmp = (char*) realloc( text, (len<space?space:len) + space - vlen + 2 );
+    tmp = (char*) realloc( text, (len<space?space:len) + space - len + 20 );
     text = tmp;
-    for( i = vlen - 1; i < space; ++i ) sprintf( &text[strlen(text)], " " );
+    for( i = vlen - 1; i < space; ++i ) sprintf( &text[strlen(text)], i < space - 16&&i>vlen+5 ? ".":" " );
   }
   free(visual); visual = NULL;
 
