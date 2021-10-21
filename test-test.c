@@ -35,7 +35,7 @@ oyjlTESTRESULT_e testA()
     "line" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "line %d", (__LINE__-5) );
+    "line %d", __LINE__-5 );
   }
 
   return result;
@@ -69,12 +69,11 @@ oyjlTESTRESULT_e testB()
   clck = oyjlClock() - clck;
   if(__LINE__ == 70)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"alloc",
-    "line %d", (__LINE__-1) ) );
+    "line %d", __LINE__-1 );
   } else
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_XFAIL,
     n,clck/(double)CLOCKS_PER_SEC,"alloc", 
-    "line %d", (__LINE__-5) );
+    "line %d", __LINE__-5 );
   }
 
   return result;
