@@ -1790,10 +1790,7 @@ void               oyParseJsonDoc_   ( oyjl_val            root,
                                        oyPointer           ui_handlers_context)
 {
   int count = 0, i;
-  char ** paths = NULL;
-
-  oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
-  while(paths && paths[count]) ++count;
+  char ** paths = oyjlTreeToPaths( root, 1000000, NULL, 0, &count );
 
   for(i = 0; i < count; ++i)
   {

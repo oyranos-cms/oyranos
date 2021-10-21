@@ -60,13 +60,12 @@
 # undef OYJL_USE_GETTEXT
 # endif
 #endif
-#if defined(__ANDROID__) || !defined(OYJL_USE_GETTEXT)
+#if !defined(USE_GETTEXT)
 # include "oyranos-profile-graph.i18n.c"
 int i18n_init = 0;
-oyjl_val i18n_catalog = NULL;
 const char * lang = NULL;
 #undef _
-#define _(x) (char*)oyjlTranslate( oyjlLang(""), oyjlCatalog(&i18n_catalog), x )
+#define _(x) (char*)oyjlTranslate( oyjlLang(""), oyjlCatalog(NULL), x, 0 )
 #endif
 
 
@@ -277,9 +276,7 @@ static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OY
       if(specT)
       {
         int i, pages;
-        char ** paths = NULL;
-        oyjlTreeToPaths( oyjlTreeGetValue( specT, 0, "collection/[0]/pages" ), 1, NULL, OYJL_PATH, &paths );
-        pages = 0; while(paths && paths[pages]) ++pages;
+        char ** paths = oyjlTreeToPaths( oyjlTreeGetValue( specT, 0, "collection/[0]/pages" ), 1, NULL, OYJL_PATH, &pages );
         cs = (oyjlOptionChoice_s*) calloc( (unsigned)pages+1, sizeof(oyjlOptionChoice_s) );
         for(i = 0; i < pages; ++i)
         {
@@ -358,7 +355,10 @@ int myMain( int argc, const char ** argv )
   int xyy_plane = 0;
   double xs_xyz = 1.2,                           /* scaling of CIE*xy graph */
          ys_xyz = 1.2;
+
 #if defined(__ANDROID__) || !defined(OYJL_USE_GETTEXT)
+  fprintf(stderr, OYJL_DBG_FORMAT "%s\n", OYJL_DBG_ARGS, argv[0] );
+
   if(!i18n_init)
   {
     i18n_catalog = oyjlTreeParse(oyranos_json,0,0);
@@ -1570,9 +1570,7 @@ int myMain( int argc, const char ** argv )
       if(oyjlStringToLong( page, &pos ) == 0 && pos == -1)
       {
         int i;
-        char ** paths = NULL;
-        oyjlTreeToPaths( oyjlTreeGetValue( specT, 0, "collection/[0]/pages" ), 1, NULL, OYJL_PATH, &paths );
-        pages = 0; while(paths && paths[pages]) ++pages;
+        char ** paths = oyjlTreeToPaths( oyjlTreeGetValue( specT, 0, "collection/[0]/pages" ), 1, NULL, OYJL_PATH, &pages );
         for(i = 0; i < pages; ++i)
           fprintf( stdout, "%s\n", paths[i] );
         return 0;
@@ -2075,7 +2073,7 @@ static char ** environment = NULL;
 #ifdef __ANDROID__
 extern char **environ;
 #endif
-int main( int argc_, char**argv_, char ** envv )
+int main( int argc_, char**argv_, char ** envv OYJL_UNUSED )
 {
   int argc = argc_;
   char ** argv = argv_;

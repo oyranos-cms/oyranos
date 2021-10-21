@@ -181,7 +181,7 @@ char **  listProfiles                ( oyConfig_s        * c, /* device */
               rank_list[i] < 1)
            {
              //fprintf(stdout, "automatic\n");
-             oyjlStringListAddStaticString( &list, count, "automatic", malloc,free );
+             oyjlStringListAddString( &list, count, "automatic", malloc,free );
              empty_added = pos;
              if(current != -1 &&
                 current == pos)
@@ -196,7 +196,7 @@ char **  listProfiles                ( oyConfig_s        * c, /* device */
              char * t = NULL;
              oyjlStringAdd( &t, 0,0, "[%d-%d] %s (%s)",
               pos+1, rank_list[i], description, temp_profile_file_name);
-             oyjlStringListAddStaticString( &list, count, t, malloc,free );
+             oyjlStringListAddString( &list, count, t, malloc,free );
              free(t);
  
              ++pos;

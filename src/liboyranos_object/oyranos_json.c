@@ -49,11 +49,8 @@ char **      oyJsonPathsFromPattern  ( oyjl_val            root,
   char ** list = NULL;
   int list_n = 0;
 
-  char ** paths = NULL;
   int paths_n = 0, i;
-
-  oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
-  while(paths && paths[paths_n]) ++paths_n;
+  char ** paths = oyjlTreeToPaths( root, 1000000, NULL, 0, &paths_n );
 
   if(paths)
   {

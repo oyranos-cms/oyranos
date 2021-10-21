@@ -143,8 +143,7 @@ static char ** getDBPaths( oySCOPE_e scope, int * n )
         char error_buffer[128] = {0};
         oyjl_val root = oyjlTreeParse( db, error_buffer, 128 );
 
-        oyjlTreeToPaths( root, 1000000, NULL, OYJL_KEY, &paths );
-        while(paths && paths[count]) ++count;
+        paths = oyjlTreeToPaths( root, 1000000, NULL, OYJL_KEY, &count );
         *n = count;
 
         oyFree_m_(db);
