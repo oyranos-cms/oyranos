@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2020 (C) Kai-Uwe Behrmann
+ *            2016-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl command line
  *  @internal
@@ -136,8 +136,7 @@ oyjl_val oyjlTreeParse2              ( const char        * input,
     if(verbose)
       fprintf(stderr, "file parsed:\t\"%s\"\n", error_name);
 
-    oyjlTreeToPaths( root_, 1000000, xpath, 0, &path_list_ );
-    while(path_list_ && path_list_[count]) ++count;
+    path_list_ = oyjlTreeToPaths( root_, 1000000, xpath, 0, &count );
 
     if(paths)
       for(i = 0; i < count; ++i)
@@ -227,6 +226,7 @@ int myMain( int argc, const char ** argv )
                                     {"YAML",        "YAML",             NULL,                         NULL},*/
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s w_choices[] = {{"C",           _("C static char"), NULL,                         NULL},
+/*                                    {"oiJS",        _("Oyjl static JSON"), NULL,                         NULL},*/
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s W_choices[] = {{"wrap",        "wrap",             NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
@@ -482,29 +482,42 @@ int myMain( int argc, const char ** argv )
           if(wrap)
           {
             char * tmp = NULL;
+            if(strcmp(wrap,"oiJS") == 0)
+            {
+              int size = 0;
+              oyjl_val oiJS = oyjlTreeSerialise( root, 0, &size );
+              fwrite( oiJS, sizeof(char), size, stdout );
+              free(text);
+              text = NULL;
+            } else
             if(strcmp(wrap,"C") != 0)
             {
               fprintf(stderr,"%sERROR: Only -w C is supported.\n", oyjlBT(0));
               error = 1;
               goto clean_main;
             }
-
-            if(!wrap_name || !wrap_name[0] || strchr(wrap_name,'-') != NULL)
+            else
             {
-              fprintf(stderr, "%s%s\t\"%s\"\n", oyjlBT(0), oyjlTermColor(oyjlRED,_("Usage Error:")), wrap_name);
-              error = 1;
-              goto clean_main;
+              if(!wrap_name || !wrap_name[0] || strchr(wrap_name,'-') != NULL)
+              {
+                fprintf(stderr, "%s%s\t\"%s\"\n", oyjlBT(0), oyjlTermColor(oyjlRED,_("Usage Error:")), wrap_name);
+                error = 1;
+                goto clean_main;
+              }
+              oyjlStringReplace( &text, "\\", "\\\\", NULL,NULL );
+              oyjlStringReplace( &text, "\"", "\\\"", NULL,NULL );
+              oyjlStringReplace( &text, "\n", "\\\n", NULL,NULL );
+              oyjlStringAdd( &tmp, malloc, free, "#define %s_json \"%s\"\n", wrap_name, text );
+              free(text); text = tmp; tmp = NULL;
             }
-            oyjlStringReplace( &text, "\\", "\\\\", NULL,NULL );
-            oyjlStringReplace( &text, "\"", "\\\"", NULL,NULL );
-            oyjlStringReplace( &text, "\n", "\\\n", NULL,NULL );
-            oyjlStringAdd( &tmp, malloc, free, "#define %s_json \"%s\"\n", wrap_name, text );
-            free(text); text = tmp; tmp = NULL;
           }
 
-          fwrite( text, sizeof(char), strlen(text), stdout );
-          free(text);
-          text = NULL;
+          if(text)
+          {
+            fwrite( text, sizeof(char), strlen(text), stdout );
+            free(text);
+            text = NULL;
+          }
         }
       }
     }

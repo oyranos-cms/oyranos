@@ -160,7 +160,7 @@
             \"NUMBER\": \"NUMMER\",\
             \"Name\": \"Name\",\
             \"No\": \"Nein\",\
-            \"Nonsense\": \"Quatsch\",\
+            \"Nonsense\": \"Schmarrn\",\
             \"November 12, 2017\": \"12. November 2017\",\
             \"November 28, 2019\": \"28. November 2019\",\
             \"Number\": \"Nummer\",\

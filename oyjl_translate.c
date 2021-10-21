@@ -278,13 +278,10 @@ int myMain( int argc, const char ** argv )
 
     if(root)
     {
-      char ** paths = NULL;
       int count = 0, i;
-
-      oyjlTreeToPaths( root, 1000000, NULL, 0, &paths );
+      char ** paths = oyjlTreeToPaths( root, 1000000, NULL, 0, &count );
       if(verbose)
         fprintf(stderr, "processed:\t\"%s\"\n", input);
-      while(paths && paths[count]) ++count;
 
       if(extract)
       {
