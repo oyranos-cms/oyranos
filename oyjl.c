@@ -598,7 +598,8 @@ int main( int argc_, char**argv_, char ** envv )
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;
 #ifdef OYJL_HAVE_LOCALE_H
-  setlocale(LC_ALL,"");
+  const char * loc = setlocale(LC_ALL,"");
+  loc = oyjlLang(loc);
 #endif
 #endif
 
@@ -610,7 +611,9 @@ int main( int argc_, char**argv_, char ** envv )
   const char * loc = setlocale(LC_ALL,"");
   if(loc && lang && strcmp(loc,lang) != 0)
     loc = lang;
-  oyjlLang(loc);
+  loc = oyjlLang(loc);
+  if(*oyjl_debug)
+    fprintf(stderr,"lang: %s loc: %s.\n", lang, loc );
   oyjlCatalog( &catalog );
   //fprintf(stderr,"%s Done liboyjl_i18n_json catalog.\n", oyjlPrintTime(OYJL_TIME|OYJL_BRACKETS, oyjlNO_MARK));
 #endif
