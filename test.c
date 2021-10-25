@@ -68,23 +68,26 @@ oyjlTESTRESULT_e testVersion()
 }
 
 char *   testTranslateJson           ( const char        * json,
-                                       const char        * loc,
-                                       oyjl_val            catalog,
+                                       oyjlTr_s          * tr_context,
                                        const char        * key_list,
-                                       int                 flags,
                                        int                 count,
                                        double            * clock )
 {
   char * txt = 0;
   int i;
   oyjl_val array[count];
+  char error_buffer[128] = {0};
   for(i = 0; i < count; ++i)
+    array[i] = oyjlTreeParse( json, error_buffer,128 );
+  if(error_buffer[0])
   {
-    array[i] = oyjlTreeParse( json, NULL,0 );
+    char * t = oyjlBT(0);
+    fprintf( stderr, "%s%s\n", t, error_buffer );
+    free(t);
   }
   double clck = oyjlClock();
   for( i = 0; i < count; ++i )
-    oyjlTranslateJson( array[i], loc, catalog, key_list, NULL, flags );
+    oyjlTranslateJson( array[i], tr_context, key_list );
   clck = oyjlClock() - clck;
   *clock = clck;
 
@@ -161,24 +164,15 @@ oyjlTESTRESULT_e testI18N()
   int debug = verbose;
   oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", &debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, oyjlMessage_p );
 
-  const char * lang = setlocale(LC_ALL, NULL);
-  if(lang && (strcmp(lang, "C") != 0))
+  const char * loc = setlocale(LC_ALL, "");
+  if(loc && (strcmp(loc, "C") != 0))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "setlocale() initialised good %s", lang );
+    "setlocale() initialised good %s", loc );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "setlocale() initialised failed %s", lang );
+    "setlocale() initialised failed %s", loc );
   }
 
-  oyjl_val catalog = NULL;
-  const char * loc = NULL;
-#ifndef OYJL_USE_GETTEXT
-  #include "liboyjl.i18n.c"
-  catalog = oyjlTreeParse( liboyjl_i18n_json, NULL, 0 );
-  oyjlCatalog( &catalog );
-  loc = setlocale(LC_ALL,"de_DE.UTF8");
-  oyjlLang(loc);
-#endif
   const char * text = _("Example");
   if(strcmp(text,"Beispiel") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -187,10 +181,18 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "dgettext() failed \"%s\"", text );
   }
+
+  oyjl_val catalog = NULL;
+#ifndef OYJL_USE_GETTEXT
+  #include "liboyjl.i18n.c"
+  catalog = oyjlTreeParse( liboyjl_i18n_json, NULL, 0 );
+  oyjlCatalog( &catalog );
+  loc = setlocale(LC_ALL,"de_DE.UTF8");
+  oyjlLang(loc);
+#endif
+
   oyjlTreeFree( catalog ); catalog=NULL;
 
-#undef _
-#define _(x) oyjlTranslate( lang, catalog, x, flags )
   const char * json = "{\n\
   \"org\": {\n\
     \"freedesktop\": {\n\
@@ -222,165 +224,166 @@ oyjlTESTRESULT_e testI18N()
   oyjlWriteFile( "i18n.json", json, strlen(json) );
   int flags = 0;
   catalog = oyjlTreeParse( json, NULL, 0 );
+  oyjlTr_s * trc = oyjlTr_New( loc, &catalog, NULL,NULL,NULL, flags );
+  oyjlTr( &trc );
   text = _("");
   if(strcmp(text,"") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", loc, text );
   }
 
   text = _("Example");
   if(strcmp(text,"Beispiel") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", loc, text );
   }
 
   text = _("Example2");
   if(strcmp(text,"Beispiel2") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de_DE\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_DE\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de_DE\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_DE\":\"%s\"", loc, text );
   }
 
   text = _("Color");
   if(strcmp(text,"Farbe") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
 
   text = _("2. Color");
   if(strcmp(text,"2. Farbe") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
 
   text = _("Color [3]");
   if(strcmp(text,"Farbe [3]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
 
   text = _("Color \"Rose\"");
   if(strcmp(text,"Farbe \"Rosa\"") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
 
   flags = verbose ? OYJL_OBSERVE : 0;
+  trc = oyjlTr(NULL);
+  oyjlTr_SetFlags( trc, flags );
   text = _("Use [A-Z,a-z] underscore '_'.");
   if(strcmp(text,"Benutze [A-Z,a-z] Understrich '_'.") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
 
   flags = verbose ? OYJL_OBSERVE : 0;
   text = _("Mode(1)");
   if(strcmp(text,"Modus(1)") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
 
   flags = verbose ? OYJL_OBSERVE : 0;
   text = _("prog -i test.json ///my/path/");
   if(strcmp(text,"prog -i test.json ///mein/Pfad/") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
 
   flags = 0;
+  oyjlTr_SetFlags( trc, flags );
   text = _("Nonsense");
   if(strcmp(text,"Schmarrn") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de_AT\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_AT\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de_AT\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_AT\":\"%s\"", loc, text );
   }
 
-  lang = "de_CH.UTF-8";
+  loc = "de_CH.UTF-8";
+  oyjlLang(loc);
   text = _("Nonsense");
   if(strcmp(text,"Schmarrn") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de_AT\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_AT\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de_AT\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_AT\":\"%s\"", loc, text );
   }
 
-  lang = "de_DE";
+  loc = "de_DE";
+  oyjlLang(loc);
   text = _("Example");
   if(strcmp(text,"Beispiel") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", loc, text );
   }
 
   text = _("Color");
   if(strcmp(text,"Farbe") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
 
-  lang = "de";
+  loc = "de";
+  oyjlLang(loc);
   text = _("Example");
   if(strcmp(text,"Beispiel") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de_DE.UTF8\":\"%s\"", loc, text );
   }
 
-  lang = "de_CH";
+  loc = "de_CH";
+  oyjlLang(loc);
   text = _("Color");
   if(strcmp(text,"Farbe") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
-  oyjlTreeFree( catalog );
-
-#undef _
-#ifdef OYJL_USE_GETTEXT
-# define _(text) dgettext( OYJL_DOMAIN, text )
-#else
-# define _(text) text
-#endif
 
   setlocale(LC_ALL,"");
   oyjlLang("C");
@@ -389,9 +392,8 @@ oyjlTESTRESULT_e testI18N()
   #include "liboyjl.i18n.c"
 #endif
   catalog = oyjlTreeParse( liboyjl_i18n_json, NULL, 0 );
-  catalog = oyjlCatalog( &catalog );
   loc = setlocale(LC_ALL,"de_DE.UTF8");
-  oyjlLang(loc);
+  loc = oyjlLang(loc);
 
   char * oyjl_export, * txt;
   int size = 0;
@@ -415,50 +417,84 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, count,
     "oyjlTreeToPaths(catalog)" );
   }
-  if(paths && count)
-    oyjlStringListRelease( &paths, count, free );
+
+  int langs_n = 0,
+     *lang_positions_start = NULL;
+  char ** langs;
+  clck = oyjlClock();
+  for( i = 0; i < 500; ++i )
+  {
+    langs = oyjlCatalogGetLangs_( paths, count,
+                                  &langs_n, &lang_positions_start );
+    if(langs && langs_n && i < 500-1)
+    {
+      oyjlStringListRelease( &langs, langs_n, free );
+      free( lang_positions_start );
+      lang_positions_start = NULL;
+    }
+  }
+  clck = oyjlClock() - clck;
+  int j;
+  txt = NULL;
+  for(j = 0; j < langs_n; ++j)
+    oyjlStringAdd( &txt, 0,0, " %s:%d", langs[j], lang_positions_start[j] );
+  fprintf( zout, "%s\n",
+    oyjlPrintSubProfiling( -1, i, clck/(double)CLOCKS_PER_SEC,"ck",
+    "oyjlCatalogGetLangs_(%d)%s", count, txt ) );
+  oyjlStringListRelease( &langs, langs_n, free );
+  free( lang_positions_start );
+  lang_positions_start = NULL;
+  myDeAllocFunc( txt ); txt = NULL;
+  oyjlStringListRelease( &paths, count, free );
 
   const char * name = "catalog";
   loc = "de_DE.UTF8";
+  trc = oyjlTr_New( loc, &catalog, NULL,NULL,NULL, !verbose?0:OYJL_OBSERVE );
   clck = oyjlClock();
   for( i = 0; i < 100; ++i )
-    text = oyjlTranslate( loc, catalog, "render", 0 );
+    text = oyjlTranslate( trc, "render" );
   clck = oyjlClock() - clck;
   if( strcmp(text,"Darstellung") == 0 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
-    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+    "oyjlTranslate(\"%s\",%s,\"render\") %s", loc, name, oyjlTr_GetLang( trc ) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   }
+
   loc = "de_DE";
+  oyjlLang( loc );
   clck = oyjlClock();
   for( i = 0; i < 100; ++i )
-    text = oyjlTranslate( loc, catalog, "render", 0 );
+    text = oyjlTranslate( trc, "render" );
   clck = oyjlClock() - clck;
   if( strcmp(text,"Darstellung") == 0 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
-    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+    "oyjlTranslate(\"%s\",%s,\"render\") %s", loc, name, oyjlTr_GetLang( trc ) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   }
+
   loc = "de";
+  oyjlLang( loc );
   clck = oyjlClock();
   for( i = 0; i < 100; ++i )
-    text = oyjlTranslate( loc, catalog, "render", 0 );
+    text = oyjlTranslate( trc, "render" );
   clck = oyjlClock() - clck;
   if( strcmp(text,"Darstellung") == 0 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
-    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+    "oyjlTranslate(\"%s\",%s,\"render\") %s", loc, name, oyjlTr_GetLang( trc ) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   }
+
   loc = "cs";
+  oyjlTr_SetLocale( trc, loc );
   clck = oyjlClock();
   for( i = 0; i < 10000; ++i )
-    text = oyjlTranslate( loc, catalog, "Color", 0 );
+    text = oyjlTranslate( trc, "Color" );
   clck = oyjlClock() - clck;
   if( strcmp(text,"Barva") == 0 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
@@ -469,14 +505,16 @@ oyjlTESTRESULT_e testI18N()
   }
 
   int n = 1;
-  txt = testTranslateJson( oyjl_export,"de_DE",catalog,key_list, flags, n,&clck);
+  loc = "de_DE";
+  oyjlTr_SetLocale( trc, loc );
+  txt = testTranslateJson( oyjl_export, trc, key_list, n, &clck );
   i = 0;
   if( txt && strlen( txt ) == 22846 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
-    "oyjlTranslateJson(catalog)" );
+    "oyjlTranslateJson(\"%s\",%s) %s", loc, name, oyjlTr_GetLang( trc ) );
   } else
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(txt),
-    "oyjlTranslateJson(catalog)" );
+    "oyjlTranslateJson(\"%s\",%s) %s", loc, name, oyjlTr_GetLang( trc ) );
   }
   OYJL_TEST_WRITE_RESULT( txt, strlen(txt), "oyjlTranslateJson", "txt" )
   if(verbose && txt)
@@ -484,12 +522,14 @@ oyjlTESTRESULT_e testI18N()
   myDeAllocFunc( txt ); txt = NULL;
 
   size = 0;
+  catalog = oyjlTr_GetCatalog( trc );
   oyjl_val static_catalog = oyjlTreeSerialise( catalog, flags, &size );
+  oyjlTr_Release( &trc );
   clck = oyjlClock();
   for( i = 0; i < 100; ++i )
   {
     paths = oyjlTreeToPaths( static_catalog, 10000000, NULL, OYJL_KEY, &count );
-    if(paths && count)
+    if(paths && count && i < 100-1)
       oyjlStringListRelease( &paths, count, free );
   }
   clck = oyjlClock() - clck;
@@ -501,57 +541,102 @@ oyjlTESTRESULT_e testI18N()
     "oyjlTreeToPaths(static_catalog)" );
   }
 
+  langs_n = 0;
+  lang_positions_start = NULL;
+  clck = oyjlClock();
+  for( i = 0; i < 500; ++i )
+  {
+    langs = oyjlCatalogGetLangs_( paths, count,
+                                  &langs_n, &lang_positions_start );
+    if(langs && langs_n && i < 500-1)
+    {
+      oyjlStringListRelease( &langs, langs_n, free );
+      free( lang_positions_start );
+      lang_positions_start = NULL;
+    }
+  }
+  clck = oyjlClock() - clck;
+  for(j = 0; j < langs_n; ++j)
+    oyjlStringAdd( &txt, 0,0, " %s:%d", langs[j], lang_positions_start[j] );
+  fprintf( zout, "%s\n",
+    oyjlPrintSubProfiling( -1, i, clck/(double)CLOCKS_PER_SEC,"ck",
+    "oyjlCatalogGetLangs_(%d)%s", count, txt ) );
+  oyjlStringListRelease( &paths, count, free );
+  oyjlStringListRelease( &langs, langs_n, free );
+  free( lang_positions_start );
+  lang_positions_start = NULL;
+  myDeAllocFunc( txt ); txt = NULL;
+
   name = "static_catalog";
   loc = "de_DE.UTF8";
+  trc = oyjlTr_New( loc, &static_catalog, NULL,NULL,NULL, !verbose?0:OYJL_OBSERVE );
   clck = oyjlClock();
   for( i = 0; i < 1000; ++i )
-    text = oyjlTranslate( loc, static_catalog, "render", 0 );
+    text = oyjlTranslate( trc, "Quark" );
   clck = oyjlClock() - clck;
-  if( strcmp(text,"Darstellung") == 0 )
+  if( strcmp(text,"Quark") == 0 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
-    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+    "oyjlTranslate(\"%s\",%s,\"Quark\") %s", loc, name, oyjlTr_GetLang( trc ) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+    "oyjlTranslate(\"%s\",%s,\"Quark\")", loc, name );
   }
-  loc = "de_DE";
+
   clck = oyjlClock();
   for( i = 0; i < 1000; ++i )
-    text = oyjlTranslate( loc, static_catalog, "render", 0 );
+    text = oyjlTranslate( trc, "render" );
   clck = oyjlClock() - clck;
   if( strcmp(text,"Darstellung") == 0 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
-    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
-  }
-  loc = "de";
-  clck = oyjlClock();
-  for( i = 0; i < 1000; ++i )
-    text = oyjlTranslate( loc, static_catalog, "render", 0 );
-  clck = oyjlClock() - clck;
-  if( strcmp(text,"Darstellung") == 0 )
-  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
-    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+    "oyjlTranslate(\"%s\",%s,\"render\") %s", loc, name, oyjlTr_GetLang( trc ) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   }
 
-  txt = testTranslateJson( oyjl_export,"de_DE",static_catalog,key_list, flags, n,&clck );
+  loc = "de_DE";
+  oyjlTr_SetLocale( trc, loc );
+  clck = oyjlClock();
+  for( i = 0; i < 1000; ++i )
+    text = oyjlTranslate( trc, "render" );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\") %s", loc, name, oyjlTr_GetLang( trc ) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+
+  loc = "de";
+  oyjlTr_SetLocale( trc, loc );
+  clck = oyjlClock();
+  for( i = 0; i < 1000; ++i )
+    text = oyjlTranslate( trc, "render" );
+  clck = oyjlClock() - clck;
+  if( strcmp(text,"Darstellung") == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
+    "oyjlTranslate(\"%s\",%s,\"render\") %s", loc, name, oyjlTr_GetLang( trc ) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
+  }
+
+  loc = "de_DE";
+  oyjlTr_SetLocale( trc, loc );
+  txt = testTranslateJson( oyjl_export, trc, key_list, n,&clck );
   if( txt && strlen( txt ) == 22846 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
-    "oyjlTranslateJson(static_catalog)" );
+    "oyjlTranslateJson(\"%s\",%s) %s", loc, name, oyjlTr_GetLang( trc ) );
   } else
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(txt),
-    "oyjlTranslateJson(static_catalog)" );
+    "oyjlTranslateJson(\"%s\",%s) %s", loc, name, oyjlTr_GetLang( trc ) );
   }
   OYJL_TEST_WRITE_RESULT( txt, strlen(txt), "oyjlTranslateJson", "txt" )
   if(/*oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL ||*/ verbose)
     fprintf( zout, "%s\n", txt );
   myDeAllocFunc( txt ); txt = NULL;
-  oyjlTreeFree( static_catalog );
+  oyjlTr_Release( &trc );
 
   //return result;
 
@@ -559,9 +644,11 @@ oyjlTESTRESULT_e testI18N()
   n = 100000;
   name = "gettext";
   loc = "de_DE.UTF8";
+  setlocale( LC_ALL, loc );
+  trc = oyjlTr_New( loc, NULL, NULL,NULL,NULL, OYJL_GETTEXT | (!verbose?0:OYJL_OBSERVE) );
   clck = oyjlClock();
   for( i = 0; i < n; ++i )
-    text = oyjlTranslate( loc, NULL, "render", OYJL_GETTEXT );
+    text = oyjlTranslate( trc, "render" );
   clck = oyjlClock() - clck;
   if( strcmp(text,"Darstellung") == 0 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
@@ -571,9 +658,10 @@ oyjlTESTRESULT_e testI18N()
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   }
   loc = "de_DE";
+  oyjlTr_SetLocale( trc, loc );
   clck = oyjlClock();
   for( i = 0; i < n; ++i )
-    text = oyjlTranslate( loc, NULL, "render", OYJL_GETTEXT );
+    text = oyjlTranslate( trc, "render" );
   clck = oyjlClock() - clck;
   if( strcmp(text,"Darstellung") == 0 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
@@ -583,9 +671,10 @@ oyjlTESTRESULT_e testI18N()
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   }
   loc = "de";
+  oyjlTr_SetLocale( trc, loc );
   clck = oyjlClock();
   for( i = 0; i < n; ++i )
-    text = oyjlTranslate( loc, NULL, "render", OYJL_GETTEXT );
+    text = oyjlTranslate( trc, "render" );
   clck = oyjlClock() - clck;
   if( strcmp(text,"Darstellung") == 0 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
@@ -596,7 +685,9 @@ oyjlTESTRESULT_e testI18N()
   }
 
   n = 1;
-  txt = testTranslateJson( oyjl_export,"de_DE",NULL,key_list, flags | OYJL_GETTEXT, n,&clck );
+  loc = "de_DE";
+  oyjlTr_SetLocale( trc, loc );
+  txt = testTranslateJson( oyjl_export, trc, key_list, n, &clck );
   if( txt && strlen( txt ) == 22846 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
     "oyjlTranslateJson(gettext)" );
@@ -608,6 +699,7 @@ oyjlTESTRESULT_e testI18N()
   if(/*oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL ||*/ verbose)
     fprintf( zout, "%s\n", txt );
   myDeAllocFunc( txt ); txt = NULL;
+  oyjlTr_Release( &trc );
 #endif
 
   double tmp_d;
@@ -617,9 +709,13 @@ oyjlTESTRESULT_e testI18N()
   oyjl_val root = oyjlTreeParse( oyjl_export, NULL, 0 );
   fprintf( zout, timeformat "before while\n", printtime );
   size = 0; while(size < 1000) ++size;
+  catalog = oyjlTreeParse( liboyjl_i18n_json, NULL, 0 );
+  loc = "de_DE";
+  trc = oyjlTr_New( loc, &catalog, NULL, NULL,NULL, flags );
   fprintf( zout, timeformat "after while; before oyjlTranslateJson\n", printtime );
-  oyjlTranslateJson( root, "de_DE", catalog, key_list, NULL, flags );
+  oyjlTranslateJson( root, trc, key_list );
   fprintf( zout, timeformat "after oyjlTranslateJson\n", printtime );
+  oyjlTr_Release( &trc );
   i = 0;
   txt = NULL;
   oyjlTreeToJson( root, &i, &txt );
@@ -654,9 +750,10 @@ char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
   if(verbose)
     fprintf( zout, "parsed: \"%s\"\n", t );
   free(t); t = NULL;
+  oyjlTreeFree( catalog );
 
+  j = 0;
   paths = oyjlTreeToPaths( static_catalog, 10000000, NULL, flags | OYJL_KEY,&count);
-  int j = 0;
   if(count == 10 &&
       strcmp(paths[j++],"org/freedesktop/oyjl/translations/de_DE\\.UTF8/Example") == 0 &&
       strcmp(paths[j++],"org/freedesktop/oyjl/translations/de_DE/Example2") == 0 &&
@@ -676,43 +773,41 @@ char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
   if(paths && count)
     oyjlStringListRelease( &paths, count, free );
 
-  oyjlTreeFree( catalog );
-  catalog = static_catalog;
-#undef _
-#define _(x) oyjlTranslate( lang, catalog, x, flags )
-
-  lang = "de_DE.UTF-8";
+  loc = "de_DE.UTF-8";
+  trc = oyjlTr_New( loc, &static_catalog, NULL, NULL,NULL, flags );
+  oyjlTr( &trc );
   text = _("Color [3]");
   if(strcmp(text,"Farbe [3]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL,
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
 
-  lang = "de_CH";
+  loc = "de_CH";
+  oyjlLang( loc );
   text = _("Color");
   if(strcmp(text,"Farbe") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
-    "oyjlTranslate(%s) \"de\":\"%s\"", lang, text );
+    "oyjlTranslate(%s) \"de\":\"%s\"", loc, text );
   }
-  oyjlTreeFree( static_catalog );
-  static_catalog = catalog = NULL;
+  oyjlTr_Release( &trc );
 
   catalog = oyjlTreeParse( liboyjl_i18n_json, NULL, 0 );
   static_catalog = oyjlTreeSerialise( catalog, flags, &size );
-  static_catalog = oyjlCatalog( &static_catalog );
+  trc = oyjlTr_New( "C", &static_catalog, NULL,NULL,NULL, !verbose?0:OYJL_OBSERVE );
+  oyjlTr( &trc );
   loc = setlocale(LC_ALL,"de_DE.UTF8");
-  oyjlLang(loc);
+  loc = oyjlLang(loc);
   root = oyjlTreeParse( oyjl_export, NULL, 0 );
   fprintf( zout, timeformat "before while\n", printtime );
   size = 0; while(size < 1000) ++size;
   fprintf( zout, timeformat "after while; before oyjlTranslateJson\n", printtime );
-  oyjlTranslateJson( root, "de_DE", oyjlCatalog(NULL), key_list, NULL, flags );
+  oyjlTranslateJson( root, NULL, key_list );
   fprintf( zout, timeformat "after oyjlTranslateJson\n", printtime );
   i = 0;
   txt = NULL;
@@ -731,13 +826,7 @@ char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
   myDeAllocFunc( oyjl_export ); oyjl_export = NULL;
   oyjlTreeFree( root );
   oyjlTreeFree( catalog );
-
-#undef _
-#ifdef OYJL_USE_GETTEXT
-# define _(text) dgettext( OYJL_DOMAIN, text )
-#else
-# define _(text) text
-#endif
+  oyjlTr( &trc );
 
   return result;
 }
@@ -1729,7 +1818,8 @@ oyjlTESTRESULT_e testUiRoundtrip ()
 
   fprintf(stdout, "\n" );
 
-  setlocale(LC_ALL,"en_GB.UTF8");
+  const char * loc = setlocale(LC_ALL,"en_GB.UTF8");
+  oyjlLang( loc );
 
   int output = 0;
   const char * file = NULL;
@@ -1860,16 +1950,15 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   return result;
 }
 
-#undef _
-# define _(text) oyjlTranslate( oyjl_lang_, oyjl_catalog_, text, flags )
 oyjlTESTRESULT_e testUiTranslation ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
 
-  setlocale(LC_ALL,"en_GB.UTF8");
-  oyjlLang( "en_GB.UTF8" );
+  oyjlTr_s * trc = NULL; oyjlTr( &trc );
+  const char * loc = setlocale(LC_ALL,"en_GB.UTF8");
+  oyjlLang( loc );
 
   int output = 0;
   const char * file = NULL;
@@ -1878,7 +1967,6 @@ oyjlTESTRESULT_e testUiTranslation ()
   int help = 0;
   int verbose_ = 0;
   const char * catalog_json = NULL;
-  int flags = 0;//verbose ? OYJL_OBSERVE : 0;
 
   /* handle options */
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
@@ -2040,8 +2128,8 @@ oyjlTESTRESULT_e testUiTranslation ()
   }\n\
 }";
   oyjl_val catalog = oyjlTreeParse( catalog_json, NULL, 0 );
-  oyjlCatalog( &catalog );
-
+  trc = oyjlTr_New( "C", &catalog, NULL,NULL,NULL, !verbose?0:OYJL_OBSERVE );
+  oyjlTr( &trc );
   oyjlLang( "de_DE" );
 
   ui = oyjlUi_Create( argc_anonymous, argv_anonymous, /* argc+argv are required for parsing the command line options */
@@ -2091,9 +2179,8 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   oyjlTreeFree( json ); json = NULL;
 
-  catalog = NULL;
-  oyjlTranslate_f tr = oyjlTranslate;
-  oyjlUi_Translate( ui, "de_DE", oyjlCatalog(NULL), tr, flags );
+  oyjlLang( "de_DE" );
+  oyjlUi_Translate( ui, NULL );
   text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 7588)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
@@ -2107,7 +2194,8 @@ oyjlTESTRESULT_e testUiTranslation ()
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
-  oyjlUi_Translate( ui, "back", oyjlCatalog(NULL), tr, flags );
+  oyjlLang( "back" );
+  oyjlUi_Translate( ui, NULL );
   text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 7511)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
@@ -2134,7 +2222,8 @@ oyjlTESTRESULT_e testUiTranslation ()
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
-  oyjlUi_Translate( ui, "cs_CZ", oyjlCatalog(NULL), tr, flags );
+  oyjlLang( "cs_CZ" );
+  oyjlUi_Translate( ui, NULL );
   text = oyjlUi_ToJson( ui, 0 );
   if(text && strlen(text) == 7612)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
@@ -2161,8 +2250,8 @@ oyjlTESTRESULT_e testUiTranslation ()
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
-  catalog = oyjlCatalog(&catalog);
   int level = 0;
+  catalog = oyjlTr_GetCatalog( oyjlTr(NULL) );
   oyjlTreeToJson( catalog, &level, &text );
   //puts(text);
   if(text && strlen(text) == 2745 && strlen(catalog_json) == 1797)
