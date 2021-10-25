@@ -422,7 +422,7 @@ oyjlTESTRESULT_e oy_test_last_result = oyjlTESTRESULT_UNKNOWN;
   if((result_) < result) \
     result = result_; \
   fprintf(stdout, ## __VA_ARGS__ ); \
-  fprintf(stdout, " ..\t%s", oyjlTestResultToString(result_,1)); \
+  fprintf(stdout, " .. %s", oyjlTestResultToString(result_,1)); \
   if((result_) <= oyjlTESTRESULT_FAIL) \
     fprintf(stdout, " !!! ERROR !!!" ); \
   fprintf(stdout, "\n" ); \
@@ -683,6 +683,7 @@ const char * oyjlPrintSubProfiling   ( int                 space,
 {
   char * text = NULL, * visual, * tmp, * prof = NULL;
   int len, vlen, i;
+  static int even = 1;
 
   if(oyjl_print_sub)
   { free(oyjl_print_sub); oyjl_print_sub = NULL; }
@@ -691,11 +692,11 @@ const char * oyjlPrintSubProfiling   ( int                 space,
 
   prof = (char*) malloc(256);
   if(integer/duration >= 1000000.0)
-    sprintf( prof, "%.02f M%s/s", integer/duration/1000000.0, term );
+    sprintf( prof, " %.02f M%s/s", integer/duration/1000000.0, term );
   else if(integer/duration < 10.0)
-    sprintf( prof, "%.04f  %s/s", integer/duration, term );
+    sprintf( prof, " %.04f  %s/s", integer/duration, term );
   else
-    sprintf( prof, "%.00f  %s/s", integer/duration, term );
+    sprintf( prof, " %.00f  %s/s", integer/duration, term );
 
   visual = strdup( text );
 #ifndef OYJL_ARGS_C
@@ -710,17 +711,25 @@ const char * oyjlPrintSubProfiling   ( int                 space,
 
   if(vlen-1 < space)
   {
+    const char * mark = ".";
+    int odd = 1;
+    even = !even;
     tmp = (char*) realloc( text, (len<space?space:len) + space - len + 20 );
     text = tmp;
-    for( i = vlen - 1; i < space; ++i ) sprintf( &text[strlen(text)], i < space - 16&&i>vlen+5 ? ".":" " );
+    for( i = vlen - 1; i < space; ++i ) sprintf( &text[strlen(text)], i < space - 16&&i>vlen+5 ? even?((odd = !odd) == 0)?mark:" ":mark : " " );
   }
   free(visual); visual = NULL;
 
   if(prof)
   {
     i = strlen(prof);
+    if(integer/duration < 10.0)
+    {
+      sprintf( prof, " %.04f", integer/duration );
+      sprintf( prof, "%s  %s/s", oyjlTermColor_(oyjlITALIC,prof), term );
+    }
     len = strlen(text);
-    tmp = (char*) realloc( text, len + i + 2 );
+    tmp = (char*) realloc( text, len + strlen(prof) + 2 );
     text = tmp;
     if(vlen + i < space)
       text[len-i] = '\000';
