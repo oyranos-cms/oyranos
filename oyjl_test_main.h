@@ -113,9 +113,19 @@ int main(int argc, char** argv)
   /* give a summary */
   if(!list)
   {
-    fprintf( stdout, "\n################################################################\n" );
-    fprintf( stdout, "#                                                              #\n" );
-    fprintf( stdout, "#                     Results                                  #\n" );
+    int i = oyjl_print_sub_length + 12;
+    fputs( "\n", stdout );
+    while(i--) fputs( "#", stdout );
+    fputs( "\n", stdout );
+    fputs( "#", stdout );
+    i = oyjl_print_sub_length + 10;
+    while(i--) fputs( " ", stdout );
+    fputs( "#\n", stdout );
+    fprintf( stdout, "#                     " );
+    fprintf( stdout, oyjlTermColor_(oyjlBOLD, "Results" ));
+    i = oyjl_print_sub_length - 18;
+    while(i--) fputs( " ", stdout );
+    fputs( "#\n", stdout );
     fprintf( stdout, "    Total of Sub Tests:         %d\n", oy_test_sub_count );
     for(i = 0; i <= oyjlTESTRESULT_UNKNOWN; ++i)
     {
