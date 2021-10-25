@@ -607,30 +607,30 @@ oyjlTESTRESULT_e testString ()
                  oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
   if(t) { free(t); t = NULL; }
 
-  oyjl_str string = oyjlStrNew(10, 0,0);
+  oyjl_str string = oyjlStr_New(10, 0,0);
   clck = oyjlClock();
   n = 1000000;
   for(i = 0; i < n; ++i)
-    oyjlStrAppendN( string, "/more/and", 9 );
+    oyjlStr_AppendN( string, "/more/and", 9 );
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjlStrAppendN()\t%dx9  %d    \t\%s\n", n, (int)strlen(oyjlStr(string)),
+  fprintf( zout, "oyjlStr_AppendN()\t%dx9  %d    \t\%s\n", n, (int)strlen(oyjlStr(string)),
                  oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
-  oyjlStrRelease( &string );
+  oyjlStr_Release( &string );
 
   int inside = 0;
-  string = oyjlStrNew(10, 0,0);
+  string = oyjlStr_New(10, 0,0);
   for(i = 0; i < 10; ++i)
-    oyjlStrAppendN( string, "/more/and", 9 );
-  oyjlStrReplace( string, "/", "\\/", replaceCb, &inside );
+    oyjlStr_AppendN( string, "/more/and", 9 );
+  oyjlStr_Replace( string, "/", "\\/", replaceCb, &inside );
   const char * tmp = oyjlStr(string);
   if(strstr(tmp, "/more\\/and/more"))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStrReplace(callback,user_data)" );
+    "oyjlStr_Replace(callback,user_data)" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStrReplace(callback,user_data)" );
+    "oyjlStr_Replace(callback,user_data)" );
   }
-  oyjlStrRelease( &string );
+  oyjlStr_Release( &string );
 
   const char * wstring = "反差";
   int wlen = oyjlStringSplitUTF8( wstring, NULL, 0 );
@@ -1453,10 +1453,14 @@ oyjlTESTRESULT_e testTree ()
 
   value = oyjlTreeGetValue( root, 0, "new/tree/key" );
 #define VALUE "value-\"one\""
-  oyjlValueSetString( value, VALUE );
+  clck = oyjlClock();
+  int n;
+  for(n = 0; n < 100000; ++n)
+    oyjlValueSetString( value, VALUE );
+  clck = oyjlClock() - clck;
   oyjlTreeToJson( root, &i, &text ); i = 0;
   if(len < strlen(text))
-  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"set",
     "oyjlValueSetString( %s )", VALUE );
   } else
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(text),
@@ -1598,7 +1602,7 @@ char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
 
   clck = oyjlClock();
   root = oyjlTreeNew("");
-  int n = 2000;
+  n = 2000;
   for(i = 0; i < n; ++i)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "data/key-%d", i );
   clck = oyjlClock() - clck;
