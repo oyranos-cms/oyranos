@@ -374,12 +374,12 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
  *
  *  The oyjl_str based oyStrXXX API's use a more carful memory
  *  management and thus perform way faster on larger memory arrays as they
- *  need fewer allocations and copies. oyjlStrNew() allocates a new object,
- *  or oyjlStrNewFrom() wrappes a existing string array into a new object.
- *  oyjlStr() lets you see the contained char array. oyjlStrAppendN()
- *  performs fast concatenation. oyjlStrReplace() uses the object advantages.
- *  oyjlStrPull() directly takes the char array out of control of the oyjl_str
- *  object and oyjlStrRelease() frees the object and all memory.
+ *  need fewer allocations and copies. oyjlStr_New() allocates a new object,
+ *  or oyjlStr_NewFrom() wrappes a existing string array into a new object.
+ *  oyjlStr() lets you see the contained char array. oyjlStr_AppendN()
+ *  performs fast concatenation. oyjlStr_Replace() uses the object advantages.
+ *  oyjlStr_Pull() directly takes the char array out of control of the oyjl_str
+ *  object and oyjlStr_Release() frees the object and all memory.
  *
  *  @{ *//* oyjl_core */
 
@@ -729,11 +729,11 @@ int        oyjlStringReplace         ( char             ** text,
   if(!text || !*text || !(*text)[0])
     return 0;
 
-  str = oyjlStrNewFrom(text, 0, alloc,deAlloc);
-  n = oyjlStrReplace( str, search, replacement, 0, NULL );
-  t = oyjlStrPull(str);
+  str = oyjlStr_NewFrom(text, 0, alloc,deAlloc);
+  n = oyjlStr_Replace( str, search, replacement, 0, NULL );
+  t = oyjlStr_Pull(str);
   *text = t;
-  oyjlStrRelease( &str );
+  oyjlStr_Release( &str );
 
   return n;
 }
@@ -1147,7 +1147,7 @@ int        oyjlRegExpReplace         ( char             ** text,
     return 0;
   }
 
-  str = oyjlStrNewFrom(text, 0, malloc, free);
+  str = oyjlStr_NewFrom(text, 0, malloc, free);
   n = re.re_nsub;
   txt = oyjlStr(str);
   while((status = regexec( &re, txt, (size_t)1, &re_match, 0 )) == 0)
@@ -1156,10 +1156,10 @@ int        oyjlRegExpReplace         ( char             ** text,
     char * tail = NULL;
     if(len > re_match.rm_eo)
       tail = oyjlStringCopy( &txt[re_match.rm_eo], 0 );
-    n = oyjlStrReplace( str, &txt[re_match.rm_so], replacement, 0, NULL );
+    n = oyjlStr_Replace( str, &txt[re_match.rm_so], replacement, 0, NULL );
     if(len > re_match.rm_eo)
     {
-      oyjlStrAdd( str, tail );
+      oyjlStr_Add( str, tail );
       free(tail);
     }
     txt = oyjlStr(str);
@@ -1167,8 +1167,8 @@ int        oyjlRegExpReplace         ( char             ** text,
     if(!n) break;
   }
   regfree( &re );
-  *text = oyjlStrPull( str );
-  oyjlStrRelease( &str );
+  *text = oyjlStr_Pull( str );
+  oyjlStr_Release( &str );
 
 #else
 
@@ -1194,22 +1194,22 @@ void       oyjlRegExpEscape2         ( oyjl_str            text )
   if(!text) return;
 
 #ifdef OYJL_HAVE_REGEX_H
-  oyjlStrReplace( tmp, "\\", "\\\\", oyjlNoBracketCb, NULL );
-  oyjlStrReplace( tmp, ".", "\\.", 0, NULL );
-  oyjlStrReplace( tmp, "^", "\\^", 0, NULL );
-  oyjlStrReplace( tmp, "$", "\\$", 0, NULL );
-  oyjlStrReplace( tmp, "*", "\\*", 0, NULL );
-  oyjlStrReplace( tmp, "+", "\\+", 0, NULL );
-  oyjlStrReplace( tmp, "?", "\\?", 0, NULL );
-  //oyjlStrReplace( tmp, "!", "\\!", 0, NULL );
-  oyjlStrReplace( tmp, "(", "\\(", 0, NULL );
-  oyjlStrReplace( tmp, ")", "\\)", 0, NULL );
-  oyjlStrReplace( tmp, "[", "\\[", 0, NULL );
-  //oyjlStrReplace( tmp, "]", "\\]", 0, NULL );
-  oyjlStrReplace( tmp, "{", "\\{", 0, NULL );
-  //oyjlStrReplace( tmp, "}", "\\}", 0, NULL );
-  //oyjlStrReplace( tmp, ",", "\\,", 0, NULL );
-  oyjlStrReplace( tmp, "|", "\\|", 0, NULL );
+  oyjlStr_Replace( tmp, "\\", "\\\\", oyjlNoBracketCb, NULL );
+  oyjlStr_Replace( tmp, ".", "\\.", 0, NULL );
+  oyjlStr_Replace( tmp, "^", "\\^", 0, NULL );
+  oyjlStr_Replace( tmp, "$", "\\$", 0, NULL );
+  oyjlStr_Replace( tmp, "*", "\\*", 0, NULL );
+  oyjlStr_Replace( tmp, "+", "\\+", 0, NULL );
+  oyjlStr_Replace( tmp, "?", "\\?", 0, NULL );
+  //oyjlStr_Replace( tmp, "!", "\\!", 0, NULL );
+  oyjlStr_Replace( tmp, "(", "\\(", 0, NULL );
+  oyjlStr_Replace( tmp, ")", "\\)", 0, NULL );
+  oyjlStr_Replace( tmp, "[", "\\[", 0, NULL );
+  //oyjlStr_Replace( tmp, "]", "\\]", 0, NULL );
+  oyjlStr_Replace( tmp, "{", "\\{", 0, NULL );
+  //oyjlStr_Replace( tmp, "}", "\\}", 0, NULL );
+  //oyjlStr_Replace( tmp, ",", "\\,", 0, NULL );
+  oyjlStr_Replace( tmp, "|", "\\|", 0, NULL );
 #endif
 }
 
@@ -1235,11 +1235,11 @@ char *     oyjlRegExpEscape          ( const char        * text )
   oyjl_str tmp;
   if(!text) return NULL;
 
-  tmp = oyjlStrNew(10,0,0);
-  oyjlStrAppendN( tmp, t, strlen(t) );
+  tmp = oyjlStr_New(10,0,0);
+  oyjlStr_AppendN( tmp, t, strlen(t) );
   oyjlRegExpEscape2( tmp );
-  out = oyjlStrPull(tmp); 
-  oyjlStrRelease( &tmp );
+  out = oyjlStr_Pull(tmp); 
+  oyjlStr_Release( &tmp );
   return out;
 }
 
@@ -1326,10 +1326,10 @@ struct oyjl_string_s
  *  @return                            the object
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/02/14
+ *  @date    2021/10/24
  *  @since   2019/02/14 (Oyjl: 1.0.0)
  */
-oyjl_str   oyjlStrNew                ( size_t              length,
+oyjl_str   oyjlStr_New               ( size_t              length,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) )
 {
@@ -1364,10 +1364,10 @@ oyjl_str   oyjlStrNew                ( size_t              length,
  *
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/02/15
+ *  @date    2021/10/24
  *  @since   2019/02/15 (Oyjl: 1.0.0)
  */
-oyjl_str   oyjlStrNewFrom            ( char             ** text,
+oyjl_str   oyjlStr_NewFrom           ( char             ** text,
                                        size_t              length,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) )
@@ -1397,7 +1397,7 @@ oyjl_str   oyjlStrNewFrom            ( char             ** text,
  *  @param[in]     append_len          length of append
  *  @return                            error
  */
-int        oyjlStrAppendN            ( oyjl_str            string,
+int        oyjlStr_AppendN           ( oyjl_str            string,
                                        const char        * append,
                                        int                 append_len )
 {
@@ -1431,7 +1431,7 @@ int        oyjlStrAppendN            ( oyjl_str            string,
  *  @param[in]     ...                 argument list for format
  *  @return                            error
  */
-int        oyjlStrAdd                ( oyjl_str            string,
+int        oyjlStr_Add               ( oyjl_str            string,
                                        const char        * format,
                                                            ... )
 {
@@ -1445,7 +1445,7 @@ int        oyjlStrAdd                ( oyjl_str            string,
 
   if(text)
   {
-    oyjlStrAppendN( string, text, strlen(text) );
+    oyjlStr_AppendN( string, text, strlen(text) );
     deAllocate( text );
   }
 
@@ -1469,13 +1469,19 @@ int        oyjlStrAdd                ( oyjl_str            string,
  *  @return                            number of occurences
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/08/02
+ *  @date    2021/10/24
  *  @since   2019/02/15 (Oyjl: 1.0.0)
  */
-int        oyjlStrReplace            ( oyjl_str            text,
+int        oyjlStr_Replace           ( oyjl_str            text,
                                        const char        * search,
                                        const char        * replacement,
-                                       void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * user_data),
+                                       void             (* modifyReplacement)
+                                                             (const char * text,
+                                                              const char * start,
+                                                              const char * end,
+                                                              const char * search,
+                                                              const char ** replace,
+                                                              void * user_data),
                                        void              * user_data )
 {
   struct oyjl_string_s * str = text;
@@ -1493,23 +1499,23 @@ int        oyjlStrReplace            ( oyjl_str            text,
     int s_len = strlen(search);
     while((end = strstr(start,search)) != 0)
     {
-      if(!t) t = oyjlStrNew(10,0,0);
-      oyjlStrAppendN( t, start, end-start );
+      if(!t) t = oyjlStr_New(10,0,0);
+      oyjlStr_AppendN( t, start, end-start );
       if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement, user_data );
-      oyjlStrAppendN( t, replacement, strlen(replacement) );
+      oyjlStr_AppendN( t, replacement, strlen(replacement) );
       ++n;
       if(strlen(end) >= (size_t)s_len)
         start = end + s_len;
       else
       {
         if(strstr(start,search) != 0)
-          oyjlStrAppendN( t, replacement, strlen(replacement) );
+          oyjlStr_AppendN( t, replacement, strlen(replacement) );
         start = end = end + s_len;
         break;
       }
     }
     if(n && start && end == NULL)
-      oyjlStrAppendN( t, start, strlen(start) );
+      oyjlStr_AppendN( t, start, strlen(start) );
   }
 
   if(t)
@@ -1532,8 +1538,8 @@ int        oyjlStrReplace            ( oyjl_str            text,
       oyjlAllocHelper_m( str->s, char, length, str->alloc, return 0 );
       str->s[0] = '\000';
       str->alloc_len = length;
-      oyjlStrAppendN( str, oyjlStr(t), strlen(oyjlStr(t)) );
-      oyjlStrRelease( &t );
+      oyjlStr_AppendN( str, oyjlStr(t), strlen(oyjlStr(t)) );
+      oyjlStr_Release( &t );
     }
   }
 
@@ -1551,10 +1557,10 @@ int        oyjlStrReplace            ( oyjl_str            text,
  *  @return                            the char array from str
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/02/15
+ *  @date    2021/10/24
  *  @since   2019/02/15 (Oyjl: 1.0.0)
  */
-char *     oyjlStrPull               ( oyjl_str            str )
+char *     oyjlStr_Pull              ( oyjl_str            str )
 {
   struct oyjl_string_s * string;
   char * t = NULL;
@@ -1578,14 +1584,14 @@ char *     oyjlStrPull               ( oyjl_str            str )
 /** @brief   clear text in a string object
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/06/14
+ *  @date    2021/10/24
  *  @since   2019/06/14 (Oyjl: 1.0.0)
  */
-void       oyjlStrClear              ( oyjl_str            string )
+void       oyjlStr_Clear             ( oyjl_str            string )
 {
   struct oyjl_string_s * str = string;
   void (* deAlloc)(void*) = str->deAlloc;
-  char * s = oyjlStrPull( string );
+  char * s = oyjlStr_Pull( string );
   if(s) deAlloc(s);
 }
 
@@ -1594,10 +1600,10 @@ void       oyjlStrClear              ( oyjl_str            string )
  *  All references from previous oyjlStr() calls will be void.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/02/14
+ *  @date    2021/10/24
  *  @since   2019/02/14 (Oyjl: 1.0.0)
  */
-void       oyjlStrRelease            ( oyjl_str          * string_ptr )
+void       oyjlStr_Release           ( oyjl_str          * string_ptr )
 {
   struct oyjl_string_s * str;
   if(!string_ptr) return;
@@ -2433,16 +2439,7 @@ void oyjlLibRelease() {
     dlclose(oyjl_args_render_lib_); oyjl_args_render_lib_ = NULL; oyjl_args_render_init = 0;
   }
 #endif
-  if(oyjl_lang_)
-  {
-    free(oyjl_lang_);
-    oyjl_lang_ = NULL;
-  }
-  if(oyjl_catalog_)
-  {
-    oyjlTreeFree(oyjl_catalog_);
-    oyjl_catalog_ = NULL;
-  }
+  oyjlTr_Release( &oyjl_tr_context_ );
   if(oyjl_debug_node_path_)
   {
     free(oyjl_debug_node_path_);
@@ -2461,7 +2458,7 @@ void oyjlLibRelease() {
 #define OyjlToString_M(t) #t
 /** @brief   init the libraries language; optionaly
  *
- *  Additionally use setlocale() somewhere in your application.
+ *  Additionally use setlocale()+oyjlLang() somewhere in your application.
  *  The message catalog search path is detected from the project specific
  *  environment variable specified in \em env_var_locdir and
  *  the \em LOCPATH environment variables. If those are not present
@@ -2632,37 +2629,6 @@ char *         oyjlCountry           ( const char        * loc )
     return NULL;
 }
 
-char * oyjl_lang_ = NULL;
-/** @brief   set explicitely language
- *
- *  @param         loc                 locale name as from setlocale("")
- *                                     - NULL: reset
- *                                     - "": get existing without change
- *                                     - "something": set lang to "something"
- *  @return                            current locale
- *
- *  @version Oyjl: 1.0.0
- *  @date    2020/07/28
- *  @since   2020/07/28 (Oyjl: 1.0.0)
- */
-const char *   oyjlLang              ( const char        * loc )
-{
-  if(!loc && oyjl_lang_)
-  {
-    free(oyjl_lang_);
-    oyjl_lang_ = NULL;
-  }
-  if(loc && strlen(loc) && oyjl_lang_ != loc)
-  {
-    if(oyjl_lang_)
-    {
-      free(oyjl_lang_);
-      oyjl_lang_ = NULL;
-    }
-    oyjl_lang_ = strdup(loc);
-  }
-  return oyjl_lang_;
-}
 /* --- I18n_Section --- */
 
 /* --- Misc_Section --- */
