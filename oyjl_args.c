@@ -56,6 +56,19 @@ extern int * oyjl_debug;
 #else /* OYJL_INTERNAL */
 int my_debug = 0;
 int * oyjl_debug = &my_debug;
+oyjlTr_s * oyjl_tr_context_ = NULL;
+#ifdef _
+#undef _
+#endif
+#ifdef OYJL_USE_GETTEXT
+# ifdef OYJL_HAVE_LIBINTL_H
+#  include <libintl.h> /* bindtextdomain() */
+# endif
+# define _(text) dgettext( OYJL_DOMAIN, text )
+#else
+#define _(x) x
+#endif
+
 #ifndef OYJL_DBG_FORMAT
 # if defined(__GNUC__)
 #  define  OYJL_DBG_FORMAT "%s:%d %s() "
@@ -296,7 +309,7 @@ struct oyjl_string_s
     void (*deAlloc)(void*);            /**< @brief custom deallocator; optional, default is free */
     int    alloc_count;
 };
-oyjl_str   oyjlStrNew                ( size_t              length,
+oyjl_str   oyjlStr_New               ( size_t              length,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) )
 {
@@ -317,7 +330,7 @@ oyjl_str   oyjlStrNew                ( size_t              length,
 
   return (oyjl_str) string;
 }
-int        oyjlStrAppendN            ( oyjl_str            string,
+int        oyjlStr_AppendN           ( oyjl_str            string,
                                        const char        * append,
                                        int                 append_len )
 {
@@ -341,7 +354,7 @@ int        oyjlStrAppendN            ( oyjl_str            string,
   }
   return error;
 }
-int        oyjlStrAdd                ( oyjl_str            string,
+int        oyjlStr_Add               ( oyjl_str            string,
                                        const char        * format,
                                                            ... )
 {
@@ -355,13 +368,13 @@ int        oyjlStrAdd                ( oyjl_str            string,
 
   if(text)
   {
-    oyjlStrAppendN( string, text, strlen(text) );
+    oyjlStr_AppendN( string, text, strlen(text) );
     deAllocate( text );
   }
 
   return 0;
 }
-int        oyjlStrReplace            ( oyjl_str            text,
+int        oyjlStr_Replace           ( oyjl_str            text,
                                        const char        * search,
                                        const char        * replacement,
                                        void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * user_data),
@@ -382,23 +395,23 @@ int        oyjlStrReplace            ( oyjl_str            text,
     int s_len = strlen(search);
     while((end = strstr(start,search)) != 0)
     {
-      if(!t) t = oyjlStrNew(10,0,0);
-      oyjlStrAppendN( t, start, end-start );
+      if(!t) t = oyjlStr_New(10,0,0);
+      oyjlStr_AppendN( t, start, end-start );
       if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement, user_data );
-      oyjlStrAppendN( t, replacement, strlen(replacement) );
+      oyjlStr_AppendN( t, replacement, strlen(replacement) );
       ++n;
       if(strlen(end) >= (size_t)s_len)
         start = end + s_len;
       else
       {
         if(strstr(start,search) != 0)
-          oyjlStrAppendN( t, replacement, strlen(replacement) );
+          oyjlStr_AppendN( t, replacement, strlen(replacement) );
         start = end = end + s_len;
         break;
       }
     }
     if(n && start && end == NULL)
-      oyjlStrAppendN( t, start, strlen(start) );
+      oyjlStr_AppendN( t, start, strlen(start) );
   }
 
   if(t)
@@ -421,14 +434,14 @@ int        oyjlStrReplace            ( oyjl_str            text,
       oyjlAllocHelper_m( str->s, char, length, str->alloc, return 0 );
       str->s[0] = '\000';
       str->alloc_len = length;
-      oyjlStrAppendN( str, oyjlStr(t), strlen(oyjlStr(t)) );
-      oyjlStrRelease( &t );
+      oyjlStr_AppendN( str, oyjlStr(t), strlen(oyjlStr(t)) );
+      oyjlStr_Release( &t );
     }
   }
 
   return n;
 }
-char *     oyjlStrPull               ( oyjl_str            str )
+char *     oyjlStr_Pull              ( oyjl_str            str )
 {
   struct oyjl_string_s * string;
   char * t = NULL;
@@ -448,14 +461,14 @@ char *     oyjlStrPull               ( oyjl_str            str )
   
   return t;
 }
-void       oyjlStrClear              ( oyjl_str            string )
+void       oyjlStr_Clear             ( oyjl_str            string )
 {
   struct oyjl_string_s * str = string;
   void (* deAlloc)(void*) = str->deAlloc;
-  char * s = oyjlStrPull( string );
+  char * s = oyjlStr_Pull( string );
   if(s) deAlloc(s);
 }
-void       oyjlStrRelease            ( oyjl_str          * string_ptr )
+void       oyjlStr_Release           ( oyjl_str          * string_ptr )
 {
   struct oyjl_string_s * str;
   if(!string_ptr) return;
@@ -4571,15 +4584,15 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   {
     const char * t;
     int insideXML[3] = {0,0,0};
-    oyjl_str tmp = oyjlStrNew(10,0,0);
-    oyjlStrAppendN( tmp, text, strlen(text) );
-    oyjlStrReplace( tmp, "`", "\\`", replaceOutsideHTML_, insideXML );
-    oyjlStrReplace( tmp, "-", "\\-", replaceOutsideHTML_, insideXML );
-    oyjlStrReplace( tmp, "_", "\\_", replaceOutsideHTML_, insideXML );
+    oyjl_str tmp = oyjlStr_New(10,0,0);
+    oyjlStr_AppendN( tmp, text, strlen(text) );
+    oyjlStr_Replace( tmp, "`", "\\`", replaceOutsideHTML_, insideXML );
+    oyjlStr_Replace( tmp, "-", "\\-", replaceOutsideHTML_, insideXML );
+    oyjlStr_Replace( tmp, "_", "\\_", replaceOutsideHTML_, insideXML );
     t = oyjlStr(tmp);
     text[0] = 0;
     oyjlStringAdd( &text, malloc,free, "%s", t );
-    oyjlStrRelease( &tmp );
+    oyjlStr_Release( &tmp );
   }
 
   free(doxy_link);

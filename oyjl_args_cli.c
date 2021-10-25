@@ -234,7 +234,7 @@ int oyjlArgsCliStart__               ( int                 argc,
     const char * lang = oyjlLang("");
     if(debug)
       fprintf( stderr, "using lang: %s\n", lang );
-    oyjlTranslateJson( root, lang, root, key_list, NULL, 0 );
+    oyjlTranslateJson( root, NULL, key_list );
 
     val = oyjlTreeGetValue(v, 0, "description");
     desc = OYJL_GET_STRING(val);
