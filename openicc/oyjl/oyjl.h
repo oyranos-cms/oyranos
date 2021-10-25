@@ -337,7 +337,7 @@ typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
 int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func );
 
 /* --- i18n helpers --- */
-int oyjlInitLanguageDebug            ( const char        * project_name,
+int            oyjlInitLanguageDebug ( const char        * project_name,
                                        const char        * env_var_debug,
                                        int               * debug_variable,
                                        int                 use_gettext,
@@ -348,22 +348,34 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 char *         oyjlLanguage          ( const char        * loc );
 char *         oyjlCountry           ( const char        * loc );
 const char *   oyjlLang              ( const char        * loc );
-oyjl_val       oyjlCatalog           ( oyjl_val          * catalog );
+typedef struct oyjlTr_s oyjlTr_s;
+char *         oyjlTranslate         ( oyjlTr_s          * context,
+                                       const char        * string );
+typedef char*(*oyjlTranslate_f)      ( oyjlTr_s          * context,
+                                       const char        * string );
 #define OYJL_GETTEXT                   0x400000 /**< @brief use gettext */
-char *         oyjlTranslate         ( const char        * loc,
-                                       oyjl_val            catalog,
-                                       const char        * string,
-                                       int                 flags );
-typedef char*(*oyjlTranslate_f)      ( const char        * loc,
-                                       oyjl_val            catalog,
-                                       const char        * string,
-                                       int                 flags );
-void               oyjlTranslateJson ( oyjl_val            root,
-                                       const char        * loc,
-                                       oyjl_val            catalog,
-                                       const char        * key_list,
+/* Workaround for chaotic key order. Slow. */
+#define OYJL_NO_OPTIMISE               0x800000 /**< @brief skip binary search */
+oyjlTr_s *     oyjlTr_New            ( const char        * loc,
+                                       oyjl_val          * catalog,
                                        oyjlTranslate_f     translator,
+                                       void              * user_data,
+                                       void             (* deAlloc)(void*),
                                        int                 flags );
+oyjlTranslate_f oyjlTr_GetTranslator ( oyjlTr_s          * context );
+const char *   oyjlTr_GetLang        ( oyjlTr_s          * context );
+oyjl_val       oyjlTr_GetCatalog     ( oyjlTr_s          * context );
+void *         oyjlTr_GetUserData    ( oyjlTr_s          * context );
+int            oyjlTr_GetFlags       ( oyjlTr_s          * context );
+void           oyjlTr_SetFlags       ( oyjlTr_s          * context,
+                                       int                 flags );
+void           oyjlTr_SetLocale      ( oyjlTr_s          * context,
+                                       const char        * loc );
+void           oyjlTr_Release        ( oyjlTr_s         ** context );
+oyjlTr_s *     oyjlTr                ( oyjlTr_s         ** context );
+void           oyjlTranslateJson     ( oyjl_val            root,
+                                       oyjlTr_s          * context,
+                                       const char        * key_list );
 
 void       oyjlDebugVariableSet      ( int               * debug );
 
@@ -447,27 +459,33 @@ int        oyjlRegExpReplace         ( char             ** text,
                                        const char        * regex,
                                        const char        * replacement );
 typedef struct oyjl_string_s * oyjl_str;
-oyjl_str   oyjlStrNew                ( size_t              length,
+oyjl_str   oyjlStr_New               ( size_t              length,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
-oyjl_str   oyjlStrNewFrom            ( char             ** text,
+oyjl_str   oyjlStr_NewFrom           ( char             ** text,
                                        size_t              length,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
-void       oyjlStrRelease            ( oyjl_str          * string_ptr );
+void       oyjlStr_Release           ( oyjl_str          * string_ptr );
 const char*oyjlStr                   ( oyjl_str            string );
-char *     oyjlStrPull               ( oyjl_str            str );
-void       oyjlStrClear              ( oyjl_str            string );
-int        oyjlStrAppendN            ( oyjl_str            string,
+char *     oyjlStr_Pull              ( oyjl_str            str );
+void       oyjlStr_Clear             ( oyjl_str            string );
+int        oyjlStr_AppendN           ( oyjl_str            string,
                                        const char        * append,
                                        int                 append_len );
-int        oyjlStrAdd                ( oyjl_str            string,
+int        oyjlStr_Add               ( oyjl_str            string,
                                        const char        * format,
                                                            ... );
-int        oyjlStrReplace            ( oyjl_str            text,
+int        oyjlStr_Replace           ( oyjl_str            text,
                                        const char        * search,
                                        const char        * replacement,
-                                       void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * user_data),
+                                       void             (* modifyReplacement)
+                                                             (const char * text,
+                                                              const char * start,
+                                                              const char * end,
+                                                              const char * search,
+                                                              const char ** replace,
+                                                              void * user_data),
                                        void              * user_data );
 typedef enum {
   oyjlNO_MARK,
@@ -791,10 +809,7 @@ oyjlUi_s *         oyjlUi_ImportFromJson(
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
 void               oyjlUi_Translate  ( oyjlUi_s          * ui,
-                                       const char        * new_loc,
-                                       oyjl_val            catalog,
-                                       oyjlTranslate_f     translator,
-                                       int                 flags );
+                                       oyjlTr_s          * context );
 
 /** link with libOyjlArgsWeb and use microhttps WWW renderer as library \n
  *  link with libOyjlArgsQml and use Qt's QML to render in a GUI
