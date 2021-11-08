@@ -244,7 +244,7 @@ CHECK_INCLUDE_FILE(langinfo.h   OYJL_HAVE_LANGINFO_H)
 CHECK_INCLUDE_FILE(locale.h     OYJL_HAVE_LOCALE_H)
 CHECK_INCLUDE_FILE(libintl.h    OYJL_HAVE_LIBINTL_H)
 FIND_PACKAGE( GetText )
-MESSAGE( "-- GetText: ${GETTEXT_FOUND}" )
+MESSAGE( "-- GetText: ${GETTEXT_FOUND} libintl: ${OYJL_HAVE_LIBINTL_H}" )
 IF( GETTEXT_FOUND AND OYJL_HAVE_LIBINTL_H )
   SET( OYJL_USE_GETTEXT TRUE )
   SET( ${PROJECT_UP_NAME}_USE_GETTEXT TRUE )
@@ -313,16 +313,35 @@ SET( CHEADERS_OYJL_PUBLIC
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_DOWN_NAME}_version.h
 	${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}.h
    )
-SET( CHEADERS_OYJL
+ SET( CHEADERS_OYJL_PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_i18n.h
 	${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_tree_internal.h
+   )
+ IF( NOT OYJL_USE_GETTEXT )
+  SET( CHEADERS_OYJL_PRIVATE ${CHEADERS_OYJL_PRIVATE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.h
+     )
+ ENDIF( NOT OYJL_USE_GETTEXT )
+SET( CHEADERS_OYJL
+  ${CHEADERS_OYJL_PRIVATE}
 	${CHEADERS_OYJL_PUBLIC}
    )
 
-SET( SOURCES_CORE ${CFILES_OYJL_CORE_PUBLIC} )
+SET( SOURCES_CORE ${CFILES_OYJL_CORE_PUBLIC} ${CHEADERS_OYJL} )
 SET( SOURCES_PARSER ${CFILES_OYJL_YAJL_PUBLIC} ${CHEADERS_OYJL} )
 SET( EXTRA_LIBS ${EXTRA_LIBS} ${YAJL_LIBRARIES} ${LIBXML2_LIBRARIES} ${YAML_LIBRARIES} ${EXTRA_CORE_LIBS} )
 MESSAGE( "-- EXTRA_CORE_LIBS:          ${EXTRA_CORE_LIBS}" )
 MESSAGE( "-- EXTRA_LIBS:               ${EXTRA_LIBS}" )
+
+SET_SOURCE_FILES_PROPERTIES( "${CMAKE_CURRENT_SOURCE_DIR}/oyjl_core.c" PROPERTIES COMPILE_DEFINITIONS "OYJL_SKIP_TRANSLATE" )
+SET( TOOL oyjl-bootstrap )
+ADD_EXECUTABLE( ${TOOL} oyjl.c ${SOURCES_CORE} ${SOURCES_PARSER} )
+TARGET_LINK_LIBRARIES ( ${TOOL} ${EXTRA_CORE_LIBS} ${EXTRA_LIBS} )
+
+SET( TOOL oyjl-translate-bootstrap )
+ADD_EXECUTABLE( ${TOOL} oyjl_translate.c ${SOURCES_CORE} ${SOURCES_PARSER} )
+TARGET_LINK_LIBRARIES ( ${TOOL} ${EXTRA_CORE_LIBS} ${EXTRA_LIBS} )
+SET_SOURCE_FILES_PROPERTIES( "${CMAKE_CURRENT_SOURCE_DIR}/oyjl_core.c" PROPERTIES COMPILE_DEFINITIONS "" )
 
 
 IF(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME})
@@ -444,7 +463,7 @@ MACRO( BUILD_TOOL _NAME _SOURCES _DEPENDENCIES _LIBS _DOCUMENT _INSTALL )
 #    MESSAGE( "-- TOOL: " ${_NAME} )
   ENDIF( )
   IF(NOT HAVE_QT)
-    SET_TARGET_PROPERTIES( ${TOOL} PROPERTIES COMPILE_DEFINITIONS "NO_OYJL_ARGS_RENDER=1" )
+#    SET_TARGET_PROPERTIES( ${TOOL} PROPERTIES COMPILE_DEFINITIONS "NO_OYJL_ARGS_RENDER=1" )
   ENDIF()
   TARGET_LINK_LIBRARIES( ${TOOL} ${QT_RENDER_LIB} ${OYJL_TARGET_LIB} ${EXTRA_LIBS} ${_LIBS} )
   IF( ${_DOCUMENT} )
@@ -489,6 +508,7 @@ IF(ENABLE_QT_${PROJECT_UP_NAME})
   ADD_SUBDIRECTORY( oyjl-args-qml )
 ENDIF(ENABLE_QT_${PROJECT_UP_NAME})
 
+SET( GETTEXT_TRANSLATIONS_TARGET_PREFIX ${PROJECT_DOWN_NAME}_ )
 IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
   FIND_PROGRAM(VALGRIND_EXECUTABLE valgrind)
   IF( VALGRIND_EXECUTABLE )
@@ -515,25 +535,56 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         DEPENDS oyjl-test-args check-test
         COMMENT "Test standalone Args API in oyjl-test-args" VERBATIM )
   ADD_CUSTOM_COMMAND(
-        OUTPUT  oyjl-args-ui.c
-        COMMAND ./oyjl-args -X export | ./oyjl-args -i - > oyjl-args-ui.c
+        OUTPUT  oyjl-args-ui-lib.c
+        COMMAND LANG=C ./oyjl-args -X export | ./oyjl-args -i - > oyjl-args-ui-lib.c
         DEPENDS oyjl-args
-        COMMENT "Export UI and generate C code" VERBATIM
+        COMMENT "Export UI and generate lib C code" VERBATIM
+        )
+  ADD_CUSTOM_COMMAND(
+        OUTPUT  oyjl-args-ui.c
+        COMMAND LANG=C ./oyjl-args -X export | ./oyjl-args -i - --c-stand-alone > oyjl-args-ui.c
+        DEPENDS oyjl-args
+        COMMENT "Export UI and generate stand alone C code" VERBATIM
         )
   INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
   SET( TOOL oyjl-args-ui )
   SET( TOOLS ${TOOLS} ${TOOL} )
+  SET( ${TOOL}_COMPILE_DEFINITIONS "OYJL_LOCALEDIR=\"${CMAKE_BINARY_DIR}/locale\"" )
+  IF(OYJL_HAVE_LOCALE_H)
+    SET( ${TOOL}_COMPILE_DEFINITIONS ${${TOOL}_COMPILE_DEFINITIONS};OYJL_HAVE_LOCALE_H )
+  ENDIF()
+  IF(OYJL_HAVE_LANGINFO_H)
+    SET( ${TOOL}_COMPILE_DEFINITIONS ${${TOOL}_COMPILE_DEFINITIONS};OYJL_HAVE_LANGINFO_H )
+  ENDIF()
+  IF(OYJL_HAVE_LIBINTL_H)
+    SET( ${TOOL}_COMPILE_DEFINITIONS ${${TOOL}_COMPILE_DEFINITIONS};OYJL_HAVE_LIBINTL_H )
+  ENDIF()
+  IF(OYJL_USE_GETTEXT)
+    SET( ${TOOL}_COMPILE_DEFINITIONS ${${TOOL}_COMPILE_DEFINITIONS};OYJL_USE_GETTEXT )
+    SET_SOURCE_FILES_PROPERTIES( "${TOOL}.c" PROPERTIES COMPILE_DEFINITIONS "OYJL_USE_GETTEXT=1" )
+  ENDIF()
+  MESSAGE( "${TOOL}_COMPILE_DEFINITIONS: " ${${TOOL}_COMPILE_DEFINITIONS} )
+  SET_SOURCE_FILES_PROPERTIES( "${TOOL}.c" PROPERTIES COMPILE_DEFINITIONS "${${TOOL}_COMPILE_DEFINITIONS}" )
   ADD_EXECUTABLE( ${TOOL} oyjl-args-ui.c )
-  TARGET_LINK_LIBRARIES( ${TOOL} ${OYJL_TARGET_LIB} ${EXTRA_LIBS} )
+  ADD_CUSTOM_TARGET( check-${TOOL}
+        ${MEMCHECK} ./${TOOL} -h
+        DEPENDS ${TOOL} check-args
+        COMMENT "Check Generated Stand Alone OyjlArgs Program" VERBATIM )
   UNSET( TOOL )
-  ADD_CUSTOM_TARGET( check-oyjl-args-ui
-        ${MEMCHECK} ./oyjl-args-ui -h
-        DEPENDS oyjl-args-ui check-args
-        COMMENT "Check Generated Program" VERBATIM )
+  SET( TOOL oyjl-args-ui-lib )
+  SET( TOOLS ${TOOLS} ${TOOL} )
+  SET( TOOL_SRC ${TOOL}.c )
+  ADD_EXECUTABLE( ${TOOL} ${TOOL_SRC} )
+  TARGET_LINK_LIBRARIES( ${TOOL} ${OYJL_TARGET_LIB} ${EXTRA_LIBS} )
+  ADD_CUSTOM_TARGET( check-${TOOL}
+        ${MEMCHECK} ./${TOOL} -h
+        DEPENDS ${TOOL} check-oyjl-args-ui
+        COMMENT "Check Generated Linked OyjlArgs Program" VERBATIM )
+  UNSET( TOOL )
   ADD_CUSTOM_TARGET(check-core
         COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-core-static
         COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static
-        DEPENDS oyjl-test-core-static check-oyjl-args-ui oyjl
+        DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations oyjl-test-core-static check-oyjl-args-ui-lib oyjl
         COMMENT "Test libOyjlCore" VERBATIM )
   ADD_CUSTOM_TARGET(check
         LOCPATH=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-static
@@ -606,7 +657,6 @@ IF( GETTEXT_FOUND AND OYJL_USE_GETTEXT )
 
   SET( ${PROJECT_UP_NAME}_LINGUAS po/cs.po po/de.po po/eo.po po/eu.po po/fr.po po/ru.po )
   # compile translations always to have them ready for installation
-  SET( GETTEXT_TRANSLATIONS_TARGET_PREFIX ${PROJECT_DOWN_NAME}_ )
   GETTEXT_CREATE_TRANSLATIONS( ${_potFile} ALL ${${PROJECT_UP_NAME}_LINGUAS} )
 
   ADD_CUSTOM_COMMAND( OUTPUT ${PROJECT_DOWN_NAME}_gmo-cp
@@ -614,17 +664,20 @@ IF( GETTEXT_FOUND AND OYJL_USE_GETTEXT )
     COMMENT "put ${PROJECT_DOWN_NAME}.mo files into ${CMAKE_BINARY_DIR}/locale/lang/LC_MESSAGES/ path for testing with LOCPATH"
                     )
   ADD_CUSTOM_TARGET( ${PROJECT_DOWN_NAME}_gmo ALL
-                     DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${PROJECT_DOWN_NAME}_gmo-cp  )
+                     DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations
+                             ${PROJECT_DOWN_NAME}_gmo-cp
+                              lib${PROJECT_DOWN_NAME}_i18n
+                   )
   SET( LOCALES cs_CZ,de_DE,eo,eu_ES,fr_FR,ru_RU )
   FOREACH( TOOL ${TOOLS} )
     ADD_CUSTOM_COMMAND( OUTPUT ${TOOL}.i18n.json
       COMMAND export LANG=C && ./${TOOL} -X json > ${TOOL}.json
-      COMMAND oyjl-translate -a -i ${TOOL}.json -o ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.i18n.json -k name,description,help -d "oyjl" -p "${CMAKE_BINARY_DIR}/locale/" -l ${LOCALES} -t
-      COMMAND oyjl-translate -a -i ${TOOL}.json -o ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.i18n.c -k name,description,help,label -d "oyjl" -p "${CMAKE_BINARY_DIR}/locale/" -l ${LOCALES} -t -w=C
-      DEPENDS ${TOOL}
+      COMMAND oyjl-translate-bootstrap -a -i ${TOOL}.json -o ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.i18n.json -k name,description,help -d "oyjl" -p "${CMAKE_BINARY_DIR}/locale/" -l ${LOCALES} -t
+      COMMAND oyjl-translate-bootstrap -a -i ${TOOL}.json -o ${CMAKE_CURRENT_SOURCE_DIR}/${TOOL}.i18n.c -k name,description,help,label -d "oyjl" -p "${CMAKE_BINARY_DIR}/locale/" -l ${LOCALES} -t -w=C
+      DEPENDS oyjl-translate-bootstrap ${TOOL}
       COMMENT "generate ${TOOL}.i18n.json" )
     ADD_CUSTOM_TARGET( ${TOOL}_i18n ALL
-      DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${TOOL}.i18n.json  )
+      DEPENDS oyjl-bootstrap oyjl-translate-bootstrap ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${TOOL}.i18n.json  )
   ENDFOREACH()
   SET( COLLECT_I18N "" )
   SET( COLLECT_I18N_DEPENDS "" )
@@ -635,16 +688,17 @@ IF( GETTEXT_FOUND AND OYJL_USE_GETTEXT )
     SET( COLLECT_I18N ${COLLECT_I18N} -i ${_lang}.i18n.json )
     SET( COLLECT_I18N_DEPENDS ${COLLECT_I18N_DEPENDS} ${_lang}.i18n.json )
     ADD_CUSTOM_COMMAND( OUTPUT ${_lang}.i18n.json
-      COMMAND oyjl-translate -c -i ${CMAKE_CURRENT_SOURCE_DIR}/po/${_lang}.po -o ${_lang}.i18n.json --locale=${_lang}
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/po/${_lang}.po
+      COMMAND oyjl-translate-bootstrap -c -i ${CMAKE_CURRENT_SOURCE_DIR}/po/${_lang}.po -o ${_lang}.i18n.json --locale=${_lang}
+      DEPENDS oyjl-translate-bootstrap ${CMAKE_CURRENT_SOURCE_DIR}/po/${_lang}.po
       COMMENT "generate ${_lang}.i18n.json" )
   ENDFOREACH( lang )
-  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.c
-    COMMAND oyjl json ${COLLECT_I18N} -w C -W lib${PROJECT_DOWN_NAME}_i18n > ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.c
+  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.h
+      COMMAND oyjl-bootstrap json ${COLLECT_I18N} -w oiJS -W lib${PROJECT_DOWN_NAME}_i18n > ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.h
+      COMMAND oyjl-bootstrap json ${COLLECT_I18N} > ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.json
       DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations ${COLLECT_I18N_DEPENDS}
-      COMMENT "generate lib${PROJECT_DOWN_NAME}.i18n.c" )
+      COMMENT "generate lib${PROJECT_DOWN_NAME}.i18n.h" )
   ADD_CUSTOM_TARGET( lib${PROJECT_DOWN_NAME}_i18n ALL
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.c )
+      DEPENDS oyjl-bootstrap ${CMAKE_CURRENT_SOURCE_DIR}/po/lib${PROJECT_DOWN_NAME}.i18n.h )
 ENDIF()
 
 
