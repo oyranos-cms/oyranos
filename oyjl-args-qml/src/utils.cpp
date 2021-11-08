@@ -25,7 +25,7 @@
 
 #define LOG_NAME "oyjl-args-qml"
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
 #define e Qt::endl
 #else
 #define e endl
