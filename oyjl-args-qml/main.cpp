@@ -16,6 +16,35 @@
 #include "oyjl.h"
 #include "oyjl_i18n.h"
 
+extern int * oyjl_debug;
+int initLanguage( )
+{
+  oyjlTr_s * trc = NULL;
+  char * loc = NULL;
+  char * lang = getenv("LANG");
+  /* language needs to be initialised before setup of data structures */
+  int use_gettext = 0;
+#ifdef OYJL_USE_GETTEXT
+  use_gettext = 1;
+#endif
+#ifdef OYJL_HAVE_LOCALE_H
+  loc = setlocale(LC_ALL,"");
+#endif
+  if(!loc)
+  {
+    fprintf( stderr, "%s", oyjlTermColor(oyjlRED,"Usage Error:") );
+    fprintf( stderr, " Environment variable possibly not correct. Translations might fail - LANG=%s\n", oyjlTermColor(oyjlBOLD,loc) );
+  }
+  if(lang)
+    loc = lang;
+  if(loc)
+    trc = oyjlTr_New( loc, 0,0,0,0,0,0 );
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, NULL );
+  oyjlTr_Release( &trc );
+
+  return 0;
+}
+
 
 int main(int argc, const char *argv[])
 {
@@ -28,10 +57,7 @@ int main(int argc, const char *argv[])
   int version = 0;
   const char * exportX = NULL;
   const char * render = "gui";
-
-#ifdef OYJL_HAVE_LOCALE_H
-  setlocale(LC_ALL,"");
-#endif
+  int error = initLanguage();
 
   /* handle options */
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
@@ -93,6 +119,8 @@ int main(int argc, const char *argv[])
   }
   if(!ui) return 1;
   /* done with options handling */
+  if(error)
+    fprintf( stderr, "initLanguage() = %d\n", error);
 
   if(ui && verbose)
     oyjlOptions_PrintHelp( ui->opts, ui, 4, "%s v%s - %s", argv[0],

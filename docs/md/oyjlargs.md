@@ -10,7 +10,7 @@ oyjl-args v1.0.0 - Ui to source code
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyjl-args</strong> <a href="#input"><strong>-i</strong>=<em>FILENAME</em></a> [<strong>--completion-bash</strong>] [<strong>-v</strong>]
+<strong>oyjl-args</strong> <a href="#input"><strong>-i</strong>=<em>FILENAME</em></a> [<strong>--c-stand-alone</strong>] [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 <br />
 <strong>oyjl-args</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-R</strong>=<em>gui|cli|web|...</em> <strong>-V</strong> [<strong>-i</strong>=<em>FILENAME</em>] [<strong>-v</strong>]
 
@@ -22,11 +22,12 @@ Tool to convert UI JSON description from *-X export* into source code.
 
 <h3 id="input">Generate source code</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>FILENAME</em> [<strong>--completion-bash</strong>] [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>FILENAME</em> [<strong>--c-stand-alone</strong>] [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>FILENAME</em></td> <td>Set Input<br />For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON.  </td>
  </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--c-stand-alone</strong></td> <td>Generate C code for oyjl_args.c inclusion.<br />Omit libOyjlCore reference.</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--completion-bash</strong></td> <td>Generate bash completion code</td> </tr>
 </table>
 

@@ -646,6 +646,7 @@ IF( GETTEXT_FOUND AND OYJL_USE_GETTEXT )
        xml2json.c
        yaml2json.c
        oyjl-args-qml/mini-app.c
+       oyjl-args-qml/main.cpp
      )
 
   ADD_CUSTOM_COMMAND(OUTPUT ${_potFile}
