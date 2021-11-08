@@ -81,5 +81,8 @@ Q_SIGNALS:
     void debugChanged(QVariant);
 };
 
+extern AppManager * m;
+extern int app_init;
+
 #endif // APP_MANAGER_H
 

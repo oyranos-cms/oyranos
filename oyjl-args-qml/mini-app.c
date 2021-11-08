@@ -258,6 +258,8 @@ int main( int argc_ OYJL_UNUSED, char**argv_ OYJL_UNUSED)
   int argc = argc_;
   const char * argv[] = {"test",argc_>=2?argv_[1]:NULL,argc_>=3?argv_[2]:NULL,argc_>=4?argv_[3]:NULL,argc_>=5?argv_[4]:NULL, NULL};
   if(argc > 4) argc = 4;
+  oyjlTr_s * trc = NULL;
+  char * loc = NULL;
 
 #ifdef __ANDROID__
   setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
@@ -268,11 +270,14 @@ int main( int argc_ OYJL_UNUSED, char**argv_ OYJL_UNUSED)
   int use_gettext = 0;
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;
+#endif
 #ifdef OYJL_HAVE_LOCALE_H
-  setlocale(LC_ALL,"");
+  loc = setlocale(LC_ALL,"");
 #endif
-#endif
-  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
+  if(loc)
+    trc = oyjlTr_New( loc, 0,0,0,0,0,0 );
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, NULL );
+  oyjlTr_Release( &trc );
 
   fprintf(stderr, "%s %s\n", _("started"), __func__ );
 

@@ -14,6 +14,7 @@
  */
 
 #include "include/utils.h"
+#include "include/app_manager.h"
 
 #include <QDateTime>
 #include <QObject>
@@ -22,27 +23,63 @@
 #include <android/log.h>
 #endif
 
+#define LOG_NAME "oyjl-args-qml"
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+#define e Qt::endl
+#else
+#define e endl
+#endif
+
 void app_log( QString log_text )
 {
+    QString text;
+    QTextStream l(&text);
     QTextStream s(stderr);
-    s << "oyjl-args-qml("<< QDateTime::currentDateTime().toString("hh:mm:ss.zzz") <<"): "
-      << log_text << endl;
+    l << LOG_NAME "("<< QDateTime::currentDateTime().toString("hh:mm:ss.zzz") <<"): "
+      << log_text << e;
+    s << text;
+    m->setFullLog(text);
 #if defined(Q_OS_ANDROID)
-    __android_log_print(ANDROID_LOG_INFO, "oyjl-args-qml", "%s", log_text.toLocal8Bit().data() );
+    __android_log_print(ANDROID_LOG_INFO, LOG_NAME, "%s", log_text.toLocal8Bit().data() );
 #endif
 }
 
+static QString * log_history = nullptr;
+
 void app_log( QString file, QString func, QString log_text )
 {
+    if(log_history == nullptr)
+        log_history = new QString("");
+
     QString t(file);
     int len = t.lastIndexOf('/');
     if(len > 0)
       t.remove( 0, len+1 );
     t += " " + func;
 
+    QString text;
+    QTextStream l(&text);
     QTextStream s(stderr);
-    s << t << " " << QDateTime::currentDateTime().toString("hh:mm:ss.zzz") << " "
-      << log_text << endl;
+    l << t << " " << QDateTime::currentDateTime().toString("hh:mm:ss.zzz") << " "
+      << log_text << e;
+    s << text;
+
+    int ready = 0;
+    if(app_init)
+    {
+      QString * h = log_history;
+      if(m)
+      {
+        QString msg = *h + text;
+        m->setFullLog( msg );
+        *log_history = "";
+        ready = 1;
+      }
+    }
+
+    if(!ready)
+        *log_history += text;
 
 #if defined(Q_OS_ANDROID)
     __android_log_print(ANDROID_LOG_INFO, t.toLocal8Bit().data(), "%s", log_text.toLocal8Bit().data() );

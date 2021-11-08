@@ -859,6 +859,45 @@ AppWindow {
                 image: logo
             }
         }
+        Rectangle {
+            width: pages.width
+            height: pages.height
+            id: logPage
+            objectName: "logPage"
+            color: bg
+
+            Flickable {
+                id: textAreaLogFlick
+                width: parent.width
+                height: parent.height - font.pixelSize * 3 // keep some space for the button
+
+                Keys.onDownPressed: { contentY += 3*h; returnToBounds() }
+                Keys.onUpPressed:   { contentY -= 3*h; returnToBounds() }
+            TextArea.flickable: TextArea {
+                id: textAreaLog
+
+                Accessible.name: "Text Area Log"
+                width: logPage.width
+                height: logPage.height
+                color: fg
+                background: Rectangle { color: bg }
+                textFormat: Qt.PlainText
+                wrapMode: TextEdit.Wrap
+                readOnly: true
+                text: showJson ? appDataJsonString : logHistory
+            }
+            }
+            Button {
+                id: textButtonLog
+                width: parent.width - textAreaLog.font.pixelSize * 2 // make this button big
+                x: parent.width/2 - width/2 // place in the middle
+                anchors.top: textAreaLogFlick.bottom
+                text: showJson ? qsTr("Show Log") : qsTr("Show JSON")
+                onClicked: {
+                    showJson = !showJson
+                }
+            }
+        }
     }
 
     property string dataText;

@@ -274,7 +274,7 @@ int oyjlArgsQml_                     ( int                 argc,
 }
 
 #ifdef COMPILE_STATIC
-#include "oyjl_tree_internal.h" /* oyjlStringToLower() */
+#include "oyjl_tree_internal.h" /* oyjlStringToLower_() */
 static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
 {
   const char * arg = NULL, * name = NULL;
@@ -310,7 +310,7 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
   {
     if(arg[0])
     {
-      char * low = oyjlStringToLower( arg );
+      char * low = oyjlStringToLower_( arg );
       if(low)
       {
         if(strlen(low) >= strlen("gui") && memcmp("gui",low,strlen("gui")) == 0)
