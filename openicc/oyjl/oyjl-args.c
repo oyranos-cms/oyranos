@@ -30,6 +30,7 @@ int myMain( int argc, const char ** argv )
 {
 
   const char * file = NULL;
+  int oyjl_args = 0;
   int completion_bash = 0;
   int test = 0;
   double d = 0;
@@ -55,6 +56,7 @@ int myMain( int argc, const char ** argv )
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input", NULL, _("input"), _("Set Input"), _("For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON."), _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file} },
+    {"oiwi", 0,    NULL, "c-stand-alone",NULL, _("C Stand Alone"),_("Generate C code for oyjl_args.c inclusion."), _("Omit libOyjlCore reference."), NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &oyjl_args} },
     {"oiwi", 0,    NULL, "completion-bash",NULL, _("Completion Bash"),_("Generate bash completion code"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &completion_bash} },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL,"test",    NULL, _("Test"),    _("Generate test Args Export"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &test} },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE,  "o",NULL,    NULL, "O",    NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {0} },
@@ -78,7 +80,7 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Convert"),_("Generate source code"),NULL, "i", "completion-bash,v","i,completion-bash" }, /* parsed and checked with -i option */
+    {"oiwg", 0,     _("Convert"),_("Generate source code"),NULL, "i", "c-stand-alone,completion-bash,v","i,c-stand-alone,completion-bash" }, /* parsed and checked with -i option */
     {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X,R,V",   "i,v",      "h,X,R,V,v" }, /* just show in documentation */
     {"",0,0,0,0,0,0,0}
   };
@@ -258,7 +260,7 @@ int myMain( int argc, const char ** argv )
     {
       char error_buffer[128] = {0};
       oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
-      char * sources = oyjlUiJsonToCode( json, completion_bash ? OYJL_COMPLETION_BASH : OYJL_SOURCE_CODE_C );
+      char * sources = oyjlUiJsonToCode( json, completion_bash ? OYJL_COMPLETION_BASH : oyjl_args ? OYJL_SOURCE_CODE_C | OYJL_WITH_OYJL_ARGS_C : OYJL_SOURCE_CODE_C );
       fprintf( stderr, "wrote %d to stdout\n", sources&&strlen(sources)?(int)strlen(sources):0 );
       if(sources)
         puts( sources );
@@ -290,6 +292,9 @@ int main( int argc_, char**argv_, char ** envv )
 {
   int argc = argc_;
   char ** argv = argv_;
+  oyjlTr_s * trc = NULL;
+  char * loc = NULL;
+  char * lang = getenv("LANG");
 
 #ifdef __ANDROID__
   setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
@@ -306,13 +311,21 @@ int main( int argc_, char**argv_, char ** envv )
   int use_gettext = 0;
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;
+#endif
 #ifdef OYJL_HAVE_LOCALE_H
-  char * loc;
   loc = setlocale(LC_ALL,"");
-  oyjlLang( loc ); /* is needed in OyjlArgsCli for oyjlTranslateJson() */
 #endif
-#endif
-  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
+  if(!loc)
+  {
+    fprintf( stderr, "%s", oyjlTermColor(oyjlRED,"Usage Error:") );
+    fprintf( stderr, " Environment variable possibly not correct. Translations might fail - LANG=%s\n", oyjlTermColor(oyjlBOLD,loc) );
+  }
+  if(lang)
+    loc = lang;
+  if(loc)
+    trc = oyjlTr_New( loc, 0,0,0,0,0,0 );
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, NULL );
+  oyjlTr_Release( &trc );
 
   myMain(argc, (const char **)argv);
 
