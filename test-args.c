@@ -17,7 +17,7 @@
   TEST_RUN( testArgsCheck, "Options checking", 1 ); \
   TEST_RUN( testArgs, "Options handling", 1 );
 
-#include "oyjl.h"
+//#include "oyjl.h"
 #include "oyjl_version.h"
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
@@ -25,8 +25,8 @@
 #ifndef OYJL_USE_GETTEXT
 #define OYJL_SKIP_TRANSLATE
 #endif
-#include "oyjl_i18n.h"
-#include "oyjl_tree_internal.h"
+//#include "oyjl_i18n.h"
+//#include "oyjl_tree_internal.h"
 
 #include "oyjl_args.c"
 
