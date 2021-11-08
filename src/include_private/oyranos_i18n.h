@@ -27,18 +27,15 @@ extern "C" {
 #include <locale.h>           /* setlocale LC_NUMERIC */
 #endif
 
-#ifdef USE_GETTEXT
-# ifdef HAVE_LIBINTL_H
-#  include <libintl.h>
-# endif
-# define _(text) dgettext( oy_domain, text )
-#else
-# define _(text) text
+#ifdef HAVE_LIBINTL_H
+# include <libintl.h>
 #endif
+#include "oyjl.h"
+#define OY_TEXTDOMAIN "oyranos"
+#define _(text) (char*)oyjlTranslate( oyjlTr_Get(OY_TEXTDOMAIN), text )
 extern const char *oy_domain;
 extern const char *oy_domain_path;
 
-#define OY_TEXTDOMAIN "oyranos"
 
 void   oyI18NInit_                   ( void );
 void   oyI18Nreset_                  ( void );
