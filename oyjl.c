@@ -482,13 +482,37 @@ int myMain( int argc, const char ** argv )
           if(wrap)
           {
             char * tmp = NULL;
-            if(strcmp(wrap,"oiJS") == 0)
+            if(strcmp(wrap,"oiJS") == 0 || strcmp(wrap,"oiJS.bin") == 0)
             {
-              int size = 0;
-              oyjl_val oiJS = oyjlTreeSerialise( root, 0, &size );
-              fwrite( oiJS, sizeof(char), size, stdout );
-              free(text);
-              text = NULL;
+              int size = 0, j,
+                  binary = strcmp(wrap,"oiJS.bin") == 0,
+                  flags = verbose?OYJL_OBSERVE:0;
+              oyjl_val oiJS = oyjlTreeSerialise( root, flags, &size );
+              if(binary)
+              {
+                fprintf( stderr, "size: %d\n", size );
+                fwrite( oiJS, sizeof(char), size, stdout );
+                free(text);
+                text = NULL;
+              }
+              else
+              {
+                unsigned char * s = (unsigned char*) oiJS;
+                oyjl_str t = oyjlStr_New( 5*size + 80, malloc,free );
+                oyjlStr_Add( t, "unsigned char %s_oiJS[] = {\n", wrap_name );
+                for( i = 0; i < size; i+=16 )
+                {
+                  for( j = 0; i+j < size && j < 16; ++j )
+                    oyjlStr_Add( t, "%3d%s%s", s[i+j], i+j < size-1?",":"", j == 7?" ":"" );
+                  if(i+j < size+1 )
+                    oyjlStr_Add( t, "\n" );
+                }
+                oyjlStr_Add( t, "};\n" );
+                free(text);
+                text = oyjlStr_Pull( t );
+                oyjlStr_Release( &t );
+              }
+              free(oiJS);
             } else
             if(strcmp(wrap,"C") != 0)
             {
@@ -581,6 +605,9 @@ int main( int argc_, char**argv_, char ** envv )
 {
   int argc = argc_;
   char ** argv = argv_;
+  int use_gettext = 0;
+  const char * locale = NULL, * loc = NULL, * lang = NULL;
+  oyjlTr_s * trc = NULL;
 
 #ifdef __ANDROID__
   setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
@@ -594,33 +621,34 @@ int main( int argc_, char**argv_, char ** envv )
 #endif
 
   /* language needs to be initialised before setup of data structures */
-  int use_gettext = 0;
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;
+#endif
 #ifdef OYJL_HAVE_LOCALE_H
-  const char * loc = setlocale(LC_ALL,"");
-  loc = oyjlLang(loc);
+  locale = loc = setlocale(LC_ALL,"");
 #endif
-#endif
+  if(*oyjl_debug > 1)
+    fprintf(stderr,OYJL_DBG_FORMAT "loc: %s locale: %s\n", OYJL_DBG_ARGS, loc, locale );
 
-  const char * lang = getenv("LANG");
-#ifndef OYJL_USE_GETTEXT
-#include "liboyjl.i18n.c"
-  //fprintf(stderr,"%s Parsing liboyjl_i18n_json catalog.\n", oyjlPrintTime(OYJL_TIME|OYJL_BRACKETS, oyjlNO_MARK));
-  oyjl_val catalog = oyjlTreeParse( liboyjl_i18n_json, NULL, 0 );
-  const char * loc = setlocale(LC_ALL,"");
-  if(loc && lang && strcmp(loc,lang) != 0)
-    loc = lang;
-  loc = oyjlLang(loc);
-  if(*oyjl_debug)
-    fprintf(stderr,"lang: %s loc: %s.\n", lang, loc );
-  oyjlCatalog( &catalog );
-  //fprintf(stderr,"%s Done liboyjl_i18n_json catalog.\n", oyjlPrintTime(OYJL_TIME|OYJL_BRACKETS, oyjlNO_MARK));
-#endif
+  lang = getenv("LANG");
+  if((!loc && lang) || (loc && lang && strcmp(loc,lang) != 0))
+    locale = lang;
+  if(!loc && lang)
+  {
+    fprintf( stderr, "%s", oyjlTermColor(oyjlRED,"Usage Error:") );
+    fprintf(stderr,OYJL_DBG_FORMAT "", OYJL_DBG_ARGS);
+    fprintf( stderr, " Environment variable possibly not correct. Translations might fail - LANG=%s\n", oyjlTermColor(oyjlBOLD,lang) );
+  }
+  else
+    if(*oyjl_debug > 1)
+      fprintf(stderr,OYJL_DBG_FORMAT "lang: %s loc: %s locale: %s\n", OYJL_DBG_ARGS, lang, loc, locale );
 
-  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
-  if(*oyjl_debug)
-    fprintf(stderr,"oyjlLang: %s use_gettext: %d LANG:%s\n", oyjlLang(""), use_gettext, lang);
+  if(locale)
+    trc = oyjlTr_New( locale, 0, 0,0,0,0, *oyjl_debug > 1?OYJL_OBSERVE:0 );
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, NULL );
+  oyjlTr_Release( &trc );
+  if(*oyjl_debug > 1)
+    fprintf(stderr,OYJL_DBG_FORMAT "oyjlLang: %s use_gettext: %d LANG:%s\n", OYJL_DBG_ARGS, oyjlLang(""), use_gettext, lang);
 
   myMain(argc, (const char **)argv);
 
@@ -628,7 +656,6 @@ int main( int argc_, char**argv_, char ** envv )
   free( argv );
 #endif
 #ifndef OYJL_USE_GETTEXT
-  //fprintf(stderr,"%s Done myMain().\n", oyjlPrintTime(OYJL_TIME|OYJL_BRACKETS, oyjlNO_MARK));
 #endif
 
   return 0;
