@@ -60,8 +60,8 @@
 
 
 /* --- Debug_Section --- */
-int oyjl_debug_local = 0;
-int * oyjl_debug = &oyjl_debug_local;
+int oyjl_debug_local_ = 0;
+int * oyjl_debug = &oyjl_debug_local_;
 
 /** @brief   set own debug variable */
 void       oyjlDebugVariableSet      ( int               * debug )
@@ -329,10 +329,10 @@ int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
 
   OYJL_CREATE_VA_STRING(format, text, malloc, return 1)
 
-  if(error_code == oyjlMSG_INFO) status_text = "Info: ";
-  if(error_code == oyjlMSG_CLIENT_CANCELED) status_text = "Client Canceled: ";
-  if(error_code == oyjlMSG_INSUFFICIENT_DATA) status_text = "Insufficient data: ";
-  if(error_code == oyjlMSG_ERROR) status_text = "!!! ERROR: ";
+  if(error_code == oyjlMSG_INFO) status_text = oyjlTermColor(oyjlGREEN,"Info: ");
+  if(error_code == oyjlMSG_CLIENT_CANCELED) status_text = oyjlTermColor(oyjlBLUE,"Client Canceled: ");
+  if(error_code == oyjlMSG_INSUFFICIENT_DATA) status_text = oyjlTermColor(oyjlRED,"Insufficient data: ");
+  if(error_code == oyjlMSG_ERROR) status_text = oyjlTermColor(oyjlRED,"ERROR: ");
 
   if(status_text)
     fprintf( stderr, "%s", status_text );
@@ -1179,7 +1179,7 @@ int        oyjlRegExpReplace         ( char             ** text,
 }
 
 
-void oyjlNoBracketCb(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, void * data OYJL_UNUSED)
+void oyjlNoBracketCb_(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, void * data OYJL_UNUSED)
 {
   if(start < end)
   {
@@ -1188,13 +1188,13 @@ void oyjlNoBracketCb(const char * text OYJL_UNUSED, const char * start, const ch
       *replace = search;
   }
 }
-void       oyjlRegExpEscape2         ( oyjl_str            text )
+void       oyjlRegExpEscape2_        ( oyjl_str            text )
 {
   oyjl_str tmp = text;
   if(!text) return;
 
 #ifdef OYJL_HAVE_REGEX_H
-  oyjlStr_Replace( tmp, "\\", "\\\\", oyjlNoBracketCb, NULL );
+  oyjlStr_Replace( tmp, "\\", "\\\\", oyjlNoBracketCb_, NULL );
   oyjlStr_Replace( tmp, ".", "\\.", 0, NULL );
   oyjlStr_Replace( tmp, "^", "\\^", 0, NULL );
   oyjlStr_Replace( tmp, "$", "\\$", 0, NULL );
@@ -1237,7 +1237,7 @@ char *     oyjlRegExpEscape          ( const char        * text )
 
   tmp = oyjlStr_New(10,0,0);
   oyjlStr_AppendN( tmp, t, strlen(t) );
-  oyjlRegExpEscape2( tmp );
+  oyjlRegExpEscape2_( tmp );
   out = oyjlStr_Pull(tmp); 
   oyjlStr_Release( &tmp );
   return out;
@@ -2224,7 +2224,7 @@ static int (*oyjlArgsRender_p)       ( int                 argc,
                                        int                 debug,
                                        oyjlUi_s          * ui,
                                        int               (*callback)(int argc, const char ** argv)) = NULL;
-static int oyjl_args_render_init = 0;
+static int oyjl_args_render_init_ = 0;
 static int oyjlArgsRendererLoad_( const char * render_lib )
 {
   const char * name = render_lib;
@@ -2295,7 +2295,7 @@ static int oyjlArgsRendererSelect_  (  oyjlUi_s          * ui )
   {
     if(arg[0])
     {
-      char * low = oyjlStringToLower( arg );
+      char * low = oyjlStringToLower_( arg );
       if(low)
       {
         if(strlen(low) >= strlen("gui") && memcmp("gui",low,strlen("gui")) == 0)
@@ -2330,10 +2330,10 @@ static int oyjlArgsRendererSelect_  (  oyjlUi_s          * ui )
     }
   }
 
-  if(!oyjl_args_render_init)
+  if(!oyjl_args_render_init_)
   {
     char * fn = oyjlLibNameCreate_(name, 1);
-    ++oyjl_args_render_init;
+    ++oyjl_args_render_init_;
 
 #ifdef HAVE_DL
 #else
@@ -2429,6 +2429,7 @@ static char * oyjl_nls_path_ = NULL;
 char * oyjl_debug_node_path_ = NULL;
 char * oyjl_debug_node_value_ = NULL;
 void oyjlLibRelease() {
+  int i;
   if(oyjl_nls_path_)
   {
     putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL;
@@ -2436,10 +2437,20 @@ void oyjlLibRelease() {
 #if defined(HAVE_DL) && (!defined(COMPILE_STATIC) || !defined(HAVE_QT))
   if(oyjl_args_render_lib_)
   {
-    dlclose(oyjl_args_render_lib_); oyjl_args_render_lib_ = NULL; oyjl_args_render_init = 0;
+    dlclose(oyjl_args_render_lib_); oyjl_args_render_lib_ = NULL; oyjl_args_render_init_ = 0;
   }
 #endif
-  oyjlTr_Release( &oyjl_tr_context_ );
+  if(oyjl_tr_context_)
+  {
+    i = 0;
+    while(oyjl_tr_context_[i])
+    {
+      oyjlTr_Release( &oyjl_tr_context_[i] );
+      ++i;
+    }
+    free(oyjl_tr_context_);
+    oyjl_tr_context_ = NULL;
+  }
   if(oyjl_debug_node_path_)
   {
     free(oyjl_debug_node_path_);
@@ -2456,60 +2467,12 @@ void oyjlLibRelease() {
 /* --- Init_Section --- */
 #define OyjlToString2_M(t) OyjlToString_M(t)
 #define OyjlToString_M(t) #t
-/** @brief   init the libraries language; optionaly
- *
- *  Additionally use setlocale()+oyjlLang() somewhere in your application.
- *  The message catalog search path is detected from the project specific
- *  environment variable specified in \em env_var_locdir and
- *  the \em LOCPATH environment variables. If those are not present
- *  a expected fall back directory from \em default_locdir is used.
- *
- *  @param         project_name        project name display string; e.g. "MyProject"
- *  @param         env_var_debug       environment debug variable string;
- *                                     e.g. "MP_DEBUG"
- *  @param         debug_variable      int C variable; e.g. my_project_debug
- *  @param         use_gettext         switch gettext support on or off
- *  @param         env_var_locdir      environment variable string for locale path;
- *                                     e.g. "MP_LOCALEDIR"
- *  @param         default_locdir      default locale path C string;
- *                                     e.g. "/usr/local/share/locale"
- *  @param         loc_domain          locale domain string related to your pot,
- *                                     po and mo files; e.g. "myproject"
- *  @param         msg                 your message function of type oyjlMessage_f; optional - default is Oyjl message function
- *  @return                            error
- *                                     - -1 : issue
- *                                     - 0 : success
- *                                     - >= 1 : found error
- *
- *  @version Oyjl: 1.0.0
- *  @date    2019/01/13
- *  @since   2019/01/13 (Oyjl: 1.0.0)
- */
-int oyjlInitLanguageDebug            ( const char        * project_name,
-                                       const char        * env_var_debug,
-                                       int               * debug_variable,
-                                       int                 use_gettext OYJL_UNUSED,
-                                       const char        * env_var_locdir OYJL_UNUSED,
-                                       const char        * default_locdir OYJL_UNUSED,
+void   oyjlGettextSetup_             ( int                 use_gettext OYJL_UNUSED,
                                        const char        * loc_domain OYJL_UNUSED,
-                                       oyjlMessage_f       msg )
+                                       const char        * env_var_locdir OYJL_UNUSED,
+                                       const char        * default_locdir OYJL_UNUSED )
 {
-  int error = -1;
-
-  if(!msg) msg = oyjlMessage_p;
-
-  if(getenv(env_var_debug))
-  {
-    *debug_variable = atoi(getenv(env_var_debug));
-    if(*debug_variable)
-    {
-      int v = oyjlVersion(0);
-      if(*debug_variable)
-        msg( oyjlMSG_INFO, 0, "%s (Oyjl compile v: %s runtime v: %d)", project_name, OYJL_VERSION_NAME, v );
-    }
-  }
-
-#ifdef OYJL_USE_GETTEXT
+#ifdef OYJL_HAVE_LIBINTL_H
   {
     if( use_gettext )
     {
@@ -2523,18 +2486,18 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
       {
         tmp = strdup(getenv(env_var_locdir));
         environment_locale_dir = domain_path = tmp;
-        if(*debug_variable)
-          msg( oyjlMSG_INFO, 0,"found environment variable: %s=%s", env_var_locdir, domain_path );
+        if(*oyjl_debug)
+          oyjlMessage_p( oyjlMSG_INFO, 0,"found environment variable: %s=%s", env_var_locdir, domain_path );
       } else
         if(environment_locale_dir == NULL && getenv("LOCPATH") && strlen(getenv("LOCPATH")))
       {
         domain_path = NULL;
         locpath = getenv("LOCPATH");
-        if(*debug_variable)
-          msg( oyjlMSG_INFO, 0,"found environment variable: LOCPATH=%s", locpath );
+        if(*oyjl_debug)
+          oyjlMessage_p( oyjlMSG_INFO, 0,"found environment variable: LOCPATH=%s", locpath );
       } else
-        if(*debug_variable)
-        msg( oyjlMSG_INFO, 0,"no %s or LOCPATH environment variable found; using default path: %s", env_var_locdir, domain_path );
+        if(*oyjl_debug)
+        oyjlMessage_p( oyjlMSG_INFO, 0,"no %s or LOCPATH environment variable found; using default path: %s", env_var_locdir, domain_path );
 
       if(domain_path || locpath)
       {
@@ -2552,13 +2515,11 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
       /* LOCPATH appears to be ignored by bindtextdomain("domain", NULL),
        * so it is set here to bindtextdomain(). */
       path = domain_path ? domain_path : locpath;
-# ifdef OYJL_HAVE_LIBINTL_H
       const char * d = textdomain( loc_domain );
       const char * dpath = bindtextdomain( loc_domain, path );
-      if(*debug_variable)
-        msg( oyjlMSG_INFO, 0,"bindtextdomain( \"%s\", \"%s\"/%s ) = ", loc_domain, path, dpath, d );
-#endif
-      if(*debug_variable)
+      if(*oyjl_debug)
+        oyjlMessage_p( oyjlMSG_INFO, 0,"bindtextdomain( \"%s\", \"%s\"/%s ) = ", loc_domain, path, dpath, d );
+      if(*oyjl_debug)
       {
         char * fn = NULL;
         int stat = -1;
@@ -2569,14 +2530,109 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
           oyjlStringAdd( &fn, 0,0, "%s/de/LC_MESSAGES/%s.mo", path ? path : "", loc_domain);
         if(fn)
           stat = oyjlIsFileFull_( fn, "r" );
-        msg( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\"/%s) to %s\"%s\" %s for %s  test:%s", loc_domain, domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call, _("Example") );
+        oyjlMessage_p( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\"/%s) to %s\"%s\" %s for %s  test:%s", loc_domain, domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call, _("Example") );
         if(fn) free(fn);
       }
       if(tmp)
         free(tmp);
     }
   }
-#endif /* OYJL_USE_GETTEXT */
+#endif /* OYJL_HAVE_LIBINTL_H */
+}
+void   oyjlInitI18n_                 ( const char        * loc )
+{
+#ifndef OYJL_SKIP_TRANSLATE
+  oyjl_val oyjl_catalog = NULL;
+  oyjlTr_s * trc = NULL;
+  int use_gettext = 0;
+#ifdef OYJL_USE_GETTEXT
+  use_gettext = 1;
+#else
+# include "liboyjl.i18n.h"
+  int size = sizeof(liboyjl_i18n_oiJS);
+  oyjl_catalog = (oyjl_val) oyjlStringAppendN( NULL, (const char*) liboyjl_i18n_oiJS, size, malloc );
+  if(*oyjl_debug)
+    oyjlMessage_p( oyjlMSG_INFO, 0,OYJL_DBG_FORMAT "loc: \"%s\" domain: \"%s\" catalog-size: %d", OYJL_DBG_ARGS, loc, OYJL_DOMAIN, size );
+#endif
+  oyjlGettextSetup_( use_gettext, OYJL_DOMAIN, "OYJL_LOCALEDIR", OYJL_LOCALEDIR );
+  trc = oyjlTr_New( loc, OYJL_DOMAIN, &oyjl_catalog, 0,0,0, *oyjl_debug > 1?OYJL_OBSERVE:0 );
+  oyjlTr_SetFlags( trc, 0 );
+  oyjlTr_Set( &trc );
+#endif
+}
+
+/** @brief   init the libraries language; optionaly
+ *
+ *  Additionally use setlocale() to obtain locale in your application.
+ *  The message catalog search path is detected from the project specific
+ *  environment variable specified in \em env_var_locdir and
+ *  the \em LOCPATH environment variables. If those are not present
+ *  a expected fall back directory from \em default_locdir is used.
+ *
+ *  @param         project_name        project name display string; e.g. "MyProject"
+ *  @param         env_var_debug       environment debug variable string;
+ *                                     e.g. "MP_DEBUG"
+ *  @param         debug_variable      int C variable; e.g. my_project_debug
+ *  @param         use_gettext         switch gettext support on or off
+ *  @param         env_var_locdir      environment variable string for locale path;
+ *                                     e.g. "MP_LOCALEDIR"
+ *  @param         default_locdir      default locale path C string;
+ *                                     e.g. "/usr/local/share/locale"
+ *  @param         context             locale, domain and possibly more information
+ *                                     - domain: po and mo files; e.g. "myproject"
+ *  @param         msg                 your message function of type oyjlMessage_f; optional - default is Oyjl message function
+ *  @return                            error
+ *                                     - -1 : issue
+ *                                     - 0 : success
+ *                                     - >= 1 : found error
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2019/01/13
+ *  @since   2019/01/13 (Oyjl: 1.0.0)
+ */
+int oyjlInitLanguageDebug            ( const char        * project_name,
+                                       const char        * env_var_debug,
+                                       int               * debug_variable,
+                                       int                 use_gettext OYJL_UNUSED,
+                                       const char        * env_var_locdir OYJL_UNUSED,
+                                       const char        * default_locdir OYJL_UNUSED,
+                                       oyjlTr_s         ** context,
+                                       oyjlMessage_f       msg )
+{
+  int error = -1;
+  oyjlTr_s * trc = context?*context:NULL;
+  const char * loc = oyjlTr_GetLang( trc );
+  const char * loc_domain = oyjlTr_GetDomain( trc );
+
+  if(!msg) msg = oyjlMessage_p;
+
+  if(debug_variable)
+    oyjlDebugVariableSet( debug_variable );
+  oyjlMessageFuncSet(msg);
+
+  if(*debug_variable)
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s loc_domain: %s", OYJL_DBG_ARGS, loc, loc_domain );
+
+  if(getenv(env_var_debug))
+  {
+    *debug_variable = atoi(getenv(env_var_debug));
+    if(*debug_variable)
+    {
+      int v = oyjlVersion(0);
+      if(*debug_variable)
+        msg( oyjlMSG_INFO, 0, "%s (Oyjl compile v: %s runtime v: %d)", project_name, OYJL_VERSION_NAME, v );
+    }
+  }
+
+  oyjlInitI18n_( loc );
+
+  if(loc_domain)
+  {
+    oyjlGettextSetup_( use_gettext, loc_domain, env_var_locdir, default_locdir );
+    int state = oyjlTr_Set( context ); /* just pass domain in */
+    if(*oyjl_debug)
+      msg( oyjlMSG_INFO, 0, "use_gettext: %d loc_domain: %s env_var_locdir: %s default_locdir: %s oyjlTr_Set: %d", use_gettext, loc_domain, env_var_locdir, default_locdir, state );
+  }
 
   return error;
 }
