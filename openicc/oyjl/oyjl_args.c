@@ -29,12 +29,11 @@
 #define OYJL_ARGS_C
 
 #include <stddef.h>
+#include <stdlib.h> /* malloc() */
+#include <stdio.h>
+#include <string.h> /* fprintf() */
 #include <ctype.h> /* toupper() */
 #include <wchar.h>  /* wcslen() */
-#include "oyjl.h"
-#ifdef OYJL_HAVE_LANGINFO_H
-#include <langinfo.h> /* nl_langinfo() */
-#endif
 #include <stdarg.h>
 
 /* C++ includes and definitions */
@@ -49,37 +48,65 @@
 #if defined(OYJL_INTERNAL)
 #include "oyjl.h"
 #include "oyjl_macros.h"
+#include "oyjl_version.h"
+#ifdef OYJL_HAVE_LOCALE_H
+#include <locale.h>
+#endif
+#ifdef OYJL_HAVE_LANGINFO_H
+#include <langinfo.h> /* nl_langinfo() */
+#endif
 extern int * oyjl_debug;
 #include "oyjl_i18n.h"
 #include "oyjl_tree_internal.h"
 
 #else /* OYJL_INTERNAL */
+
+#include <stdint.h> /* intptr_t */
+#ifdef OYJL_HAVE_LOCALE_H
+#include <locale.h> /* setlocale LC_NUMERIC */
+#endif
+#ifdef OYJL_HAVE_LANGINFO_H
+#include <langinfo.h> /* nl_langinfo() */
+#endif
+#define OYJL_VERSION 100
+#define OYJL_VERSION_NAME "1.0.0"
+#define OYJL_DOMAIN  "oyjl"
+#ifndef OYJL_LOCALEDIR
+#define OYJL_LOCALEDIR  ""
+#endif
 int my_debug = 0;
 int * oyjl_debug = &my_debug;
-oyjlTr_s * oyjl_tr_context_ = NULL;
-#ifdef _
-#undef _
+#if   (__GNUC__*100 + __GNUC_MINOR__) >= 406
+#define OYJL_UNUSED                    __attribute__ ((unused))
+#elif defined(__clang__)
+#define OYJL_UNUSED                    __attribute__ ((unused))
+#elif defined(_MSC_VER)
+#define OYJL_UNUSED                    __declspec(unused)
+#else
+#define OYJL_UNUSED
 #endif
-#ifdef OYJL_USE_GETTEXT
+# ifdef _
+#  undef _
+# endif
 # ifdef OYJL_HAVE_LIBINTL_H
 #  include <libintl.h> /* bindtextdomain() */
-# endif
-# define _(text) dgettext( OYJL_DOMAIN, text )
-#else
-#define _(x) x
-#endif
-
-#ifndef OYJL_DBG_FORMAT
-# if defined(__GNUC__)
-#  define  OYJL_DBG_FORMAT "%s:%d %s() "
-#  define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
+#  define _(text) dgettext( OYJL_DOMAIN, text )
 # else
-#  define  OYJL_DBG_FORMAT "%s:%d "
-#  define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+#  define _(x) x
 # endif
-#endif
-#ifndef OYJL_CREATE_VA_STRING
-#define OYJL_CREATE_VA_STRING(format_, text_, alloc_, error_action) \
+# define OYJL_OBSERVE                   0x200000
+
+# ifndef OYJL_DBG_FORMAT
+#  if defined(__GNUC__)
+#   define  OYJL_DBG_FORMAT "%s:%d %s() "
+#   define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__,__func__
+#  else
+#   define  OYJL_DBG_FORMAT "%s:%d "
+#   define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+#  endif
+# endif
+# ifndef OYJL_CREATE_VA_STRING
+# define OYJL_CREATE_VA_STRING(format_, text_, alloc_, error_action) \
 { \
   va_list list; \
   size_t sz = 0; \
@@ -107,7 +134,7 @@ oyjlTr_s * oyjl_tr_context_ = NULL;
 }
 #endif
 
-#define oyjlAllocHelper_m(ptr_, type, size_, alloc_func, action) { \
+# define oyjlAllocHelper_m(ptr_, type, size_, alloc_func, action) { \
   if ((size_) <= 0) {                                       \
       oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "Nothing to allocate"); \
   } else {                                                  \
@@ -121,11 +148,191 @@ oyjlTr_s * oyjl_tr_context_ = NULL;
     action;                                                 \
   }                                                         \
 }
-#define OYJL_ENUM_CASE_TO_STRING(case_) case case_: return #case_
+# define OYJL_ENUM_CASE_TO_STRING(case_) case case_: return #case_
+
+typedef enum {
+  oyjlOBJECT_NONE,
+  oyjlOBJECT_OPTION = 1769433455,
+  oyjlOBJECT_OPTION_GROUP = 1735879023,
+  oyjlOBJECT_OPTIONS = 1937205615,
+  oyjlOBJECT_UI_HEADER_SECTION = 1936222575,
+  oyjlOBJECT_UI = 1769302383,
+  oyjlOBJECT_TR = 1920231791,
+  oyjlOBJECT_JSON = 1397385583
+} oyjlOBJECT_e;
+
+typedef enum oyjlOPTIONTYPE_e {
+    oyjlOPTIONTYPE_START,
+    oyjlOPTIONTYPE_CHOICE,
+    oyjlOPTIONTYPE_FUNCTION,
+    oyjlOPTIONTYPE_DOUBLE,
+    oyjlOPTIONTYPE_NONE,
+    oyjlOPTIONTYPE_END
+} oyjlOPTIONTYPE_e;
+
+typedef enum oyjlVARIABLETYPE_e {
+    oyjlNONE,
+    oyjlSTRING,
+    oyjlDOUBLE,
+    oyjlINT
+} oyjlVARIABLE_e;
+
+typedef struct oyjlOptionChoice_s {
+  char * nick;
+  char * name;
+  char * description;
+  char * help;
+} oyjlOptionChoice_s;
+
+typedef struct oyjlOptions_s oyjlOptions_s;
+typedef struct oyjlOption_s oyjlOption_s;
+
+typedef union oyjlVariable_u {
+  const char ** s;
+  double * d;
+  int * i;
+} oyjlVariable_u;
+
+typedef union oyjlOption_u {
+  oyjlOptionChoice_s * (*getChoices)( oyjlOption_s * opt, int * selected, oyjlOptions_s * context );
+  struct {
+    oyjlOptionChoice_s * list;
+    int selected;
+  } choices;
+  struct {
+    double d;
+    double start;
+    double end;
+    double tick;
+  } dbl;
+} oyjlOption_u;
+
+#define OYJL_OPTION_FLAG_EDITABLE      0x001
+#define OYJL_OPTION_FLAG_ACCEPT_NO_ARG 0x002
+#define OYJL_OPTION_FLAG_NO_DASH       0x004
+#define OYJL_OPTION_FLAG_REPETITION    0x008
+#define OYJL_OPTION_FLAG_MAINTENANCE   0x100
+#define OYJL_OPTION_FLAG_IMMEDIATE     0x200
+struct oyjlOption_s {
+  char type[8];
+  unsigned int flags;
+  const char * o;
+  const char * option;
+  const char * key;
+  const char * name;
+  const char * description;
+  const char * help;
+  const char * value_name;
+  oyjlOPTIONTYPE_e value_type;
+  oyjlOption_u values;
+  oyjlVARIABLE_e variable_type;
+  oyjlVariable_u variable;
+};
+
+#define OYJL_GROUP_FLAG_SUBCOMMAND     0x080
+#define OYJL_GROUP_FLAG_EXPLICITE      0x100
+#define OYJL_GROUP_FLAG_GENERAL_OPTS   0x200
+typedef struct oyjlOptionGroup_s {
+  char type [8];
+  unsigned int flags;
+  const char * name;
+  const char * description;
+  const char * help;
+  const char * mandatory;
+  const char * optional;
+  const char * detail;
+} oyjlOptionGroup_s;
+
+struct oyjlOptions_s {
+  char type [8];
+  oyjlOption_s * array;
+  oyjlOptionGroup_s * groups;
+  void * user_data;
+  int argc;
+  const char ** argv;
+  void * private_data;
+};
+
+#define OYJL_QUIET                     0x100000
+typedef enum {
+  oyjlOPTION_NONE,
+  oyjlOPTION_USER_CHANGED,
+  oyjlOPTION_MISSING_VALUE,
+  oyjlOPTION_UNEXPECTED_VALUE,
+  oyjlOPTION_NOT_SUPPORTED,
+  oyjlOPTION_DOUBLE_OCCURENCE,
+  oyjlOPTIONS_MISSING,
+  oyjlOPTION_NO_GROUP_FOUND,
+  oyjlOPTION_SUBCOMMAND,
+  oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND
+} oyjlOPTIONSTATE_e;
+
+typedef struct oyjlUiHeaderSection_s {
+  char type [8];
+  const char * nick;
+  const char * label;
+  const char * name;
+  const char * description;
+} oyjlUiHeaderSection_s;
+
+typedef struct oyjlUi_s oyjlUi_s;
+struct oyjlUi_s {
+  char type [8];
+  const char * app_type;
+  const char * nick;
+  const char * name;
+  const char * description;
+  const char * logo;
+  oyjlUiHeaderSection_s * sections;
+  oyjlOptions_s * opts;                /* info for UI logic */
+};
+
+oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
+                                       const char        * ostring,
+                                       int                 flags );
+enum {
+  oyjlUI_STATE_NONE,
+  oyjlUI_STATE_HELP,
+  oyjlUI_STATE_VERBOSE = 2,
+  oyjlUI_STATE_EXPORT = 4,
+  oyjlUI_STATE_OPTION = 24,
+  oyjlUI_STATE_NO_CHECKS = 0x1000
+};
+oyjlOPTIONSTATE_e oyjlOptions_GetResult (
+                                       oyjlOptions_s     * opts,
+                                       const char        * opt,
+                                       const char       ** result_string,
+                                       double            * result_dbl,
+                                       int               * result_int );
+char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
+                                       const char        * oc,
+                                       int               * count );
+oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
+                                       oyjlUi_s          * ui,
+                                       const char        * nick );
+void               oyjlUi_ReleaseArgs( oyjlUi_s         ** ui );
+char *             oyjlUi_ToJson     ( oyjlUi_s          * ui,
+                                       int                 flags );
+char *             oyjlUi_ToMan      ( oyjlUi_s          * ui,
+                                       int                 flags );
+char *             oyjlUi_ToMarkdown ( oyjlUi_s          * ui,
+                                       int                 flags );
+char *             oyjlUi_ExportToJson(oyjlUi_s          * ui,
+                                       int                 flags );
+typedef enum {
+  oyjlMSG_INFO = 400,
+  oyjlMSG_CLIENT_CANCELED,
+  oyjlMSG_INSUFFICIENT_DATA,
+  oyjlMSG_ERROR
+} oyjlMSG_e;
+typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
+                                       const void        * context,
+                                       const char        * format,
+                                       ... );
 
 char *   oyjlBT                      ( int                 stack_limit OYJL_UNUSED )
 {
-  return NULL;
+  return strdup("");
 }
 extern oyjlMessage_f oyjlMessage_p;
 int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
@@ -300,6 +507,9 @@ int        oyjlStringReplace         ( char             ** text,
 }
 
 
+typedef struct oyjl_string_s * oyjl_str;
+const char*oyjlStr                   ( oyjl_str            string );
+void       oyjlStr_Release           ( oyjl_str          * string_ptr );
 struct oyjl_string_s
 {
     char * s;                          /**< @brief UTF-8 text */
@@ -835,7 +1045,6 @@ void     oyjlStringListAddList       ( char            *** list,
   *list = tmp;
 }
 
-#include "oyjl_version.h"
 int            oyjlVersion           ( int                 type OYJL_UNUSED )
 {
   return OYJL_VERSION;
@@ -884,35 +1093,244 @@ int oyjlIsFileFull_ (const char* fullFileName, const char * read_mode)
 
   return r;
 }
-static char * oyjl_nls_path_ = NULL;
-void oyjlLibRelease() { if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); } }
-#define OyjlToString2_M(t) OyjlToString_M(t)
-#define OyjlToString_M(t) #t
-int oyjlInitLanguageDebug            ( const char        * project_name,
-                                       const char        * env_var_debug,
-                                       int               * debug_variable,
-                                       int                 use_gettext OYJL_UNUSED,
-                                       const char        * env_var_locdir OYJL_UNUSED,
-                                       const char        * default_locdir OYJL_UNUSED,
-                                       const char        * loc_domain OYJL_UNUSED,
-                                       oyjlMessage_f       msg )
+typedef struct oyjl_val_s * oyjl_val;
+typedef struct oyjlTr_s oyjlTr_s; /* from oyjl.h */
+typedef char*(*oyjlTranslate_f)      ( oyjlTr_s          * context,
+                                       const char        * string );
+void           oyjlTr_Release        ( oyjlTr_s         ** context_ );
+struct oyjlTr_s
 {
-  int error = -1;
+  char type [8];                       /**< @brief must be 'oitr' */
+  const char * loc;                    /**< @brief original provided locale */
+  char * lang;                         /**< @brief optimised loc for translator */
+  const char * domain;                 /**< @brief identiefier for catalog */
+  oyjl_val catalog;                    /**< @brief the translation tables */
+  int start;                           /**< @brief lang start in catalog paths */
+  int end;                             /**< @brief lang end in catalog paths */
+  oyjlTranslate_f translator;          /**< @brief the function */
+  void * user_data;                    /**< @brief additional data for translator */
+  void (*deAlloc)(void*);              /**< @brief custom deallocator; optional */
+  int flags;                           /**< @brief flags for translator; optional */
+};
+oyjlTr_s *     oyjlTr_New            ( const char        * loc,
+                                       const char        * domain,
+                                       oyjl_val          * catalog,
+                                       oyjlTranslate_f     translator,
+                                       void              * user_data,
+                                       void             (* deAlloc)(void*),
+                                       int                 flags )
+{
+  oyjlTr_s * context = NULL;
+  char * lang = NULL;
 
-  if(!msg) msg = oyjlMessage_p;
-
-  if(getenv(env_var_debug))
+  oyjlAllocHelper_m( context, struct oyjlTr_s, 1, malloc, return NULL );
+  memcpy( context->type, "oitr", 4 );
+  context->loc = loc;
+  context->domain = domain;
+  if(*oyjl_debug > 1)
+    fprintf(stderr, OYJL_DBG_FORMAT "loc: %s domain: %s\n", OYJL_DBG_ARGS, loc, domain );
+  if(catalog)
   {
-    *debug_variable = atoi(getenv(env_var_debug));
-    if(*debug_variable)
+    context->catalog = *catalog;
+    *catalog = NULL;
+  }
+  context->translator = translator;
+  context->user_data = user_data;
+  context->deAlloc = deAlloc;
+  context->flags = flags;
+  /*lang  = oyjlLangForCatalog_( loc, context->catalog,
+                                    &context->start, &context->end,
+                                    context->flags );*/
+  context->lang = lang;
+
+  return context;
+}
+int oyjlTr_Check_                    ( oyjlTr_s          * context )
+{
+  int success = 1;
+  if( context && *(oyjlOBJECT_e*)context != oyjlOBJECT_TR)
+  {
+    char * a = (char*)context;
+    char type[5] = {a[0],a[1],a[2],a[3],0};
+    char * t = oyjlBT(0);
+    fprintf(stderr, "%sUnexpected object: \"%s\"(expected: \"oyjlTr_s\")\n", t, type );
+    free(t);
+    success = 0;
+    return success;
+  }
+  return success;
+}
+const char *   oyjlTr_GetDomain      ( oyjlTr_s          * context )
+{
+  return context && oyjlTr_Check_(context) ? context->domain : NULL;
+}
+const char * oyjlTr_GetLang          ( oyjlTr_s          * context )
+{
+  return !context || !oyjlTr_Check_(context) ? "" : context->lang ? context->lang : context->loc;
+}
+void           oyjlTr_SetFlags       ( oyjlTr_s          * context,
+                                       int                 flags )
+{
+  if(context && oyjlTr_Check_(context))
+    context->flags = flags;
+}
+oyjlTr_s ** oyjl_tr_context_ = NULL;
+int         oyjl_tr_context_reserve_ = 0;
+int            oyjlTr_Set            ( const char        * domain,
+                                       oyjlTr_s         ** context )
+{
+  int i = 0, pos = -1;
+  oyjlTr_s * oyjl_tr_context = NULL;
+  int state = -1;
+
+  if(context && *context && !oyjlTr_Check_(*context))
+    return -2;
+
+  if(!domain)
+  {
+    oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, OYJL_DBG_FORMAT "domain arg missed", OYJL_DBG_ARGS );
+    return state;
+  }
+  state = 0;
+
+  while(oyjl_tr_context_ && oyjl_tr_context_[i])
+  {
+    oyjlTr_s * context = oyjl_tr_context_[i];
+    if(context->domain && domain && strcmp(context->domain, domain) == 0)
     {
-      int v = oyjlVersion(0);
-      if(*debug_variable)
-        msg( oyjlMSG_INFO, 0, "%s (Oyjl compile v: %s runtime v: %d)", project_name, OYJL_VERSION_NAME, v );
+      pos = i;
+      break;
+    }
+    ++i;
+  }
+  if(pos >= 0)
+  {
+    oyjl_tr_context = oyjl_tr_context_[pos];
+    state |= 1;
+    if(*oyjl_debug)
+    {
+      int erase = context && oyjl_tr_context && oyjl_tr_context != *context,
+          keep = context && oyjl_tr_context == *context,
+          replace = !erase && context && *context;
+      char * t = oyjlBT(0);
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s[%d] domain: \"%s\" show", OYJL_DBG_ARGS, t, pos, domain, erase?"erase":keep?"keep":replace?"replace":"show on return" );
+      free(t);
     }
   }
 
-#ifdef OYJL_USE_GETTEXT
+  if(context && oyjl_tr_context == *context)
+    return 1|4;
+
+  if(context && oyjl_tr_context && oyjl_tr_context != *context)
+  {
+    oyjlTr_Release(&oyjl_tr_context_[pos]);
+    state |= 2;
+  }
+
+  if(context && *context)
+  {
+    if(!oyjl_tr_context_)
+    {
+      oyjlAllocHelper_m( oyjl_tr_context_, oyjlTr_s*, 10, malloc, return -2 );
+      oyjl_tr_context_reserve_ = 10;
+    }
+    if(i == oyjl_tr_context_reserve_)
+    {
+      oyjl_tr_context_ = realloc( oyjl_tr_context_, sizeof(oyjlTr_s*) * oyjl_tr_context_reserve_ * 2 );
+      if(!oyjl_tr_context_)
+      {
+        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "domain: \"%s\" alloc failed: %d", OYJL_DBG_ARGS, domain, i );
+        return -2;
+      } else
+        oyjl_tr_context_reserve_ *= 2;
+    }
+    oyjl_tr_context_[i] = *context;
+    *context = NULL;
+  }
+
+  return state;
+}
+oyjlTr_s *     oyjlTr_Get            ( const char        * domain )
+{
+  oyjlTr_s * context = NULL;
+
+  if(oyjl_tr_context_ && domain)
+  {
+    int i = 0;
+    while(oyjl_tr_context_[i])
+    {
+      context = oyjl_tr_context_[i];
+      if(context->domain && domain && strcmp(context->domain, domain) == 0)
+        break;
+      else
+        context = NULL;
+      ++i;
+    }
+  }
+
+  return context;
+}
+static char * oyjl_nls_path_ = NULL;
+void oyjlLibRelease() {
+  if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); }
+  if(oyjl_tr_context_)
+  {
+    int i = 0;
+    while(oyjl_tr_context_[i])
+    {
+      oyjlTr_Release( &oyjl_tr_context_[i] );
+      ++i;
+    }
+    free(oyjl_tr_context_);
+    oyjl_tr_context_ = NULL;
+    oyjl_tr_context_reserve_ = 0;
+  }
+}
+void oyjlTreeFree (oyjl_val v)
+{
+    if (v == NULL) return;
+
+    /*if((long)v->type != oyjlOBJECT_JSON)
+      oyjlValueClear (v);*/
+
+    free(v);
+}
+void           oyjlTr_Release        ( oyjlTr_s         ** context_ )
+{
+  oyjlTr_s * context;
+  if(!(context_ && *context_ && oyjlTr_Check_(*context_)))
+    return;
+
+  context = *context_;
+  context->loc = NULL;
+  if(context->catalog)
+    oyjlTreeFree( context->catalog );
+  context->catalog = NULL;
+  context->translator = NULL;
+  if(context->deAlloc)
+    context->deAlloc( context->user_data );
+  context->user_data = NULL;
+  context->deAlloc = NULL;
+  context->flags = 0;
+  context->start = 0;
+  context->end = 0;
+  if(context->lang)
+    free(context->lang);
+  context->lang = NULL;
+  free(context);
+  context = NULL;
+
+  *context_ = context;
+}
+
+#define OyjlToString2_M(t) OyjlToString_M(t)
+#define OyjlToString_M(t) #t
+void   oyjlGettextSetup_             ( int                 use_gettext OYJL_UNUSED,
+                                       const char        * loc_domain OYJL_UNUSED,
+                                       const char        * env_var_locdir OYJL_UNUSED,
+                                       const char        * default_locdir OYJL_UNUSED )
+{
+#ifdef OYJL_HAVE_LIBINTL_H
   {
     if( use_gettext )
     {
@@ -926,18 +1344,18 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
       {
         tmp = strdup(getenv(env_var_locdir));
         environment_locale_dir = domain_path = tmp;
-        if(*debug_variable)
-          msg( oyjlMSG_INFO, 0,"found environment variable: %s=%s", env_var_locdir, domain_path );
+        if(*oyjl_debug)
+          oyjlMessage_p( oyjlMSG_INFO, 0,"found environment variable: %s=%s", env_var_locdir, domain_path );
       } else
         if(environment_locale_dir == NULL && getenv("LOCPATH") && strlen(getenv("LOCPATH")))
       {
         domain_path = NULL;
         locpath = getenv("LOCPATH");
-        if(*debug_variable)
-          msg( oyjlMSG_INFO, 0,"found environment variable: LOCPATH=%s", locpath );
+        if(*oyjl_debug)
+          oyjlMessage_p( oyjlMSG_INFO, 0,"found environment variable: LOCPATH=%s", locpath );
       } else
-        if(*debug_variable)
-        msg( oyjlMSG_INFO, 0,"no %s or LOCPATH environment variable found; using default path: %s", env_var_locdir, domain_path );
+        if(*oyjl_debug)
+        oyjlMessage_p( oyjlMSG_INFO, 0,"no %s or LOCPATH environment variable found; using default path: %s", env_var_locdir, domain_path );
 
       if(domain_path || locpath)
       {
@@ -956,26 +1374,99 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
        * so it is set here to bindtextdomain(). */
       path = domain_path ? domain_path : locpath;
 # ifdef OYJL_HAVE_LIBINTL_H
-      bindtextdomain( loc_domain, path );
+      const char * d = textdomain( loc_domain );
+      const char * dpath = bindtextdomain( loc_domain, path );
+      if(*oyjl_debug)
+        oyjlMessage_p( oyjlMSG_INFO, 0,"bindtextdomain( \"%s\", \"%s\"/%s ) = ", loc_domain, path, dpath, d );
 #endif
-      if(*debug_variable)
+      if(*oyjl_debug)
       {
         char * fn = NULL;
         int stat = -1;
         const char * gettext_call = OyjlToString2_M(_());
+        const char * domain = textdomain(NULL);
 
         if(path)
           oyjlStringAdd( &fn, 0,0, "%s/de/LC_MESSAGES/%s.mo", path ? path : "", loc_domain);
         if(fn)
           stat = oyjlIsFileFull_( fn, "r" );
-        msg( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\") to %s\"%s\" %s for %s  test:%s", loc_domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call, _("Example") );
+        oyjlMessage_p( oyjlMSG_INFO, 0,"bindtextdomain(\"%s\"/%s) to %s\"%s\" %s for %s  test:%s", loc_domain, domain, locpath?"effectively ":"", path ? path : "", (stat > 0)?"Looks good":"Might fail", gettext_call, _("Example") );
         if(fn) free(fn);
       }
       if(tmp)
         free(tmp);
     }
   }
-#endif /* OYJL_USE_GETTEXT */
+#endif /* OYJL_HAVE_LIBINTL_H */
+}
+void   oyjlInitI18n_                 ( const char        * loc OYJL_UNUSED )
+{
+#ifndef OYJL_SKIP_TRANSLATE
+  oyjl_val oyjl_catalog = NULL;
+  oyjlTr_s * trc = NULL;
+  int use_gettext = 0;
+#ifdef OYJL_HAVE_LIBINTL_H
+  use_gettext = 1;
+#else
+# if 0
+# include "liboyjl.i18n.h"
+  int size = sizeof(liboyjl_i18n_oiJS);
+  oyjl_catalog = (oyjl_val) oyjlStringAppendN( NULL, (const char*) liboyjl_i18n_oiJS, size, malloc );
+  if(*oyjl_debug)
+    oyjlMessage_p( oyjlMSG_INFO, 0,OYJL_DBG_FORMAT "loc: \"%s\" domain: \"%s\" catalog-size: %d", OYJL_DBG_ARGS, loc, OYJL_DOMAIN, size );
+# endif
+#endif
+  oyjlGettextSetup_( use_gettext, OYJL_DOMAIN, "OYJL_LOCALEDIR", OYJL_LOCALEDIR );
+  trc = oyjlTr_New( loc, OYJL_DOMAIN, &oyjl_catalog, 0,0,0, *oyjl_debug > 1?OYJL_OBSERVE:0 );
+  oyjlTr_SetFlags( trc, 0 );
+  oyjlTr_Set( OYJL_DOMAIN, &trc );
+#endif
+}
+
+int oyjlInitLanguageDebug            ( const char        * project_name,
+                                       const char        * env_var_debug,
+                                       int               * debug_variable,
+                                       int                 use_gettext OYJL_UNUSED,
+                                       const char        * env_var_locdir OYJL_UNUSED,
+                                       const char        * default_locdir OYJL_UNUSED,
+                                       oyjlTr_s         ** context OYJL_UNUSED,
+                                       oyjlMessage_f       msg )
+{
+  int error = -1;
+  oyjlTr_s * trc = context?*context:NULL;
+  const char * loc = oyjlTr_GetLang( trc );
+  const char * loc_domain = oyjlTr_GetDomain( trc );
+
+  if(!msg) msg = oyjlMessage_p;
+
+  if(debug_variable)
+    oyjl_debug = debug_variable;
+  if(msg)
+    oyjlMessage_p = msg;
+
+  if(*debug_variable)
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s loc_domain: %s", OYJL_DBG_ARGS, loc, loc_domain );
+
+  if(getenv(env_var_debug))
+  {
+    *debug_variable = atoi(getenv(env_var_debug));
+    if(*debug_variable)
+    {
+      int v = oyjlVersion(0);
+      if(*debug_variable)
+        msg( oyjlMSG_INFO, 0, "%s (Oyjl compile v: %s runtime v: %d)", project_name, OYJL_VERSION_NAME, v );
+    }
+  }
+
+  oyjlInitI18n_( loc );
+
+  if(loc_domain)
+  {
+    oyjlGettextSetup_( use_gettext, loc_domain, env_var_locdir, default_locdir );
+    int state = oyjlTr_Set( loc_domain, context ); /* just pass domain in */
+    if(*oyjl_debug)
+      msg( oyjlMSG_INFO, 0, "use_gettext: %d loc_domain: %s env_var_locdir: %s default_locdir: %s oyjlTr_Set: %d", use_gettext, loc_domain, env_var_locdir, default_locdir, state );
+  }
 
   return error;
 }
@@ -987,14 +1478,23 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 
 #if !defined(OYJL_TREE_INTERNAL_H)
 typedef struct {
-  char       ** options; /* detected vanilla args + probably "@" for anonymous args */
-  const char ** values; /* the vanilla args from main(argv[]) */
-  int           count; /* number of detected options */
-  int           group; /* detected group */
-  void        * attr; /* oyjl_val attributes */
-  int           memory_allocation; /* 0: as usual; 1 - sections, 2 - opts->groups and 4 - opts->array are owned and need to be released */
+  char       ** options;
+  const char ** values;
+  int           count;
+  int           group;
+  void        * attr;
+  int           memory_allocation;
 } oyjlOptsPrivate_s;
 #endif
+typedef enum {
+  oyjlNO_MARK,
+  oyjlRED,
+  oyjlGREEN,
+  oyjlBLUE,
+  oyjlBOLD,
+  oyjlITALIC,
+  oyjlUNDERLINE
+} oyjlTEXTMARK_e;
 #endif /* OYJL_INTERNAL */
 
 #ifdef OYJL_HAVE_LANGINFO_H
@@ -1257,7 +1757,7 @@ int oyjlOptions_GroupHasOptionL_     ( oyjlOptions_s     * opts,
 /**
  *  @return                            - 1 for number
  *                                     - 2 for symbolic */
-int oyjlManArgIsNum( const char * arg )
+int oyjlManArgIsNum_( const char * arg )
 {
   int is_num_arg = 0, i = 0;
   double dbl = 0.0;
@@ -1273,11 +1773,11 @@ int oyjlManArgIsNum( const char * arg )
   return is_num_arg;
 }
 
-int oyjlManArgIsEditable( const char * arg )
+int oyjlManArgIsEditable_( const char * arg )
 {
   int is_edit_arg = 0;
   if(!arg) return is_edit_arg;
-  if(oyjlManArgIsNum(arg) == 2 && strchr(arg,'|') == NULL)
+  if(oyjlManArgIsNum_(arg) == 2 && strchr(arg,'|') == NULL)
     ++is_edit_arg;
   /* explicite more expressions */
   if( strstr(arg, "...") != NULL )
@@ -1362,7 +1862,7 @@ char *       oyjlOption_PrintArg_    ( oyjlOption_s      * o,
   {
     const char * value_name = o->value_name;
     int needs_edit_dots = 0;
-    int is_editable_arg = oyjlManArgIsEditable( value_name );
+    int is_editable_arg = oyjlManArgIsEditable_( value_name );
     if( o->flags & OYJL_OPTION_FLAG_EDITABLE &&
         !is_editable_arg &&
         strstr(value_name, "...") == NULL )
@@ -1615,7 +2115,7 @@ oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
   return o;
 }
 
-static int oyjlOptions_IsOn_         ( oyjlOptions_s     * opts,
+int oyjlOptions_IsOn_         ( oyjlOptions_s     * opts,
                                        const char        * opt )
 {
   int found = 0;
@@ -3302,12 +3802,6 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   int flags = 0, optionless = 0;//, anonymous = 0;
   char * t;
 
-  int use_gettext = 0;
-#ifdef OYJL_USE_GETTEXT
-  use_gettext = 1;
-#endif
-  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
-
   if(status)
     flags = *status;
 
@@ -3902,7 +4396,7 @@ oyjlUiHeaderSection_s * oyjlUi_GetHeaderSection (
   return section;
 }
 
-char *       oyjlStringToUpper       ( const char        * t )
+char *       oyjlStringToUpper_      ( const char        * t )
 {
   char * text = oyjlStringCopy(t, malloc);
   int slen = strlen(t), i;
@@ -3910,7 +4404,7 @@ char *       oyjlStringToUpper       ( const char        * t )
     text[i] = toupper(t[i]);
   return text;
 }
-char *       oyjlStringToLower       ( const char        * t )
+char *       oyjlStringToLower_      ( const char        * t )
 {
   char * text = oyjlStringCopy(t, malloc);
   int slen = strlen(t), i;
@@ -3949,7 +4443,7 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
       while((list[n].nick && list[n].nick[0] != '\000') || (list[n].name && list[n].name[0] != '\000')) ++n;
       if(n)
       {
-        char * up = oyjlStringToUpper( &opt_name[4] );
+        char * up = oyjlStringToUpper_( &opt_name[4] );
         oyjlStringReplace( &up, "_", " ", malloc, free );
         const char * section = up;
         if(strcmp(section,"EXAMPLES") == 0)
@@ -3968,7 +4462,7 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
           section = _("SEE ALSO");
         if(flags & oyjlOPTIONSTYLE_MARKDOWN)
         {
-          char * low = oyjlStringToLower( &opt_name[4] );
+          char * low = oyjlStringToLower_( &opt_name[4] );
           oyjlStringReplace( &low, "_", "", malloc, free );
           ADD_SECTION( _(section), low, "", "" )
           free(low);
