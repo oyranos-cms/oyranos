@@ -558,6 +558,8 @@ int main( int argc_, char**argv_, char ** envv )
 {
   int argc = argc_;
   char ** argv = argv_;
+  oyjlTr_s * trc = NULL;
+  char * loc = NULL;
 
 #ifdef __ANDROID__
   setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
@@ -574,11 +576,21 @@ int main( int argc_, char**argv_, char ** envv )
   int use_gettext = 0;
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;
+#endif
 #ifdef OYJL_HAVE_LOCALE_H
-  setlocale(LC_ALL,"");
+  loc = setlocale(LC_ALL,"");
 #endif
-#endif
-  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );
+  if(!loc)
+  {
+    loc = getenv("LANG");
+    fprintf( stderr, "%s", oyjlTermColor(oyjlRED,"Usage Error:") );
+    fprintf(stderr,OYJL_DBG_FORMAT "", OYJL_DBG_ARGS);
+    fprintf( stderr, " Environment variable possibly not correct. Translations might fail - LANG=%s\n", oyjlTermColor(oyjlBOLD,loc) );
+  }
+  if(loc)
+    trc = oyjlTr_New( loc, 0,0,0,0,0,0 );
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, NULL );
+  oyjlTr_Release( &trc );
 
   myMain(argc, (const char **)argv);
 

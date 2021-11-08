@@ -870,11 +870,15 @@ static oyjl_val oyjlFindOption_( oyjl_val root, char o )
  *  The input is the JSON data from oyjlUi_ExportToJson().
  *
  *  @param[in]     root                the parsed JSON tree to convert
- *  @param[in]     flags               ::OYJL_SOURCE_CODE_C, ::OYJL_SUGGEST_VARIABLE_NAMES,
- *                                     ::OYJL_NO_DEFAULT_OPTIONS ::OYJL_COMPLETION_BASH are supported
+ *  @param[in]     flags               support;
+ *                                     - ::OYJL_SOURCE_CODE_C
+ *                                       - ::OYJL_WITH_OYJL_ARGS_C
+ *                                       - ::OYJL_SUGGEST_VARIABLE_NAMES
+ *                                       - ::OYJL_NO_DEFAULT_OPTIONS
+ *                                     - ::OYJL_COMPLETION_BASH
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/10/11
+ *  @date    2021/10/31
  *  @since   2019/06/24 (Oyjl: 1.0.0)
  */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
@@ -889,20 +893,46 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     int i,n, X_found = 0, export_found = 0, h_found = 0, help_found = 0, v_found = 0, v_is_string = 0, verbose_found = 0, version_found = 0, render_found = 0;
 
     val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/app_type" ); app_type = OYJL_GET_STRING(val);
-    oyjlStr_Add( s, "#include \"oyjl.h\"\n" );
-    oyjlStr_Add( s, "#include \"oyjl_version.h\"\n" );
+    if(flags & OYJL_WITH_OYJL_ARGS_C)
+    {
+      oyjlStr_Add( s, "/* Compile:\n" );
+      oyjlStr_Add( s, " *   cc -Wall -g my-OyjlArgs-enabled-tool.c -DOYJL_HAVE_LOCALE_H -DOYJL_HAVE_LANGINFO_H -DOYJL_HAVE_LIBINTL_H -DOYJL_LOCALEDIR=\"\\\"/usr/local/share/locale\\\"\"  -I oyjl/\n" );
+      oyjlStr_Add( s, " */\n" );
+      oyjlStr_Add( s, "#include \"oyjl_args.c\"\n" );
+    }
+    else
+    {
+      oyjlStr_Add( s, "#include \"oyjl.h\"\n" );
+      oyjlStr_Add( s, "#include \"oyjl_version.h\"\n" );
+    }
     oyjlStr_Add( s, "extern char **environ;\n" );
+    if(flags & OYJL_WITH_OYJL_ARGS_C)
+      oyjlStr_Add( s, "#define NO_OYJL_ARGS_RENDER\n" );
     oyjlStr_Add( s, "#ifdef OYJL_HAVE_LOCALE_H\n" );
-    oyjlStr_Add( s, "#include <locale.h>\n" );
+    oyjlStr_Add( s, "# include <locale.h>\n" );
     oyjlStr_Add( s, "#endif\n" );
-    oyjlStr_Add( s, "#ifdef OYJL_USE_GETTEXT\n" );
-    oyjlStr_Add( s, "# ifdef OYJL_HAVE_LIBINTL_H\n" );
-    oyjlStr_Add( s, "#  include <libintl.h> /* bindtextdomain() */\n" );
+    oyjlStr_Add( s, "#define MY_DOMAIN \"oyjl\"\n" );
+    oyjlStr_Add( s, "oyjlTr_s * trc = NULL;\n" );
+    oyjlStr_Add( s, "# ifdef _\n" );
+    oyjlStr_Add( s, "# undef _\n" );
     oyjlStr_Add( s, "# endif\n" );
-    oyjlStr_Add( s, "# define _(text) dgettext( OYJL_DOMAIN, text )\n" );
-    oyjlStr_Add( s, "#else\n" );
-    oyjlStr_Add( s, "# define _(text) text\n" );
-    oyjlStr_Add( s, "#endif\n" );
+    if(flags & OYJL_WITH_OYJL_ARGS_C)
+    {
+      oyjlStr_Add( s, "#ifdef OYJL_HAVE_LIBINTL_H\n" );
+      oyjlStr_Add( s, "# define _(text) dgettext( MY_DOMAIN, text )\n" );
+      oyjlStr_Add( s, "#else\n" );
+      oyjlStr_Add( s, "# ifdef OYJL_H\n" );
+      oyjlStr_Add( s, "#  define _(text) oyjlTranslate( trc, text )\n" );
+      oyjlStr_Add( s, "# else\n" );
+      oyjlStr_Add( s, "#  define _(text) text\n" );
+      oyjlStr_Add( s, "# endif\n" );
+      oyjlStr_Add( s, "#endif\n" );
+    }
+    else
+    {
+      oyjlStr_Add( s, "# define _(text) oyjlTranslate( trc, text )\n" );
+    }
+
     n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/array" ) );
     for(i = 0; i < n; ++i)
     {
@@ -1381,10 +1411,14 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "  if(ui && verbose)\n" );
     oyjlStr_Add( s, "  {\n" );
+    if(flags & OYJL_WITH_OYJL_ARGS_C)
+    oyjlStr_Add( s, "#if 0\n" );
     oyjlStr_Add( s, "    char * json = oyjlOptions_ResultsToJson( ui->opts );\n" );
     oyjlStr_Add( s, "    if(json)\n" );
     oyjlStr_Add( s, "      fputs( json, stderr );\n" );
     oyjlStr_Add( s, "    fputs( \"\\n\", stderr );\n" );
+    if(flags & OYJL_WITH_OYJL_ARGS_C)
+    oyjlStr_Add( s, "#endif\n" );
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "    char * text = oyjlOptions_ResultsToText( ui->opts );\n" );
     oyjlStr_Add( s, "    if(text)\n" );
@@ -1394,11 +1428,19 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "  if(ui && (export_var && strcmp(export_var,\"json+command\") == 0))\n" );
     oyjlStr_Add( s, "  {\n" );
+    if(flags & OYJL_WITH_OYJL_ARGS_C)
+    oyjlStr_Add( s, "#if 0\n" );
     oyjlStr_Add( s, "    char * json = oyjlUi_ToJson( ui, 0 ),\n" );
     oyjlStr_Add( s, "         * json_commands = NULL;\n" );
     oyjlStr_Add( s, "    oyjlStringAdd( &json_commands, malloc, free, \"{\\n  \\\"command_set\\\": \\\"%%s\\\",\", argv[0] );\n" );
     oyjlStr_Add( s, "    oyjlStringAdd( &json_commands, malloc, free, \"%%s\", &json[1] ); /* skip opening '{' */\n" );
     oyjlStr_Add( s, "    puts( json_commands );\n" );
+    if(flags & OYJL_WITH_OYJL_ARGS_C)
+    {
+      oyjlStr_Add( s, "#else\n" );
+      oyjlStr_Add( s, "    fputs( \"oyjlUi_ToJson not supported.\", stderr );\n" );
+      oyjlStr_Add( s, "#endif\n" );
+    }
     oyjlStr_Add( s, "    goto clean_main;\n" );
     oyjlStr_Add( s, "  }\n" );
     oyjlStr_Add( s, "\n" );
@@ -1409,7 +1451,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "    int debug = verbose;\n" );
     oyjlStr_Add( s, "    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );\n" );
     oyjlStr_Add( s, "#else\n" );
-    oyjlStr_Add( s, "    fprintf( stderr, \"No render support compiled in. For a GUI use -X json and load into oyjl-args-render viewer.\" );\n" );
+    oyjlStr_Add( s, "    fprintf( stderr, \"No render support compiled in. For a GUI you might by able to use -X json+command and load into oyjl-args-render viewer.\\n\" );\n" );
     oyjlStr_Add( s, "#endif\n" );
     oyjlStr_Add( s, "  } else if(ui)\n" );
     oyjlStr_Add( s, "  {\n" );
@@ -1438,6 +1480,9 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "{\n" );
     oyjlStr_Add( s, "  int argc = argc_;\n" );
     oyjlStr_Add( s, "  char ** argv = argv_;\n" );
+    oyjlStr_Add( s, "  oyjlTr_s * trc_ = NULL;\n" );
+    oyjlStr_Add( s, "  const char * loc = NULL;\n" );
+    oyjlStr_Add( s, "  const char * lang = getenv(\"LANG\");\n" );
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "#ifdef __ANDROID__\n" );
     oyjlStr_Add( s, "  setenv(\"COLORTERM\", \"1\", 0); /* show rich text format on non GNU color extension environment */\n" );
@@ -1452,15 +1497,34 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "  /* language needs to be initialised before setup of data structures */\n" );
     oyjlStr_Add( s, "  int use_gettext = 0;\n" );
-    oyjlStr_Add( s, "#ifdef OYJL_USE_GETTEXT\n" );
+    oyjlStr_Add( s, "#ifdef OYJL_HAVE_LIBINTL_H\n" );
     oyjlStr_Add( s, "  use_gettext = 1;\n" );
+    oyjlStr_Add( s, "#endif\n" );
     oyjlStr_Add( s, "#ifdef OYJL_HAVE_LOCALE_H\n" );
-    oyjlStr_Add( s, "  setlocale(LC_ALL,\"\");\n" );
+    oyjlStr_Add( s, "  loc = setlocale(LC_ALL,\"\");\n" );
     oyjlStr_Add( s, "#endif\n" );
-    oyjlStr_Add( s, "#endif\n" );
-    oyjlStr_Add( s, "  oyjlInitLanguageDebug( \"Oyjl\", \"OYJL_DEBUG\", oyjl_debug, use_gettext, \"OYJL_LOCALEDIR\", OYJL_LOCALEDIR, OYJL_DOMAIN, NULL );\n" );
+    oyjlStr_Add( s, "  if(!loc)\n" );
+    oyjlStr_Add( s, "  {\n" );
+    oyjlStr_Add( s, "    loc = lang;\n" );
+    oyjlStr_Add( s, "    fprintf( stderr, \"%%s\", oyjlTermColor(oyjlRED,\"Usage Error:\") );\n" );
+    oyjlStr_Add( s, "    fprintf( stderr, \" Environment variable possibly not correct. Translations might fail - LANG=%%s\\n\", oyjlTermColor(oyjlBOLD,lang) );\n" );
+    oyjlStr_Add( s, "  }\n" );
+    oyjlStr_Add( s, "  if(lang)\n" );
+    oyjlStr_Add( s, "    loc = lang;\n" );
+    oyjlStr_Add( s, "  if(loc)\n" );
+    oyjlStr_Add( s, "  {\n" );
+    oyjlStr_Add( s, "    const char * my_domain = MY_DOMAIN;\n" );
+    oyjlStr_Add( s, "    if(my_domain && strcmp(my_domain,\"oyjl\") == 0)\n" );
+    oyjlStr_Add( s, "      my_domain = NULL;\n" );
+    oyjlStr_Add( s, "    trc = trc_ = oyjlTr_New( loc, my_domain, 0,0,0,0,0 );\n" );
+    oyjlStr_Add( s, "  }\n" );
+    oyjlStr_Add( s, "  oyjlInitLanguageDebug( \"Oyjl\", \"OYJL_DEBUG\", oyjl_debug, use_gettext, \"OYJL_LOCALEDIR\", OYJL_LOCALEDIR, &trc_, NULL );\n" );
+    oyjlStr_Add( s, "  if(MY_DOMAIN && strcmp(MY_DOMAIN,\"oyjl\") == 0)\n" );
+    oyjlStr_Add( s, "    trc = oyjlTr_Get( MY_DOMAIN );\n" );
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "  myMain(argc, (const char **)argv);\n" );
+    oyjlStr_Add( s, "\n" );
+    oyjlStr_Add( s, "  oyjlTr_Release( &trc_ );\n" );
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "#ifdef __ANDROID__\n" );
     oyjlStr_Add( s, "  free( argv );\n" );
@@ -2512,7 +2576,6 @@ void               oyjlUi_Translate  ( oyjlUi_s          * ui,
   int i,j,n,ng;
   oyjlTranslate_f translator = NULL;
 
-  if(!context) context = oyjlTr(NULL);
   translator = oyjlTr_GetTranslator( context );
 
   if(!ui) return;

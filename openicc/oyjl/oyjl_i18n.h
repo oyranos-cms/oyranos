@@ -22,7 +22,8 @@
 # include <libintl.h> /* bindtextdomain() */
 #endif
 #ifndef OYJL_SKIP_TRANSLATE
-# define _(text) oyjlTranslate( oyjl_tr_context_, text )
+extern oyjlTr_s**oyjl_tr_context_;
+# define _(text) oyjlTranslate( oyjlTr_Get( OYJL_DOMAIN ), text )
 #else
 # define _(text) text
 #endif
@@ -34,7 +35,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern oyjlTr_s* oyjl_tr_context_;
 char *           oyjlLangForCatalog_ ( const char        * loc,
                                        oyjl_val            catalog,
                                        int               * cstart,
