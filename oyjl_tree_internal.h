@@ -95,16 +95,16 @@ enum {
 char *       oyjlOption_PrintArg_    ( oyjlOption_s      * o,
                                        int                 style );
 void oyjlUiCanonicaliseVariableName_ ( char             ** name );
-int  oyjlManArgIsNum                 ( const char        * arg );
-int  oyjlManArgIsEditable            ( const char        * arg );
+int  oyjlManArgIsNum_                ( const char        * arg );
+int  oyjlManArgIsEditable_           ( const char        * arg );
 int  oyjlManAddOptionToGroup_        ( char             ** group,
                                        char                o,
                                        const char        * option,
                                        const char        * delimiter,
                                        int                 flags );
 
-char *       oyjlStringToLower       ( const char        * t );
-char *       oyjlStringToUpper       ( const char        * t );
+char *       oyjlStringToLower_      ( const char        * t );
+char *       oyjlStringToUpper_      ( const char        * t );
 
 #ifdef __cplusplus
 }
