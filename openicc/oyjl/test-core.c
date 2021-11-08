@@ -55,6 +55,10 @@ oyjlTESTRESULT_e testVersion()
 }
 
 extern oyjlMessage_f oyjlMessage_p;
+int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
+                                       const void        * context_object OYJL_UNUSED,
+                                       const char        * format,
+                                       ... );
 oyjlTESTRESULT_e testI18N()
 {
   const char * clang;
@@ -111,15 +115,34 @@ oyjlTESTRESULT_e testI18N()
   }
   if(country) free(country);
 
-  setlocale(LC_ALL,"de_DE.UTF8");
+  oyjlTr_s * trc = NULL;
+  char * loc = NULL;
+  const char * lang = getenv("LANG");
   int use_gettext = 0;
+  static int my_debug = 0;
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;
 #endif
-  int debug = 0;
-  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", &debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, OYJL_DOMAIN, oyjlMessage_p );
+#ifdef OYJL_HAVE_LOCALE_H
+  loc = setlocale(LC_ALL,"de_DE.UTF8");
+#endif
+  if(!loc)
+    fprintf( zout, "setlocale() not available or failed\n" );
+  if(!loc && lang)
+    loc = lang;
+  if(loc)
+  {
+# include "liboyjl.i18n.h"
+    int size = sizeof(liboyjl_i18n_oiJS);
+    oyjl_val oyjl_catalog = (oyjl_val) oyjlStringAppendN( NULL, (const char*) liboyjl_i18n_oiJS, size, malloc );
+    if(*oyjl_debug)
+      oyjlMessage_p( oyjlMSG_INFO, 0, "loc: \"%s\" domain: \"%s\" catalog-size: %d", loc, OYJL_DOMAIN, size );
+    trc = oyjlTr_New( loc, OYJL_DOMAIN, &oyjl_catalog, 0,0,0,0 );
+  }
+  oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", &my_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, oyjlMessageFunc );
+  oyjlTr_Release( &trc );
 
-  const char * lang = setlocale(LC_ALL, NULL);
+  lang = setlocale(LC_ALL, NULL);
   if(lang && (strcmp(lang, "C") != 0))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "setlocale() initialised good %s", lang );
@@ -971,7 +994,8 @@ oyjlTESTRESULT_e testArgs()
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
-  setlocale(LC_ALL,"en_GB.UTF8");
+  const char * loc = setlocale(LC_ALL,"en_GB.UTF8");
+  oyjlLang(loc);
 
   int output = 0;
   const char * file = NULL;
@@ -1057,7 +1081,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           8517                      /*code_size*/,
+                           9144                      /*code_size*/,
                            1082                      /*help_size*/,
                            1967                      /*man_size*/,
                            3788                      /*markdown_size*/,
@@ -1153,7 +1177,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           8262                      /*code_size*/,
+                           8889                      /*code_size*/,
                             615                      /*help_size*/,
                            1451                      /*man_size*/,
                            2300                      /*markdown_size*/,
@@ -1576,7 +1600,7 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "prog -i test.json ///mein/Pfad/", "org/freedesktop/oyjl/translations/de/prog -i test.json %%37%%37%%37my%%37path%%37" );
 
   oyjl_val static_catalog = oyjlTreeSerialise( catalog, flags, &size );
-  if( static_catalog && size == 1061 )
+  if( static_catalog && size == 853 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, size,
     "oyjlTreeSerialise() oiJS" );
   } else
@@ -1584,16 +1608,17 @@ oyjlTESTRESULT_e testTree ()
     "oyjlTreeSerialise() oiJS" );
   }
   OYJL_TEST_WRITE_RESULT( static_catalog, size, "oyjlTreeSerialise", "oiJS" )
-  if(verbose)
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL || verbose)
   {
-char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
+char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
                                        int                 flags OYJL_UNUSED );
-    char * t = oyjlTreeSerialisedPrint( static_catalog, 0 );
+    char * t = oyjlTreeSerialisedPrint_( static_catalog, 0 );
     fprintf( zout, "parsed: %s\n", t );
     free(t); t = NULL;
     i = 0;
     oyjlTreeToJson( catalog, &i, &t ); i = 0;
     fprintf( zout, "%s\n", t );
+    free(t); t = NULL;
   }
 
   oyjlTreeFree( static_catalog );
