@@ -270,6 +270,9 @@ int        oyjlTreeSetDoubleF        ( oyjl_val            root,
 oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
                                        int                 flags,
                                        int               * size );
+oyjl_val   oyjlTreeDeSerialise       ( oyjl_val            v,
+                                       int                 flags,
+                                       int                 size );
 char *     oyjlValueText             ( oyjl_val            v,
                                        void*             (*alloc)(size_t));
 int        oyjlValueCount            ( oyjl_val            v );
@@ -337,18 +340,18 @@ typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
 int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func );
 
 /* --- i18n helpers --- */
+typedef struct oyjlTr_s oyjlTr_s;
 int            oyjlInitLanguageDebug ( const char        * project_name,
                                        const char        * env_var_debug,
                                        int               * debug_variable,
                                        int                 use_gettext,
                                        const char        * env_var_locdir,
                                        const char        * default_locdir,
-                                       const char        * loc_domain,
+                                       oyjlTr_s         ** context,
                                        oyjlMessage_f       msg );
 char *         oyjlLanguage          ( const char        * loc );
 char *         oyjlCountry           ( const char        * loc );
 const char *   oyjlLang              ( const char        * loc );
-typedef struct oyjlTr_s oyjlTr_s;
 char *         oyjlTranslate         ( oyjlTr_s          * context,
                                        const char        * string );
 typedef char*(*oyjlTranslate_f)      ( oyjlTr_s          * context,
@@ -357,6 +360,7 @@ typedef char*(*oyjlTranslate_f)      ( oyjlTr_s          * context,
 /* Workaround for chaotic key order. Slow. */
 #define OYJL_NO_OPTIMISE               0x800000 /**< @brief skip binary search */
 oyjlTr_s *     oyjlTr_New            ( const char        * loc,
+                                       const char        * domain,
                                        oyjl_val          * catalog,
                                        oyjlTranslate_f     translator,
                                        void              * user_data,
@@ -364,6 +368,7 @@ oyjlTr_s *     oyjlTr_New            ( const char        * loc,
                                        int                 flags );
 oyjlTranslate_f oyjlTr_GetTranslator ( oyjlTr_s          * context );
 const char *   oyjlTr_GetLang        ( oyjlTr_s          * context );
+const char *   oyjlTr_GetDomain      ( oyjlTr_s          * context );
 oyjl_val       oyjlTr_GetCatalog     ( oyjlTr_s          * context );
 void *         oyjlTr_GetUserData    ( oyjlTr_s          * context );
 int            oyjlTr_GetFlags       ( oyjlTr_s          * context );
@@ -372,7 +377,9 @@ void           oyjlTr_SetFlags       ( oyjlTr_s          * context,
 void           oyjlTr_SetLocale      ( oyjlTr_s          * context,
                                        const char        * loc );
 void           oyjlTr_Release        ( oyjlTr_s         ** context );
-oyjlTr_s *     oyjlTr                ( oyjlTr_s         ** context );
+oyjlTr_s *     oyjlTr_Get            ( const char        * domain );
+int            oyjlTr_Set            ( oyjlTr_s         ** context );
+int            oyjlTr_Unset          ( const char        * domain );
 void           oyjlTranslateJson     ( oyjl_val            root,
                                        oyjlTr_s          * context,
                                        const char        * key_list );
@@ -539,6 +546,7 @@ typedef enum {
   oyjlOBJECT_OPTIONS = 1937205615,     /**< @brief oyjlOptions_s */
   oyjlOBJECT_UI_HEADER_SECTION = 1936222575, /**< @brief oyjlUiHeaderSection_s */
   oyjlOBJECT_UI = 1769302383,          /**< @brief oyjlUi_s */
+  oyjlOBJECT_TR = 1920231791,          /**< @brief oyjlTr_s */
   oyjlOBJECT_JSON = 1397385583         /**< @brief oyjlNodes_s */
 } oyjlOBJECT_e;
 
@@ -803,8 +811,9 @@ oyjlUi_s *         oyjlUi_ImportFromJson(
                                        oyjl_val            root,
                                        int                 flags );
 #define OYJL_SOURCE_CODE_C             0x01 /**< @brief C programming language source code */
-#define OYJL_NO_DEFAULT_OPTIONS        0x02 /**< @brief omit automatic options generation for --help, --X export or --verbose */
-#define OYJL_SUGGEST_VARIABLE_NAMES    0x04 /**< @brief automatic suggestion of variable names for missing oyjlOption_s::o and oyjlOption_s::option members */
+#define OYJL_WITH_OYJL_ARGS_C          0x02 /**< @brief Include oyjl_args.c . Skip libOyjlCode. */
+#define OYJL_NO_DEFAULT_OPTIONS        0x04 /**< @brief omit automatic options generation for --help, --X export or --verbose */
+#define OYJL_SUGGEST_VARIABLE_NAMES    0x08 /**< @brief automatic suggestion of variable names for missing oyjlOption_s::o and oyjlOption_s::option members */
 #define OYJL_COMPLETION_BASH           0x100 /**< @brief bash completion source code */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );

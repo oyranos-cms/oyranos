@@ -240,7 +240,7 @@ typedef struct oyjlXPath_s
 typedef struct oyjlNodes_s
 {
   char type [8];                       /* place 'oiJS' here for oyjl static Json */
-  int32_t count;                       /* number of entries */
+  uint32_t count;                      /* number of entries */
   int32_t flags;
   /* offset from begin of the oyjlNodes_s::offsets array to a oyjlXPath_s element.
    * elements can be of type oyjl_t_null, oyjl_t_string, oyjl_t_true, oyjl_t_false or oyjl_t_number.
@@ -453,8 +453,8 @@ static void oyjlJsonIndent_( char ** json, const char * before, int level, const
   *json = njson;
 }
 
-void       oyjlRegExpEscape2         ( oyjl_str            text );
-void       oyjlNoBracketCb(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * data OYJL_UNUSED);
+void       oyjlRegExpEscape2_        ( oyjl_str            text );
+void       oyjlNoBracketCb_(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * data OYJL_UNUSED);
 /** @brief Convert strings to pass through JSON
  *
  *  @param         in                  input string
@@ -514,9 +514,9 @@ char *     oyjlJsonEscape            ( const char        * in,
   } else
   {
     if(!(flags & OYJL_NO_BACKSLASH) || !(flags & OYJL_REGEXP))
-      oyjlStr_Replace( tmp, "\\", "\\\\", oyjlNoBracketCb, NULL );
+      oyjlStr_Replace( tmp, "\\", "\\\\", oyjlNoBracketCb_, NULL );
     if(flags & OYJL_REGEXP)
-      oyjlRegExpEscape2( tmp );
+      oyjlRegExpEscape2_( tmp );
     if(flags & OYJL_QUOTE)
       oyjlStr_Replace( tmp, "\"", "\\\"", 0, NULL );
     oyjlStr_Replace( tmp, "\b", "\\b", 0, NULL );
@@ -1963,24 +1963,25 @@ void oyjlTreeFree (oyjl_val v)
 /** \addtogroup oyjl
  *  @{ *//* oyjl */
 
-const char *       oyjlTreeGetString ( oyjl_val            v,
+const char *       oyjlTreeGetString_( oyjl_val            v,
                                        int                 flags OYJL_UNUSED,
                                        const char        * path );
-const char *       oyjlTreeGetStringF( oyjl_val            v,
+const char *       oyjlTreeGetStringF_(oyjl_val            v,
                                        int                 flags,
                                        const char        * format,
                                                            ... );
-const char*oyjlTreeGetStringF2       ( oyjl_val            v,
+const char*oyjlTreeGetStringF2_      ( oyjl_val            v,
                                        int                 start,
                                        int                 end,
                                        int                 flags,
                                        const char        * format,
                                                            ... );
 
-char *         oyjlTranslate2        ( const char        * loc,
+char *         oyjlTranslate2_       ( const char        * loc,
                                        oyjl_val            catalog,
                                        int                 start,
                                        int                 end,
+                                       const char        * domain OYJL_UNUSED,
                                        const char        * text,
                                        int                 flags )
 {
@@ -1991,7 +1992,6 @@ char *         oyjlTranslate2        ( const char        * loc,
   if(flags & OYJL_GETTEXT)
   {
 #ifdef OYJL_USE_GETTEXT
-    const char * domain = textdomain(NULL);
     const char * t = NULL;;
     if(!domain)
     {
@@ -2063,7 +2063,7 @@ char *         oyjlTranslate2        ( const char        * loc,
   }
 
   loc_ = oyjlJsonEscape( loc, OYJL_KEY | OYJL_REGEXP );
-  translated = oyjlTreeGetStringF2(catalog, start, end, flags, "org/freedesktop/oyjl/translations/%s/%s", loc_, key );
+  translated = oyjlTreeGetStringF2_(catalog, start, end, flags, "org/freedesktop/oyjl/translations/%s/%s", loc_, key );
   if(end && !(flags & OYJL_NO_OPTIMISE))
     goto oyjlTranslate2_clean;
   if(!translated)
@@ -2071,14 +2071,14 @@ char *         oyjlTranslate2        ( const char        * loc,
     char * language = oyjlLanguage(loc),
          * country = oyjlCountry(loc);
     if(language && country)
-        translated = oyjlTreeGetStringF(catalog, 0, "org/freedesktop/oyjl/translations/%s_%s/%s", language, country, key );
+        translated = oyjlTreeGetStringF_(catalog, 0, "org/freedesktop/oyjl/translations/%s_%s/%s", language, country, key );
     if(language) free(language);
     if(country) free(country);
   }
   if(!translated)
   {
     char * language = oyjlLanguage(loc);
-    translated = oyjlTreeGetStringF(catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", language, key );
+    translated = oyjlTreeGetStringF_(catalog, 0, "org/freedesktop/oyjl/translations/%s/%s", language, key );
     if(language) free(language);
   }
   if(!translated && text[0])
@@ -2135,7 +2135,7 @@ char *         oyjlTranslate2        ( const char        * loc,
     v = NULL;
     if(path)
     {
-      translated = oyjlTreeGetString( catalog, 0, path );
+      translated = oyjlTreeGetString_( catalog, 0, path );
       if(flags & OYJL_OBSERVE)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\tpath:\"%s\" %s", OYJL_DBG_ARGS, path, translated?"found":"not found" );
       free(path);
@@ -2177,6 +2177,7 @@ char *         oyjlTranslate         ( oyjlTr_s          * context,
   {
     oyjl_val catalog = oyjlTr_GetCatalog( context );
     struct oyjl_tr_example_s * bounds = oyjlTr_GetUserData( context );
+    const char * domain = oyjlTr_GetDomain( context );
     int start, end,
         flags = oyjlTr_GetFlags( context );
     if(bounds)
@@ -2192,17 +2193,14 @@ char *         oyjlTranslate         ( oyjlTr_s          * context,
       flags |= OYJL_GETTEXT;
 
     lang = oyjlTr_GetLang( context );
-    translated = oyjlTranslate2( lang, catalog, start, end, text, flags );
-  } else if(text)
-  {
-    lang = oyjlLang("");
-    translated = oyjlTranslate2( lang, NULL, 0,0, text, OYJL_GETTEXT );
+    if(start >= 0 && end >= 0)
+      translated = oyjlTranslate2_( lang, catalog, start, end, domain, text, flags );
   }
 
   return translated ? translated : (char*)text;
 }
 
-int  oyjlXPathGetSize                ( oyjl_val            v,
+int  oyjlXPathGetSize_               ( oyjl_val            v,
                                        const char        * xpath,
                                        uint32_t          * v_offset )
 {
@@ -2240,11 +2238,12 @@ int  oyjlXPathGetSize                ( oyjl_val            v,
  *  @param[in]     flags               supported:
  *                                     - OYJL_OBSERVE : to print verbose info message
  *  @param[out]    size                the size of the returned data block
- *
  *  @return                            serialised tree
  *
+ *  @see oyjlTreeDeSerialise()
+ *
  *  @version Oyjl: 1.0.0
- *  @date    2021/09/21
+ *  @date    2021/11/01
  *  @since   2021/09/16 (Oyjl: 1.0.0)
  */
 oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
@@ -2252,24 +2251,35 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
                                        int               * size )
 {
   oyjlNodes_s * nodes = NULL;
+  if(v && (long)v->type == oyjlOBJECT_JSON)
+  {
+    char * t = oyjlBT(0);
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%spassed a already serialised oiJS in", OYJL_DBG_ARGS, t );
+    free(t);
+  }
+  else
   if(v)
   {
     int count = 0, i,
         max_u_size = sizeof(oyjl_val),
         size_ = 0;
     char ** paths = oyjlTreeToPaths( v, 1000000, NULL, OYJL_KEY, &count );
+
+    if(flags & OYJL_OBSERVE)
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "oyjlNodes_s: %d oyjlXPath_s: %d count: %d", OYJL_DBG_ARGS, sizeof(oyjlNodes_s), sizeof(oyjlXPath_s), count );
+
+    size_ += sizeof(oyjlNodes_s) + sizeof(uint64_t) * count;
     for(i = 0; i < count; ++i)
     {
       const char * xpath = paths[i];
       oyjl_val val = oyjlTreeGetValue( v, 0, xpath );
       uint32_t v_offset = 0;
       int size__ = size_;
-      size_ += oyjlXPathGetSize( val, xpath, &v_offset );
+      size_ += oyjlXPathGetSize_( val, xpath, &v_offset );
       if(flags & OYJL_OBSERVE)
-        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\txpath:\"%s\" %s v_offset: %d offset2: %d", OYJL_DBG_ARGS, xpath, val?"found":"not found", v_offset, size__ );
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "xpath[%d]:\"%s\" %s v_offset: %d offset2: %d", OYJL_DBG_ARGS, i, xpath, val?"found":"not found", v_offset, size__ );
     }
 
-    size_ += sizeof(oyjlNodes_s) + sizeof(oyjlXPath_s) * (count+2);
     if(size)
       *size = size_;
 
@@ -2277,7 +2287,7 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
     if(!nodes) return NULL;
     memcpy( nodes, "oiJS", 4 );
 
-    size_ = sizeof(oyjlNodes_s) + sizeof(oyjlXPath_s) * (count+2);
+    size_ = sizeof(oyjlNodes_s) + sizeof(uint64_t) * count;
     nodes->count = count;
     for(i = 0; i < count; ++i)
     {
@@ -2287,7 +2297,7 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
       int len = strlen(xpath);
       uint32_t v_offset = 0;
       nodes->offsets[i] = size_;
-      size_ += oyjlXPathGetSize( val, xpath, &v_offset );
+      size_ += oyjlXPathGetSize_( val, xpath, &v_offset );
       oyjlXPath_s * node = (oyjlXPath_s *)&((char*)nodes)[nodes->offsets[i]];
       node->v_offset = v_offset;
       oyjl_val node_v = (oyjl_val)((char*)node + v_offset);
@@ -2308,7 +2318,7 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
             memcpy( node_v, val, max_u_size );
             strcpy( (char*)node_v + sizeof(oyjl_val_s), val->u.number.r );
             if(flags & OYJL_OBSERVE)
-              oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\tnumber.i:%d number.d:%f number.r:%d", OYJL_DBG_ARGS, i, d, (char*)&node_v->u.number.r );
+              oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\t\tnumber.i:%d number.d:%f number.r:%s", OYJL_DBG_ARGS, i, d, (char*)node_v + sizeof(oyjl_val_s) );
             break;
           }
         case oyjl_t_string:
@@ -2317,7 +2327,7 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
             memcpy( node_v, val, sizeof(oyjl_type) );
             strcpy( (char*)node + v_offset + sizeof(oyjl_type), t );
             if(flags & OYJL_OBSERVE)
-              oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\toffset %d %s", OYJL_DBG_ARGS, max_u_size + len + 1 + v_offset, t );
+              oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\t\toffset %d %s", OYJL_DBG_ARGS, max_u_size + len + 1 + v_offset, t );
           }
           break;
         default: break;
@@ -2330,7 +2340,7 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
   return (oyjl_val)nodes;
 }
 
-const char * oyjlXPath_Print         ( oyjlXPath_s       * node )
+const char * oyjlXPath_Print_        ( oyjlXPath_s       * node )
 {
   const char * text = NULL;
   uint32_t v_offset = node->v_offset;
@@ -2367,14 +2377,13 @@ const char * oyjlXPath_Print         ( oyjlXPath_s       * node )
  *  @param         v                   block to decode
  *  @param[in]     flags               supported:
  *                                     - OYJL_OBSERVE : to print verbose info message
- *
  *  @return                            text
  *
  *  @version Oyjl: 1.0.0
  *  @date    2021/09/17
  *  @since   2021/09/17 (Oyjl: 1.0.0)
  */
-char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
+char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
                                        int                 flags OYJL_UNUSED )
 {
   char * text = NULL;
@@ -2389,15 +2398,84 @@ char *     oyjlTreeSerialisedPrint   ( oyjl_val            v,
     {
       oyjlXPath_s * node = (oyjlXPath_s *)&((char*)nodes)[nodes->offsets[i]];
       const char * xpath = ((const char*)node) + sizeof(uint32_t);
-      const char * value = oyjlXPath_Print( node );
-      oyjlStringAdd( &text, 0,0, "%s:%s", xpath, value );
+      const char * value = oyjlXPath_Print_( node );
+      oyjlStringAdd( &text, 0,0, "%s:%s\n", xpath, value );
     }
   }
 
   return text;
 }
 
-const char * oyjlTreeGetString2      ( oyjl_val            v,
+/** @brief   create tree from serialised data block
+ *
+ *  @param         v                   serialised tree
+ *  @param[in]     flags               unused:
+ *  @param[in]     size                the size of the data block v - not used
+ *  @return                            serialised tree
+ *
+ *  @see oyjlTreeSerialise()
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/11/01
+ *  @since   2021/11/01 (Oyjl: 1.0.0)
+ */
+oyjl_val   oyjlTreeDeSerialise       ( oyjl_val            v,
+                                       int                 flags OYJL_UNUSED,
+                                       int                 size OYJL_UNUSED )
+{
+  oyjl_val root = NULL;
+
+  if(v && (long)v->type != oyjlOBJECT_JSON)
+  {
+    char * t = oyjlBT(0);
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%spassed a non serialised oiJS in", OYJL_DBG_ARGS, t );
+    free(t);
+  }
+  else
+  if(v && (long)v->type == oyjlOBJECT_JSON)
+  {
+    int count = 0, i;
+    oyjlNodes_s * nodes = (oyjlNodes_s *)v;
+
+    count = nodes->count;
+    if(count)
+      root = oyjlTreeNew("");
+    for(i = 0; i < count; ++i)
+    {
+      oyjlXPath_s * node = (oyjlXPath_s *)&((char*)nodes)[nodes->offsets[i]];
+      const char * xpath = ((const char*)node) + sizeof(uint32_t);
+      const char * text = NULL;
+      uint32_t v_offset = node->v_offset;
+      int max_u_size = sizeof(oyjl_val_s);
+      oyjl_val val = (oyjl_val)((char*)node + v_offset);
+      oyjl_type type = val->type;
+      v = oyjlTreeGetValue( root, OYJL_CREATE_NEW, xpath );
+      v->type = type;
+      switch(type)
+      {
+      case oyjl_t_null:
+      case oyjl_t_true:
+      case oyjl_t_false:
+        break;
+      case oyjl_t_number:
+        text = (const char*)val + max_u_size;
+        memcpy( v, val, max_u_size );
+        v->u.number.r = oyjlStringCopy( text, 0 );
+        break;
+      case oyjl_t_string:
+        text = (const char*)node + v_offset + sizeof(oyjl_type);
+        oyjlValueSetString( v, text );
+        break;
+      default:
+        break;
+      }
+    }
+  }
+
+  return root;
+}
+
+const char * oyjlTreeGetString2_     ( oyjl_val            v,
                                        int                 flags,
                                        const char        * path,
                                        int                 start,
@@ -2440,7 +2518,7 @@ const char * oyjlTreeGetString2      ( oyjl_val            v,
           fprintf( stderr, "xpath[%d %d %d] = %s\n", low, mid, high, oyjlTermColor(compare>0?oyjlGREEN:oyjlBLUE, xpath) );
       }
       if(found)
-        text = oyjlXPath_Print( node );
+        text = oyjlXPath_Print_( node );
       if(flags & OYJL_OBSERVE)
         fprintf( stderr, "     [%d] = %s: \"%s\"\n", mid, xpath, text&&found?text:oyjlTermColor(oyjlRED,"------------") );
     }
@@ -2453,7 +2531,7 @@ const char * oyjlTreeGetString2      ( oyjl_val            v,
         if(strcmp(path, xpath) != 0)
           continue;
 
-        text = oyjlXPath_Print( node );
+        text = oyjlXPath_Print_( node );
         break;
       }
     }
@@ -2467,14 +2545,14 @@ const char * oyjlTreeGetString2      ( oyjl_val            v,
   return text;
 }
 
-const char * oyjlTreeGetString       ( oyjl_val            v,
+const char * oyjlTreeGetString_      ( oyjl_val            v,
                                        int                 flags,
                                        const char        * path )
 {
-  return oyjlTreeGetString2( v, flags, path, 0,0 );
+  return oyjlTreeGetString2_( v, flags, path, 0,0 );
 }
 
-const char*oyjlTreeGetStringF2       ( oyjl_val            v,
+const char*oyjlTreeGetStringF2_      ( oyjl_val            v,
                                        int                 start,
                                        int                 end,
                                        int                 flags,
@@ -2486,14 +2564,14 @@ const char*oyjlTreeGetStringF2       ( oyjl_val            v,
 
   OYJL_CREATE_VA_STRING(format, text, malloc, return value)
 
-  value = oyjlTreeGetString2( v, flags, text, start, end );
+  value = oyjlTreeGetString2_( v, flags, text, start, end );
 
   if(text) free(text);
 
   return value;
 }
 
-const char*oyjlTreeGetStringF        ( oyjl_val            v,
+const char*oyjlTreeGetStringF_       ( oyjl_val            v,
                                        int                 flags,
                                        const char        * format,
                                                            ... )
@@ -2503,7 +2581,7 @@ const char*oyjlTreeGetStringF        ( oyjl_val            v,
 
   OYJL_CREATE_VA_STRING(format, text, malloc, return value)
 
-  value = oyjlTreeGetString( v, flags, text );
+  value = oyjlTreeGetString_( v, flags, text );
 
   if(text) free(text);
 
@@ -2583,25 +2661,29 @@ char *             oyjlLangForCatalog_(const char        * loc,
     const char * lang = getenv("LANG");
     if(!(!loc && lang))
     {
-      char * t = oyjlBT(0);
+      char * t;
+      int old_dbg = *oyjl_debug;
+      *oyjl_debug = 0;
+      t = oyjlBT(0);
+      *oyjl_debug = old_dbg;
       fprintf( stderr, "%s", t );
       free(t);
     }
     if(loc)
-      fprintf( stderr, "loc: %s catalog: %s contains langs:", oyjlTermColor(oyjlITALIC,loc), catalog?is_static?"oiJS":"tree":"none" );
+      fprintf( stderr, OYJL_DBG_FORMAT "loc: %s catalog: %s contains langs:", OYJL_DBG_ARGS, loc, catalog?is_static?"oiJS":"tree":"none" );
     else
     {
       if(lang)
       {
         fprintf( stderr, "%s", oyjlTermColor(oyjlRED,"Usage Error:") );
-        fprintf( stderr, " Environment variable possibly not correct. Translations might fail - LANG=%s\n", oyjlTermColor(oyjlBOLD,lang) );
+        fprintf( stderr, OYJL_DBG_FORMAT " Environment variable possibly not correct. Translations might fail - LANG=%s\n", OYJL_DBG_ARGS, lang );
       }
       else
         fprintf( stderr, "loc argument missed\n" );
     }
   }
 
-  if(!loc || strcmp(loc,"C") == 0)
+  if(!loc || strcmp(loc,"C") == 0 || strcmp(loc,"back") == 0)
     return new_loc;
 
   if(catalog)
@@ -2654,14 +2736,29 @@ char *             oyjlLangForCatalog_(const char        * loc,
           if(strcmp(new_loc?new_loc:loc, lang) == 0)
           {
             opt_start = lang_positions_start[i];
-            opt_end = i>=langs_n?count:lang_positions_start[i+1];
+            opt_end = i>=langs_n-1?count:lang_positions_start[i+1];
             break;
           }
         }
         *cstart = opt_start;
         *cend = opt_end;
-        if(flags & OYJL_OBSERVE)
-          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "optimise %d -> %d\n", OYJL_DBG_ARGS, opt_start, opt_end );
+        if(flags & OYJL_OBSERVE || *oyjl_debug)
+        {
+          fprintf( stderr, "\n" );
+          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "optimise catalog[%s] access %d -> %d\n", OYJL_DBG_ARGS, new_loc?new_loc:loc, opt_start, opt_end );
+        }
+      }
+      else if(cstart && cend && lang_matches == 0)
+      {
+        if(*oyjl_debug)
+        {
+          if(flags & OYJL_OBSERVE)
+            fprintf( stderr, "\n" );
+          fprintf(stderr,OYJL_DBG_FORMAT "", OYJL_DBG_ARGS);
+          fprintf(stderr,"loc: %s not supported by catalog\n", oyjlTermColor(oyjlBOLD,loc));
+        }
+        *cstart = -1;
+        *cend = -1;
       }
 
       if(langs_n)
@@ -2708,7 +2805,9 @@ void               oyjlTranslateJson ( oyjl_val            root,
     char ** paths = oyjlTreeToPaths( root, 1000000, NULL,  OYJL_KEY, &count );
     oyjlTranslate_f translator = NULL;
 
-    if(!context) context = oyjlTr(NULL);
+    if(!context)
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no context arg\n", OYJL_DBG_ARGS );
+
     translator = oyjlTr_GetTranslator( context );
     if(!translator)
       translator = oyjlTranslate;
@@ -2762,8 +2861,10 @@ void               oyjlTranslateJson ( oyjl_val            root,
  */
 struct oyjlTr_s
 {
+  char type [8];                       /**< @brief must be 'oitr' */
   const char * loc;                    /**< @brief original provided locale */
   char * lang;                         /**< @brief optimised loc for translator */
+  const char * domain;                 /**< @brief identiefier for catalog */
   oyjl_val catalog;                    /**< @brief the translation tables */
   int start;                           /**< @brief lang start in catalog paths */
   int end;                             /**< @brief lang end in catalog paths */
@@ -2791,10 +2892,11 @@ struct oyjlTr_s
  *  @return                            context
  *
  *  @version Oyjl: 1.0.0
- *  @date    2021/10/24
+ *  @date    2021/10/26
  *  @since   2021/10/24 (Oyjl: 1.0.0)
  */
 oyjlTr_s *     oyjlTr_New            ( const char        * loc,
+                                       const char        * domain,
                                        oyjl_val          * catalog,
                                        oyjlTranslate_f     translator,
                                        void              * user_data,
@@ -2805,7 +2907,11 @@ oyjlTr_s *     oyjlTr_New            ( const char        * loc,
   char * lang = NULL;
 
   oyjlAllocHelper_m( context, struct oyjlTr_s, 1, malloc, return NULL );
+  memcpy( context->type, "oitr", 4 );
   context->loc = loc;
+  context->domain = domain;
+  if(*oyjl_debug > 1)
+    fprintf(stderr, OYJL_DBG_FORMAT "loc: %s domain: %s\n", OYJL_DBG_ARGS, loc, domain );
   if(catalog)
   {
     context->catalog = *catalog;
@@ -2823,6 +2929,21 @@ oyjlTr_s *     oyjlTr_New            ( const char        * loc,
   return context;
 }
 
+int oyjlTr_Check_                    ( oyjlTr_s          * context )
+{
+  int success = 1;
+  if( context && *(oyjlOBJECT_e*)context != oyjlOBJECT_TR)
+  {
+    char * a = (char*)context;
+    char type[5] = {a[0],a[1],a[2],a[3],0};
+    char * t = oyjlBT(0);
+    fprintf(stderr, "%sUnexpected object: \"%s\"(expected: \"oyjlTr_s\")\n", t, type );
+    free(t);
+    success = 0;
+    return success;
+  }
+  return success;
+}
 /** @brief get function
  *
  *  Fall back to oyjlTranslate().
@@ -2833,7 +2954,7 @@ oyjlTr_s *     oyjlTr_New            ( const char        * loc,
  */
 oyjlTranslate_f oyjlTr_GetTranslator ( oyjlTr_s          * context )
 {
-  return context?context->translator:oyjlTranslate;
+  return context && oyjlTr_Check_(context)?context->translator:oyjlTranslate;
 }
 
 /** @brief get catalog lang
@@ -2846,7 +2967,18 @@ oyjlTranslate_f oyjlTr_GetTranslator ( oyjlTr_s          * context )
  */
 const char * oyjlTr_GetLang          ( oyjlTr_s          * context )
 {
-  return context && context->lang ? context->lang : context?context->loc:NULL;
+  return context && oyjlTr_Check_(context) && context->lang ? context->lang : context?context->loc:NULL;
+}
+
+/** @brief get domain
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/10/26
+ *  @since   2021/10/26 (Oyjl: 1.0.0)
+ */
+const char *   oyjlTr_GetDomain      ( oyjlTr_s          * context )
+{
+  return context && oyjlTr_Check_(context) ? context->domain : NULL;
 }
 
 /** @brief get catalog
@@ -2857,7 +2989,7 @@ const char * oyjlTr_GetLang          ( oyjlTr_s          * context )
  */
 oyjl_val     oyjlTr_GetCatalog       ( oyjlTr_s          * context )
 {
-  return context ? context->catalog : NULL;
+  return context && oyjlTr_Check_(context) ? context->catalog : NULL;
 }
 
 /** @brief get UserData
@@ -2868,7 +3000,7 @@ oyjl_val     oyjlTr_GetCatalog       ( oyjlTr_s          * context )
  */
 void *       oyjlTr_GetUserData      ( oyjlTr_s          * context )
 {
-  return context ? context->user_data : NULL;
+  return context && oyjlTr_Check_(context) ? context->user_data : NULL;
 }
 
 /** @brief get flags
@@ -2879,7 +3011,7 @@ void *       oyjlTr_GetUserData      ( oyjlTr_s          * context )
  */
 int          oyjlTr_GetFlags         ( oyjlTr_s          * context )
 {
-  return context ? context->flags : 0;
+  return context && oyjlTr_Check_(context) ? context->flags : 0;
 }
 
 /** @brief get start
@@ -2891,7 +3023,7 @@ int          oyjlTr_GetFlags         ( oyjlTr_s          * context )
  */
 int          oyjlTr_GetStart_        ( oyjlTr_s          * context )
 {
-  return context ? context->start : 0;
+  return context && oyjlTr_Check_(context) ? context->start : 0;
 }
 
 /** @brief get end
@@ -2903,7 +3035,7 @@ int          oyjlTr_GetStart_        ( oyjlTr_s          * context )
  */
 int          oyjlTr_GetEnd_          ( oyjlTr_s          * context )
 {
-  return context ? context->end : 0;
+  return context && oyjlTr_Check_(context) ? context->end : 0;
 }
 
 /** @brief   change flags
@@ -2918,14 +3050,13 @@ int          oyjlTr_GetEnd_          ( oyjlTr_s          * context )
 void           oyjlTr_SetFlags       ( oyjlTr_s          * context,
                                        int                 flags )
 {
-  if(context)
+  if(context && oyjlTr_Check_(context))
     context->flags = flags;
 }
 /** @brief   change language
 *
 *  @param          context            the translation context
 *  @param          loc                locale name as from setlocale("")
-*                                     - NULL: take system locale
 *                                     - "something": set lang to "something"
 *
 *  @version Oyjl: 1.0.0
@@ -2935,7 +3066,7 @@ void           oyjlTr_SetFlags       ( oyjlTr_s          * context,
 void           oyjlTr_SetLocale      ( oyjlTr_s          * context,
                                        const char        * loc )
 {
-  if(context)
+  if(context && oyjlTr_Check_(context) && loc && loc[0])
   {
     context->loc = loc;
     context->start = 0;
@@ -2957,7 +3088,7 @@ void           oyjlTr_SetLocale      ( oyjlTr_s          * context,
 void           oyjlTr_Release        ( oyjlTr_s         ** context_ )
 {
   oyjlTr_s * context;
-  if(!(context_ && *context_))
+  if(!(context_ && *context_ && oyjlTr_Check_(*context_)))
     return;
 
   context = *context_;
@@ -2984,61 +3115,231 @@ void           oyjlTr_Release        ( oyjlTr_s         ** context_ )
 
 
 
-oyjlTr_s * oyjl_tr_context_ = NULL;
-/** @brief   set message translation context
+oyjlTr_s ** oyjl_tr_context_ = NULL;
+/** @brief   change language
  *
- *  @param         context             message context for oyjlTranslate()
- *                                     - NULL: return context
- *                                     - pointer to NULL: reset
- *                                     - oyjlTr_s context: move in as new current
- *  @return                            current context
+ *  Call after oyjlTr().
+ *
+ *  @param         loc                 locale name as from setlocale("")
+ *                                     - NULL: reset
+ *                                     - "": get existing without change
+ *                                     - "something": set lang to "something"
+ *  @return                            current locale
  *
  *  @version Oyjl: 1.0.0
  *  @date    2021/10/24
- *  @since   2020/07/29 (Oyjl: 1.0.0)
+ *  @since   2020/07/28 (Oyjl: 1.0.0)
  */
-oyjlTr_s *     oyjlTr                ( oyjlTr_s         ** context )
+const char *   oyjlLang              ( const char        * loc )
 {
-  if(context && oyjl_tr_context_ && oyjl_tr_context_ != *context)
-    oyjlTr_Release(&oyjl_tr_context_);
+  const char * lang = NULL;
+
+  if(oyjl_tr_context_)
+  {
+    int i = 0;
+    while(oyjl_tr_context_[i])
+    {
+      oyjlTr_s * context = oyjl_tr_context_[i];
+      const char * domain = oyjlTr_GetDomain(context);
+      if(*oyjl_debug > 1)
+      {
+        char * t = oyjlBT(0);
+        oyjlMessage_p( oyjlMSG_INFO, 0, "%s", t );
+        free(t);
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s context[%d]->loc: %s lang: %s domain: %s", OYJL_DBG_ARGS, loc, i, context->loc, lang, domain );
+      }
+      oyjlTr_SetLocale( context, loc );
+      lang = context->lang?context->lang:context->loc;
+      if(*oyjl_debug > 1)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s context[%d]->loc: %s lang: %s", OYJL_DBG_ARGS, loc, i, context->loc, lang );
+      ++i;
+    }
+  }
+
+  return lang;
+}
+
+/** @brief   get message translation context
+ *
+ *  @param         domain              select domain of library or application
+ *  @return                            context for domain
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/10/26
+ *  @since   2021/10/26 (Oyjl: 1.0.0)
+ */
+oyjlTr_s *     oyjlTr_Get            ( const char        * domain )
+{
+  oyjlTr_s * context = NULL;
+
+  if(oyjl_tr_context_ && domain)
+  {
+    int i = 0;
+    while(oyjl_tr_context_[i])
+    {
+      context = oyjl_tr_context_[i];
+      if(context->domain && domain && strcmp(context->domain, domain) == 0)
+        break;
+      else
+        context = NULL;
+      ++i;
+    }
+  }
+
+  return context;
+}
+
+int         oyjl_tr_context_reserve_ = 0;
+/** @brief   set message translation context
+ *
+ *  @param         context             message context for oyjlTranslate()
+ *                                     - oyjlTr_s context: move in as new current
+ *  @return                            state
+ *                                     - -1: no domain
+ *                                     - 0: nothing found for erase
+ *                                     - 1: old context found
+ *                                     - 2: old context erased
+ *                                     - 3: context replaced
+ *                                     - 5: context kept
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/11/01
+ *  @since   2021/10/26 (Oyjl: 1.0.0)
+ */
+int            oyjlTr_Set            ( oyjlTr_s         ** context )
+{
+  int i = 0, pos = -1;
+  oyjlTr_s * oyjl_tr_context = NULL;
+  int state = -1;
+  const char * domain;
+
+  if(context && *context && !oyjlTr_Check_(*context))
+    return -2;
+
+  domain = oyjlTr_GetDomain( *context );
+
+  if(!domain)
+  {
+    oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, OYJL_DBG_FORMAT "domain arg missed", OYJL_DBG_ARGS );
+    return state;
+  }
+  state = 0;
+
+  while(oyjl_tr_context_ && oyjl_tr_context_[i])
+  {
+    oyjlTr_s * context = oyjl_tr_context_[i];
+    if(context->domain && domain && strcmp(context->domain, domain) == 0)
+    {
+      pos = i;
+      break;
+    }
+    ++i;
+  }
+  if(pos >= 0)
+  {
+    oyjl_tr_context = oyjl_tr_context_[pos];
+    state |= 1;
+    if(*oyjl_debug)
+    {
+      int erase = context && oyjl_tr_context && oyjl_tr_context != *context,
+          keep = context && oyjl_tr_context == *context,
+          replace = !erase && context && *context;
+      char * t = oyjlBT(0);
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s[%d] domain: \"%s\" show", OYJL_DBG_ARGS, t, pos, domain, erase?"erase":keep?"keep":replace?"replace":"show on return" );
+      free(t);
+    }
+  }
+
+  if(context && oyjl_tr_context == *context)
+    return 1|4;
+
+  if(context && oyjl_tr_context && oyjl_tr_context != *context)
+  {
+    oyjlTr_Release(&oyjl_tr_context_[pos]);
+    state |= 2;
+  }
 
   if(context && *context)
   {
-    oyjl_tr_context_ = *context;
+    if(!oyjl_tr_context_)
+    {
+      oyjlAllocHelper_m( oyjl_tr_context_, oyjlTr_s*, 10, malloc, return -2 );
+      oyjl_tr_context_reserve_ = 10;
+    }
+    if(i == oyjl_tr_context_reserve_)
+    {
+      oyjl_tr_context_ = realloc( oyjl_tr_context_, sizeof(oyjlTr_s*) * oyjl_tr_context_reserve_ * 2 );
+      if(!oyjl_tr_context_)
+      {
+        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "domain: \"%s\" alloc failed: %d", OYJL_DBG_ARGS, domain, i );
+        return -2;
+      } else
+        oyjl_tr_context_reserve_ *= 2;
+    }
+    oyjl_tr_context_[i] = *context;
     *context = NULL;
   }
 
-  return oyjl_tr_context_;
+  return state;
 }
 
-/** @brief   set explicitely language
-*
-*  @param         loc                 locale name as from setlocale("")
-*                                     - NULL: reset
-*                                     - "": get existing without change
-*                                     - "something": set lang to "something"
-*  @return                            current locale
-*
-*  @version Oyjl: 1.0.0
-*  @date    2021/10/24
-*  @since   2020/07/28 (Oyjl: 1.0.0)
-*/
-const char *   oyjlLang              ( const char        * loc )
+/** @brief   unregister message translation context
+ *
+ *  @param         domain              select domain of library or application
+ *  @return                            state
+ *                                     - -1: no domain
+ *                                     - 0: nothing found for erase
+ *                                     - 1: old context found
+ *                                     - 2: old context erased
+ *                                     - 3: context replaced
+ *                                     - 5: context kept
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/11/01
+ *  @since   2021/10/26 (Oyjl: 1.0.0)
+ */
+int            oyjlTr_Unset          ( const char        * domain )
 {
-  oyjlTr_s * context = oyjl_tr_context_;
-  const char * lang = NULL;
+  int i = 0, pos = -1;
+  oyjlTr_s * oyjl_tr_context = NULL;
+  int state = -1;
 
-  if(context)
-    oyjlTr_SetLocale( context, loc );
-  else
+  if(!domain)
   {
-    context = oyjlTr_New( loc, NULL, NULL, NULL, NULL, 0 );
-    context = oyjlTr( &context );
+    oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, OYJL_DBG_FORMAT "domain arg missed", OYJL_DBG_ARGS );
+    return state;
+  }
+  state = 0;
+
+  while(oyjl_tr_context_ && oyjl_tr_context_[i])
+  {
+    oyjlTr_s * context = oyjl_tr_context_[i];
+    if(context->domain && domain && strcmp(context->domain, domain) == 0)
+    {
+      pos = i;
+      break;
+    }
+    ++i;
+  }
+  if(pos >= 0)
+  {
+    oyjl_tr_context = oyjl_tr_context_[pos];
+    state |= 1;
+    if(*oyjl_debug)
+    {
+      char * t = oyjlBT(0);
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s[%d] domain: \"%s\" %s", OYJL_DBG_ARGS, t, pos, domain, "erase" );
+      free(t);
+    }
   }
 
-  lang = oyjlTr_GetLang( context );
+  if(oyjl_tr_context && pos >= 0 && oyjl_tr_context != oyjl_tr_context_[pos])
+  {
+    oyjlTr_Release(&oyjl_tr_context_[pos]);
+    state |= 2;
+  }
 
-  return lang;
+  return state;
 }
 
 /** @} *//* oyjl */
