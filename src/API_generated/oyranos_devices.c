@@ -1358,7 +1358,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
 
   oyOptions_FindInt( options, "pos", 0, &pos );
 
-  json_class = oyjlTreeGetValue( json, 0, "org/freedesktop/oyjl/device" );
+  json_class = oyjlTreeGetValue( json, 0, "org/freedesktop/openicc/device" );
   if(json_class && json_class->type == oyjl_t_object)
     device_class = json_class->u.object.keys[0];
 
@@ -2055,7 +2055,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
           if(!o)
           {
             o = oyOption_New( NULL );
-            oyOption_SetRegistration( o, OY_DEFAULT_CMM_RENDERER );
+            oyOption_SetRegistration( o, OY_DEFAULT_CMM_CONTEXT );
             is_new = 1;
           }
           api_pattern = cmm_api9_->oyCMMRegistrationToName(
@@ -2084,7 +2084,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
           if(!o)
           {
             o = oyOption_New( NULL );
-            oyOption_SetRegistration( o, OY_DEFAULT_CMM_CONTEXT );
+            oyOption_SetRegistration( o, OY_DEFAULT_CMM_RENDERER );
             is_new = 1;
           }
           oyOption_SetFromString( o, api_pattern, 0 );

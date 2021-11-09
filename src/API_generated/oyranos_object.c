@@ -396,6 +396,8 @@ int    oyFilterStringMatch           ( const char        * registration,
   int     reg_n = 0;
   int     reg_len = 0;
   char  * regc_text = 0;
+  char  * tempr = NULL;
+  char  * tempp = NULL;
   int     regc_n = 0;
   int     regc_len = 0;
   char  * p_text = 0;
@@ -411,11 +413,28 @@ int    oyFilterStringMatch           ( const char        * registration,
 
   if(flags & OY_MATCH_SUB_STRING)
     memmatch = oyMemMemFound;
- 
+
   if(registration && pattern)
   {
+    char * t;
     api_num = oyCMMapiNumberToChar(api_number);
     match_tmp = 1;
+
+    if(strstr(registration, "\\."))
+    {
+      tempr = oyjlStringCopy(registration, oyAllocateFunc_);
+      t = strstr(tempr, "\\.");
+      t[0] = '\000';
+      registration = tempr;
+    }
+    if(strstr(pattern, "\\."))
+    {
+      tempp = oyjlStringCopy(pattern, oyAllocateFunc_);
+      t = strstr(tempp, "\\.");
+      t[0] = '\000';
+      pattern = tempp;
+    }
+ 
     reg_n = oyStringSegments_(registration, path_separator);
     p_n = oyStringSegments_(pattern, path_separator);
 
@@ -512,12 +531,18 @@ int    oyFilterStringMatch           ( const char        * registration,
                 ++ match;
                 match_tmp = 1;
               } else /* if(pc_match_type == '-') */
-                return 0;
+              {
+                match = 0;
+                goto clean_oyFilterStringMatch;
+              }
             }
           }
 
           if(pc_match_type == '+' && !match_tmp)
-            return 0;
+          {
+            match = 0;
+            goto clean_oyFilterStringMatch;
+          }
         }
       }
     }
@@ -529,6 +554,9 @@ int    oyFilterStringMatch           ( const char        * registration,
   if(match_tmp == 1 && !match)
     match = 1;
 
+  clean_oyFilterStringMatch:
+  if(tempp) oyDeAllocateFunc_(tempp);
+  if(tempr) oyDeAllocateFunc_(tempr);
   return match;
 }
 

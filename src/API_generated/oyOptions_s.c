@@ -489,10 +489,7 @@ int          oyOptions_FromJSON      ( const char        * json_text,
     xv = oyjlTreeGetValue( json, 0, xpath );
   else
   {
-    char ** paths = NULL;
-    oyjlTreeToPaths( json, 1000000, NULL, OYJL_KEY, &paths );
-    count = 0;
-    while(paths && paths[count]) ++count;
+    char ** paths = oyjlTreeToPaths( json, 1000000, NULL, OYJL_KEY, &count );
     for(i = 0; i < count; ++i)
     {
       const char * xpath = paths[i];
@@ -674,9 +671,11 @@ int            oyOptions_Add         ( oyOptions_s       * options,
   {
     o_opt = oyFilterRegistrationToText( o->registration,
                                         oyFILTER_REG_MAX, 0 );
-    if(strrchr(o_opt, '.' ))
+    if(strstr(o_opt, "\\." ) || strchr(o_opt, '.' ))
     {
-      t = strrchr(o_opt, '.' );
+      t = strstr(o_opt, "\\." );
+      if(!t)
+        t = strrchr(o_opt, '.' );
       *t = 0;
     }
     o_top = oyFilterRegistrationToText( o->registration,
@@ -688,9 +687,11 @@ int            oyOptions_Add         ( oyOptions_s       * options,
       tmp = (oyOption_s_ *) oyOptions_Get( options, i );
       l_opt = oyFilterRegistrationToText( tmp->registration,
                                           oyFILTER_REG_MAX, 0 );
-      if(strrchr(l_opt, '.' ))
+      if(strstr(l_opt, "\\." ) || strrchr(l_opt, '.' ))
       {
-        t = strrchr(l_opt, '.' );
+        t = strstr(l_opt, "\\." );
+        if(!t)
+          t = strrchr(l_opt, '.' );
         *t = 0;
       }
       l_top = oyFilterRegistrationToText( tmp->registration,
@@ -714,24 +715,34 @@ int            oyOptions_Add         ( oyOptions_s       * options,
     } else if(skip == 2)
     {
       tmp = (oyOption_s_*) oyOptions_Find( options, o_opt, oyNAME_PATTERN );
-
-      /* preserve manual / on the fly settings */
-      if(o->flags & oyOPTIONATTRIBUTE_EDIT &&
-         !(tmp->flags & oyOPTIONATTRIBUTE_EDIT))
+      if(!tmp)
       {
-        oyOption_Copy__Members( tmp, o );
-        error = 0;
-      } else
-      /* preserve automatic / DB settings */
-      if(o->flags & oyOPTIONATTRIBUTE_AUTOMATIC &&
-         !(tmp->flags & oyOPTIONATTRIBUTE_AUTOMATIC) &&
-         !(tmp->flags & oyOPTIONATTRIBUTE_EDIT))
-      {
-        oyOption_Copy__Members( tmp, o );
-        error = 0;
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)options,
+                         OY_DBG_FORMAT_ "Could not find: \"%s\"", OY_DBG_ARGS_,
+                         oyNoEmptyName_m_(o_opt) );
+        error = 1;
       }
 
-      oyOption_Release( (oyOption_s**)&tmp );
+      if(error <= 0)
+      {
+        /* preserve manual / on the fly settings */
+        if(o->flags & oyOPTIONATTRIBUTE_EDIT &&
+           !(tmp->flags & oyOPTIONATTRIBUTE_EDIT))
+        {
+          oyOption_Copy__Members( tmp, o );
+          error = 0;
+        } else
+        /* preserve automatic / DB settings */
+        if(o->flags & oyOPTIONATTRIBUTE_AUTOMATIC &&
+           !(tmp->flags & oyOPTIONATTRIBUTE_AUTOMATIC) &&
+           !(tmp->flags & oyOPTIONATTRIBUTE_EDIT))
+        {
+          oyOption_Copy__Members( tmp, o );
+          error = 0;
+        }
+
+        oyOption_Release( (oyOption_s**)&tmp );
+      }
     }
 
     oyFree_m_( o_opt );
@@ -1209,11 +1220,8 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
             if(!opt_root)
               WARNc1_S("could not parse:\n%s", val);
 
-            char ** paths = NULL;
             int count = 0;
-
-            oyjlTreeToPaths( opt_root, 1000000, NULL, OYJL_KEY, &paths );
-            while(paths && paths[count]) ++count;
+            char ** paths = oyjlTreeToPaths( opt_root, 1000000, NULL, OYJL_KEY, &count );
 
             for(k = 0; k < count; ++k)
             {
@@ -1481,7 +1489,8 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
 
       if(found && registration)
       {
-         if(!oyOptionRegistrationMatch( oyOptionPriv_m(o)->registration, registration, type ))
+         const char * oreg = oyOptionPriv_m(o)->registration;
+         if(!oyOptionRegistrationMatch( oreg, registration, type ))
           found = 0;
       }
 
