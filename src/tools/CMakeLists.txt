@@ -6,7 +6,7 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
       MESSAGE( "-- Skipping ${_tool} docu: cross compiling; Hint: build first for local march to generate docu + i18n" )
   ELSE( CMAKE_CROSSCOMPILING )
     ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=C DISPLAY="man_page" ${_tool} -X man > ${CMAKE_SOURCE_DIR}/doc/man/${_tool}.1
         DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -17,7 +17,7 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
     STRING(REGEX REPLACE "-" "" _tool_MD ${_tool})
     MESSAGE( "${_tool_MD}: ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md" )
     ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=en DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG=C DISPLAY="man_page" ${_tool} -X markdown > ${CMAKE_SOURCE_DIR}/doc/md/${_tool_MD}.md
         DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -75,7 +75,7 @@ MACRO(OY_COMPLETION_TOOL _tool _tool_src)
       MESSAGE( "-- Skipping ${_tool} completion: cross compiling" )
   ELSE( CMAKE_CROSSCOMPILING )
     ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
-      COMMAND LANG=C DISPLAY="man_page" PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} ${_tool} -X export | oyjl-args -i - --completion-bash > ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
+        COMMAND LANG=C DISPLAY="man_page" PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} ${_tool} -X export | oyjl-args -i - --completion-bash > ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
         DEPENDS ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
