@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2021-11-08 19:36+0100\n"
+"POT-Creation-Date: 2021-11-09 07:48+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_args.c:4777 oyjl_args.c:5048 oyjl_args_tree.c:2135
+#: oyjl_args.c:4779 oyjl_args.c:5050 oyjl_args_tree.c:2135
 msgid "AUTHOR"
 msgstr ""
 
@@ -93,7 +93,7 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:4787 oyjl_args.c:4789 oyjl_args.c:5062 oyjl_args.c:5064
+#: oyjl_args.c:4789 oyjl_args.c:4791 oyjl_args.c:5064 oyjl_args.c:5066
 #: oyjl_args_tree.c:2138
 msgid "BUGS"
 msgstr ""
@@ -107,7 +107,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:4781 oyjl_args.c:5052 oyjl_args_tree.c:2136
+#: oyjl_args.c:4783 oyjl_args.c:5054 oyjl_args_tree.c:2136
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -206,7 +206,7 @@ msgstr "Copyright-a"
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:4650 oyjl_args.c:4919 oyjl_args_tree.c:2132
+#: oyjl_args.c:4652 oyjl_args.c:4921 oyjl_args_tree.c:2132
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -354,7 +354,7 @@ msgstr ""
 msgid "Function"
 msgstr "Dokumentazioa"
 
-#: oyjl_args.c:4661 oyjl_args.c:4931
+#: oyjl_args.c:4663 oyjl_args.c:4933
 msgid "GENERAL OPTIONS"
 msgstr ""
 
@@ -505,7 +505,7 @@ msgstr "Izena"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:4104 oyjl_args.c:4783 oyjl_args.c:5054 oyjl_args_tree.c:2096
+#: oyjl_args.c:4104 oyjl_args.c:4785 oyjl_args.c:5056 oyjl_args_tree.c:2096
 #: oyjl_args_tree.c:2137
 msgid "License"
 msgstr "Lizentzia"
@@ -667,7 +667,7 @@ msgstr "Modeloa:"
 msgid "Module"
 msgstr "Bereizketa"
 
-#: oyjl.c:273 oyjl_args.c:4635 oyjl_args.c:4904 oyjl_args_tree.c:2128
+#: oyjl.c:273 oyjl_args.c:4637 oyjl_args.c:4906 oyjl_args_tree.c:2128
 msgid "NAME"
 msgstr ""
 
@@ -703,7 +703,7 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: oyjl_args.c:4653 oyjl_args.c:4922 oyjl_args_tree.c:2134
+#: oyjl_args.c:4655 oyjl_args.c:4924 oyjl_args_tree.c:2134
 msgid "OPTIONS"
 msgstr ""
 
@@ -987,7 +987,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:4638 oyjl_args.c:4907 oyjl_args_tree.c:2130
+#: oyjl_args.c:4640 oyjl_args.c:4909 oyjl_args_tree.c:2130
 msgid "SYNOPSIS"
 msgstr ""
 

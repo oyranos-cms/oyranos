@@ -166,25 +166,15 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h2>BEISPIELE <a href="#toc" name="examples">&uarr;</a></h2>
 
-#### 
-&nbsp;&nbsp;Zeige JSON auf stdout
-  <br />
+#### Zeige JSON auf stdout
 &nbsp;&nbsp;oyjl -i text.json -x ///[0]
-#### 
-&nbsp;&nbsp;Zeige Anzahl der Knotenzweige
-  <br />
+#### Zeige Anzahl der Knotenzweige
 &nbsp;&nbsp;oyjl -c -i text.json -x mein/Pfad/
-#### 
-&nbsp;&nbsp;Zeige Schlüsselname des Knotens
-  <br />
+#### Zeige Schlüsselname des Knotens
 &nbsp;&nbsp;oyjl -k -i text.json -x ///[0]
-#### 
-&nbsp;&nbsp;Zeige alle zutreffenden Pfade
-  <br />
+#### Zeige alle zutreffenden Pfade
 &nbsp;&nbsp;oyjl -p -i text.json -x //
-#### 
-&nbsp;&nbsp;Setze Wert des Schlüssels
-  <br />
+#### Setze Wert des Schlüssels
 &nbsp;&nbsp;oyjl -i text.json -x mein/Pfad/zum/Schlüssel -s Wert
 
 <h2>SIEHE AUCH <a href="#toc" name="seealso">&uarr;</a></h2>

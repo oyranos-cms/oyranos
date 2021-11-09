@@ -4505,16 +4505,18 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
               oyjlStringListRelease( &li, li_n, free );
             }
             else
-            oyjlStringAdd( &text, malloc, free, "#### %s\n", list[l].nick );
-            if(list[l].name && list[l].name[0])
+            oyjlStringAdd( &text, malloc, free, "#### %s\n", list[l].nick[0] ? list[l].nick : list[l].name && list[l].name[0] ? list[l].name : "" );
+            if(list[l].nick[0] && list[l].name && list[l].name[0])
             {
               if(strlen(list[l].name) > 5 && memcmp(list[l].name,"http",4) == 0)
                 oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;<a href=\"%s\">%s</a>\n", list[l].name, list[l].name );
                else
                 oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", list[l].name );
             }
+            if(list[l].nick[0] && list[l].name && list[l].name[0] && list[l].description && list[l].description[0])
+            oyjlStringAdd( &text, malloc, free, "  <br />\n" );
             if(list[l].description && list[l].description[0])
-            oyjlStringAdd( &text, malloc, free, "  <br />\n&nbsp;&nbsp;%s\n", list[l].description );
+            oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n", list[l].description );
             if(list[l].help && list[l].help[0])
             oyjlStringAdd( &text, malloc, free, "  <br />\n&nbsp;&nbsp;%s\n", list[l].help );
           }
