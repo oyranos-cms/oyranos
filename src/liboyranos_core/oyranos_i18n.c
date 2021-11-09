@@ -22,7 +22,8 @@
 #include <libintl.h>
 #include <locale.h>
 #else
-#include "oyranos.i18n.h"
+#include "liboyranos.i18n.h"
+#include "oyjl.h" /* oyjl_val oyjlLang() */
 #endif
 
 #include "oyranos.h"
@@ -61,6 +62,8 @@ int oy_i18n_init_ = 0;
 void oyI18NInit_()
 {
   int use_gettext = 0;
+  oyjlTr_s * trc = NULL;
+  char * loc = NULL;
   DBG_PROG_START
 
 #ifdef USE_GETTEXT
@@ -70,16 +73,6 @@ void oyI18NInit_()
   if(!oy_i18n_init_)
   {
     ++oy_i18n_init_;
-    oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &oy_debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, OY_TEXTDOMAIN, oyMessageFunc_p );
-#ifdef USE_GETTEXT
-    if(oy_domain_codeset)
-    {
-      if(oy_debug)
-        WARNc2_S("bindtextdomain( %s, %s )", oy_domain, oy_domain_codeset );
-      bind_textdomain_codeset(oy_domain, oy_domain_codeset);
-    }
-    DBG_NUM2_S("oy_domain_codeset %s %s", oy_domain, oyNoEmptyString_m(oy_domain_codeset))
-#endif
 
     /* we use the posix setlocale interface;
      * the environmental LANG variable is flacky */
@@ -90,32 +83,51 @@ void oyI18NInit_()
 
     if(oy_lang_)
     {
-    if(oyStrchr_(oy_lang_,'_'))
-    {
-      char * tmp = NULL;
-      int len = oyStrlen_(oy_lang_);
+#if !defined( USE_GETTEXT )
+      const char * t = (const char*) liboyranos_i18n_oiJS;
+      int size = sizeof(liboyranos_i18n_oiJS);
+      oyjl_val catalog = (oyjl_val) oyjlStringAppendN( NULL, t, size, 0 );
+      trc = oyjlTr_New( oy_lang_, OY_TEXTDOMAIN, &catalog, 0,0,0,0 );
+#else
+      trc = oyjlTr_New( oy_lang_, OY_TEXTDOMAIN, 0, 0,0,0,0 );
+#endif
+      if(oyStrchr_(oy_lang_,'_'))
+      {
+        char * tmp = NULL;
+        int len = oyStrlen_(oy_lang_);
 
-      oyAllocHelper_m_( tmp, char, len + 5, 0, DBG_PROG_ENDE; return );
-      oySprintf_( tmp, "%s", oyStrchr_(oy_lang_,'_')+1 );
-      if(oyStrlen_(tmp) > 2)
-        tmp[2] = 0;
-      oy_country_ = tmp; tmp = NULL;
+        oyAllocHelper_m_( tmp, char, len + 5, 0, DBG_PROG_ENDE; return );
+        oySprintf_( tmp, "%s", oyStrchr_(oy_lang_,'_')+1 );
+        if(oyStrlen_(tmp) > 2)
+          tmp[2] = 0;
+        oy_country_ = tmp; tmp = NULL;
 
-      tmp = oyStrchr_(oy_country_,'.');
-      if(tmp)
-        tmp[0] = 0;
-      tmp = NULL;
+        tmp = oyStrchr_(oy_country_,'.');
+        if(tmp)
+          tmp[0] = 0;
+        tmp = NULL;
 
-      oyAllocHelper_m_( tmp, char, len + 5, 0, DBG_PROG_ENDE; return );
-      oySprintf_( tmp, "%s", oy_lang_ );
-      oy_language_ = tmp; tmp = NULL;
+        oyAllocHelper_m_( tmp, char, len + 5, 0, DBG_PROG_ENDE; return );
+        oySprintf_( tmp, "%s", oy_lang_ );
+        oy_language_ = tmp; tmp = NULL;
 
-      tmp = oyStrchr_(oy_language_,'_');
-      if(tmp)
-        tmp[0] = 0;
-    } else
-      oy_language_ = oyStringCopy_( oy_lang_, oyAllocateFunc_);
+        tmp = oyStrchr_(oy_language_,'_');
+        if(tmp)
+          tmp[0] = 0;
+      } else
+        oy_language_ = oyStringCopy_( oy_lang_, oyAllocateFunc_);
     }
+    oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &oy_debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, &trc, oyMessageFunc_p );
+#ifdef USE_GETTEXT
+    if(oy_domain_codeset)
+    {
+      if(oy_debug)
+        WARNc2_S("bindtextdomain( %s, %s )", oy_domain, oy_domain_codeset );
+      bind_textdomain_codeset(oy_domain, oy_domain_codeset);
+    }
+    DBG_NUM2_S("oy_domain_codeset %s %s", oy_domain, oyNoEmptyString_m(oy_domain_codeset))
+#endif
+
   }
 
   DBG_PROG_ENDE
