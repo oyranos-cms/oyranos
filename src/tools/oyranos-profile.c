@@ -214,23 +214,28 @@ int myMain( int argc, const char ** argv )
   const char * render = NULL;
   const char * export = 0;
 
+#if defined(__ANDROID__)
+  oy_debug = 2;
+  fprintf(stderr, OYJL_DBG_FORMAT "%s\n", OYJL_DBG_ARGS, argv[0] );
+#endif
+
   /* handle options */
   /* declare the option choices  *   nick,          name,               description,                  help */
-  oyjlOptionChoice_s E_choices[] = {{_("OY_DEBUG"), _("set the Oyranos debug level. Alternatively the -v option can be used."),NULL,                         NULL},
-                                    {_("XDG_DATA_HOME XDG_DATA_DIRS"),_("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended."),_("http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"),NULL},
-                                    {"","","",""}};
+  oyjlOptionChoice_s E_choices[] = {{"OY_DEBUG", _("set the Oyranos debug level. Alternatively the -v option can be used."),NULL,                         NULL},
+                                    {"XDG_DATA_HOME XDG_DATA_DIRS",_("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended."),_("http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"),NULL},
+                                    {NULL,NULL,NULL,NULL}};
 
-  oyjlOptionChoice_s A_choices[] = {{_("Show overview and header of profile"),_("oyranos-profile sRGB.icc"),NULL,                         NULL},
-                                    {_("Show first tags content of profile"),_("oyranos-profile -lv -p=1 sRGB.icc"),NULL,                         NULL},
-                                    {_("Show the profile hash sum"),_("oyranos-profile -m sRGB.icc"),NULL,                         NULL},
-                                    {_("Show the RGB primaries of a matrix profile inside a CIE*xy diagram"),_("ppmcie `oyranos-profile --ppmcie sRGB.icc` > sRGB_cie-xy.ppm"),NULL,                         NULL},
-                                    {_("Add calibration data to meta tag of a device profile"),_("oyranos-profile -w my_profile -j my_device.json my_profile.icc"),NULL,                         NULL},
-                                    {_("Pass the profile to a external tool"),_("iccdump \"`oyranos-profile --path cmyk`\""),NULL,                         NULL},
-                                    {"","","",""}};
+  oyjlOptionChoice_s A_choices[] = {{"",_("Show overview and header of profile"),_("oyranos-profile sRGB.icc"),                         NULL},
+                                    {"",_("Show first tags content of profile"),_("oyranos-profile -lv -p=1 sRGB.icc"),                         NULL},
+                                    {"",_("Show the profile hash sum"),_("oyranos-profile -m sRGB.icc"),                         NULL},
+                                    {"",_("Show the RGB primaries of a matrix profile inside a CIE*xy diagram"),_("ppmcie `oyranos-profile --ppmcie sRGB.icc` > sRGB_cie-xy.ppm"),NULL},
+                                    {"",_("Add calibration data to meta tag of a device profile"),_("oyranos-profile -w my_profile -j my_device.json my_profile.icc"),NULL},
+                                    {"",_("Pass the profile to a external tool"),_("iccdump \"`oyranos-profile --path cmyk`\""),NULL},
+                                    {NULL,NULL,NULL,NULL}};
 
   oyjlOptionChoice_s S_choices[] = {{_("oyranos-profiles(1) oyranos-profile-graph(1) oyranos-config-fltk(1) oyranos-config(1) oyranos(3) ppmcie(1)"),NULL,               NULL,                         NULL},
-                                    {_("http://www.oyranos.org"),NULL,               NULL,                         NULL},
-                                    {"","","",""}};
+                                    {"http://www.oyranos.org",NULL,               NULL,                         NULL},
+                                    {NULL,NULL,NULL,NULL}};
 
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
@@ -307,7 +312,7 @@ int myMain( int argc, const char ** argv )
   oyjlUi_s * ui = oyjlUi_Create( argc, argv, /* argc+argv are required for parsing the command line options */
                                        "oyranos-profile", _("Oyranos Profile"), _("The Tool gives information of a ICC color profile."),
 #ifdef __ANDROID__
-                                       ":/images/logo.svg", // use qrc
+                                       ":/images/oyranos-logo", // use qrc
 #else
                                        "oyranos_logo",
 #endif
@@ -939,13 +944,14 @@ int myMain( int argc, const char ** argv )
 
 extern int * oyjl_debug;
 char ** environment = NULL;
-int main( int argc_, char**argv_, char ** envv )
+int main( int argc_, char**argv_, char ** envv OYJL_UNUSED )
 {
   int argc = argc_;
   char ** argv = argv_;
 
 #ifdef __ANDROID__
   setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+  //setenv("OY_DEBUG", "2", 0);
 
   argv = calloc( argc + 2, sizeof(char*) );
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
@@ -956,7 +962,7 @@ int main( int argc_, char**argv_, char ** envv )
 #endif
 
   /* language needs to be initialised before setup of data structures */
-#ifdef USE_GETTEXT
+#ifdef OYJL_HAVE_LOCALE_H
   setlocale(LC_ALL,"");
 #endif
   oyExportStart_(EXPORT_CHECK_NO);

@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2012-2020  Kai-Uwe Behrmann
+ *  Copyright (C) 2012-2021  Kai-Uwe Behrmann
  *
  */
 
@@ -59,13 +59,6 @@
 # ifdef OYJL_USE_GETTEXT
 # undef OYJL_USE_GETTEXT
 # endif
-#endif
-#if !defined(USE_GETTEXT)
-# include "oyranos-profile-graph.i18n.c"
-int i18n_init = 0;
-const char * lang = NULL;
-#undef _
-#define _(x) (char*)oyjlTranslate( oyjlLang(""), oyjlCatalog(NULL), x, 0 )
 #endif
 
 
@@ -358,25 +351,6 @@ int myMain( int argc, const char ** argv )
 
 #if defined(__ANDROID__) || !defined(OYJL_USE_GETTEXT)
   fprintf(stderr, OYJL_DBG_FORMAT "%s\n", OYJL_DBG_ARGS, argv[0] );
-
-  if(!i18n_init)
-  {
-    i18n_catalog = oyjlTreeParse(oyranos_json,0,0);
-    ++i18n_init;
-  }
-  if(!lang || (lang && strcmp(lang,"C") == 0))
-    lang =
-#ifdef OYJL_HAVE_LOCALE_H
-      setlocale(LC_ALL, ""); /* unlikely to work */
-#else
-      NULL;
-#endif
-  if(!lang || (lang && strcmp(lang,"C") == 0))
-    lang = getenv("LANG"); /* flacky */
-  if(lang && strlen(lang) >= 2)
-    lang = oyjlLang(lang);
-  if(!lang || (lang && strcmp(lang,"C") == 0))
-    lang = oyjlLang("");
 #endif
 
   /* spectal variables */
@@ -414,12 +388,12 @@ int myMain( int argc, const char ** argv )
   /* nick, name, description, help */
   oyjlOptionChoice_s env_vars[]={ {"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
                                   {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html"), "", ""},
-                                  {"","","",""}};
+                                  {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s examples[]={ {_("Show graph of a ICC profile"), "oyranos-profile-graph ICC_PROFILE", "", ""},
                                   {_("Show the saturation lines of two profiles in CIE*ab 256 pixel width, without spectral line and with thicker lines:"), "oyranos-profile-graph -w 256 -n -t 3 sRGB.icc ProPhoto-RGB.icc", "", ""},
                                   {_("Show HLC Color Atlas patches"),"oyranos-profile-graph -H=90 -o HLC_H090.png cmyk web",_("Color patches are only shown, if they are in gamut of the default CMYK and web profile."), ""},
                                   {_("Show the standard observer spectral function as curves:"),"oyranos-profile-graph --standard-observer -o CIE-StdObserver.png","", ""},
-                                  {"","","",""}};
+                                  {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s illu_dxx[]={ {"A",  _("Illuminant A"),  "", _("CIE A spectral power distribution")},
                                   {"D50",_("Illuminant D50"),"", _("CIE D50 spectral power distribution (computed)")},
                                   {"D55",_("Illuminant D55"),"", _("CIE D55 spectral power distribution (computed)")},
@@ -427,10 +401,10 @@ int myMain( int argc, const char ** argv )
                                   {"D65T",_("Illuminant D65 T"),"",_("CIE D65 spectral power distribution")},
                                   {"D75",_("Illuminant D75"),"", _("CIE D75 spectral power distribution (computed)")},
                                   {"D93",_("Illuminant D93"),"", _("CIE D93 spectral power distribution (computed)")},
-                                  {"","","",""}};
+                                  {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s out_form[]={ {"png",_("PNG"),"",_("PNG Raster")},
                                   {"svg",_("SVG"),"",_("SVG Vector")},
-                                  {"","","",""}};
+                                  {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s spe_form[]={ {"png",_("PNG"),"",_("PNG Raster")},
                                   {"svg",_("SVG"),"",_("SVG Vector")},
                                   {"csv",_("CSV"),"",_("CSV Values")},
@@ -438,14 +412,14 @@ int myMain( int argc, const char ** argv )
                                   {"cgats",_("CGATS"),"",_("CGATS Values")},
                                   {"icc-xml",_("Icc XML"),"",_("ICC Named Color Values")},
                                   {"ppm",_("PPM"),"",_("Spectral PAM Image")},
-                                  {"","","",""}};
+                                  {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s p_format[]={ {"png",_("PNG"),"",_("PNG Raster")},
                                   {"svg",_("SVG"),"",_("SVG Vector")},
                                   {"ncc",_("NCC"),"",_("Named Color Collection")},
-                                  {"","","",""}};
+                                  {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s see_as_well[]={{"oyranos-profile(1) oyranos-config(1) oyranos-policy(1) oyranos(3)", "", "", ""},
                                     {"http://www.oyranos.org","","",""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
     {"oiwi", 0,                         "2", "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&v2} },
@@ -614,11 +588,7 @@ int myMain( int argc, const char ** argv )
   if(render)
   { 
     int debug = verbose;
-#if defined(__ANDROID__) || !defined(OYJL_USE_GETTEXT)
-# define RENDER_I18N oyranos_json
-#else
 # define RENDER_I18N NULL
-#endif
     oyjlArgsRender( argc, argv, RENDER_I18N, jcommands,NULL, debug, ui, myMain );
 #ifndef __ANDROID__
     oyjlUi_Release( &ui);
@@ -3472,7 +3442,7 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
       oyjlStringAdd( &tmp, 0,0, "\tSPECTRAL_%d", nm );
     }
     oyjlStringAdd( &tmp, 0,0, "\nEND_DATA_FORMAT\n\nNUMBER_OF_SETS %d\nBEGIN_DATA\n", (int)pixels );
-    t = oyjlStrNewFrom(&tmp,0,0,0);
+    t = oyjlStr_NewFrom(&tmp,0,0,0);
   }
 
   if(t && pixels >= 1)
@@ -3486,9 +3456,9 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
       name = OYJL_GET_STRING(v);
       if(name)
       {
-        oyjlStrAppendN( t, "\"", 1 );
-        oyjlStrAppendN( t, name, strlen(name) );
-        oyjlStrAppendN( t, "\"", 1 );
+        oyjlStr_AppendN( t, "\"", 1 );
+        oyjlStr_AppendN( t, name, strlen(name) );
+        oyjlStr_AppendN( t, "\"", 1 );
       }
 
       v = oyjlTreeGetValueF( data, 0, "[%d]/lab/[0]/data", index );
@@ -3503,12 +3473,12 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
             d = NAN;
           } else
             d = OYJL_GET_DOUBLE(v);
-          oyjlStrAppendN( t, "\t", 1 );
+          oyjlStr_AppendN( t, "\t", 1 );
           if(i == 0)
             sprintf(f, "%f", d*100.0);
           else
             sprintf(f, "%f", (d-0.5)*256.0);
-          oyjlStrAppendN( t, f, strlen(f) );
+          oyjlStr_AppendN( t, f, strlen(f) );
         }
       }
 
@@ -3524,9 +3494,9 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
             d = NAN;
           } else
             d = OYJL_GET_DOUBLE(v);
-          oyjlStrAppendN( t, "\t", 1 );
+          oyjlStr_AppendN( t, "\t", 1 );
           sprintf(f, "%f", d*255.0);
-          oyjlStrAppendN( t, f, strlen(f) );
+          oyjlStr_AppendN( t, f, strlen(f) );
         }
       }
 
@@ -3542,9 +3512,9 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
             d = NAN;
           } else
             d = OYJL_GET_DOUBLE(v);
-          oyjlStrAppendN( t, "\t", 1 );
+          oyjlStr_AppendN( t, "\t", 1 );
           sprintf(f, "%f", d*100.0);
-          oyjlStrAppendN( t, f, strlen(f) );
+          oyjlStr_AppendN( t, f, strlen(f) );
         }
       }
 
@@ -3557,13 +3527,13 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
           d = NAN;
         } else
           d = OYJL_GET_DOUBLE(v);
-        oyjlStrAppendN( t, "\t", 1 );
+        oyjlStr_AppendN( t, "\t", 1 );
         sprintf(f, "%f", d);
-        oyjlStrAppendN( t, f, strlen(f) );
+        oyjlStr_AppendN( t, f, strlen(f) );
       }
-      oyjlStrAppendN( t, "\n", 1 );
+      oyjlStr_AppendN( t, "\n", 1 );
     }
-    oyjlStrAppendN( t, "END_DATA\n", 9 );
+    oyjlStr_AppendN( t, "END_DATA\n", 9 );
   }
 
 #ifdef USE_GETTEXT
@@ -3573,8 +3543,8 @@ int oyTreeToCgats( oyjl_val root, int * level OYJL_UNUSED, char ** text )
 
   if(!t) return 1;
 
-  *text = oyjlStrPull( t );
-  oyjlStrRelease( &t );
+  *text = oyjlStr_Pull( t );
+  oyjlStr_Release( &t );
   return 0;
 }
 
@@ -3627,20 +3597,20 @@ int oyTreeToCsv( oyjl_val root, int * level OYJL_UNUSED, char ** text )
 #endif
 
   if(data && pixels >= 1)
-    t = oyjlStrNew(0,0,0);
+    t = oyjlStr_New(0,0,0);
   if(t)
   {
-    oyjlStrAppendN( t, "\"Wavelength (nm)/Name\"", 22 );
+    oyjlStr_AppendN( t, "\"Wavelength (nm)/Name\"", 22 );
     for(index = 0; index < pixels; ++index)
     {
       v = oyjlTreeGetValueF( data, 0, "[%d]/name", index );
       name = OYJL_GET_STRING(v);
-      oyjlStrAppendN( t, ",\"", 2 );
+      oyjlStr_AppendN( t, ",\"", 2 );
       if(name)
-        oyjlStrAppendN( t, name, strlen(name) );
-      oyjlStrAppendN( t, "\"", 1 );
+        oyjlStr_AppendN( t, name, strlen(name) );
+      oyjlStr_AppendN( t, "\"", 1 );
     }
-    oyjlStrAppendN( t, "\n", 1 );
+    oyjlStr_AppendN( t, "\n", 1 );
     for(i = 0; i < samples; ++i)
     {
       for(index = 0; index < pixels; ++index)
@@ -3649,7 +3619,7 @@ int oyTreeToCsv( oyjl_val root, int * level OYJL_UNUSED, char ** text )
         if(index == 0)
         {
           sprintf(f, "%d", (int)(start + i*lambda));
-          oyjlStrAppendN( t, f, strlen(f) );
+          oyjlStr_AppendN( t, f, strlen(f) );
         }
 
         v = oyjlTreeGetValueF( data, 0, "[%d]/spectral/[0]/data/[%d]", index, i );
@@ -3660,10 +3630,10 @@ int oyTreeToCsv( oyjl_val root, int * level OYJL_UNUSED, char ** text )
         } else
           d = OYJL_GET_DOUBLE(v);
         sprintf(f, "%f", d);
-        oyjlStrAppendN( t, ",", 1 );
-        oyjlStrAppendN( t, f, strlen(f) );
+        oyjlStr_AppendN( t, ",", 1 );
+        oyjlStr_AppendN( t, f, strlen(f) );
       }
-      oyjlStrAppendN( t, "\n", 1 );
+      oyjlStr_AppendN( t, "\n", 1 );
     }
   }
 
@@ -3674,8 +3644,8 @@ int oyTreeToCsv( oyjl_val root, int * level OYJL_UNUSED, char ** text )
 
   if(!t) return 1;
 
-  *text = oyjlStrPull( t );
-  oyjlStrRelease( &t );
+  *text = oyjlStr_Pull( t );
+  oyjlStr_Release( &t );
   return 0;
 }
 

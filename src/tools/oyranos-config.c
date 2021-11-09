@@ -238,23 +238,23 @@ int myMain( int argc , const char** argv )
   /* declare the option choices  *   nick,          name,               description,                  help */
   oyjlOptionChoice_s d_choices[] = {{"0",           _("Deactivate"),    _("Deactivate"),              ""},
                                     {"1",           _("Activate"),      _("Activate"),                ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
 
   oyjlOptionChoice_s E_choices[] = {{"OY_DEBUG",    _("set the Oyranos debug level."),_("Alternatively the -v option can be used."),_("Valid integer range is from 1-20.")},
                                     {"OY_MODULE_PATH",_("route Oyranos to additional directories containing modules."),"",                        ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
 
-  oyjlOptionChoice_s A_choices[] = {{_("Show a settings value"),_("oyranos-config -g org/freedesktop/openicc/behaviour/effect_switch"),"",""},
-                                    {_("Change a setting"),_("oyranos-config -s org/freedesktop/openicc/behaviour/effect_switch:1"),"",""},
-                                    {_("Show all settings with values"),_("oyranos-config -l -v"),"",                        ""},
-                                    {_("Watch events"),_("oyranos-config -d 1 -v > log-file.txt"),"",                        ""},
-                                    {_("Compile a simple programm"),_("cc `oyranos-config --cflags` myFile.c `oyranos-config --ldflags` -o myProg"),"",""},
-                                    {_("Show system wide visible profiles from the Oyranos installation path"),_("ls `oyranos-config --syscolordir --iccdirname`"),"",""},
-                                    {"","","",""}};
+  oyjlOptionChoice_s A_choices[] = {{"",_("Show a settings value"),_("oyranos-config -g org/freedesktop/openicc/behaviour/effect_switch"),""},
+                                    {"",_("Change a setting"),_("oyranos-config -s org/freedesktop/openicc/behaviour/effect_switch:1"),""},
+                                    {"",_("Show all settings with values"),_("oyranos-config -l -v"),                        ""},
+                                    {"",_("Watch events"),_("oyranos-config -d 1 -v > log-file.txt"),""},
+                                    {"",_("Compile a simple programm"),_("cc `oyranos-config --cflags` myFile.c `oyranos-config --ldflags` -o myProg"),""},
+                                    {"",_("Show system wide visible profiles from the Oyranos installation path"),_("ls `oyranos-config --syscolordir --iccdirname`"),""},
+                                    {NULL,NULL,NULL,NULL}};
 
   oyjlOptionChoice_s S_choices[] = {{"oyranos-policy(1) oyranos-config-synnefo(1) oyranos(3)","",              "",                        ""},
                                     {"http://www.oyranos.org","",              "",                        ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
 
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {

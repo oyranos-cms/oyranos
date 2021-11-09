@@ -62,7 +62,7 @@ Das oyranos-device Program zeigt und ändert Einstellungen zu ICC Geräteprofile
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--assign</strong></td> <td>Füge Konfiguration zu OpenICC DB hinzu</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--profile-name</strong>=<em>ICC_DATEINAME</em></td> <td>Profildateiname<br />Can be "" empty string or "automatic" or a real profile name. </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--profile-name</strong>=<em>ICC_DATEINAME</em></td> <td>Profildateiname<br />Kann ein lehrer Text "" oder "automatic" oder der Name einer existierenden Profiles sein. </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--system-wide</strong></td> <td>Füge systemweit hinzu</td> </tr>
 </table>
 

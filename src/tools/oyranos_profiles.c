@@ -89,20 +89,20 @@ int myMain( int argc, const char ** argv )
   /* nick, name, description, help */
   oyjlOptionChoice_s env_vars[]={{"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
                                     {"XDG_DATA_HOME XDG_DATA_DIRS", _("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html"), "", ""},
-                                    {"","","",""}};
-  oyjlOptionChoice_s examples[]={{_("List all installed profiles by internal name"), "oyranos-profiles -le", "", ""},
-                                    {_("List all installed profiles of the display and output device classes"), "oyranos-profiles -l -od", "", ""},
-                                    {_("List all installed profiles in user path"), "oyranos-profiles -lfu", "", ""},
-                                    {_("Install a profile for the actual user and show error messages in a GUI"), "oyranos-profiles --install profilename -u --gui", "", ""},
-                                    {_("Install a profile for the actual user and show error messages in a GUI"), "oyranos-profiles --install --taxi=taxi_id/0 --gui -d -u", "", ""},
-                                    {_("Show file infos"),"SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do ls \"$file\"; done", "", ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
+  oyjlOptionChoice_s examples[]={{"",_("List all installed profiles by internal name"), "oyranos-profiles -le", ""},
+                                    {"",_("List all installed profiles of the display and output device classes"), "oyranos-profiles -l -od", ""},
+                                    {"",_("List all installed profiles in user path"), "oyranos-profiles -lfu", ""},
+                                    {"",_("Install a profile for the actual user and show error messages in a GUI"), "oyranos-profiles --install profilename -u --gui", ""},
+                                    {"",_("Install a profile for the actual user and show error messages in a GUI"), "oyranos-profiles --install --taxi=taxi_id/0 --gui -d -u", ""},
+                                    {"",_("Show file infos"),"SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do ls \"$file\"; done", ""},
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s see_as_well[]={{"oyranos-profile-graph(1) oyranos-config(1) oyranos-policy(1) oyranos(3)", "", "", ""},
                                     {"http://www.oyranos.org","","",""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s path_choices[]={{"basICColor","","",""}, {"colord","","",""}, {"edid","","",""}, {"OpenICC","","",""}, {"oyra","","",""}, {"xorg","","",""},
-                                    {"","","",""}};
-  oyjlOptionChoice_s effect_meta[]={{"EFFECT_class;sepia","","",""},{"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
+  oyjlOptionChoice_s effect_meta[]={{"EFFECT_class;sepia","","",""},{NULL,NULL,NULL,NULL}};
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */

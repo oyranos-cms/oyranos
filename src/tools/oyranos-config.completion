@@ -46,7 +46,7 @@ _oyranos_config()
             ;;
         --daemon) # long option with static args
             local IFS=$'\n'
-            local WORD_LIST=('0' '1' '')
+            local WORD_LIST=('0' '1')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
@@ -109,7 +109,7 @@ _oyranos_config()
             ;;
         -d=*) # single letter option with static args
             local IFS=$'\n'
-            local WORD_LIST=('0' '1' '')
+            local WORD_LIST=('0' '1')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return

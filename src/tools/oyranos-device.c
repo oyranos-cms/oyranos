@@ -338,21 +338,21 @@ int myMain( int argc, const char ** argv )
                                     {"printer",     _("Printer"),       "",                           ""},
                                     {"camera",      _("Camera"),        "",                           ""},
                                     {"scanner",     _("Scanner"),       "",                           ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s f_choices[] = {{"icc",         _("write assigned ICC profile"),"",                        ""},
                                     {"fallback-icc",_("create fallback ICC profile"),"",                        ""},
                                     {"openicc+rank-map",_("create OpenICC device color state JSON including the rank map"),"",                        ""},
                                     {"openicc",     _("create OpenICC device color state JSON"),"",                        ""},
                                     {"openicc-rank-map",_("create OpenICC device color state rank map JSON"),"",                        ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
 
-  oyjlOptionChoice_s E_choices[] = {{_("OY_DEBUG"), _("set the Oyranos debug level. Alternatively the -v option can be used."),NULL,                         NULL},
-                                    {_("XDG_DATA_HOME XDG_DATA_DIRS"),_("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended."),_("http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"),NULL},
-                                    {"","","",""}};
+  oyjlOptionChoice_s E_choices[] = {{"OY_DEBUG", _("set the Oyranos debug level. Alternatively the -v option can be used."),NULL,                         NULL},
+                                    {"XDG_DATA_HOME XDG_DATA_DIRS",_("route Oyranos to top directories containing resources. The derived paths for ICC profiles have a \"color/icc\" appended."),_("http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"),NULL},
+                                    {NULL,NULL,NULL,NULL}};
 
   oyjlOptionChoice_s S_choices[] = {{_("oyranos-policy(1) oyranos-config(1) oyranos-profiles(1) oyranos-profile(1) oyranos(3)"),NULL,               NULL,                         NULL},
-                                    {_("http://www.oyranos.org"),NULL,               NULL,                         NULL},
-                                    {"","","",""}};
+                                    {"http://www.oyranos.org",NULL,               NULL,                         NULL},
+                                    {NULL,NULL,NULL,NULL}};
 
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {

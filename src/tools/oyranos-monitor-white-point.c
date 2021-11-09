@@ -328,16 +328,16 @@ int myMain( int argc , const char** argv )
   oyjlOptionChoice_s d_choices[] = {{"0", _("Deactivate"), _("Deactivate"), ""},
                                     {"1", _("Autostart"), _("Autostart"), ""},
                                     {"2", _("Activate"), _("Activate"), ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s env_vars[]={{"OY_DEBUG", _("set the Oyranos debug level."), _("Alternatively the -v option can be used."), _("Valid integer range is from 1-20.")},
                                     {"OY_MODULE_PATH", _("route Oyranos to additional directories containing modules."), "", ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s examples[]={{_("Enable the daemon, set night white point to 3000 Kelvin and use that in night mode"), "oyranos-monitor-white-point -d 2 -a 3000 -n 1", "", ""},
                                     {_("Switch all day light intereference off such as white point and effect"), "oyranos-monitor-white-point -s 0 -e 0", "", ""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s see_as_well[]={{"oyranos-monitor(1) oyranos-config(1) oyranos(3)", "", "", ""},
                                     {"http://www.oyranos.org","","",""},
-                                    {"","","",""}};
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
     {"oiwi", 0, "d", "daemon", NULL, _("daemon"), _("Control user daemon"), NULL, "0|1|2", oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)d_choices, sizeof(d_choices), 0 )}, oyjlINT, {.i=&daemon} },

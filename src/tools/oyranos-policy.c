@@ -75,21 +75,21 @@ int myMain( int argc, const char ** argv )
   /* handle options */
 
   /* declare the option choices  *   nick,          name,               description,                  help */
-  oyjlOptionChoice_s E_choices[] = {{_("OY_DEBUG"), _("set the Oyranos debug level."),NULL,                         NULL},
-                                    {_("XDG_CONFIG_HOME"),_("route Oyranos to top directories containing resources. The derived paths for policies have a \"color/settings\" appended."),_("http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"),NULL},
-                                    {"","","",""}};
+  oyjlOptionChoice_s E_choices[] = {{"OY_DEBUG", _("set the Oyranos debug level."),NULL,                         NULL},
+                                    {"XDG_CONFIG_HOME",_("route Oyranos to top directories containing resources. The derived paths for policies have a \"color/settings\" appended."),_("http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"),NULL},
+                                    {NULL,NULL,NULL,NULL}};
 
-  oyjlOptionChoice_s A_choices[] = {{_("Dump out the actual settings"),_("oyranos-policy -d"),NULL,                         NULL},
-                                    {_("Set new policy"),_("oyranos-policy -i policy_filename"),NULL,                         NULL},
-                                    {_("List available policies"),_("oyranos-policy -l"),NULL,                         NULL},
-                                    {_("Currently active policy including its file name"),_("oyranos-policy -cfe"),NULL,                         NULL},
-                                    {_("Save and Install to a new policy"),_("oyranos-policy -s policy_name"),NULL,                         NULL},
-                                    {_("Print a help text"),_("oyranos-policy -h"),NULL,                         NULL},
-                                    {"","","",""}};
+  oyjlOptionChoice_s A_choices[] = {{"",_("Dump out the actual settings"),_("oyranos-policy -d"),                         NULL},
+                                    {"",_("Set new policy"),_("oyranos-policy -i policy_filename"),                         NULL},
+                                    {"",_("List available policies"),_("oyranos-policy -l"),                         NULL},
+                                    {"",_("Currently active policy including its file name"),_("oyranos-policy -cfe"),                         NULL},
+                                    {"",_("Save and Install to a new policy"),_("oyranos-policy -s policy_name"),                         NULL},
+                                    {"",_("Print a help text"),_("oyranos-policy -h"),                         NULL},
+                                    {NULL,NULL,NULL,NULL}};
 
-  oyjlOptionChoice_s S_choices[] = {{_("oyranos-config(3) oyranos-monitor(1) oyranos(3)"),NULL,               NULL,                         NULL},
-                                    {_("http://www.oyranos.org"),NULL,               NULL,                         NULL},
-                                    {"","","",""}};
+  oyjlOptionChoice_s S_choices[] = {{"oyranos-config(3) oyranos-monitor(1) oyranos(3)",NULL,               NULL,                         NULL},
+                                    {"http://www.oyranos.org",NULL,               NULL,                         NULL},
+                                    {NULL,NULL,NULL,NULL}};
 
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {

@@ -182,13 +182,14 @@ oyjlTESTRESULT_e testI18N()
     "oyLanguage() initialised failed %s", lang?lang:"---" );
   }
 
-  setlocale(LC_ALL,"de_DE.UTF8");
+  const char * loc = setlocale(LC_ALL,"de_DE.UTF8");
   int use_gettext = 0;
 #ifdef USE_GETTEXT
   use_gettext = 1;
 #endif
   int debug = 0;
-  oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, OY_TEXTDOMAIN, oyMessageFunc_p );
+  oyjlTr_s * trc = oyjlTr_New( loc, 0, 0,0,0,0,0 );
+  oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, &trc, oyMessageFunc_p );
 
   lang = setlocale(LC_ALL, NULL);
   if(lang && (strcmp(lang, "C") != 0))

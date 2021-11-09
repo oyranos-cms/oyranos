@@ -82,7 +82,7 @@ Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--Version</strong></td> <td>Zeige offizielle Version<br />API|ABI-neueAPI-FehlerKorrektur Veröffentlichung</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--api-version</strong></td> <td>Zeige Version der API</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--num-version</strong></td> <td>Zeige Version als einfache Zahl<br />10000*API+100*Feature+Patch</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--num-version</strong></td> <td>Zeige Version als einfache Zahl<br />10000*API+100*Fähigkeit(Feature)+Korrektur(Patch)</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--git-version</strong></td> <td>Zeige Version wie in git<br />letzteVeröffentlichungsVersion-gitEintragsNummer-gitEintragsSHA1ID-Jahr-Monat-Tag</td> </tr>
 </table>
 

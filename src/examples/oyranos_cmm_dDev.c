@@ -830,9 +830,9 @@ const char * GetText                 ( const char        * select,
   } else if(strcmp(select, "manufacturer")==0)
   {
          if(type == oyNAME_NICK)
-      return _("Kai-Uwe");
+      return "Kai-Uwe";
     else if(type == oyNAME_NAME)
-      return _("Kai-Uwe Behrmann");
+      return "Kai-Uwe Behrmann";
     else
       return _("Oyranos project; www: http://www.oyranos.com; support/email: ku.b@gmx.de; sources: http://www.oyranos.com/wiki/index.php?title=Oyranos/Download");
   } else if(strcmp(select, "copyright")==0)
