@@ -166,25 +166,15 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h2>EXAMPLES <a href="#toc" name="examples">&uarr;</a></h2>
 
-#### 
-&nbsp;&nbsp;Print JSON to stdout
-  <br />
+#### Print JSON to stdout
 &nbsp;&nbsp;oyjl -i text.json -x ///[0]
-#### 
-&nbsp;&nbsp;Print count of leafs in node
-  <br />
+#### Print count of leafs in node
 &nbsp;&nbsp;oyjl -c -i text.json -x my/path/
-#### 
-&nbsp;&nbsp;Print key name of node
-  <br />
+#### Print key name of node
 &nbsp;&nbsp;oyjl -k -i text.json -x ///[0]
-#### 
-&nbsp;&nbsp;Print all matching paths
-  <br />
+#### Print all matching paths
 &nbsp;&nbsp;oyjl -p -i text.json -x //
-#### 
-&nbsp;&nbsp;Set a key name to a value
-  <br />
+#### Set a key name to a value
 &nbsp;&nbsp;oyjl -i text.json -x my/path/to/key -s value
 
 <h2>SEE ALSO <a href="#toc" name="seealso">&uarr;</a></h2>
