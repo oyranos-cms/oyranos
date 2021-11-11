@@ -655,8 +655,6 @@ int main( int argc_, char**argv_, char ** envv )
 #ifdef __ANDROID__
   free( argv );
 #endif
-#ifndef OYJL_USE_GETTEXT
-#endif
 
   return 0;
 }
