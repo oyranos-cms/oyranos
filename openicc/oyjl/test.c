@@ -423,7 +423,7 @@ oyjlTESTRESULT_e testI18N()
   char ** paths = oyjlTreeToPaths( catalog, 10000000, NULL, OYJL_KEY, &count );
   clck = oyjlClock() - clck;
   count = 0; while(paths && paths[count]) ++count;
-  if( count == 335 )
+  if( count == 347 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,1,clck/(double)CLOCKS_PER_SEC,"wr",
     "oyjlTreeToPaths(catalog) = %d", count );
   } else
@@ -1009,11 +1009,11 @@ oyjlTESTRESULT_e testJson ()
 
   oyjl_val value = 0;
   oyjl_val root = 0;
+  char error_buffer[128];
   for(i = 0; i < 5; ++i)
   {
     int level = 0;
     const char * xpath = NULL;
-    char error_buffer[128];
     int flags = 0;
 
     root = oyjlTreeParse( json, error_buffer, 128 );
@@ -1218,6 +1218,20 @@ oyjlTESTRESULT_e testJson ()
     oyjlTreeFree( root );
   }
 
+  char * non_json = NULL;
+  oyjlStringAdd( &non_json, 0,0, "%s,(nonsense}]", json );
+  root = oyjlTreeParse( non_json, error_buffer, 128 );
+  if( !root )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeParse(non_json)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyjlTreeParse(non_json)" );
+  }
+  if(verbose)
+    fprintf( zout, "%s\n", non_json );
+  free(non_json); non_json = NULL;
+
   result = testEscapeJson( "Color", "Color", OYJL_NO_BACKSLASH, 44, result, oyjlTESTRESULT_FAIL );
   result = testEscapeJson( "Color \"Rose\"", "Color \"Rose\"", OYJL_NO_BACKSLASH, 53, result, oyjlTESTRESULT_XFAIL );
   result = testEscapeJson( "Color \"Rose\"", "Color \"Rose\"", 0, 53, result, oyjlTESTRESULT_XFAIL );
@@ -1235,7 +1249,6 @@ oyjlTESTRESULT_e testJson ()
   result = testEscapeJsonVal( "my\\.value", "my\\\\.value", OYJL_QUOTE | OYJL_NO_BACKSLASH, 27, result, oyjlTESTRESULT_XFAIL );
   result = testEscapeJsonVal( "my/value", "my%37value", OYJL_KEY, 25, result, oyjlTESTRESULT_XFAIL );
 
-  char error_buffer[128];
   const char * json2 = "{\n\
   \"org\": {\n\
     \"free\": [{\n\
