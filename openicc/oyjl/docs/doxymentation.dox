@@ -83,7 +83,7 @@
     - Original Yajl: https://lloyd.github.io/yajl/
  */
 
-/** \addtogroup oyjl_args Options Handling
+/** \addtogroup oyjl_args OyjlArgs Options Handling
  *  @brief   Structured Options and Arguments for many aspects on command line and more in a single file
  *
  *  @section args_intro Introduction
