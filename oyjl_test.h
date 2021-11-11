@@ -83,7 +83,7 @@ extern int verbose;
 
 /** \addtogroup oyjl
  *  @{ *//* oyjl */
-/** \addtogroup oyjl_test Testing
+/** \addtogroup oyjl_test OyjlTest Code and Tools Testing
  *  @brief API testing for prototyping and regression checking in CI
  *
  *  The API is designed to be easily useable without much boilerplate.

@@ -35,7 +35,7 @@
 #include <locale.h>
 #endif
 
-/** \addtogroup oyjl_tree Oyjl JSON Parsing
+/** \addtogroup oyjl_tree OyjlTree JSON Parsing and Tree Handling
  *  @brief Tree data structure manipulation and I/O
  *
  *  The API is designed to be easily useable without much boilerplate.

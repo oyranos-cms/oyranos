@@ -361,7 +361,7 @@ int            oyjlMessageFuncSet    ( oyjlMessage_f       message_func )
 }
 /* --- Message_Section --- */
 
-/** \addtogroup oyjl_core Core
+/** \addtogroup oyjl_core OyjlCore
  *  @brief I/O and String Handling
  *
  *  Basic C FILE input and output is provided by oyjlWriteFile(), oyjlReadFile()
@@ -2412,10 +2412,10 @@ int oyjlArgsRender                   ( int                 argc,
 
     @section oyjl_api API Documentation
     The API of the @ref oyjl is declared in the oyjl.h header file.
-    - @ref oyjl_tree - JSON modeled C data structure with data I/O API: *libOyjlCore*, all parsers (JSON,YAML,XML) reside in *libOyjl*
-    - @ref oyjl_core - Core API: *libOyjlCore*
-    - @ref oyjl_test - Test API: header only implementation in *oyjl_test.h* and *oyjl_test_main.h*
-    - @ref oyjl_args - Argument Handling API: link to *libOyjlCore* or with slightly reduced functionality in the stand alone *oyjl_args.c* version
+    - @ref oyjl_tree - OyjlTree JSON modeled C data structure with data I/O API: *libOyjlCore*, all parsers (JSON,YAML,XML) reside in *libOyjl*
+    - @ref oyjl_core - OyjlCore API: *libOyjlCore*
+    - @ref oyjl_test - OyjlTest API: header only implementation in *oyjl_test.h* and *oyjl_test_main.h*
+    - @ref oyjl_args - OyjlArgs Argument Handling API: link to *libOyjlCore* or with slightly reduced functionality in the stand alone *oyjl_args.c* version
 
     @section oyjl_tools Tools Documentation
     Oyjl comes with a few tools, which use the Oyjl API's.
