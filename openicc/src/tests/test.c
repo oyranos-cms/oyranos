@@ -64,13 +64,13 @@ oyjlTESTRESULT_e testVersion()
 
 oyjlTESTRESULT_e testI18N()
 {
-  const char * lang = 0, * text;
+  const char * lang = 0, * text, * loc;
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
 
-  setlocale(LC_ALL,"de_DE.UTF8");
-  openiccInit();
+  loc = setlocale(LC_ALL,"de_DE.UTF8");
+  openiccInit( loc );
 
   lang = setlocale(LC_ALL, NULL);
   if(lang && (strcmp(lang, "C") != 0))

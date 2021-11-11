@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openicc\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2020-04-20 07:09+0200\n"
+"POT-Creation-Date: 2021-11-11 01:26+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -20,20 +20,20 @@ msgid "!!! ERROR"
 msgstr "!!! CHYBA"
 
 #. type,   flags, o,  option,          key,  name,             description,         help, value_name,    value_type,        values, variable_type, result
-#: tools/openicc_device.c:110
+#: tools/openicc_device.c:111
 msgid "Add"
 msgstr ""
 
-#: tools/openicc_device.c:135
+#: tools/openicc_device.c:136
 #, fuzzy
 msgid "Add Device"
 msgstr "Zařízení"
 
-#: tools/openicc_device.c:110 tools/openicc_device.c:135
+#: tools/openicc_device.c:111 tools/openicc_device.c:136
 msgid "Add Device to DB"
 msgstr ""
 
-#: tools/openicc_device.c:102
+#: tools/openicc_device.c:103
 #, fuzzy
 msgid "Camera"
 msgstr "CameraRaw"
@@ -74,108 +74,108 @@ msgid "Could not setup db objetc"
 msgstr "Nelze rozpoznat zařízení"
 
 #. declare some option choices
-#: tools/openicc_device.c:98 tools/openicc_device.c:111
+#: tools/openicc_device.c:99 tools/openicc_device.c:112
 #, fuzzy
 msgid "DB File"
 msgstr "Soubory"
 
-#: tools/openicc_device.c:111
+#: tools/openicc_device.c:112
 #, fuzzy
 msgid "DB File Name"
 msgstr "Jmeno souboru:"
 
-#: tools/openicc_device.c:113
+#: tools/openicc_device.c:114
 #, fuzzy
 msgid "Device"
 msgstr "Zařízení"
 
-#: tools/openicc_device.c:112
+#: tools/openicc_device.c:113
 #, fuzzy
 msgid "Device Class"
 msgstr "použít třídu zařízení"
 
-#: tools/openicc_device.c:113
+#: tools/openicc_device.c:114
 #, fuzzy
 msgid "Device position"
 msgstr "Popis modelu zařízení"
 
-#: tools/openicc_device.c:116
+#: tools/openicc_device.c:117
 msgid "Dump OpenICC JSON"
 msgstr ""
 
-#: tools/openicc_device.c:114 tools/openicc_device.c:136
+#: tools/openicc_device.c:115 tools/openicc_device.c:137
 #, fuzzy
 msgid "Erase Device"
 msgstr "Testovací zařízení"
 
-#: tools/openicc_device.c:114
+#: tools/openicc_device.c:115
 #, fuzzy
 msgid "Erase Devices"
 msgstr "Testovací zařízení"
 
-#: tools/openicc_device.c:136
+#: tools/openicc_device.c:137
 msgid "Erase a Devices from the DB"
 msgstr ""
 
-#: tools/openicc_device.c:111 tools/openicc_device.c:115
+#: tools/openicc_device.c:112 tools/openicc_device.c:116
 msgid "FILENAME"
 msgstr ""
 
-#: tools/openicc_device.c:115
+#: tools/openicc_device.c:116
 #, fuzzy
 msgid "File Name"
 msgstr "Jmeno souboru:"
 
-#: tools/openicc_device.c:111
+#: tools/openicc_device.c:112
 #, fuzzy
 msgid "File Name of OpenICC Device Data Base JSON"
 msgstr "vložit JSON OpenICC ze souboru"
 
-#: tools/openicc_device.c:98
+#: tools/openicc_device.c:99
 msgid "File Name of device JSON Data Base"
 msgstr ""
 
-#: tools/openicc_device.c:138
+#: tools/openicc_device.c:139
 #, fuzzy
 msgid "General options"
 msgstr "Obecné volby:"
 
-#: tools/openicc_device.c:117
+#: tools/openicc_device.c:118
 msgid "Help"
 msgstr ""
 
 #. type,   flags, name,              description,                          help, mandatory, optional, detail
-#: tools/openicc_device.c:119 tools/openicc_device.c:134
+#: tools/openicc_device.c:120 tools/openicc_device.c:135
 #, fuzzy
 msgid "List Devices"
 msgstr "Vypsat zařízení:"
 
-#: tools/openicc_device.c:120
+#: tools/openicc_device.c:121
 #, fuzzy
 msgid "List all key/values pairs"
 msgstr "nalezené key/value dvojice:"
 
-#: tools/openicc_device.c:122
+#: tools/openicc_device.c:123
 msgid "Local System"
 msgstr ""
 
-#: tools/openicc_device.c:120
+#: tools/openicc_device.c:121
 msgid "Long Format"
 msgstr ""
 
-#: tools/openicc_device.c:143
+#: tools/openicc_device.c:144
 msgid "Manipulation of OpenICC color management data base device entries."
 msgstr ""
 
-#: tools/openicc_device.c:138
+#: tools/openicc_device.c:139
 msgid "Misc"
 msgstr ""
 
-#: tools/openicc_device.c:100
+#: tools/openicc_device.c:101
 msgid "Monitor"
 msgstr "Monitor"
 
-#: tools/openicc_device.c:113
+#: tools/openicc_device.c:114
 msgid "NUMBER"
 msgstr ""
 
@@ -187,59 +187,59 @@ msgstr ""
 msgid "No JSON obtained for"
 msgstr ""
 
-#: tools/openicc_device.c:116
+#: tools/openicc_device.c:117
 #, fuzzy
 msgid "OpenICC Json"
 msgstr "ICC Examin Verze"
 
-#: tools/openicc_device.c:145
+#: tools/openicc_device.c:146
 msgid "OpenICC devices handling tool"
 msgstr ""
 
-#: libopenicc/openicc_db.c:171 tools/openicc_device.c:191
+#: libopenicc/openicc_db.c:171 tools/openicc_device.c:192
 #, fuzzy
 msgid "Paths:"
 msgstr "Cesty"
 
-#: tools/openicc_device.c:134
+#: tools/openicc_device.c:135
 msgid "Print the Devices in the DB"
 msgstr ""
 
-#: tools/openicc_device.c:101
+#: tools/openicc_device.c:102
 msgid "Printer"
 msgstr "Tiskárna"
 
-#: tools/openicc_device.c:103
+#: tools/openicc_device.c:104
 msgid "Scanner"
 msgstr "Skener"
 
-#: tools/openicc_device.c:137
+#: tools/openicc_device.c:138
 msgid "Show DB Path"
 msgstr ""
 
-#: tools/openicc_device.c:137
+#: tools/openicc_device.c:138
 msgid "Show Filepath to the DB"
 msgstr ""
 
-#: tools/openicc_device.c:121
+#: tools/openicc_device.c:122
 #, fuzzy
 msgid "Show Path"
 msgstr "Cesta"
 
-#: tools/openicc_device.c:122
+#: tools/openicc_device.c:123
 msgid "System"
 msgstr ""
 
-#: tools/openicc_device.c:115
+#: tools/openicc_device.c:116
 msgid "The File Name of the OpenICC Device in Json format."
 msgstr ""
 
-#: tools/openicc_device.c:123
+#: tools/openicc_device.c:124
 #, fuzzy
 msgid "Verbose"
 msgstr "upovídaný výstup"
 
-#: tools/openicc_device.c:124
+#: tools/openicc_device.c:125
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Verze"
@@ -248,12 +248,12 @@ msgstr "ICC Examin Verze"
 msgid "WARNING"
 msgstr "VAROVÁNÍ"
 
-#: tools/openicc_device.c:127
+#: tools/openicc_device.c:128
 #, fuzzy
 msgid "Write"
 msgstr "Zapsat"
 
-#: tools/openicc_device.c:127
+#: tools/openicc_device.c:128
 #, fuzzy
 msgid "Write DB File"
 msgstr "zapsat do souboru"
@@ -262,15 +262,15 @@ msgstr "zapsat do souboru"
 msgid "Writing failed for"
 msgstr ""
 
-#: tools/openicc_device.c:204
+#: tools/openicc_device.c:205
 msgid "unable to open data base"
 msgstr ""
 
-#: tools/openicc_device.c:123
+#: tools/openicc_device.c:124
 msgid "verbose"
 msgstr "upovídaný výstup"
 
-#: tools/openicc_device.c:124
+#: tools/openicc_device.c:125
 #, fuzzy
 msgid "version"
 msgstr "ICC Examin Verze"

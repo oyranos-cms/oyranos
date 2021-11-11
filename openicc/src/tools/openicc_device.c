@@ -88,11 +88,12 @@ int main(int argc, char ** argv)
   char * json;
   int i,j, n = 0,
       flags = OPENICC_CONFIGS_SKIP_HEADER | OPENICC_CONFIGS_SKIP_FOOTER;
+  char * loc = NULL;
 
-#ifdef USE_GETTEXT
-  setlocale(LC_ALL,"");
+#ifdef OYJL_HAVE_LOCALE_H
+  loc = setlocale(LC_ALL,"");
 #endif
-  openiccInit();
+  openiccInit(loc);
 
   /* declare some option choices */
   oyjlOptionChoice_s b_choices[] = {{"DB-file-name.json", _("DB File"), _("File Name of device JSON Data Base"), ""},

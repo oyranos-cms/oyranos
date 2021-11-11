@@ -271,19 +271,23 @@ int openicc_i18n_init = 0;
  *  return -1 for no USE_GETTEXT defined, otherwise 1
  *
  *  @version OpenICC: 0.1.0
- *  @date    2015/08/27
+ *  @date    2021/11/11
  *  @since   2015/08/27 (OpenICC: 0.1.0)
  */
-int            openiccInit           ( void )
+int            openiccInit           ( const char        * loc )
 {
   int use_gettext = 0;
   if(!openicc_i18n_init)
   {
+    oyjlTr_s * trc = NULL;
+    if(loc)
+      trc = oyjlTr_New( loc, "openicc", 0,0,0,0,0 );
 #ifdef USE_GETTEXT
     use_gettext = 1;
 #endif
     ++openicc_i18n_init;
-    oyjlInitLanguageDebug( "OpenICC", OI_DEBUG, openicc_debug, use_gettext, "OI_LOCALEDIR", OPENICC_LOCALEDIR, "openicc", openiccMessage_p );
+    oyjlInitLanguageDebug( "OpenICC", OI_DEBUG, openicc_debug, use_gettext, "OI_LOCALEDIR", OPENICC_LOCALEDIR, &trc, openiccMessage_p );
+    oyjlTr_Release( &trc );
   }
 
   if(getenv(OI_DEBUG))

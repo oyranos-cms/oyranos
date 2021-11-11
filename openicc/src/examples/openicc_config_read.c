@@ -44,8 +44,8 @@ int main(int argc, char ** argv)
   int verbose = 0;
   const char * export = NULL;
 
-  setlocale(LC_ALL,"");
-  openiccInit();
+  const char * loc = setlocale(LC_ALL,"");
+  openiccInit( loc );
 
   /* handle options */
   /* declare some option choices */

@@ -48,7 +48,7 @@
 
  *  @{ */
 
-int            openiccInit           ( void );
+int            openiccInit           ( const char        * loc );
 
 typedef void * (*openiccAlloc_f)     ( size_t              size );
 typedef void   (*openiccDeAlloc_f)   ( void              * data );

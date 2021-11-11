@@ -496,13 +496,10 @@ int                openiccConfig_GetKeyNames (
   }
 
   if(!error)
-    oyjlTreeToPaths( list, child_levels, NULL, 0, &keys );
+    keys = oyjlTreeToPaths( list, child_levels, NULL, 0, &count );
 
   if(!error && n)
-  {
-    while(keys && keys[count]) ++count;
     *n = count?count-1:0;
-  }
 
   if(!error && key_names && keys)
   {
