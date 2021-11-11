@@ -35,7 +35,8 @@ Manipulation of OpenICC color management data base device entries.
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--device</strong>=<em>NUMBER</em></td> <td>Device position (NUMBER:0 [≥0 ≤100 Δ1])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-j</strong>|<strong>--dump-json</strong></td> <td>Dump OpenICC JSON</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--long</strong></td> <td>List all key/values pairs</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--db-file</strong>=<em>FILENAME</em></td> <td>DB File Name<br />File Name of OpenICC Device Data Base JSON </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--db-file</strong>=<em>FILENAME</em></td> <td>DB File Name<br />File Name of OpenICC Device Data Base JSON  </td>
+ </tr>
 </table>
 
 <h3 id="add">Add Device to DB</h3>
@@ -44,8 +45,10 @@ Manipulation of OpenICC color management data base device entries.
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--add</strong></td> <td>Add Device to DB</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--file-name</strong>=<em>FILENAME</em></td> <td>File Name<br />The File Name of the OpenICC Device in Json format. </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--db-file</strong>=<em>FILENAME</em></td> <td>DB File Name<br />File Name of OpenICC Device Data Base JSON </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--file-name</strong>=<em>FILENAME</em></td> <td>File Name<br />The File Name of the OpenICC Device in Json format.  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--db-file</strong>=<em>FILENAME</em></td> <td>DB File Name<br />File Name of OpenICC Device Data Base JSON  </td>
+ </tr>
 </table>
 
 <h3 id="erase-device">Erase a Devices from the DB</h3>
@@ -55,7 +58,8 @@ Manipulation of OpenICC color management data base device entries.
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-e</strong>|<strong>--erase-device</strong></td> <td>Erase Devices</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--device</strong>=<em>NUMBER</em></td> <td>Device position (NUMBER:0 [≥0 ≤100 Δ1])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--db-file</strong>=<em>FILENAME</em></td> <td>DB File Name<br />File Name of OpenICC Device Data Base JSON </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--db-file</strong>=<em>FILENAME</em></td> <td>DB File Name<br />File Name of OpenICC Device Data Base JSON  </td>
+ </tr>
 </table>
 
 <h3 id="show-path">Show Filepath to the DB</h3>
@@ -72,7 +76,8 @@ Manipulation of OpenICC color management data base device entries.
 &nbsp;&nbsp; <a href="#synopsis"><strong>openicc-device</strong></a> <strong>-h</strong> <strong>-X</strong>=<em>json|json+command|man|markdown</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--db-file</strong>=<em>FILENAME</em></td> <td>DB File Name<br />File Name of OpenICC Device Data Base JSON </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--db-file</strong>=<em>FILENAME</em></td> <td>DB File Name<br />File Name of OpenICC Device Data Base JSON  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
   <table>
    <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
