@@ -1271,8 +1271,9 @@ oyjlTr_s *     oyjlTr_Get            ( const char        * domain )
   return context;
 }
 static char * oyjl_nls_path_ = NULL;
+extern char * oyjl_term_color_html_;
 void oyjlLibRelease() {
-  if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); }
+  if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL; }
   if(oyjl_tr_context_)
   {
     int i = 0;
@@ -1285,6 +1286,7 @@ void oyjlLibRelease() {
     oyjl_tr_context_ = NULL;
     oyjl_tr_context_reserve_ = 0;
   }
+  if(oyjl_term_color_html_) { free(oyjl_term_color_html_); oyjl_term_color_html_ = NULL; }
 }
 void oyjlTreeFree (oyjl_val v)
 {
@@ -1535,7 +1537,7 @@ void oyjlOptionChoice_Release     ( oyjlOptionChoice_s**choices )
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-static int oyjlTermColorCheck_()
+static int oyjlTermColorCheck_( )
 {
   struct stat sout, serr;
   int color_term = 0;
@@ -1580,6 +1582,36 @@ static int oyjlTermColorCheck_()
 
   return color_term;
 }
+#ifndef OYJL_FORCE_COLORTERM
+#define OYJL_FORCE_COLORTERM           0x01
+#define OYJL_FORCE_NO_COLORTERM        0x04
+#endif
+int oyjlTermColorInit_( int flags )
+{
+  int color_env = 0;
+  static int colorterm_init = 0;
+  static const char * oyjl_colorterm = NULL;
+  static int truecolor = 0,
+             color = 0;
+  if(!colorterm_init)
+  {
+    colorterm_init = 1;
+    oyjl_colorterm = getenv("COLORTERM");
+    color = oyjl_colorterm != NULL ? 1 : 0;
+    if(!oyjl_colorterm) oyjl_colorterm = getenv("TERM");
+    truecolor = oyjl_colorterm && strcmp(oyjl_colorterm,"truecolor") == 0;
+    if(!oyjlTermColorCheck_())
+      truecolor = color = 0;
+    if( getenv("FORCE_COLORTERM") || flags & OYJL_FORCE_COLORTERM )
+      truecolor = color = 1;
+    if( getenv("FORCE_NO_COLORTERM") || flags & OYJL_FORCE_NO_COLORTERM )
+      truecolor = color = 0;
+    if(flags & OYJL_OBSERVE)
+      fprintf(stdout, "color: %d truecolor: %d oyjl_colorterm: %s\n", color, truecolor, oyjl_colorterm );
+  }
+  color_env = (color ? 0x01 : 0x00) | (truecolor ? 0x02 : 0x00);
+  return color_env;
+}
 
 #ifndef OYJL_CTEND
 /* true color codes */
@@ -1599,27 +1631,12 @@ static int oyjlTermColorCheck_()
 const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text) {
   int len = 0;
   static char t[256];
-  static int colorterm_init = 0;
-  static const char * oyjl_colorterm = NULL;
-  static int truecolor = 0,
-             color = 0;
+  int color_env = oyjlTermColorInit_( *oyjl_debug > 1?OYJL_OBSERVE:0 ),
+      color = color_env & 0x01,
+      truecolor = color_env & 0x02;
   if(!text)
     return "---";
 
-  if(!colorterm_init)
-  {
-    colorterm_init = 1;
-    oyjl_colorterm = getenv("COLORTERM");
-    color = oyjl_colorterm != NULL ? 1 : 0;
-    if(!oyjl_colorterm) oyjl_colorterm = getenv("TERM");
-    truecolor = oyjl_colorterm && strcmp(oyjl_colorterm,"truecolor") == 0;
-    if(!oyjlTermColorCheck_())
-      truecolor = color = 0;
-    if( getenv("FORCE_COLORTERM") )
-      truecolor = color = 1;
-    if( getenv("FORCE_NO_COLORTERM") )
-      truecolor = color = 0;
-  }
   len = strlen(text);
   if(len < 200)
   {
@@ -1636,6 +1653,30 @@ const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text) {
     return t;
   } else
     return text;
+}
+
+char * oyjl_term_color_html_ = NULL;
+const char * oyjlTermColorFromHtml   ( const char        * text,
+                                       int                 flags )
+{
+  int color_env = oyjlTermColorInit_( flags ),
+      color = color_env & 0x01,
+      truecolor = color_env & 0x02;
+  const char * t,
+             * bold = color || truecolor ? OYJL_BOLD : "",
+             * italic = color || truecolor ? OYJL_ITALIC : "",
+             * end = color || truecolor ? OYJL_CTEND : "";
+  oyjl_str tmp = oyjlStr_New(10,0,0);
+  oyjlStr_AppendN( tmp, text, strlen(text) );
+  oyjlStr_Replace( tmp, "<strong>", bold, 0,NULL );
+  oyjlStr_Replace( tmp, "</strong>", end, 0,NULL );
+  oyjlStr_Replace( tmp, "<em>", italic, 0,NULL );
+  oyjlStr_Replace( tmp, "</em>", end, 0,NULL );
+  t = oyjlStr(tmp);
+  if(oyjl_term_color_html_) free(oyjl_term_color_html_);
+  oyjl_term_color_html_ = strdup( t );
+  oyjlStr_Release( &tmp );
+  return oyjl_term_color_html_;
 }
 
 /** @brief    Return number of array elements
