@@ -23,19 +23,26 @@ void oyjlArgsCliGroupPrintSection_   ( oyjl_val            g,
 {
   oyjl_val v;
 
-  const char * gdesc, * gname, * ghelp;
+  const char * gdesc, * gname, * ghelp, * synopsis;
   v = oyjlTreeGetValue(g, 0, "name");
   gname = OYJL_GET_STRING(v);
   v = oyjlTreeGetValue(g, 0, "description");
   gdesc = OYJL_GET_STRING(v);
   v = oyjlTreeGetValue(g, 0, "help");
   ghelp = OYJL_GET_STRING(v);
+  v = oyjlTreeGetValue(g, 0, "synopsis");
+  synopsis = OYJL_GET_STRING(v);
   if(gname || gdesc || ghelp)
     printf( "  %s", level?"  ":"" );
   if(gname)
     printf( "%s", oyjlTermColor(oyjlUNDERLINE,gname) );
   if(gdesc)
     printf( " %s", oyjlTermColor(oyjlUNDERLINE,gdesc) );
+  if(synopsis)
+  {
+    synopsis = oyjlTermColorFromHtml( synopsis, 0 );
+    printf( "\n    %s%s", oyjlJsonEscape(synopsis, OYJL_REVERSE), ghelp?"":"\n" );
+  }
   if(ghelp)
     printf( "\n%s%s\n", level?"      ":"    ", ghelp );
   if(gname || gdesc || ghelp)
@@ -85,7 +92,7 @@ void oyjlArgsCliGroupPrint_          ( oyjl_val            g )
         value_name && key[0] != '@'?"=":"", value_name?text:"",
         name?"\t":"", name?name:"",
         desc?" : ":"", desc?desc:"",
-        help&&help[0]?"\n          ":"", help&&help[0]?help:"" );
+        help&&help[0]?" - ":"", help&&help[0]?help:"" );
     if(text) { free(text); text = NULL; }
     choices = oyjlTreeGetValue(opt, 0, "choices");
     if(type && strcmp(type,"bool") != 0)
@@ -103,7 +110,7 @@ void oyjlArgsCliGroupPrint_          ( oyjl_val            g )
       desc = OYJL_GET_STRING(cv);
       cv = oyjlTreeGetValue(c, 0, "help");
       help = OYJL_GET_STRING(cv);
-      printf( "          %s%s%s%s%s%s%s%s%s%s\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
+      printf( "        %s%s%s%s%s%s%s%s%s%s\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
         nick && key[0] != '@'?" ":"", nick?nick:"",
         name&&name[0]?"\t\t# ":"", name?name:"",
         desc?" : ":"", desc&&desc[0]?desc:"",
