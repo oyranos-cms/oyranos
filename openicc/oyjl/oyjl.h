@@ -505,6 +505,8 @@ typedef enum {
 } oyjlTEXTMARK_e;
 const char * oyjlTermColor           ( oyjlTEXTMARK_e      mark,
                                        const char        * text );
+const char * oyjlTermColorFromHtml   ( const char        * text,
+                                       int                 flags );
 char *       oyjlBT                  ( int                 stack_limit );
 #define OYJL_DATE           0x01
 #define OYJL_TIME           0x02
