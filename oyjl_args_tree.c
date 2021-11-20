@@ -397,6 +397,8 @@ char *       oyjlUi_ExportToJson     ( oyjlUi_s          * ui,
  *
  *  The returned oyjlUi_s is a reverse of oyjlUi_s().
  *  Static strings inside oyjlUi_s depend on root structure.
+ *  The required JSON data need to match the -X export option as
+ *  returned by the oyjlUi_ExportToJson() function.
  *
  *  @see oyjlUi_ExportToJson()
  *
@@ -867,7 +869,7 @@ static oyjl_val oyjlFindOption_( oyjl_val root, char o )
 /** @brief    Return a source code from a parsed source tree
  *  @memberof oyjlUi_s
  *
- *  The input is the JSON data from oyjlUi_ExportToJson().
+ *  The input format is the JSON data from oyjlUi_ExportToJson().
  *
  *  @param[in]     root                the parsed JSON tree to convert
  *  @param[in]     flags               support;
@@ -1469,7 +1471,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "      ++i;\n" );
     oyjlStr_Add( s, "    }\n" );
     oyjlStr_Add( s, "  }\n" );
-    oyjlStr_Add( s, "  oyjlLibRelease();\n" );
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "  return error;\n" );
     oyjlStr_Add( s, "}\n" );
@@ -1525,6 +1526,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "  myMain(argc, (const char **)argv);\n" );
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "  oyjlTr_Release( &trc_ );\n" );
+    oyjlStr_Add( s, "  oyjlLibRelease();\n" );
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "#ifdef __ANDROID__\n" );
     oyjlStr_Add( s, "  free( argv );\n" );
@@ -2045,10 +2047,11 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
 /** @brief    Return a JSON representation from options
  *  @memberof oyjlUi_s
  *
- *  The JSON data shall be useable with oyjl-args-qml options renderer.
+ *  The JSON data shall be useable with oyjl-args-qml options renderer and
+ *  the -R option.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/05/29
+ *  @date    2021/11/14
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
@@ -2151,9 +2154,12 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     oyjlOptionGroup_s * g = &opts->groups[i];
     int sub_command;
     oyjlOption_s * o;
+    char * synopsis;
 
     if(!(g->detail && g->detail[0]))
       continue;
+
+    synopsis = oyjlOptions_PrintHelpSynopsis_( opts, g, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
 
     sub_command = (g->flags & OYJL_GROUP_FLAG_SUBCOMMAND) ? OYJL_GROUP_FLAG_SUBCOMMAND : 0;
     if(g->name)
@@ -2172,6 +2178,12 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       oyjlValueSetString( key, g->help );
       if(*oyjl_debug)
         fprintf(stderr, "found help: %s\n", g->help);
+    }
+    if(synopsis)
+    {
+      oyjlTreeSetStringF( root, OYJL_CREATE_NEW, synopsis, OYJL_REG "/modules/[0]/groups/[%d]/%s", i, "synopsis" );
+      free(synopsis);
+      synopsis = NULL;
     }
     if(sub_command)
     {

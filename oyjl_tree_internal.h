@@ -94,6 +94,10 @@ enum {
 };
 char *       oyjlOption_PrintArg_    ( oyjlOption_s      * o,
                                        int                 style );
+char *       oyjlOptions_PrintHelpSynopsis_ (
+                                       oyjlOptions_s  *    opts,
+                                       oyjlOptionGroup_s * g,
+                                       int                 style );
 void oyjlUiCanonicaliseVariableName_ ( char             ** name );
 int  oyjlManArgIsNum_                ( const char        * arg );
 int  oyjlManArgIsEditable_           ( const char        * arg );
