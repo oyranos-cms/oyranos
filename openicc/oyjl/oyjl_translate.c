@@ -547,7 +547,6 @@ int myMain( int argc, const char ** argv )
       ++i;
     }
   }
-  oyjlLibRelease();
 
   return error;
 }
@@ -597,6 +596,7 @@ int main( int argc_, char**argv_, char ** envv )
 #ifdef __ANDROID__
   free( argv );
 #endif
+  oyjlLibRelease();
 
   return 0;
 }

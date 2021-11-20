@@ -60,6 +60,9 @@ char *     oyjlReadFileToMem         ( const char        * filename,
   char * text = NULL;
   FILE * fp;
 
+  if(!filename || !filename[0])
+    return text;
+  else
   if(strcmp(filename,"-") == 0)
     fp = stdin;
   else
@@ -594,7 +597,6 @@ int myMain( int argc, const char ** argv )
       ++i;
     }
   }
-  oyjlLibRelease();
 
   return error;
 }
@@ -655,6 +657,8 @@ int main( int argc_, char**argv_, char ** envv )
 #ifdef __ANDROID__
   free( argv );
 #endif
+
+  oyjlLibRelease();
 
   return 0;
 }

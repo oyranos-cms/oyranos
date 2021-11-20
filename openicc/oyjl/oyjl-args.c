@@ -281,7 +281,6 @@ int myMain( int argc, const char ** argv )
       ++i;
     }
   }
-  oyjlLibRelease();
 
   return 0;
 }
@@ -328,6 +327,8 @@ int main( int argc_, char**argv_, char ** envv )
   oyjlTr_Release( &trc );
 
   myMain(argc, (const char **)argv);
+
+  oyjlLibRelease();
 
   return 0;
 }
