@@ -2428,6 +2428,7 @@ int oyjlArgsRender                   ( int                 argc,
 static char * oyjl_nls_path_ = NULL;
 char * oyjl_debug_node_path_ = NULL;
 char * oyjl_debug_node_value_ = NULL;
+extern char * oyjl_term_color_html_;
 void oyjlLibRelease() {
   int i;
   if(oyjl_nls_path_)
@@ -2460,6 +2461,11 @@ void oyjlLibRelease() {
   {
     free(oyjl_debug_node_value_);
     oyjl_debug_node_value_ = NULL;
+  }
+  if(oyjl_term_color_html_)
+  {
+    free(oyjl_term_color_html_);
+    oyjl_term_color_html_ = NULL;
   }
 }
 /* --- Render_Section --- */
