@@ -1231,6 +1231,8 @@ oyjlTESTRESULT_e testJson ()
   if(verbose)
     fprintf( zout, "%s\n", non_json );
   free(non_json); non_json = NULL;
+  oyjlTreeFree( root );
+  root = NULL;
 
   result = testEscapeJson( "Color", "Color", OYJL_NO_BACKSLASH, 44, result, oyjlTESTRESULT_FAIL );
   result = testEscapeJson( "Color \"Rose\"", "Color \"Rose\"", OYJL_NO_BACKSLASH, 53, result, oyjlTESTRESULT_XFAIL );
@@ -1609,7 +1611,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   int lib_a_size = oyjlIsFile( lib_a, "r", info, 48 ),
       size;
   char * command = NULL;
-  char * t;
+  char * t = oyjlReadCommandF( &size, "r", malloc, "pkg-config -libs-only-L openicc" );
 
   fprintf( zout, "compiling and testing: %s\n", oyjlTermColor(oyjlBOLD, prog) );
 
@@ -1627,8 +1629,10 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   oyjlWriteFile( name, c_source, len );
   if(c_source) {free(c_source);} c_source = NULL;
   /* compile */
+  if(!(t && t[0]))
+    fprintf( zout, "Compiling without OpenICC\n" );
   if(lib_a_size)
-    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -loyjl-static -loyjl-core-static `pkg-config -libs-only-L openicc` -lopenicc-static -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, prog );
+    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -loyjl-static -loyjl-core-static %s %s -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, t&&t[0]?t:"", t&&t[0]?"-lopenicc-static":"", prog );
   else if(lib_so_size)
     oyjlStringAdd( &command, 0,0, "cc %s -g -O0 -I %s -I %s %s -L %s -lOyjl -lOyjlCore -o %s", verbose?"-Wall -Wextra":"", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, prog );
   if(command)
@@ -1912,8 +1916,8 @@ oyjlTESTRESULT_e testUiRoundtrip ()
                            1284                      /*help_size*/,
                            2174                      /*man_size*/,
                            4316                      /*markdown_size*/,
-                           7528                      /*json_size*/,
-                           7555                      /*json_command_size*/,
+                           8023                      /*json_size*/,
+                           8050                      /*json_command_size*/,
                            11682                     /*export_size*/,
                            4144                      /*bash_size*/,
                            result,
@@ -1994,7 +1998,7 @@ oyjlTESTRESULT_e testUiTranslation ()
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups_no_args, NULL );
   char * text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7511)
+  if(text && strlen(text) == 7971)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
     "oyjlUi_ToJson(en_GB)" );
   } else
@@ -2029,8 +2033,8 @@ oyjlTESTRESULT_e testUiTranslation ()
                            1187                      /*help_size*/,
                            2075                      /*man_size*/,
                            3874                      /*markdown_size*/,
-                           6961                      /*json_size*/,
-                           6993                      /*json_command_size*/,
+                           7441                      /*json_size*/,
+                           7473                      /*json_command_size*/,
                            10606                     /*export_size*/,
                            3150                      /*bash_size*/,
                            result,
@@ -2114,7 +2118,7 @@ oyjlTESTRESULT_e testUiTranslation ()
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups_no_args, NULL );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7517)
+  if(text && strlen(text) == 7977)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
     "oyjlUi_ToJson(de)" );
   } else
@@ -2161,7 +2165,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   trc = oyjlTr_New( "de_DE", OYJL_DOMAIN, &catalog, NULL,NULL,NULL, !verbose?0:OYJL_OBSERVE );
   oyjlUi_Translate( ui, trc );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7588)
+  if(text && strlen(text) == 8050)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
     "oyjlUi_ToJson(de+)" );
   } else
@@ -2176,7 +2180,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   oyjlTr_SetLocale( trc, "back" );
   oyjlUi_Translate( ui, trc );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7511)
+  if(text && strlen(text) == 7971)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
     "oyjlUi_ToJson(back)" );
   } else
@@ -2204,7 +2208,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   oyjlTr_SetLocale( trc, "cs_CZ" );
   oyjlUi_Translate( ui, trc );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 7612)
+  if(text && strlen(text) == 8082)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, text?strlen(text):0,
     "oyjlUi_ToJson(cs)" );
   } else
