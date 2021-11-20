@@ -505,7 +505,9 @@ AppWindow {
         if(start === '<?xml version=')
             helpTextArea.textFormat = Qt.PlainText
         else
-        if(helpText.charAt(0) === '<' || t.match(/\033\[/)) // assume rich text
+        if( t.charAt(0) === '<' ||
+            t.match(/\033\[/) ||
+            t.match(/oyjl-html-format-marker/) ) // assume rich text
             helpTextArea.textFormat = Qt.RichText
         else
             helpTextArea.textFormat = Qt.PlainText
@@ -626,7 +628,7 @@ AppWindow {
             helpText = high;
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
-        } else
+        } else if(!t.match(/oyjl-html-format-marker/))
         {
             var text = Link.linkify( t );
             if(text.length !== helpText.length)
@@ -640,7 +642,9 @@ AppWindow {
                 helpTextArea.textFormat = Qt.RichText
             }
             helpText = text;
-        }
+        } else
+          helpText = t;
+        helpText = helpText.replace(/oyjl-html-format-marker/, '')
 
         helpTextChanging = false
         image.opacity = 0.01
@@ -1169,6 +1173,24 @@ AppWindow {
             }
             var help = P.getTranslatedItem( group, "help", loc, catalog );
 
+            var synopsis = "";
+            if(typeof group.synopsis !== "undefined")
+            {
+              synopsis = group.synopsis;
+              if(synopsis.length)
+              {
+                  if(typeof help !== "undefined")
+                  {
+                      help = help.replace(/ /g, '&nbsp;')
+                      help = help.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+                      help = help.replace(/\n/g, "<br />")
+                      help = Link.linkify( help );
+                      help += "<br /><br />" + synopsis;
+                  }
+                  else
+                      help = synopsis;
+              }
+            }
             if(typeof options !== "undefined")
                 setOptions( group, groupName, help )
 
@@ -1181,12 +1203,21 @@ AppWindow {
                     desc = P.getTranslatedItem( g, "name", loc, catalog )
                     if(typeof desc === "undefined")
                         desc = P.getTranslatedItem( g, "description", loc, catalog )
+                    if(typeof desc !== "undefined")
+                        desc = Link.linkify( desc );
                     var groupName2 = groupName + " : " + desc
                     var help2 = ""
                     if(typeof help !== "undefined")
-                        help2 = help + "\n\n"
+                        help2 = help + "<br /><br />"
                     if(typeof groupName2 !== "undefined")
                         help2 += P.getTranslatedItem( g, "help", loc, catalog );
+                    if(typeof g.synopsis !== "undefined")
+                    {
+                      synopsis = g.synopsis;
+                      if(synopsis.length)
+                        help2 +="<br />" + synopsis;
+                    }
+                    statusText = "Synopsis: " + synopsis
                     setOptions( g, groupName2, help2 )
                 }
         }

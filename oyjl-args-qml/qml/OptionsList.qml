@@ -48,7 +48,7 @@ Rectangle {
                     setHelpText( "", false )
                     var text = groupDescriptions[section]
                     if( typeof text !== "undefined" )
-                        setHelpText( text, false )
+                        setHelpText( "oyjl-html-format-marker" + text, false )
                     else
                         helpText = ""
                     focus = true
