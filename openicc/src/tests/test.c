@@ -35,7 +35,7 @@
 
 void oyjlLibRelease();
 #define OYJL_TEST_MAIN_SETUP  printf("\n    OpenICC Test Program\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    OpenICC Test Program finished\n\n"); oyjlLibRelease();
+#define OYJL_TEST_MAIN_FINISH printf("\n    OpenICC Test Program finished\n\n"); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub);
 #define OYJL_TEST_NAME "test-core"
 #include "oyjl_test.h"
 #include "oyjl_test_main.h"
@@ -585,9 +585,19 @@ oyjlTESTRESULT_e testConfig()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "openiccConfig_GetKeyNames(many levels)      %d<%d", key_names_n,i );
   }
-  i = 0;
-  while(key_names && key_names[i]) myDeAllocFunc( key_names[i++] );
-  if( key_names ) { myDeAllocFunc(key_names); key_names = NULL; }
+  key_names_n = i;
+  if(verbose)
+  {
+    for(i = 0; i < key_names_n; ++i)
+    {
+      const char * key = key_names[i];
+      const char * t = NULL;
+      openiccConfig_GetStringf( config, &t, "%s", key );
+
+      fprintf(zout, "\t[%d]%s: %s%s%s\n", i, key, t?"\"":"", t?t:"XPATH", t?"\"":"");
+    }
+  }
+  oyjlStringListRelease( &key_names, i, myDeAllocFunc );
 
 
   /* get one key name */
@@ -939,10 +949,8 @@ oyjlTESTRESULT_e testODB()
     }
     if(verbose)
       fprintf(zout, "\t%s:\t\"%s\"\n", key_names[i]?key_names[i]:"????", t?t:"" );
-    myDeAllocFunc( key_names[i] );
   }
-
-  if( key_names ) { myDeAllocFunc(key_names); key_names = NULL; }
+  oyjlStringListRelease( &key_names, key_names_n, myDeAllocFunc );
 
   openiccDB_Release( &db );
 
