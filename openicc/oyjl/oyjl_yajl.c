@@ -539,6 +539,20 @@ static yajl_callbacks oyjl_tree_callbacks_ = {
         yajl_free_error( handle, (unsigned char*)internal_err_str );
         internal_err_str = 0;
         yajl_free (handle);
+        while(ctx.stack)
+        {
+          if(ctx.stack->key)
+            free(ctx.stack->key);
+          ctx.stack->key = NULL;
+          if(ctx.stack->value)
+          {
+            oyjlValueClear(ctx.stack->value);
+            free(ctx.stack->value);
+            ctx.stack->value = NULL;
+          }
+          context_pop(&ctx);
+        }
+        oyjlTreeFree( ctx.root );
         return NULL;
     }
 
