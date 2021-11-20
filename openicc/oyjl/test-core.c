@@ -851,7 +851,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   int lib_a_size = oyjlIsFile( lib_a, "r", info, 48 ),
       size;
   char * command = NULL;
-  char * t;
+  char * t = oyjlReadCommandF( &size, "r", malloc, "pkg-config -libs-only-L openicc" );
 
   fprintf( zout, "compiling and testing: %s\n", oyjlTermColor(oyjlBOLD, prog) );
 
@@ -869,10 +869,13 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   oyjlWriteFile( name, c_source, len );
   if(c_source) {free(c_source);} c_source = NULL;
   /* compile */
+  if(!(t && t[0]))
+    fprintf( zout, "Compiling without OpenICC\n" );
   if(lib_a_size)
-    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -loyjl-static -loyjl-core-static `pkg-config -libs-only-L openicc` -lopenicc-static -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, prog );
+    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -loyjl-static -loyjl-core-static %s %s -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, t&&t[0]?t:"", t&&t[0]?"-lopenicc-static":"", prog );
   else if(lib_so_size)
     oyjlStringAdd( &command, 0,0, "cc %s -g -O0 -I %s -I %s %s -L %s -lOyjl -lOyjlCore -o %s", verbose?"-Wall -Wextra":"", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, prog );
+  if(t) { free(t); t = NULL; }
   if(command)
   {
     if(verbose)
@@ -1085,8 +1088,8 @@ oyjlTESTRESULT_e testArgs()
                            1082                      /*help_size*/,
                            1967                      /*man_size*/,
                            3788                      /*markdown_size*/,
-                           6779                      /*json_size*/,
-                           6806                      /*json_command_size*/,
+                           7196                      /*json_size*/,
+                           7223                      /*json_command_size*/,
                            10581                     /*export_size*/,
                            3163                      /*bash_size*/,
                            result,
@@ -1181,8 +1184,8 @@ oyjlTESTRESULT_e testArgs()
                             615                      /*help_size*/,
                            1451                      /*man_size*/,
                            2300                      /*markdown_size*/,
-                           4710                      /*json_size*/,
-                           4737                      /*json_command_size*/,
+                           4933                      /*json_size*/,
+                           4960                      /*json_command_size*/,
                            10066                     /*export_size*/,
                            3030                      /*bash_size*/,
                            result,
@@ -1209,12 +1212,12 @@ oyjlTESTRESULT_e testArgs()
                                        "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 4916)
+  if(text && strlen(text) == 5139)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson() 4903 == %lu", strlen(text) );
+    "oyjlUi_ToJson() 5139 == %lu", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson", "txt" )
   if(verbose && text)
@@ -1568,12 +1571,12 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr2a", "two/[%d]/data/[0]", 0 );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr2b", "two/[%d]/data/[1]", 0 );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "one/[%d]/key3", 1 );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr3a", "one/[%d]/data/[0]", 1 );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr3b", "one/[%d]/data/[1]", 1 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "%33[1marr3a%33[0m", "one/[%d]/data/[0]", 1 );
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "\033[1marr3b\033[0m", "one/[%d]/data/[1]", 1 );
   oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, 1.4,     "one/[%d]/key4", 1 );
   oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, 1.2,     "one/[%d]/data/[2]", 1 );
   oyjlTreeToJson( root, &i, &text ); i = 0;
-  if( text && strlen( text ) == 238 )
+  if( text && strlen( text ) == 262 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
     "add array" );
   } else
