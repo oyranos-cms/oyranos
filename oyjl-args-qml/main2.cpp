@@ -79,9 +79,11 @@ int main(int argc, char *argv[])
     else
         app.installTranslator(&translator);
 
+#if QT_VERSION_MAJOR == 5
     foreach (QScreen * screen, QGuiApplication::screens())
         screen->setOrientationUpdateMask(Qt::LandscapeOrientation | Qt::PortraitOrientation |
                                          Qt::InvertedLandscapeOrientation | Qt::InvertedPortraitOrientation);
+#endif
 
     app.setApplicationName(QString("oyjl-args-qml"));
     app.setApplicationDisplayName(QString("Oyjl"));
