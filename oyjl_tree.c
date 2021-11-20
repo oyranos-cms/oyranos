@@ -498,6 +498,7 @@ char *     oyjlJsonEscape            ( const char        * in,
     oyjlStr_Replace( tmp, "\\n", "\n", 0, NULL );
     oyjlStr_Replace( tmp, "\\r", "\r", 0, NULL );
     oyjlStr_Replace( tmp, "\\t", "\t", 0, NULL );
+    oyjlStr_Replace( tmp, "%33", "\033", 0, NULL );
     if(flags & OYJL_KEY)
       oyjlStr_Replace( tmp, "%37", "/", NULL,NULL );
     /* undo RegExp */
@@ -524,6 +525,7 @@ char *     oyjlJsonEscape            ( const char        * in,
     oyjlStr_Replace( tmp, "\n", "\\n", 0, NULL );
     oyjlStr_Replace( tmp, "\r", "\\r", 0, NULL );
     oyjlStr_Replace( tmp, "\t", "\\t", 0, NULL );
+    oyjlStr_Replace( tmp, "\033", "%33", 0, NULL );
     if(flags & OYJL_KEY)
       oyjlStr_Replace( tmp, "/", "%37", NULL,NULL );
     if(flags & OYJL_REGEXP)
