@@ -186,6 +186,8 @@ int oyjlTermColorCheck()
       truecolor = color = 0;
     if( getenv("FORCE_COLORTERM") )
       truecolor = color = 1;
+    if( getenv("FORCE_NO_COLORTERM") )
+      truecolor = color = 0;
     if(verbose)
       fprintf(stdout, "color: %d truecolor: %d oyjl_colorterm: %s\n", color, truecolor, oyjl_colorterm );
   }
