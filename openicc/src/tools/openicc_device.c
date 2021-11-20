@@ -49,14 +49,16 @@ typedef enum {
 } ucmm_scope;
 
 
-int main(int argc, char ** argv)
+int myMain(int argc, const char ** argv)
 {
   int count = 0;
 
   int help = 0;
   int verbose = 0;
   int version = 0;
+  int state = 0;
   const char * export = NULL;
+  const char * render = NULL;
   int list_devices = 0,
       list_long = 0;
   int error = 0;
@@ -88,12 +90,6 @@ int main(int argc, char ** argv)
   char * json;
   int i,j, n = 0,
       flags = OPENICC_CONFIGS_SKIP_HEADER | OPENICC_CONFIGS_SKIP_FOOTER;
-  char * loc = NULL;
-
-#ifdef OYJL_HAVE_LOCALE_H
-  loc = setlocale(LC_ALL,"");
-#endif
-  openiccInit(loc);
 
   /* declare some option choices */
   oyjlOptionChoice_s b_choices[] = {{"DB-file-name.json", _("DB File"), _("File Name of device JSON Data Base"), ""},
@@ -122,6 +118,8 @@ int main(int argc, char ** argv)
     {"oiwi", 0,    "p", "show-path",     NULL, _("Show Path"),   _("Show Path"),      NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&show_path} },
     {"oiwi", 0,    "s", "system",        NULL, _("System"),      _("Local System"),   NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=(int*)&scope} },
     {"oiwi", 0,    "v", "verbose",       NULL, _("Verbose"),     _("verbose"),        NULL, NULL,    oyjlOPTIONTYPE_NONE,     {},      oyjlINT,   {.i=&verbose} },
+    /* The --render option can be hidden and used only internally. */
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE, "R","render",NULL,NULL,NULL,NULL,NULL,oyjlOPTIONTYPE_CHOICE,{0},oyjlSTRING,{.s=&render}},
     {"oiwi", 0,    "V", "version",       NULL, _("version"),     _("Version"),        NULL, NULL,    oyjlOPTIONTYPE_NONE,     {0},     oyjlINT,   {.i=&version} },
     /* default option template -X|--export */
     {"oiwi", 0,    "X", "export",        NULL, NULL,             NULL,                NULL, NULL,    oyjlOPTIONTYPE_CHOICE,   {},      oyjlSTRING,{.s=&export} },
@@ -144,8 +142,13 @@ int main(int argc, char ** argv)
   oyjlUiHeaderSection_s * info = oiUiInfo(_("Manipulation of OpenICC color management data base device entries."));
   oyjlUi_s * ui = oyjlUi_Create( argc, (const char**) argv,
       "openicc-device", "OpenICC Device", _("OpenICC devices handling tool"), "openicc-logo",
-      info, oarray, groups, NULL );
-  if(!ui) return 0;
+      info, oarray, groups, &state );
+  if(!ui) goto clean_main;
+  if(state & oyjlUI_STATE_HELP)
+  {
+    fprintf( stdout, "%s\n\tman oyjl\n\n", _("For more information read the man page:") );
+    goto clean_main;
+  }
 
   if((export && strcmp(export,"json+command") == 0))
   {
@@ -162,7 +165,24 @@ int main(int argc, char ** argv)
     json_commands[strlen(json_commands)-1] = '\000';
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
     puts( json_commands );
-    exit(0);
+    goto clean_main;
+  }
+
+  /* Render boilerplate */
+  if(ui && render)
+  {
+#if !defined(NO_OYJL_ARGS_RENDER)
+# ifdef __ANDROID__
+#   define RENDER_I18N oyjl_json
+# else
+#   define RENDER_I18N NULL
+# endif
+    int debug = verbose;
+    oyjlArgsRender( argc, argv, RENDER_I18N, NULL,NULL, debug, ui, myMain );
+#else
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "No render support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer.", OYJL_DBG_ARGS );
+#endif
+    goto clean_main;
   }
 
   if(!db_file)
@@ -407,9 +427,45 @@ int main(int argc, char ** argv)
 
   openiccConfig_Release( &config );
 
+  clean_main:
   if(conf_name)
     free(conf_name);
+  oyjlLibRelease();
 
   return error;
+}
+
+char ** environment = NULL;
+int main( int argc_, char**argv_, char ** envv )
+{
+  int argc = argc_;
+  char ** argv = argv_;
+  const char * loc = NULL;
+
+#ifdef __ANDROID__
+  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+
+  argv = calloc( argc + 2, sizeof(char*) );
+  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
+  argv[argc++] = "--render=gui"; /* start QML */
+  environment = environ;
+#else
+  environment = envv;
+#endif
+
+  /* language needs to be initialised before setup of data structures */
+#ifdef OYJL_HAVE_LOCALE_H
+  loc = setlocale(LC_ALL,"");
+#endif
+
+  openiccInit( loc );
+
+  myMain(argc, (const char **)argv);
+
+#ifdef __ANDROID__
+  free( argv );
+#endif
+
+  return 0;
 }
 
