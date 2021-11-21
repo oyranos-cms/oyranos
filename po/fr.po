@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2021-11-20 10:54+0100\n"
+"POT-Creation-Date: 2021-11-21 00:02+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -211,7 +211,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: oyjl_args.c:3258 oyjl_args_cli.c:268 oyjl_args_tree.c:2134
+#: oyjl_args.c:3258 oyjl_args_cli.c:269 oyjl_args_tree.c:2134
 #, fuzzy
 msgid "Description"
 msgstr "Description"
@@ -1220,7 +1220,7 @@ msgstr ""
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:3277 oyjl_args_cli.c:273 oyjl_args_tree.c:2136
+#: oyjl_args.c:3277 oyjl_args_cli.c:274 oyjl_args_tree.c:2136
 #: oyjl_translate.c:223
 msgid "Usage"
 msgstr ""

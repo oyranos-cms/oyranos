@@ -132,7 +132,8 @@ int oyjlArgsCliStart__               ( int                 argc,
 
   if(debug)
   {
-    for(int i = 0; i < argc; ++i)
+    int i;
+    for(i = 0; i < argc; ++i)
       fprintf( stderr, "%s ", argv[i] );
     fprintf( stderr, "\n" );
   }
