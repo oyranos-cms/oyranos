@@ -180,7 +180,7 @@ int myMain(int argc, const char ** argv)
     int debug = verbose;
     oyjlArgsRender( argc, argv, RENDER_I18N, NULL,NULL, debug, ui, myMain );
 #else
-    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "No render support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer.", OYJL_DBG_ARGS );
+    openiccMessage_p( oyjlMSG_ERROR, 0, OI_DBG_FORMAT_ "No render support compiled in. For a GUI use -X json and load into oyjl-args-qml viewer.", OI_DBG_ARGS_ );
 #endif
     goto clean_main;
   }
