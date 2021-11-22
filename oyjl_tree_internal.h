@@ -47,6 +47,7 @@ void       oyjlValueDebug_           ( oyjl_val            v,
                                        int                 flags );
 #define OYJL_DEBUG_NODE_IS_VALUE(xpath_,value_text_) ( oyjl_debug_node_path_ && oyjl_debug_node_path_[0] && xpath_ && oyjlPathMatch( xpath_, oyjl_debug_node_path_, 0 ) && ( (oyjl_debug_node_value_ && value_text_ && strstr( value_text_, oyjl_debug_node_value_ ) != NULL) || oyjl_debug_node_value_ == NULL))
 int oyjlIsDirFull_ (const char* name);
+int oyjlMakeDir_ (const char* path);
 
 int        oyjlTreePathsGetIndex_    ( const char        * term,
                                        int               * index );
