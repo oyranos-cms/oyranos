@@ -339,8 +339,14 @@ int myMain( int argc, const char ** argv )
         {
           if(!oyjlIsDirFull_ (localedir))
           {
-            fprintf(stderr, "%sERROR: Can not find absolute path:\t%s\n", oyjlBT(0), localedir);
-            exit(1);
+            fprintf(stderr, "Create path:\t%s\n", localedir);
+            oyjlMakeDir_(localedir);
+            if(!oyjlIsDirFull_ (localedir))
+            {
+              fprintf(stderr, "%sERROR: Can not find absolute path:\t%s\n", oyjlBT(0), localedir);
+              error = 1;
+              goto clean_main;
+            }
           }
           oyjl_domain_path = oyjlStringCopy(localedir, 0);
         }
