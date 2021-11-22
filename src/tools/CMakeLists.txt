@@ -1,6 +1,7 @@
 SET( LANGS
      cs_CZ.UTF8
      de_DE.UTF8 )
+SET( OYJL_DIR ":${CMAKE_BINARY_DIR}/openicc/oyjl" )
 MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
   IF( CMAKE_CROSSCOMPILING )
       MESSAGE( "-- Skipping ${_tool} docu: cross compiling; Hint: build first for local march to generate docu + i18n" )
@@ -59,8 +60,8 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
 
       STRING(REGEX REPLACE ";" "," oyjl_langs "${long_langs}")
       ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c
-          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG="C" DISPLAY="man_page" ${_tool} -X json | oyjl-translate -a -i - -o ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c -k name,description,help,label,value_name -d "oyjl,oyranos" -p "${CMAKE_BINARY_DIR}/locale/" -l ${oyjl_langs} -t -w=C
-          DEPENDS ${_tool} ${_tool_src}
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG="C" DISPLAY="man_page" ${_tool} -X json | PATH=$$PATH${OYJL_DIR} oyjl-translate-bootstrap -a -i - -o ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c -k name,description,help,label,value_name -d "oyjl,oyranos" -p "${CMAKE_BINARY_DIR}/locale/" -l ${oyjl_langs} -t -w=C
+          DEPENDS oyjl-translate-bootstrap ${_tool} ${_tool_src}
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
       ADD_CUSTOM_TARGET( ${_tool}.i18n.c ALL
@@ -75,8 +76,8 @@ MACRO(OY_COMPLETION_TOOL _tool _tool_src)
       MESSAGE( "-- Skipping ${_tool} completion: cross compiling" )
   ELSE( CMAKE_CROSSCOMPILING )
     ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
-        COMMAND LANG=C DISPLAY="man_page" PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} ${_tool} -X export | oyjl-args -i - --completion-bash > ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
-        DEPENDS ${_tool} ${_tool_src}
+      COMMAND LANG=C DISPLAY="man_page" PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} ${_tool} -X export | PATH=$$PATH${OYJL_DIR} oyjl-args-bootstrap -i - --completion-bash > ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
+        DEPENDS oyjl-args-bootstrap ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
     ADD_CUSTOM_TARGET( ${_tool}.completion ALL

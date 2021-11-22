@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2021-11-09 07:43+0100\n"
+"POT-Creation-Date: 2021-11-22 06:48+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -800,11 +800,6 @@ msgstr ""
 msgid "CLUT"
 msgstr ""
 
-#: tools/oyranos_convert.c:79
-msgid ""
-"CLUT is a levels x levels*levels sized PPM, --levels defaults for clut to 64"
-msgstr ""
-
 #. CMM: abbreviation for Color Matching Module
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/label
 #. oyranos_cmm_lcms.json:org/freedesktop/oyjl/modules/[0]/label
@@ -1151,7 +1146,7 @@ msgstr ""
 msgid "Control user daemon"
 msgstr ""
 
-#: tools/oyranos-convert.c:222 tools/oyranos_convert.c:65
+#: tools/oyranos-convert.c:222
 msgid "Conversion"
 msgstr ""
 
@@ -1164,19 +1159,15 @@ msgstr ""
 msgid "Convert Image"
 msgstr ""
 
-#: tools/oyranos_convert.c:62
-msgid "Convert Image:"
-msgstr ""
-
 #: liboyranos_config/oyranos_texts.c:552 liboyranos_config/oyranos_texts.c:562
 msgid "Convert automatically"
 msgstr ""
 
-#: tools/oyranos-convert.c:205 tools/oyranos_convert.c:114
+#: tools/oyranos-convert.c:205
 msgid "Convert image through ICC device link profile"
 msgstr ""
 
-#: tools/oyranos-convert.c:204 tools/oyranos_convert.c:111
+#: tools/oyranos-convert.c:204
 msgid "Convert image to ICC Color Space"
 msgstr ""
 
@@ -1356,7 +1347,7 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: tools/oyranos-convert.c:207 tools/oyranos_convert.c:120
+#: tools/oyranos-convert.c:207
 msgid "Create 3D CLUT"
 msgstr ""
 
@@ -1826,8 +1817,7 @@ msgid ""
 "Effect Settings allows one to decide about a abstract effect color space."
 msgstr ""
 
-#: tools/oyranos-convert.c:230 tools/oyranos_convert.c:68
-#: tools/oyranos_convert.c:77
+#: tools/oyranos-convert.c:230
 msgid "Effect abtract Color Space"
 msgstr ""
 
@@ -1905,7 +1895,6 @@ msgstr "ICC-профиль"
 
 #: examples/libraw/oyranos_file.cpp:71 examples/oyranos_cmm_dDev.c:710
 #: examples/oyranos_cmm_dDev.c:721 examples/taxi.c:69
-#: tools/oyranos_convert.c:107
 msgid "Example"
 msgstr "приме́р"
 
@@ -1943,11 +1932,6 @@ msgstr ""
 msgid "Extract ICC profile"
 msgstr "ICC-профиль"
 
-#: tools/oyranos_convert.c:90
-#, fuzzy
-msgid "Extract ICC profile:"
-msgstr "ICC-профиль"
-
 #: examples/libraw/oyranos_file.cpp:67 examples/libraw/oyranos_file.cpp:68
 #: tools/oyranos_profile_graph.c:443 tools/oyranos_profile_graph.c:456
 msgid "FILE"
@@ -1961,15 +1945,10 @@ msgid "FILENAME"
 msgstr ""
 
 #: tools/oyranos-convert.c:224 tools/oyranos-convert.c:226
-#: tools/oyranos_convert.c:63 tools/oyranos_convert.c:64
-#: tools/oyranos_convert.c:69 tools/oyranos_convert.c:72
-#: tools/oyranos_convert.c:78 tools/oyranos_convert.c:91
-#: tools/oyranos_convert.c:95 tools/oyranos_convert.c:96
 msgid "FILE_NAME"
 msgstr ""
 
-#: tools/oyranos-convert.c:236 tools/oyranos_convert.c:73
-#: tools/oyranos_convert.c:83 tools/oyranos_profile_graph.c:432
+#: tools/oyranos-convert.c:236 tools/oyranos_profile_graph.c:432
 #: tools/oyranos_profile_graph.c:451 tools/oyranos_profile_graph.c:453
 msgid "FORMAT"
 msgstr ""
@@ -2104,7 +2083,7 @@ msgid "General options"
 msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:66 examples/taxi.c:66
-#: tools/oyranos_convert.c:102 tools/oyranos_gamma.c:241
+#: tools/oyranos_gamma.c:241
 msgid "General options:"
 msgstr ""
 
@@ -2112,25 +2091,13 @@ msgstr ""
 msgid "Generate CLUT Image"
 msgstr ""
 
-#: tools/oyranos_convert.c:71
-msgid "Generate CLUT Image:"
-msgstr ""
-
 #: tools/oyranos-convert.c:274
 #, fuzzy
 msgid "Generate Device Link Profile"
 msgstr "ICC-профили"
 
-#: tools/oyranos_convert.c:81
-msgid "Generate Device Link Profile:"
-msgstr ""
-
 #: tools/oyranos-convert.c:276
 msgid "Generate Image"
-msgstr ""
-
-#: tools/oyranos_convert.c:94
-msgid "Generate Image:"
 msgstr ""
 
 #: tools/oyranos-policy.c:116 tools/oyranos-policy.c:118
@@ -2149,7 +2116,7 @@ msgstr ""
 msgid "Get"
 msgstr ""
 
-#: tools/oyranos-convert.c:206 tools/oyranos_convert.c:117
+#: tools/oyranos-convert.c:206
 msgid "Get Conversion"
 msgstr ""
 
@@ -2158,7 +2125,7 @@ msgstr ""
 msgid "Get ICC Profile:"
 msgstr "ICC-профиль"
 
-#: tools/oyranos-convert.c:203 tools/oyranos_convert.c:108
+#: tools/oyranos-convert.c:203
 #, fuzzy
 msgid "Get ICC profile"
 msgstr "ICC-профиль"
@@ -2288,7 +2255,7 @@ msgstr "Справка"
 msgid "Help Shortcuts"
 msgstr ""
 
-#: examples/taxi.c:47 tools/oyranos_convert.c:59
+#: examples/taxi.c:47
 msgid ""
 "Hint: search paths are influenced by the XDG_CONFIG_HOME shell variable."
 msgstr ""
@@ -2412,13 +2379,7 @@ msgstr ""
 #: tools/oyranos-convert.c:220 tools/oyranos-convert.c:222
 #: tools/oyranos-convert.c:230 tools/oyranos-convert.c:232
 #: tools/oyranos-device.c:367 tools/oyranos-device.c:369
-#: tools/oyranos-profile.c:260 tools/oyranos_convert.c:63
-#: tools/oyranos_convert.c:65 tools/oyranos_convert.c:66
-#: tools/oyranos_convert.c:67 tools/oyranos_convert.c:68
-#: tools/oyranos_convert.c:72 tools/oyranos_convert.c:74
-#: tools/oyranos_convert.c:75 tools/oyranos_convert.c:76
-#: tools/oyranos_convert.c:77 tools/oyranos_convert.c:82
-#: tools/oyranos_convert.c:91 tools/oyranos_convert.c:92
+#: tools/oyranos-profile.c:260
 msgid "ICC_FILE_NAME"
 msgstr ""
 
@@ -2645,10 +2606,6 @@ msgstr ""
 
 #: tools/oyranos_profiles.c:116
 msgid "Input Class"
-msgstr ""
-
-#: tools/oyranos_convert.c:74
-msgid "Input Color Space"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oPNG.c:1208
@@ -3192,9 +3149,7 @@ msgstr ""
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
-#: tools/oyranos-convert.c:228 tools/oyranos_convert.c:72
-#: tools/oyranos_convert.c:82 tools/oyranos_convert.c:91
-#: tools/oyranos_convert.c:100 tools/oyranos_convert.c:104
+#: tools/oyranos-convert.c:228
 msgid "MODULE_NAME"
 msgstr ""
 
@@ -3410,11 +3365,10 @@ msgstr ""
 
 #: tools/oyranos-convert.c:234 tools/oyranos-device.c:365
 #: tools/oyranos-profile.c:252 tools/oyranos-profile.c:256
-#: tools/oyranos_convert.c:97 tools/oyranos_profile_graph.c:430
-#: tools/oyranos_profile_graph.c:435 tools/oyranos_profile_graph.c:437
-#: tools/oyranos_profile_graph.c:439 tools/oyranos_profile_graph.c:441
-#: tools/oyranos_profile_graph.c:447 tools/oyranos_profile_graph.c:462
-#: tools/oyranos_profile_graph.c:464
+#: tools/oyranos_profile_graph.c:430 tools/oyranos_profile_graph.c:435
+#: tools/oyranos_profile_graph.c:437 tools/oyranos_profile_graph.c:439
+#: tools/oyranos_profile_graph.c:441 tools/oyranos_profile_graph.c:447
+#: tools/oyranos_profile_graph.c:462 tools/oyranos_profile_graph.c:464
 msgid "NUMBER"
 msgstr ""
 
@@ -3623,7 +3577,7 @@ msgstr ""
 msgid "Optimization"
 msgstr ""
 
-#: tools/oyranos-convert.c:509 tools/oyranos_convert.c:366
+#: tools/oyranos-convert.c:509
 msgid "Option"
 msgstr ""
 
@@ -3664,8 +3618,7 @@ msgstr ""
 msgid "Output Class"
 msgstr ""
 
-#: tools/oyranos-convert.c:220 tools/oyranos_convert.c:66
-#: tools/oyranos_convert.c:75
+#: tools/oyranos-convert.c:220
 msgid "Output Color Space"
 msgstr ""
 
@@ -4125,7 +4078,7 @@ msgstr "приме́р"
 msgid "Print a help text"
 msgstr ""
 
-#: examples/taxi.c:63 tools/oyranos_convert.c:99
+#: examples/taxi.c:63
 msgid "Print a help text:"
 msgstr ""
 
@@ -4909,8 +4862,7 @@ msgstr ""
 msgid "Simulation Profile"
 msgstr "ICC-профиль"
 
-#: tools/oyranos-convert.c:232 tools/oyranos_convert.c:67
-#: tools/oyranos_convert.c:76
+#: tools/oyranos-convert.c:232
 msgid "Simulation/Proof Color Space"
 msgstr ""
 
@@ -5920,7 +5872,7 @@ msgid "Unset device"
 msgstr "приме́р"
 
 #: examples/libraw/oyranos_file.cpp:45 examples/taxi.c:49
-#: tools/oyranos_convert.c:61 tools/oyranos_gamma.c:214
+#: tools/oyranos_gamma.c:214
 msgid "Usage"
 msgstr "по́льзование"
 
@@ -6310,7 +6262,7 @@ msgstr ""
 msgid "embedd device and driver information into ICC meta tag"
 msgstr ""
 
-#: tools/oyranos-convert.c:248 tools/oyranos_convert.c:105
+#: tools/oyranos-convert.c:248
 msgid "enable simple defaults"
 msgstr ""
 
@@ -6477,10 +6429,6 @@ msgstr ""
 msgid "is a CameraRaw conversion tool"
 msgstr ""
 
-#: tools/oyranos_convert.c:51
-msgid "is a ICC color conversion tool"
-msgstr ""
-
 #: examples/taxi.c:39
 msgid "is a Taxi DB tool"
 msgstr ""
@@ -6496,10 +6444,6 @@ msgstr ""
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/groups/[0]/groups/[0]/name
 #: modules/lcm2-i18n.c:86
 msgid "lcm2 Specific Options"
-msgstr ""
-
-#: tools/oyranos_convert.c:97
-msgid "levels from 4-16 make sense"
 msgstr ""
 
 #: examples/oyranos_cmm_dFil.c:159 examples/oyranos_cmm_dFil.c:161
@@ -6541,10 +6485,6 @@ msgstr ""
 
 #: tools/oyranos-device.c:1199 tools/oyranos_gamma.c:465
 msgid "match value"
-msgstr ""
-
-#: tools/oyranos_convert.c:104
-msgid "module name"
 msgstr ""
 
 #: liboyranos_config/oyranos_io.c:152
@@ -6762,10 +6702,6 @@ msgstr ""
 msgid "read"
 msgstr ""
 
-#: tools/oyranos_convert.c:64
-msgid "read from file"
-msgstr ""
-
 #: tools/oyranos-profile.c:405 tools/oyranos-profile.c:409
 msgid "read input stream"
 msgstr ""
@@ -6815,35 +6751,27 @@ msgstr ""
 msgid "search paths are influenced by the XDG_CONFIG_HOME shell variable."
 msgstr ""
 
-#: tools/oyranos-convert.c:242 tools/oyranos_convert.c:86
+#: tools/oyranos-convert.c:242
 msgid "select floating point 16-bit precision data format"
 msgstr ""
 
-#: tools/oyranos-convert.c:244 tools/oyranos_convert.c:87
+#: tools/oyranos-convert.c:244
 msgid "select floating point 32-bit precision data format"
 msgstr ""
 
-#: tools/oyranos-convert.c:246 tools/oyranos_convert.c:88
+#: tools/oyranos-convert.c:246
 msgid "select floating point 64-bit precision data format"
-msgstr ""
-
-#: tools/oyranos_convert.c:73
-msgid "select format, currently only clut"
-msgstr ""
-
-#: tools/oyranos_convert.c:83
-msgid "select format, currently only icc"
 msgstr ""
 
 #: tools/oyranos-profile.c:252 tools/oyranos-profile.c:254
 msgid "select tag"
 msgstr ""
 
-#: tools/oyranos-convert.c:240 tools/oyranos_convert.c:85
+#: tools/oyranos-convert.c:240
 msgid "select unsigned integer 16-bit precision data format"
 msgstr ""
 
-#: tools/oyranos-convert.c:238 tools/oyranos_convert.c:84
+#: tools/oyranos-convert.c:238
 msgid "select unsigned integer 8-bit precision data format"
 msgstr ""
 
@@ -6947,8 +6875,8 @@ msgstr ""
 #: examples/libraw/oyranos_file.cpp:69 tools/oyranos-config.c:321
 #: tools/oyranos-convert.c:260 tools/oyranos-device.c:381
 #: tools/oyranos-monitor-white-point.c:372 tools/oyranos-policy.c:134
-#: tools/oyranos-profile.c:287 tools/oyranos_convert.c:103
-#: tools/oyranos_profile_graph.c:472 tools/oyranos_profiles.c:138
+#: tools/oyranos-profile.c:287 tools/oyranos_profile_graph.c:472
+#: tools/oyranos_profiles.c:138
 msgid "verbose"
 msgstr ""
 
@@ -6983,26 +6911,13 @@ msgstr ""
 msgid "write profile with correct ID hash"
 msgstr ""
 
-#: tools/oyranos_convert.c:92 tools/oyranos_convert.c:96
-msgid "write to file"
-msgstr ""
-
-#: tools/oyranos_convert.c:69
-msgid "write to file, currently only PPM and PNG formats"
-msgstr ""
-
-#: tools/oyranos_convert.c:78
-msgid "write to file, currently only PPM format"
-msgstr ""
-
 #: examples/libraw/oyranos_file.cpp:61 examples/libraw/oyranos_file.cpp:68
 #: tools/oyranos-device.c:405
 msgid "write to specified file"
 msgstr ""
 
 #: API_generated/oyOptions_s.c:1633 examples/libraw/oyranos_file.cpp:236
-#: examples/taxi.c:208 tools/oyranos_convert.c:271 tools/oyranos_gamma.c:260
-#: tools/oyranos_profiles.c:305
+#: examples/taxi.c:208 tools/oyranos_gamma.c:260 tools/oyranos_profiles.c:305
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -7026,6 +6941,10 @@ msgstr ""
 #, fuzzy
 #~ msgid "Description"
 #~ msgstr "ве́рсия:          "
+
+#, fuzzy
+#~ msgid "Extract ICC profile:"
+#~ msgstr "ICC-профиль"
 
 #, fuzzy
 #~ msgid "Full Help"
