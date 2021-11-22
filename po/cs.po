@@ -135,7 +135,6 @@ msgid "10. Channel"
 msgstr "10. kanál"
 
 #: liboyranos_config/oyranos_icc.c:909
-#, fuzzy
 msgid "100"
 msgstr "100"
 
@@ -222,9 +221,8 @@ msgid "2. Channel"
 msgstr "2. kanál"
 
 #: tools/oyranos_profile_graph.c:488
-#, fuzzy
 msgid "2D Graph from profiles"
-msgstr "2D grafy z profilů:"
+msgstr "2D grafy z profilů"
 
 #: liboyranos_config/oyranos_icc.c:202
 msgid "2color"
@@ -496,9 +494,8 @@ msgid "Apple CMM"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oyra_image.c:1189
-#, fuzzy
 msgid "Apply regions of interesst in form of simple rectangles."
-msgstr "Apply regions of interesst in form of simple rectangles."
+msgstr ""
 
 #. argl
 #: liboyranos_config/oyranos_icc.c:681
@@ -597,15 +594,13 @@ msgid "Assumed XYZ source"
 msgstr "Předpokládaný vstupní XYZ"
 
 #: API_generated/oyranos_profile.c:42
-#, fuzzy
 msgid "Attributes"
-msgstr "Atributy:    "
+msgstr "Atributy"
 
 #. keep total number of chars equal to original for cli print
 #: tools/oyranos-profile.c:644
-#, fuzzy
 msgid "Attributes:      "
-msgstr "Atributy:    "
+msgstr "Atributy:        "
 
 #: liboyranos_config/oyranos_texts.c:507
 #, fuzzy
@@ -871,9 +866,8 @@ msgid "CMM options for color rendering, precission and fixes."
 msgstr ""
 
 #: tools/oyranos_profile_graph.c:410
-#, fuzzy
 msgid "CSV"
-msgstr "PCS: "
+msgstr ""
 
 #: tools/oyranos_profile_graph.c:410
 #, fuzzy
@@ -890,7 +884,6 @@ msgid "Camera"
 msgstr "CameraRaw"
 
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1048
-#, fuzzy
 msgid "CameraRaw"
 msgstr "CameraRaw"
 
@@ -925,14 +918,12 @@ msgid "Change a setting"
 msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:427
-#, fuzzy
 msgid "Channel Image Filter Object"
-msgstr "Root Image Filter Object"
+msgstr ""
 
 #: examples/image_display/image_display.cpp:602
-#, fuzzy
 msgid "Channels:"
-msgstr "Kanály"
+msgstr "Kanály:"
 
 #: examples/oyranos_cmm_dFil.c:632
 #: modules/color/modules/devices/oyranos_monitor_x11_extend.c:149
@@ -1192,21 +1183,18 @@ msgstr "Barvový prostor pro simulaci skutečných zařízení"
 
 #. CCMS
 #: liboyranos_config/oyranos_icc.c:675
-#, fuzzy
 msgid "ColorGear CMM"
-msgstr "Barva b"
+msgstr ""
 
 #. UCMS
 #: liboyranos_config/oyranos_icc.c:677
-#, fuzzy
 msgid "ColorGear CMM C"
-msgstr "Barva b"
+msgstr ""
 
 #. UCCM
 #: liboyranos_config/oyranos_icc.c:676
-#, fuzzy
 msgid "ColorGear CMM Lite"
-msgstr "Barva b"
+msgstr ""
 
 #: tools/oyranos-config.c:251
 msgid "Compile a simple programm"
@@ -1238,16 +1226,14 @@ msgstr ""
 
 #. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
 #: tools/oyranos-convert.c:272
-#, fuzzy
 msgid "Convert Image"
-msgstr "Konvertovat obrázek:"
+msgstr "Konvertovat obrázek"
 
 #: liboyranos_config/oyranos_texts.c:552 liboyranos_config/oyranos_texts.c:562
 msgid "Convert automatically"
 msgstr "Automaticky konvertovat"
 
 #: tools/oyranos-convert.c:205
-#, fuzzy
 msgid "Convert image through ICC device link profile"
 msgstr "Konvertovat obrázek do barvového prostoru ICC"
 
@@ -1285,19 +1271,16 @@ msgstr "Copyright &copy;"
 
 #. oyranos_cmm_lcms.json:org/freedesktop/oyjl/modules/[0]/information/[1]/name
 #: modules/lcms-i18n.c:23
-#, fuzzy
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer"
-msgstr "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
+msgstr ""
 
 #: modules/color/modules/oyranos_cmm_lcms.c:2897
-#, fuzzy
 msgid "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
-msgstr "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
+msgstr ""
 
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4921
-#, fuzzy
 msgid "Copyright (c) 1998-2016 Marti Maria Saguer; MIT"
-msgstr "Copyright (c) 1998-2013 Marti Maria Saguer; MIT"
+msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1500
 #: modules/color/modules/oyranos_cmm_oyra.c:157
@@ -1305,14 +1288,12 @@ msgid "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 
 #: liboyranos/oyranos_cmm.c:330
-#, fuzzy
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
-msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
+msgstr ""
 
 #: modules/color/modules/oyranos_cmm_oicc.c:1224
-#, fuzzy
 msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
-msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
+msgstr ""
 
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:1017
 msgid "Copyright (c) 2009 Joseph Simon; MIT"
@@ -1334,21 +1315,18 @@ msgid "Copyright (c) 2009 My Name; newBSD"
 msgstr "Copyright (c) 2009 Mé Jméno; newBSD"
 
 #: modules/color/modules/oyranos_cmm_trds.c:828
-#, fuzzy
 msgid "Copyright (c) 2014-2016 Kai-Uwe Behrmann; new BSD"
-msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
+msgstr ""
 
 #: modules/color/modules/oyranos_cmm_elDB.c:1100
 #: modules/color/modules/oyranos_cmm_oiDB.c:520
-#, fuzzy
 msgid "Copyright (c) 2016 Kai-Uwe Behrmann; new BSD"
-msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; newBSD"
+msgstr ""
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/information/[1]/name
 #: modules/lcm2-i18n.c:23
-#, fuzzy
 msgid "Copyright 2018 Marti Maria"
-msgstr "Copyright (c) 1998-2008 Marti Maria Saguer; MIT"
+msgstr ""
 
 #: tools/oyranos-profile.c:572
 msgid "Copyright:       "
@@ -1364,9 +1342,8 @@ msgid "Could not create filter"
 msgstr "Nelze zapisovat do souboru"
 
 #: examples/taxi.c:238 examples/taxi.c:298
-#, fuzzy
 msgid "Could not download from WWW."
-msgstr "Nelze stáhnout z WWW. Nainstalujte prosím \"curl\" nebo \"wget\"."
+msgstr ""
 
 #: liboyranos_core/oyranos_io_core.c:371
 msgid "Could not download from WWW. Please install curl or wget."
@@ -1518,22 +1495,19 @@ msgid "Creator"
 msgstr ""
 
 #: tools/oyranos-profile.c:660
-#, fuzzy
 msgid "Creator:         "
-msgstr "Datum:       "
+msgstr ""
 
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
 #: tools/oyranos-policy.c:98
-#, fuzzy
 msgid "Current Policy"
-msgstr "Aktuálně aktivní politika:"
+msgstr "Aktuálně politika"
 
 #. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
 #: tools/oyranos-policy.c:144
-#, fuzzy
 msgid "Current policy"
-msgstr "Aktuálně aktivní politika:"
+msgstr "Aktuálně politika"
 
 #: tools/oyranos-policy.c:85
 #, fuzzy
@@ -1546,9 +1520,8 @@ msgstr "Aktuálně aktivní politika:"
 
 #. Multi process elements types
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:1883
-#, fuzzy
 msgid "Curve Set"
-msgstr "Segmenty křivky:"
+msgstr "Segmenty křivky"
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/groups/[0]/groups/[0]/options/[2]/name
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3419 modules/lcm2-i18n.c:143
@@ -1643,7 +1616,7 @@ msgstr "Výchozí profily"
 #: tools/oyranos-convert.c:195
 #, fuzzy
 msgid "Default for CLUT"
-msgstr "Vytvořit 3D CLUT"
+msgstr "Výchozí 3D CLUT"
 
 #: tools/oyranos-convert.c:234
 msgid ""
@@ -7284,29 +7257,24 @@ msgid "oyranos-icc -i image.png -n lcm2 -p Lab.icc -o image.ppm"
 msgstr ""
 
 #: tools/oyranos-policy.c:85
-#, fuzzy
 msgid "oyranos-policy -cfe"
-msgstr "Politika Oyranosu pro ICC"
+msgstr ""
 
 #: tools/oyranos-policy.c:82
-#, fuzzy
 msgid "oyranos-policy -d"
-msgstr "Politika Oyranosu pro ICC"
+msgstr ""
 
 #: tools/oyranos-policy.c:87
-#, fuzzy
 msgid "oyranos-policy -h"
-msgstr "Politika Oyranosu pro ICC"
+msgstr ""
 
 #: tools/oyranos-policy.c:83
-#, fuzzy
 msgid "oyranos-policy -i policy_filename"
-msgstr "politika nebo jméno souboru"
+msgstr "oyranos-policy -i jméno_souboru"
 
 #: tools/oyranos-policy.c:84
-#, fuzzy
 msgid "oyranos-policy -l"
-msgstr "Politika Oyranosu pro ICC"
+msgstr ""
 
 #: tools/oyranos-policy.c:86
 msgid "oyranos-policy -s policy_name"
@@ -7323,18 +7291,16 @@ msgid "oyranos-profile -lv -p=1 sRGB.icc"
 msgstr ""
 
 #: tools/oyranos-profile.c:230
-#, fuzzy
 msgid "oyranos-profile -m sRGB.icc"
-msgstr "Politika Oyranosu pro ICC"
+msgstr ""
 
 #: tools/oyranos-profile.c:232
 msgid "oyranos-profile -w my_profile -j my_device.json my_profile.icc"
 msgstr ""
 
 #: tools/oyranos-profile.c:228
-#, fuzzy
 msgid "oyranos-profile sRGB.icc"
-msgstr "Politika Oyranosu pro ICC"
+msgstr ""
 
 #: tools/oyranos-convert.c:210
 msgid "oyranos-profile(1) oyranos-profiles(1) oyranos(3)"
@@ -7385,9 +7351,8 @@ msgid "print the modules device class"
 msgstr "použít třídu zařízení"
 
 #: tools/oyranos-device.c:367 tools/oyranos-device.c:369
-#, fuzzy
 msgid "profile file name"
-msgstr "jméno profilu"
+msgstr "jméno profil souboru"
 
 #: tools/oyranos_gamma.c:217
 msgid "profile name"
@@ -7649,9 +7614,8 @@ msgid "xml"
 msgstr "Příklad"
 
 #: tools/oyranos_profile_graph.c:466
-#, fuzzy
 msgid "xyY"
-msgstr "Yxy"
+msgstr ""
 
 #~ msgid ""
 #~ "    ICC Examin is licensed under the GPL version 2.    Especially all "
