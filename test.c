@@ -1647,7 +1647,8 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
       fprintf(stderr, "%scompile: %s %s %d %d\n", size == 0?"Could not ":"", oyjlTermColor(oyjlBOLD,prog), info, size, r);
     }
   }
-  if(name) {free(name);} name = NULL;
+  if(name) {free(name); name = NULL;}
+  if(t) {free(t); t = NULL;}
 
   c_source = oyjlUiJsonToCode( json, OYJL_COMPLETION_BASH );
   len = c_source ? strlen(c_source) : 0;
