@@ -116,7 +116,7 @@ oyjlTESTRESULT_e testI18N()
   if(country) free(country);
 
   oyjlTr_s * trc = NULL;
-  char * loc = NULL;
+  const char * loc = NULL;
   const char * lang = getenv("LANG");
   int use_gettext = 0;
   static int my_debug = 0;

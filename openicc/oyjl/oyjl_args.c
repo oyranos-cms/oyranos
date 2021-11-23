@@ -1481,7 +1481,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 #if !defined(OYJL_TREE_INTERNAL_H)
 typedef struct {
   char       ** options;
-  const char ** values;
+  char       ** values;
   int           count;
   int           group;
   void        * attr;
@@ -2375,7 +2375,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
         len += strlen(opts->argv[i]);
     /* The first string contains the detected single char options */
     result->options = (char**) calloc( len + 1, sizeof(char*) );
-    result->values = (const char**) calloc( len + 1, sizeof(char*) );
+    result->values = (char**) calloc( len + 1, sizeof(char*) );
     result->group = -1;
     if((state = oyjlOptions_Check_(opts)) != oyjlOPTION_NONE)
       goto clean_parse;
@@ -2445,19 +2445,19 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             }
 
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = value?value:"1";
+            result->values[result->count] = strdup(value?value:"1");
             ++result->count;
           }
           else if( might_have_value )
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = value?value:"1";
+            result->values[result->count] = strdup(value?value:"1");
             ++result->count;
           }
           else if(!require_value && !value)
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = "1";
+            result->values[result->count] = strdup("1");
             ++result->count;
           }
           else
@@ -2515,20 +2515,20 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           }
 
           result->options[result->count] = strdup(o->o?o->o:o->option);
-          result->values[result->count] = value?value:"1";
+          result->values[result->count] = strdup(value?value:"1");
           ++result->count;
         } else
         {
           if(!value)
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = "1";
+            result->values[result->count] = strdup("1");
             ++result->count;
           }
           else if( might_have_value && value )
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = value;
+            result->values[result->count] = strdup(value);
             ++result->count;
           }
           else
@@ -2563,7 +2563,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           if(o && o->value_type == oyjlOPTIONTYPE_NONE)
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = "1";
+            result->values[result->count] = strdup("1");
             state = oyjlOPTION_SUBCOMMAND;
           }
           if( might_have_value )
@@ -2580,9 +2580,9 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             if(!result->options[result->count])
               result->options[result->count] = strdup(o->o?o->o:o->option);
             if(value)
-              result->values[result->count] = value;
+              result->values[result->count] = strdup(value);
             else
-              result->values[result->count] = "1";
+              result->values[result->count] = strdup("1");
             state = oyjlOPTION_SUBCOMMAND;
           }
           else if( o && !might_have_value && value )
@@ -2594,14 +2594,14 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             fprintf( stderr, "%s\n", _("Options with arguments are not allowed in sub command style. A sub command has no leading '--'. It is a mandatory option of a option group.") );
             free(t);
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = "0";
+            result->values[result->count] = strdup("0");
             state = oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND;
           }
           else if(o)
           {
             if(!result->options[result->count])
               result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = "1";
+            result->values[result->count] = strdup("1");
           }
         }
 
@@ -2612,7 +2612,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             value = str;
           if(value)
           {
-            result->values[result->count] = value;
+            result->values[result->count] = strdup(value);
             result->options[result->count] = strdup("@");
           }
           else
@@ -2673,7 +2673,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
 
 clean_parse:
   oyjlStringListRelease( &result->options, result->count, free );
-  free(result->values);
+  oyjlStringListRelease( &result->values, result->count, free );
   result->values = NULL;
   result->count = 0;
   result->group = -1;
@@ -3470,13 +3470,8 @@ oyjlUi_s *         oyjlUi_Copy       ( oyjlUi_s          * src )
     {
       oyjlOptsPrivate_s * results_dst = (oyjlOptsPrivate_s*) calloc( 1, sizeof(oyjlOptsPrivate_s) );
       results_dst->options = oyjlStringListCatList( (const char**)results->options, results->count+1, NULL,0, &results_dst->count, malloc );
-      /* values are only references */
       if(results->values)
-      {
-        int n = 0;
-        while(results->values[n]) ++n;
-        results_dst->values = (const char**)oyjlStringAppendN( NULL, (const char*)results->values, n+1, malloc );;
-      }
+        results_dst->values = oyjlStringListCatList( (const char**)results->values, results->count+1, NULL,0, &results_dst->count, malloc );
       results_dst->group = results->group;
       results_dst->memory_allocation = oyjlMEMORY_ALLOCATION_OPTIONS;
       ui->opts->private_data = results_dst;
@@ -3975,7 +3970,9 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         max = found;
       if(h && h->variable_type == oyjlSTRING && h->variable.s)
         help_string = *h->variable.s;
-      if(help_string && strcmp(help_string, "oyjl-list") == 0 && h->value_type == oyjlOPTIONTYPE_FUNCTION)
+      if( help_string &&
+          strcmp(help_string, "oyjl-list") == 0 &&
+          h->value_type == oyjlOPTIONTYPE_FUNCTION )
       {
         int selected = 0;
         oyjlOptionChoice_s * choices = oyjlOption_EnrichInbuildFunc_( h, &selected, opts );
@@ -4196,7 +4193,9 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     const char * value = NULL;
     oyjlOption_s * o = &ui->opts->array[i];
     oyjlOptions_GetResult( opts, o->o, &value, 0, 0 );
-    if(value && strcmp(value, "oyjl-list") == 0 && o->value_type == oyjlOPTIONTYPE_FUNCTION)
+    if( value &&
+        strcmp(value, "oyjl-list") == 0 &&
+        o->value_type == oyjlOPTIONTYPE_FUNCTION )
     {
       int n = 0,l;
       oyjlOptionChoice_s * list;
@@ -4214,7 +4213,9 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       oyjlUi_ReleaseArgs( &ui);
       return NULL;
     }
-    if(value && strcmp(value, "oyjl-list") == 0 && o->value_type == oyjlOPTIONTYPE_CHOICE)
+    if( value &&
+        strcmp(value, "oyjl-list") == 0 &&
+        o->value_type == oyjlOPTIONTYPE_CHOICE )
     {
       int n = 0,l;
       oyjlOptionChoice_s * list = o->values.choices.list;
@@ -4361,9 +4362,8 @@ void           oyjlUi_ReleaseArgs ( oyjlUi_s      ** ui )
           free((*ui)->opts->groups);
       }
       oyjlStringListRelease( &results->options, results->count, free );
+      oyjlStringListRelease( &results->values,  results->count, free );
       results->count = 0;
-      free(results->options);
-      free(results->values);
       free((*ui)->opts->private_data);
     }
   }

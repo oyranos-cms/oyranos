@@ -62,7 +62,7 @@ char *     oyjlTreePrint             ( oyjl_val            v );
 
 typedef struct {
   char       ** options; /* detected vanilla args + probably "@" for anonymous args */
-  const char ** values; /* the vanilla args from main(argv[]) */
+  char       ** values; /* the vanilla args from main(argv[]) */
   int           count; /* number of detected options */
   int           group; /* detected group */
   void        * attr; /* oyjl_val attributes */
