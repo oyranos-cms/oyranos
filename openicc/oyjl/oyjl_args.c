@@ -95,6 +95,7 @@ int * oyjl_debug = &my_debug;
 #  define _(x) x
 # endif
 # define OYJL_OBSERVE                   0x200000
+# define OYJL_NO_OPTIMISE               0x800000
 
 # ifndef OYJL_DBG_FORMAT
 #  if defined(__GNUC__)
@@ -2333,6 +2334,26 @@ void       oyjlStringListStaticAdd   ( const char      *** list,
 }
 #endif
 
+/* support OYJL_NO_OPTIMISE */
+char * oyjlOptionsResultValueCopy_   ( const char        * arg,
+                                       int                 flags )
+{
+  char * value = NULL;
+  int len;
+  if(!arg)
+    return value;
+
+  if(arg[0] == '"' && !(flags & OYJL_NO_OPTIMISE ))
+    ++arg;
+
+  value = oyjlStringCopy( arg, 0 );
+  len = strlen(value);
+  if(value[len - 1] == '"' && !(flags & OYJL_NO_OPTIMISE ))
+    value[len - 1] = '\000';
+
+  return value;
+}
+
 void oyjlOptions_Print_              ( oyjlOptions_s     * opts,
                                        int                 pos )
 {
@@ -2445,19 +2466,19 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             }
 
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = strdup(value?value:"1");
+            result->values[result->count] = oyjlOptionsResultValueCopy_(value?value:"1",0);
             ++result->count;
           }
           else if( might_have_value )
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = strdup(value?value:"1");
+            result->values[result->count] = oyjlOptionsResultValueCopy_(value?value:"1",0);
             ++result->count;
           }
           else if(!require_value && !value)
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = strdup("1");
+            result->values[result->count] = oyjlOptionsResultValueCopy_("1",0);
             ++result->count;
           }
           else
@@ -2515,20 +2536,20 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           }
 
           result->options[result->count] = strdup(o->o?o->o:o->option);
-          result->values[result->count] = strdup(value?value:"1");
+          result->values[result->count] = oyjlOptionsResultValueCopy_(value?value:"1",0);
           ++result->count;
         } else
         {
           if(!value)
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = strdup("1");
+            result->values[result->count] = oyjlOptionsResultValueCopy_("1",0);
             ++result->count;
           }
           else if( might_have_value && value )
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = strdup(value);
+            result->values[result->count] = oyjlOptionsResultValueCopy_(value,0);
             ++result->count;
           }
           else
@@ -2563,7 +2584,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           if(o && o->value_type == oyjlOPTIONTYPE_NONE)
           {
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = strdup("1");
+            result->values[result->count] = oyjlOptionsResultValueCopy_("1",0);
             state = oyjlOPTION_SUBCOMMAND;
           }
           if( might_have_value )
@@ -2580,9 +2601,9 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             if(!result->options[result->count])
               result->options[result->count] = strdup(o->o?o->o:o->option);
             if(value)
-              result->values[result->count] = strdup(value);
+              result->values[result->count] = oyjlOptionsResultValueCopy_(value,0);
             else
-              result->values[result->count] = strdup("1");
+              result->values[result->count] = oyjlOptionsResultValueCopy_("1",0);
             state = oyjlOPTION_SUBCOMMAND;
           }
           else if( o && !might_have_value && value )
@@ -2594,14 +2615,14 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             fprintf( stderr, "%s\n", _("Options with arguments are not allowed in sub command style. A sub command has no leading '--'. It is a mandatory option of a option group.") );
             free(t);
             result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = strdup("0");
+            result->values[result->count] = oyjlOptionsResultValueCopy_("0",0);
             state = oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND;
           }
           else if(o)
           {
             if(!result->options[result->count])
               result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = strdup("1");
+            result->values[result->count] = oyjlOptionsResultValueCopy_("1",0);
           }
         }
 
@@ -2613,7 +2634,7 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           if(value)
           {
             result->values[result->count] = strdup(value);
-            result->options[result->count] = strdup("@");
+            result->options[result->count] = oyjlOptionsResultValueCopy_("@",0);
           }
           else
           {

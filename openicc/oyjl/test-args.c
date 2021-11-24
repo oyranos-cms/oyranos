@@ -15,7 +15,8 @@
 #define TESTS_RUN \
   TEST_RUN( testArgsPrint, "Options print", 1 ); \
   TEST_RUN( testArgsCheck, "Options checking", 1 ); \
-  TEST_RUN( testArgs, "Options handling", 1 );
+  TEST_RUN( testArgs, "Options handling", 1 ); \
+  TEST_RUN( testArgsValues, "Value converting", 1 );
 
 //#include "oyjl.h"
 #include "oyjl_version.h"
@@ -1105,6 +1106,45 @@ oyjlTESTRESULT_e testArgs()
   return result;
 }
 
+oyjlTESTRESULT_e testArgsValues2     ( const char        * value,
+                                       const char        * value_erg,
+                                       oyjlTESTRESULT_e    result,
+                                       oyjlTESTRESULT_e    fail )
+{
+  const char * v = value;
+  char * t = oyjlOptionsResultValueCopy_( value, 0 );
+
+  if(strcmp(t, value_erg) == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyjlOptionsResultValueCopy_(%s) = %s", v, t );
+  } else
+  { PRINT_SUB( fail, 
+    "oyjlOptionsResultValueCopy_(%s) = %s", v, t );
+  }
+  free(t);
+
+  t = oyjlOptionsResultValueCopy_( value, OYJL_NO_OPTIMISE );
+  if(strcmp(t, value) != 0)
+  { PRINT_SUB( fail, 
+    "oyjlOptionsResultValueCopy_(%s,OYJL_NO_OPTIMISE) = %s", v, t );
+  }
+  free(t);
+
+  return result;
+}
+
+oyjlTESTRESULT_e testArgsValues()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+  setlocale(LC_ALL,"en_GB.UTF8");
+
+  result = testArgsValues2( "\"val1\"", "val1", result, oyjlTESTRESULT_XFAIL );
+  result = testArgsValues2( "val2", "val2", result, oyjlTESTRESULT_XFAIL );
+
+  return result;
+}
 
 /* --- end actual tests --- */
 
