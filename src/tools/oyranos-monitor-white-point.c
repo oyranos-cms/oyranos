@@ -1048,6 +1048,7 @@ int checkWtptState(int dry)
 
     cmode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
     effect = oyGetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    fprintf (stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
     fprintf (stderr, "%s: %s %s: %s\n", _("Actual white point mode"), cmode<choices?choices_string_list[cmode]:"----",
             _("Effect"), oyNoEmptyString_m_(effect));
 
@@ -1118,6 +1119,7 @@ int checkWtptState(int dry)
               backlight[strlen(backlight)-1] = '\000';
             value = oyGetPersistentString( OY_DISPLAY_STD "/display_backlight_night", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
             nbl = atoi(value);
+            fprintf( stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
             fprintf( stderr, "xbacklight old | new: %d(%s) | %d\n", bl, backlight, nbl );
             if(bl > nbl)
             {
@@ -1134,6 +1136,7 @@ int checkWtptState(int dry)
         ((effect?1:0) != (new_effect?1:0) ||
          (effect && new_effect && strcmp(effect, new_effect) != 0)))
     {
+      fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
       fprintf(  stderr, "%s: %s %s: %s\n", _("New white point mode"), new_mode<choices?choices_string_list[new_mode]:"----",
                 _("Effect"), oyNoEmptyString_m_(new_effect) );
 
@@ -1259,7 +1262,10 @@ int runDaemon(int dmode)
 #ifdef HAVE_DBUS
   oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyMonitorCallbackDBus, OY_STD, NULL )
   if(id)
+  {
+    fprintf(stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
     fprintf(stderr, "oyStartDBusObserver ID: %d\n", id);
+  }
 
   while(1)
   {
