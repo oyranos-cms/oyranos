@@ -68,6 +68,8 @@ typedef struct {
   void        * attr; /* oyjl_val attributes */
   int           memory_allocation; /* 0: as usual; 1 - sections, 2 - opts->groups and 4 - opts->array are owned and need to be released */
 } oyjlOptsPrivate_s;
+char * oyjlOptionsResultValueCopy_   ( const char        * arg,
+                                       int                 flags );
 
 oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char        * documentation,
                                        const char        * date_name,
