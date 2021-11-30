@@ -2343,6 +2343,9 @@ char * oyjlOptionsResultValueCopy_   ( const char        * arg,
   if(!arg)
     return value;
 
+  if(arg[0] == '\000')
+    return oyjlStringCopy( arg, 0 );
+
   if(arg[0] == '"' && !(flags & OYJL_NO_OPTIMISE ))
     ++arg;
 
@@ -3218,10 +3221,11 @@ FILE * oyjl_help_zout = NULL;
  *  @param   verbose                   gives debug output
  *                                     - -1 : print help only for detected group
  *                                     - -2 : print only Synopsis 
+ *                                     - -3 : print help only for detected group to stderr
  *  @param   motto_format              prints a customised intoduction line
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/04/05
+ *  @date    2021/11/27
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
@@ -3247,7 +3251,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     fprintf( oyjl_help_zout, "\n");
   }
 
-  if(!(verbose == -1 && results && results->group > -1) && verbose >= 0)
+  if(!((verbose == -1 || verbose == -3) && results && results->group > -1) && verbose >= 0)
   {
     if(!motto_format)
     {
@@ -3273,12 +3277,12 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
 
   if( ui && (section = oyjlUi_GetHeaderSection(ui, "documentation")) != NULL &&
       section->description &&
-      !(verbose == -1 && results && results->group > -1) &&
+      !((verbose == -1 || verbose == -3) && results && results->group > -1) &&
       verbose >= 0
     )
     fprintf( oyjl_help_zout, "\n%s:\n" OYJL_HELP_SUBSECTION "%s\n", oyjlTermColor(oyjlBOLD,_("Description")), section->description );
 
-  if(verbose != -1)
+  if(!(verbose == -1 || verbose == -3))
   {
     fprintf( oyjl_help_zout, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Synopsis")) );
     for(i = 0 ; i < ng; ++i)
@@ -3296,7 +3300,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
   }
 
   fprintf( oyjl_help_zout, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Usage"))  );
-  for(i = (verbose == -1 && results && results->group > -1) ? results->group : 0 ; i < ng; ++i)
+  for(i = ((verbose == -1 || verbose == -3) && results && results->group > -1) ? results->group : 0 ; i < ng; ++i)
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
     int d = 0,
@@ -3410,7 +3414,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     }
     oyjlStringListRelease( &d_list, d, free );
     if(d) fprintf( oyjl_help_zout, "\n" );
-    if(verbose == -1 && results && results->group > -1) break;
+    if((verbose == -1 || verbose == -3) && results && results->group > -1) break;
   }
   fprintf( oyjl_help_zout, "\n" );
 }
@@ -4113,7 +4117,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   if( opt_state == oyjlOPTIONS_MISSING ||
       (opt_state == oyjlOPTION_MISSING_VALUE && results && results->group >= 0) )
   {
-    oyjlOptions_PrintHelp( ui->opts, ui, results && results->group >= 0?-1:-2, NULL );
+    oyjlOptions_PrintHelp( ui->opts, ui, results && results->group >= 0?-3:-2, NULL );
     oyjlUi_ReleaseArgs( &ui);
     if(status)
       *status |= oyjlUI_STATE_HELP;
