@@ -60,8 +60,8 @@ MACRO(OY_DOCUMENT_TOOL _tool _tool_src _langs)
 
       STRING(REGEX REPLACE ";" "," oyjl_langs "${long_langs}")
       ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c
-        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG="C" DISPLAY="man_page" ${_tool} -X json | PATH=$$PATH${OYJL_DIR} oyjl-translate-bootstrap -a -i - -o ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c -k name,description,help,label,value_name -d "oyjl,oyranos" -p "${CMAKE_BINARY_DIR}/locale/" -l ${oyjl_langs} -t -w=C
-          DEPENDS oyjl-translate-bootstrap ${_tool} ${_tool_src}
+        COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} LANG="C" DISPLAY="man_page" ${_tool} -X json | PATH=$$PATH${OYJL_DIR} ${OYJL_TRANSLATE} -a -i - -o ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.i18n.c -k name,description,help,label,value_name -d "oyjl,oyranos" -p "${CMAKE_BINARY_DIR}/locale/" -l ${oyjl_langs} -t -w=C
+          DEPENDS ${OYJL_TRANSLATE_BOOTSTRAP} ${_tool} ${_tool_src}
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
       ADD_CUSTOM_TARGET( ${_tool}.i18n.c ALL
@@ -76,8 +76,8 @@ MACRO(OY_COMPLETION_TOOL _tool _tool_src)
       MESSAGE( "-- Skipping ${_tool} completion: cross compiling" )
   ELSE( CMAKE_CROSSCOMPILING )
     ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
-      COMMAND LANG=C DISPLAY="man_page" PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} ${_tool} -X export | PATH=$$PATH${OYJL_DIR} oyjl-args-bootstrap -i - --completion-bash > ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
-        DEPENDS oyjl-args-bootstrap ${_tool} ${_tool_src}
+      COMMAND LANG=C DISPLAY="man_page" PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH OY_MODULE_SKIP_FIX_PATH=1 OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules XDG_DATA_HOME=${CMAKE_SOURCE_DIR} ${_tool} -X export | PATH=$$PATH${OYJL_DIR} ${OYJL_ARGS} -i - --completion-bash > ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
+        DEPENDS ${OYJL_ARGS_BOOTSTRAP} ${_tool} ${_tool_src}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
     ADD_CUSTOM_TARGET( ${_tool}.completion ALL
@@ -88,6 +88,16 @@ MACRO(OY_COMPLETION_TOOL _tool _tool_src)
   ENDIF( CMAKE_CROSSCOMPILING )
 ENDMACRO(OY_COMPLETION_TOOL)
 
+IF( HAVE_OYJL )
+  SET( OYJL_ARGS oyjl-args )
+  SET( OYJL_TRANSLATE oyjl-translate )
+ELSE()
+  SET_TARGET_PROPERTIES( ${TOOL} PROPERTIES COMPILE_DEFINITIONS "NO_OYJL_ARGS_RENDER=1" )
+  SET( OYJL_ARGS oyjl-args-bootstrap )
+  SET( OYJL_ARGS_BOOTSTRAP oyjl-args-bootstrap )
+  SET( OYJL_TRANSLATE oyjl-translate-bootstrap )
+  SET( OYJL_TRANSLATE_BOOTSTRAP oyjl-translate-bootstrap )
+ENDIF()
 
 SET( LD_LIBRARY_PATH "${CMAKE_BINARY_DIR}:${CMAKE_BINARY_DIR}/src/liboyranos:${CMAKE_BINARY_DIR}/src/liboyranos_config:${CMAKE_BINARY_DIR}/src/liboyranos_modules:${CMAKE_BINARY_DIR}/src/liboyranos_object:${CMAKE_BINARY_DIR}/src/liboyranos_core" )
 # ICC profiles listing
@@ -213,9 +223,6 @@ INSTALL (TARGETS oyranos-xforms-modules DESTINATION ${CMAKE_INSTALL_BINDIR})
 SET( TOOL "oyranos-icc" )
 SET( TOOL_SRC "${CMAKE_CURRENT_SOURCE_DIR}/oyranos-convert.c" )
 ADD_EXECUTABLE( ${TOOL} ${TOOL_SRC} )
-IF( NOT HAVE_OYJL )
-  SET_TARGET_PROPERTIES( ${TOOL} PROPERTIES COMPILE_DEFINITIONS "NO_OYJL_ARGS_RENDER=1" )
-ENDIF()
 TARGET_LINK_LIBRARIES( ${TOOL} ${TARGET_LIB} ${EXTRA_LIBS} )
 INSTALL (TARGETS ${TOOL} DESTINATION ${CMAKE_INSTALL_BINDIR})
 OY_DOCUMENT_TOOL( ${TOOL} ${TOOL_SRC} "${LANGS}" )
