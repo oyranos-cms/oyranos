@@ -1250,6 +1250,7 @@ oyjlTESTRESULT_e testJson ()
   result = testEscapeJsonVal( "my.value", "my.value", 0, 23, result, oyjlTESTRESULT_XFAIL );
   result = testEscapeJsonVal( "my\\.value", "my\\\\.value", OYJL_QUOTE | OYJL_NO_BACKSLASH, 27, result, oyjlTESTRESULT_XFAIL );
   result = testEscapeJsonVal( "my/value", "my%37value", OYJL_KEY, 25, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJsonVal( "value\nafter_line_break", "value\\nafter_line_break", 0, 39, result, oyjlTESTRESULT_XFAIL );
 
   const char * json2 = "{\n\
   \"org\": {\n\
