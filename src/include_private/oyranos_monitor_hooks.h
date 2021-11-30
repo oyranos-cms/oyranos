@@ -196,8 +196,8 @@ typedef char * (*oyGetMonitorProfile_f) (
  *  @param[out]    monitor_names       a list of monitor identifier
  *  @return                            count of detected monitors
  *
- *  @version Oyranos Monitor: 0.9.6
- *  @date    2016/11/27
+ *  @version Oyranos Monitor: 0.9.7
+ *  @date    2021/11/24
  *  @since   2016/11/27 (Oyranos Monitor: 0.9.6)
  */
 typedef int  (*oyGetAllMonitorNames_f)(const char        * display_name,
@@ -249,10 +249,11 @@ typedef int  (*oyGetAllMonitorNames_f)(const char        * display_name,
  *  @param[out]    edid                The EDID data blob as returned by i2c.
  *  @param[out]    edid_size           The edid data blob size.
  *  @param[in]     refresh_edid        request a edid refresh
+ *  @param[in,out] debug_info          additional text infos
  *  @return                            0 - success; < 0 - issue; > 0 - error
  *
- *  @version Oyranos Monitor: 0.9.6
- *  @date    2016/11/27
+ *  @version Oyranos Monitor: 0.9.7
+ *  @date    2021/11/24
  *  @since   2016/11/27 (Oyranos Monitor: 0.9.6)
  */
 typedef int  (*oyGetMonitorInfo_f)   ( oyMonitor_s       * monitor,
@@ -271,7 +272,8 @@ typedef int  (*oyGetMonitorInfo_f)   ( oyMonitor_s       * monitor,
                                        double            * colors,
                                        char             ** edid,
                                        size_t            * edid_size,
-                                       int                 refresh_edid );
+                                       int                 refresh_edid,
+                                       char             ** debug_info );
 
 /** @struct  oyMonitorHooks3_s
  *  @ingroup monitor_hooks_api

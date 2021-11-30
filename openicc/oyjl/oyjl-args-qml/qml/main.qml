@@ -299,7 +299,7 @@ AppWindow {
         if(typeof group.sub_command !== "undefined")
             sub_command = true
         var mandatory_found = false
-        if(!sub_command && typeof group.mandatory !== "undefined" && group.mandatory.length && group.mandatory.match(key))
+        if(!sub_command && typeof group.mandatory !== "undefined" && group.mandatory.length && hasArg(group.mandatory, key))
         {
             mandatory_found = true
             mkey = key;
@@ -320,12 +320,12 @@ AppWindow {
             opt = optionsModel.get(i)
             var arg = opt.key
             var akey = mkey?mkey:key;
-            if(arg.match(akey))
+            if(arg == akey)
             {
                 // activate value using default from JSON
                 var changed = false
                 if(typeof group.changed !== "undefined")
-                    changed = (group.changed.match(arg) !== null)
+                    changed = hasArg(group.changed, arg)
                 if(changed === true &&
                    !opt.value.length &&
                    opt.changed.length)
@@ -349,7 +349,7 @@ AppWindow {
             return
 
         // skip optional options from groups with mandatory requirement
-        if(!pass && group.mandatory.length && !group.mandatory.match(key))
+        if(!pass && group.mandatory.length && !hasArg(group.mandatory, key))
             return
 
         var mandatory_exclusive = false

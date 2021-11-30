@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2005-2010  Kai-Uwe Behrmann
+ *  Copyright (C) 2005-2021  Kai-Uwe Behrmann
  *
  */
 
@@ -146,13 +146,16 @@ int      oyX1GetMonitorInfo          ( oyMonitor_s       * disp,
                                        double            * colors,
                                        char             ** edid,
                                        size_t            * edid_size,
-                                       int                 refresh_edid );
+                                       int                 refresh_edid,
+                                       char             ** debug_info );
 
 
 char *   oyX1Monitor_getProperty_    ( oyMonitor_s       * disp,
                                        const char        * prop_name,
                                        const char       ** prop_name_xrandr,
-                                       size_t            * prop_size );
+                                       size_t            * prop_size,
+                                       oyX11INFO_SOURCE_e* source,
+                                       char             ** atom_name );
 int      oyX1Monitor_setProperty_    ( oyMonitor_s       * disp,
                                        const char        * prop_name,
                                        char              * prop,
@@ -160,7 +163,9 @@ int      oyX1Monitor_setProperty_    ( oyMonitor_s       * disp,
 int      oyX1GetMonitorEdid          ( oyMonitor_s       * disp,
                                        char             ** edid,
                                        size_t            * edid_size,
-                                       int                 refresh_edid );
+                                       int                 refresh_edid,
+                                       oyX11INFO_SOURCE_e* source,
+                                       char             ** atom_name );
 void  oyX1Monitor_setCompatibility   ( oyMonitor_s       * disp,
                                        const char        * profile_name );
 int   oyX1Monitor_getScreenFromDisplayName_( oyMonitor_s * disp );
