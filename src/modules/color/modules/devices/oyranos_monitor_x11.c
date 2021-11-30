@@ -111,10 +111,9 @@ int oyX1Monitor_rrScreen_     ( oyMonitor_s * disp ) { return disp->rr_screen; }
 
 #endif
 
-char* oyX1Monitor_getAtomName_         ( oyMonitor_s         * disp,
+char* oyX1Monitor_getScreenAtomName_ ( oyMonitor_s       * disp,
                                        const char        * base );
 const char *xrandr_edids[] = {"EDID","EDID_DATA",0};
-
 
 
 
@@ -124,20 +123,21 @@ const char *xrandr_edids[] = {"EDID","EDID_DATA",0};
  *
  *  The returned property is owned by the caller.
  *
- *  @version Oyranos: 0.9.6
- *  @date    2016/11/25
+ *  @version Oyranos: 0.9.7
+ *  @date    2021/11/24
  *  @since   2009/01/17 (Oyranos: 0.1.10)
  */
 char *   oyX1Monitor_getProperty_    ( oyMonitor_s       * disp,
                                        const char        * prop_name,
                                        const char       ** prop_name_xrandr,
-                                       size_t            * prop_size )
+                                       size_t            * prop_size,
+                                       oyX11INFO_SOURCE_e* source,
+                                       char             ** atom_name )
 {
   char * prop = 0;
   Display *display = 0;
   Window w = 0;
   Atom atom = 0, a;
-  char *atom_name = 0;
   int actual_format_return;
   unsigned long nitems_return=0, bytes_after_return=0;
   unsigned char* prop_return=0;
@@ -171,10 +171,11 @@ char *   oyX1Monitor_getProperty_    ( oyMonitor_s       * disp,
           fprintf( stderr,"%s nitems_return: %lu, bytes_after_return: %lu %d\n",
                    "found issues", nitems_return, bytes_after_return,
                    error );
-        if(oy_debug)
-          atom_name = XGetAtomName(display, atom);
+        else
+          *source = oyX11INFO_SOURCE_XRANDR;
+        *atom_name = XGetAtomName(display, atom);
         if(oy_debug) fprintf( stderr, "root: %d atom: %ld atom_name: %s prop_name: %s %lu %lu\n",
-                  (int)w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
+                  (int)w, atom, *atom_name, prop_name, nitems_return,bytes_after_return );
       }
     }
 #else
@@ -187,9 +188,9 @@ char *   oyX1Monitor_getProperty_    ( oyMonitor_s       * disp,
         (oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR &&
           !nitems_return) )
     {
-      atom_name = oyX1Monitor_getAtomName_( disp, prop_name );
-      if(atom_name)
-        atom = XInternAtom(display, atom_name, True);
+      *atom_name = oyX1Monitor_getScreenAtomName_( disp, prop_name );
+      if(*atom_name)
+        atom = XInternAtom(display, *atom_name, True);
       if(atom)
         w = RootWindow( display, oyX1Monitor_deviceScreen_( disp ) );
       if(w)
@@ -201,9 +202,8 @@ char *   oyX1Monitor_getProperty_    ( oyMonitor_s       * disp,
       if(bytes_after_return != 0) fprintf( stderr,"%s bytes_after_return: %lu\n",
                                           "found issues",bytes_after_return);
       if(oy_debug) fprintf( stderr, "root: %d atom: %ld atom_name: %s prop_name: %s %lu %lu\n",
-                  (int)w, atom, atom_name, prop_name, nitems_return,bytes_after_return );
-      if(atom_name)
-        free( atom_name );
+                  (int)w, atom, *atom_name, prop_name, nitems_return,bytes_after_return );
+      *source = oyX11INFO_SOURCE_XINERAMA;
     }
   }
 
@@ -259,7 +259,7 @@ int      oyX1Monitor_setProperty_    ( oyMonitor_s       * disp,
         oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_SCREEN ||
         oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR )
     {
-      atom_name = oyX1Monitor_getAtomName_( disp, prop_name );
+      atom_name = oyX1Monitor_getScreenAtomName_( disp, prop_name );
       if(atom_name)
         atom = XInternAtom(display, atom_name, True);
       if(atom)
@@ -268,7 +268,7 @@ int      oyX1Monitor_setProperty_    ( oyMonitor_s       * disp,
         /* AnyPropertyType does not work for XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE ---vvvvvvvvvv */
         error = XChangeProperty( display, w, atom, XA_CARDINAL,
                        8, PropModeReplace, (unsigned char*)prop, (int)prop_size );
-      if(oy_debug) fprintf( stderr,"XChangeProperty[%s] = %lu\n", atom_name, prop_size);
+      if(1||oy_debug) fprintf( stderr,"XChangeProperty[%s] = %lu\n", atom_name, prop_size);
       if(atom_name)
         free( atom_name );
     }
@@ -282,7 +282,9 @@ int      oyX1Monitor_setProperty_    ( oyMonitor_s       * disp,
 int      oyX1GetMonitorEdid          ( oyMonitor_s       * disp,
                                        char             ** edid,
                                        size_t            * edid_size,
-                                       int                 refresh_edid )
+                                       int                 refresh_edid,
+                                       oyX11INFO_SOURCE_e* source,
+                                       char             ** atom_name )
 {
   char * prop = 0;
   size_t prop_size = 0;
@@ -290,7 +292,8 @@ int      oyX1GetMonitorEdid          ( oyMonitor_s       * disp,
  
 #if !defined(IGNORE_EDID)
   prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
-                                   xrandr_edids, &prop_size );
+                                   xrandr_edids, &prop_size,
+                                   source, atom_name );
 #else
     if(oy_debug) fprintf( stderr,OY_DBG_FORMAT_ "IGNORE_EDID\n", OY_DBG_ARGS_ );
 #endif
@@ -301,7 +304,8 @@ int      oyX1GetMonitorEdid          ( oyMonitor_s       * disp,
   {
 #if !defined(IGNORE_EDID)
     prop = oyX1Monitor_getProperty_( disp, "XFree86_DDC_EDID1_RAWDATA",
-                                         xrandr_edids, &prop_size );
+                                     xrandr_edids, &prop_size,
+                                     source, atom_name );
 #else
     if(oy_debug) fprintf( stderr,OY_DBG_FORMAT_ "IGNORE_EDID\n", OY_DBG_ARGS_ );
 #endif
@@ -378,6 +382,178 @@ char * oyX1OpenFile( const char * file_name,
   return text;
 }
 
+#define CASE_RETURN_ENUM( text_ ) case text_: return #text_;
+static const char * oyX11INFO_SOURCE_eToString( oyX11INFO_SOURCE_e type )
+{
+  switch( type )
+  {
+    CASE_RETURN_ENUM(oyX11INFO_SOURCE_XINERAMA)
+    CASE_RETURN_ENUM(oyX11INFO_SOURCE_SCREEN)
+    CASE_RETURN_ENUM(oyX11INFO_SOURCE_XRANDR)
+  }
+  return NULL;
+}
+
+typedef struct {
+    char                sig[4];
+    uint32_t            offset;
+    uint32_t            size;
+} iccTag;
+
+int           UTF16toASCII           ( const char        * input,
+                                       size_t              len,
+                                       char              * output,
+                                       const char        * from_codeset )
+{
+  int error = 0;
+  error = !memcpy(output, input, sizeof(char) * len);
+  output[len] = 0;
+
+  /* cheap fallback for UTF-16 to ASCII */
+  {
+    int i;
+    int low_byte = strcmp(from_codeset,"UTF-16BE") == 0;
+
+    for(i = 0 ; i < (int)len; i += 2)
+      output[i/2] = input[i+low_byte];
+
+    output[i/2] = 0;
+  }
+
+  return error;
+}
+
+char * icProfileName( const char * p, int psize, int verbose )
+{
+  int moff = 4+4+4+4+4+4+12; /* magic offset */
+  if(psize < 132)
+  {
+    fprintf( stderr, "Size too small for a ICC profile: %d\n", psize );
+    return NULL;
+  }
+  if(verbose)
+    fprintf( stderr, "ICC profile: %d\n", psize );
+  if(verbose)
+    fprintf( stderr, "ICC_magic:%c%c%c%c\n", p[moff],p[moff+1],p[moff+2],p[moff+3]);
+  int tag_count = htonl(*(uint32_t*)&p[128]);
+  if(verbose)
+    fprintf( stderr, "ICC_tag_count:%d\n", tag_count);
+  if(128 + tag_count*12 > psize)
+    fprintf( stderr, "profile data exceeds memory:%d/%d\n", 128+tag_count*12, psize);
+  char * pname = NULL;
+  int i;
+  for(i = 0; i < tag_count; ++i)
+  {
+    const iccTag * ttag = (const iccTag*) &p[128+4 + 12*i]; /* table tag */
+    const char * s = ttag->sig;
+    int toff = htonl(ttag->offset);
+    int tag_size = htonl(ttag->size);
+    int pass = 0;
+    if(toff + tag_size > psize)
+      fprintf( stderr, "profile tag data exceeds memory:%d/%d\n",
+          128+toff+tag_size, psize);
+    else
+      ++pass;
+    if(verbose)
+      fprintf( stderr, "ICC_tag[%d]:%c%c%c%c %d+%d\n",
+          i, s[0],s[1],s[2],s[3], toff, tag_size );
+    if(pass)
+    {
+      const char * tag = &p[toff];
+      const char * ttype = tag;
+      int is_desc = memcmp(s,"desc",4) == 0 || memcmp(s,"dscm",4) == 0;
+      if( memcmp(ttype,"desc", 4) == 0 ||
+          is_desc )
+      {
+        if(memcmp(s,"desc",4) == 0 && memcmp(ttype,"desc", 4) == 0)
+        {
+          int tlen = htonl(*(uint32_t*)&tag[4+4]);
+          s = ttype;
+          if(verbose)
+            fprintf( stderr, "ICC_tag[%d]type:%c%c%c%c %d\n",
+                i, s[0],s[1],s[2],s[3], tlen );
+          if(tlen <= tag_size - 20)
+          {
+            pname = (char*) calloc( tlen + 8, sizeof(char) );
+            memcpy( pname, &tag[4+4+4], tlen );
+            break;
+          }
+        } else
+        if(memcmp(ttype,"mluc",4) == 0)
+        {
+          int count = htonl( *(uint32_t*)&tag[8] );
+          int size = htonl( *(uint32_t*)&tag[12] ); /* 12 */
+          int j, error = 0, len;
+          char * t = NULL;
+          s = ttype;
+          if(verbose)
+            fprintf( stderr, "ICC_tag[%d]type:%c%c%c%c %d %d\n", i,
+                s[0],s[1],s[2],s[3], count, size );
+          if(!error)
+          for (j = 0; j < count; j++)
+          {
+            char lang[4] = {0,0,0,0};
+            int  g = 0,
+                 offset = 0;
+
+            error = tag_size < 20 + j * size;
+            if(!error)
+              g = htonl( *(uint32_t*)&tag[20+ j*size] );
+
+            lang[0] = tag[16+ j*size];
+            lang[1] = tag[17+ j*size];
+            if(verbose)
+              fprintf( stderr, "ICC_tag[%d]lang[%d]:%c%c\n", i,j, 
+                  lang[0],lang[1] );
+            error = tag_size < 20 + j * size + g + 4;
+            if(!error)
+            {
+              len = (g > 1) ? g : 8;
+              t = (char*) malloc(len*4);
+              error = !t;
+            }
+            if(!error)
+              t[0] = 0;
+
+            if(!error)
+              error = (24 + j*size + 4) > tag_size;
+
+            if(!error)
+              offset = htonl( *(uint32_t*)&tag[24+ j*size] );
+            if(!error)
+            {
+              /* ICC says UTF-16BE */
+              error = UTF16toASCII( &tag[offset], len, t, "UTF-16BE" );
+
+              /* eigther text or we have a non translatable string */
+              if(!error && strlen(t))
+              {
+                if(verbose)
+                  fprintf( stderr, "ICC_tag[%d]lang_country[%d]:%s_%c%c %s\n", i,j, 
+                              lang, tag[18+ j*size], tag[19+ j*size], t);
+
+              }
+              if( is_desc &&
+                  t && t[0] && strcasecmp(lang,"en") == 0)
+              {
+                pname = strdup(t);
+                i = tag_count;
+                break;
+              }
+            }
+            free(t);
+          }
+        } else
+        {
+          s = ttype;
+          if(verbose)
+            fprintf( stderr, "ICC_tag[%d]type:%c%c%c%c\n", i, s[0],s[1],s[2],s[3] );
+        }
+      }
+    }
+  }
+  return pname;
+}
 
 /** @brief pick up monitor information with Xlib
  *  @deprecated because sometimes is no ddc information available
@@ -406,7 +582,8 @@ int      oyX1GetMonitorInfo          ( oyMonitor_s       * disp,
                                        double            * colors,
                                        char             ** edid,
                                        size_t            * edid_size,
-                                       int                 refresh_edid )
+                                       int                 refresh_edid,
+                                       char             ** debug_info )
 {
   int len;
   char *t, * port = 0, * geo = 0;
@@ -414,6 +591,8 @@ int      oyX1GetMonitorInfo          ( oyMonitor_s       * disp,
   char * prop = 0;
   size_t prop_size = 0;
   int error = 0;
+  oyX11INFO_SOURCE_e source;
+  char * atom_name = NULL;
 
   if(display_name)
     if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "display_name %s\n", OY_DBG_ARGS_, display_name);
@@ -441,7 +620,80 @@ int      oyX1GetMonitorInfo          ( oyMonitor_s       * disp,
   if( host )
     *host = strdup( oyX1Monitor_hostName_( disp ) );
 
-  error = oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid );
+  error = oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid,
+                                    &source, &atom_name );
+  if(debug_info)
+  {
+    char * icc;
+    size_t icc_size = 0;
+    char * pname = NULL;
+    oyX1Alloc(t, 4096,)
+    t[0] = '\000';
+    sprintf( &t[strlen(t)],"EDID_source:%s\n", oyX11INFO_SOURCE_eToString(source) );
+    if(atom_name)
+      sprintf( &t[strlen(t)],"EDID_atom_name:%s\n", atom_name );
+    if(atom_name) { free(atom_name); atom_name = NULL; }
+    sprintf( &t[strlen(t)],"EDID_size:%ld\n", (long)prop_size );
+
+#if defined(HAVE_XRANDR)
+    sprintf( &t[strlen(t)],"XRR_version:%d\n", oyX1Monitor_rrVersion_(disp) );
+    sprintf( &t[strlen(t)],"XRR_screen:%d(%d)\n", oyX1Monitor_rrScreen_(disp), oyX1Monitor_activeOutputs_(disp) );
+    sprintf( &t[strlen(t)],"XRR_size:%dmmx%dmm\n", disp->mm_width, disp->mm_height );
+#endif
+
+#if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
+  /* support the color server device profile */
+    icc_size = 0;
+    icc = oyX1Monitor_getProperty_( disp,
+                             XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0,
+                                    &icc_size,
+                                    &source, &atom_name );
+    sprintf( &t[strlen(t)],"ICC_server_source:%s\n", oyX11INFO_SOURCE_eToString(source) );
+    if(atom_name)
+      sprintf( &t[strlen(t)],"ICC_server_atom_name:%s\n", atom_name );
+    sprintf( &t[strlen(t)],"ICC_server_size:%ld\n", (long)icc_size );
+    if((pname = icProfileName(icc, icc_size, 0)) != NULL)
+    {
+      sprintf( &t[strlen(t)],"ICC_server_name:%s\n", pname );
+      free(pname); pname = NULL;
+    }
+    if(atom_name) { free(atom_name); atom_name = NULL; }
+    if(icc) free(icc);
+    icc_size = 0;
+    icc = oyX1Monitor_getProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, 0, &icc_size,
+                                    &source, &atom_name );
+    sprintf( &t[strlen(t)],"ICC_v0_3_target_source:%s\n", oyX11INFO_SOURCE_eToString(source) );
+    if(atom_name)
+      sprintf( &t[strlen(t)],"ICC_v0_3_target_atom_name:%s\n", atom_name );
+    sprintf( &t[strlen(t)],"ICC_v0_3_target_size:%ld\n", (long)icc_size );
+    if((pname = icProfileName(icc, icc_size, 0)) != NULL)
+    {
+      sprintf( &t[strlen(t)],"ICC_v0_3_target_name:%s\n", pname );
+      free(pname); pname = NULL;
+    }
+    if(atom_name) { free(atom_name); atom_name = NULL; }
+    if(icc) free(icc);
+    icc_size = 0;
+    icc = oyX1Monitor_getProperty_( disp, "_ICC_PROFILE", 0, &icc_size,
+                                    &source, &atom_name );
+    sprintf( &t[strlen(t)],"ICC_v0_3_source:%s\n", oyX11INFO_SOURCE_eToString(source) );
+    if(atom_name)
+      sprintf( &t[strlen(t)],"ICC_v0_3_atom_name:%s\n", atom_name );
+    sprintf( &t[strlen(t)],"ICC_v0_3_size:%ld\n", (long)icc_size );
+    if((pname = icProfileName(icc, icc_size, 0)) != NULL)
+    {
+      sprintf( &t[strlen(t)],"ICC_v0_3_name:%s\n", pname );
+      free(pname); pname = NULL;
+    }
+    if(atom_name) { free(atom_name); atom_name = NULL; }
+    if(icc) free(icc);
+#endif
+
+    *debug_info = t;
+    t = NULL;
+  }
+  if(atom_name) { free(atom_name); atom_name = NULL; }
+
 
   if( !prop )
   /* as a last means try Xorg.log for at least some informations */
@@ -595,7 +847,8 @@ char *       oyX1GetMonitorProfile   ( oyMonitor_s       * disp,
 {
   const char * device_name = oyX1Monitor_name_(disp);
   char * moni_profile = NULL;
-
+  oyX11INFO_SOURCE_e source = 0;
+  char * atom_name = NULL;
 
   char * prop = 0;
   size_t prop_size = 0;
@@ -607,15 +860,18 @@ char *       oyX1GetMonitorProfile   ( oyMonitor_s       * disp,
   /* support the color server device profile */
   if(flags & 0x01)
     prop = oyX1Monitor_getProperty_( disp,
-                             XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0, &prop_size );
+                             XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0, &prop_size,
+                                     &source, &atom_name );
 #endif
 
   /* alternatively fall back to the non color server or pre v0.4 atom */
   if(!prop)
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
-    prop = oyX1Monitor_getProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, 0, &prop_size );
+    prop = oyX1Monitor_getProperty_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, 0, &prop_size,
+                                     &source, &atom_name );
 #else
-    prop = oyX1Monitor_getProperty_( disp, "_ICC_PROFILE", 0, &prop_size );
+    prop = oyX1Monitor_getProperty_( disp, "_ICC_PROFILE", 0, &prop_size,
+                                     &source, &atom_name );
 #endif
 
   if(prop)
@@ -628,6 +884,7 @@ char *       oyX1GetMonitorProfile   ( oyMonitor_s       * disp,
   } /*else
     fprintf( stderr,"\n  %s",
          _("Could not get Xatom, probably your monitor profile is not set:"));*/
+  if(atom_name) { free( atom_name ); atom_name = NULL; }
 
   return moni_profile;
 }
@@ -768,7 +1025,7 @@ oyX1Monitor_getGeometryIdentifier_         (oyMonitor_s  *disp)
   return 0;
 }
 
-char* oyX1Monitor_getAtomName_       ( oyMonitor_s     * disp,
+char* oyX1Monitor_getScreenAtomName_ ( oyMonitor_s     * disp,
                                        const char        * base )
 {
   int len = 64;
@@ -794,10 +1051,13 @@ void  oyX1Monitor_setCompatibility   ( oyMonitor_s       * disp,
   size_t prop_size = 0;
   int refresh_edid = 1;
   char * command;
+  oyX11INFO_SOURCE_e source;
+  char * atom_name = NULL;
  
   oyX1Alloc(command, 4096, return;)
 
-  oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid );
+  oyX1GetMonitorEdid( disp, &prop, &prop_size, refresh_edid, &source, &atom_name );
+  if(atom_name) { free(atom_name); atom_name = NULL; }
 
   sprintf( command, "oyranos-compat-gnome -q %s -i -", profile_name?"-a":"-e" );
   if(profile_name)
@@ -819,6 +1079,7 @@ void  oyX1Monitor_setCompatibility   ( oyMonitor_s       * disp,
 
   }
 
+  if(atom_name) free( atom_name );
   if(prop) free( prop );
   free( command );
 }
@@ -859,9 +1120,9 @@ int      oyX1SetupMonitorProfile     ( oyMonitor_s       * disp,
         fprintf( stderr,OY_DBG_FORMAT_ "Error obtaining profile\n", OY_DBG_ARGS_);
 
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
-      atom_name = oyX1Monitor_getAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
+      atom_name = oyX1Monitor_getScreenAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
 #else
-      atom_name = oyX1Monitor_getAtomName_( disp, "_ICC_PROFILE" );
+      atom_name = oyX1Monitor_getScreenAtomName_( disp, "_ICC_PROFILE" );
 #endif
       if( atom_name )
       {
@@ -1169,9 +1430,9 @@ int      oyX1UnsetMonitorProfile     ( oyMonitor_s       * disp )
 
 
 #if defined(XCM_HAVE_X11) && defined(HAVE_XCM)
-      atom_name = oyX1Monitor_getAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
+      atom_name = oyX1Monitor_getScreenAtomName_( disp, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE );
 #else
-      atom_name = oyX1Monitor_getAtomName_( disp, "_ICC_PROFILE" );
+      atom_name = oyX1Monitor_getScreenAtomName_( disp, "_ICC_PROFILE" );
 #endif
       atom = XInternAtom (display, atom_name, True);
       if (atom != None)
