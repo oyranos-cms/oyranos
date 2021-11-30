@@ -404,6 +404,7 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
   const char * monitor_icc_dscr = NULL;
   int active = oyX1ColorServerActive( oySOURCE_DATA );
   const char * filename = NULL;
+  char * fn = NULL;
 
   if(!disp)
   {
@@ -415,19 +416,47 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
   oyDevicesGet( NULL, "monitor", NULL, &devices );
   monitor = oyConfigs_Get( devices, screen );
   oyConfigs_Release( &devices );
-  /* get XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE */
-  oyOptions_SetFromString( &options,
+
+  /* detect OpenICC DB profile */
+  oyDeviceProfileFromDB( monitor, &fn, 0 );
+  if(fn && fn[0])
+  {
+    monitor_icc = oyProfile_FromName( fn, 0, 0 );
+    _msg( oyMSG_DBG, (oyStruct_s*)options,
+        OY_DBG_FORMAT_ "monitor[%d] DB profile \"%s\" %s", OY_DBG_ARGS_,
+        screen, fn ? fn :"not found", setup?"setup":"unset");
+  }
+  /* detect the possibly new set ICC profile in X
+   * get XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE */
+  if(!monitor_icc)
+  {
+    oyX11INFO_SOURCE_e source;
+    char * atom_name = NULL;
+    dev_prof = oyX1Monitor_getProperty_( disp,
+                                         XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE,
+                                         0, &dev_prof_size,
+                                         &source, &atom_name );
+    monitor_icc = oyProfile_FromMem( dev_prof_size, dev_prof, 0,0 );
+    _msg( oyMSG_DBG, (oyStruct_s*)options,
+        OY_DBG_FORMAT_ "monitor[%d] %s profile %d %s %s %s", OY_DBG_ARGS_,
+        screen, XCM_ICC_V0_3_TARGET_PROFILE_IN_X_BASE, dev_prof_size, atom_name?atom_name:"not reachable", setup?"setup":"unset");
+    if(dev_prof) { free(dev_prof); dev_prof = NULL; }
+    if(atom_name) { free( atom_name ); atom_name = NULL; }
+  }
+  if(!monitor_icc)
+  {
+    oyOptions_SetFromString( &options,
               "//"OY_TYPE_STD"/config/icc_profile.x_color_region_target", "yes", OY_CREATE_NEW );
-  oyDeviceGetProfile( monitor, options, &monitor_icc );
-  oyOptions_Release( &options );
+    oyDeviceGetProfile( monitor, options, &monitor_icc );
+  }
   filename = oyProfile_GetFileName( monitor_icc, -1 );
   dev_prof = oyProfile_GetMem( monitor_icc, &dev_prof_size, 0,0 );
   // get the profiles internal name
   monitor_icc_dscr = oyProfile_GetText( monitor_icc, oyNAME_DESCRIPTION );
-  //fprintf( stderr, "monitor[%s] has profile: \"%s\"\n", screen_name, monitor_icc_dscr );
   _msg( oyMSG_DBG, (oyStruct_s*)options,
         OY_DBG_FORMAT_ "monitor[%d] has profile: \"%s\" %s %s", OY_DBG_ARGS_,
         screen, monitor_icc_dscr, active ? "color_server_active":"no color server", setup?"setup":"unset");
+  oyOptions_Release( &options );
 
   oyConfig_Release( &monitor );
 
@@ -490,12 +519,17 @@ int          oyX1MoveOptions_Handle  ( oyOptions_s       * options,
     const char * display_name = oyOptions_FindString( options, "display_name", 0 );
     int screen = 0;
     int setup = 0;
+    char * t;
     oyOptions_FindInt( options, "screen", 0, &screen );
     oyOptions_FindInt( options, "setup", 0, &setup );
     _msg( oyMSG_DBG, (oyStruct_s*)options,
           OY_DBG_FORMAT_ "move_color_server_profiles: display_name: %s screen: %d setup: %d", OY_DBG_ARGS_,
           display_name, screen, setup );
-    //fprintf(stderr, "display_name: %s screen: %d setup: %d\n", display_name, screen, setup );
+    t = oyBT(0);
+    fprintf( stderr, "%s", t );
+    free(t);
+    if(oy_debug)
+      fprintf(stderr, "display_name: %s screen: %d setup: %d\n", display_name, screen, setup );
     oyMoveColorServerProfiles( display_name, screen, setup );
   }
 

@@ -301,7 +301,8 @@ int              DeviceFromName_     ( const char        * device_name,
     {
       char * EDID_manufacturer=0, * EDID_mnft=0, * EDID_model=0,
            * EDID_serial=0, * EDID_vendor = 0,
-           * host=0, * display_geometry=0, * system_port=0;
+           * host=0, * display_geometry=0, * system_port=0,
+           * debug_info=0;
       double colors[9] = {0,0,0,0,0,0,0,0,0};
       oyBlob_s * edid = 0;
       int week=0, year=0, EDID_mnft_id=0, EDID_model_id=0;
@@ -340,7 +341,8 @@ int              DeviceFromName_     ( const char        * device_name,
                       &week, &year, &EDID_mnft_id, &EDID_model_id,
                                         colors,
                                         &edid_data, &edid_size,
-                                        oyOptions_FindString( options, "edid", "refresh" ) ? 1 : 0 );
+                                        oyOptions_FindString( options, "edid", "refresh" ) ? 1 : 0,
+                      &debug_info );
         } else
           _msg(oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_ "Unable to open monitor device \"%s\"\n", OY_DBG_ARGS_, device_name);
 
@@ -383,6 +385,11 @@ int              DeviceFromName_     ( const char        * device_name,
                                    EDID_mnft_id, EDID_model_id,
                                    colors, options );
       }
+      if(debug_info)
+        error = oyOptions_SetFromString( oyConfig_GetOptions(*device,"data"),
+                                       MONITOR_REGISTRATION OY_SLASH
+                                       "debug_info",
+                                       debug_info, OY_CREATE_NEW );
 
       if(error != 0)
         _msg( oyMSG_WARN, (oyStruct_s*)options,
@@ -426,6 +433,7 @@ int              DeviceFromName_     ( const char        * device_name,
       if(host) oyFree_m_(host);
       if(display_geometry) oyFree_m_(display_geometry);
       if(system_port) oyFree_m_(system_port);
+      if(debug_info) oyFree_m_(debug_info);
     }
 
   return error;
