@@ -730,6 +730,28 @@ OYAPI int  OYEXPORT
 
         oyOption_Release( &o );
       }
+      n = oyOptions_Count( device_->data );
+      if(n)
+        STRING_ADD( text, "data:\n" );
+      for( i = 0; i < n; ++i )
+      {
+        o = oyOptions_Get( device_->data, i );
+        
+        STRING_ADD( text, oyStrrchr_( oyOption_GetRegistration(o),
+                          OY_SLASH_C ) + 1 );
+        STRING_ADD( text, ":" );
+        t = oyOption_GetValueText(o,oyAllocateFunc_);
+        if(t)
+        {
+          if(strchr(t,'\n'))
+            STRING_ADD( text, "\n" );
+          STRING_ADD( text, t );
+          oyDeAllocateFunc_(t); t = 0;
+        }
+        STRING_ADD( text, "\n" );
+
+        oyOption_Release( &o );
+      }
     }
     *info_text = oyStringCopy_( text, allocateFunc );
     oyFree_m_(text);
@@ -1509,13 +1531,14 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
 
           if(value && count > j)
           {
+            char * escaped = oyjlJsonEscape( value, OYJL_QUOTE | OYJL_NO_BACKSLASH );
             if(j)
               oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                                   ",\n" );
             if(value[0] == '<')
                oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                "              \"%s\": \"%s\"",
-                     key, value );
+                     key, escaped );
             else
             {
               /* split into a array with a useful delimiter */
@@ -1540,10 +1563,12 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
               } else
                 oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                      "              \"%s\": \"%s\"",
-                     key, value );
+                     key, escaped );
 
               oyStringListRelease_( &vals, vals_n, free );
             }
+            if(escaped)
+              oyFree_m_( escaped );
           }
           oyOption_Release( &opt );
           if(key)
