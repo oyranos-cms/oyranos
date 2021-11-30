@@ -32,7 +32,7 @@ The tool dumps out / read a configuration of the Oyranos color management system
 
 <h2>OPTIONS <a href="#toc" name="options">&uarr;</a></h2>
 
-<h3 id="current-policy">Current policy</h3>
+<h3 id="current-policy">Aktuálně politika</h3>
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-policy</strong></a> <strong>-c</strong> [<strong>-f</strong>] [<strong>-e</strong>] [<strong>-v</strong>]
 
@@ -151,7 +151,7 @@ The tool dumps out / read a configuration of the Oyranos color management system
 #### Dump out the actual settings
 &nbsp;&nbsp;oyranos-policy -d
 #### Set new policy
-&nbsp;&nbsp;oyranos-policy -i policy_filename
+&nbsp;&nbsp;oyranos-policy -i jméno_souboru
 #### List available policies
 &nbsp;&nbsp;oyranos-policy -l
 #### Currently active policy including its file name

@@ -2,7 +2,7 @@
 .SH NAME
 oyranos-device v0.9.7 \- Oyranos Farbgerät
 .SH ÜBERSICHT
-\fBoyranos-device\fR \fB\-a\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR \fB\-p\fR \fIICC_DATEINAME\fR [\fB\-\-system-wide\fR]
+\fBoyranos-device\fR \fB\-a\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR [\fB\-p\fR\fI[=ICC_DATEINAME]\fR] [\fB\-\-system-wide\fR]
 .br
 \fBoyranos-device\fR \fB\-e\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR [\fB\-\-system-wide\fR]
 .br
@@ -49,11 +49,11 @@ Setze grundlegende Parameter
 .br
 .SS
 Weise Farbprofil einem Gerät zu
-\fBoyranos-device\fR \fB\-a\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR \fB\-p\fR \fIICC_DATEINAME\fR [\fB\-\-system-wide\fR]
+\fBoyranos-device\fR \fB\-a\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR [\fB\-p\fR\fI[=ICC_DATEINAME]\fR] [\fB\-\-system-wide\fR]
 .br
 \fB\-a\fR|\fB\-\-assign\fR	Füge Konfiguration zu OpenICC DB hinzu
 .br
-\fB\-p\fR|\fB\-\-profile-name\fR \fIICC_DATEINAME\fR	Profildateiname
+\fB\-p\fR|\fB\-\-profile-name\fR\fI[=ICC_DATEINAME]\fR	Profildateiname
 .RS
 Kann ein lehrer Text "" oder "automatic" oder der Name einer existierenden Profiles sein.
 .RE

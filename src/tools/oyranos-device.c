@@ -148,8 +148,18 @@ char **  listProfiles                ( oyConfig_s        * c, /* device */
 
       size = oyProfiles_Count(iccs);
       if(verbose)
-        fprintf( stderr, "%s %s: %d\n",
-                 _("found profiles for device class"), device_class, size );
+      {
+        oyOptions_s * options = NULL;
+        char * json = NULL;
+        char * t = oyjlBT(0);
+        int error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/options/source",
+                                         "backend_core", OY_CREATE_NEW );
+        error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
+        fprintf( stderr, OY_DBG_FORMAT_ "%s%s %s: %d\n%s\n", OY_DBG_ARGS_, t,
+                 _("found profiles for device class"), device_class, size, json );
+        free(t);
+        if(json) free(json);
+      }
       rank_list = (int32_t*) malloc( size * sizeof(int32_t) );
       oyProfiles_DeviceRank( iccs, c, rank_list );
 
@@ -248,6 +258,11 @@ oyjlOptionChoice_s * getDeviceProfileChoices    ( oyjlOption_s      * o OYJL_UNU
   if(device_pos == -1 && !device_name) return c;
 
   profile_class = getProfileClass( device_class, verbose );
+  if(verbose)
+  {
+    fprintf( stderr, OY_DBG_FORMAT_ "-c=%s -d=%d --device-name=%s\n", OY_DBG_ARGS_,
+             device_class, device_pos, device_name?device_name:"" );
+  }
 
   if(!skip_x_color_region_target)
     oyOptions_SetFromString( &options,
@@ -364,7 +379,7 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)c_choices, sizeof(c_choices), malloc ), 0}}, oyjlSTRING,    {.s=&device_class}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_IMMEDIATE,  "d","device-pos",    NULL,     _("Device Pos"),  _("device position start from zero"),NULL, _("NUMBER"),        
         oyjlOPTIONTYPE_FUNCTION, {.getChoices = getDevicePosChoices},                oyjlINT,       {.i=&device_pos}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "p","profile-name",  NULL,     _("Profile Name"),_("profile file name"),    _("Can be \"\" empty string or \"automatic\" or a real profile name."), _("ICC_FILE_NAME"), 
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_ACCEPT_NO_ARG,  "p","profile-name",  NULL,     _("Profile Name"),_("profile file name"),    _("Can be \"\" empty string or \"automatic\" or a real profile name."), _("ICC_FILE_NAME"), 
         oyjlOPTIONTYPE_FUNCTION, {.getChoices = getDeviceProfileChoices},                oyjlSTRING,    {.s=&profile_name}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "n","new-profile-name",  NULL, _("New Profile Name"),_("profile file name"),   NULL, _("ICC_FILE_NAME"), 
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&new_profile_name}},
@@ -430,8 +445,8 @@ int myMain( int argc, const char ** argv )
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
     {"oiwg", 0,     NULL,               _("Set basic parameters"),    NULL,               NULL,          NULL,          "c,d,device-name,2,4,r"},
-    {"oiwg", 0,     NULL,               _("Assign profile to device"),NULL,               "a,c,d,p",     "system-wide", "a,p,system-wide"},
-    {"oiwg", 0,     NULL,               _("Unassign profile from device"),NULL,               "e,c,d",       "system-wide", "e" },
+    {"oiwg", 0,     NULL,               _("Assign profile to device"),NULL,               "a,c,d",       "p,system-wide", "a,p,system-wide"},
+    {"oiwg", 0,     NULL,               _("Unassign profile from device"),NULL,           "e,c,d",       "system-wide", "e" },
     {"oiwg", 0,     NULL,               _("Setup device"),            NULL,               "s,c,d",       NULL,          "s" },
     {"oiwg", 0,     NULL,               _("Unset device"),            NULL,               "u,c,d",       NULL,          "u" },
     {"oiwg", 0,     NULL,               _("List device classes"),     NULL,               "l",           "v,short,print-class","l,v,short,print-class"},
@@ -560,7 +575,8 @@ int myMain( int argc, const char ** argv )
         oyjlStringListRelease( &results, n, free );
         prof_name = NULL;
       }
-    }
+    } else if(profile_name && profile_name[0])
+      assign = 1;
     n = 0;
 
 

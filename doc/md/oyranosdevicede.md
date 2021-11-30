@@ -10,7 +10,7 @@ oyranos-device v0.9.7 - Oyranos Farbgerät
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos-device</strong> <a href="#assign"><strong>-a</strong></a> <strong>-c</strong>=<em>KLASSE</em> <strong>-d</strong>=<em>NUMMER</em> <strong>-p</strong>=<em>ICC_DATEINAME</em> [<strong>--system-wide</strong>]
+<strong>oyranos-device</strong> <a href="#assign"><strong>-a</strong></a> <strong>-c</strong>=<em>KLASSE</em> <strong>-d</strong>=<em>NUMMER</em> [<strong>-p</strong><em>[=ICC_DATEINAME]</em>] [<strong>--system-wide</strong>]
 <br />
 <strong>oyranos-device</strong> <a href="#erase"><strong>-e</strong></a> <strong>-c</strong>=<em>KLASSE</em> <strong>-d</strong>=<em>NUMMER</em> [<strong>--system-wide</strong>]
 <br />
@@ -58,11 +58,11 @@ Das oyranos-device Program zeigt und ändert Einstellungen zu ICC Geräteprofile
 
 <h3 id="assign">Weise Farbprofil einem Gerät zu</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-device</strong></a> <strong>-a</strong> <strong>-c</strong>=<em>KLASSE</em> <strong>-d</strong>=<em>NUMMER</em> <strong>-p</strong>=<em>ICC_DATEINAME</em> [<strong>--system-wide</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-device</strong></a> <strong>-a</strong> <strong>-c</strong>=<em>KLASSE</em> <strong>-d</strong>=<em>NUMMER</em> [<strong>-p</strong><em>[=ICC_DATEINAME]</em>] [<strong>--system-wide</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--assign</strong></td> <td>Füge Konfiguration zu OpenICC DB hinzu</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--profile-name</strong>=<em>ICC_DATEINAME</em></td> <td>Profildateiname<br />Kann ein lehrer Text "" oder "automatic" oder der Name einer existierenden Profiles sein. </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--profile-name</strong><em>[=ICC_DATEINAME]</em></td> <td>Profildateiname<br />Kann ein lehrer Text "" oder "automatic" oder der Name einer existierenden Profiles sein. </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--system-wide</strong></td> <td>Füge systemweit hinzu</td> </tr>
 </table>
 

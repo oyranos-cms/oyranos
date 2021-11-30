@@ -10,7 +10,7 @@ oyranos-device v0.9.7 - Oyranos Color Devices
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos-device</strong> <a href="#assign"><strong>-a</strong></a> <strong>-c</strong>=<em>CLASS</em> <strong>-d</strong>=<em>NUMBER</em> <strong>-p</strong>=<em>ICC_FILE_NAME</em> [<strong>--system-wide</strong>]
+<strong>oyranos-device</strong> <a href="#assign"><strong>-a</strong></a> <strong>-c</strong>=<em>CLASS</em> <strong>-d</strong>=<em>NUMBER</em> [<strong>-p</strong><em>[=ICC_FILE_NAME]</em>] [<strong>--system-wide</strong>]
 <br />
 <strong>oyranos-device</strong> <a href="#erase"><strong>-e</strong></a> <strong>-c</strong>=<em>CLASS</em> <strong>-d</strong>=<em>NUMBER</em> [<strong>--system-wide</strong>]
 <br />
@@ -58,11 +58,11 @@ The oyranos-device program shows and administrates ICC profiles for color device
 
 <h3 id="assign">Assign profile to device</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-device</strong></a> <strong>-a</strong> <strong>-c</strong>=<em>CLASS</em> <strong>-d</strong>=<em>NUMBER</em> <strong>-p</strong>=<em>ICC_FILE_NAME</em> [<strong>--system-wide</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-device</strong></a> <strong>-a</strong> <strong>-c</strong>=<em>CLASS</em> <strong>-d</strong>=<em>NUMBER</em> [<strong>-p</strong><em>[=ICC_FILE_NAME]</em>] [<strong>--system-wide</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--assign</strong></td> <td>add configuration to OpenICC DB</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--profile-name</strong>=<em>ICC_FILE_NAME</em></td> <td>profile file name<br />Can be "" empty string or "automatic" or a real profile name. </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--profile-name</strong><em>[=ICC_FILE_NAME]</em></td> <td>profile file name<br />Can be "" empty string or "automatic" or a real profile name. </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--system-wide</strong></td> <td>add computer wide</td> </tr>
 </table>
 
