@@ -431,7 +431,7 @@ static char ** oyjlStringSplitSpace_ ( const char        * text,
     if(tmp && tmp[0] && !isspace(tmp[0])) ++n;
     while( tmp && tmp[0] && (tmp = oyjlStringGetNext_( tmp )) != NULL ) ++n;
 
-    if((list = alloc( (n+1) * sizeof(char*) )) == 0) return NULL;
+    if((list = (char**) alloc( (n+1) * sizeof(char*) )) == 0) return NULL;
     memset( list, 0, (n+1) * sizeof(char*) );
 
     {
@@ -443,7 +443,7 @@ static char ** oyjlStringSplitSpace_ ( const char        * text,
       {
         int len = oyjlStringNextSpace_( start );
 
-        if((list[i] = alloc( len+1 )) == 0) return NULL;
+        if((list[i] = (char*) alloc( len+1 )) == 0) return NULL;
 
         memcpy( list[i], start, len );
         list[i][len] = 0;
@@ -1702,7 +1702,7 @@ char *    oyjlReadFile( const char * file_name,
         return NULL;
       }
       rewind(fp);
-      text = malloc(size+1);
+      text = (char*) malloc(size+1);
       if(text == NULL)
       {
         WARNc_S( "Error: Could allocate memory: %lu", (long unsigned int)size);
@@ -1817,7 +1817,7 @@ char * oyjlReadCmdToMem_             ( const char        * command,
         if(text) { free( text ); text = NULL; }
         *size = 0;
         mem_size = 1024;
-        mem = malloc(mem_size+1);
+        mem = (char*) malloc(mem_size+1);
         oyjlPCLOSE_m(fp);
         fp = oyjlPOPEN_m( command, mode );
       }
