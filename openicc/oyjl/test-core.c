@@ -1570,13 +1570,16 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "two/[%d]/key2", 0 );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr2a", "two/[%d]/data/[0]", 0 );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "arr2b", "two/[%d]/data/[1]", 0 );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "one/[%d]/key3", 1 );
+  const char * txt = "value\nafter_line_break";
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, txt, "one/[%d]/key3", 1 );
+  if(verbose)
+    fprintf( zout, "oyjlTreeSetStringF( value: %s )\n", txt );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "%33[1marr3a%33[0m", "one/[%d]/data/[0]", 1 );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "\033[1marr3b\033[0m", "one/[%d]/data/[1]", 1 );
   oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, 1.4,     "one/[%d]/key4", 1 );
   oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, 1.2,     "one/[%d]/data/[2]", 1 );
   oyjlTreeToJson( root, &i, &text ); i = 0;
-  if( text && strlen( text ) == 262 )
+  if( text && strlen( text ) == 280 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
     "add array" );
   } else
