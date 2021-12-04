@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2019 (C) Kai-Uwe Behrmann
+ *            2018-2021 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 
     app.setApplicationName(QString("oyjl-args-qml"));
     app.setApplicationDisplayName(QString("Oyjl"));
-    app.setApplicationVersion("0.7");
+    app.setApplicationVersion("0.8");
     app.setOrganizationName(QString("oyranos.org"));
     app.setWindowIcon(QIcon(":/images/logo-sw.svg"));
 
