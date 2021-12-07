@@ -56,6 +56,7 @@
  *                                     - 7 : JSON
  *                                     - 8 : XML
  *                                     - 9 : YAML
+ *                                     - 10 : C
  *                                     - 0 : not detected
  *                                     - -1 : no input
  *                                     - -2 : no data
@@ -76,6 +77,8 @@ int          oyjlDataFormat          ( const char        * text )
     return 7;
   if((i == 0 || text[i-1] == '\n') && strlen(&text[i]) > 4 && memcmp( &text[i], "---\n", 4 ) == 0)
     return 9;
+  if(strstr(text, "#define ") || strstr(text, "#include ") || strstr(text, "int ") || strstr(text, "char *"))
+    return 10;
   if(!c)
     return -2;
   else
@@ -95,6 +98,7 @@ const char * oyjlDataFormatToString  ( int                 format )
     case 7: text = "JSON"; break;
     case 8: text = "XML"; break;
     case 9: text = "YAML"; break;
+    case 10: text = "C"; break;
     case 0: text = "unknown"; break;
     case -1: text = "no input"; break;
     case -2: text = "no data"; break;

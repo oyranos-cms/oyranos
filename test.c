@@ -823,6 +823,16 @@ oyjlTESTRESULT_e testDataFormat ()
     "oyjlDataFormat (\"%s\") = %d guessed", data, format );
   }
 
+  data = "  \n#include \"oyjl.h\"\nint i;";
+  format = oyjlDataFormat(data);
+  if(format == 10)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+  }
+
   data = "---a:";
   format = oyjlDataFormat(data);
   if(format == 0)
