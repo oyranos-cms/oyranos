@@ -3401,7 +3401,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
           {
             char * t = oyjlOption_PrintArg_(o, style);
             fprintf( oyjl_help_zout, OYJL_HELP_OPTION );
-            fprintf( oyjl_help_zout, "%s", t );
+            fprintf( oyjl_help_zout, "%s", t?t:"" );
             fprintf( oyjl_help_zout, "\t%s\n", o->description ? o->description:"" );
             if(o->help)
               fprintf(oyjl_help_zout,OYJL_HELP_HELP "%s\n", o->help );
