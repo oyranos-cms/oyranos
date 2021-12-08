@@ -24,7 +24,8 @@
 #  HAVE_OYJL_QML      - TRUE
 #  HAVE_OYJL_QML_STATIC-TRUE
 #
-#  OYJL_DOCUMENT_TOOL( toolName toolSources languages:e.g.:de_DE.UTF8 documentPath)
+#  OYJL_DOCUMENT_TOOL( toolName toolSources languages:e.g.:de_DE.UTF8 documentPath) - create localised markdown docs for gitlab/-hub and MAN pages for OyjlArgs enabled tools
+#  OYJL_COMPLETION_TOOL( toolName toolSources ) - create bash shell .completion
 
 
 # Set path to the header file.
@@ -98,6 +99,12 @@ if (OYJL_FOUND)
 
 endif (OYJL_FOUND)
 
+# _tool      name to execute for  _tool -X man ...
+# _tool_src  update document after edit dependency
+# _langs     catalogs to use  SET( MY_LANGS cs_CZ de_DE fr_FR.UTF8 )
+# _doc_path  file system location to store the documents into, usually "docs" -> docs/md/... docs/man/... docs/man/_langs/...
+# use GETTEXT_FOUND for gettext style translations
+# oe use USE_I18N without gettext and e.g. OyjlCore style: #define _(text) oyjlTranslate( trc, text )
 MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
   IF( CMAKE_CROSSCOMPILING )
     MESSAGE( "-- Skipping ${_tool} docu: cross compiling; Hint: build first for local march to generate docu + i18n" )
@@ -124,16 +131,22 @@ MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
           DEPENDS ${_doc_path}/md/${_tool_md}.md
           COMMENT "Extract markdown formated manual page to ${_tool_md}.md"
     )
-    IF( GETTEXT_FOUND )
+    IF( GETTEXT_FOUND OR USE_I18N )
     # add translations
+      IF( GETTEXT_FOUND )
+        SET( MY_LOCPATH LOCPATH=${CMAKE_BINARY_DIR}/locale )
+        SET( MY_LOCCOPY cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy )
+      ELSE( GETTEXT_FOUND )
+        SET( MY_LOCCOPY echo use USE_I18N path without gettext )
+      ENDIF( GETTEXT_FOUND )
       FOREACH( _lang ${_langs} )
         SET( _lang "de_DE.UTF8" )
         STRING(SUBSTRING ${_lang} 0 2 short_lang)
         MESSAGE( "add \"${_tool}\": \"" ${short_lang} "\" from ${_lang} / \"${_langs}\"" )
         ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/man/${short_lang}/${_tool}.1
             COMMAND mkdir -p "${_doc_path}/man/${short_lang}/"
-            COMMAND cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy
-            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${short_lang}/${_tool}.1
+            COMMAND ${MY_LOCCOPY}
+            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} ${MY_LOCPATH} LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${short_lang}/${_tool}.1
             DEPENDS ${_tool} ${_tool_src}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
@@ -143,7 +156,7 @@ MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
         )
 
         ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/md/${_tool_md}${short_lang}.md
-            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LOCPATH=${CMAKE_BINARY_DIR}/locale LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}${short_lang}.md
+            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} ${MY_LOCPATH} LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}${short_lang}.md
             DEPENDS ${_tool} ${_tool_src}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
@@ -152,7 +165,7 @@ MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
             COMMENT "Extract markdown formated ${_lang} manual page to ${_tool_md}${short_lang}.md"
         )
       ENDFOREACH( _lang ${_langs} )
-    ENDIF( GETTEXT_FOUND )
+    ENDIF( GETTEXT_FOUND OR USE_I18N )
   ENDIF( CMAKE_CROSSCOMPILING )
 ENDMACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
 
