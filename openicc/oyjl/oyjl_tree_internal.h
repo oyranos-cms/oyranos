@@ -52,6 +52,9 @@ int oyjlMakeDir_ (const char* path);
 int        oyjlTreePathsGetIndex_    ( const char        * term,
                                        int               * index );
 char *     oyjlTreePrint             ( oyjl_val            v );
+const char *       oyjlTreeGetString_( oyjl_val            v,
+                                       int                 flags OYJL_UNUSED,
+                                       const char        * path );
 #define OYJL_ENUM_CASE_TO_STRING(case_) case case_: return #case_
 #define OYJL_ENUM_CASE_TO_VALUE(case_, val) case case_: value = val; break;
 
