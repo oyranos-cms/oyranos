@@ -1624,6 +1624,8 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   char * command = NULL;
   char * t = oyjlReadCommandF( &size, "r", malloc, "pkg-config -libs-only-L openicc" );
 
+  if(t && t[0] && t[strlen(t)-1] == '\n') t[strlen(t)-1] = '\000';
+
   fprintf( zout, "compiling and testing: %s\n", oyjlTermColor(oyjlBOLD, prog) );
 
   if(c_source && len == code_size)
