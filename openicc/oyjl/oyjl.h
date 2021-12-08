@@ -253,6 +253,10 @@ char *     oyjlTreeGetPath           ( oyjl_val            v,
 oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
                                        int                 flags,
                                        const char        * path );
+oyjl_val oyjlTreeGetNewValueFromArray( oyjl_val            root,
+                                       const char        * name,
+                                       oyjl_val          * array_ret,
+                                       int               * pos_ret );
 oyjl_val   oyjlTreeGetValueF         ( oyjl_val            v,
                                        int                 flags,
                                        const char        * format,
@@ -636,6 +640,7 @@ struct oyjlOption_s {
    *  - ::OYJL_OPTION_FLAG_REPETITION multi occurence; print trailing ...
    *  - ::OYJL_OPTION_FLAG_IMMEDIATE instant applying; e.g. for cheap status info inside a ::OYJL_GROUP_FLAG_EXPLICITE flagged group
    *  - ::OYJL_OPTION_FLAG_MAINTENANCE accept even without printed visibility
+   *  - ::OYJL_NO_OPTIMISE pass values through as is
    */
   unsigned int flags;                  /**< @brief parsing and rendering hints */
   /** '#' is used as default option like a command without any arguments.
