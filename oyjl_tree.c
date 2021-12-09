@@ -2618,11 +2618,13 @@ char **  oyjlCatalogGetLangs_        ( char             ** paths,
 
       if(!strstr(path, base))
         continue;
-      loc = len > base_len + 5 ? oyjlStringCopy(&path[base_len], 0):NULL,
+      loc = len > base_len ? oyjlStringCopy(&path[base_len], 0) : NULL;
+      if(!loc)
+        continue;
       t = loc ? strrchr(loc, '/') : NULL;
       if(t) t[0] = '\000';
       t = oyjlJsonEscape( loc, OYJL_REVERSE | OYJL_REGEXP | OYJL_KEY );
-      free(loc);
+      if(loc) { free(loc); loc = NULL; }
       loc = t;
       for(j = 0; j < locs_n; ++j)
       {
@@ -2711,7 +2713,6 @@ char *             oyjlLangForCatalog_(const char        * loc,
 
       langs = oyjlCatalogGetLangs_( paths, count,
                                     &langs_n, &lang_positions_start );
-
       for(j = 0; j < langs_n; ++j)
       {
         char * l = langs[j];
