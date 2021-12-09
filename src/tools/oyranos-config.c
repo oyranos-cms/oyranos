@@ -260,7 +260,7 @@ int myMain( int argc , const char** argv )
   oyjlOption_s oarray[] = {
   /* type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,         
         value_type,              values,             variable_type, variable_name */
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,"#",NULL,            NULL,    _("Name"),     _("Project Name"),            NULL, NULL,               
+    {"oiwi", 0,                          "#",NULL,            NULL,     _("Name"),     _("Project Name"),            NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&no_arg_var}},
     {"oiwi", 0,                          "p","path",          NULL,     _("Path"),     _("Show DB File"),            NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&path}},
@@ -332,7 +332,7 @@ int myMain( int argc , const char** argv )
 #endif
     {"oiwg", 0,     _("Install Paths"), _("Show Install Paths"),      _("Show statically configured and compiled in paths of Oyranos CMS."),               "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir","v,z",         "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir"},
     {"oiwg", 0,     _("Version"),       _("Show Version"),            _("Release Version follow of a Major(API|ABI)-Minor(Feature)-Micro(Patch|Bug Fix) scheme. For orientation in git the last release, commit number, SHA1 ID and Year-month-day parts are available."), "Version|api-version|num-version|git-version","v",           "Version|api-version|num-version|git-version"},
-    {"oiwg", 0,     _("Options"),       _("Miscellaneous options"),   _("These strings can be used to compile programs."),"cflags|ldflags|ldstaticflags|sourcedir|builddir","v",           "cflags|ldflags|ldstaticflags|sourcedir|builddir"},
+    {"oiwg", 0,     _("Options"),       _("Miscellaneous options"),   _("These strings can be used to compile programs."),"#|cflags|ldflags|ldstaticflags|sourcedir|builddir","v",           "#|cflags|ldflags|ldstaticflags|sourcedir|builddir"},
     {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL,         "X|h|V|R",     "v",           "h,X,R,V,z,v"},
     {"",0,0,0,0,0,0,0}
   };
