@@ -111,7 +111,7 @@ MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
   ELSE( CMAKE_CROSSCOMPILING )
     ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/man/${_tool}.1
           COMMAND mkdir -p "${_doc_path}/man/"
-          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LANG=C DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${_tool}.1
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH LANG=C DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${_tool}.1
           DEPENDS ${_tool} ${_tool_src}
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -123,7 +123,7 @@ MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
     MESSAGE( "${_tool_md}: ${_doc_path}/md/${_tool_md}.md" )
     ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/md/${_tool_md}.md
           COMMAND mkdir -p "${_doc_path}/md/"
-          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} LANG=C DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}.md
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH LANG=C DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}.md
           DEPENDS ${_tool} ${_tool_src}
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -146,7 +146,7 @@ MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
         ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/man/${short_lang}/${_tool}.1
             COMMAND mkdir -p "${_doc_path}/man/${short_lang}/"
             COMMAND ${MY_LOCCOPY}
-            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} ${MY_LOCPATH} LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${short_lang}/${_tool}.1
+            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH ${MY_LOCPATH} LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${short_lang}/${_tool}.1
             DEPENDS ${_tool} ${_tool_src}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
@@ -156,7 +156,7 @@ MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
         )
 
         ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/md/${_tool_md}${short_lang}.md
-            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH} ${MY_LOCPATH} LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}${short_lang}.md
+            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH ${MY_LOCPATH} LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}${short_lang}.md
             DEPENDS ${_tool} ${_tool_src}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
