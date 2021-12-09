@@ -1928,20 +1928,23 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         oyjlStr_Add( s, "%s%s%s%s%s%s", found?"|":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && opt->option)?"|":"", (opt->option && !sub)?"--":"", opt->option?opt->option:"" );
         ++found;
       }
-      oyjlStr_Add( s, ")\n" );
-      oyjlStr_Add( s, "          COMPREPLY=($(compgen -W '" );
-      found = 0;
-      for(j = 0; j < optional_n; ++j)
+      if(found)
       {
-        const char * ooption = optional_list[j];
-        opt = oyjlOptions_GetOptionL( ui->opts, ooption, 0 );
-        oyjlStr_Add( s, "%s%s%s%s%s%s%s%s", found?" ":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && WANT_ARG(opt))?"=":"", opt->o?" ":"", opt->option?"--":"", opt->option?opt->option:"", (opt->option && WANT_ARG(opt))?"=":"" );
-        ++found;
+        oyjlStr_Add( s, ")\n" );
+        oyjlStr_Add( s, "          COMPREPLY=($(compgen -W '" );
+        found = 0;
+        for(j = 0; j < optional_n; ++j)
+        {
+          const char * ooption = optional_list[j];
+          opt = oyjlOptions_GetOptionL( ui->opts, ooption, 0 );
+          oyjlStr_Add( s, "%s%s%s%s%s%s%s%s", found?" ":"", opt->o?"-":"", opt->o?opt->o:"", (opt->o && WANT_ARG(opt))?"=":"", opt->o?" ":"", opt->option?"--":"", opt->option?opt->option:"", (opt->option && WANT_ARG(opt))?"=":"" );
+          ++found;
+        }
+        oyjlStr_Add( s, "' -- \"$cur\"))\n" );
+        oyjlStr_Add( s, "            set +x +v\n" );
+        oyjlStr_Add( s, "            return\n" );
+        oyjlStr_Add( s, "            ;;\n" );
       }
-      oyjlStr_Add( s, "' -- \"$cur\"))\n" );
-      oyjlStr_Add( s, "            set +x +v\n" );
-      oyjlStr_Add( s, "            return\n" );
-      oyjlStr_Add( s, "            ;;\n" );
       oyjlStringListRelease( &mandatory_list, mandatory_n, free );
       oyjlStringListRelease( &optional_list, optional_n, free );
     }
