@@ -3036,7 +3036,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
         oyjlStringAdd( &text, malloc, free, " %s", t );
       free(t);
     }
-    if(next_delimiter == '|')
+    if(next_delimiter == '|' && !(option[0] == '#'))
       oyjlStringAdd( &text, malloc, free, " |" );
   }
 
