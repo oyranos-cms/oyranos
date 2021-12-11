@@ -74,6 +74,7 @@ extern int * oyjl_debug;
 #ifndef OYJL_LOCALEDIR
 #define OYJL_LOCALEDIR  ""
 #endif
+#define      oyjlIsString_m( text ) (text&&text[0])
 int my_debug = 0;
 int * oyjl_debug = &my_debug;
 #if   (__GNUC__*100 + __GNUC_MINOR__) >= 406
@@ -347,13 +348,14 @@ int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
 
   OYJL_CREATE_VA_STRING(format, text, malloc, return 1)
 
-  if(error_code == oyjlMSG_INFO) status_text = "Info: ";
-  if(error_code == oyjlMSG_CLIENT_CANCELED) status_text = "Client Canceled: ";
-  if(error_code == oyjlMSG_INSUFFICIENT_DATA) status_text = "Insufficient data: ";
-  if(error_code == oyjlMSG_ERROR) status_text = "!!! ERROR: ";
+  if(error_code == oyjlMSG_INFO) status_text = oyjlTermColor(oyjlGREEN,"Info: ");
+  if(error_code == oyjlMSG_CLIENT_CANCELED) status_text = oyjlTermColor(oyjlBLUE,"Client Canceled: ");
+  if(error_code == oyjlMSG_INSUFFICIENT_DATA) status_text = oyjlTermColor(oyjlRED,"Insufficient data: ");
+  if(error_code == oyjlMSG_ERROR) status_text = oyjlTermColor(oyjlRED,_("Usage Error:"));
+  if(error_code == oyjlMSG_PROGRAM_ERROR) status_text = oyjlTermColor(oyjlRED,_("Program Error:"));
 
   if(status_text)
-    fprintf( stderr, "%s", status_text );
+    fprintf( stderr, "%s ", status_text );
   if(text)
     fprintf( stderr, "%s\n", text );
   fflush( stderr );
@@ -3213,6 +3215,27 @@ oyjlOptionChoice_s * oyjlOption_GetChoices_ (
 #define OYJL_HELP_HELP       "          "
 #include <stdarg.h> /* va_list */
 FILE * oyjl_help_zout = NULL;
+void oyjlOptionChoice_PrintHelp_     ( oyjlOptionChoice_s* c,
+                                       oyjlOption_s      * o )
+{
+  char * t = NULL;
+  int has_comment = oyjlIsString_m(c->name) ||
+                    oyjlIsString_m(c->description) ||
+                    oyjlIsString_m(c->help);
+  t = oyjlOption_PrintArg_( o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_OPTION_ONLY );
+  fprintf( oyjl_help_zout, OYJL_HELP_ARG "  %s %s%s%s%s%s%s%s\n",
+      t,
+      c->nick,
+      has_comment?"\t\t# ":"",
+      c->name && c->nick[0] ? c->name :
+        oyjlIsString_m(c->description)?c->description:"",
+      c->description&&c->description[0]?" : ":"",
+      c->description?c->description:"",
+      c->help&&c->help[0]?" - ":"",
+      c->help?c->help:"" );
+  if(t) free(t);
+}
+
 /** @brief    Print help text to stderr
  *  @memberof oyjlOptions_s
  *
@@ -3349,19 +3372,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
             while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
               ++n;
             for(l = 0; l < n; ++l)
-            {
-              char * t = NULL;
-              t = oyjlOption_PrintArg_( o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_OPTION_ONLY );
-              fprintf( oyjl_help_zout, OYJL_HELP_ARG "  %s %s\t\t# %s%s%s%s%s\n",
-                  t,
-                  o->values.choices.list[l].nick,
-                  o->values.choices.list[l].name && o->values.choices.list[l].nick[0] ? o->values.choices.list[l].name : o->values.choices.list[l].description,
-                  o->values.choices.list[l].description&&o->values.choices.list[l].description[0]?" : ":"",
-                  o->values.choices.list[l].description?o->values.choices.list[l].description:"",
-                  o->values.choices.list[l].help&&o->values.choices.list[l].help[0]?" - ":"",
-                  o->values.choices.list[l].help?o->values.choices.list[l].help:"" );
-              if(t) free(t);
-            }
+              oyjlOptionChoice_PrintHelp_( &o->values.choices.list[l], o );
           }
           break;
         case oyjlOPTIONTYPE_FUNCTION:
@@ -3383,7 +3394,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
               while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
             for(l = 0; l < n; ++l)
-              fprintf( oyjl_help_zout, OYJL_HELP_ARG "-%s %s\t\t# %s\n", o->o, list[l].nick, list[l].name && list[l].nick[0] ? list[l].name : list[l].description );
+              oyjlOptionChoice_PrintHelp_( &o->values.choices.list[l], o );
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
           }
           break;
