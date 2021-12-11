@@ -334,7 +334,8 @@ typedef enum {
   oyjlMSG_INFO = 400,                  /**< @brief informational, for debugging */
   oyjlMSG_CLIENT_CANCELED,             /**< @brief user side requested stop */
   oyjlMSG_INSUFFICIENT_DATA,           /**< @brief missing or insufficient data */
-  oyjlMSG_ERROR                        /**< @brief error */
+  oyjlMSG_ERROR,                       /**< @brief usage error */
+  oyjlMSG_PROGRAM_ERROR                /**< @brief program error */
 } oyjlMSG_e;
 /** @brief custom message function type */
 typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,

@@ -332,10 +332,11 @@ int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
   if(error_code == oyjlMSG_INFO) status_text = oyjlTermColor(oyjlGREEN,"Info: ");
   if(error_code == oyjlMSG_CLIENT_CANCELED) status_text = oyjlTermColor(oyjlBLUE,"Client Canceled: ");
   if(error_code == oyjlMSG_INSUFFICIENT_DATA) status_text = oyjlTermColor(oyjlRED,"Insufficient data: ");
-  if(error_code == oyjlMSG_ERROR) status_text = oyjlTermColor(oyjlRED,"ERROR: ");
+  if(error_code == oyjlMSG_ERROR) status_text = oyjlTermColor(oyjlRED,_("Usage Error:"));
+  if(error_code == oyjlMSG_PROGRAM_ERROR) status_text = oyjlTermColor(oyjlRED,_("Program Error:"));
 
   if(status_text)
-    fprintf( stderr, "%s", status_text );
+    fprintf( stderr, "%s ", status_text );
   if(text)
     fprintf( stderr, "%s\n", text );
   fflush( stderr );
@@ -1705,19 +1706,19 @@ char *    oyjlReadFile( const char * file_name,
       text = (char*) malloc(size+1);
       if(text == NULL)
       {
-        WARNc_S( "Error: Could allocate memory: %lu", (long unsigned int)size);
+        WARNc_S( "Could allocate memory: %lu", (long unsigned int)size);
         fclose( fp );
         return NULL;
       }
       s = fread(text, sizeof(char), size, fp);
       text[size] = '\000';
       if(s != size)
-        WARNc_S( "Error: fread %lu but should read %lu",
+        WARNc_S( "fread %lu but should read %lu",
                 (long unsigned int) s, (long unsigned int)size);
       fclose( fp );
     } else
     {
-      WARNc_S( "Error: Could not open file - \"%s\"", file_name);
+      WARNc_S( "%s\"%s\"", _("Could not open: "), file_name);
     }
   }
 
