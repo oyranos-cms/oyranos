@@ -115,6 +115,7 @@ int  oyjlManAddOptionToGroup_        ( char             ** group,
 
 char *       oyjlStringToLower_      ( const char        * t );
 char *       oyjlStringToUpper_      ( const char        * t );
+#define      oyjlIsString_m( text ) (text&&text[0])
 
 #ifdef __cplusplus
 }
