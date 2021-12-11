@@ -2238,6 +2238,7 @@ int  oyjlXPathGetSize_               ( oyjl_val            v,
   return size;
 }
 
+#define OYJL_PAD_SIZE( size, modulo ) ((size % modulo) ? (modulo - size % modulo) : 0)
 /** @brief   write tree to data block
  *
  *  @param         v                   tree to serialise
@@ -2256,6 +2257,7 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
                                        int                 flags,
                                        int               * size )
 {
+#define PAD_SIZE 16
   oyjlNodes_s * nodes = NULL;
   if(v && (long)v->type == oyjlOBJECT_JSON)
   {
@@ -2275,13 +2277,15 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
       oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "oyjlNodes_s: %d oyjlXPath_s: %d count: %d", OYJL_DBG_ARGS, sizeof(oyjlNodes_s), sizeof(oyjlXPath_s), count );
 
     size_ += sizeof(oyjlNodes_s) + sizeof(uint64_t) * count;
+    size_ += OYJL_PAD_SIZE( size_, PAD_SIZE );
     for(i = 0; i < count; ++i)
     {
       const char * xpath = paths[i];
       oyjl_val val = oyjlTreeGetValue( v, 0, xpath );
       uint32_t v_offset = 0;
       int size__ = size_;
-      size_ += oyjlXPathGetSize_( val, xpath, &v_offset );
+      size_ += oyjlXPathGetSize_( val, xpath, &v_offset, flags );
+      size_ += OYJL_PAD_SIZE( size_, PAD_SIZE );
       if(flags & OYJL_OBSERVE)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "xpath[%d]:\"%s\" %s v_offset: %d offset2: %d", OYJL_DBG_ARGS, i, xpath, val?"found":"not found", v_offset, size__ );
     }
@@ -2294,6 +2298,7 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
     memcpy( nodes, "oiJS", 4 );
 
     size_ = sizeof(oyjlNodes_s) + sizeof(uint64_t) * count;
+    size_ += OYJL_PAD_SIZE( size_, PAD_SIZE );
     nodes->count = count;
     for(i = 0; i < count; ++i)
     {
@@ -2303,7 +2308,8 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
       int len = strlen(xpath);
       uint32_t v_offset = 0;
       nodes->offsets[i] = size_;
-      size_ += oyjlXPathGetSize_( val, xpath, &v_offset );
+      size_ += oyjlXPathGetSize_( val, xpath, &v_offset, flags );
+      size_ += OYJL_PAD_SIZE( size_, PAD_SIZE );
       oyjlXPath_s * node = (oyjlXPath_s *)&((char*)nodes)[nodes->offsets[i]];
       node->v_offset = v_offset;
       oyjl_val node_v = (oyjl_val)((char*)node + v_offset);
