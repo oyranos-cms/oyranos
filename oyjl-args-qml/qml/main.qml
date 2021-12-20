@@ -177,8 +177,8 @@ AppWindow {
         var okey = arg
         if(okey[0] === '-')
             okey = okey.substr(1,okey.length-1)
-        if(okey[0] === '-')
-            okey = okey.substr(1,okey.length-1)
+        if(okey[1] === '-')
+            okey = okey.substr(2,okey.length-2)
         if(okey.match('='))
             okey = okey.substr(0,okey.indexOf('='))
         return okey;
@@ -186,10 +186,22 @@ AppWindow {
 
     function hasArg(args, key)
     {
-        for( var o in args )
+        var arr = [];
+        var arrn = 0;
+        if(app_debug)
+            statusText = "hasArgs( args=" + args + ", key=" + key + " )"
+        if(typeof args === "string")
         {
-            var okey = argToKey(args[o])
+            arr = args.split(new RegExp('[,|]', 'g'))
+            arrn = arr.length
+        }
+        var j
+        for( j = 0; j < arrn; ++j )
+        {
+            var okey = argToKey(arr[j])
             var k = argToKey(key)
+            if(app_debug)
+                statusText = "arr[j]=" + arr[j] + " okey=" + okey + " key=" + key + " k=" + k
             if(okey == k)
                 return true;
         }
