@@ -3282,7 +3282,10 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     {
       oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
                                                                  "version" );
-      fprintf( oyjl_help_zout, "%s v%s - %s", oyjlTermColor( oyjlBOLD, opts->argv[0] ),
+      const char * prog = opts->argv[0];
+      if(verbose == 0)
+        prog = strrchr(prog,'/') ? strrchr(prog,'/') + 1 : prog;
+      fprintf( oyjl_help_zout, "%s v%s - %s", oyjlTermColor( oyjlBOLD, prog ),
                               version && version->name ? version->name : "",
                               ui->description ? ui->description : ui->name ? ui->name : "" );
       if(version && version->name && version->description && *oyjl_debug)
