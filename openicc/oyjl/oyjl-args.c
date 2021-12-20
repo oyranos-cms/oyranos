@@ -272,6 +272,7 @@ int myMain( int argc, const char ** argv )
   fflush(stdout);
 
   clean_main:
+  free(sections);
   {
     int i = 0;
     while(oarray[i].type[0])
