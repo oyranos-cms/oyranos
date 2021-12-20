@@ -576,7 +576,10 @@ static yajl_callbacks oyjl_tree_callbacks_ = {
  *                                     - >= 0 -> index in array
  *  @return                            new node
  */
-oyjl_val oyjlTreeGetNewValueFromArray( oyjl_val root, const char * name, oyjl_val * array_ret, int * pos_ret )
+oyjl_val oyjlTreeGetNewValueFromArray( oyjl_val            root,
+                                       const char        * name,
+                                       oyjl_val          * array_ret,
+                                       int               * pos_ret )
 {
   oyjl_val array = NULL, node;
   int pos = -1;
