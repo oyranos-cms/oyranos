@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2017-2018  Kai-Uwe Behrmann
+ *  Copyright (C) 2017-2021  Kai-Uwe Behrmann
  *
  */
 
@@ -60,6 +60,10 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
 void pingNativeDisplay();
 int checkWtptState();
 void updateVCGT();
+// Dark/Bright Desktop backgrounds
+char * getCurrentColorScheme();
+void setColorScheme( const char * scheme );
+char ** listColorSchemes( int * count );
 
 #define OYJL_IS_NOT_O( x ) (!o->o || strcmp(o->o,x) != 0)
 #define OYJL_IS_O( x ) (o->o && strcmp(o->o,x) == 0)
@@ -189,6 +193,7 @@ double getDoubleFromDB               ( const char        * key,
 }
 #define OYJL_IS_NOT_O( x ) (!o->o || strcmp(o->o,x) != 0)
 #define OYJL_IS_O( x ) (o->o && strcmp(o->o,x) == 0)
+#define OYJL_IS_OPTION( x ) (o->option && strcmp(o->option,x) == 0)
 static oyjlOptionChoice_s * white_point_choices_ = NULL;
 static int white_point_choices_selected_ = -1;
 oyjlOptionChoice_s * getWhitePointChoices       ( oyjlOption_s      * o,
@@ -259,6 +264,164 @@ oyjlOptionChoice_s * getWhitePointChoices       ( oyjlOption_s      * o,
     } else
       return NULL;
 }
+
+char ** listColorSchemes( int * count )
+{
+  int n = 0, size = 0, i;
+  char ** list, ** result_list = NULL;
+  char * result = oyjlReadCommandF( &size, "r", malloc, "LANG=C plasma-apply-colorscheme --list-schemes" );
+  list = oyjlStringSplit( result, '\n', &n, 0 );
+
+  *count = 0;
+  if(list)
+  {
+    for(i = 0; i < n; ++i)
+    {
+      char * t = list[i];
+      if(strstr(t, "You have the"))
+        continue;
+      if(strchr(t, '*') != NULL)
+        t = strchr(t, '*') + 1;
+      if(t[0] == ' ')
+        ++t;
+      if(strstr(t, " (current color scheme)"))
+      {
+        char * txt = strstr(t, " (current color scheme)");
+        txt[0] = '\000';
+      }
+
+      oyjlStringListAddString( &result_list, count, t, oyAllocateFunc_, oyDeAllocateFunc_ );
+    }
+    oyjlStringListRelease( &list, n, free );
+  }
+
+  return result_list;
+}
+static oyjlOptionChoice_s * getColorSchemeChoices (
+                                       oyjlOption_s      * o,
+                                       int               * selected,
+                                       oyjlOptions_s     * opts OY_UNUSED )
+{
+  const char * man_page = getenv("DISPLAY");
+  int i = 0, n = 0;
+  char ** list;
+  char * value;
+  int night;
+  oyjlOptionChoice_s * c;
+
+  if(man_page && strcmp(man_page,"man_page") == 0)
+  {
+    c = calloc(1+2+1, sizeof(oyjlOptionChoice_s));
+    if(c)
+    {
+      /* first entry is for unsetting */
+      c[i].nick = strdup("-");
+      c[i].name = strdup(_("[none]"));
+      c[i].description = strdup("");
+      c[i].help = strdup("");
+
+      /* example choice */
+      c[++i].nick = strdup("Breeze");
+      c[i].name = strdup("Breeze");
+      c[i].description = strdup("Detected Color Scheme");
+      c[i].help = strdup("");
+
+      c[++i].nick = strdup("BreezeDark");
+      c[i].name = strdup("Breeze Dark");
+      c[i].description = strdup("2. detected Color Scheme");
+      c[i].help = strdup("");
+
+      /* empty choice for end of list */
+      c[++i].nick = malloc(4);
+      c[i].nick[0] = '\000';
+    }
+    return c;
+  }
+
+  night = OYJL_IS_OPTION("night-color-scheme"); 
+  if(night)
+    value = oyGetPersistentString( OY_DISPLAY_STD "/night_color_scheme", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+  else
+    value = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_color_scheme", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+
+  list = listColorSchemes( &n );
+  if(list)
+  {
+    c = calloc(n+2, sizeof(oyjlOptionChoice_s));
+    if(c)
+    {
+      int pos = 1;
+      /* first entry is for unsetting */
+      c[i].nick = strdup("-");
+      c[i].name = strdup(_("[none]"));
+      c[i].description = strdup("");
+      c[i].help = strdup("");
+
+      for(i = 0; i < n; ++i)
+      {
+        char * t = list[i];
+        c[pos].nick = strdup( t );
+        c[pos].name = strdup("");
+        c[pos].description = strdup("");
+        c[pos].help = strdup("");
+
+        if(selected && value && strcmp(t, value) == 0)
+          *selected = pos;
+
+        ++pos;
+      }
+    }
+    oyjlStringListRelease( &list, n, oyDeAllocateFunc_ );
+  }
+  if(selected && *selected > 0)
+    fprintf( stderr, "%s %s selected: %d %s\n", o->option, value, *selected, c[*selected].nick );
+
+  return c;
+}
+char * getCurrentColorScheme()
+{
+  int n = 0,i, size = 0;
+  char * result = oyjlReadCommandF( &size, "r", malloc, "LANG=C plasma-apply-colorscheme --list-schemes" );
+  char ** list = oyjlStringSplit( result, '\n', &n, 0 );
+  char * current = NULL;
+
+  if(list)
+  {
+    for(i = 0; i < n; ++i)
+    {
+      char * t = list[i];
+      if(strstr(t, "You have the"))
+        continue;
+      if(strchr(t, '*') != NULL)
+        t = strchr(t, '*') + 1;
+      if(t[0] == ' ')
+        ++t;
+      if(strstr(t, " (current color scheme)"))
+      {
+        char * txt = strstr(t, " (current color scheme)");
+        txt[0] = '\000';
+        current = strdup( t );
+      }
+    }
+    oyjlStringListRelease( &list, n, free );
+  }
+
+  return current;
+}
+void setColorScheme( const char * scheme )
+{
+  int size = 0;
+  char * command = NULL;
+  char * result;
+  const char * home = oyGetHomeDir_();
+  const char * ThemeName = strstr(scheme, "dark") == NULL && strstr(scheme, "Dark") == NULL?"Adwaita":"Adwaita-dark";
+
+  oyjlStringAdd( &command, 0,0, "plasma-apply-colorscheme %s; export THEME=%s; sed -i \"/Net\\/ThemeName/cNet\\/ThemeName \\\"$THEME\\\"\" %s/.config/xsettingsd/xsettingsd.conf; xsettingsd & (sleep 1; killall xsettingsd)", scheme, ThemeName, home );
+  result = oyjlReadCommandF( &size, "r", malloc, command );
+
+  free(result);
+  free(command);
+}
 const char * jcommands = "{\n\
   \"command_set\": \"oyranos-monitor-white-point\",\n\
   \"comment\": \"command_set_delimiter - build key:value; default is '=' key=value\",\n\
@@ -284,7 +447,9 @@ int myMain( int argc , const char** argv )
   int wtpt_mode_night = -1;
   int wtpt_mode_sunlight = -1;
   const char * sunlight_effect = NULL;
+  const char * sunlight_color_scheme = NULL;
   const char * night_effect = NULL;
+  const char * night_color_scheme = NULL;
   double night_backlight = -1;
   double temperature = 0.0, temperature_man = 2800.0; // 2800 kelvin is near candel light
   int show = 0;
@@ -354,6 +519,8 @@ int myMain( int argc , const char** argv )
     {"oiwi", 0, "e", "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&sunlight_effect} },
     {"oiwi", 0, "b", "night-backlight", NULL, _("Night Backlight"), _("Set Nightly Backlight"), _("The option needs xbacklight installed and supporting your device for dimming the monitor lamp."), _("PERCENT"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 0, .dbl.end = 100, .dbl.tick = 1, .dbl.d = man?4:getDoubleFromDB( OY_DISPLAY_STD "/display_backlight_night", 0 )}, oyjlDOUBLE, {.d=&night_backlight} },
+    {"oiwi", 0, NULL, "sunlight-color-scheme", NULL, _("Sun light color scheme"), _("Set day time typical brighter color scheme"), _("Use this to switch color scheme day/night dependent."), _("STRING"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getColorSchemeChoices}, oyjlSTRING, {.s=&sunlight_color_scheme} },
+    {"oiwi", 0, NULL, "night-color-scheme", NULL, _("Night color scheme"), _("Set nightly typical darker color scheme"), _("Use this to switch color scheme day/night dependent."), _("STRING"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getColorSchemeChoices}, oyjlSTRING, {.s=&night_color_scheme} },
     {"oiwi", 0, "l", "location", NULL, _("location"), _("Detect location by IP adress"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&location} },
     {"oiwi", 0, "i", "latitude", NULL, _("Latitude"), _("Set Latitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -90, .dbl.end = 90, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/latitude", 0 )}, oyjlDOUBLE, {.d=&latitude} },
@@ -386,11 +553,11 @@ int myMain( int argc , const char** argv )
   /* type,   flags, name, description, help, mandatory, optional, detail */
     {"oiwg", 0, _("Mode"), _("Actual mode"), NULL, "w,a", "z,v", "w,a,y" },
 #if defined( XCM_HAVE_X11 )
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g,b", "z,v,y", "n,g,b" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g,b,night-color-scheme", "z,v,y", "n,g,b,night-color-scheme" },
 #else
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g", "z,v,y", "n,g" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g,night-color-scheme", "z,v,y", "n,g,night-color-scheme" },
 #endif
-    {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s,e", "z,v,y", "s,e" },
+    {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s,e,sunlight-color-scheme", "z,v,y", "s,e,sunlight-color-scheme" },
     {"oiwg", OYJL_GROUP_FLAG_EXPLICITE, _("Location"), _("Location and Twilight"), NULL, "l|i,o", "t,z,v,y", "l,i,o,t"},
     {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d" },
     {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL, "m|r|X|h|V|R", "v", "h,m,r,X,R,V,z,y,v" },
@@ -616,6 +783,14 @@ int myMain( int argc , const char** argv )
     ++worked;
   }
 
+  if(night_color_scheme != NULL && dry == 0)
+  {
+    oySetPersistentString( OY_DISPLAY_STD "/night_color_scheme", scope,
+                           (night_color_scheme[0] && night_color_scheme[0] != '-') ?
+                            night_color_scheme : NULL, NULL );
+    ++worked;
+  }
+
   if(night_backlight != -1 && dry == 0)
   {
     oyStringAddPrintfC(&value, 0,0, "%g", night_backlight);
@@ -630,6 +805,14 @@ int myMain( int argc , const char** argv )
     oySetPersistentString( OY_DISPLAY_STD "/sunlight_effect", scope,
                            (sunlight_effect[0] && sunlight_effect[0]!='-') ?
                             sunlight_effect : NULL, NULL );
+    ++worked;
+  }
+
+  if(sunlight_color_scheme != NULL && dry == 0)
+  {
+    oySetPersistentString( OY_DISPLAY_STD "/sunlight_color_scheme", scope,
+                           (sunlight_color_scheme[0] && sunlight_color_scheme[0]!='-') ?
+                            sunlight_color_scheme : NULL, NULL );
     ++worked;
   }
 
@@ -656,10 +839,9 @@ int myMain( int argc , const char** argv )
   if(worked == 0)
     oyjlOptions_PrintHelp( opts, ui, verbose, NULL );
 
-  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-
   if(oy_debug)
     fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
+  free(info);
   return error;
 }
 
@@ -690,6 +872,7 @@ int main( int argc_, char ** argv_)
 #ifdef __ANDROID__
   free( argv );
 #endif
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return 0;
 }
@@ -1045,11 +1228,12 @@ int checkWtptState(int dry)
     int new_mode = -1;
     char * new_effect = NULL;
     int use_effect = 0;
+    int night_set_to = -1;
 
     cmode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
     effect = oyGetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
     fprintf (stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
-    fprintf (stderr, "%s: %s %s: %s\n", _("Actual white point mode"), cmode<choices?choices_string_list[cmode]:"----",
+    fprintf (stderr, "%s: %s %s: %s\n", _("Actual white point mode"), oyjlTermColor(oyjlBOLD,cmode<choices?choices_string_list[cmode]:"----"),
             _("Effect"), oyNoEmptyString_m_(effect));
 
     if(rise < dtime && dtime <= set)
@@ -1079,6 +1263,7 @@ int checkWtptState(int dry)
         if(!oyExistPersistentString( OY_DISPLAY_STD "/night", "0", 0, oySCOPE_USER_SYS ))
         {
           oySetPersistentString( OY_DISPLAY_STD "/night", scope, "0", NULL );
+          night_set_to = 0;
         }
 
     } else
@@ -1105,9 +1290,11 @@ int checkWtptState(int dry)
         }
       }
       if(dry == 0)
+      {
         if(!oyExistPersistentString( OY_DISPLAY_STD "/night", "1", 0, oySCOPE_USER_SYS ))
         {
           oySetPersistentString( OY_DISPLAY_STD "/night", scope, "1", NULL );
+          night_set_to = 1;
 #if defined( XCM_HAVE_X11 )
           size_t size = 0;
           char * backlight = oyReadCmdToMem_( "xbacklight", &size, "r", oyAllocateFunc_);
@@ -1130,6 +1317,7 @@ int checkWtptState(int dry)
           }
 #endif
         }
+      }
     }
 
     if( (new_mode != cmode) ||
@@ -1137,7 +1325,7 @@ int checkWtptState(int dry)
          (effect && new_effect && strcmp(effect, new_effect) != 0)))
     {
       fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
-      fprintf(  stderr, "%s: %s %s: %s\n", _("New white point mode"), new_mode<choices?choices_string_list[new_mode]:"----",
+      fprintf(  stderr, "%s: %s %s: %s\n", _("New white point mode"), oyjlTermColor(oyjlBOLD,new_mode<choices?choices_string_list[new_mode]:"----"),
                 _("Effect"), oyNoEmptyString_m_(new_effect) );
 
       if(dry == 0 && (use_effect ||
@@ -1153,6 +1341,23 @@ int checkWtptState(int dry)
 
       if(cmode != new_mode)
         error = setWtptMode( scope, new_mode, dry );
+    }
+
+    if(dry == 0 && night_set_to >= 0)
+    {
+      char * ccs = getCurrentColorScheme();
+      if(night_set_to == 1)
+        value = oyGetPersistentString( OY_DISPLAY_STD "/night_color_scheme", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      else
+        value = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_color_scheme", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      if(value && (!ccs || strcmp(value, ccs) != 0))
+      {
+        setColorScheme( value);
+        fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+        fprintf(  stderr, "%s: %s %s/%s\n", _("New color scheme"),
+                _("old/new"), oyNoEmptyString_m_(ccs), oyjlTermColor(oyjlBOLD,value) );
+      }
+      oyFree_m_(value);
     }
 
     if(effect) oyFree_m_(effect);
