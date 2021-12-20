@@ -325,12 +325,23 @@ typedef enum {
   oyjlMSG_INFO = 400,
   oyjlMSG_CLIENT_CANCELED,
   oyjlMSG_INSUFFICIENT_DATA,
-  oyjlMSG_ERROR
+  oyjlMSG_ERROR,
+  oyjlMSG_PROGRAM_ERROR
 } oyjlMSG_e;
 typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context,
                                        const char        * format,
                                        ... );
+typedef enum {
+  oyjlNO_MARK,
+  oyjlRED,
+  oyjlGREEN,
+  oyjlBLUE,
+  oyjlBOLD,
+  oyjlITALIC,
+  oyjlUNDERLINE
+} oyjlTEXTMARK_e;
+const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text);
 
 char *   oyjlBT                      ( int                 stack_limit OYJL_UNUSED )
 {
@@ -1491,15 +1502,6 @@ typedef struct {
   int           memory_allocation;
 } oyjlOptsPrivate_s;
 #endif
-typedef enum {
-  oyjlNO_MARK,
-  oyjlRED,
-  oyjlGREEN,
-  oyjlBLUE,
-  oyjlBOLD,
-  oyjlITALIC,
-  oyjlUNDERLINE
-} oyjlTEXTMARK_e;
 #endif /* OYJL_INTERNAL */
 
 #ifdef OYJL_HAVE_LANGINFO_H
@@ -3394,7 +3396,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
               while(list[n].nick && list[n].nick[0] != '\000')
                 ++n;
             for(l = 0; l < n; ++l)
-              oyjlOptionChoice_PrintHelp_( &o->values.choices.list[l], o );
+              oyjlOptionChoice_PrintHelp_( &list[l], o );
             /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
           }
           break;
@@ -3956,7 +3958,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         if(!o)
         {
           fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
-          fprintf( stderr, "%s (%s)\n", _("This option is not defined"), moption );
+          fprintf( stderr, "%s g[%d]=%s.mandatory=%s[%d](%s)\n", _("This option is not defined"), i, g->name,g->mandatory,j, moption && moption[0]?moption:"---" );
         }
         for( k = 0; k  < (results?results->count:0); ++k )
         {
@@ -4030,7 +4032,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       if(!o)
       {
         fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
-        fprintf( stderr, "%s (%s)\n", _("This option is not defined"), option );
+        fprintf( stderr, "%s g[%d]=%s.optional=%s[%d](%s)\n", _("This option is not defined"), i,g->name,g->optional,j, option && option[0]?option:"---" );
       }
     }
     oyjlStringListRelease( &list, n, free );
@@ -4043,7 +4045,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       if(!o)
       {
         fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
-        fprintf( stderr, "%s (%s)\n", _("This option is not defined"), option );
+        fprintf( stderr, "%s g[%d]=%s.detail=%s[%d](%s)\n", _("This option is not defined"), i,g->name,g->detail,j, option && option[0]?option:"---" );
       }
     }
     oyjlStringListRelease( &list, n, free );
