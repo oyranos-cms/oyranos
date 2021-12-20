@@ -45,19 +45,19 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--try-format</strong>=<em>FORMAT</em></td> <td>Versuche ein Datenformat zu finden, auch mit Versatz.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-r JSON</strong></td><td># JSON</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> JSON</td><td># JSON</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--wrap</strong>=<em>TYP</em></td> <td>sprachspezifische Formatierung
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-w C</strong></td><td># C statischer Text</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w</strong> C</td><td># C statischer Text</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-W</strong>|<strong>--wrap-name</strong>=<em>NAME</em></td> <td>Ein Name für das zu definierende Symbol.<br />Benutze nur Buchstaben aus den Alphabet [A-Z,a-z] einschließlich möglichem Understrich '_'.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-W wrap</strong></td><td># wrap</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-W</strong> wrap</td><td># wrap</td></tr>
   </table>
   </td>
  </tr>
@@ -134,28 +134,28 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Vollständige Hilfe</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Übersicht</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Eingabe</strong></td><td># Setze Eingangsdateiname und Pfad</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Zeige JSON</strong></td><td># Zeige JSON auf stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Zeige YAML</strong></td><td># Zeige YAML auf stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Zeige XML</strong></td><td># Zeige XML auf stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Anzahl</strong></td><td># Zeige Knotenanzahl</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Schlüsselname</strong></td><td># Zeige Schlüsselname</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Typ</strong></td><td># Zeige Typ</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Pfade</strong></td><td># Zeige alle zutreffenden Pfade</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Format</strong></td><td># Zeige Datenformat.</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Verschiedenes</strong></td><td># Allgemeine Optionen</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> 1</td><td># Vollständige Hilfe : Zeige Hilfe für alle Gruppen</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> synopsis</td><td># Übersicht : Liste Gruppen - Zeige alle Gruppen mit Syntax</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Eingabe</td><td># Setze Eingangsdateiname und Pfad</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige JSON</td><td># Zeige JSON auf stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige YAML</td><td># Zeige YAML auf stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige XML</td><td># Zeige XML auf stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Anzahl</td><td># Zeige Knotenanzahl</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Schlüsselname</td><td># Zeige Schlüsselname</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Typ</td><td># Zeige Typ</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Pfade</td><td># Zeige alle zutreffenden Pfade</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Format</td><td># Zeige Datenformat.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Verschiedenes</td><td># Allgemeine Optionen</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Exportiere formatierten Text<br />Hole Benutzerschnittstelle als Text
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Handbuch</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Kommando</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formatierter Text - Hole formatierten Text</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Hole Oyjl Json Benutzerschnittstelle</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler</td></tr>
   </table>
   </td>
  </tr>

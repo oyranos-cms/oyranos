@@ -423,7 +423,7 @@ oyjlTESTRESULT_e testI18N()
   char ** paths = oyjlTreeToPaths( catalog, 10000000, NULL, OYJL_KEY, &count );
   clck = oyjlClock() - clck;
   count = 0; while(paths && paths[count]) ++count;
-  if( count == 347 )
+  if( count == 356 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,1,clck/(double)CLOCKS_PER_SEC,"wr",
     "oyjlTreeToPaths(catalog) = %d", count );
   } else
@@ -634,7 +634,7 @@ oyjlTESTRESULT_e testI18N()
   //flags = verbose ? OYJL_OBSERVE : 0;
   catalog = oyjlTreeParse( json, NULL, 0 );
   oyjl_val static_catalog = oyjlTreeSerialise( catalog, flags, &size );
-  if(size == 854 && memcmp( static_catalog, "oiJS", 4 ) == 0)
+  if(size == 944 && memcmp( static_catalog, "oiJS", 4 ) == 0)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, size,
     "oyjlTreeSerialise() oiJS" );
   } else
@@ -1927,9 +1927,9 @@ oyjlTESTRESULT_e testUiRoundtrip ()
 
   result = testCode( json, "oiCR"                    /*prog*/,
                            9996                      /*code_size*/,
-                           1284                      /*help_size*/,
+                           1282                      /*help_size*/,
                            2174                      /*man_size*/,
-                           4316                      /*markdown_size*/,
+                           4476                      /*markdown_size*/,
                            8023                      /*json_size*/,
                            8050                      /*json_command_size*/,
                            11682                     /*export_size*/,
@@ -2044,9 +2044,9 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   result = testCode( json, "oiCR_enGB"               /*prog*/,
                            9052                      /*code_size*/,
-                           1187                      /*help_size*/,
+                           1185                      /*help_size*/,
                            2075                      /*man_size*/,
-                           3874                      /*markdown_size*/,
+                           4034                      /*markdown_size*/,
                            7441                      /*json_size*/,
                            7473                      /*json_command_size*/,
                            10606                     /*export_size*/,
@@ -2319,7 +2319,7 @@ oyjlTESTRESULT_e   testTool          ( const char        * prog,
     command = NULL;
   }
 
-  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C PATH=%s %s --help", OYJL_BUILDDIR, prog );
+  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C %s/%s --help", OYJL_BUILDDIR, prog );
   len = t ? strlen(t) : 0;
   if(len == help_size)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -2431,10 +2431,10 @@ oyjlTESTRESULT_e testToolOyjl ()
     { "paths -i i18n_de_DE.c -x '////'",            292,  NULL,       NULL },
     { "format -i i18n_cs_CZ.json",                  5,    "JSON",     NULL },
     { "format -i none.file",                        9,    "no input", NULL },
-    { "-X man > oyjl.1 && cat oyjl.1",              5758, NULL,       NULL }
+    { "-X man > oyjl.1 && cat oyjl.1",              5913, NULL,       NULL }
   };
   int count = 14;
-  result = testTool( "oyjl", 3751/*help size*/, commands_oyjl, count, result, oyjlTESTRESULT_FAIL );
+  result = testTool( "oyjl", 3852/*help size*/, commands_oyjl, count, result, oyjlTESTRESULT_FAIL );
 
   return result;
 }
@@ -2475,19 +2475,19 @@ msgstr \"\"\n\
     fprintf( zout, "de.po:\n%s\n", po );
 
   oyjl_command_test_s commands_oyjl_translate[] = {
-    { "-X export > oyjl-translate-ui.json && cat oyjl-translate-ui.json", 22517,  NULL,       NULL },
-    { "-e -i oyjl-translate-ui.json -o i18n.c -f '_(\"%s\");\n' -k name,description,help && cat i18n.c", 3714,  NULL,       NULL },
+    { "-X export > oyjl-translate-ui.json && cat oyjl-translate-ui.json", 25431,  NULL,       NULL },
+    { "-e -i oyjl-translate-ui.json -o i18n.c -f '_(\"%s\");\n' -k name,description,help && cat i18n.c", 4141,  NULL,       NULL },
 #ifdef OYJL_USE_GETTEXT
-    { "-a -i oyjl-translate-ui.json -o oyjl-translate-ui-i18n.json -k name,description,help -d oyjl -p locale -l=de_DE,cs_CZ && cat oyjl-translate-ui-i18n.json", 29697, NULL,       NULL },
+    { "-a -i oyjl-translate-ui.json -o oyjl-translate-ui-i18n.json -k name,description,help -d oyjl -p locale -l=de_DE,cs_CZ && cat oyjl-translate-ui-i18n.json", 33595, NULL,       NULL },
 #endif
-    { "-V; xgettext --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=i18n --package-version=1.0.0 -o i18n.pot i18n.c && cat i18n.pot", 6986,  NULL,       "xgettext ... i18n.c -> i18n.pot; hand translate -> de.po(prepared example)" },
+    { "-V; xgettext --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=i18n --package-version=1.0.0 -o i18n.pot i18n.c && cat i18n.pot", 7752,  NULL,       "xgettext ... i18n.c -> i18n.pot; hand translate -> de.po(prepared example)" },
     { "-c -i de.po --locale=de_DE -o i18n-de_DE.json && cat i18n-de_DE.json", 320, NULL,       NULL }
   };
   int count = 4;
 #ifdef OYJL_USE_GETTEXT
   ++count;
 #endif
-  result = testTool( "oyjl-translate", 3631/*help size*/, commands_oyjl_translate, count, result, oyjlTESTRESULT_FAIL );
+  result = testTool( "oyjl-translate", 4386/*help size*/, commands_oyjl_translate, count, result, oyjlTESTRESULT_FAIL );
 
   return result;
 }/* --- end actual tests --- */

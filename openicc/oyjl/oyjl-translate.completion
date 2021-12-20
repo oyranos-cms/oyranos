@@ -19,6 +19,20 @@ _oyjl_translate()
             set +x +v
             return
             ;;
+        --function-name) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('_(\"' 'i18n(\"' 'QObject::tr(\"')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --function-name-out) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('_(\"' 'i18n(\"' 'QObject::tr(\"')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --help) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('-' 'synopsis')
@@ -82,7 +96,7 @@ _oyjl_translate()
             set +x +v
             return
             ;;
-        --input|--output|--format|--domain|--key-list|--locale|--locales|--localedir|--wrap|--help|--export|--render)
+        --input|--output|--format|--domain|--key-list|--locale|--locales|--localedir|--wrap|--function-name|--function-name-out|--help|--export|--render)
             : "finish long options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
@@ -117,7 +131,7 @@ _oyjl_translate()
     if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
       case "${COMP_WORDS[1]}" in
         -e|--extract|-k|--key-list)
-          COMPREPLY=($(compgen -W '-i= --input= -o= --output= -f= --format= -v --verbose' -- "$cur"))
+          COMPREPLY=($(compgen -W '-i= --input= -o= --output= -f= --format= -v --verbose --function-name= --function-name-out=' -- "$cur"))
             set +x +v
             return
             ;;

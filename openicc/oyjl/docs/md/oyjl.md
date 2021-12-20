@@ -45,19 +45,19 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--try-format</strong>=<em>FORMAT</em></td> <td>Try to find data format, even with offset.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-r JSON</strong></td><td># JSON</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> JSON</td><td># JSON</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--wrap</strong>=<em>TYPE</em></td> <td>language specific wrap
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-w C</strong></td><td># C static char</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w</strong> C</td><td># C static char</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-W</strong>|<strong>--wrap-name</strong>=<em>NAME</em></td> <td>A name for the symbol to be defined.<br />Use only letters from alphabet [A-Z,a-z] including optional underscore '_'.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-W wrap</strong></td><td># wrap</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-W</strong> wrap</td><td># wrap</td></tr>
   </table>
   </td>
  </tr>
@@ -134,28 +134,28 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-h 1</strong></td><td># Full Help</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Synopsis</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Input</strong></td><td># Set input file and path</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Print JSON</strong></td><td># Print JSON to stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Print YAML</strong></td><td># Print YAML to stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Print XML</strong></td><td># Print XML to stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Count</strong></td><td># Print node count</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Key Name</strong></td><td># Print key name</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Type</strong></td><td># Print type</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Paths</strong></td><td># Print all matching paths.</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Format</strong></td><td># Print Data Format.</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h Misc</strong></td><td># General options</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> 1</td><td># Full Help : Print help for all groups</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> synopsis</td><td># Synopsis : List groups - Show all groups including syntax</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Input</td><td># Set input file and path</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print JSON</td><td># Print JSON to stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print YAML</td><td># Print YAML to stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print XML</td><td># Print XML to stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Count</td><td># Print node count</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Key Name</td><td># Print key name</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Type</td><td># Print type</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Paths</td><td># Print all matching paths.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Format</td><td># Print Data Format.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Misc</td><td># General options</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Command</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Man : Unix Man page - Get a unix man page</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formated text - Get formated text</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Get a Oyjl Json UI declaration</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : All available data - Get UI data for developers</td></tr>
   </table>
   </td>
  </tr>
