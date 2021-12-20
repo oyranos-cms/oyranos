@@ -99,6 +99,38 @@ _oyranos_monitor_white_point()
             set +x +v
             return
             ;;
+        --sunlight-color-scheme) # long option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --sunlight-color-scheme=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            fi
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --night-color-scheme) # long option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --night-color-scheme=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            fi
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --export) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
@@ -228,7 +260,7 @@ _oyranos_monitor_white_point()
             set +x +v
             return
             ;;
-        --daemon|--white-point|--night-white-point|--sun-white-point|--automatic|--night-effect|--sunlight-effect|--night-backlight|--latitude|--longitude|--twilight|--export|--render|--hour)
+        --daemon|--white-point|--night-white-point|--sun-white-point|--automatic|--night-effect|--sunlight-effect|--night-backlight|--sunlight-color-scheme|--night-color-scheme|--latitude|--longitude|--twilight|--export|--render|--hour)
             : "finish long options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
@@ -262,7 +294,7 @@ _oyranos_monitor_white_point()
     : "suggest group options for subcommands"
     if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
       case "${COMP_WORDS[1]}" in
-        -n|--night-white-point|-g|--night-effect|-b|--night-backlight)
+        -n|--night-white-point|-g|--night-effect|-b|--night-backlight|--night-color-scheme)
           COMPREPLY=($(compgen -W '-z --system-wide -v --verbose -y --test' -- "$cur"))
             set +x +v
             return
@@ -272,7 +304,7 @@ _oyranos_monitor_white_point()
             set +x +v
             return
             ;;
-        -s|--sun-white-point|-e|--sunlight-effect)
+        -s|--sun-white-point|-e|--sunlight-effect|--sunlight-color-scheme)
           COMPREPLY=($(compgen -W '-z --system-wide -v --verbose -y --test' -- "$cur"))
             set +x +v
             return
@@ -298,7 +330,7 @@ _oyranos_monitor_white_point()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       local WORD_LIST=()
-      WORD_LIST=("${WORD_LIST[@]}" -n= --night-white-point= -g= --night-effect= -b= --night-backlight= -w= --white-point= -a= --automatic= -s= --sun-white-point= -e= --sunlight-effect= -l --location -i= --latitude= -o= --longitude= -d= --daemon= -m --modes -r --sunrise -X= --export= -h --help -V --version -R= --render=)
+      WORD_LIST=("${WORD_LIST[@]}" -n= --night-white-point= -g= --night-effect= -b= --night-backlight= --night-color-scheme= -w= --white-point= -a= --automatic= -s= --sun-white-point= -e= --sunlight-effect= --sunlight-color-scheme= -l --location -i= --latitude= -o= --longitude= -d= --daemon= -m --modes -r --sunrise -X= --export= -h --help -V --version -R= --render=)
       COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return

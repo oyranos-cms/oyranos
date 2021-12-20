@@ -10,11 +10,11 @@ oyranos-monitor-white-point v0.9.7 - Night Manager
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos-monitor-white-point</strong> <a href="#night-white-point"><strong>-n</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-g</strong>=<em>ICC_PROFILE</em> <strong>-b</strong>=<em>PERCENT</em> [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#night-white-point"><strong>-n</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-g</strong>=<em>ICC_PROFILE</em> <strong>-b</strong>=<em>PERCENT</em> <strong>--night-color-scheme</strong>=<em>STRING</em> [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#white-point"><strong>-w</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-a</strong>=<em>KELVIN</em> [<strong>-z</strong>] [<strong>-v</strong>]
 <br />
-<strong>oyranos-monitor-white-point</strong> <a href="#sun-white-point"><strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-e</strong>=<em>ICC_PROFILE</em> [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#sun-white-point"><strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-e</strong>=<em>ICC_PROFILE</em> <strong>--sunlight-color-scheme</strong>=<em>STRING</em> [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#location"><strong>-l</strong></a> | <strong>-i</strong> <strong>-o</strong> [<strong>-t</strong>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 <br />
@@ -30,32 +30,40 @@ The tool can set the actual white point or set it by local day and night time. A
 
 <h3 id="night-white-point">Nightly appearance</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-g</strong>=<em>ICC_PROFILE</em> <strong>-b</strong>=<em>PERCENT</em> [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-n</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-g</strong>=<em>ICC_PROFILE</em> <strong>-b</strong>=<em>PERCENT</em> <strong>--night-color-scheme</strong>=<em>STRING</em> [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 
 &nbsp;&nbsp;The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times.
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--night-white-point</strong>=<em>0|1|2|3|4|5|6|7</em></td> <td>Set night time mode<br />A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (-n=1) and Temperature to 3000 (-a=3000).
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-n 0</strong></td><td># Ne</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-n 1</strong></td><td># Automatic</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-n 2</strong></td><td># Iluminant D50</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-n 3</strong></td><td># Iluminant D55</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-n 4</strong></td><td># Iluminant D65</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-n 5</strong></td><td># Illuminant D75</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-n 6</strong></td><td># Iluminant D93</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n</strong> 0</td><td># Ne</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n</strong> 1</td><td># Automatic</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n</strong> 2</td><td># Iluminant D50</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n</strong> 3</td><td># Iluminant D55</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n</strong> 4</td><td># Iluminant D65</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n</strong> 5</td><td># Illuminant D75</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-n</strong> 6</td><td># Iluminant D93</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--night-effect</strong>=<em>ICC_PROFILE</em></td> <td>Set night time effect<br />A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-g -</strong></td><td># [žádný]</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-g Effect-1</strong></td><td># Example Effect 1</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-g Effect-2</strong></td><td># Example Effect 2</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-g</strong> -</td><td># [žádný]</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-g</strong> Effect-1</td><td># Example Effect 1 : ICC profile of class abstract, wich affects gamma</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-g</strong> Effect-2</td><td># Example Effect 2 : ICC profile of class abstract, wich affects gamma</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--night-backlight</strong>=<em>PERCENT</em></td> <td>Set Nightly Backlight: The option needs xbacklight installed and supporting your device for dimming the monitor lamp. (PERCENT:4 [≥0 ≤100 Δ1])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--night-color-scheme</strong>=<em>STRING</em></td> <td>Set nightly typical darker color scheme<br />Use this to switch color scheme day/night dependent.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>--night-color-scheme</strong> -</td><td># [žádný]</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>--night-color-scheme</strong> Breeze</td><td># Breeze : Detected Color Scheme</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>--night-color-scheme</strong> BreezeDark</td><td># Breeze Dark : 2. detected Color Scheme</td></tr>
+  </table>
+  </td>
+ </tr>
 </table>
 
 <h3 id="white-point">Actual mode</h3>
@@ -65,13 +73,13 @@ The tool can set the actual white point or set it by local day and night time. A
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--white-point</strong>=<em>0|1|2|3|4|5|6|7</em></td> <td>Set white point mode
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-w 0</strong></td><td># Ne</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-w 1</strong></td><td># Automatic</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-w 2</strong></td><td># Iluminant D50</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-w 3</strong></td><td># Iluminant D55</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-w 4</strong></td><td># Iluminant D65</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-w 5</strong></td><td># Illuminant D75</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-w 6</strong></td><td># Iluminant D93</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w</strong> 0</td><td># Ne</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w</strong> 1</td><td># Automatic</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w</strong> 2</td><td># Iluminant D50</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w</strong> 3</td><td># Iluminant D55</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w</strong> 4</td><td># Iluminant D65</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w</strong> 5</td><td># Illuminant D75</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-w</strong> 6</td><td># Iluminant D93</td></tr>
   </table>
   </td>
  </tr>
@@ -81,26 +89,34 @@ The tool can set the actual white point or set it by local day and night time. A
 
 <h3 id="sun-white-point">Sun light appearance</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-e</strong>=<em>ICC_PROFILE</em> [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em> <strong>-e</strong>=<em>ICC_PROFILE</em> <strong>--sunlight-color-scheme</strong>=<em>STRING</em> [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--sun-white-point</strong>=<em>0|1|2|3|4|5|6|7</em></td> <td>Set day time mode
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-s 0</strong></td><td># Ne</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-s 1</strong></td><td># Automatic</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-s 2</strong></td><td># Iluminant D50</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-s 3</strong></td><td># Iluminant D55</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-s 4</strong></td><td># Iluminant D65</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-s 5</strong></td><td># Illuminant D75</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-s 6</strong></td><td># Iluminant D93</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s</strong> 0</td><td># Ne</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s</strong> 1</td><td># Automatic</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s</strong> 2</td><td># Iluminant D50</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s</strong> 3</td><td># Iluminant D55</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s</strong> 4</td><td># Iluminant D65</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s</strong> 5</td><td># Illuminant D75</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-s</strong> 6</td><td># Iluminant D93</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-e</strong>|<strong>--sunlight-effect</strong>=<em>ICC_PROFILE</em></td> <td>Set day time effect<br />A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-e -</strong></td><td># [žádný]</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-e Effect-1</strong></td><td># Example Effect 1</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-e Effect-2</strong></td><td># Example Effect 2</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-e</strong> -</td><td># [žádný]</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-e</strong> Effect-1</td><td># Example Effect 1 : ICC profile of class abstract, wich affects gamma</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-e</strong> Effect-2</td><td># Example Effect 2 : ICC profile of class abstract, wich affects gamma</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--sunlight-color-scheme</strong>=<em>STRING</em></td> <td>Set day time typical brighter color scheme<br />Use this to switch color scheme day/night dependent.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>--sunlight-color-scheme</strong> -</td><td># [žádný]</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>--sunlight-color-scheme</strong> Breeze</td><td># Breeze : Detected Color Scheme</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>--sunlight-color-scheme</strong> BreezeDark</td><td># Breeze Dark : 2. detected Color Scheme</td></tr>
   </table>
   </td>
  </tr>
@@ -124,9 +140,9 @@ The tool can set the actual white point or set it by local day and night time. A
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong>=<em>0|1|2</em></td> <td>Control user daemon
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-d 0</strong></td><td># Deactivate</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-d 1</strong></td><td># Autostart</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-d 2</strong></td><td># Activate</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td># Deactivate : Deactivate</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 1</td><td># Autostart : Autostart</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 2</td><td># Activate : Activate</td></tr>
   </table>
   </td>
  </tr>
@@ -145,20 +161,20 @@ The tool can set the actual white point or set it by local day and night time. A
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--sunrise</strong></td> <td>Show local time, used geographical location, twilight height angles, sun rise and sun set times</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Command</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Man : Unix Man page - Get a unix man page</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formated text - Get formated text</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Get a Oyjl Json UI declaration</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : All available data - Get UI data for developers</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Show UI - Display a interactive graphical User Interface.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Show UI - Print on Command Line Interface.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>
  </tr>

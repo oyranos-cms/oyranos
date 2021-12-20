@@ -18,7 +18,7 @@ oyranos-config v0.9.7 - Config
 <br />
 <strong>oyranos-config</strong> <a href="#Version"><strong>--Version</strong></a> | <strong>--api-version</strong> | <strong>--num-version</strong> | <strong>--git-version</strong> [<strong>-v</strong>]
 <br />
-<strong>oyranos-config</strong> <a href="#cflags"><strong>--cflags</strong></a> | <strong>--ldflags</strong> | <strong>--ldstaticflags</strong> | <strong>--sourcedir</strong> | <strong>--builddir</strong> [<strong>-v</strong>]
+<strong>oyranos-config</strong> | <strong>--cflags</strong> | <strong>--ldflags</strong> | <strong>--ldstaticflags</strong> | <strong>--sourcedir</strong> | <strong>--builddir</strong> [<strong>-v</strong>]
 <br />
 <strong>oyranos-config</strong> <a href="#export"><strong>-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
@@ -51,8 +51,8 @@ The tool can read and set OpenICC DB options, and display paths and static infor
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong>=<em>0|1</em></td> <td>Watch DB changes
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-d 0</strong></td><td># Deactivate</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-d 1</strong></td><td># Activate</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td># Deactivate : Deactivate</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 1</td><td># Activate : Activate</td></tr>
   </table>
   </td>
  </tr>
@@ -86,13 +86,14 @@ The tool can read and set OpenICC DB options, and display paths and static infor
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--git-version</strong></td> <td>Show version as in git<br />lastReleaseVersion-gitCommitNumber-gitCommitSHA1ID-Year-month-day</td> </tr>
 </table>
 
-<h3 id="cflags">Miscellaneous options</h3>
+<h3>Miscellaneous options</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>--cflags</strong> | <strong>--ldflags</strong> | <strong>--ldstaticflags</strong> | <strong>--sourcedir</strong> | <strong>--builddir</strong> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> | <strong>--cflags</strong> | <strong>--ldflags</strong> | <strong>--ldstaticflags</strong> | <strong>--sourcedir</strong> | <strong>--builddir</strong> [<strong>-v</strong>]
 
 &nbsp;&nbsp;These strings can be used to compile programs.
 
 <table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'>|</td> <td>Project Name</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--cflags</strong></td> <td>compiler flags</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--ldflags</strong></td> <td>dynamic link flags</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--ldstaticflags</strong></td> <td>static linking flags</td> </tr>
@@ -110,27 +111,27 @@ The tool can read and set OpenICC DB options, and display paths and static infor
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-h -</strong></td><td># Full Help</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Synopsis</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> -</td><td># Full Help : Print help for all groups</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> synopsis</td><td># Synopsis : List groups - Show all groups including syntax</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Command</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Man : Unix Man page - Get a unix man page</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formated text - Get formated text</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Get a Oyjl Json UI declaration</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : All available data - Get UI data for developers</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Show UI - Display a interactive graphical User Interface.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Show UI - Print on Command Line Interface.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>
  </tr>

@@ -10,7 +10,7 @@ oyranos-config v0.9.7 \- Config
 .br
 \fBoyranos-config\fR \fB\-\-Version\fR | \fB\-\-api-version\fR | \fB\-\-num-version\fR | \fB\-\-git-version\fR [\fB\-v\fR]
 .br
-\fBoyranos-config\fR \fB\-\-cflags\fR | \fB\-\-ldflags\fR | \fB\-\-ldstaticflags\fR | \fB\-\-sourcedir\fR | \fB\-\-builddir\fR [\fB\-v\fR]
+\fBoyranos-config\fR | \fB\-\-cflags\fR | \fB\-\-ldflags\fR | \fB\-\-ldstaticflags\fR | \fB\-\-sourcedir\fR | \fB\-\-builddir\fR [\fB\-v\fR]
 .br
 \fBoyranos-config\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH DESCRIPTION
@@ -44,9 +44,9 @@ Will only work on command line.
 .br
 \fB\-d\fR|\fB\-\-daemon\fR \fI0|1\fR	Watch DB changes
 .br
-	\-d 0		# Deactivate : Deactivate
+	\fB\-d\fR 0		# Deactivate : Deactivate
 .br
-	\-d 1		# Activate : Activate
+	\fB\-d\fR 1		# Activate : Activate
 .br
 .SS
 Show Install Paths
@@ -92,11 +92,13 @@ lastReleaseVersion-gitCommitNumber-gitCommitSHA1ID-Year-month-day
 .RE
 .SS
 Miscellaneous options
-\fBoyranos-config\fR \fB\-\-cflags\fR | \fB\-\-ldflags\fR | \fB\-\-ldstaticflags\fR | \fB\-\-sourcedir\fR | \fB\-\-builddir\fR [\fB\-v\fR]
+\fBoyranos-config\fR | \fB\-\-cflags\fR | \fB\-\-ldflags\fR | \fB\-\-ldstaticflags\fR | \fB\-\-sourcedir\fR | \fB\-\-builddir\fR [\fB\-v\fR]
 .br
 These strings can be used to compile programs.
 .br
 .sp
+.br
+|	Project Name
 .br
 \fB\-\-cflags\fR	compiler flags
 .br
@@ -117,35 +119,35 @@ General options
 .RS
 Show usage information and hints for the tool.
 .RE
-	\-h -		# Full Help : Print help for all groups
+	\fB\-h\fR -		# Full Help : Print help for all groups
 .br
-	\-h synopsis		# Synopsis : List groups - Show all groups including syntax
+	\fB\-h\fR synopsis		# Synopsis : List groups - Show all groups including syntax
 .br
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
 .RS
 Get UI converted into text formats
 .RE
-	\-X man		# Man : Unix Man page - Get a unix man page
+	\fB\-X\fR man		# Man : Unix Man page - Get a unix man page
 .br
-	\-X markdown		# Markdown : Formated text - Get formated text
+	\fB\-X\fR markdown		# Markdown : Formated text - Get formated text
 .br
-	\-X json		# Json : GUI - Get a Oyjl Json UI declaration
+	\fB\-X\fR json		# Json : GUI - Get a Oyjl Json UI declaration
 .br
-	\-X json+command		# Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command
+	\fB\-X\fR json+command		# Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command
 .br
-	\-X export		# Export : All available data - Get UI data for developers
+	\fB\-X\fR export		# Export : All available data - Get UI data for developers
 .br
 \fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Select Renderer
 .RS
 Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
 .RE
-	\-R gui		# Gui : Show UI - Display a interactive graphical User Interface.
+	\fB\-R\fR gui		# Gui : Show UI - Display a interactive graphical User Interface.
 .br
-	\-R cli		# Cli : Show UI - Print on Command Line Interface.
+	\fB\-R\fR cli		# Cli : Show UI - Print on Command Line Interface.
 .br
-	\-R web		# Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.
+	\fB\-R\fR web		# Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.
 .br
-	\-R -		# 
+	\fB\-R\fR -
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br

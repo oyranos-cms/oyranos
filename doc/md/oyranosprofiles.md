@@ -43,18 +43,18 @@ The tool can list installed profiles, search paths and can help install a ICC co
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-4</strong>|<strong>--icc-version-4</strong></td> <td>Select ICC v4 Profiles</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--path</strong>=<em>PATH_SUB_STRING</em></td> <td>Show profiles containing a string as part of their full name
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-P basICColor</strong></td><td># </td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-P colord</strong></td><td># </td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-P edid</strong></td><td># </td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-P OpenICC</strong></td><td># </td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-P oyra</strong></td><td># </td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-P xorg</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-P</strong> basICColor</td>
+   <tr><td style='padding-left:0.5em'><strong>-P</strong> colord</td>
+   <tr><td style='padding-left:0.5em'><strong>-P</strong> edid</td>
+   <tr><td style='padding-left:0.5em'><strong>-P</strong> OpenICC</td>
+   <tr><td style='padding-left:0.5em'><strong>-P</strong> oyra</td>
+   <tr><td style='padding-left:0.5em'><strong>-P</strong> xorg</td>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-T</strong>|<strong>--meta</strong>=<em>KEY;VALUE</em></td> <td>Filter for meta tag key/value pair<br />Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-T EFFECT_class;sepia</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-T</strong> EFFECT_class;sepia</td>
   </table>
   </td>
  </tr>
@@ -101,21 +101,21 @@ The tool can list installed profiles, search paths and can help install a ICC co
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Command</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Man : Unix Man page - Get a unix man page</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formated text - Get formated text</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Get a Oyjl Json UI declaration</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : All available data - Get UI data for developers</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-V</strong>|<strong>--version</strong></td> <td>Version</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Show UI - Display a interactive graphical User Interface.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Show UI - Print on Command Line Interface.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>
  </tr>

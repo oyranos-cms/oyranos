@@ -64,9 +64,9 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em> ...</td> <td>ICC Profile </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--swatch-format</strong>=<em>FORMAT</em></td> <td>Specify output file format
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-m png</strong></td><td># PNG</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-m svg</strong></td><td># SVG</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-m ncc</strong></td><td># NCC</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-m</strong> png</td><td># PNG - PNG Raster</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-m</strong> svg</td><td># SVG - SVG Vector</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-m</strong> ncc</td><td># NCC - Named Color Collection</td></tr>
   </table>
   </td>
  </tr>
@@ -103,13 +103,13 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-u</strong>|<strong>--illuminant</strong>=<em>STRING</em></td> <td>Illuminant Spectrum
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-u A</strong></td><td># Iluminant A</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D50</strong></td><td># Iluminant D50</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D55</strong></td><td># Iluminant D55</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D65</strong></td><td># Iluminant D65</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D65T</strong></td><td># Illuminant D65 T</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D75</strong></td><td># Illuminant D75</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D93</strong></td><td># Iluminant D93</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> A</td><td># Iluminant A - CIE A spectral power distribution</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D50</td><td># Iluminant D50 - CIE D50 spectral power distribution (computed)</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D55</td><td># Iluminant D55 - CIE D55 spectral power distribution (computed)</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D65</td><td># Iluminant D65 - CIE D65 spectral power distribution (computed)</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D65T</td><td># Illuminant D65 T - CIE D65 spectral power distribution</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D75</td><td># Illuminant D75 - CIE D75 spectral power distribution (computed)</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D93</td><td># Iluminant D93 - CIE D93 spectral power distribution (computed)</td></tr>
   </table>
   </td>
  </tr>
@@ -123,13 +123,13 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--spectral</strong>=<em>FILE</em></td> <td>Spectral Input </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--spectral-format</strong>=<em>FORMAT</em></td> <td>Specify spectral output file format
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-p png</strong></td><td># PNG</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p svg</strong></td><td># SVG</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p csv</strong></td><td># CSV</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p ncc</strong></td><td># NCC</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p cgats</strong></td><td># CGATS</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p icc-xml</strong></td><td># Icc XML</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p ppm</strong></td><td># PPM</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> png</td><td># PNG - PNG Raster</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> svg</td><td># SVG - SVG Vector</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> csv</td><td># CSV - CSV Values</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> ncc</td><td># NCC - Named Color Collection</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> cgats</td><td># CGATS - CGATS Values</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> icc-xml</td><td># Icc XML - ICC Named Color Values</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> ppm</td><td># PPM - Spectral PAM Image</td></tr>
   </table>
   </td>
  </tr>
@@ -165,28 +165,28 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong>=<em>FORMAT</em></td> <td>Specify output file format png or svg, default is png
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-f png</strong></td><td># PNG</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-f svg</strong></td><td># SVG</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> png</td><td># PNG - PNG Raster</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> svg</td><td># SVG - SVG Vector</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Command</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Man : Unix Man page - Get a unix man page</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formated text - Get formated text</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Get a Oyjl Json UI declaration</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : All available data - Get UI data for developers</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Show UI - Display a interactive graphical User Interface.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Show UI - Print on Command Line Interface.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>
  </tr>

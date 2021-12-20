@@ -18,7 +18,7 @@ oyranos-config v0.9.7 - Konfiguration
 <br />
 <strong>oyranos-config</strong> <a href="#Version"><strong>--Version</strong></a> | <strong>--api-version</strong> | <strong>--num-version</strong> | <strong>--git-version</strong> [<strong>-v</strong>]
 <br />
-<strong>oyranos-config</strong> <a href="#cflags"><strong>--cflags</strong></a> | <strong>--ldflags</strong> | <strong>--ldstaticflags</strong> | <strong>--sourcedir</strong> | <strong>--builddir</strong> [<strong>-v</strong>]
+<strong>oyranos-config</strong> | <strong>--cflags</strong> | <strong>--ldflags</strong> | <strong>--ldstaticflags</strong> | <strong>--sourcedir</strong> | <strong>--builddir</strong> [<strong>-v</strong>]
 <br />
 <strong>oyranos-config</strong> <a href="#export"><strong>-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
@@ -51,8 +51,8 @@ Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong>=<em>0|1</em></td> <td>Beobachte Einstellungsänderungen
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-d 0</strong></td><td># Deaktiviere</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-d 1</strong></td><td># Aktiviere</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td># Deaktiviere : Deaktiviere</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 1</td><td># Aktiviere : Aktiviere</td></tr>
   </table>
   </td>
  </tr>
@@ -86,13 +86,14 @@ Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und 
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--git-version</strong></td> <td>Zeige Version wie in git<br />letzteVeröffentlichungsVersion-gitEintragsNummer-gitEintragsSHA1ID-Jahr-Monat-Tag</td> </tr>
 </table>
 
-<h3 id="cflags">Sonstige Optionen</h3>
+<h3>Sonstige Optionen</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>--cflags</strong> | <strong>--ldflags</strong> | <strong>--ldstaticflags</strong> | <strong>--sourcedir</strong> | <strong>--builddir</strong> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> | <strong>--cflags</strong> | <strong>--ldflags</strong> | <strong>--ldstaticflags</strong> | <strong>--sourcedir</strong> | <strong>--builddir</strong> [<strong>-v</strong>]
 
 &nbsp;&nbsp;Die Texte dienen dem Übersetzen von Programmen.
 
 <table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'>|</td> <td>Projektname</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--cflags</strong></td> <td>Übersetzungsargumente</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--ldflags</strong></td> <td>dynamische Verknüpfungsargumente</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--ldstaticflags</strong></td> <td>statische Verknüpfungsargumente</td> </tr>
@@ -110,27 +111,27 @@ Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-h -</strong></td><td># Vollständige Hilfe</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h synopsis</strong></td><td># Übersicht</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> -</td><td># Vollständige Hilfe : Zeige Hilfe für alle Gruppen</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> synopsis</td><td># Übersicht : Liste Gruppen - Zeige alle Gruppen mit Syntax</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Exportiere formatierten Text<br />Hole Benutzerschnittstelle als Text
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Handbuch</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Kommando</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formatierter Text - Hole formatierten Text</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Hole Oyjl Json Benutzerschnittstelle</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Wähle Darstellung<br />Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>
  </tr>

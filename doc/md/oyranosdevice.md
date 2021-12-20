@@ -42,10 +42,10 @@ The oyranos-device program shows and administrates ICC profiles for color device
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--device-class</strong>=<em>CLASS</em></td> <td>use device class. Useful device classes are monitor, scanner, printer, camera.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-c monitor</strong></td><td># Monitor</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-c printer</strong></td><td># Printer</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-c camera</strong></td><td># Camera</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-c scanner</strong></td><td># Scanner</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-c</strong> monitor</td><td># Monitor</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-c</strong> printer</td><td># Printer</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-c</strong> camera</td><td># Camera</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-c</strong> scanner</td><td># Scanner</td></tr>
   </table>
   </td>
  </tr>
@@ -111,10 +111,10 @@ The oyranos-device program shows and administrates ICC profiles for color device
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list</strong></td> <td>List device classes</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--device-class</strong>=<em>CLASS</em></td> <td>use device class. Useful device classes are monitor, scanner, printer, camera.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-c monitor</strong></td><td># Monitor</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-c printer</strong></td><td># Printer</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-c camera</strong></td><td># Camera</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-c scanner</strong></td><td># Scanner</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-c</strong> monitor</td><td># Monitor</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-c</strong> printer</td><td># Printer</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-c</strong> camera</td><td># Camera</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-c</strong> scanner</td><td># Scanner</td></tr>
   </table>
   </td>
  </tr>
@@ -153,11 +153,11 @@ The oyranos-device program shows and administrates ICC profiles for color device
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong>=<em>icc|openicc+rank-map|openicc|openicc-rank-map</em></td> <td>dump configuration data
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-f icc</strong></td><td># write assigned ICC profile</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-f fallback-icc</strong></td><td># create fallback ICC profile</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-f openicc+rank-map</strong></td><td># create OpenICC device color state JSON including the rank map</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-f openicc</strong></td><td># create OpenICC device color state JSON</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-f openicc-rank-map</strong></td><td># create OpenICC device color state rank map JSON</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> icc</td><td># write assigned ICC profile</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> fallback-icc</td><td># create fallback ICC profile</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> openicc+rank-map</td><td># create OpenICC device color state JSON including the rank map</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> openicc</td><td># create OpenICC device color state JSON</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> openicc-rank-map</td><td># create OpenICC device color state rank map JSON</td></tr>
   </table>
   </td>
  </tr>
@@ -180,21 +180,21 @@ The oyranos-device program shows and administrates ICC profiles for color device
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong>=<em>synopsis|...</em></td> <td>Print help text<br />Show usage information and hints for the tool.</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Man</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Command</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Man : Unix Man page - Get a unix man page</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formated text - Get formated text</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Get a Oyjl Json UI declaration</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : All available data - Get UI data for developers</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-V</strong>|<strong>--version</strong></td> <td>Version</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Show UI - Display a interactive graphical User Interface.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Show UI - Print on Command Line Interface.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>
  </tr>

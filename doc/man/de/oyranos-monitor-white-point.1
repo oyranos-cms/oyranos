@@ -2,11 +2,11 @@
 .SH NAME
 oyranos-monitor-white-point v0.9.7 \- Nacht Manager
 .SH ÜBERSICHT
-\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFIL\fR \fB\-b\fR \fIPROZENT\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFIL\fR \fB\-b\fR \fIPROZENT\fR \fB\-\-night-color-scheme\fR \fIWORT\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-w\fR \fI0|1|2|3|4|5|6|7\fR \fB\-a\fR \fIKELVIN\fR [\fB\-z\fR] [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFIL\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFIL\fR \fB\-\-sunlight-color-scheme\fR \fIWORT\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fB\-o\fR [\fB\-t\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
@@ -18,7 +18,7 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
 .SH OPTIONEN
 .SS
 Nächtliche Anmutung
-\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFIL\fR \fB\-b\fR \fIPROZENT\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFIL\fR \fB\-b\fR \fIPROZENT\fR \fB\-\-night-color-scheme\fR \fIWORT\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche Hormonsystem reduzieren. Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dieser wird zusammen mit einem warmen Lichtton für die allgemeine Zimmerbeleuchtung wärend der Abend-und Nachtstunden empfohlen.
 .br
@@ -28,53 +28,63 @@ Der Nachtweißpunkmodus soll den Einfluß von blauen Licht auf das menschliche H
 .RS
 Ein Weißpunkt mit einer Strahlungstemperatur von 4000 Kelvin und weniger erleichtert den natürlichen Schlafrhytmus zu finden. Dazu wird diese Einstellung auf Automatisch (-n=1) und die Temperatur auf 3000 (-a=3000) gestellt.
 .RE
-	\-n 0		# Nein
+	\fB\-n\fR 0		# Nein
 .br
-	\-n 1		# Automatisch
+	\fB\-n\fR 1		# Automatisch
 .br
-	\-n 2		# Lichtart D50
+	\fB\-n\fR 2		# Lichtart D50
 .br
-	\-n 3		# Lichtart D55
+	\fB\-n\fR 3		# Lichtart D55
 .br
-	\-n 4		# Lichtart D65
+	\fB\-n\fR 4		# Lichtart D65
 .br
-	\-n 5		# Lichtart D75
+	\fB\-n\fR 5		# Lichtart D75
 .br
-	\-n 6		# Lichtart D93
+	\fB\-n\fR 6		# Lichtart D93
 .br
 \fB\-g\fR|\fB\-\-night-effect\fR \fIICC_PROFIL\fR	Setze den Nacht Effect
 .RS
 Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT_linear=yes gekennzeichnet ist.
 .RE
-	\-g -		# [kein]
+	\fB\-g\fR -		# [kein]
 .br
-	\-g Effect-1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
+	\fB\-g\fR Effect-1		# Example Effect 1 : ICC profile of class abstract, wich affects gamma
 .br
-	\-g Effect-2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
+	\fB\-g\fR Effect-2		# Example Effect 2 : ICC profile of class abstract, wich affects gamma
 .br
 \fB\-b\fR|\fB\-\-night-backlight\fR \fIPROZENT\fR	Setze Nächtiches Monitorlicht (PROZENT:4 [≥0 ≤100 Δ1])
 .RS
 Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe.
 .RE
+\fB\-\-night-color-scheme\fR \fIWORT\fR	Setze zur Nacht ein typischerweise dunkles Farbschema
+.RS
+Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen.
+.RE
+	\fB\-\-night-color-scheme\fR -		# [kein]
+.br
+	\fB\-\-night-color-scheme\fR Breeze		# Breeze : Detected Color Scheme
+.br
+	\fB\-\-night-color-scheme\fR BreezeDark		# Breeze Dark : 2. detected Color Scheme
+.br
 .SS
 Aktueller Modus
 \fBoyranos-monitor-white-point\fR \fB\-w\fR \fI0|1|2|3|4|5|6|7\fR \fB\-a\fR \fIKELVIN\fR [\fB\-z\fR] [\fB\-v\fR]
 .br
 \fB\-w\fR|\fB\-\-white-point\fR \fI0|1|2|3|4|5|6|7\fR	Setze Weißpunktmodus
 .br
-	\-w 0		# Nein
+	\fB\-w\fR 0		# Nein
 .br
-	\-w 1		# Automatisch
+	\fB\-w\fR 1		# Automatisch
 .br
-	\-w 2		# Lichtart D50
+	\fB\-w\fR 2		# Lichtart D50
 .br
-	\-w 3		# Lichtart D55
+	\fB\-w\fR 3		# Lichtart D55
 .br
-	\-w 4		# Lichtart D65
+	\fB\-w\fR 4		# Lichtart D65
 .br
-	\-w 5		# Lichtart D75
+	\fB\-w\fR 5		# Lichtart D75
 .br
-	\-w 6		# Lichtart D93
+	\fB\-w\fR 6		# Lichtart D93
 .br
 \fB\-a\fR|\fB\-\-automatic\fR \fIKELVIN\fR	Werte zwischen 2700 bis 8000 Kelvin sollten keine Darstellungsfehler hervorrufen (KELVIN:2800 [≥1100 ≤10100 Δ100])
 .br
@@ -82,33 +92,43 @@ Aktueller Modus
 .br
 .SS
 Setze Tagesmodus
-\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFIL\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFIL\fR \fB\-\-sunlight-color-scheme\fR \fIWORT\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fB\-s\fR|\fB\-\-sun-white-point\fR \fI0|1|2|3|4|5|6|7\fR	Setze den Tagesmodus
 .br
-	\-s 0		# Nein
+	\fB\-s\fR 0		# Nein
 .br
-	\-s 1		# Automatisch
+	\fB\-s\fR 1		# Automatisch
 .br
-	\-s 2		# Lichtart D50
+	\fB\-s\fR 2		# Lichtart D50
 .br
-	\-s 3		# Lichtart D55
+	\fB\-s\fR 3		# Lichtart D55
 .br
-	\-s 4		# Lichtart D65
+	\fB\-s\fR 4		# Lichtart D65
 .br
-	\-s 5		# Lichtart D75
+	\fB\-s\fR 5		# Lichtart D75
 .br
-	\-s 6		# Lichtart D93
+	\fB\-s\fR 6		# Lichtart D93
 .br
 \fB\-e\fR|\fB\-\-sunlight-effect\fR \fIICC_PROFIL\fR	Setze den Tages Effect
 .RS
 Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprofil, welches nur eindimensionale RGB Kurven benutzt und mit meta:EFFECT_linear=yes gekennzeichnet ist.
 .RE
-	\-e -		# [kein]
+	\fB\-e\fR -		# [kein]
 .br
-	\-e Effect-1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
+	\fB\-e\fR Effect-1		# Example Effect 1 : ICC profile of class abstract, wich affects gamma
 .br
-	\-e Effect-2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
+	\fB\-e\fR Effect-2		# Example Effect 2 : ICC profile of class abstract, wich affects gamma
+.br
+\fB\-\-sunlight-color-scheme\fR \fIWORT\fR	Setze für Tageslight ein typischerweise helleres Farbschema
+.RS
+Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen.
+.RE
+	\fB\-\-sunlight-color-scheme\fR -		# [kein]
+.br
+	\fB\-\-sunlight-color-scheme\fR Breeze		# Breeze : Detected Color Scheme
+.br
+	\fB\-\-sunlight-color-scheme\fR BreezeDark		# Breeze Dark : 2. detected Color Scheme
 .br
 .SS
 Ort und Dämmerung
@@ -130,11 +150,11 @@ Setze Sonnenuntergangsdienst
 .br
 \fB\-d\fR|\fB\-\-daemon\fR \fI0|1|2\fR	Setze Sonnenuntergangsdienst
 .br
-	\-d 0		# Deaktiviere : Deaktiviere
+	\fB\-d\fR 0		# Deaktiviere : Deaktiviere
 .br
-	\-d 1		# Automatischer Start : Automatischer Start
+	\fB\-d\fR 1		# Automatischer Start : Automatischer Start
 .br
-	\-d 2		# Aktiviere : Aktiviere
+	\fB\-d\fR 2		# Aktiviere : Aktiviere
 .br
 .SH ALLGEMEINE OPTIONEN
 .SS
@@ -153,27 +173,27 @@ Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
 .RS
 Hole Benutzerschnittstelle als Text
 .RE
-	\-X man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
+	\fB\-X\fR man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
 .br
-	\-X markdown		# Markdown : Formatierter Text - Hole formatierten Text
+	\fB\-X\fR markdown		# Markdown : Formatierter Text - Hole formatierten Text
 .br
-	\-X json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
+	\fB\-X\fR json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
 .br
-	\-X json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
+	\fB\-X\fR json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
 .br
-	\-X export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
+	\fB\-X\fR export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
 .br
 \fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Wähle Darstellung
 .RS
 Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten.
 .RE
-	\-R gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
+	\fB\-R\fR gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
 .br
-	\-R cli		# Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.
+	\fB\-R\fR cli		# Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.
 .br
-	\-R web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser
+	\fB\-R\fR web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser
 .br
-	\-R -		# 
+	\fB\-R\fR -
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br

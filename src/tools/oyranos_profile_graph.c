@@ -2033,6 +2033,7 @@ int myMain( int argc, const char ** argv )
   cairo_surface_destroy( surface );
   oyProfile_Release( &p_lab );
   oyProfile_Release( &p_xyz );
+  free(info);
 
   return 0;
 }

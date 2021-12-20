@@ -64,9 +64,9 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder in Bildern 
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em> ...</td> <td>ICC Profil </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--swatch-format</strong>=<em>FORMAT</em></td> <td>Gib Ausgabeformat an
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-m png</strong></td><td># PNG</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-m svg</strong></td><td># SVG</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-m ncc</strong></td><td># NCC</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-m</strong> png</td><td># PNG - PNG Raster</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-m</strong> svg</td><td># SVG - SVG Vektor</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-m</strong> ncc</td><td># NCC - Einzelfarbsammlung (NCC)</td></tr>
   </table>
   </td>
  </tr>
@@ -103,13 +103,13 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder in Bildern 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-u</strong>|<strong>--illuminant</strong>=<em>WORT</em></td> <td>Beleuchtungsspektrum
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-u A</strong></td><td># Lichtart A</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D50</strong></td><td># Lichtart D50</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D55</strong></td><td># Lichtart D55</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D65</strong></td><td># Lichtart D65</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D65T</strong></td><td># Lichtart D65 T</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D75</strong></td><td># Lichtart D75</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-u D93</strong></td><td># Lichtart D93</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> A</td><td># Lichtart A - CIE A Strahlungsverteilung</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D50</td><td># Lichtart D50 - CIE D50 Strahlungsverteilung (berechnet)</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D55</td><td># Lichtart D55 - CIE D55 Strahlungsverteilung (berechnet)</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D65</td><td># Lichtart D65 - CIE D65 Strahlungsverteilung (berechnet)</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D65T</td><td># Lichtart D65 T - CIE D65 Strahlungsverteilung</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D75</td><td># Lichtart D75 - CIE D75 Strahlungsverteilung (berechnet)</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-u</strong> D93</td><td># Lichtart D93 - CIE D93 Strahlungsverteilung (berechnet)</td></tr>
   </table>
   </td>
  </tr>
@@ -123,13 +123,13 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder in Bildern 
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--spectral</strong>=<em>DATEI</em></td> <td>Spektrale Eingabe </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--spectral-format</strong>=<em>FORMAT</em></td> <td>Gib spektrales Ausgabeformat an
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-p png</strong></td><td># PNG</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p svg</strong></td><td># SVG</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p csv</strong></td><td># CSV</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p ncc</strong></td><td># NCC</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p cgats</strong></td><td># CGATS</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p icc-xml</strong></td><td># Icc XML</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-p ppm</strong></td><td># PPM</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> png</td><td># PNG - PNG Raster</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> svg</td><td># SVG - SVG Vektor</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> csv</td><td># CSV - CSV Werte</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> ncc</td><td># NCC - Einzelfarbsammlung (NCC)</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> cgats</td><td># CGATS - CGATS Werte</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> icc-xml</td><td># Icc XML - ICC Einzelfarben Werte</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> ppm</td><td># PPM - Spektrales PAM Bild</td></tr>
   </table>
   </td>
  </tr>
@@ -165,28 +165,28 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder in Bildern 
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong>=<em>FORMAT</em></td> <td>Gib Ausgabeformat PNG oder SVG an, voreingestellt ist PNG
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-f png</strong></td><td># PNG</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-f svg</strong></td><td># SVG</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> png</td><td># PNG - PNG Raster</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> svg</td><td># SVG - SVG Vektor</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Exportiere formatierten Text<br />Hole Benutzerschnittstelle als Text
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-X man</strong></td><td># Handbuch</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X markdown</strong></td><td># Markdown</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json</strong></td><td># Json</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X json+command</strong></td><td># Json + Kommando</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X export</strong></td><td># Export</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formatierter Text - Hole formatierten Text</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Hole Oyjl Json Benutzerschnittstelle</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler</td></tr>
   </table>
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Wähle Darstellung<br />Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-R gui</strong></td><td># Gui</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R cli</strong></td><td># Cli</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R web</strong></td><td># Web</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R -</strong></td><td># </td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>
  </tr>

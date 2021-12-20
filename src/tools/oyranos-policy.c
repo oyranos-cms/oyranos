@@ -370,6 +370,7 @@ int myMain( int argc, const char ** argv )
   else error = 1;
 
   clean_main:
+  free(sections);
   {
     int i = 0;
     while(oarray[i].type[0])
@@ -379,9 +380,6 @@ int myMain( int argc, const char ** argv )
       ++i;
     }
   }
-  oyjlLibRelease();
-
-  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return error;
 }
@@ -415,6 +413,7 @@ int main( int argc_, char**argv_, char ** envv )
 #ifdef __ANDROID__
   free( argv );
 #endif
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return 0;
 }

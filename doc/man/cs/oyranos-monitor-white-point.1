@@ -2,11 +2,11 @@
 .SH NAME
 oyranos-monitor-white-point v0.9.7 \- Night Manager
 .SH SYNOPSIS
-\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFILE\fR \fB\-b\fR \fIPERCENT\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFILE\fR \fB\-b\fR \fIPERCENT\fR \fB\-\-night-color-scheme\fR \fISTRING\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-w\fR \fI0|1|2|3|4|5|6|7\fR \fB\-a\fR \fIKELVIN\fR [\fB\-z\fR] [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFILE\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFILE\fR \fB\-\-sunlight-color-scheme\fR \fISTRING\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fB\-o\fR [\fB\-t\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
@@ -18,7 +18,7 @@ The tool can set the actual white point or set it by local day and night time. A
 .SH OPTIONS
 .SS
 Nightly appearance
-\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFILE\fR \fB\-b\fR \fIPERCENT\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-n\fR \fI0|1|2|3|4|5|6|7\fR \fB\-g\fR \fIICC_PROFILE\fR \fB\-b\fR \fIPERCENT\fR \fB\-\-night-color-scheme\fR \fISTRING\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times.
 .br
@@ -28,53 +28,63 @@ The Night white point mode shall allow to reduce influence of blue light during 
 .RS
 A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (-n=1) and Temperature to 3000 (-a=3000).
 .RE
-	\-n 0		# Ne
+	\fB\-n\fR 0		# Ne
 .br
-	\-n 1		# Automatic
+	\fB\-n\fR 1		# Automatic
 .br
-	\-n 2		# Iluminant D50
+	\fB\-n\fR 2		# Iluminant D50
 .br
-	\-n 3		# Iluminant D55
+	\fB\-n\fR 3		# Iluminant D55
 .br
-	\-n 4		# Iluminant D65
+	\fB\-n\fR 4		# Iluminant D65
 .br
-	\-n 5		# Illuminant D75
+	\fB\-n\fR 5		# Illuminant D75
 .br
-	\-n 6		# Iluminant D93
+	\fB\-n\fR 6		# Iluminant D93
 .br
 \fB\-g\fR|\fB\-\-night-effect\fR \fIICC_PROFILE\fR	Set night time effect
 .RS
 A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
 .RE
-	\-g -		# [žádný]
+	\fB\-g\fR -		# [žádný]
 .br
-	\-g Effect-1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
+	\fB\-g\fR Effect-1		# Example Effect 1 : ICC profile of class abstract, wich affects gamma
 .br
-	\-g Effect-2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
+	\fB\-g\fR Effect-2		# Example Effect 2 : ICC profile of class abstract, wich affects gamma
 .br
 \fB\-b\fR|\fB\-\-night-backlight\fR \fIPERCENT\fR	Set Nightly Backlight (PERCENT:4 [≥0 ≤100 Δ1])
 .RS
 The option needs xbacklight installed and supporting your device for dimming the monitor lamp.
 .RE
+\fB\-\-night-color-scheme\fR \fISTRING\fR	Set nightly typical darker color scheme
+.RS
+Use this to switch color scheme day/night dependent.
+.RE
+	\fB\-\-night-color-scheme\fR -		# [žádný]
+.br
+	\fB\-\-night-color-scheme\fR Breeze		# Breeze : Detected Color Scheme
+.br
+	\fB\-\-night-color-scheme\fR BreezeDark		# Breeze Dark : 2. detected Color Scheme
+.br
 .SS
 Actual mode
 \fBoyranos-monitor-white-point\fR \fB\-w\fR \fI0|1|2|3|4|5|6|7\fR \fB\-a\fR \fIKELVIN\fR [\fB\-z\fR] [\fB\-v\fR]
 .br
 \fB\-w\fR|\fB\-\-white-point\fR \fI0|1|2|3|4|5|6|7\fR	Set white point mode
 .br
-	\-w 0		# Ne
+	\fB\-w\fR 0		# Ne
 .br
-	\-w 1		# Automatic
+	\fB\-w\fR 1		# Automatic
 .br
-	\-w 2		# Iluminant D50
+	\fB\-w\fR 2		# Iluminant D50
 .br
-	\-w 3		# Iluminant D55
+	\fB\-w\fR 3		# Iluminant D55
 .br
-	\-w 4		# Iluminant D65
+	\fB\-w\fR 4		# Iluminant D65
 .br
-	\-w 5		# Illuminant D75
+	\fB\-w\fR 5		# Illuminant D75
 .br
-	\-w 6		# Iluminant D93
+	\fB\-w\fR 6		# Iluminant D93
 .br
 \fB\-a\fR|\fB\-\-automatic\fR \fIKELVIN\fR	A value from 2700 till 8000 Kelvin is expected to show no artefacts (KELVIN:2800 [≥1100 ≤10100 Δ100])
 .br
@@ -82,33 +92,43 @@ Actual mode
 .br
 .SS
 Sun light appearance
-\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFILE\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFILE\fR \fB\-\-sunlight-color-scheme\fR \fISTRING\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fB\-s\fR|\fB\-\-sun-white-point\fR \fI0|1|2|3|4|5|6|7\fR	Set day time mode
 .br
-	\-s 0		# Ne
+	\fB\-s\fR 0		# Ne
 .br
-	\-s 1		# Automatic
+	\fB\-s\fR 1		# Automatic
 .br
-	\-s 2		# Iluminant D50
+	\fB\-s\fR 2		# Iluminant D50
 .br
-	\-s 3		# Iluminant D55
+	\fB\-s\fR 3		# Iluminant D55
 .br
-	\-s 4		# Iluminant D65
+	\fB\-s\fR 4		# Iluminant D65
 .br
-	\-s 5		# Illuminant D75
+	\fB\-s\fR 5		# Illuminant D75
 .br
-	\-s 6		# Iluminant D93
+	\fB\-s\fR 6		# Iluminant D93
 .br
 \fB\-e\fR|\fB\-\-sunlight-effect\fR \fIICC_PROFILE\fR	Set day time effect
 .RS
 A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes .
 .RE
-	\-e -		# [žádný]
+	\fB\-e\fR -		# [žádný]
 .br
-	\-e Effect-1		# Example Effect 1 - ICC profile of class abstract, wich affects gamma
+	\fB\-e\fR Effect-1		# Example Effect 1 : ICC profile of class abstract, wich affects gamma
 .br
-	\-e Effect-2		# Example Effect 2 - ICC profile of class abstract, wich affects gamma
+	\fB\-e\fR Effect-2		# Example Effect 2 : ICC profile of class abstract, wich affects gamma
+.br
+\fB\-\-sunlight-color-scheme\fR \fISTRING\fR	Set day time typical brighter color scheme
+.RS
+Use this to switch color scheme day/night dependent.
+.RE
+	\fB\-\-sunlight-color-scheme\fR -		# [žádný]
+.br
+	\fB\-\-sunlight-color-scheme\fR Breeze		# Breeze : Detected Color Scheme
+.br
+	\fB\-\-sunlight-color-scheme\fR BreezeDark		# Breeze Dark : 2. detected Color Scheme
 .br
 .SS
 Location and Twilight
@@ -130,11 +150,11 @@ Run sunset daemon
 .br
 \fB\-d\fR|\fB\-\-daemon\fR \fI0|1|2\fR	Control user daemon
 .br
-	\-d 0		# Deactivate : Deactivate
+	\fB\-d\fR 0		# Deactivate : Deactivate
 .br
-	\-d 1		# Autostart : Autostart
+	\fB\-d\fR 1		# Autostart : Autostart
 .br
-	\-d 2		# Activate : Activate
+	\fB\-d\fR 2		# Activate : Activate
 .br
 .SH GENERAL OPTIONS
 .SS
@@ -153,27 +173,27 @@ Show usage information and hints for the tool.
 .RS
 Get UI converted into text formats
 .RE
-	\-X man		# Man : Unix Man page - Get a unix man page
+	\fB\-X\fR man		# Man : Unix Man page - Get a unix man page
 .br
-	\-X markdown		# Markdown : Formated text - Get formated text
+	\fB\-X\fR markdown		# Markdown : Formated text - Get formated text
 .br
-	\-X json		# Json : GUI - Get a Oyjl Json UI declaration
+	\fB\-X\fR json		# Json : GUI - Get a Oyjl Json UI declaration
 .br
-	\-X json+command		# Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command
+	\fB\-X\fR json+command		# Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command
 .br
-	\-X export		# Export : All available data - Get UI data for developers
+	\fB\-X\fR export		# Export : All available data - Get UI data for developers
 .br
 \fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Select Renderer
 .RS
 Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
 .RE
-	\-R gui		# Gui : Show UI - Display a interactive graphical User Interface.
+	\fB\-R\fR gui		# Gui : Show UI - Display a interactive graphical User Interface.
 .br
-	\-R cli		# Cli : Show UI - Print on Command Line Interface.
+	\fB\-R\fR cli		# Cli : Show UI - Print on Command Line Interface.
 .br
-	\-R web		# Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.
+	\fB\-R\fR web		# Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.
 .br
-	\-R -		# 
+	\fB\-R\fR -
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br

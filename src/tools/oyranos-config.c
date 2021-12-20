@@ -622,12 +622,11 @@ int myMain( int argc , const char** argv )
   }
 #endif /* HAVE_DBUS */
 
-  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
-
   }
   else error = 1;
 
   clean_main:
+  free(sections);
   {
     int i = 0;
     while(oarray[i].type[0])
@@ -637,7 +636,6 @@ int myMain( int argc , const char** argv )
       ++i;
     }
   }
-  oyjlLibRelease();
 
   return error;
 }
@@ -669,6 +667,7 @@ int main( int argc_, char ** argv_)
 #ifdef __ANDROID__
   free( argv );
 #endif
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return 0;
 }
