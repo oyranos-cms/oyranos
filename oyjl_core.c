@@ -2522,10 +2522,8 @@ void   oyjlGettextSetup_             ( int                 use_gettext OYJL_UNUS
       /* LOCPATH appears to be ignored by bindtextdomain("domain", NULL),
        * so it is set here to bindtextdomain(). */
       path = domain_path ? domain_path : locpath;
-      const char * d = textdomain( loc_domain );
+      const char * d = textdomain( NULL );
       const char * dpath = bindtextdomain( loc_domain, path );
-      if(*oyjl_debug)
-        oyjlMessage_p( oyjlMSG_INFO, 0,"bindtextdomain( \"%s\", \"%s\"/%s ) = ", loc_domain, path, dpath, d );
       if(*oyjl_debug)
       {
         char * fn = NULL;
@@ -2533,6 +2531,7 @@ void   oyjlGettextSetup_             ( int                 use_gettext OYJL_UNUS
         const char * gettext_call = OyjlToString2_M(_());
         const char * domain = textdomain(NULL);
 
+        oyjlMessage_p( oyjlMSG_INFO, 0,"bindtextdomain( \"%s\", \"%s\"/%s ) = ", loc_domain, path, dpath, d );
         if(path)
           oyjlStringAdd( &fn, 0,0, "%s/de/LC_MESSAGES/%s.mo", path ? path : "", loc_domain);
         if(fn)
