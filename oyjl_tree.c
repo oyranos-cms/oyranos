@@ -2284,7 +2284,7 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
       oyjl_val val = oyjlTreeGetValue( v, 0, xpath );
       uint32_t v_offset = 0;
       int size__ = size_;
-      size_ += oyjlXPathGetSize_( val, xpath, &v_offset, flags );
+      size_ += oyjlXPathGetSize_( val, xpath, &v_offset );
       size_ += OYJL_PAD_SIZE( size_, PAD_SIZE );
       if(flags & OYJL_OBSERVE)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "xpath[%d]:\"%s\" %s v_offset: %d offset2: %d", OYJL_DBG_ARGS, i, xpath, val?"found":"not found", v_offset, size__ );
@@ -2308,7 +2308,7 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
       int len = strlen(xpath);
       uint32_t v_offset = 0;
       nodes->offsets[i] = size_;
-      size_ += oyjlXPathGetSize_( val, xpath, &v_offset, flags );
+      size_ += oyjlXPathGetSize_( val, xpath, &v_offset );
       size_ += OYJL_PAD_SIZE( size_, PAD_SIZE );
       oyjlXPath_s * node = (oyjlXPath_s *)&((char*)nodes)[nodes->offsets[i]];
       node->v_offset = v_offset;
