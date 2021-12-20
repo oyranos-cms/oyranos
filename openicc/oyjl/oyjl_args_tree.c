@@ -237,7 +237,7 @@ oyjl_val       oyjlUi_ExportToJson_  ( oyjlUi_s          * ui,
   {
     oyjlOption_s * o = &ui->opts->array[i];
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->type, OYJL_REG "/ui/options/array/[%d]/%s", i, "type" );
-    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, o->flags, OYJL_REG "/ui/options/array/[%d]/%s", i, "flags" );
+    oyjlTreeSetIntF( root, OYJL_CREATE_NEW, o->flags, OYJL_REG "/ui/options/array/[%d]/%s", i, "flags" );
     if(o->o)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, o->o, OYJL_REG "/ui/options/array/[%d]/%s", i, "o" );
     if(o->option)
@@ -305,7 +305,7 @@ oyjl_val       oyjlUi_ExportToJson_  ( oyjlUi_s          * ui,
   {
     oyjlOptionGroup_s * g = &ui->opts->groups[i];
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->type, OYJL_REG "/ui/options/groups/[%d]/%s", i, "type" );
-    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, g->flags, OYJL_REG "/ui/options/groups/[%d]/%s", i, "flags" );
+    oyjlTreeSetIntF( root, OYJL_CREATE_NEW, g->flags, OYJL_REG "/ui/options/groups/[%d]/%s", i, "flags" );
     if(g->name)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->name, OYJL_REG "/ui/options/groups/[%d]/%s", i, "name" );
     if(g->description)
@@ -587,7 +587,10 @@ oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
               oyjlValueSetString( attrv, rootv->u.string );
               break;
           case oyjl_t_number: /* 2 - floating or integer number */
-              oyjlValueSetDouble( attrv, rootv->u.number.d );
+              if(OYJL_IS_INTEGER(rootv))
+                oyjlValueSetInt( attrv, rootv->u.number.i );
+              else
+                oyjlValueSetDouble( attrv, rootv->u.number.d );
               break;
           case oyjl_t_true:   /* 5 - boolean true or 1 */
           case oyjl_t_false:  /* 6 - boolean false or 0 */
