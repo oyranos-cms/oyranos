@@ -271,6 +271,11 @@ int        oyjlTreeSetDoubleF        ( oyjl_val            root,
                                        double              value,
                                        const char        * format,
                                                            ... );
+int        oyjlTreeSetIntF           ( oyjl_val            root,
+                                       int                 flags,
+                                       long long           value,
+                                       const char        * format,
+                                                           ... );
 oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
                                        int                 flags,
                                        int               * size );
@@ -286,6 +291,8 @@ int        oyjlValueSetString        ( oyjl_val            v,
                                        const char        * string );
 int        oyjlValueSetDouble        ( oyjl_val            v,
                                        double              value );
+int        oyjlValueSetInt           ( oyjl_val            v,
+                                       long long           value );
 void       oyjlValueCopy             ( oyjl_val            v,
                                        oyjl_val            src );
 void       oyjlValueClear            ( oyjl_val            v );
