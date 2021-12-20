@@ -22,7 +22,7 @@ Rectangle {
     height: parent.height
     anchors.centerIn: parent
 
-    color: myPalette.window
+    color: "lightgray"
     implicitHeight: parent.height
     implicitWidth: parent.width
 

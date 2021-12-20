@@ -790,7 +790,7 @@ AppWindow {
             Rectangle {
                 width: parent.width
                 height: logoImage.height
-                color: myPalette.window
+                color: "gray" // myPalette.window
                 Image {
                     id: logoImage
                     width: parent.width
