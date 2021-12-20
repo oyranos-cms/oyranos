@@ -1473,9 +1473,31 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
 
         if(texts_n && texts[0] && texts[0][0])
         {
-          memcpy(temp, texts[0], oyStrlen_(texts[0]));
-          temp[oyStrlen_(texts[0])] = 0;
-          found = 1;
+          int i;
+          char * select = NULL;
+          if(texts_n == 1)
+            select = texts[0];
+          else
+          for(i = 0; i < texts_n; ++i)
+          {
+            char * t = texts[i];
+            if(t && (t[0] == 'e' || t[0] == 'E') && (t[1] == 'n' || t[1] == 'N') && (t[2] == '_' || t[2] == ':'))
+            {
+              if(strchr(t,':'))
+                select = strchr(t,':') + 1;
+              else
+                select = t;
+            }
+          }
+          if(!select && texts[0])
+            select = texts[0];
+
+          if(select)
+          {
+            memcpy(temp, select, oyStrlen_(select));
+            temp[oyStrlen_(select)] = 0;
+            found = 1;
+          }
 
           oyStringListRelease_( &texts, texts_n, tag->oy_->deallocateFunc_ );
         } else
