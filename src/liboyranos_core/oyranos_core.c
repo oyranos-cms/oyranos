@@ -56,6 +56,8 @@ static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = NULL;
 static oyStruct_RegisterStaticFreeFunc_f * oy_static_free_funcs_ = NULL;
 static int oy_msg_func_n_ = 0;
 char * oy_object_show_text_ = NULL;
+char * oy_version_string_[] = {0,0,0,0,0};
+
 
 
 /** Function oyStruct_RegisterStaticMessageFunc
@@ -144,6 +146,10 @@ int oyStruct_RegisterStaticMessageFunc (
 void               oyLibCoreRelease  ( )
 {
   int i;
+
+  for(i = 1; i <= 5; ++i)
+    if(oy_version_string_[i])
+      free(oy_version_string_[i]);
 
   if(oy_static_msg_funcs_)
     oyDeAllocateFunc_(oy_static_msg_funcs_);
@@ -1063,18 +1069,25 @@ char *       oyVersionString         ( int                 type,
   if(!allocateFunc)
     allocateFunc = oyAllocateFunc_;
 
+  if( 1 < type && type <= 4 &&
+      oy_version_string_[type]  )
+    return oy_version_string_[type];
+  if( (type < 1 || 4 < type) &&
+      oy_version_string_[5] )
+    return oy_version_string_[5];
+
   if(type == 1)
-    return oyStringCopy_(OYRANOS_VERSION_NAME, allocateFunc);
+    return oy_version_string_[1] = oyStringCopy_(OYRANOS_VERSION_NAME, allocateFunc);
   if(type == 2)
   {
     if(oy_debug) fprintf( stderr, "OY_GIT_VERSION: %s\n", OY_GIT_VERSION );
     if(git[0])
-      return oyStringCopy_(git, allocateFunc);
+      return oy_version_string_[2] = oyStringCopy_(git, allocateFunc);
     else
       return 0;
   }
   if(type == 3)
-    return oyStringCopy_("", allocateFunc);
+    return oy_version_string_[3] = oyStringCopy_("", allocateFunc);
 
   if(type == 4)
   {
@@ -1093,10 +1106,10 @@ char *       oyVersionString         ( int                 type,
 
     tmp = oyStringCopy_( text , allocateFunc);
     oyDeAllocateFunc_(text);
-    return tmp;
+    return oy_version_string_[4] = tmp;
   }
 
-  return oyStringCopy_("----", allocateFunc);
+  return oy_version_string_[5] = oyStringCopy_("----", allocateFunc);
 }
 
 int                oyBigEndian       ( void )
