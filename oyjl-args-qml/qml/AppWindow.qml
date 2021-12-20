@@ -66,8 +66,8 @@ ApplicationWindow {
     property int theme: Material.System
     property int prefered_theme: Material.System
     property int accent: Material.Orange
-    property color bg: Material.background
-    property color fg: Material.foreground
+    property color bg: myPalette.window/*Material.background*/
+    property color fg: myPalette.windowText/*Material.foreground*/
     property color highlighted: Material.highlightedButtonColor
     Material.theme: theme
     Material.accent: accent
