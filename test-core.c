@@ -1087,9 +1087,9 @@ oyjlTESTRESULT_e testArgs()
 
   result = testCode( json, "oiCR"                    /*prog*/,
                            9144                      /*code_size*/,
-                           1082                      /*help_size*/,
+                           1080                      /*help_size*/,
                            1967                      /*man_size*/,
-                           3788                      /*markdown_size*/,
+                           3899                      /*markdown_size*/,
                            7196                      /*json_size*/,
                            7223                      /*json_command_size*/,
                            10581                     /*export_size*/,
@@ -1183,9 +1183,9 @@ oyjlTESTRESULT_e testArgs()
 
   result = testCode( json, "oiCR"                    /*prog*/,
                            8889                      /*code_size*/,
-                            615                      /*help_size*/,
+                            613                      /*help_size*/,
                            1451                      /*man_size*/,
-                           2300                      /*markdown_size*/,
+                           2355                      /*markdown_size*/,
                            4933                      /*json_size*/,
                            4960                      /*json_command_size*/,
                            10066                     /*export_size*/,
@@ -1227,12 +1227,12 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToMan( ui, 0 );
-  if(text && strlen(text) == 833)
+  if(text && strlen(text) == 863)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 848 == %lu", strlen(text) );
+    "oyjlUi_ToMan() 863 == %lu", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose)
@@ -1579,9 +1579,9 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "%33[1marr3a%33[0m", "one/[%d]/data/[0]", 1 );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "\033[1marr3b\033[0m", "one/[%d]/data/[1]", 1 );
   oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, 1.4,     "one/[%d]/key4", 1 );
-  oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, 1.2,     "one/[%d]/data/[2]", 1 );
+  oyjlTreeSetIntF( root, OYJL_CREATE_NEW, 0x800000,   "one/[%d]/data/[2]", 1 );
   oyjlTreeToJson( root, &i, &text ); i = 0;
-  if( text && strlen( text ) == 280 )
+  if( text && strlen( text ) == 284 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
     "add array" );
   } else
@@ -1608,7 +1608,7 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "prog -i test.json ///mein/Pfad/", "org/freedesktop/oyjl/translations/de/prog -i test.json %%37%%37%%37my%%37path%%37" );
 
   oyjl_val static_catalog = oyjlTreeSerialise( catalog, flags, &size );
-  if( static_catalog && size == 853 )
+  if( static_catalog && size == 944 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, size,
     "oyjlTreeSerialise() oiJS" );
   } else

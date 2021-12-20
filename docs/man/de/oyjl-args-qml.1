@@ -18,7 +18,7 @@ Das Dateiformat ist ein JSON UI von einem Werkzeug mittels libOyjlCore mit der -
 .RE
 \fB\-c\fR|\fB\-\-command\fR \fITEXT\fR	JSON Kommando
 .RS
-Supported is the value of '+' as hint to take the merged in data from the input. The command can be passed as JSON string, e.g. "{"command_set":"my-cli-program"}", as file name pointing to JSON containing the command or the command alone as string.
+Unterstützt wird 1) ein Wert von '+' als Hinweis, daß ein Kommando bereits in UI JSON entahlten ist. Das Kommando kann 2) als JSON Text eingegeben werden. Z.B. "{"command_set":"my-cli-program"}". Oder 3) wird einfach ein Programmname angegeben.
 .RE
 \fB\-o\fR|\fB\-\-output\fR \fITEXT\fR	Ergebnis JSON
 .br
@@ -30,23 +30,23 @@ Allgemeine Optionen
 .RS
 Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
 .RE
-	\-h -		# Vollständige Hilfe : Zeige Hilfe für alle Gruppen
+	\fB\-h\fR -		# Vollständige Hilfe : Zeige Hilfe für alle Gruppen
 .br
-	\-h synopsis		# Übersicht : Liste Gruppen - Zeige alle Gruppen mit Syntax
+	\fB\-h\fR synopsis		# Übersicht : Liste Gruppen - Zeige alle Gruppen mit Syntax
 .br
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
 .RS
 Hole Benutzerschnittstelle als Text
 .RE
-	\-X man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
+	\fB\-X\fR man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
 .br
-	\-X markdown		# Markdown : Formatierter Text - Hole formatierten Text
+	\fB\-X\fR markdown		# Markdown : Formatierter Text - Hole formatierten Text
 .br
-	\-X json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
+	\fB\-X\fR json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
 .br
-	\-X json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
+	\fB\-X\fR json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
 .br
-	\-X export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
+	\fB\-X\fR export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br
