@@ -76,7 +76,7 @@ Rectangle {
             id: itemRect
             objectName: "itemRect"
             x: dens
-            width:  parent.width - 2*dens
+            width:  parent !== null ? parent.width - 2*dens : width
             height: h
             color: run ? (bright ? Qt.lighter("steelblue") : "steelblue") : immediate ? (bright ? Qt.lighter("grey") : "grey") : "transparent"
 
