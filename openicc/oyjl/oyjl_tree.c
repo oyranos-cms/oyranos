@@ -1742,6 +1742,84 @@ int        oyjlValueSetDouble        ( oyjl_val            v,
   return error;
 }
 
+/** Function oyjlTreeSetIntF
+ *  @brief   set a child node to a string value
+ *
+ *  @param[in,out] root                the oyjl node
+ *  @param[in]     flags               ::OYJL_CREATE_NEW - allocates nodes even
+ *                                     if they did not yet exist
+ *  @param[in]     value               integer number
+ *  @param[in]     format              the format for the slashed xpath string
+ *  @param[in]     ...                 the variable argument list; optional
+ *  @return                            error
+ *                                     - -1 - if not found
+ *                                     - 0 on success
+ *                                     - else error
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/12/20
+ *  @since   2021/12/20 (Oyjl: 1.0.0)
+ */
+int        oyjlTreeSetIntF           ( oyjl_val            root,
+                                       int                 flags,
+                                       long long           value,
+                                       const char        * format,
+                                                           ... )
+{
+  oyjl_val value_node = NULL;
+
+  char * text = NULL;
+  int error = 0;
+
+  OYJL_CREATE_VA_STRING(format, text, malloc, return 1)
+
+  value_node = oyjlTreeGetValue( root, flags, text );
+
+  if(text) { free(text); text = NULL; }
+
+  if(value_node)
+    error = oyjlValueSetInt( value_node, value );
+  else
+    error = -1;
+
+  return error;
+}
+
+/** Function oyjlValueSetInt
+ *  @brief   set a child node to a number value
+ *
+ *  @param[in,out] v                   the oyjl node
+ *  @param[in]     value               integer number
+ *  @return                            error
+ *                                     - -1 - if not found
+ *                                     - 0 on success
+ *                                     - else error
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2021/12/20
+ *  @since   2021/12/20 (Oyjl: 1.0.0)
+ */
+int        oyjlValueSetInt           ( oyjl_val            v,
+                                       long long           value )
+{
+  int error = 0;
+
+  if(v)
+  {
+    oyjlValueClear( v );
+    v->type = oyjl_t_number;
+    v->u.number.i = value;
+    error = oyjlStringAdd( &v->u.number.r, 0,0, "%lli", value );
+    v->u.number.flags |= OYJL_NUMBER_INT_VALID;
+    errno = 0;
+    v->u.number.i = strtoll(v->u.number.r, 0, 10);
+  }
+  else
+    error = -1;
+
+  return error;
+}
+
 /** @brief set the node value to a string */
 int        oyjlValueSetString        ( oyjl_val            v,
                                        const char        * string )
