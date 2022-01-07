@@ -52,10 +52,6 @@ void oyInit_()
                   oyNoEmptyName_m_(cfg_date), oyNoEmptyName_m_(devel_time) );
     if(id)
       DBG1_S( "Oyranos git id %s", oyNoEmptyName_m_(id) );
-    oyFree_m_(version);
-    oyFree_m_(id);
-    oyFree_m_(cfg_date);
-    oyFree_m_(devel_time);
   }
 
   if(getenv(OY_DEBUG_MEMORY))
