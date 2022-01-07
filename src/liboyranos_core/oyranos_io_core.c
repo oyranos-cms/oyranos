@@ -399,7 +399,15 @@ char * oyReadCmdToMem_               ( const char        * command,
   {
     {
       if(oy_debug && (strstr(command, "addr2line") == NULL || oy_debug > 1))
+      {
+        if(oy_debug > 1)
+        {
+          char * t = oyjlBT(0);
+          fprintf( stderr, "%s", t );
+          free(t);
+        }
         oyMessageFunc_p( oyMSG_DBG, 0, OY_DBG_FORMAT_"%s",OY_DBG_ARGS_, command );
+      }
       fp = oyPOPEN_m( command, mode );
     }
     if(fp)
