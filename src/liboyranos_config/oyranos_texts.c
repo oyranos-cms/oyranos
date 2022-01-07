@@ -2517,13 +2517,14 @@ int          oyCanSetPersistent      ( oySCOPE_e           scope )
 #ifdef HAVE_POSIX
       {
         /* get local free disk space the POSIX way */
-        char * num = oyReadCmdToMemf_( &size, "r", oyAllocateFunc_, "df -P %s | awk '{ print $4 }' | awk '{ sum += $1 }; END { print sum }'", path );
+        size_t size_ = 0;
+        char * num = oyReadCmdToMemf_( &size_, "r", oyAllocateFunc_, "df -P %s | awk '{ print $4 }' | awk '{ sum += $1 }; END { print sum }'", path );
         long space = 0;
         if(oy_debug)
           fprintf(stderr, "empty disk space: %s\n", num );
-        if(num && oyjlStringToLong(num, &space) == 0)
+        if(num && oyjlStringToLong(num, &space) <= 0)
         {
-          if(space < 10)
+          if(space*1000 < 10000+size)
           {
             WARNc1_S( "not enough disk space: %ld", space );
             return 0;
