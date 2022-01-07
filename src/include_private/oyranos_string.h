@@ -31,10 +31,6 @@ extern "C" {
 
 
 
-int          oyStringToLong          ( const char        * text,
-                                       long              * value );
-int          oyStringToDouble        ( const char        * text,
-                                       double            * value );
 size_t             oyStrblen_        ( const char        * s );
 #define oyStringCopy_ oyStringCopy
 char*              oyStringCopy      ( const char        * text,
@@ -182,8 +178,6 @@ int                oyIconvGet        ( const char        * text,
 #define oyStringListCat             oyjlStringListCatList
 #define oyStringListFreeDoubles     oyjlStringListFreeDoubles
 #define oyStringListAddStaticString oyjlStringListAddString
-#define oyStringToLong              oyjlStringToLong
-#define oyStringToDouble            oyjlStringToDouble
 
 
 #ifdef __cplusplus

@@ -148,7 +148,7 @@ AppWindow {
             var cA = currentArgs
             n = cA.length
             for(i = 0; i < n; ++i)
-                if(!hasArg(pGA,cA[i]))
+                if(!hasArg(pGA,cA[i],"onReadChannelFinished"))
                     pGA.push(cA[i])
 
             if(processGetCommand.length && setOnly <= 0)
@@ -184,12 +184,12 @@ AppWindow {
         return okey;
     }
 
-    function hasArg(args, key)
+    function hasArg(args, key, dbg)
     {
         var arr = [];
         var arrn = 0;
         if(app_debug)
-            statusText = "hasArgs( args=" + args + ", key=" + key + " )"
+            statusText = "hasArg( args=" + args + ", key=" + key + " ) " + dbg
         if(typeof args === "string")
         {
             arr = args.split(new RegExp('[,|]', 'g'))
@@ -279,6 +279,8 @@ AppWindow {
     }
     function addArg( args, key, value, type, sub_command, repetition )
     {
+        if(typeof value === "undefined")
+            statusText = "key:" + key + " no value args:" + args
         if(repetition)
         {
             var arr = value.split(new RegExp('[;]', 'g'));
@@ -311,7 +313,7 @@ AppWindow {
         if(typeof group.sub_command !== "undefined")
             sub_command = true
         var mandatory_found = false
-        if(!sub_command && typeof group.mandatory !== "undefined" && group.mandatory.length && hasArg(group.mandatory, key))
+        if(!sub_command && typeof group.mandatory !== "undefined" && group.mandatory.length && hasArg(group.mandatory, key,"interactiveCallback-mandatory"))
         {
             mandatory_found = true
             mkey = key;
@@ -337,7 +339,7 @@ AppWindow {
                 // activate value using default from JSON
                 var changed = false
                 if(typeof group.changed !== "undefined")
-                    changed = hasArg(group.changed, arg)
+                    changed = hasArg(group.changed, arg,"interactiveCallback-changed["+i+"]")
                 if(changed === true &&
                    !opt.value.length &&
                    opt.changed.length)
@@ -361,7 +363,7 @@ AppWindow {
             return
 
         // skip optional options from groups with mandatory requirement
-        if(!pass && group.mandatory.length && !hasArg(group.mandatory, key))
+        if(!pass && group.mandatory.length && !hasArg(group.mandatory, key,"interactiveCallback-mandatory!pass"))
             return
 
         var mandatory_exclusive = false
@@ -382,7 +384,7 @@ AppWindow {
         {
             arg = key
 
-            if( hasArg(args, key) === false ||
+            if( hasArg(args, key,"interactiveCallback " + sCb) === false ||
                 opt.repetition === true )
                 addArg( args, key, value, type, sub_command, opt.repetition )
 
@@ -445,7 +447,7 @@ AppWindow {
                        opt.value === "false")))
                     continue
 
-                if( hasArg(args, opt.key) === false ||
+                if( hasArg(args, opt.key,"interactiveCallback-mandatory create" ) === false ||
                     opt.repetition === true )
                     addArg( args, opt.key, opt.value, opt.type, sub_command, opt.repetition )
             }
@@ -453,8 +455,12 @@ AppWindow {
             for( i = 0; i < n; ++i )
             {
                 opt = group.options[i]
-                if( typeof opt.changed != "undefined" && opt.changed.length && hasArg(args, opt.key) === false )
+                if( typeof opt.changed != "undefined" && opt.changed.length && hasArg(args, opt.key,"interactiveCallback-options[" + i + "] opt:" + JSON.stringify(opt)) === false )
+                {
+                    if(typeof opt.value === "undefined")
+                        opt.value = opt.changed
                     addArg( args, opt.key, opt.value, opt.type, sub_command, opt.repetition )
+                }
             }
 
             if(app_debug)
@@ -540,11 +546,12 @@ AppWindow {
             t = t.replace(/\033\[00;31m/g, "<font color=red>")
             t = t.replace(/\033\[01;31m/g, "<font color=red>")
             t = t.replace(/\033\[38;2;240;0;0m/g, "<font color=red>")
+            t = t.replace(/\033\[38;2;250;0;0m/g, "<font color=red>")
             t = t.replace(/\033\[32m/g, "<font color=green>")
             t = t.replace(/\033\[0;32m/g, "<font color=green>")
             t = t.replace(/\033\[00;32m/g, "<font color=green>")
             t = t.replace(/\033\[01;32m/g, "<font color=green>")
-            t = t.replace(/\033\[38;2;250;0;0m/g, "<font color=green>")
+            t = t.replace(/\033\[38;2;0;250;100m/g, "<font color=green>")
             t = t.replace(/\033\[33m/g, "<font color=lime>")
             t = t.replace(/\033\[0;33m/g, "<font color=lime>")
             t = t.replace(/\033\[00;33m/g, "<font color=lime>")
