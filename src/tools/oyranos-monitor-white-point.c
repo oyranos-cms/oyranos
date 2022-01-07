@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2017-2021  Kai-Uwe Behrmann
+ *  Copyright (C) 2017-2022  Kai-Uwe Behrmann
  *
  */
 
@@ -251,12 +251,12 @@ oyjlOptionChoice_s * getWhitePointChoices       ( oyjlOption_s      * o,
       if(OYJL_IS_O("n") && selected)
       {
         value = oyGetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_night", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-        if(value && oyjlStringToLong( value, &l ) == 0)
+        if(value && oyjlStringToLong( value, &l ) <= 0)
           *selected = l;
       } else if(OYJL_IS_O("s") && selected)
       {
         value = oyGetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_sunlight", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-        if(value && oyjlStringToLong( value, &l ) == 0)
+        if(value && oyjlStringToLong( value, &l ) <= 0)
           *selected = l;
       }
 
@@ -999,11 +999,11 @@ int findLocation(oySCOPE_e scope, int dry)
       int level = 0;
       v = oyjlTreeGetValueF( root, 0, "location/lat" );
       value = oyjlValueText( v, oyAllocateFunc_ );
-      if(oyStringToDouble( value, &lat ))
+      if(oyjlStringToDouble( value, &lat ) > 0)
         error = 1;
       v = oyjlTreeGetValueF( root, 0, "location/lng" );
       value = oyjlValueText( v, oyAllocateFunc_ );
-      if(oyStringToDouble( value, &lon ))
+      if(oyjlStringToDouble( value, &lon ) > 0)
         error = 1;
       oyFree_m_(value);
       oyjlTreeToJson( root, &level, &json );
@@ -1060,7 +1060,7 @@ int getLocation( double * lon, double * lat)
   char * value = NULL;
  
   value = oyGetPersistentString( OY_DISPLAY_STD "/latitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-  if(value && oyStringToDouble( value, lat ))
+  if(value && oyjlStringToDouble( value, lat ) > 0)
     fprintf(stderr, "lat = %g / %s\n", *lat, value);
   if(value)
   {
@@ -1068,7 +1068,7 @@ int getLocation( double * lon, double * lat)
   } else
     need_location = 1;
   value = oyGetPersistentString( OY_DISPLAY_STD "/longitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-  if(value && oyStringToDouble( value, lon ))
+  if(value && oyjlStringToDouble( value, lon ) > 0)
     fprintf(stderr, "lon = %g / %s\n", *lon, value);
   if(value)
   {
@@ -1122,7 +1122,7 @@ int getSunriseSunset( double * rise, double * set, int dry, char ** text, int ve
 
   value =
       oyGetPersistentString(OY_DISPLAY_STD "/twilight", 0, oySCOPE_USER_SYS, oyAllocateFunc_);
-  if(value && oyStringToDouble( value, &twilight ))
+  if(value && oyjlStringToDouble( value, &twilight ) > 0)
   {
     if(verbose)
       fprintf(stderr, "twilight = %g / %s\n", isnan(twilight) ? 0 : twilight, value && value[0] ? value : "----");
@@ -1146,16 +1146,24 @@ int getSunriseSunset( double * rise, double * set, int dry, char ** text, int ve
     oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour_(0), gmt_diff_second ), &hour, &minute, &second );
     elevation = getSunHeight( year, month, day, oyGetCurrentGMTHour_(0), lat, lon, verbose );
     if(text)
-      oyjlStringAdd( text, malloc, free, "%d-%d-%d %d:%.2d:%.2d",
-             year, month, day, hour, minute, second );
+      oyjlStringAdd( text, malloc, free, "%s%s%s%s",
+             verbose?_("Local Time"):"", verbose?":":"", verbose?"\t":"", oyjlPrintTime(verbose?OYJL_TIME_ZONE:OYJL_BRACKETS, oyjlGREEN) );
     oySplitHour( oyGetCurrentLocalHour( *rise, gmt_diff_second ), &hour, &minute, &second );
     if(text)
-      oyjlStringAdd( text, malloc, free, " %s: %g° %g° %s: %g° (%s: %g°) %s: %d:%.2d:%.2d",
+    {
+      if(verbose)
+      {
+        oyjlStringAdd( text, malloc, free, "\n%s:\t%g°\n%s:\t%g°\n%s:\t%g°\n%s:\t%g°\n%s:\t%d:%.2d:%.2d",
+             _("Latitude"), lat, _("Longitude"), lon, _("Twilight"), twilight, _("Sun Elevation"), elevation, _("Sunrise"), hour, minute, second );
+      }
+      else
+        oyjlStringAdd( text, malloc, free, " %s: %g° %g° %s: %g° (%s: %g°) %s: %d:%.2d:%.2d",
              _("Geographical Position"), lat, lon, _("Twilight"), twilight, _("Sun Elevation"), elevation, _("Sunrise"), hour, minute, second );
+    }
     oySplitHour( oyGetCurrentLocalHour( *set,  gmt_diff_second ), &hour, &minute, &second );
     if(text)
-      oyjlStringAdd( text, malloc, free, " %s: %d:%.2d:%.2d",
-             _("Sunset"), hour, minute, second );
+      oyjlStringAdd( text, malloc, free, "%s%s:%s%d:%.2d:%.2d",
+             verbose?"\n":" ",_("Sunset"), verbose?"\t":" ", hour, minute, second );
   }
 
   return r;
