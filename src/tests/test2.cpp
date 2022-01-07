@@ -9185,7 +9185,7 @@ oyjlTESTRESULT_e testICCsCheck()
       if(texts_n && texts[0])
       {
         long l = 0;
-        if(oyjlStringToLong( texts[0], &l ) == 0)
+        if(oyjlStringToLong( texts[0], &l ) <= 0)
           j = l;
       }
       oyjlStringListRelease( &texts, texts_n, oyDeAllocateFunc_ );

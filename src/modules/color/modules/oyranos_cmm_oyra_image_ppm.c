@@ -675,7 +675,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
           {
             memcpy(var_s, &data[start], l);
             var_s[l] = 0;
-            oyStringToDouble(var_s, &var);
+            oyjlStringToDouble(var_s, &var);
 #           ifdef DEBUG_
             fprintf(stderr, "var = \"%s\"  %d\n",var_s, l);
 #           endif
