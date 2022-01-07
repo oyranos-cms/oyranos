@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-01-06 10:28+0100\n"
+"POT-Creation-Date: 2022-01-07 06:53+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 #: tools/oyranos-device.c:700 tools/oyranos-device.c:714
 #: tools/oyranos-device.c:741 tools/oyranos-device.c:782
 #: tools/oyranos-device.c:1162 tools/oyranos-device.c:1282
-#: tools/oyranos-device.c:1517 tools/oyranos-monitor-white-point.c:922
+#: tools/oyranos-device.c:1517 tools/oyranos-monitor-white-point.c:923
 #: tools/qcmsevents/qcmsevents.cpp:338
 #, c-format
 msgid "!!! ERROR"
@@ -396,7 +396,7 @@ msgstr "Monitor s aktivní maticí"
 msgid "Actual mode"
 msgstr "ukázat volby politiky"
 
-#: tools/oyranos-monitor-white-point.c:1244
+#: tools/oyranos-monitor-white-point.c:1245
 #, fuzzy
 msgid "Actual white point mode"
 msgstr "Bílý bod média"
@@ -959,7 +959,7 @@ msgstr "Chromaticita"
 msgid "Chromaticity"
 msgstr "Chromaticita"
 
-#: tools/oyranos-monitor-white-point.c:1023
+#: tools/oyranos-monitor-white-point.c:1024
 msgid "City"
 msgstr ""
 
@@ -1422,7 +1422,7 @@ msgstr "Nelze rozpoznat zařízení"
 msgid "Could not write to file"
 msgstr "Nelze zapisovat do souboru"
 
-#: tools/oyranos-monitor-white-point.c:1022
+#: tools/oyranos-monitor-white-point.c:1023
 msgid "Country"
 msgstr ""
 
@@ -1904,8 +1904,8 @@ msgid "Editing XYZ"
 msgstr "Editace XYZ"
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
-#: tools/oyranos-monitor-white-point.c:1245
-#: tools/oyranos-monitor-white-point.c:1337
+#: tools/oyranos-monitor-white-point.c:1246
+#: tools/oyranos-monitor-white-point.c:1338
 msgid "Effect"
 msgstr ""
 
@@ -2233,7 +2233,7 @@ msgstr "Dokumentace"
 msgid "Generate a 3D LUT"
 msgstr "Vytvořit 3D CLUT"
 
-#: tools/oyranos-monitor-white-point.c:1161
+#: tools/oyranos-monitor-white-point.c:1162
 msgid "Geographical Position"
 msgstr ""
 
@@ -2899,7 +2899,7 @@ msgid "Kai-Uwe Behrmann"
 msgstr "Kai-Uwe Behrmann"
 
 #: tools/oyranos-monitor-white-point.c:239
-#: tools/oyranos-monitor-white-point.c:715 tools/oyranos_profile_graph.c:454
+#: tools/oyranos-monitor-white-point.c:716 tools/oyranos_profile_graph.c:454
 msgid "Kelvin"
 msgstr ""
 
@@ -2979,7 +2979,7 @@ msgid "Lab2XYZ"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:525
-#: tools/oyranos-monitor-white-point.c:1157
+#: tools/oyranos-monitor-white-point.c:1158
 #, fuzzy
 msgid "Latitude"
 msgstr "ukázat volby politiky"
@@ -3248,7 +3248,7 @@ msgstr "Načíst"
 msgid "Load Image File Object"
 msgstr "Načíst objekt obrázkového souboru"
 
-#: tools/oyranos-monitor-white-point.c:1150
+#: tools/oyranos-monitor-white-point.c:1151
 msgid "Local Time"
 msgstr ""
 
@@ -3272,7 +3272,7 @@ msgid "Long Help"
 msgstr "Ukázat model:"
 
 #: tools/oyranos-monitor-white-point.c:527
-#: tools/oyranos-monitor-white-point.c:1157
+#: tools/oyranos-monitor-white-point.c:1158
 #, fuzzy
 msgid "Longitude"
 msgstr "ukázat volby politiky"
@@ -3684,14 +3684,14 @@ msgstr "Takže něco s volbami."
 msgid "New Profile Name"
 msgstr "jméno profilu"
 
-#: tools/oyranos-monitor-white-point.c:1365
+#: tools/oyranos-monitor-white-point.c:1366
 #, fuzzy
 msgid "New color scheme"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:919
-#: tools/oyranos-monitor-white-point.c:922
-#: tools/oyranos-monitor-white-point.c:1336
+#: tools/oyranos-monitor-white-point.c:920
+#: tools/oyranos-monitor-white-point.c:923
+#: tools/oyranos-monitor-white-point.c:1337
 #, fuzzy
 msgid "New white point mode"
 msgstr "Bílý bod média"
@@ -5404,8 +5404,8 @@ msgstr "Začátek"
 msgid "StdObs2°"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1157
-#: tools/oyranos-monitor-white-point.c:1161
+#: tools/oyranos-monitor-white-point.c:1158
+#: tools/oyranos-monitor-white-point.c:1162
 #, fuzzy
 msgid "Sun Elevation"
 msgstr "Saturační"
@@ -5426,13 +5426,13 @@ msgid "Sun light effect"
 msgstr "Bílý bod média"
 
 #: tools/oyranos-monitor-white-point.c:529
-#: tools/oyranos-monitor-white-point.c:1157
-#: tools/oyranos-monitor-white-point.c:1161
+#: tools/oyranos-monitor-white-point.c:1158
+#: tools/oyranos-monitor-white-point.c:1162
 #, fuzzy
 msgid "Sunrise"
 msgstr "Získat profil ICC"
 
-#: tools/oyranos-monitor-white-point.c:1166
+#: tools/oyranos-monitor-white-point.c:1167
 msgid "Sunset"
 msgstr ""
 
@@ -6484,13 +6484,13 @@ msgstr ""
 "žádný barvový prostor. Obvykle by měl být přiřazen příslušný předpokládaný "
 "profil ICC."
 
-#: tools/oyranos-monitor-white-point.c:1021
+#: tools/oyranos-monitor-white-point.c:1022
 msgid "Time Zone"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:530
-#: tools/oyranos-monitor-white-point.c:1157
-#: tools/oyranos-monitor-white-point.c:1161
+#: tools/oyranos-monitor-white-point.c:1158
+#: tools/oyranos-monitor-white-point.c:1162
 msgid "Twilight"
 msgstr ""
 
@@ -6999,7 +6999,7 @@ msgstr "nalezené problémy"
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:143
 #: tools/oyranos-device.c:1309 tools/oyranos-device.c:1319
 #: tools/oyranos-device.c:1335 tools/oyranos-device.c:1361
-#: tools/oyranos-monitor-white-point.c:989
+#: tools/oyranos-monitor-white-point.c:990
 msgid "found issues parsing JSON"
 msgstr "zjištěny problémy při analýze JSON"
 
@@ -7244,7 +7244,7 @@ msgstr "nenalezeno:"
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1366
+#: tools/oyranos-monitor-white-point.c:1367
 msgid "old/new"
 msgstr ""
 

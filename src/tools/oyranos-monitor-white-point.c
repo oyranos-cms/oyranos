@@ -703,6 +703,7 @@ int myMain( int argc , const char** argv )
       {
         const char * t = "";
         char * tmp = NULL;
+        int flag = (int)i == current ? oyjlBOLD:0;
         if(i == 1) /* automatic */
         {
           double temperature = oyGetTemperature(0);
@@ -716,7 +717,7 @@ int myMain( int argc , const char** argv )
             t = tmp;
           }
         }
-        printf("-w %u # %s %s%s\n", i, choices_string_list[i], t, (int)i == current ? "*":" ");
+        printf("-w %u # %s %s%s\n", i, oyjlTermColor(flag,choices_string_list[i]), t, (int)i == current ? "*":" ");
         if(tmp) oyFree_m_(tmp);
       }
     }

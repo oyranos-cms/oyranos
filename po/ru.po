@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-01-06 10:28+0100\n"
+"POT-Creation-Date: 2022-01-07 06:53+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -25,7 +25,7 @@ msgstr ""
 #: tools/oyranos-device.c:700 tools/oyranos-device.c:714
 #: tools/oyranos-device.c:741 tools/oyranos-device.c:782
 #: tools/oyranos-device.c:1162 tools/oyranos-device.c:1282
-#: tools/oyranos-device.c:1517 tools/oyranos-monitor-white-point.c:922
+#: tools/oyranos-device.c:1517 tools/oyranos-monitor-white-point.c:923
 #: tools/qcmsevents/qcmsevents.cpp:338
 #, c-format
 msgid "!!! ERROR"
@@ -397,7 +397,7 @@ msgstr ""
 msgid "Actual mode"
 msgstr "значе́ние"
 
-#: tools/oyranos-monitor-white-point.c:1244
+#: tools/oyranos-monitor-white-point.c:1245
 msgid "Actual white point mode"
 msgstr ""
 
@@ -928,7 +928,7 @@ msgstr ""
 msgid "Chromaticity"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1023
+#: tools/oyranos-monitor-white-point.c:1024
 msgid "City"
 msgstr ""
 
@@ -1343,7 +1343,7 @@ msgstr ""
 msgid "Could not write to file"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1022
+#: tools/oyranos-monitor-white-point.c:1023
 msgid "Country"
 msgstr ""
 
@@ -1798,8 +1798,8 @@ msgid "Editing XYZ"
 msgstr ""
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
-#: tools/oyranos-monitor-white-point.c:1245
-#: tools/oyranos-monitor-white-point.c:1337
+#: tools/oyranos-monitor-white-point.c:1246
+#: tools/oyranos-monitor-white-point.c:1338
 msgid "Effect"
 msgstr ""
 
@@ -2108,7 +2108,7 @@ msgstr ""
 msgid "Generate a 3D LUT"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1161
+#: tools/oyranos-monitor-white-point.c:1162
 msgid "Geographical Position"
 msgstr ""
 
@@ -2702,7 +2702,7 @@ msgid "Kai-Uwe Behrmann"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:239
-#: tools/oyranos-monitor-white-point.c:715 tools/oyranos_profile_graph.c:454
+#: tools/oyranos-monitor-white-point.c:716 tools/oyranos_profile_graph.c:454
 msgid "Kelvin"
 msgstr ""
 
@@ -2782,7 +2782,7 @@ msgid "Lab2XYZ"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:525
-#: tools/oyranos-monitor-white-point.c:1157
+#: tools/oyranos-monitor-white-point.c:1158
 #, fuzzy
 msgid "Latitude"
 msgstr "значе́ние"
@@ -3017,7 +3017,7 @@ msgstr ""
 msgid "Load Image File Object"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1150
+#: tools/oyranos-monitor-white-point.c:1151
 msgid "Local Time"
 msgstr ""
 
@@ -3040,7 +3040,7 @@ msgid "Long Help"
 msgstr "Справка"
 
 #: tools/oyranos-monitor-white-point.c:527
-#: tools/oyranos-monitor-white-point.c:1157
+#: tools/oyranos-monitor-white-point.c:1158
 #, fuzzy
 msgid "Longitude"
 msgstr "значе́ние"
@@ -3430,14 +3430,14 @@ msgstr ""
 msgid "New Profile Name"
 msgstr "ICC-профиль"
 
-#: tools/oyranos-monitor-white-point.c:1365
+#: tools/oyranos-monitor-white-point.c:1366
 #, fuzzy
 msgid "New color scheme"
 msgstr "значе́ние"
 
-#: tools/oyranos-monitor-white-point.c:919
-#: tools/oyranos-monitor-white-point.c:922
-#: tools/oyranos-monitor-white-point.c:1336
+#: tools/oyranos-monitor-white-point.c:920
+#: tools/oyranos-monitor-white-point.c:923
+#: tools/oyranos-monitor-white-point.c:1337
 msgid "New white point mode"
 msgstr ""
 
@@ -5016,8 +5016,8 @@ msgstr ""
 msgid "StdObs2°"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1157
-#: tools/oyranos-monitor-white-point.c:1161
+#: tools/oyranos-monitor-white-point.c:1158
+#: tools/oyranos-monitor-white-point.c:1162
 msgid "Sun Elevation"
 msgstr ""
 
@@ -5036,13 +5036,13 @@ msgid "Sun light effect"
 msgstr "значе́ние"
 
 #: tools/oyranos-monitor-white-point.c:529
-#: tools/oyranos-monitor-white-point.c:1157
-#: tools/oyranos-monitor-white-point.c:1161
+#: tools/oyranos-monitor-white-point.c:1158
+#: tools/oyranos-monitor-white-point.c:1162
 #, fuzzy
 msgid "Sunrise"
 msgstr "ICC-профиль"
 
-#: tools/oyranos-monitor-white-point.c:1166
+#: tools/oyranos-monitor-white-point.c:1167
 msgid "Sunset"
 msgstr ""
 
@@ -5854,13 +5854,13 @@ msgid ""
 "assigned. Typically the according assumed ICC profile should be assigned."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1021
+#: tools/oyranos-monitor-white-point.c:1022
 msgid "Time Zone"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:530
-#: tools/oyranos-monitor-white-point.c:1157
-#: tools/oyranos-monitor-white-point.c:1161
+#: tools/oyranos-monitor-white-point.c:1158
+#: tools/oyranos-monitor-white-point.c:1162
 msgid "Twilight"
 msgstr ""
 
@@ -6348,7 +6348,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:143
 #: tools/oyranos-device.c:1309 tools/oyranos-device.c:1319
 #: tools/oyranos-device.c:1335 tools/oyranos-device.c:1361
-#: tools/oyranos-monitor-white-point.c:989
+#: tools/oyranos-monitor-white-point.c:990
 msgid "found issues parsing JSON"
 msgstr ""
 
@@ -6577,7 +6577,7 @@ msgstr ""
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1366
+#: tools/oyranos-monitor-white-point.c:1367
 msgid "old/new"
 msgstr ""
 
