@@ -2666,7 +2666,7 @@ oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char          * documentation,
     /* type,  nick,      label,name,                 description */
     { "oihs", "version", NULL, OYJL_VERSION_NAME, NULL },
     { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.oyranos.org" },
-    { "oihs", "copyright", NULL, "Copyright © 2017-2021 Kai-Uwe Behrmann", NULL },
+    { "oihs", "copyright", NULL, "Copyright © 2017-2022 Kai-Uwe Behrmann", NULL },
     { "oihs", "license", NULL, "newBSD", "http://www.oyranos.org" },
     { "oihs", "url", NULL, "http://www.oyranos.org", NULL },
     { "oihs", "support", NULL, "https://www.github.com/oyranos-cms/oyranos/issues", NULL },
