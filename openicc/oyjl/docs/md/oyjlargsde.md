@@ -84,7 +84,7 @@ Kai-Uwe Behrmann http://www.oyranos.org
 
 <h2>KOPIERRECHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*Copyright © 2017-2021 Kai-Uwe Behrmann*
+*Copyright © 2017-2022 Kai-Uwe Behrmann*
 
 
 <a name="license"></a>
