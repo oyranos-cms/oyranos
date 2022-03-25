@@ -5,7 +5,7 @@
  *  oyjl - convinient tree JSON APIs
  *
  *  @par Copyright:
- *            2011-2021 (C) Kai-Uwe Behrmann
+ *            2011-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    tree based JSON API
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -96,7 +96,9 @@ enum {
   oyjlOPTIONSTYLE_MAN = 0x20,                           /* add Unix MAN page groff syntax decoration */
   oyjlOPTIONSTYLE_MARKDOWN = 0x40,                      /* add markdown syntax decoration */
   oyjlOPTIONSTYLE_GROUP_SUBCOMMAND = 0x080,             /* supresses dash(es): option */
-  oyjlOPTIONSTYLE_OPTION_ONLY = 0x100                   /* print the option without any args */
+  oyjlOPTIONSTYLE_GROUP_EXPLICITE = 0x100,              /* -- just for alignment */
+  oyjlOPTIONSTYLE_GROUP_GENERAL_OPTS = 0x200,           /* -- just for alignment */
+  oyjlOPTIONSTYLE_OPTION_ONLY = 0x8000                  /* print the option without any args */
 };
 char *       oyjlOption_PrintArg_    ( oyjlOption_s      * o,
                                        int                 style );

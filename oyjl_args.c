@@ -1848,6 +1848,7 @@ int oyjlManArgIsEditable_( const char * arg )
 
 #define OYJL_E(x_) (x_?x_:"")
 #define OYJL_IS_NOT_O( x ) (!o || !o->o || strcmp(o->o,x) != 0)
+#define OYJL_IS_NOT_OPT( x ) (!o || !o->option || strcmp(o->option,x) != 0)
 #define OYJL_IS_O( x ) (o && o->o && strcmp(o->o,x) == 0)
 #if !defined(OYJL_TREE_INTERNAL_H)
 enum {
@@ -1859,7 +1860,9 @@ enum {
   oyjlOPTIONSTYLE_MAN = 0x20,                           /* add Unix MAN page groff syntax decoration */
   oyjlOPTIONSTYLE_MARKDOWN = 0x40,                      /* add markdown syntax decoration */
   oyjlOPTIONSTYLE_GROUP_SUBCOMMAND = 0x080,             /* supresses dash(es): option */
-  oyjlOPTIONSTYLE_OPTION_ONLY = 0x100                   /* print the option without any args */
+  oyjlOPTIONSTYLE_GROUP_EXPLICITE = 0x100,              /* -- just for alignment */
+  oyjlOPTIONSTYLE_GROUP_GENERAL_OPTS = 0x200,           /* -- just for alignment */
+  oyjlOPTIONSTYLE_OPTION_ONLY = 0x8000                  /* print the option without any args */
 };
 #endif
 #define oyjlOPTIONSTYLE_OPTIONAL (oyjlOPTIONSTYLE_OPTIONAL_START | oyjlOPTIONSTYLE_OPTIONAL_END)
