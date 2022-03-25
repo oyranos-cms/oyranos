@@ -1,7 +1,7 @@
 /** @file oyranos-compat-gnome.c
  *
  *  @par Copyright:
- *            2016-2019 (C) Kai-Uwe Behrmann
+ *            2016-2021 (C) Kai-Uwe Behrmann
  *
  *  @brief    compatibility tool for handling gnome monitor profiles
  *  @internal
@@ -211,16 +211,10 @@ int main(int argc, char **argv_)
     const char * lib_name = "libcolordcompat.so";
     void * gnome_handle = dlopen(lib_name, RTLD_LAZY);
     int report = 0;
-#define LOAD_FUNC( func, fallback_func ) l##func = dlsym(gnome_handle, #func ); \
+#define LOAD_FUNC( func ) l##func = dlsym(gnome_handle, #func ); \
                if(!l##func) \
                { \
-                 if(#fallback_func != NULL) \
-                 { \
-                   l##func = fallback_func; \
-                 } else \
-                 { \
-                   error = 1; \
-                 } \
+                 error = 1; \
                  report = 1; \
                  if(verbose) fprintf( stderr, OY_DBG_FORMAT_ "dlsym failed: %s\n", OY_DBG_ARGS_, \
                                        dlerror() ); \
@@ -231,9 +225,11 @@ int main(int argc, char **argv_)
     char * edid = NULL;
     size_t size = 0;
 
-    LOAD_FUNC( cd_edid_install_profile, 0 )
-    LOAD_FUNC( cd_edid_remove_profile, 0 )
-    LOAD_FUNC( cd_edid_get_profile, 0 )
+    LOAD_FUNC( cd_edid_install_profile )
+    LOAD_FUNC( cd_edid_remove_profile )
+    LOAD_FUNC( cd_edid_get_profile )
+    if(error == -1)
+      error = 0;
 
     if(report && verbose)
     {
@@ -246,7 +242,7 @@ int main(int argc, char **argv_)
     else
       edid = oyReadFileToMem_( edid_fn, &size );
 
-    if(strcmp( type, "-a" ) == 0 && argc == 6)
+    if(!error && strcmp( type, "-a" ) == 0 && argc == 6)
     {
       error = lcd_edid_install_profile( edid, size, 0, profile_fn );
       if(error)
@@ -275,7 +271,7 @@ int main(int argc, char **argv_)
       if(!error)
         return 0;
     } 
-    if(strcmp( type, "-e" ) == 0 && argc == 4)
+    if(!error && strcmp( type, "-e" ) == 0 && argc == 4)
     {
       do {
         profile_fn = NULL;
@@ -288,7 +284,7 @@ int main(int argc, char **argv_)
       if(!error)
         return 0;
     }
-    if(strcmp( type, "-l" ) == 0 && argc == 4)
+    if(!error && strcmp( type, "-l" ) == 0 && argc == 4)
     {
       error = lcd_edid_get_profile( edid, size, &profile_fn );
       if(verbose)
