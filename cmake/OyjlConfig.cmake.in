@@ -104,7 +104,7 @@ endif (OYJL_FOUND)
 # _langs     catalogs to use  SET( MY_LANGS cs_CZ de_DE fr_FR.UTF8 )
 # _doc_path  file system location to store the documents into, usually "docs" -> docs/md/... docs/man/... docs/man/_langs/...
 # use GETTEXT_FOUND for gettext style translations
-# oe use USE_I18N without gettext and e.g. OyjlCore style: #define _(text) oyjlTranslate( trc, text )
+# or use USE_I18N without gettext and e.g. OyjlCore style: #define _(text) oyjlTranslate( trc, text )
 MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
   IF( CMAKE_CROSSCOMPILING )
     MESSAGE( "-- Skipping ${_tool} docu: cross compiling; Hint: build first for local march to generate docu + i18n" )
