@@ -11,7 +11,7 @@
  *            MIT http://www.opensource.org/licenses/mit-license.php
 
     @author Kai-Uwe Behrmann and others
-    @since  September 2006-2020
+    @since  September 2006-2022
 
     @par Development
           https://github.com/oyranos-cms/oyranos
@@ -295,4 +295,3 @@
  *  Use setenv("OYJL_NO_EXIT", "1", 0) in order to avoid this behaviour.
  *
  */
-
