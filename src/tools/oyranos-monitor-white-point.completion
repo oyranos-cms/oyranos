@@ -131,6 +131,13 @@ _oyranos_monitor_white_point()
             set +x +v
             return
             ;;
+        --sunrise) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('TEXT' 'JSON')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --export) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
@@ -141,6 +148,13 @@ _oyranos_monitor_white_point()
         --render) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('gui' 'cli' 'web' '-')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --help) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('-' 'synopsis')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
@@ -235,6 +249,13 @@ _oyranos_monitor_white_point()
             set +x +v
             return
             ;;
+        -r=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('TEXT' 'JSON')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
         -X=*) # single letter option with static args
             local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
@@ -249,30 +270,37 @@ _oyranos_monitor_white_point()
             set +x +v
             return
             ;;
+        -h=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('-' 'synopsis')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
     esac
 
 
     : "autocomplete options "$cur""
     case "$cur" in
-        -d|-w|-n|-s|-a|-g|-e|-b|-i|-o|-t|-X|-R|-u)
+        -d|-w|-n|-s|-a|-g|-e|-b|-i|-o|-r|-t|-X|-R|-h|-u)
             : "finish short options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
-        --daemon|--white-point|--night-white-point|--sun-white-point|--automatic|--night-effect|--sunlight-effect|--night-backlight|--sunlight-color-scheme|--night-color-scheme|--latitude|--longitude|--twilight|--export|--render|--hour)
+        --daemon|--white-point|--night-white-point|--sun-white-point|--automatic|--night-effect|--sunlight-effect|--night-backlight|--sunlight-color-scheme|--night-color-scheme|--latitude|--longitude|--sunrise|--twilight|--export|--render|--help|--hour)
             : "finish long options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
-        -m|-l|-r|-z|-h|-v|-V|-y|-c)
+        -m|-l|-z|-v|-V|-y|-c)
             : "finish short options without choices"
             COMPREPLY=("$cur ")
             set +x +v
             return
             ;;
-        --modes|--location|--sunrise|--system-wide|--help|--synopsis|--verbose|--version|--test|--check)
+        --modes|--location|--system-wide|--synopsis|--verbose|--version|--test|--check)
             : "finish long options without choices"
             COMPREPLY=("$cur ")
             set +x +v
@@ -330,7 +358,7 @@ _oyranos_monitor_white_point()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       local WORD_LIST=()
-      WORD_LIST=("${WORD_LIST[@]}" -n= --night-white-point= -g= --night-effect= -b= --night-backlight= --night-color-scheme= -w= --white-point= -a= --automatic= -s= --sun-white-point= -e= --sunlight-effect= --sunlight-color-scheme= -l --location -i= --latitude= -o= --longitude= -d= --daemon= -m --modes -r --sunrise -X= --export= -h --help -V --version -R= --render=)
+      WORD_LIST=("${WORD_LIST[@]}" -n= --night-white-point= -g= --night-effect= -b= --night-backlight= --night-color-scheme= -w= --white-point= -a= --automatic= -s= --sun-white-point= -e= --sunlight-effect= --sunlight-color-scheme= -l --location -i= --latitude= -o= --longitude= -d= --daemon= -m --modes -r= --sunrise= -X= --export= -h= --help= -V --version -R= --render=)
       COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return

@@ -16,11 +16,11 @@ oyranos-monitor-white-point v0.9.7 - Nacht Manager
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#sun-white-point"><strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-e</strong>=<em>ICC_PROFIL</em> <strong>--sunlight-color-scheme</strong>=<em>WORT</em> [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 <br />
-<strong>oyranos-monitor-white-point</strong> <a href="#location"><strong>-l</strong></a> | <strong>-i</strong> <strong>-o</strong> [<strong>-t</strong>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#location"><strong>-l</strong></a> | <strong>-i</strong>=<em>WINKEL_IN_GRAD</em> <strong>-o</strong>=<em>WINKEL_IN_GRAD</em> [<strong>-t</strong>=<em>WINKEL_IN_GRAD</em>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#daemon"><strong>-d</strong>=<em>0|1|2</em></a> [<strong>-v</strong>]
 <br />
-<strong>oyranos-monitor-white-point</strong> <a href="#modes"><strong>-m</strong></a> | <strong>-r</strong> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#modes"><strong>-m</strong></a> | <strong>-r</strong><em>[=FORMAT]</em> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -124,7 +124,7 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
 
 <h3 id="location">Ort und Dämmerung</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-l</strong> | <strong>-i</strong> <strong>-o</strong> [<strong>-t</strong>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-l</strong> | <strong>-i</strong>=<em>WINKEL_IN_GRAD</em> <strong>-o</strong>=<em>WINKEL_IN_GRAD</em> [<strong>-t</strong>=<em>WINKEL_IN_GRAD</em>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--location</strong></td> <td>Erhalte Position von IP Adresse</td> </tr>
@@ -140,7 +140,7 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong>=<em>0|1|2</em></td> <td>Setze Sonnenuntergangsdienst
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td># Deaktiviere : Deaktiviere</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td>#  : Deaktiviere</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 1</td><td># Automatischer Start : Automatischer Start</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 2</td><td># Aktiviere : Aktiviere</td></tr>
   </table>
@@ -153,12 +153,24 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
 
 <h3 id="modes">Allgemeine Optionen</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-m</strong> | <strong>-r</strong> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-m</strong> | <strong>-r</strong><em>[=FORMAT]</em> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> -</td><td># Vollständige Hilfe : Zeige Hilfe für alle Gruppen</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> synopsis</td><td># Übersicht : Liste Gruppen - Zeige alle Gruppen mit Syntax</td></tr>
+  </table>
+  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--modes</strong></td> <td>Zeige Weißpunktmodus</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--sunrise</strong></td> <td>Zeige lokale Zeit, benutzte geografische Position, Dämmerungswinkel, Sonnenauf-und untergangszeiten</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--sunrise</strong><em>[=FORMAT]</em></td> <td>Zeige lokale Zeit, benutzte geografische Position, Dämmerungswinkel, Sonnenauf-und untergangszeiten
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> TEXT</td><td># TEXT</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> JSON</td><td># JSON</td></tr>
+  </table>
+  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Exportiere formatierten Text<br />Hole Benutzerschnittstelle als Text
   <table>
    <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite</td></tr>

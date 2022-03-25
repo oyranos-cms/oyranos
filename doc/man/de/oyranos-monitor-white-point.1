@@ -8,11 +8,11 @@ oyranos-monitor-white-point v0.9.7 \- Nacht Manager
 .br
 \fBoyranos-monitor-white-point\fR \fB\-s\fR \fI0|1|2|3|4|5|6|7\fR \fB\-e\fR \fIICC_PROFIL\fR \fB\-\-sunlight-color-scheme\fR \fIWORT\fR [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fB\-o\fR [\fB\-t\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR\fI[=FORMAT]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Tages- und Nachzeit festlegen. Ein zusätzliches Effektprofil kann eingestellt werden.
 .SH OPTIONEN
@@ -132,7 +132,7 @@ Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen.
 .br
 .SS
 Ort und Dämmerung
-\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fB\-o\fR [\fB\-t\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
+\fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
 \fB\-l\fR|\fB\-\-location\fR	Erhalte Position von IP Adresse
 .br
@@ -150,7 +150,7 @@ Setze Sonnenuntergangsdienst
 .br
 \fB\-d\fR|\fB\-\-daemon\fR \fI0|1|2\fR	Setze Sonnenuntergangsdienst
 .br
-	\fB\-d\fR 0		# Deaktiviere : Deaktiviere
+	\fB\-d\fR 0		#  : Deaktiviere
 .br
 	\fB\-d\fR 1		# Automatischer Start : Automatischer Start
 .br
@@ -159,15 +159,23 @@ Setze Sonnenuntergangsdienst
 .SH ALLGEMEINE OPTIONEN
 .SS
 Allgemeine Optionen
-\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR\fI[=FORMAT]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .br
 \fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Zeige Hilfetext an
 .RS
 Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
 .RE
+	\fB\-h\fR -		# Vollständige Hilfe : Zeige Hilfe für alle Gruppen
+.br
+	\fB\-h\fR synopsis		# Übersicht : Liste Gruppen - Zeige alle Gruppen mit Syntax
+.br
 \fB\-m\fR|\fB\-\-modes\fR	Zeige Weißpunktmodus
 .br
-\fB\-r\fR|\fB\-\-sunrise\fR	Zeige lokale Zeit, benutzte geografische Position, Dämmerungswinkel, Sonnenauf-und untergangszeiten
+\fB\-r\fR|\fB\-\-sunrise\fR\fI[=FORMAT]\fR	Zeige lokale Zeit, benutzte geografische Position, Dämmerungswinkel, Sonnenauf-und untergangszeiten
+.br
+	\fB\-r\fR TEXT		# TEXT
+.br
+	\fB\-r\fR JSON		# JSON
 .br
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
 .RS

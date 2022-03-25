@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-01-07 06:53+0100\n"
+"POT-Creation-Date: 2022-03-23 07:48+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -19,8 +19,8 @@ msgstr ""
 #: liboyranos_core/oyranos_core.c:521 tools/oyranos-device.c:685
 #: tools/oyranos-device.c:700 tools/oyranos-device.c:714
 #: tools/oyranos-device.c:741 tools/oyranos-device.c:782
-#: tools/oyranos-device.c:1162 tools/oyranos-device.c:1282
-#: tools/oyranos-device.c:1517 tools/oyranos-monitor-white-point.c:923
+#: tools/oyranos-device.c:1163 tools/oyranos-device.c:1283
+#: tools/oyranos-device.c:1518 tools/oyranos-monitor-white-point.c:923
 #: tools/qcmsevents/qcmsevents.cpp:338
 #, c-format
 msgid "!!! ERROR"
@@ -652,8 +652,8 @@ msgid "Available Device Profiles:"
 msgstr "ICC Profils"
 
 #: tools/oyranos-device.c:687 tools/oyranos-device.c:702
-#: tools/oyranos-device.c:716 tools/oyranos-device.c:1164
-#: tools/oyranos-device.c:1284 tools/oyranos_gamma.c:381
+#: tools/oyranos-device.c:716 tools/oyranos-device.c:1165
+#: tools/oyranos-device.c:1285 tools/oyranos_gamma.c:381
 #, fuzzy
 msgid "Available devices"
 msgstr "ICC Profils"
@@ -1394,7 +1394,7 @@ msgid "Could not resolve device"
 msgstr "Ouvrir Profil"
 
 #: tools/oyranos-device.c:685 tools/oyranos-device.c:700
-#: tools/oyranos-device.c:1162 tools/oyranos-device.c:1282
+#: tools/oyranos-device.c:1163 tools/oyranos-device.c:1283
 #, fuzzy
 msgid "Could not resolve device."
 msgstr "Ouvrir Profil"
@@ -5436,7 +5436,7 @@ msgstr "ICC Profils"
 msgid "Taxi DB entries for device"
 msgstr ""
 
-#: tools/oyranos-device.c:1205 tools/oyranos_gamma.c:464
+#: tools/oyranos-device.c:1206 tools/oyranos_gamma.c:464
 msgid "Taxi ID"
 msgstr ""
 
@@ -6609,7 +6609,7 @@ msgstr ""
 msgid "default profile type does not exist:"
 msgstr ""
 
-#: tools/oyranos-device.c:1206 tools/oyranos_gamma.c:465
+#: tools/oyranos-device.c:1207 tools/oyranos_gamma.c:465
 #, fuzzy
 msgid "description"
 msgstr "Description"
@@ -6691,8 +6691,8 @@ msgstr ""
 #: API_generated/oyranos_devices.c:1702 API_generated/oyranos_devices.c:1786
 #: examples/taxi.c:233 examples/taxi.c:334
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:143
-#: tools/oyranos-device.c:1309 tools/oyranos-device.c:1319
-#: tools/oyranos-device.c:1335 tools/oyranos-device.c:1361
+#: tools/oyranos-device.c:1310 tools/oyranos-device.c:1320
+#: tools/oyranos-device.c:1336 tools/oyranos-device.c:1362
 #: tools/oyranos-monitor-white-point.c:990
 msgid "found issues parsing JSON"
 msgstr ""
@@ -6874,7 +6874,7 @@ msgstr "Options"
 msgid "ls `oyranos-config --syscolordir --iccdirname`"
 msgstr ""
 
-#: tools/oyranos-device.c:1206 tools/oyranos_gamma.c:465
+#: tools/oyranos-device.c:1207 tools/oyranos_gamma.c:465
 msgid "match value"
 msgstr ""
 

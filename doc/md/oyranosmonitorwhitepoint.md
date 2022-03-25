@@ -16,11 +16,11 @@ oyranos-monitor-white-point v0.9.7 - Night Manager
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#sun-white-point"><strong>-s</strong>=<em>0|1|2|3|4|5|6|7</em></a> <strong>-e</strong>=<em>ICC_PROFILE</em> <strong>--sunlight-color-scheme</strong>=<em>STRING</em> [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 <br />
-<strong>oyranos-monitor-white-point</strong> <a href="#location"><strong>-l</strong></a> | <strong>-i</strong> <strong>-o</strong> [<strong>-t</strong>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#location"><strong>-l</strong></a> | <strong>-i</strong>=<em>ANGLE_IN_DEGREE</em> <strong>-o</strong>=<em>ANGLE_IN_DEGREE</em> [<strong>-t</strong>=<em>ANGLE_IN_DEGREE</em>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#daemon"><strong>-d</strong>=<em>0|1|2</em></a> [<strong>-v</strong>]
 <br />
-<strong>oyranos-monitor-white-point</strong> <a href="#modes"><strong>-m</strong></a> | <strong>-r</strong> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#modes"><strong>-m</strong></a> | <strong>-r</strong><em>[=FORMAT]</em> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -124,7 +124,7 @@ The tool can set the actual white point or set it by local day and night time. A
 
 <h3 id="location">Location and Twilight</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-l</strong> | <strong>-i</strong> <strong>-o</strong> [<strong>-t</strong>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-l</strong> | <strong>-i</strong>=<em>ANGLE_IN_DEGREE</em> <strong>-o</strong>=<em>ANGLE_IN_DEGREE</em> [<strong>-t</strong>=<em>ANGLE_IN_DEGREE</em>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--location</strong></td> <td>Detect location by IP adress</td> </tr>
@@ -140,7 +140,7 @@ The tool can set the actual white point or set it by local day and night time. A
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong>=<em>0|1|2</em></td> <td>Control user daemon
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td># Deactivate : Deactivate</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td>#  : Deactivate</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 1</td><td># Autostart : Autostart</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 2</td><td># Activate : Activate</td></tr>
   </table>
@@ -153,12 +153,24 @@ The tool can set the actual white point or set it by local day and night time. A
 
 <h3 id="modes">General options</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-m</strong> | <strong>-r</strong> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-m</strong> | <strong>-r</strong><em>[=FORMAT]</em> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> -</td><td># Full Help : Print help for all groups</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> synopsis</td><td># Synopsis : List groups - Show all groups including syntax</td></tr>
+  </table>
+  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--modes</strong></td> <td>Show white point modes</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--sunrise</strong></td> <td>Show local time, used geographical location, twilight height angles, sun rise and sun set times</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--sunrise</strong><em>[=FORMAT]</em></td> <td>Show local time, used geographical location, twilight height angles, sun rise and sun set times
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> TEXT</td><td># TEXT</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> JSON</td><td># JSON</td></tr>
+  </table>
+  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-X</strong>|<strong>--export</strong>=<em>json|json+command|man|markdown</em></td> <td>Export formated text<br />Get UI converted into text formats
   <table>
    <tr><td style='padding-left:0.5em'><strong>-X</strong> man</td><td># Man : Unix Man page - Get a unix man page</td></tr>

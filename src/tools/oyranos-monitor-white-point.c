@@ -52,8 +52,8 @@ int __sunriset__( int year, int month, int day, double lon, double lat,
                   double altit, int upper_limb, double *trise, double *tset );
 int findLocation(oySCOPE_e scope, int dry);
 int getLocation( double * lon, double * lat);
-double getSunHeight( double year, double month, double day, double gmt_hours, double lat, double lon, int verbose );
-int getSunriseSunset( double * rise, double * set, int dry, char ** text, int verbose );
+double getSunHeight( double year, double month, double day, double gmt_hours, double lat, double lon, int verbose, oyjl_val root );
+int getSunriseSunset( double * rise, double * set, int dry, const char * format, char ** text, int verbose );
 int isNight(int dry);
 int runDaemon(int dmode);
 int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
@@ -459,7 +459,7 @@ int myMain( int argc , const char** argv )
   int location = 0;
   double longitude = 360;
   double latitude = 360;
-  int sunrise = 0;
+  const char * sunrise = NULL;
   double twilight = -1000;
   char * value = NULL;
   double rise = 0.0,
@@ -490,7 +490,10 @@ int myMain( int argc , const char** argv )
   DBG_S_( oyPrintTime() );
   opts = oyjlOptions_New( argc, (const char **)argv );
   /* nick, name, description, help */
-  oyjlOptionChoice_s d_choices[] = {{"0", _("Deactivate"), _("Deactivate"), ""},
+  oyjlOptionChoice_s r_choices[] = {{"TEXT",        "TEXT",             NULL,                         NULL},
+                                    {"JSON",        "JSON",             NULL,                         NULL},
+                                    {NULL,NULL,NULL,NULL}};
+  oyjlOptionChoice_s d_choices[] = {{"0", _(""), _("Deactivate"), ""},
                                     {"1", _("Autostart"), _("Autostart"), ""},
                                     {"2", _("Activate"), _("Activate"), ""},
                                     {NULL,NULL,NULL,NULL}};
@@ -526,7 +529,7 @@ int myMain( int argc , const char** argv )
       {.dbl.start = -90, .dbl.end = 90, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/latitude", 0 )}, oyjlDOUBLE, {.d=&latitude} },
     {"oiwi", 0, "o", "longitude", NULL, _("Longitude"), _("Set Longitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )}, oyjlDOUBLE, {.d=&longitude} },
-    {"oiwi", 0, "r", "sunrise", NULL, _("Sunrise"), _("Show local time, used geographical location, twilight height angles, sun rise and sun set times"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&sunrise} },
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "r", "sunrise", NULL, _("Sunrise"), _("Show local time, used geographical location, twilight height angles, sun rise and sun set times"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), 0 )}, oyjlSTRING, {.s=&sunrise} },
     {"oiwi", 0, "t", "twilight", NULL, _("Twilight"), _("Set Twilight angle"), _("0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical"), _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )}, oyjlDOUBLE, {.d=&twilight} },
     {"oiwi", 0, "z", "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_wide} },
@@ -534,7 +537,7 @@ int myMain( int argc , const char** argv )
     {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
     /* The --render option can be hidden and used only internally. */
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
-    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help",NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help",NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlINT, {.i=&help} },
     {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0} },
     {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
     {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
@@ -601,7 +604,7 @@ int myMain( int argc , const char** argv )
     char * json = NULL,
          * json_commands = strdup(jcommands),
          * text = NULL;
-    error = getSunriseSunset( &rise, &set, dry, &text, verbose );
+    error = getSunriseSunset( &rise, &set, dry, "TEXT", &text, verbose );
     ui->opts->groups[3].help = text;
     json = oyjlUi_ToJson( ui, 0 ),
     json_commands[strlen(json_commands)-2] = ',';
@@ -641,7 +644,7 @@ int myMain( int argc , const char** argv )
 #endif
 
   DBG_S_( oyPrintTime() );
-  if(verbose >= 1)
+  if(verbose > 1)
     oy_debug += verbose;
 
   if(system_wide)
@@ -820,7 +823,8 @@ int myMain( int argc , const char** argv )
   if(sunrise)
   {
     char * text = NULL;
-    error = getSunriseSunset( &rise, &set, dry, &text, verbose );
+    if(strlen(sunrise) < 4) sunrise = "TEXT";
+    error = getSunriseSunset( &rise, &set, dry, sunrise, &text, verbose );
     puts(text);
     ++worked;
   }
@@ -1091,11 +1095,12 @@ double oyNormaliseHour(double hour)
 }
 
 #define oyGetCurrentGMTHour_(arg) ((hour_ != -1.0) ? hour_ + oyGetCurrentGMTHour(arg)*0.0 : oyGetCurrentGMTHour(arg))
-int getSunriseSunset( double * rise, double * set, int dry, char ** text, int verbose )
+int getSunriseSunset( double * rise, double * set, int dry, const char * format, char ** text, int verbose )
 {
   double lat = 0.0,
          lon = 0.0;
   double twilight = 0;
+  double dtime;
   int year,month,day;
   int r;
   char * value = NULL;
@@ -1142,27 +1147,62 @@ int getSunriseSunset( double * rise, double * set, int dry, char ** text, int ve
   {
     int hour, minute, second, gmt_diff_second;
     double elevation;
+    oyjl_val root = NULL;
+    if(format && strcmp(format,"JSON") == 0)
+      root = oyjlTreeNew(NULL);
 
-    oyGetCurrentGMTHour_( &gmt_diff_second );
+    dtime = oyGetCurrentGMTHour_( &gmt_diff_second );
     oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour_(0), gmt_diff_second ), &hour, &minute, &second );
-    elevation = getSunHeight( year, month, day, oyGetCurrentGMTHour_(0), lat, lon, verbose );
+    if(format && strcmp(format,"JSON") == 0)
+    {
+      int is_night;
+      if(*rise < dtime && dtime <= *set)
+      /* day time */
+        is_night = 0;
+      else
+        is_night = 1;
+      oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, hour, "local/time/hour" );
+      oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, minute, "local/time/minute" );
+      oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, second, "local/time/second" );
+      oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, is_night, "org/freedesktop/openicc/display/night" );
+    }
+    elevation = getSunHeight( year, month, day, oyGetCurrentGMTHour_(0), lat, lon, verbose, root );
     if(text)
       oyjlStringAdd( text, malloc, free, "%s%s%s%s",
              verbose?_("Local Time"):"", verbose?":":"", verbose?"\t":"", oyjlPrintTime(verbose?OYJL_TIME_ZONE:OYJL_BRACKETS, oyjlGREEN) );
     oySplitHour( oyGetCurrentLocalHour( *rise, gmt_diff_second ), &hour, &minute, &second );
     if(text)
     {
-      if(verbose)
+      if(format && strcmp(format,"JSON") == 0)
+      {
+        oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, lat, "org/freedesktop/openicc/display/latitude" );
+        oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, lon, "org/freedesktop/openicc/display/longitude" );
+        oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, twilight, "org/freedesktop/openicc/display/twilight" );
+        oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, hour, "local/sun/rise/hour" );
+        oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, minute, "local/sun/rise/minute" );
+        oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, second, "local/sun/rise/second" );
+      }
+      else if(verbose)
       {
         oyjlStringAdd( text, malloc, free, "\n%s:\t%g°\n%s:\t%g°\n%s:\t%g°\n%s:\t%g°\n%s:\t%d:%.2d:%.2d",
              _("Latitude"), lat, _("Longitude"), lon, _("Twilight"), twilight, _("Sun Elevation"), elevation, _("Sunrise"), hour, minute, second );
       }
       else
-        oyjlStringAdd( text, malloc, free, " %s: %g° %g° %s: %g° (%s: %g°) %s: %d:%.2d:%.2d",
+      {
+          oyjlStringAdd( text, malloc, free, " %s: %g° %g° %s: %g° (%s: %g°) %s: %d:%.2d:%.2d",
              _("Geographical Position"), lat, lon, _("Twilight"), twilight, _("Sun Elevation"), elevation, _("Sunrise"), hour, minute, second );
+      }
     }
     oySplitHour( oyGetCurrentLocalHour( *set,  gmt_diff_second ), &hour, &minute, &second );
-    if(text)
+    if(format && strcmp(format,"JSON") == 0)
+    {
+      int level = 0;
+      oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, hour, "local/sun/set/hour" );
+      oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, minute, "local/sun/set/minute" );
+      oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, second, "local/sun/set/second" );
+      oyjlTreeToJson( root, &level, text );
+    }
+    else if(text)
       oyjlStringAdd( text, malloc, free, "%s%s:%s%d:%.2d:%.2d",
              verbose?"\n":" ",_("Sunset"), verbose?"\t":" ", hour, minute, second );
   }
@@ -1177,7 +1217,7 @@ int isNight(int dry)
 
   dtime = oyGetCurrentGMTHour_(&diff);
 
-  if( getSunriseSunset( &rise, &set, dry, NULL, 0 ) == 0 )
+  if( getSunriseSunset( &rise, &set, dry, NULL, NULL, 0 ) == 0 )
   {
     if(rise < dtime && dtime <= set)
     /* day time */
@@ -1232,7 +1272,7 @@ int checkWtptState(int dry)
   }
 
   DBG_S_( oyPrintTime() );
-  if( choices_string_list && getSunriseSunset( &rise, &set, dry, NULL, 0 ) == 0 )
+  if( choices_string_list && getSunriseSunset( &rise, &set, dry, NULL, NULL, 0 ) == 0 )
   {
     int new_mode = -1;
     char * new_effect = NULL;
@@ -1913,7 +1953,8 @@ double GMST0( double d )
 
 double getSunHeight( double year, double month, double day, double gmt_hours,
                      double lat, double lon,
-                     int verbose )
+                     int verbose,
+                     oyjl_val root )
 {
   double  d = days_since_2000_Jan_0(year,month,day) + 0.5 - lon/360.0,
       sr,         /* Solar distance, astronomical units */
@@ -1927,37 +1968,63 @@ double getSunHeight( double year, double month, double day, double gmt_hours,
 
   int hour,minute,second;
   oySplitHour( oyGetCurrentLocalHour( gmt_hours, 0 ), &hour, &minute, &second );
-  if(verbose)
-  fprintf( stdout, "GMT:\t%02d:%02d:%02d\n", hour,minute,second );
-  if(verbose)
-  fprintf( stdout, "JD (GMT 12:00):\t%fd\n", d + 2451545.0 + lon/360.0 );
-  if(verbose)
-  fprintf( stdout, "JD0 (GMT 12:00):\t%fd\n", d + lon/360.0 );
-  if(verbose)
-  fprintf( stdout, "LMST:\t%fd\n", d + gmt_hours/24.0*365.25/366.25 );
+  if(root)
+  {
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, hour, "gmt/hour" );
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, minute, "gmt/minute" );
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, second, "gmt/second" );
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, d + 2451545.0 + lon/360.0 , "gmt/jd" );
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, d + lon/360.0 , "gmt/jd0" );
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, d + gmt_hours/24.0*365.25/366.25 , "gmt/lmst" );
+  }
+  else if(verbose)
+  {
+    fprintf( stdout, "GMT:\t%02d:%02d:%02d\n", hour,minute,second );
+    fprintf( stdout, "JD (GMT 12:00):\t%fd\n", d + 2451545.0 + lon/360.0 );
+    fprintf( stdout, "JD0 (GMT 12:00):\t%fd\n", d + lon/360.0 );
+    fprintf( stdout, "LMST:\t%fd\n", d + gmt_hours/24.0*365.25/366.25 );
+  }
 
   /* Compute local sideral time of this moment */
   sidtime = revolution( GMST0(d) + 360.*gmt_hours/24.*365.25/366.25 + lon );
   oySplitHour( oyGetCurrentLocalHour( sidtime/15., 0 ), &hour, &minute, &second );
-  if(verbose)
+  if(root)
+  {
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, hour, "local/mean-sideral-time/hour" );
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, minute, "local/mean-sideral-time/minute" );
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, second, "local/mean-sideral-time/second" );
+  }
+  else if(verbose)
   fprintf( stdout, "Local Mean Sidereal Time:\t%02d:%02d:%02d\n", hour,minute,second );
 
   sun_RA_dec( d, &sRA, &sdec, &sr );
-  if(verbose)
-  fprintf( stdout, "Rectaszension:\t%g°\n", sRA);
-  if(verbose)
-  fprintf( stdout, "Declination:\t%g°\n", sdec);
+  if(root)
+  {
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, sRA, "sun/rectaszension" );
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, sdec, "sun/declination" );
+  }
+  else if(verbose)
+  {
+    fprintf( stdout, "Rectaszension:\t%g°\n", sRA);
+    fprintf( stdout, "Declination:\t%g°\n", sdec);
+  }
   t = sidtime - sRA;
-  if(verbose)
+  if(root)
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, t, "local/sun/hourly-angle" );
+  else if(verbose)
   fprintf( stdout, "Sun's Hourly Angle:\t%g° (%gh)\n", t, t/15.);
   A = atand( sind( t ) /
              ( cosd( t )*sind( lon ) - tand( sdec )*cosd( lon ) )
            );
-  if(verbose)
+  if(root)
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, revolution(A-180.0), "local/sun/azimut" );
+  else if(verbose)
   fprintf( stdout, "Sun's Azimut:\t%g°\n", revolution(A-180.0) );
   hs = cosd( sdec )*cosd( t )*cosd( lat ) + sind( sdec )*sind( lat );
   h = asind( hs );
-  if(verbose)
+  if(root)
+    oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, h, "local/sun/height" );
+  else if(verbose)
   fprintf( stdout, "Sun's Height:\t%g° sin(%g)\n", h, hs );
 
   return h;
