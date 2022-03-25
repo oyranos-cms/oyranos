@@ -1005,9 +1005,10 @@ int myMain( int argc, const char ** argv )
     if(profile)
       tmp = oyProfile_GetFileName( profile, -1 );
 
-    fprintf( stdout, "%s %s %s %s%s%s\n",
-            device_class, device_name, prof_name, error?"wrong":"good",
-            tmp?"\n has already a profile: ":"", tmp?tmp:"" );
+    if(verbose)
+      fprintf( stdout, "%s \"%s\" %s %s%s%s\n",
+            device_class, device_name, prof_name?prof_name:"", error?"wrong":"good",
+            tmp?"\n  has already a profile: ":"", tmp?tmp:"" );
 
     if(assign && prof_name)
     {
