@@ -604,7 +604,7 @@ int myMain( int argc , const char** argv )
     char * json = NULL,
          * json_commands = strdup(jcommands),
          * text = NULL;
-    error = getSunriseSunset( &rise, &set, dry, "TEXT", &text, verbose );
+    error = getSunriseSunset( &rise, &set, dry, "TEXT", &text, 0 );
     ui->opts->groups[3].help = text;
     json = oyjlUi_ToJson( ui, 0 ),
     json_commands[strlen(json_commands)-2] = ',';
