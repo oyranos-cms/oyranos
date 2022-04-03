@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2019 (C) Kai-Uwe Behrmann
+ *            2016-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl parsing functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de> and Florian Forster  <ff at octo.it>
@@ -448,6 +448,7 @@ static int handle_null (void *ctx)
 oyjl_val oyjlTreeParse   (const char *input,
                           char *error_buffer, size_t error_buffer_size)
 {
+  char * tmp = NULL;
   if(input && strlen(input) > 4 && memcmp(input, "oiJS", 4) == 0)
     return (oyjl_val)input;
 
@@ -521,6 +522,12 @@ static yajl_callbacks oyjl_tree_callbacks_ = {
     yajl_config(handle, yajl_allow_comments, 1);
 #endif
 
+    if(strstr(input, "\033[0") != NULL)
+    {
+      const char * t = oyjlTermColorToPlain(input);
+      input = tmp = oyjlStringCopy( t, 0 );
+    }
+
     status = yajl_parse(handle,
                         (unsigned char *) input,
                         strlen (input));
@@ -552,6 +559,7 @@ static yajl_callbacks oyjl_tree_callbacks_ = {
           }
           context_pop(&ctx);
         }
+        if(tmp) free(tmp);
         oyjlTreeFree( ctx.root );
         return NULL;
     }
@@ -560,6 +568,7 @@ static yajl_callbacks oyjl_tree_callbacks_ = {
     status = yajl_complete_parse (handle);
 #endif
     yajl_free (handle);
+    if(tmp) free(tmp);
     return (ctx.root);
 }
 #undef Florian_Forster_SOURCE_GUARD
