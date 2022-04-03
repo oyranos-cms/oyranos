@@ -506,6 +506,7 @@ int        oyjlStr_Replace           ( oyjl_str            text,
                                                               const char ** replace,
                                                               void * user_data),
                                        void              * user_data );
+
 typedef enum {
   oyjlNO_MARK,
   oyjlRED,
@@ -517,8 +518,13 @@ typedef enum {
 } oyjlTEXTMARK_e;
 const char * oyjlTermColor           ( oyjlTEXTMARK_e      mark,
                                        const char        * text );
+const char * oyjlTermColorF          ( oyjlTEXTMARK_e      mark,
+                                       const char        * format,
+                                       ... );
 const char * oyjlTermColorFromHtml   ( const char        * text,
                                        int                 flags );
+const char * oyjlTermColorToPlain    ( const char        * text );
+
 char *       oyjlBT                  ( int                 stack_limit );
 #define OYJL_DATE           0x01
 #define OYJL_TIME           0x02
