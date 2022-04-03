@@ -497,9 +497,23 @@ int myMain( int argc , const char** argv )
       size_t size = 0;
       int count = 0;
       char * db;
+      char error_buffer[128] = {0};
+      oyjl_val root;
 
       STRING_ADD( v, "/openicc.json" );
       db = oyReadFileToMem_( v, &size, oyAllocateFunc_ );
+      root = oyjlTreeParse( db, error_buffer, 128 );
+      if(root)
+      {
+        char * json = NULL;
+        int level = 0;
+        oyjlTreeToJson( root, &level, &json );
+        if(json)
+          puts(json);
+        oyFree_m_(json);
+        oyjlTreeFree( root ); root = NULL;
+      }
+      else
       if(db)
       {
         puts(db);
