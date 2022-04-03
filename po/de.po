@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-03-26 11:17+0100\n"
+"POT-Creation-Date: 2022-04-03 13:13+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -627,7 +627,7 @@ msgstr "Verfügbare Geräteprofile:"
 
 #: tools/oyranos-device.c:687 tools/oyranos-device.c:702
 #: tools/oyranos-device.c:716 tools/oyranos-device.c:1165
-#: tools/oyranos-device.c:1285 tools/oyranos_gamma.c:381
+#: tools/oyranos-device.c:1285 tools/oyranos_gamma.c:395
 msgid "Available devices"
 msgstr "Verfügbare Geräte"
 
@@ -1362,7 +1362,7 @@ msgstr "Konnte Profil nicht laden"
 msgid "Could not open: "
 msgstr "Konnte nicht öffnen: "
 
-#: tools/oyranos_gamma.c:380
+#: tools/oyranos_gamma.c:394
 msgid "Could not resolve device"
 msgstr "Konnte Gerät nicht auflösen"
 
@@ -1812,6 +1812,11 @@ msgstr "EBU Tech.3213-E"
 #: liboyranos_config/oyranos_icc.c:678
 msgid "EFI CMM"
 msgstr "EFI CMM"
+
+#: tools/oyranos_gamma.c:326
+#, fuzzy
+msgid "ERROR"
+msgstr "!!! Fehler"
 
 #: examples/image_display/image_display.cpp:1275
 msgid "Edit Options ..."
@@ -4046,7 +4051,7 @@ msgstr "Plattform"
 msgid "Platform:        "
 msgstr "Plattform:       "
 
-#: tools/oyranos_gamma.c:409
+#: tools/oyranos_gamma.c:423
 msgid "Please specify a monitor with the -d option."
 msgstr "Bitte einen Monitor mit der Option -d wählen."
 
@@ -5165,11 +5170,11 @@ msgstr "Taxi DB"
 msgid "Taxi DB Profiles"
 msgstr "Verfügbare Taxiprofile"
 
-#: tools/oyranos_gamma.c:461
+#: tools/oyranos_gamma.c:475
 msgid "Taxi DB entries for device"
 msgstr "Taxi DB Einträge für das Gerät"
 
-#: tools/oyranos-device.c:1206 tools/oyranos_gamma.c:464
+#: tools/oyranos-device.c:1206 tools/oyranos_gamma.c:478
 msgid "Taxi ID"
 msgstr "Taxi ID"
 
@@ -6349,6 +6354,11 @@ msgstr "Betrachtungsbedingungen"
 msgid "Viewing conditions description"
 msgstr "Beschreibung der Betrachtungbedingungen"
 
+#: tools/oyranos_gamma.c:320
+#, fuzzy
+msgid "WARN"
+msgstr "WARNUNG"
+
 #: liboyranos_core/oyranos_core.c:518 tools/oyranos-device.c:764
 #: tools/oyranos-device.c:767 tools/oyranos-device.c:773
 #: tools/qcmsevents/qcmsevents.cpp:335
@@ -6470,7 +6480,7 @@ msgstr "Sie können es erhalten von http://sf.net/projects/openicc"
 msgid "Yxy"
 msgstr "Yxy"
 
-#: tools/oyranos_gamma.c:417
+#: tools/oyranos_gamma.c:431
 msgid "Zero profiles found in Taxi ICC DB"
 msgstr "Keine Profile in Taxi ICC DB gefunden"
 
@@ -6599,7 +6609,7 @@ msgstr "Dienst"
 msgid "default profile type does not exist:"
 msgstr "Standard Profiltyp existiert nicht:"
 
-#: tools/oyranos-device.c:1207 tools/oyranos_gamma.c:465
+#: tools/oyranos-device.c:1207 tools/oyranos_gamma.c:479
 msgid "description"
 msgstr "Beschreibung"
 
@@ -6664,9 +6674,9 @@ msgstr "daneben!"
 #: modules/color/modules/oyranos_cmm_oPNG.c:992
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:141
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:104
-#: tools/oyranos_gamma.c:677 tools/oyranos_gamma.c:850
-#: tools/oyranos_gamma.c:1007 tools/oyranos_gamma.c:1010
-#: tools/oyranos_gamma.c:1014 tools/oyranos_gamma.c:1052
+#: tools/oyranos_gamma.c:691 tools/oyranos_gamma.c:864
+#: tools/oyranos_gamma.c:1021 tools/oyranos_gamma.c:1024
+#: tools/oyranos_gamma.c:1028 tools/oyranos_gamma.c:1066
 msgid "found issues"
 msgstr "fand Probleme"
 
@@ -6860,7 +6870,7 @@ msgstr "Position"
 msgid "ls `oyranos-config --syscolordir --iccdirname`"
 msgstr ""
 
-#: tools/oyranos-device.c:1207 tools/oyranos_gamma.c:465
+#: tools/oyranos-device.c:1207 tools/oyranos_gamma.c:479
 msgid "match value"
 msgstr "Übereinstimmungswert"
 

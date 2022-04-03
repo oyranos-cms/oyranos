@@ -84,7 +84,7 @@ int main( int argc , char** argv )
   int list = 0;
   int setup = 0;
   int gamma = 0;
-  int daemon = 0;
+  int daemon_var = 0;
   char * format = 0;
   char * output = 0;
   int server = 0;
@@ -175,7 +175,7 @@ int main( int argc , char** argv )
                         else if(OY_IS_ARG("setup"))
                         { setup = 1; i=100; break; }
                         else if(OY_IS_ARG("daemon"))
-                        { daemon = 1; i=100; break; }
+                        { daemon_var = 1; i=100; break; }
                         else if(OY_IS_ARG("format"))
                         { OY_PARSE_STRING_ARG2(format, "format"); break; }
                         else if(OY_IS_ARG("output"))
@@ -302,26 +302,40 @@ int main( int argc , char** argv )
   }
 
   /* start independent white point daemon */
-  if(daemon)
+  if(daemon_var)
   {
     int r OY_UNUSED;
     r = system("oyranos-monitor-white-point --daemon=1");
   }
 
 #ifdef XCM_HAVE_X11
-  if(daemon)
+#include <unistd.h> /* sleep() */
+  if(daemon_var)
   {
     int r = 0;
+    int seconds = 0;
     Display * display = XOpenDisplay( display_name );
+    while(!display && seconds < 5)
+    {
+      fprintf( stderr, "%s: Can not open display.\n", oyjlTermColor(oyjlBOLD, _("WARN")));
+      sleep( 1 );
+      ++seconds;
+    }
+    if(!display)
+    {
+      fprintf( stderr, "%s: Can not open display. Give up after 5 seconds.\n", oyjlTermColor(oyjlRED, _("ERROR")));
+      error = 1;
+      return error;
+    }
     if((r=XcmColorServerCapabilities( display )) > 0 && r & XCM_COLOR_SERVER_MANAGEMENT)
-      daemon = 2;
+      daemon_var = 2;
     if(oy_debug) fprintf( stderr, "active: %d\n", r);
     XCloseDisplay( display );
     r = system(argv[0]);
   }
 
   /* we rely on any color server doing X11 setup by its own and do not want to interfere */
-  if(daemon != 2)
+  if(daemon_var != 2)
 #endif
   {
     if(!erase && !unset && !list && !setup && !format && !gamma &&
@@ -931,10 +945,10 @@ int main( int argc , char** argv )
     oyDeAllocFunc(oy_display_name);
 
 #if defined(XCM_HAVE_X11)
-  if(daemon)
+  if(daemon_var)
     error = runDaemon( display_name );
 #else
-  if(daemon)
+  if(daemon_var)
     fprintf( stderr, "daemon mode not supported on your OS\n" );
 #endif
 
