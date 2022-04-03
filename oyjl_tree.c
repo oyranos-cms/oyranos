@@ -548,24 +548,30 @@ char *     oyjlJsonEscape            ( const char        * in,
 int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
 {
   int error = 0;
+  const char * t;
   if(v)
   switch(v->type)
   {
     case oyjl_t_null:
-         oyjlStr_AppendN (json, "null", 4); break;
+         t = oyjlTermColor(oyjlUNDERLINE,"null");
+         oyjlStr_AppendN (json, t, strlen(t)); break;
          break;
     case oyjl_t_number:
-         oyjlStr_AppendN (json, v->u.number.r, strlen(v->u.number.r));
+         t = oyjlTermColor(oyjlBLUE, v->u.number.r);
+         oyjlStr_AppendN (json, t, strlen(t));
          break;
     case oyjl_t_true:
-         oyjlStr_AppendN (json, "true", 4); break;
+         t = oyjlTermColor(oyjlGREEN,"true");
+         oyjlStr_AppendN (json, t, strlen(t)); break;
     case oyjl_t_false:
-         oyjlStr_AppendN (json, "false", 5); break;
+         t = oyjlTermColor(oyjlRED,"false");
+         oyjlStr_AppendN (json, t, strlen(t)); break;
     case oyjl_t_string:
          {
           char * escaped = oyjlJsonEscape( v->u.string, OYJL_QUOTE | OYJL_NO_BACKSLASH );
+          t = oyjlTermColor(oyjlBOLD,escaped);
           oyjlStr_AppendN( json, "\"", 1 );
-          oyjlStr_AppendN( json, escaped, strlen(escaped) );
+          oyjlStr_AppendN( json, t, strlen(t) );
           oyjlStr_AppendN( json, "\"", 1 );
           free( escaped );
          }
@@ -611,7 +617,8 @@ int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
              oyjlStr_AppendN( json, "\"", 1 );
              {
               char * escaped = oyjlJsonEscape( v->u.object.keys[i], OYJL_QUOTE | OYJL_NO_BACKSLASH );
-              oyjlStr_AppendN( json, escaped, strlen(escaped) );
+              const char * t = oyjlTermColor(oyjlITALIC,escaped);
+              oyjlStr_AppendN( json, t, strlen(t) );
               free( escaped );
              }
              oyjlStr_AppendN( json, "\": ", 3 );
