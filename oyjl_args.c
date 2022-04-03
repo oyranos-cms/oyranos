@@ -1286,6 +1286,7 @@ oyjlTr_s *     oyjlTr_Get            ( const char        * domain )
 }
 static char * oyjl_nls_path_ = NULL;
 extern char * oyjl_term_color_html_;
+extern char * oyjl_term_color_plain_;
 void oyjlLibRelease() {
   if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL; }
   if(oyjl_tr_context_)
@@ -1301,6 +1302,7 @@ void oyjlLibRelease() {
     oyjl_tr_context_reserve_ = 0;
   }
   if(oyjl_term_color_html_) { free(oyjl_term_color_html_); oyjl_term_color_html_ = NULL; }
+  if(oyjl_term_color_plain_) { free(oyjl_term_color_plain_); oyjl_term_color_plain_ = NULL; }
 }
 void oyjlTreeFree (oyjl_val v)
 {
@@ -1659,6 +1661,15 @@ const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text) {
   } else
     return text;
 }
+const char * oyjlTermColorF( oyjlTEXTMARK_e rgb, const char * format, ...)
+{
+  char * text = NULL;
+  const char * t;
+  OYJL_CREATE_VA_STRING(format, text, malloc, return NULL)
+  t = oyjlTermColor( rgb, text );
+  if(text) free(text);
+  return t;
+}
 
 char * oyjl_term_color_html_ = NULL;
 const char * oyjlTermColorFromHtml   ( const char        * text,
@@ -1682,6 +1693,29 @@ const char * oyjlTermColorFromHtml   ( const char        * text,
   oyjl_term_color_html_ = strdup( t );
   oyjlStr_Release( &tmp );
   return oyjl_term_color_html_;
+}
+
+char * oyjl_term_color_plain_ = NULL;
+const char * oyjlTermColorToPlain    ( const char        * text )
+{
+  const char * t;
+  oyjl_str tmp = oyjlStr_New(10,0,0);
+  oyjlStr_AppendN( tmp, text, strlen(text) );
+  oyjlStr_Replace( tmp, OYJL_RED_TC, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_GREEN_TC, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_BLUE_TC, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_BOLD, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_ITALIC, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_UNDERLINE, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_RED_B, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_GREEN_B, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_BLUE_B, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_CTEND, "", 0,NULL );
+  t = oyjlStr(tmp);
+  if(oyjl_term_color_plain_) free(oyjl_term_color_plain_);
+  oyjl_term_color_plain_ = strdup( t );
+  oyjlStr_Release( &tmp );
+  return oyjl_term_color_plain_;
 }
 
 /** @brief    Return number of array elements
