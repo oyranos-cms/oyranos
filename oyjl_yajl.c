@@ -817,8 +817,15 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
   xmlDocPtr doc = NULL;
   xmlNodePtr cur = NULL;
   oyjl_val jroot =  NULL;
+  char * tmp = NULL;
 
   if(!xml) return jroot;
+
+  if(strstr(xml, "\033[0") != NULL)
+  {
+    const char * t = oyjlTermColorToPlain(xml);
+    xml = tmp = oyjlStringCopy( t, 0 );
+  }
 
   doc = xmlParseMemory( xml, strlen(xml) );
   cur = xmlDocGetRootElement(doc);
@@ -837,6 +844,7 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
 
   if(doc)
     xmlFreeDoc( doc );
+  if(tmp) free(tmp);
 
   return jroot;
 }
@@ -966,6 +974,7 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
   yaml_document_t document;
   yaml_node_t * root = NULL;
   char * json = NULL;
+  char * tmp = NULL;
   oyjl_val jroot = NULL;
   int error = 0;
 
@@ -978,6 +987,12 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
     oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s", OYJL_DBG_ARGS,
                    "YAML initialisation failed" );
     return jroot;
+  }
+
+  if(strstr(yaml, "\033[0") != NULL)
+  {
+    const char * t = oyjlTermColorToPlain(yaml);
+    yaml = tmp = oyjlStringCopy( t, 0 );
   }
 
   yaml_parser_set_input_string( &parser, (const unsigned char*) yaml, strlen(yaml));
@@ -1008,6 +1023,7 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
 
   yaml_parser_delete(&parser);
   yaml_document_delete(&document);
+  if(tmp) free(tmp);
 
   return jroot;
 }

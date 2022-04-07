@@ -1214,7 +1214,8 @@ oyjlTESTRESULT_e testArgs()
                                        "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
   text = oyjlUi_ToJson( ui, 0 );
-  if(text && strlen(text) == 5139)
+  int len = strlen(text);
+  if(text && (len == 5139 || len == 6763))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToJson() %lu", strlen(text) );
   } else
@@ -1240,7 +1241,8 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   text = oyjlOptions_ResultsToJson( ui->opts );
-  if(text && strlen(text) == 63)
+  len = strlen(text);
+  if(text && (len == 63 || len == 135))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOptions_ResultsToJson() %lu", strlen(text) );
   } else
@@ -1274,7 +1276,8 @@ oyjlTESTRESULT_e testArgs()
   }
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  if(text && strlen(text) == 6644)
+  len = strlen(text);
+  if(text && (len == 6644 || len == 9352))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ExportToJson()       %lu", strlen(text) );
   } else
@@ -1405,7 +1408,7 @@ oyjlTESTRESULT_e testTree ()
   char * text = NULL; i = 0;
   root = oyjlTreeNew( NULL );
   oyjlTreeToJson( root, &i, &text ); i = 0;
-  if(root && text && strcmp(text,"null") == 0)
+  if(root && text && (strcmp(text,"null") == 0 || strcmp(text,oyjlTermColor(oyjlUNDERLINE,"null")) == 0 ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeNew( NULL )" );
   } else
@@ -1420,7 +1423,7 @@ oyjlTESTRESULT_e testTree ()
 
   root = oyjlTreeNew( "" );
   oyjlTreeToJson( root, &i, &text ); i = 0;
-  if(root && text && strcmp(text,"null") == 0)
+  if(root && text && (strcmp(text,"null") == 0 || strcmp(text,oyjlTermColor(oyjlUNDERLINE,"null")) == 0 ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeNew( \"\" )" );
   } else
@@ -1437,7 +1440,7 @@ oyjlTESTRESULT_e testTree ()
   i = 0;
   oyjlTreeToJson( root, &i, &text ); i = 0;
   size_t len = strlen(text);
-  if(root && len == 56)
+  if(root && (len == 56 || len == 88))
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "oyjlTreeNew( \"new/tree/key\" )" );
   } else
@@ -1523,7 +1526,7 @@ oyjlTESTRESULT_e testTree ()
 
   oyjlTreeClearValue( root,"new/tree/key" );
   oyjlTreeToJson( root, &i, &text ); i = 0;
-  if(!text || strcmp(text, "null") == 0)
+  if(!text || (strcmp(text, "null") == 0 || strcmp(text,oyjlTermColor(oyjlUNDERLINE,"null")) == 0 ))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeClearValue( \"new/tree/key\" ) " );
   } else
@@ -1538,12 +1541,13 @@ oyjlTESTRESULT_e testTree ()
   value = oyjlTreeGetValue( root, 0, "arr" );
   count = oyjlValueCount( value );
   text = oyjlTreePrint(root);
-  if(count == 4 && strlen(text) == 34)
+  len = strlen(text);
+  if(count == 4 && (len == 34 || len == 74))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeGetValue(OYJL_CREATE_NEW, \"arr/[3]\") oyjlValueCount() %i", count );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlTreeGetValue(OYJL_CREATE_NEW, \"arr/[3]\") oyjlValueCount() %i", count );
+    "oyjlTreeGetValue(OYJL_CREATE_NEW, \"arr/[3]\") oyjlValueCount() %i %i", count, len );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeGetValue-array-4", "txt" )
   if(verbose && text)
@@ -1552,7 +1556,8 @@ oyjlTESTRESULT_e testTree ()
 
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "arr/[1]/key" );
   text = oyjlTreePrint(root);
-  if(strlen(text) == 58)
+  len = strlen(text);
+  if(len == 58 || len == 106)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeSetStringF(OYJL_CREATE_NEW,\"arr/[1]/key\") %lu", strlen(text) );
   } else
@@ -1581,7 +1586,8 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeSetDoubleF( root, OYJL_CREATE_NEW, 1.4,     "one/[%d]/key4", 1 );
   oyjlTreeSetIntF( root, OYJL_CREATE_NEW, 0x800000,   "one/[%d]/data/[2]", 1 );
   oyjlTreeToJson( root, &i, &text ); i = 0;
-  if( text && strlen( text ) == 284 )
+  len = strlen(text);
+  if( text && (len == 284 || len == 470) )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
     "add array" );
   } else

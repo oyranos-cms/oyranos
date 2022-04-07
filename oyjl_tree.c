@@ -783,19 +783,19 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
     case oyjl_t_null:
          break;
     case oyjl_t_number:
-         oyjlStringAdd (text, 0,0, "%s", v->u.number.r);
+         oyjlStringAdd (text, 0,0, " %s", oyjlTermColor(oyjlBLUE,v->u.number.r));
          break;
     case oyjl_t_true:
-         oyjlStringAdd (text, 0,0, "true"); break;
+         oyjlStringAdd (text, 0,0, " %s", oyjlTermColor(oyjlGREEN,"true")); break;
     case oyjl_t_false:
-         oyjlStringAdd (text, 0,0, "false"); break;
+         oyjlStringAdd (text, 0,0, " %s", oyjlTermColor(oyjlRED,"false")); break;
     case oyjl_t_string:
          {
           const char * t = v->u.string;
           char * tmp = oyjlStringCopy(t,malloc);
           oyjlStringReplace( &tmp, "\"", "\\\"", 0, 0);
           oyjlStringReplace( &tmp, ": ", ":\\ ", 0, 0);
-          oyjlStringAdd (text, 0,0, YAML_INDENT "%s", tmp);
+          oyjlStringAdd (text, 0,0, YAML_INDENT "%s", oyjlTermColor(oyjlBOLD,tmp));
           if(tmp) free(tmp);
          }
          break;
@@ -831,7 +831,7 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
                }
                return;
              }
-             oyjlStringAdd( text, 0,0, "%s:", v->u.object.keys[i] );
+             oyjlStringAdd( text, 0,0, "%s:", oyjlTermColor(oyjlITALIC,v->u.object.keys[i]) );
              *level += 2;
              oyjlTreeToYaml( v->u.object.values[i], level, text );
              *level -= 2;
@@ -848,6 +848,7 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
 
 static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oyjl_str text)
 {
+  const char * t;
   if(!v) return;
 
   switch(v->type)
@@ -855,15 +856,18 @@ static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oy
     case oyjl_t_null:
          break;
     case oyjl_t_number:
-         oyjlStr_AppendN (text, v->u.number.r, strlen(v->u.number.r));
+         t = oyjlTermColor(oyjlBLUE, v->u.number.r);
+         oyjlStr_AppendN (text, t, strlen(t));
          break;
     case oyjl_t_true:
-         oyjlStr_AppendN (text, "true", 4); break;
+         t = oyjlTermColor(oyjlGREEN,"true");
+         oyjlStr_AppendN (text, t, strlen(t)); break;
     case oyjl_t_false:
-         oyjlStr_AppendN (text, "false", 5); break;
+         t = oyjlTermColor(oyjlRED,"false");
+         oyjlStr_AppendN (text, t, strlen(t)); break;
     case oyjl_t_string:
          {
-          const char * t = v->u.string;
+          const char * t = oyjlTermColor(oyjlBOLD,v->u.string);
           oyjlStr_AppendN (text, t, strlen(t));
          }
          break;
@@ -883,11 +887,13 @@ static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oy
               {
                 oyjlStr_AppendN( text, "\n", 1 );
                 for(j = 0; j < *level; ++j) oyjlStr_AppendN( text, " ", 1 );
-                oyjlStr_Add( text, "<%s>", parent_key );
+                t = oyjlTermColor(oyjlITALIC,parent_key);
+                oyjlStr_Add( text, "<%s>", t );
 
                 oyjlTreeToXml2_( v->u.array.values[i], parent_key, level, text );
 
-                oyjlStr_Add( text, "</%s>", parent_key );
+                t = oyjlTermColor(oyjlITALIC,parent_key);
+                oyjlStr_Add( text, "</%s>", t );
               }
             }
           }
@@ -921,7 +927,8 @@ static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oy
           {
             oyjlStr_AppendN( text, "\n", 1 );
             for(j = 0; j < *level; ++j) oyjlStr_AppendN( text, " ", 1 );
-            oyjlStr_Add( text, "<%s", parent_key );
+            t = oyjlTermColor(oyjlITALIC,parent_key);
+            oyjlStr_Add( text, "<%s", t );
 
             /* insert attributes to key */
             for(i = 0; i < count; ++i)
@@ -1001,7 +1008,7 @@ static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oy
             if( !is_array &&
                 !is_object &&
                 !is_inner_string )
-              oyjlStr_Add( text, "<%s>", key );
+              oyjlStr_Add( text, "<%s>", oyjlTermColor(oyjlITALIC,key) );
 
             if( strcmp(key, XML_CDATA) == 0 )
               oyjlStr_AppendN( text, "<![CDATA[", 9 );
@@ -1015,7 +1022,8 @@ static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oy
                 !is_object &&
                 !is_inner_string )
             {
-              oyjlStr_Add( text, "</%s>", key );
+              t = oyjlTermColor(oyjlITALIC,key);
+              oyjlStr_Add( text, "</%s>", t );
               last_is_content = 0;
             }
             else
@@ -1032,7 +1040,8 @@ static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oy
               oyjlStr_AppendN( text, "\n", 1 );
               for(j = 0; j < *level; ++j) oyjlStr_AppendN( text, " ", 1 );
             }
-            oyjlStr_Add( text, "</%s>", parent_key );
+            t = oyjlTermColor(oyjlITALIC,parent_key);
+            oyjlStr_Add( text, "</%s>", t );
           }
          }
          break;
