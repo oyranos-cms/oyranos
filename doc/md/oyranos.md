@@ -20,5 +20,5 @@ http://www.oyranos.org/doc/index.html
 <h2> AUTHOR <a name="author"></a></h2>
 Kai\-Uwe Behrmann (ku.b (at) gmx.de) 
 <h2> BUGS <a name="bugs"></a></h2>
-at: [https://github.com/oyranos-cms/oyranos/issues](https://github.com/oyranos-cms/oyranos/issues)
+at: [https://gitlab.com/oyranos/oyranos/issues](https://gitlab.com/oyranos/oyranos/issues)
 

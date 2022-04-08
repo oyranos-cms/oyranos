@@ -21,7 +21,7 @@ is appreciated for some special cases like headless print servers.
 * liboyranos_oyIM_cmm_module.so
 * liboyranos_oicc_cmm_module.so
 * liboyranos_oyra_cmm_module.so
-* liboyranos_lcm[s,2]_cmm_module.so
+* liboyranos_lcm[s,2]\_cmm_module.so
 
 #### X11 functionality depends on:
 * liboyranos_oyX1_cmm_module.so
@@ -46,7 +46,7 @@ oyranos-profile-graph depends on lCC modules (oicc+lcm[s,2])
 
 
 ## Sources
-Online source are on https://github.com/oyranos-cms/oyranos
+Online source are on https://gitlab.com/oyranos/oyranos
 
 
 ## Licenses

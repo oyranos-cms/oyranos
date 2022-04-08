@@ -88,7 +88,7 @@ applications.
 Oyranos was started by [Kai-Uwe Behrmann](http://www.behrmann.name).
 Yiannis Belias has joined. More details can be read in the AUTHORS file
 in the sources. Still we are searching for
-[help](https://github.com/oyranos-cms "github development page"). Code
+[help](https://gitlab.com/oyranos "gitlab development page"). Code
 contributions came from students through their
 [Summer](http://www.freedesktop.org/wiki/OpenIccForGoogleSoC2008/#colormanagementnearx)
 of
@@ -116,9 +116,9 @@ Becoming part of the development team is easy, just ask.
 So if your have a question around Oyranos thats a good sign to 
 start ask that.
 
-See as well [here](https://github.com/oyranos-cms/oyranos/labels/help%20wanted "wikilink").
+See as well [here](https://gitlab.com/oyranos/oyranos/-/issues?label_name[]=help%20wanted "wikilink").
 
-A suggestion list can be found [here](https://github.com/oyranos-cms/oyranos/labels/enhancement "wikilink").
+A suggestion list can be found [here](https://gitlab.com/oyranos/oyranos/-/issues?label_name[]=enhancement "wikilink").
 
 ### Which applications use Oyranos?
 

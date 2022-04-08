@@ -14,7 +14,7 @@
     @since  September 2006-2022
 
     @par Development
-          https://github.com/oyranos-cms/oyranos
+          https://gitlab.com/oyranos/oyranos
 
 
     @n@n
@@ -79,7 +79,7 @@
 /** @page links References
     @section projects_links Links
     - Oyranos: http://www.oyranos.org
-    - Bug reports: https://github.com/oyranos-cms/oyranos
+    - Bug reports: https://gitlab.com/oyranos/oyranos
     - Original Yajl: https://lloyd.github.io/yajl/
  */
 

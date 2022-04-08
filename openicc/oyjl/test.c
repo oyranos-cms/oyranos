@@ -1480,7 +1480,7 @@ oyjlTESTRESULT_e testFromJson ()
   oyjlTreeToYaml( root, &level, &text );
   format = oyjlDataFormat(text);
   len = strlen(text);
-  if(text && text[0] && strlen(text) > 20 && format == 9 && (len == 312 || len == 670))
+  if(text && text[0] && strlen(text) > 20 && format == 9 && (len == 320 || len == 678))
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
     "oyjlTreeToYaml()" );
     if(verbose) fprintf( zout, "%s\n", text );

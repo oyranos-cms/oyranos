@@ -215,7 +215,7 @@
     - cross platform color information exchange standard, called ICC - http://www.color.org
     - OpenICC: http://www.freedesktop.org/wiki/OpenIcc
     - Email list: https://lists.sourceforge.net/lists/listinfo/oyranos-devel
-    - Bug reports: https://github.com/oyranos-cms/oyranos/issues
+    - Bug reports: https://gitlab.com/oyranos/oyranos/issues
     - Oyranos project page: http://www.oyranos.org/about
     - ColourWiki: http://www.oyranos.org/wiki
     - Elektra, configuration engine used on Linux - https://www.libelektra.org/home
@@ -894,7 +894,7 @@ digraph Anatomy_A {
  *  oyranos_monitor_hooks_x11.h header and the implementation in
  *  oyranos_monitor_x11.c . The oyX1 CMakeLists.txt section gives
  *  more details on how to build the according module in the source tree.
- *  Please do not hesitate to contact the developers on github or the mailing
+ *  Please do not hesitate to contact the developers on gitlab or the mailing
  *  list for further help.
  *
  *  @{
