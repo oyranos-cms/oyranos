@@ -877,12 +877,16 @@ const char * oyjlStringDelimiter ( const char * text, const char * delimiter, in
 }
 char **        oyjlStringSplit2      ( const char        * text,
                                        const char        * delimiter,
+                                       const char        *(splitFunc)( const char * text, const char * delimiter, int * length ),
                                        int               * count,
                                        int              ** index,
                                        void*            (* alloc)(size_t))
 {
   char ** list = 0;
   int n = 0, i;
+
+  if(!splitFunc)
+    splitFunc = oyjlStringDelimiter;
 
   /* split the path search string by a delimiter */
   if(text && text[0])
@@ -891,14 +895,14 @@ char **        oyjlStringSplit2      ( const char        * text,
 
     if(!alloc) alloc = malloc;
 
-    if(!delimiter)
+    if(!delimiter || !delimiter[0])
       return oyjlStringSplitSpace_( text, count, alloc );
 
-    tmp = oyjlStringDelimiter(tmp, delimiter, NULL);
+    tmp = splitFunc(tmp, delimiter, NULL);
     if(tmp == text) ++n;
     tmp = text;
     do { ++n;
-    } while( (tmp = oyjlStringDelimiter(tmp + 1, delimiter, NULL)) );
+    } while( (tmp = splitFunc(tmp + 1, delimiter, NULL)) );
 
     tmp = 0;
 
@@ -913,7 +917,7 @@ char **        oyjlStringSplit2      ( const char        * text,
       {
         intptr_t len = 0;
         int length = 0;
-        const char * end = oyjlStringDelimiter(start, delimiter, &length);
+        const char * end = splitFunc(start, delimiter, &length);
         if(index && length) (*index)[i] = length + start - text;
 
         if(end > start)
@@ -1798,7 +1802,7 @@ int oyjlOptions_GroupHasOptionL_     ( oyjlOptions_s     * opts,
   if(g->mandatory && g->mandatory[0])
   {
     n = 0;
-    list = oyjlStringSplit2( g->mandatory, "|,", &n, NULL, malloc );
+    list = oyjlStringSplit2( g->mandatory, "|,", 0, &n, NULL, malloc );
     for( i = 0; i  < n; ++i )
     {
       const char * opt = list[i];
@@ -1816,7 +1820,7 @@ int oyjlOptions_GroupHasOptionL_     ( oyjlOptions_s     * opts,
   if(g->optional && g->optional[0] && found == 0)
   {
     n = 0;
-    list = oyjlStringSplit2( g->optional, "|,", &n, NULL, malloc );
+    list = oyjlStringSplit2( g->optional, "|,", 0, &n, NULL, malloc );
     for( i = 0; i  < n; ++i )
     {
       const char * opt = list[i];
@@ -2995,7 +2999,7 @@ const char * oyjlOptions_GetGroupId_ ( oyjlOptions_s  *    opts,
   const char * group_id = NULL;
   int m = 0;
 
-  m_list = oyjlStringSplit2( g->mandatory, "|,", &m, NULL, malloc );
+  m_list = oyjlStringSplit2( g->mandatory, "|,", 0, &m, NULL, malloc );
 
   if(m_list && m)
   {
@@ -3054,7 +3058,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
   else
     return text;
 
-  m_list = oyjlStringSplit2( g->mandatory, "|,", &m, &m_index, malloc );
+  m_list = oyjlStringSplit2( g->mandatory, "|,", 0, &m, &m_index, malloc );
   for(i = 0; i < m; ++i)
   {
     char * option = m_list[i];
@@ -3081,7 +3085,7 @@ char *       oyjlOptions_PrintHelpSynopsis_ (
       oyjlStringAdd( &text, malloc, free, " |" );
   }
 
-  on_list = oyjlStringSplit2( g->optional, "|,", &on, &on_index, malloc );
+  on_list = oyjlStringSplit2( g->optional, "|,", 0, &on, &on_index, malloc );
   style = style & (~OYJL_GROUP_FLAG_SUBCOMMAND);
   for(i = 0; i < on; ++i)
   {
@@ -3150,7 +3154,7 @@ int oyjlOptionMandatoryIndex_        ( oyjlOption_s      * opt,
   const char * mandatory = g->mandatory,
              * m;
   int n = 0, i;
-  char ** list = oyjlStringSplit2( mandatory, "|,", &n, NULL, malloc );
+  char ** list = oyjlStringSplit2( mandatory, "|,", 0, &n, NULL, malloc );
   for(i = 0; i < n; ++i)
   {
     m = list[i];
@@ -3408,7 +3412,7 @@ void  oyjlOptions_PrintHelp          ( oyjlOptions_s     * opts,
     oyjlOptionGroup_s * g = &opts->groups[i];
     int d = 0,
         j;
-    char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc );
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", 0, &d, NULL, malloc );
     fprintf( oyjl_help_zout, OYJL_HELP_SUBSECTION "%s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
     if(g->mandatory && g->mandatory[0])
     {
@@ -3672,7 +3676,7 @@ int oyjlManAddOptionToGroup_         ( char             ** group,
   if(g)
   {
     int list_n = 0;
-    char ** list = oyjlStringSplit2( *group, "|,", &list_n, NULL, malloc );
+    char ** list = oyjlStringSplit2( *group, "|,", 0, &list_n, NULL, malloc );
     is_double_string = oyjlManAddOptionToGroupList_( &list, &list_n, o, option, flags );
 
     oyjlStringListRelease( &list, list_n, free );
@@ -3734,7 +3738,7 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
     if(g->mandatory && g->mandatory[0])
     {
       n = 0;
-      list = oyjlStringSplit2( g->mandatory, "|,", &n, NULL, malloc );
+      list = oyjlStringSplit2( g->mandatory, "|,", 0, &n, NULL, malloc );
       for( j = 0; j  < n; ++j )
       {
         const char * option = list[j];
@@ -3745,7 +3749,7 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
     if(g->optional && g->optional[0])
     {
       n = 0;
-      list = oyjlStringSplit2( g->optional, "|,", &n, NULL, malloc );
+      list = oyjlStringSplit2( g->optional, "|,", 0, &n, NULL, malloc );
       for( j = 0; j  < n; ++j )
       {
         const char * option = list[j];
@@ -3756,7 +3760,7 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
     if(g->detail && g->detail[0])
     {
       n = 0;
-      list = oyjlStringSplit2( g->detail, "|,", &n, NULL, malloc );
+      list = oyjlStringSplit2( g->detail, "|,", 0, &n, NULL, malloc );
       for( j = 0; j  < n; ++j )
       {
         const char * option = list[j];
@@ -3771,14 +3775,14 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
     int mn;
     char ** list;
     int j, n;
-    mlist = oyjlStringSplit2( mandatory_all, "|,", &mn, NULL, malloc );
+    mlist = oyjlStringSplit2( mandatory_all, "|,", 0, &mn, NULL, malloc );
     for(i = 0; i < mn; ++i)
     {
       int found = 0;
       char * moption = mlist[i];
       if(strcmp(moption,"#") == 0) continue;
       n = 0;
-      list = oyjlStringSplit2( detail_all, "|,", &n, NULL, malloc );
+      list = oyjlStringSplit2( detail_all, "|,", 0, &n, NULL, malloc );
       for( j = 0; j  < n; ++j )
       {
         const char * option = list[j];
@@ -3800,12 +3804,12 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
   {
     oyjlOptionGroup_s * g = &opts->groups[i];
     int * d_index = NULL, d = 0;
-    char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, &d_index, malloc );
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", 0, &d, &d_index, malloc );
     int j;
     if(g->mandatory && g->mandatory[0])
     {
       int n = 0;
-      char ** list = oyjlStringSplit2( g->mandatory, "|,", &n, NULL, malloc );
+      char ** list = oyjlStringSplit2( g->mandatory, "|,", 0, &n, NULL, malloc );
       for( j = 0; j  < n; ++j )
       {
         const char * option = list[j];
@@ -4021,7 +4025,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       const char * mandatory = g->mandatory;
       int k, found = 0;
 
-      list = oyjlStringSplit2( mandatory, "|,", &n, NULL, malloc );
+      list = oyjlStringSplit2( mandatory, "|,", 0, &n, NULL, malloc );
 
       if( strchr(mandatory,'#') != NULL &&
           results ? (results->count == 0) : 0 )
@@ -4102,7 +4106,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       }
     }
 
-    list = oyjlStringSplit2( g->optional, "|,", &n, NULL, malloc );
+    list = oyjlStringSplit2( g->optional, "|,", 0, &n, NULL, malloc );
     for( j = 0; j  < n; ++j )
     {
       option = list[j];
@@ -4115,7 +4119,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     }
     oyjlStringListRelease( &list, n, free );
 
-    list = oyjlStringSplit2( g->detail, "|,", &n, NULL, malloc );
+    list = oyjlStringSplit2( g->detail, "|,", 0, &n, NULL, malloc );
     for( j = 0; j  < n; ++j )
     {
       option = list[j];
@@ -4169,7 +4173,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     if(g->flags & OYJL_GROUP_FLAG_SUBCOMMAND)
     {
       int li_n = 0, i;
-      char ** li = oyjlStringSplit2( g->mandatory, "|,", &li_n, NULL, 0 );
+      char ** li = oyjlStringSplit2( g->mandatory, "|,", 0, &li_n, NULL, 0 );
       const char * first_opt = results->options[0];
       int found_mandatory_at_first_pos = 0;
       for( i = 0; i < li_n; ++i )
@@ -4634,7 +4638,7 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
                 strcmp(up,"SEE ALSO") == 0 )
             {
               int li_n = 0, i;
-              char ** li = oyjlStringSplit2( list[l].nick, 0, &li_n, NULL, malloc );
+              char ** li = oyjlStringSplit2( list[l].nick, 0, 0, &li_n, NULL, malloc );
               for(i = 0; i < li_n; ++i)
               {
                 char * md = oyjlStringCopy( li[i], 0 );
@@ -4815,7 +4819,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
     oyjlOptionGroup_s * g = &opts->groups[i];
     int dn = 0,
         j;
-    char ** d_list = oyjlStringSplit2( g->detail, "|,", &dn, NULL, malloc );
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", 0, &dn, NULL, malloc );
     if(g->flags & OYJL_GROUP_FLAG_GENERAL_OPTS)
       oyjlStringAdd( &text, malloc, free, ".SH %s\n", _("GENERAL OPTIONS") );
     if(g->description)
@@ -5079,7 +5083,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     oyjlOptionGroup_s * g = &opts->groups[i];
     int d = 0,
         j;
-    char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc ),
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", 0, &d, NULL, malloc ),
          * t;
     if(g->flags & OYJL_GROUP_FLAG_GENERAL_OPTS)
       ADD_SECTION( _("GENERAL OPTIONS"), "general_options", "", "" )
