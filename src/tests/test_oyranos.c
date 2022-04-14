@@ -25,7 +25,7 @@
 
 char * oyAlphaPrint_(int);
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Oyranos test\n"); if(getenv(OY_DEBUG)) oy_debug = atoi(getenv(OY_DEBUG)); // oy_debug_objects = 9; oy_debug_signals = 1;
-#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0);
+#define OYJL_TEST_MAIN_FINISH printf("\n    Oyranos test finished\n\n"); if(testobj) testobj->release( &testobj ); if(verbose) { char * t = oyAlphaPrint_(0); puts(t); free(t); } oyLibConfigRelease(0); if(oyjl_print_sub) free(oyjl_print_sub);
 
 
 #include "oyranos.h"
