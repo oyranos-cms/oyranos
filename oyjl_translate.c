@@ -3,7 +3,7 @@
  *  libOyjl - JSON helper tool
  *
  *  @par Copyright:
- *            2018-2021 (C) Kai-Uwe Behrmann
+ *            2018-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl JSON translation helper
  *  @internal
@@ -22,6 +22,68 @@
 #include "oyjl_macros.h"
 #include "oyjl_i18n.h"
 #include "oyjl_tree_internal.h"
+
+oyjl_val oyjlTreeParsePo             ( const char        * text,
+                                       const char        * input OYJL_UNUSED,
+                                       int                 verbose )
+{
+  oyjl_val root = NULL;
+  int count = 0, i, pos = 0;
+  char ** blocks = oyjlStringSplit2( text, "\n\n", oyjlRegExpDelimiter, &count, NULL, NULL );
+  if(count)
+    root = oyjlTreeNew("!DOCTYPE TS");
+  fprintf( stderr, "count: %d\n", count );
+  for(i = 0; i < count; ++i)
+  {
+    const char * block = blocks[i];
+    if(strstr(block, "msgid") && !strstr(block, "~ msgid"))
+    {
+      const char * msgid = strstr( block, "msgid" );
+      const char * msgstr = strstr( block, "\nmsgstr");
+      char * t = msgid ? oyjlStringCopy(msgid + 5+2, 0) : NULL;
+      char * tr = msgstr ? oyjlStringCopy(msgstr + 7+2, 0) : NULL;
+      char * tmp;
+      if(!(t && t[0] && tr && tr[0]))
+      {
+        if(t) free(t);
+        if(tr) free(tr);
+        continue;
+      }
+      oyjlStringReplace( &t, "\"\n\"", "", NULL,NULL );
+      oyjlStringReplace( &tr, "\"\n\"", "", NULL,NULL );
+      tmp = (char*)oyjlRegExpDelimiter( t, "\"\n", 0 );
+      tmp[0] = '\000';
+      tmp = (char*)oyjlRegExpDelimiter( tr, "\"$", 0 );
+      if(tmp)
+        tmp[0] = '\000';
+      if(!(t[0] && tr[0]) || strcmp(t,tr) == 0)
+      {
+        free(t); free(tr);
+        continue;
+      }
+      oyjlStringReplace( &t, "\\", "", NULL,NULL );
+      oyjlStringReplace( &tr, "\\", "", NULL,NULL );
+      char * new_path = NULL, * new_key = oyjlStringCopy( t, NULL );
+      tmp = oyjlJsonEscape( new_key,  0 );
+      free(new_key); new_key = tmp; tmp = NULL;
+      oyjlTreeSetStringF( root, OYJL_CREATE_NEW, new_key,  "TS/context/message/[%d]/source", pos );
+      if(verbose)
+        fprintf(stderr, "[%d]: %s", i, new_key );
+      tmp = oyjlJsonEscape( tr, 0 );
+      if(tmp)
+      {
+        oyjlTreeSetStringF( root, OYJL_CREATE_NEW, t != tr ? tmp : "", "TS/context/message/[%d]/translation", pos );
+        if(verbose)
+          fprintf(stderr, " %s\n", oyjlTermColor(oyjlBOLD,tmp) );
+        free(tmp);
+      }
+      free(new_path);
+      ++pos;
+    }
+  }
+  oyjlStringListRelease( &blocks, count, free );
+  return root;
+}
 
 oyjl_val oyjlTreeParseXXX            ( const char        * text,
                                        const char        * input,
@@ -49,19 +111,23 @@ oyjl_val oyjlTreeParseXXX            ( const char        * text,
 #endif
   } else if(strstr(json, "msgid") != NULL && strstr(json, "msgstr") != NULL)
   {
-    free(json);
+    free(json); json = NULL;
     if(strcmp(input,"-") == 0)
-      fprintf( stderr, "%s accept gettext input only as file name not as data stream\n", oyjlTermColor(oyjlRED,_("Usage Error:")) );
+      root = oyjlTreeParsePo( text, input, verbose );
     else
     {
-      json = oyjlReadCommandF( &size, "r", malloc, "lconvert-qt5 -locations relative %s", input );
-      if(verbose)
+      root = oyjlTreeParsePo( text, input, verbose );
+      if(!root)
       {
-        const char * fn = "oyjl-translate-temp.ts";
-        oyjlWriteFile( fn, json, strlen(json) );
-        fprintf( stderr, "wrote: %s %lu\n", fn, strlen(json) );
+        json = oyjlReadCommandF( &size, "r", malloc, "lconvert-qt5 -locations relative %s", input );
+        if(verbose)
+        {
+          const char * fn = "oyjl-translate-temp.ts";
+          oyjlWriteFile( fn, json, strlen(json) );
+          fprintf( stderr, "wrote: %s %lu\n", fn, strlen(json) );
+        }
+        root = oyjlTreeParseXXX( json, input, verbose );
       }
-      root = oyjlTreeParseXXX( json, input, verbose );
     }
   }
 
@@ -599,6 +665,7 @@ int myMain( int argc, const char ** argv )
         {
           char * tmp = NULL;
           char * sname;
+          const char * ptext;
           if(strcmp(wrap,"C") != 0)
           {
             fprintf(stderr,"%sERROR: Only -w C is supported.\n", oyjlBT(0));
@@ -606,6 +673,9 @@ int myMain( int argc, const char ** argv )
             goto clean_main;
           }
 
+          ptext = oyjlTermColorToPlain(text);
+          free(text);
+          text = oyjlStringCopy(ptext,0);
           sname = strdup(domain);
           oyjlStringReplace( &text, "\\", "\\\\", NULL,NULL );
           oyjlStringReplace( &text, "\"", "\\\"", NULL,NULL );
