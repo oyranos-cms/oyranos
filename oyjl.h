@@ -409,6 +409,7 @@ char **    oyjlStringSplit           ( const char        * text,
                                        void*            (* alloc)(size_t));
 char **    oyjlStringSplit2          ( const char        * text,
                                        const char        * delimiter,
+                                       const char        *(splitFunc)( const char * text, const char * delimiter, int * length ),
                                        int               * count,
                                        int              ** index,
                                        void*            (* alloc)(size_t));
@@ -473,6 +474,9 @@ int        oyjlStringsToDoubles      ( const char        * text,
                                        double           ** value );
 char *     oyjlRegExpFind            ( char              * text,
                                        const char        * regex );
+const char*oyjlRegExpDelimiter       ( const char        * text,
+                                       const char        * delimiter,
+                                       int               * length );
 char *     oyjlRegExpEscape          ( const char        * text );
 int        oyjlRegExpReplace         ( char             ** text,
                                        const char        * regex,

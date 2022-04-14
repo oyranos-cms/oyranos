@@ -1918,8 +1918,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
       if(flg & OYJL_GROUP_FLAG_SUBCOMMAND)
         sub = 1;
-      mandatory_list = oyjlStringSplit2( mandatory, "|,", &mandatory_n, NULL, malloc );
-      optional_list = oyjlStringSplit2( optional, "|,", &optional_n, NULL, malloc );
+      mandatory_list = oyjlStringSplit2( mandatory, "|,", 0, &mandatory_n, NULL, malloc );
+      optional_list = oyjlStringSplit2( optional, "|,", 0, &optional_n, NULL, malloc );
       oyjlStr_Add( s, "        " );
       found = 0;
       for(j = 0; j < mandatory_n; ++j)
@@ -1964,8 +1964,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         continue;
       if(strcmp(mandatory,"@") != 0)
         continue;
-      mandatory_list = oyjlStringSplit2( mandatory, "|,", &mandatory_n, NULL, malloc );
-      optional_list = oyjlStringSplit2( optional, "|,", &optional_n, NULL, malloc );
+      mandatory_list = oyjlStringSplit2( mandatory, "|,", 0, &mandatory_n, NULL, malloc );
+      optional_list = oyjlStringSplit2( optional, "|,", 0, &optional_n, NULL, malloc );
       oyjlStr_Add( s, "        " );
       oyjlStr_Add( s, ".*)\n" );
       oyjlStr_Add( s, "          COMPREPLY=($(compgen -W '" );
@@ -2013,7 +2013,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
       if(flg & OYJL_GROUP_FLAG_SUBCOMMAND)
         sub = 1;
-      mandatory_list = oyjlStringSplit2( mandatory, "|,", &mandatory_n, NULL, malloc );
+      mandatory_list = oyjlStringSplit2( mandatory, "|,", 0, &mandatory_n, NULL, malloc );
       for(j = 0; j < mandatory_n; ++j)
       {
         const char * moption = mandatory_list[j];
@@ -2242,7 +2242,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     }
 
     int d = 0;
-    char ** d_list = oyjlStringSplit2( g->detail, "|,", &d, NULL, malloc );
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", 0, &d, NULL, malloc );
     for(j = 0; j < d; ++j)
     {
       char * option = d_list[j];

@@ -489,7 +489,7 @@ char **        oyjlStringSplit       ( const char        * text,
                                        void*            (* alloc)(size_t))
 {
   char d[2] = { delimiter, '\000' };
-  return oyjlStringSplit2( text, d, count, NULL, alloc );
+  return oyjlStringSplit2( text, d, oyjlStringDelimiter, count, NULL, alloc );
 }
 
 /** @brief   convert a string into list
@@ -498,6 +498,8 @@ char **        oyjlStringSplit       ( const char        * text,
  *  @param[in]     delimiter           the ASCII char which marks the split;
  *                                     e.g. comma ","; optional;
  *                                     default zero: extract white space separated words
+ *  @param[in]     splitFunc           function for splitting, default is
+ *                                     oyjlStringSplit(); optional
  *  @param[out]    count               number of detected string segments; optional
  *  @param[out]    index               to be allocated array of detected delimiter indexes; The array will contain the list of indexes in text, which lead to the actual split positional index.; optional
  *  @param[in]     alloc               custom allocator; optional, default is malloc
@@ -505,12 +507,16 @@ char **        oyjlStringSplit       ( const char        * text,
  */
 char **        oyjlStringSplit2      ( const char        * text,
                                        const char        * delimiter,
+                                       const char        *(splitFunc)( const char * text, const char * delimiter, int * length ),
                                        int               * count,
                                        int              ** index,
                                        void*            (* alloc)(size_t))
 {
   char ** list = 0;
   int n = 0, i;
+
+  if(!splitFunc)
+    splitFunc = oyjlStringDelimiter;
 
   /* split the path search string by a delimiter */
   if(text && text[0])
@@ -522,11 +528,11 @@ char **        oyjlStringSplit2      ( const char        * text,
     if(!delimiter || !delimiter[0])
       return oyjlStringSplitSpace_( text, count, alloc );
 
-    tmp = oyjlStringDelimiter(tmp, delimiter, NULL);
+    tmp = splitFunc(tmp, delimiter, NULL);
     if(tmp == text) ++n;
     tmp = text;
     do { ++n;
-    } while( (tmp = oyjlStringDelimiter(tmp + 1, delimiter, NULL)) );
+    } while( (tmp = splitFunc(tmp + 1, delimiter, NULL)) );
 
     tmp = 0;
 
@@ -541,7 +547,7 @@ char **        oyjlStringSplit2      ( const char        * text,
       {
         intptr_t len = 0;
         int length = 0;
-        const char * end = oyjlStringDelimiter(start, delimiter, &length);
+        const char * end = splitFunc(start, delimiter, &length);
         if(index && length) (*index)[i] = length + start - text;
 
         if(end > start)
@@ -1038,7 +1044,7 @@ int          oyjlStringsToDoubles    ( const char        * text,
   if(!text || !text[0])
     return 0;
 
-  list = oyjlStringSplit2( text, delimiter, &n, NULL, alloc );
+  list = oyjlStringSplit2( text, delimiter, oyjlStringDelimiter, &n, NULL, alloc );
   if(n)
     oyjlAllocHelper_m( *value, double, n + 1, alloc, return 1);
   for( i = 0; i < n; ++i )
@@ -1105,6 +1111,19 @@ char *     oyjlRegExpFind            ( char              * text,
     match = strstr(text, regex);
 
   return match;
+}
+
+const char * oyjlRegExpDelimiter ( const char * text, const char * delimiter, int * length )
+{
+  const char * pos = oyjlRegExpFind( (char*)text, delimiter ),
+             * pos2 = pos ? oyjlRegExpFind( (char*)pos+1, delimiter ) : NULL;
+  if(pos)
+  {
+    if(length)
+      *length = pos2!=NULL ? pos2-pos : (int)strlen(pos);
+    return pos;
+  }
+  return NULL;
 }
 
 /** @brief   replace pattern
