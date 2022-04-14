@@ -319,7 +319,7 @@ oyjlTESTRESULT_e testString ()
   int list_n = 0;
   int *index = NULL;
   const char * text = "org/domain/eins.lib,org/domain/zwei.txt;org/domain/drei.lib?net/welt/vier.lib:net/welt/vier.txt$/net/welt/fuenf;/net/welt/fuenf";
-  char ** list = oyjlStringSplit2( text, ";:,?$&§", &list_n, &index, myAllocFunc );
+  char ** list = oyjlStringSplit2( text, ";:,?$&§", 0, &list_n, &index, myAllocFunc );
 
   if( list_n == 7 &&
       (index && text[index[0]] == ',') &&
