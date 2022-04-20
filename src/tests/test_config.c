@@ -21,6 +21,10 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
   else
     oyMessageFunc_p(oyMSG_WARN,0,"found %d registrations", count);
 
+  oyStringListRelease( &texts, count, free );
+  if(rank_list) free(rank_list);
+  oyLibConfigRelease(0);
+
   return 0;
 }
 

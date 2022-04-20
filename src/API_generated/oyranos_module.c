@@ -2311,8 +2311,7 @@ char **     oyLibFilesGet_           ( int             * count,
                                       dir_string, string, suffix, &filt_n,
                                       allocateFunc );
 
-  if(l && *l)
-    oyStringListRelease_(&l, l_n, oyDeAllocateFunc_);
+  oyStringListRelease_(&l, l_n, oyDeAllocateFunc_);
 
   if(count)
     *count = filt_n;

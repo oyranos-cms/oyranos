@@ -1322,7 +1322,7 @@ void               oyObjectTreePrint ( int                 flags,
         {
           const char * nick = oyStructTypeToText( s->type_ ),
                      * text = oyStruct_GetText( s, oyNAME_DESCRIPTION, 2 );
-          fprintf( stderr, "present: %s \"%s\" - %s\n", nick, text, trees[i].text);
+          fprintf( stderr, "present: %s \"%s\" - %s\n", oyNoEmptyString_m_(nick), oyNoEmptyString_m_(text), oyNoEmptyString_m_(trees[i].text));
         }
       }
       if(i == old_oy_debug_objects)

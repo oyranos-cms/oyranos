@@ -589,6 +589,7 @@ oyjlTESTRESULT_e testProfiles ()
       tmp = oyProfile_GetText( p, oyNAME_DESCRIPTION );
       PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
       "profiles found for oyPROFILE_e %d: %d \"%s\"", i, count, tmp ? tmp :"" );
+      oyProfile_Release( &p );
     }
 
     oyProfiles_Release( &profs );
@@ -618,7 +619,7 @@ oyjlTESTRESULT_e testMonitor ()
   char * block, * text = 0, * display_name;
   const char * tmp = 0;
   size_t size = 0;
-  oyProfile_s * p = 0, * p2;
+  oyProfile_s * p = NULL, * p2 = NULL;
   oyConfigs_s * devices = 0;
   oyConfig_s * c = 0;
   oyOptions_s * options = 0;
@@ -861,12 +862,12 @@ oyjlTESTRESULT_e testMonitor ()
         "monitor profile from Oyranos DB differs from the server one" );
       }
 
-      if(text)
-        free( text );
+      if(text) { free( text ); text = NULL; }
 
       if(block) { free(block); block = 0; }
       oyConfig_Release( &c );
       oyProfile_Release( &p );
+      oyProfile_Release( &p2 );
       fprintf(zout, "\n" );
     }
   }
@@ -874,6 +875,7 @@ oyjlTESTRESULT_e testMonitor ()
   oyOptions_Release( &options );
 
   display_name = oyGetDisplayNameFromPosition( 0, 0,0, malloc);
+  if(display_name) free(display_name);
 
   return result;
 }

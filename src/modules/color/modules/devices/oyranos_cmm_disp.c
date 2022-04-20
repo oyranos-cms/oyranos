@@ -1045,7 +1045,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
             if(data && size)
             {
               prof = oyProfile_FromMem( size, data, 0, 0 );
-              free( data );
+              free( data ); data = NULL; size = 0;
               if(has == 0)
               {
                 const char * key = MONITOR_REGISTRATION OY_SLASH "icc_profile";

@@ -620,6 +620,7 @@ OY_DEPRECATED char *   oyGetDisplayNameFromPosition2(const char        * device_
     o = oyConfig_Find( device, "device_rectangle" );
 
     r = (oyRectangle_s*) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
+    oyOption_Release( &o );
 
     if(!device_name &&
        r && oyRectangle_PointIsInside( r, x,y ))
@@ -627,6 +628,7 @@ OY_DEPRECATED char *   oyGetDisplayNameFromPosition2(const char        * device_
       device_name = oyConfig_FindString( device, "device_name", 0 );
       text = oyStringCopy_( device_name, allocateFunc );
     }
+    oyRectangle_Release( &r );
     oyConfig_Release( &device );
   }
   oyConfigs_Release( &devices );
@@ -691,6 +693,7 @@ OY_DEPRECATED char *   oyGetDisplayNameFromPosition( const char        * display
     o = oyConfig_Find( device, "device_rectangle" );
 
     r = (oyRectangle_s*) oyOption_GetStruct( o, oyOBJECT_RECTANGLE_S );
+    oyOption_Release( &o );
 
     if(!device_name &&
        r && oyRectangle_PointIsInside( r, x,y ))
@@ -698,6 +701,7 @@ OY_DEPRECATED char *   oyGetDisplayNameFromPosition( const char        * display
       device_name = oyConfig_FindString( device, "device_name", 0 );
       text = oyStringCopy_( device_name, allocateFunc );
     }
+    oyRectangle_Release( &r );
     oyConfig_Release( &device );
   }
   oyConfigs_Release( &devices );

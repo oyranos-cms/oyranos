@@ -862,6 +862,7 @@ char *       oyX1GetMonitorProfile   ( oyMonitor_s       * disp,
     prop = oyX1Monitor_getProperty_( disp,
                              XCM_ICC_COLOUR_SERVER_TARGET_PROFILE_IN_X_BASE, 0, &prop_size,
                                      &source, &atom_name );
+  if(atom_name) { free( atom_name ); atom_name = NULL; }
 #endif
 
   /* alternatively fall back to the non color server or pre v0.4 atom */
