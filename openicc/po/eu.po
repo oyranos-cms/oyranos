@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openicc\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2021-11-11 09:14+0100\n"
+"POT-Creation-Date: 2022-04-19 00:01+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -52,7 +52,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not create a intermediate db object for"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: libopenicc/openicc_db.c:518
+#: libopenicc/openicc_db.c:517
 #, fuzzy
 msgid "Could not create root JSON node for"
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -62,7 +62,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not find config"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: libopenicc/openicc_db.c:511
+#: libopenicc/openicc_db.c:510
 #, fuzzy
 msgid "Could not obtain JSON node for"
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -186,11 +186,11 @@ msgstr "Bideo-monitorea"
 msgid "NUMBER"
 msgstr ""
 
-#: libopenicc/openicc_db.c:494
+#: libopenicc/openicc_db.c:493
 msgid "No JSON content obtained for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:503
+#: libopenicc/openicc_db.c:502
 msgid "No JSON obtained for"
 msgstr ""
 
@@ -265,7 +265,7 @@ msgstr "Puntua"
 msgid "Write DB File"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: libopenicc/openicc_db.c:487
+#: libopenicc/openicc_db.c:486
 msgid "Writing failed for"
 msgstr ""
 

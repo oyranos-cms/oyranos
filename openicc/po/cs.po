@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openicc\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2021-11-11 09:14+0100\n"
+"POT-Creation-Date: 2022-04-19 00:01+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -49,7 +49,7 @@ msgstr "Nelze alokovat paměť pro:"
 msgid "Could not create a intermediate db object for"
 msgstr "Nelze rozpoznat zařízení"
 
-#: libopenicc/openicc_db.c:518
+#: libopenicc/openicc_db.c:517
 #, fuzzy
 msgid "Could not create root JSON node for"
 msgstr "Nelze otevřít meta modul API"
@@ -59,7 +59,7 @@ msgstr "Nelze otevřít meta modul API"
 msgid "Could not find config"
 msgstr "Nelze otevřít profil"
 
-#: libopenicc/openicc_db.c:511
+#: libopenicc/openicc_db.c:510
 #, fuzzy
 msgid "Could not obtain JSON node for"
 msgstr "Nelze otevřít meta modul API"
@@ -184,11 +184,11 @@ msgstr "Monitor"
 msgid "NUMBER"
 msgstr ""
 
-#: libopenicc/openicc_db.c:494
+#: libopenicc/openicc_db.c:493
 msgid "No JSON content obtained for"
 msgstr ""
 
-#: libopenicc/openicc_db.c:503
+#: libopenicc/openicc_db.c:502
 msgid "No JSON obtained for"
 msgstr ""
 
@@ -263,7 +263,7 @@ msgstr "Zapsat"
 msgid "Write DB File"
 msgstr "zapsat do souboru"
 
-#: libopenicc/openicc_db.c:487
+#: libopenicc/openicc_db.c:486
 msgid "Writing failed for"
 msgstr ""
 

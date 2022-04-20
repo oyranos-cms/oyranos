@@ -3,7 +3,7 @@
  *  libOpenICC - OpenICC Colour Management Configuration
  *
  *  @par Copyright:
- *            2015-2017 (C) Kai-Uwe Behrmann
+ *            2015-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    OpenICC Colour Management configuration helpers
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -472,9 +472,8 @@ int      openiccDBSetString          ( const char        * keyName,
         {
           char * json = NULL;
           int size = 0, result = 0;
-          int level = 0;
 
-          oyjlTreeToJson( root, &level, &json );
+          json = oyjlTreeToText( root, OYJL_NO_MARKUP );
           if(json)
           {
             size = strlen(json);
