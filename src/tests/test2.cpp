@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2004-2020  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2022  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -831,6 +831,7 @@ oyjlTESTRESULT_e testJson ()
 
   int i;
   const char * json = "{\"org\":{\"free\":[{\"s1key_a\":\"val_a\",\"s1key_b\":\"val_b\"},{\"s2key_c\":\"val_c\",\"s2key_d\":\"val_d\"}],\"key_e\":\"val_e_yyy\",\"key_f\":\"val_f\"}}";
+  const char * t;
 
   if(verbose) fprintf( zout, "%s\n", json );
 
@@ -859,8 +860,9 @@ oyjlTESTRESULT_e testJson ()
     {
       char * json = 0;
       oyjlTreeToJson( root, &level, &json );
-      if(json && json[0] && strlen(json) == 210)
-      { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(json),
+      t = oyjlTermColorToPlain( json );
+      if(json && json[0] && strlen(t) == 210)
+      { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(t),
         "oyjlTreeToJson()" );
         if(verbose) fprintf( zout, "%s\n", json );
       } else
@@ -868,6 +870,7 @@ oyjlTESTRESULT_e testJson ()
         "oyjlTreeToJson()" );
       }
       oyFree_m_(json);
+      t = NULL;
 
       int count;
       char ** paths = oyjlTreeToPaths( root, 10, NULL, 0, &count );
@@ -1002,7 +1005,8 @@ oyjlTESTRESULT_e testJson ()
   root = oyjlTreeNew( "new/tree/key" );
   char * rjson = NULL; i = 0;
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
-  size_t len = strlen(rjson);
+  t = oyjlTermColorToPlain( rjson );
+  size_t len = strlen(t);
   if(root && len == 56)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "oyjlTreeNew( \"new/tree/key\" )" );
@@ -1016,15 +1020,16 @@ oyjlTESTRESULT_e testJson ()
   value = oyjlTreeGetValue( root, 0, "new/tree/key" );
   oyjlValueSetString( value, "value" );
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
-  if(len < strlen(rjson))
-  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(rjson),
+  t = oyjlTermColorToPlain( rjson );
+  if(len < strlen(t))
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(t),
     "oyjlValueSetString( \"value\" )" );
   } else
-  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(rjson),
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(t),
     "oyjlValueSetString( \"value\" )" );
   }
   if(verbose) fprintf( zout, "%s\n", rjson );
-  len = strlen(rjson);
+  len = strlen(t);
   oyFree_m_( rjson );
 
   char * v = oyjlValueText(value, oyAllocateFunc_);
@@ -1039,7 +1044,8 @@ oyjlTESTRESULT_e testJson ()
 
   oyjlTreeClearValue( root,"new/tree/key" );
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
-  if(rjson && strcmp(rjson,"null") == 0)
+  t = oyjlTermColorToPlain( rjson );
+  if(rjson && strcmp(t,"null") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeClearValue( \"new/tree/key\" )" );
   } else
@@ -1500,12 +1506,13 @@ oyjlTESTRESULT_e testOptionsSet ()
 
   char error_buffer[128] = {0};
   oyjl_val root = oyjlTreeParse( t, error_buffer, 128 );
-  if(root && strlen(t) == 154)
+  const char * plain = oyjlTermColorToPlain(t);
+  if(root && strlen(plain) == 154)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyOptions_GetText(oyNAME_JSON)" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyOptions_GetText(oyNAME_JSON) %d              %s", t?(int)strlen(t):-1, error_buffer );
+    "oyOptions_GetText(oyNAME_JSON) %d              %s", t?(int)strlen(plain):-1, error_buffer );
   }
   OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyOptions_GetText-JSON", "txt" )
   oyjlTreeFree( root );
@@ -1519,9 +1526,10 @@ oyjlTESTRESULT_e testOptionsSet ()
   error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_JSON );
+  plain = oyjlTermColorToPlain(t);
   oyOptions_Release( &options );
   count = oyOptions_Count(setA);
-  if(count == 8 && t && strlen(t) == 315)
+  if(count == 8 && t && strlen(plain) == 315)
   {
     PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(t),
     "oyOptions_FromJSON() key_paths               %d", count );
@@ -1535,12 +1543,13 @@ oyjlTESTRESULT_e testOptionsSet ()
   error = oyOptions_FromJSON( t, NULL, &options, "org" );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   t = oyOptions_GetText( options, (oyNAME_e) oyNAME_JSON );
-  if(!error && t && t && strlen(t) == 60)
+  plain = oyjlTermColorToPlain(t);
+  if(!error && t && t && strlen(plain) == 60)
   {
-    PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, t?strlen(t):0,
+    PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, t?strlen(plain):0,
     "oyOptions_FromJSON() validity" );
   } else
-  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, t?strlen(t):0,
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, t?strlen(plain):0,
     "oyOptions_FromJSON() validity" );
     fprintf( zout, "%s\n", t?t:0 );
   }
@@ -4510,67 +4519,84 @@ oyjlTESTRESULT_e test_oyTextIccDictMatch ()
 
   fprintf(stdout, "\n" );
 
-  if( oyTextIccDictMatch("ABC",
-                         "ABC", 0, '/', ','))
+  const char * value  = "ABC",
+             * value2 = "ABC";
+  if( oyTextIccDictMatch(value, value2, 0, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "simple text matching" );
+    "simple text    matching \"%s\"/\"%s\"", value, value2 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "simple text matching" );
+    "simple text    matching \"%s\"/\"%s\"", value, value2 );
   }
 
-  if(!oyTextIccDictMatch("ABC",
-                         "ABCD", 0, '/', ','))
+  value  = "ABC";
+  value2 = "ABCD";
+  if(!oyTextIccDictMatch(value, value2, 0, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "simple text mismatching" );
+    "simple text mismatching \"%s\"/\"%s\"", value, value2 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "simple text mismatching" );
+    "simple text mismatching \"%s\"/\"%s\"", value, value2 );
   }
 
-  if( oyTextIccDictMatch("abcd,ABC,efgh",
-                         "abcdef,12345,ABC", 0, '/', ','))
+  value  = "abcd,ABC,efgh";
+  value2 = "abcdef,12345,ABC";
+  if( oyTextIccDictMatch(value, value2, 0, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "multiple text matching" );
+    "multiple text    matching \"%s\"/\"%s\"", value, value2 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "multiple text matching" );
+    "multiple text    matching \"%s\"/\"%s\"", value, value2 );
   }
 
-  if( oyTextIccDictMatch("abcd,ABC,efgh,12345",
-                         "abcdef,12345,ABCD", 0.0005, '/', ','))
+  value  = "abcd,ABC,efgh";
+  value2 = "abcdef,12345,ABCD";
+  if(!oyTextIccDictMatch(value, value2, 0, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "multiple integer matching" );
+    "multiple text mismatching \"%s\"/\"%s\"", value, value2 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "multiple integer matching" );
+    "multiple text mismatching \"%s\"/\"%s\"", value, value2 );
   }
 
-  if(!oyTextIccDictMatch("abcd,ABC,efgh,12345",
-                         "abcdef,12345ABCD", 0.0005, '/', ','))
+  value  = "abcd,ABC,efgh,12345px";
+  value2 = "abcdef,12345,ABCD";
+  if( oyTextIccDictMatch(value, value2, 0.0005, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "multiple integer mismatching" );
+    "multiple integer    matching \"%s\"/\"%s\"", value, value2 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "multiple integer mismatching" );
+    "multiple integer    matching \"%s\"/\"%s\"", value, value2 );
   }
 
-  if( oyTextIccDictMatch("abcd,ABC,efgh,123.45001",
-                         "abcdef,123.45,ABCD", 0.0005, '/', ','))
+  value  = "abcd,ABC,efgh,12345px";
+  value2 = "abcdef,12345ABCD";
+  if(!oyTextIccDictMatch(value, value2, 0.0005, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "multiple float matching" );
+    "multiple integer mismatching \"%s\"/\"%s\"", value, value2 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "multiple float matching" );
+    "multiple integer mismatching \"%s\"/\"%s\"", value, value2 );
   }
 
-  if(!oyTextIccDictMatch("abcd,ABC,efgh,123.45",
-                         "abcdef,123", 0.0005, '/', ','))
+  value  = "abcd,ABC,efgh,123.45001";
+  value2 = "abcdef,123.45,ABCD";
+  if( oyTextIccDictMatch(value, value2, 0.0005, '/', ','))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "multiple float mismatching" );
+    "multiple float    matching \"%s\"/\"%s\"", value, value2 );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "multiple float mismatching" );
+    "multiple float    matching \"%s\"/\"%s\"", value, value2 );
+  }
+
+  value  = "abcd,ABC,efgh,123.45";
+  value2 = "abcdef,123";
+  if(!oyTextIccDictMatch(value, value2, 0.0005, '/', ','))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "multiple float mismatching \"%s\"/\"%s\"", value, value2 );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "multiple float mismatching \"%s\"/\"%s\"", value, value2 );
   }
   return result;
 }
@@ -9185,7 +9211,7 @@ oyjlTESTRESULT_e testICCsCheck()
       if(texts_n && texts[0])
       {
         long l = 0;
-        if(oyjlStringToLong( texts[0], &l ) <= 0)
+        if(oyjlStringToLong( texts[0], &l, 0 ) <= 0)
           j = l;
       }
       oyjlStringListRelease( &texts, texts_n, oyDeAllocateFunc_ );

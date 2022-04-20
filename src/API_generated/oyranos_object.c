@@ -676,7 +676,7 @@ int    oyFilterRegistrationMatchKey  ( const char        * registration_a,
  *  @return                            match, useable for ranking
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/01/05
+ *  @date    2022/04/18
  *  @since   2010/11/21 (Oyranos: 0.1.3)
  */
 int    oyTextIccDictMatch            ( const char        * text,
@@ -691,8 +691,10 @@ int    oyTextIccDictMatch            ( const char        * text,
   char ** patterns = 0, * p;
   long num[2] = {0,0};
   int num_valid[2] = {0,0};
+  const char * num_end[2] = {0,0};
   double dbl[2] = {0,0};
   int dbl_valid[2] = {0,0}; 
+  const char * dbl_end[2] = {0,0};
 
   DBG_MEM_START
 
@@ -705,20 +707,29 @@ int    oyTextIccDictMatch            ( const char        * text,
     {
       t = texts[i];
       DBG_MEM3_S( "%d: "OY_PRINT_POINTER" \"%s\"", i, (intptr_t)t, t );
-      num_valid[0] = oyjlStringToLong(t,&num[0]) <= 0 ? 1 : 0;
-      dbl_valid[0] = oyjlStringToDouble(t,&dbl[0]) <= 0 ? 1 : 0;
+      num_valid[0] = oyjlStringToLong(t,&num[0],&num_end[0]) <= 0 ? 1 : 0;
+      dbl_valid[0] = oyjlStringToDouble(t,&dbl[0],&dbl_end[0]) <= 0 ? 1 : 0;
       DBG_MEM
       for( j = 0; j < p_n; ++j )
       {
         p = patterns[j];
         DBG_MEM4_S( "%d %d: "OY_PRINT_POINTER" \"%s\"", i, j, (intptr_t)t, p );
-        num_valid[1] = oyjlStringToLong(p,&num[1]) <= 0 ? 1 : 0;
-        dbl_valid[1] = oyjlStringToDouble(p,&dbl[1]) <= 0 ? 1 : 0;
+        num_valid[1] = oyjlStringToLong(p,&num[1],&num_end[1]) <= 0 ? 1 : 0;
+        dbl_valid[1] = oyjlStringToDouble(p,&dbl[1],&dbl_end[1]) <= 0 ? 1 : 0;
         DBG_MEM
 
-        if((strcmp( t, p ) == 0) ||
-           (num_valid[0] && num_valid[1] && num[0] == num[1]) ||
-           (dbl_valid[0] && dbl_valid[1] && fabs(dbl[0] - dbl[1])/2.0 < delta))
+        if(strcmp( t, p ) == 0)
+        {
+          match = 1;
+          goto clean_oyTextIccDictMatch;
+        } else if (dbl_valid[0] && dbl_valid[1])
+        {
+          if ((fabs(dbl[0] - dbl[1])/2.0 < delta) && (dbl_end[0] == 0 || dbl_end[1] == 0 || strcmp(dbl_end[0],dbl_end[1]) == 0))
+          {
+            match = 1;
+            goto clean_oyTextIccDictMatch;
+          }
+        } else if (num_valid[0] && num_valid[1] && num[0] == num[1] && (num_end[0] == 0 || num_end[1] == 0 || strcmp(num_end[0],num_end[1]) == 0))
         {
           match = 1;
           goto clean_oyTextIccDictMatch;
