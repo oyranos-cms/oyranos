@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2021 (C) Kai-Uwe Behrmann
+ *            2016-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl tree functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -543,6 +543,37 @@ char *     oyjlJsonEscape            ( const char        * in,
   out = oyjlStr_Pull(tmp); 
   oyjlStr_Release( &tmp );
   return out;
+}
+
+/** @brief convert a C tree into a text string
+ *
+ *  @see oyjlTreeToJson() oyjlTreeToYaml() oyjlTreeToXml()
+ */
+char *     oyjlTreeToText            ( oyjl_val            v,
+                                       int                 flags )
+{
+  int level = 0;
+  char * text = NULL;
+
+  if(flags & OYJL_YAML)
+    oyjlTreeToYaml( v, &level, &text );
+  else if(flags & OYJL_XML)
+    oyjlTreeToXml( v, &level, &text );
+  else
+    oyjlTreeToJson( v, &level, &text );
+
+  if(text && flags & OYJL_NO_MARKUP)
+  {
+    const char * t = NULL;
+    t = oyjlTermColorToPlain( text );
+    if(t && t != text)
+    {
+      free(text); text = NULL;
+      text = oyjlStringCopy( t, 0 );
+    }
+  }
+
+  return text;
 }
 
 int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
