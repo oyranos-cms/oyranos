@@ -110,6 +110,10 @@ ADD_CUSTOM_TARGET(test-2
 	      COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules ${MEMCHECK_SMALL} "${CMAKE_CURRENT_BINARY_DIR}/test2"
         DEPENDS test2 test_oyranos test_config test_modules test_object test_core
         COMMENT "Test libOyranos extensive." VERBATIM )
+ADD_CUSTOM_TARGET(test-2-fast
+	      COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale OY_MODULE_PATH=${CMAKE_BINARY_DIR}/src/modules "${CMAKE_CURRENT_BINARY_DIR}/test2"
+        DEPENDS test2
+        COMMENT "Test libOyranos fast." VERBATIM )
 
 IF(USE_GCOV AND CMAKE_COMPILER_IS_GNUCC)
   MESSAGE("testing coverage using gcc's gcov; try target: coverage")
