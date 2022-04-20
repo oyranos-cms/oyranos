@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-04-03 13:13+0200\n"
+"POT-Creation-Date: 2022-04-16 16:30+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1381,7 +1381,7 @@ msgid "Could not open default ICC profile"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
 #: API_generated/oyranos_devices.c:228 API_generated/oyranos_devices.c:980
-#: liboyranos/oyranos_alpha.c:846 liboyranos/oyranos_alpha.c:929
+#: liboyranos/oyranos_alpha.c:850 liboyranos/oyranos_alpha.c:933
 #, fuzzy
 msgid "Could not open device"
 msgstr "Ezin izan da letra-tipoa ireki:"

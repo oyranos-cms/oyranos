@@ -377,7 +377,7 @@ int            oyOptionsToChromaticity(double            * pandg,
 #define READ_DBL( key ) \
   t = oyOptions_FindString(options, key, NULL); \
   if(!t) return 1; \
-  oyjlStringToDouble( t, &value ); \
+  oyjlStringToDouble( t, &value, 0 ); \
   pandg[pos++] = value;
   READ_DBL( "EDID_red_x" )
   READ_DBL( "EDID_red_y" )

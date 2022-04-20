@@ -2522,7 +2522,7 @@ int          oyCanSetPersistent      ( oySCOPE_e           scope )
         long space = 0;
         if(oy_debug)
           fprintf(stderr, "empty disk space: %s\n", num );
-        if(num && oyjlStringToLong(num, &space) <= 0)
+        if(num && oyjlStringToLong(num, &space, 0) <= 0)
         {
           if(space*1000 < 10000+size)
           {
