@@ -3,7 +3,7 @@
  *  oyjl - Basic helper C API's
  *
  *  @par Copyright:
- *            2010-2021 (C) Kai-Uwe Behrmann
+ *            2010-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
  *            XML + YAML, string helpers, file reading, testing and argument handling.
@@ -230,6 +230,12 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
 oyjl_val   oyjlTreeNew               ( const char        * path );
 void       oyjlTreeClearValue        ( oyjl_val            root,
                                        const char        * xpath );
+#define    OYJL_JSON                   0x0    /**< @brief  JSON format; default */
+#define    OYJL_YAML                   0x01   /**< @brief  YAML format */
+#define    OYJL_XML                    0x02   /**< @brief  XML format */
+#define    OYJL_NO_MARKUP              0x100  /**< @brief  plain text; use oyjlTermColorToPlain() */
+char *     oyjlTreeToText            ( oyjl_val            v,
+                                       int                 flags );
 void       oyjlTreeToJson            ( oyjl_val            v,
                                        int               * level,
                                        char             ** json );

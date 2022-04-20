@@ -1665,6 +1665,14 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
     oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
     "oyjlTreeToJson()         1x %d", (int)strlen(text)) );
   myDeAllocFunc( text ); text = NULL;
+
+  clck = oyjlClock();
+  text = oyjlTreeToText( root, OYJL_NO_MARKUP );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "%s\n",
+    oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
+    "oyjlTreeToText()         1x %d", (int)strlen(text)) );
+  myDeAllocFunc( text ); text = NULL;
   oyjlTreeFree( root );
 
 
