@@ -3,14 +3,14 @@
  *  oyjl - UI helpers
  *
  *  @par Copyright:
- *            2018-2021 (C) Kai-Uwe Behrmann
+ *            2018-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl argument handling
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- * Copyright (c) 2018-2021  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ * Copyright (c) 2018-2022  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -708,19 +708,32 @@ const char*oyjlStr                   ( oyjl_str            string )
   return (const char*)string->s;
 }
 int      oyjlStringToLong            ( const char        * text,
-                                       long              * value )
+                                       long              * value,
+                                       const char       ** end )
 {
-  char * end = 0;
-  *value = strtol( text, &end, 0 );
-  if(end && end != text && isdigit(text[0]) && !isdigit(end[0]) )
-    return 0;
+  char * end_ = 0;
+  int error = -1;
+  *value = strtol( text, &end_, 0 );
+  if(end_ && end_ != text && isdigit(text[0]) && !isdigit(end_[0]) )
+  {
+    if(end_[0] && end_ != text)
+    {
+      error = -1;
+      if(end)
+        *end = end_;
+    }
+    else
+      error = 0;
+  }
   else
-    return 1;
+    error = 1;
+  return error;
 }
 int          oyjlStringToDouble      ( const char        * text,
-                                       double            * value )
+                                       double            * value,
+                                       const char       ** end )
 {
-  char * end = NULL, * t = NULL;
+  char * end_ = NULL, * t = NULL;
   int len, pos = 0;
   int error = -1;
 #ifdef OYJL_HAVE_LOCALE_H
@@ -746,11 +759,23 @@ int          oyjlStringToDouble      ( const char        * text,
   while(text[pos] && isspace(text[pos])) pos++;
   memcpy( t, &text[pos], len );
 
-  *value = strtod( t, &end );
+  *value = strtod( t, &end_ );
 
-  if(end && end != text && isdigit(text[0]) && !isdigit(end[0]) )
-    error = 0;
-  else if(end && end == t)
+  if(end_ && end_ != text && isdigit(text[0]) && !isdigit(end_[0]) )
+  {
+    if(end_[0] && end_ != text)
+    {
+      error = -1;
+      if(end)
+      {
+        end_ = strstr( text, end_ );
+        *end = end_;
+      }
+    }
+    else
+      error = 0;
+  }
+  else if(end_ && end_ == t)
   {
     *value = NAN;
     error = 2;
@@ -1851,7 +1876,7 @@ int oyjlManArgIsNum_( const char * arg )
     is_num_arg = 2;
   while(t[i] && t[i] != '\000' && t[i] != '|') ++i;
   t[i] = '\000';
-  if(t && t[0] && oyjlStringToDouble( t, &dbl ) == 0)
+  if(t && t[0] && oyjlStringToDouble( t, &dbl, 0 ) == 0)
     is_num_arg = 1;
   free(t);
   return is_num_arg;
@@ -2833,7 +2858,7 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
 
   if(result_dbl)
   {
-    oyjlStringToDouble( t, result_dbl );
+    oyjlStringToDouble( t, result_dbl, 0 );
     if( o->value_type == oyjlOPTIONTYPE_DOUBLE &&
         ( o->values.dbl.start > *result_dbl ||
           o->values.dbl.end < *result_dbl) )
@@ -2856,7 +2881,7 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
     } else if(t)
     {
       long lo = 0;
-      if(oyjlStringToLong( t, &lo ) == 0)
+      if(oyjlStringToLong( t, &lo, 0 ) == 0)
         *result_int = lo;
     }
   }

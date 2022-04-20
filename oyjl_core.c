@@ -3,14 +3,14 @@
  *  oyjl - string, file i/o and other basic helpers
  *
  *  @par Copyright:
- *            2016-2021 (C) Kai-Uwe Behrmann
+ *            2016-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl core functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- * Copyright (c) 2004-2021  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ * Copyright (c) 2004-2022  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -914,23 +914,29 @@ void     oyjlStringListAddList       ( char            *** list,
  *
  *  @param[in]     text                string
  *  @param[out]    value               resulting number
+ *  @param[out]    end                 possibly part after number
  *  @return                            error
  *                                     - 0 : text input was completely read as number
- *                                     - -1 : text input was read as number with white space or other text after
+ *                                     - -1 : text input was read as number with white space or other text after; can be seen in end argument
  *                                     - 1 : missed text input
  *                                     - 2 : no number detected
  *
  */
 int      oyjlStringToLong            ( const char        * text,
-                                       long              * value )
+                                       long              * value,
+                                       const char       ** end )
 {
-  char * end = 0;
+  char * end_ = 0;
   int error = -1;
-  *value = strtol( text, &end, 0 );
-  if(end && end != text && isdigit(text[0]) && !isdigit(end[0]) )
+  *value = strtol( text, &end_, 0 );
+  if(end_ && end_ != text && isdigit(text[0]) && !isdigit(end_[0]) )
   {
-    if(end[0] && end != text)
+    if(end_[0] && end_ != text)
+    {
       error = -1;
+      if(end)
+        *end = end_;
+    }
     else
       error = 0;
   }
@@ -943,20 +949,22 @@ int      oyjlStringToLong            ( const char        * text,
  *
  *  @param[in]     text                string
  *  @param[out]    value               resulting number
+ *  @param[out]    end                 possibly part after number
  *  @return                            error
  *                                     - 0 : text input was completely read as number
- *                                     - -1 : text input was read as number with white space or other text after
+ *                                     - -1 : text input was read as number with white space or other text after; can be seen in end argument
  *                                     - 1 : missed text input
  *                                     - 2 : no number detected
  *
  *  @version Oyjl: 1.0.0
- *  @date    2021/10/04
+ *  @date    2022/04/17
  *  @since   2011/11/17 (Oyranos: 0.2.0)
  */
 int          oyjlStringToDouble      ( const char        * text,
-                                       double            * value )
+                                       double            * value,
+                                       const char       ** end )
 {
-  char * end = NULL, * t = NULL;
+  char * end_ = NULL, * t = NULL;
   int len, pos = 0;
   int error = -1;
 #ifdef OYJL_HAVE_LOCALE_H
@@ -982,16 +990,23 @@ int          oyjlStringToDouble      ( const char        * text,
   while(text[pos] && isspace(text[pos])) pos++;
   memcpy( t, &text[pos], len );
 
-  *value = strtod( t, &end );
+  *value = strtod( t, &end_ );
 
-  if(end && end != text && isdigit(text[0]) && !isdigit(end[0]) )
+  if(end_ && end_ != text && isdigit(text[0]) && !isdigit(end_[0]) )
   {
-    if(end[0] && end != text)
+    if(end_[0] && end_ != text)
+    {
       error = -1;
+      if(end)
+      {
+        end_ = strstr( text, end_ );
+        *end = end_;
+      }
+    }
     else
       error = 0;
   }
-  else if(end && end == t)
+  else if(end_ && end_ == t)
   {
     *value = NAN;
     error = 2;
@@ -1050,7 +1065,7 @@ int          oyjlStringsToDoubles    ( const char        * text,
   for( i = 0; i < n; ++i )
   {
     val = list[i];
-    l_error = oyjlStringToDouble( val, &d );
+    l_error = oyjlStringToDouble( val, &d, 0 );
     (*value)[i] = d;
     if(!error || l_error > 0) error = l_error;
     if(l_error > 0) break;

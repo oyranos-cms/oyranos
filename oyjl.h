@@ -470,9 +470,11 @@ void       oyjlStringListAddString   ( char            *** list,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
 int        oyjlStringToLong          ( const char        * text,
-                                       long              * value );
+                                       long              * value,
+                                       const char       ** end );
 int        oyjlStringToDouble        ( const char        * text,
-                                       double            * value );
+                                       double            * value,
+                                       const char       ** end );
 int        oyjlStringsToDoubles      ( const char        * text,
                                        const char        * delimiter,
                                        int               * count,
