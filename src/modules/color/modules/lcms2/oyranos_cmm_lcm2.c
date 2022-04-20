@@ -1276,7 +1276,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
 
   o_txt = oyOptions_FindString  ( opts, "adaption_state", 0 );
   if(o_txt && oyStrlen_(o_txt))
-    oyjlStringToDouble( o_txt, &adaption_state );
+    oyjlStringToDouble( o_txt, &adaption_state, 0 );
 
   if(!error)
   {
@@ -2429,9 +2429,9 @@ char * l2cmsImage_GetText            ( oyImage_s         * image,
 
   /* describe the image */
   if(type == oyNAME_DESCRIPTION)
-    oySprintf_( text,   "  {\n  \"oyImage_s\": {\n    \"oyProfile_s\": %s", oyProfile_GetText(profile, oyNAME_JSON));
+    oySprintf_( text,   "  {\n  \"oyImage_s\": {\n    \"oyProfile_s\": %s", oyjlTermColorToPlain(oyProfile_GetText(profile, oyNAME_JSON)));
   else
-    oySprintf_( text,   "%s", oyProfile_GetText(profile, oyNAME_JSON));
+    oySprintf_( text,   "%s", oyjlTermColorToPlain(oyProfile_GetText(profile, oyNAME_JSON)));
   hashTextAdd_m( text );
   if(type == oyNAME_DESCRIPTION)
   {
@@ -2583,7 +2583,7 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
     for(i = 0; i < n; ++i)
     {
       p = oyProfiles_Get( profiles, i );
-      model = oyProfile_GetText( p, oyNAME_JSON );
+      model = oyjlTermColorToPlain(oyProfile_GetText( p, oyNAME_JSON ));
       oyProfile_Release( &p );
 
       if(i==0)
@@ -2603,7 +2603,7 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
                                   oyOBJECT_PROFILE_S, NULL, &o );
       p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
       oyOption_Release( &o );
-      model = oyProfile_GetText( p, oyNAME_JSON );
+      model = oyjlTermColorToPlain(oyProfile_GetText( p, oyNAME_JSON ));
       oyProfile_Release( &p );
 
       if(i==0)
@@ -4258,7 +4258,7 @@ cmsHPROFILE  l2cmsGamutCheckAbstract  ( oyProfile_s       * proof,
         "CMF_product", "Oyranos",
         0,0
         };
-        const char * desc = oyProfile_GetText( proof, oyNAME_DESCRIPTION );
+        const char * desc = oyjlTermColorToPlain(oyProfile_GetText( proof, oyNAME_DESCRIPTION ));
         lcm2CreateAbstractProfile (
                              lcm2SamplerProof, ptr,
                              "*lab", // CIE*Lab
