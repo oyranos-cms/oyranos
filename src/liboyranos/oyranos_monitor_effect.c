@@ -591,6 +591,8 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
   /* 2. get user effect profile and display white point effect */
   /* 2.1. get effect profile and decide if it can be embedded into a VGCT tag */
   oyOptions_s * module_options = NULL;
+  if(!prof)
+    return -1;
   error = oyAddLinearDisplayEffect( &module_options );
   if(error)
     oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)prof, OY_DBG_FORMAT_
@@ -745,7 +747,7 @@ int      oyDeviceSetup2              ( oyConfig_s        * device,
 
     if(oyProfile_CreateEffectVCGT( prof ))
       oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)device, OY_DBG_FORMAT_
-                       "Create Effect VCGT failed: %s", OY_DBG_ARGS_, profile_name );
+                       "Create Effect VCGT failed: %s", OY_DBG_ARGS_, oyNoEmptyString_m_(profile_name) );
     if(oy_debug)
       oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)device, OY_DBG_FORMAT_
                        "%s + modified VCGT -> %s", OY_DBG_ARGS_, profile_name, tmpname );
@@ -888,17 +890,17 @@ int      oyGetDisplayWhitePoint      ( int                 mode,
       if(!value)
         oyMessageFunc_p( oyMSG_ERROR,NULL, OY_DBG_FORMAT_
                          "Can not obtain white point! Try CLI command: oyranos-monitor-white-point -a 5000", OY_DBG_ARGS_ );
-      if(oyjlStringToDouble( value, &XYZ[0] ) > 0)
+      if(oyjlStringToDouble( value, &XYZ[0], 0 ) > 0)
         return error;
       oyFree_m_( value );
       value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_Y, 0,
                                      oySCOPE_USER_SYS, oyAllocateFunc_ );
-      if(oyjlStringToDouble( value, &XYZ[1] ) > 0)
+      if(oyjlStringToDouble( value, &XYZ[1], 0 ) > 0)
         return error;
       oyFree_m_( value );
       value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_Z, 0,
                                      oySCOPE_USER_SYS, oyAllocateFunc_ );
-      if(oyjlStringToDouble( value, &XYZ[2] ) > 0)
+      if(oyjlStringToDouble( value, &XYZ[2], 0 ) > 0)
         return error;
       oyFree_m_( value );
       error = 0;
