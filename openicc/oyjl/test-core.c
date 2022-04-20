@@ -409,7 +409,8 @@ oyjlTESTRESULT_e testString ()
   }
 
   long l = 0;
-  int error = oyjlStringToLong( "2", &l );
+  const char * end = NULL;
+  int error = oyjlStringToLong( "2", &l, &end );
   if( !error &&
       l == 2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -420,7 +421,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   l = 0;
-  error = oyjlStringToLong( "2\n", &l );
+  error = oyjlStringToLong( "2\n", &l, &end );
   if( error == -1 &&
       l == 2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -431,7 +432,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   l = -2;
-  error = oyjlStringToLong( "", &l );
+  error = oyjlStringToLong( "", &l, &end );
   if( error == 1 &&
       l == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -442,7 +443,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   double d = 0.0;
-  error = oyjlStringToDouble( "0.2", &d );
+  error = oyjlStringToDouble( "0.2", &d, &end );
   if( !error &&
       d == 0.2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -453,18 +454,18 @@ oyjlTESTRESULT_e testString ()
   }
 
   d = 0.0;
-  error = oyjlStringToDouble( "0.2#", &d );
+  error = oyjlStringToDouble( "0.2#", &d, &end );
   if( error == -1 &&
-      d == 0.2)
+      d == 0.2 && end[0] == '#' )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringToDouble(\"0.2#\") = %g  error = %d", d, error );
+    "oyjlStringToDouble(\"0.2#\") = %g  error = %d  end = %s", d, error, end );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringToDouble(\"0.2#\") = %g  error = %d", d, error );
+    "oyjlStringToDouble(\"0.2#\") = %g  error = %d  end = %s", d, error, end );
   }
 
   d = 0.0;
-  error = oyjlStringToDouble( "val_a", &d );
+  error = oyjlStringToDouble( "val_a", &d, &end );
   if( error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlStringToDouble(\"val_a\")   error = %d", error );

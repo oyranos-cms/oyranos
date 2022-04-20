@@ -1229,7 +1229,7 @@ int        oyjlPathTermGetIndex_     ( const char        * term,
       memcpy( ttmp, tindex, size );
       ttmp[size] = '\000';
 
-      error = oyjlStringToLong( ttmp, &num );
+      error = oyjlStringToLong( ttmp, &num, 0 );
       if(!error)
         pos = num;
 
