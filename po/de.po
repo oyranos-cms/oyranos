@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-04-16 16:30+0200\n"
+"POT-Creation-Date: 2022-04-23 10:35+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: vim 6.0\n"
 
-#: liboyranos_core/oyranos_core.c:521 tools/oyranos-device.c:685
+#: liboyranos_core/oyranos_core.c:524 tools/oyranos-device.c:685
 #: tools/oyranos-device.c:700 tools/oyranos-device.c:714
 #: tools/oyranos-device.c:741 tools/oyranos-device.c:782
 #: tools/oyranos-device.c:1163 tools/oyranos-device.c:1283
@@ -1230,7 +1230,7 @@ msgstr "Wandle in unspezifziertes Cmyk, erhalte Cmyk Zahlen"
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/information/[1]/label
 #. oyranos_cmm_lcms.json:org/freedesktop/oyjl/modules/[0]/information/[1]/label
-#: API_generated/oyranos_module.c:1415 liboyranos_config/oyranos_icc.c:457
+#: API_generated/oyranos_module.c:1420 liboyranos_config/oyranos_icc.c:457
 #: modules/lcm2-i18n.c:20 modules/lcms-i18n.c:20
 msgid "Copyright"
 msgstr "Kopierrecht"
@@ -1303,7 +1303,7 @@ msgstr "Kopierrecht 2018 Marti Maria"
 msgid "Copyright:       "
 msgstr "Kopierrecht:     "
 
-#: API_generated/oyranos_module.c:2038
+#: API_generated/oyranos_module.c:2043
 msgid "Could not allocate memory for:"
 msgstr "Kann nicht reservieren für:"
 
@@ -3158,8 +3158,8 @@ msgstr "Luv"
 #: API_generated/oyCMMapi9_s_.c:261 API_generated/oyCMMapi9_s_.c:269
 #: API_generated/oyCMMapiFilter_s_.c:260 API_generated/oyCMMapiFilter_s_.c:268
 #: API_generated/oyCMMapiFilters_s_.c:254
-#: API_generated/oyCMMapiFilters_s_.c:262 API_generated/oyCMMapi_s_.c:258
-#: API_generated/oyCMMapi_s_.c:266 API_generated/oyCMMapis_s_.c:254
+#: API_generated/oyCMMapiFilters_s_.c:262 API_generated/oyCMMapi_s_.c:259
+#: API_generated/oyCMMapi_s_.c:267 API_generated/oyCMMapis_s_.c:254
 #: API_generated/oyCMMapis_s_.c:262 API_generated/oyCMMinfo_s_.c:305
 #: API_generated/oyCMMinfo_s_.c:313 API_generated/oyCMMobjectType_s_.c:251
 #: API_generated/oyCMMobjectType_s_.c:259 API_generated/oyCMMui_s_.c:302
@@ -3193,7 +3193,7 @@ msgstr "Luv"
 #: API_generated/oyProfiles_s_.c:254 API_generated/oyProfiles_s_.c:262
 #: API_generated/oyRectangle_s_.c:250 API_generated/oyRectangle_s_.c:258
 #: API_generated/oyStructList_s_.c:296 API_generated/oyStructList_s_.c:304
-#: API_generated/oyranos_devices.c:3639 API_generated/oyranos_module.c:1577
+#: API_generated/oyranos_devices.c:3639 API_generated/oyranos_module.c:1582
 #: liboyranos/oyranos_alpha.c:312 liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr "Speicher Fehler"
@@ -3245,7 +3245,7 @@ msgstr "Signatur:        "
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/information/[0]/label
 #. oyranos_cmm_lcms.json:org/freedesktop/oyjl/modules/[0]/information/[0]/label
-#: API_generated/oyranos_module.c:1414 API_generated/oyranos_profile.c:43
+#: API_generated/oyranos_module.c:1419 API_generated/oyranos_profile.c:43
 #: modules/lcm2-i18n.c:11 modules/lcms-i18n.c:11
 msgid "Manufacturer"
 msgstr "Hersteller"
@@ -3442,7 +3442,7 @@ msgstr "NUMMER"
 
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
-#: API_generated/oyranos_module.c:1413 tools/oyranos-config.c:263
+#: API_generated/oyranos_module.c:1418 tools/oyranos-config.c:263
 msgid "Name"
 msgstr "Name"
 
@@ -6359,7 +6359,7 @@ msgstr "Beschreibung der Betrachtungbedingungen"
 msgid "WARN"
 msgstr "WARNUNG"
 
-#: liboyranos_core/oyranos_core.c:518 tools/oyranos-device.c:764
+#: liboyranos_core/oyranos_core.c:521 tools/oyranos-device.c:764
 #: tools/oyranos-device.c:767 tools/oyranos-device.c:773
 #: tools/qcmsevents/qcmsevents.cpp:335
 #, c-format
@@ -6649,7 +6649,7 @@ msgstr "benutze einfache Grundeinstellungen"
 #: API_generated/oyConversion_s.c:208 API_generated/oyFilterNode_s_.c:928
 #: API_generated/oyranos_devices.c:2652 API_generated/oyranos_devices.c:2664
 #: API_generated/oyranos_devices.c:2697 API_generated/oyranos_devices.c:3213
-#: API_generated/oyranos_module.c:2030
+#: API_generated/oyranos_module.c:2035
 msgid "error in module:"
 msgstr "Fehler in Modul:"
 

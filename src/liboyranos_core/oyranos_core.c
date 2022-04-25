@@ -149,7 +149,10 @@ void               oyLibCoreRelease  ( )
 
   for(i = 1; i <= 5; ++i)
     if(oy_version_string_[i])
-      free(oy_version_string_[i]);
+    {
+      oyFree_m_(oy_version_string_[i]);
+      oy_version_string_[i] = NULL;
+    }
 
   if(oy_static_msg_funcs_)
     oyDeAllocateFunc_(oy_static_msg_funcs_);
