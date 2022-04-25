@@ -98,7 +98,7 @@ void oy_backtrace_()
     } else
       fprintf( stderr, "could not open "TMP_FILE "\n" );
 }
-
+                
 #ifdef HAVE_BACKTRACE
 #include <execinfo.h>
 #define BT_BUF_SIZE 100
@@ -106,12 +106,23 @@ void oy_backtrace_()
 #include "oyranos_helper.h"
 #include "oyranos_i18n.h"
 #include "oyranos_io.h" /* oyFindApplication() */
+int oyHasApplication_(const char * app_name)
+{               
+  char * full_app_name = oyFindApplication(app_name);
+  int found = full_app_name == NULL ? 0 : 1;
+  if(full_app_name) free(full_app_name);
+  return found; 
+}
+
 /* @param[in]      stack_limit         set limit of stack depth
  *                                     - -1 : omit color/emphasize
  */
 char *   oyBT                        ( int                 stack_limit )
 {
   char * text = NULL;
+  static int oy_init_has_addr2line_ = 0;
+  static int oy_has_addr2line_ = 0;
+  static int oy_has_eu_addr2line_ = 0;
 
           int j, nptrs;
           void *buffer[BT_BUF_SIZE];
@@ -135,6 +146,17 @@ char *   oyBT                        ( int                 stack_limit )
             int start = nptrs-1;
             do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) );
             if(start < 0) start = nptrs-1; /* handle threads */
+
+            if( oy_init_has_addr2line_ == 0 )
+            {
+              ++oy_init_has_addr2line_;
+              oy_has_addr2line_ = 0;
+              oy_has_eu_addr2line_ = 0;
+              if(oyHasApplication_( "eu-addr2line" ))
+                ++oy_has_eu_addr2line_;
+              if(oyHasApplication_( "addr2line" ))
+                ++oy_has_addr2line_;
+            }
 
             for(j = start; j >= (oy_debug?0:1); j--)
             {
@@ -165,8 +187,7 @@ char *   oyBT                        ( int                 stack_limit )
                   fprintf(stderr, "prog = %s main_prog = %s\n", prog, main_prog );
               }
 
-
-              if( main_prog && prog && strstr(main_prog, prog) == NULL)
+              if( main_prog && prog && strstr(main_prog, prog) == NULL && oy_has_eu_addr2line_)
               {
                 char * addr2 = NULL;
                 txt = strchr( tmp?tmp:line, '(' );
@@ -185,7 +206,7 @@ char *   oyBT                        ( int                 stack_limit )
                   }
                 }
               }
-              else if(addr)
+              else if(addr && oy_has_addr2line_)
               {
                 char * addr2 = oyStringCopy( addr+1, NULL );
                 addr2[strlen(addr2)-1] = '\000';
@@ -261,14 +282,14 @@ char *   oyBT                        ( int                 stack_limit )
                   }
                   oyFree_m_(t);
                 }
-                oyFree_m_(addr_info);
+                if(addr_info) oyFree_m_(addr_info);
                 if(line_number) oyFree_m_(line_number);
                 if(func_name) oyFree_m_(func_name);
                 if(discriminator) oyFree_m_(discriminator);
               }
-              oyFree_m_( addr_infos );
+              if(addr_infos) oyFree_m_( addr_infos );
               oyFree_m_( prog );
-              oyFree_m_( command );
+              if(command) oyFree_m_( command );
             }
             oyStringAddPrintf( &text, 0,0, "\n" );
             free(strings);
