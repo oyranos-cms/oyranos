@@ -563,6 +563,7 @@ int        oyjlIsFile                ( const char        * fullname,
                                        const char        * mode,
                                        char              * info,
                                        int                 info_len );
+int        oyjlHasApplication        ( const char        * app_name);
 void       oyjlLibRelease            ( );
 /** @} *//* oyjl_core */
 
