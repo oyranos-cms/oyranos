@@ -87,6 +87,9 @@ char * oyjlFindApplication_(const char * app_name);
 char *   oyjlBT                      ( int                 stack_limit )
 {
   char * text = NULL;
+  static int oyjl_init_has_addr2line_ = 0;
+  static int oyjl_has_addr2line_ = 0;
+  static int oyjl_has_eu_addr2line_ = 0;
 
           int j, nptrs;
           void *buffer[BT_BUF_SIZE];
@@ -109,6 +112,17 @@ char *   oyjlBT                      ( int                 stack_limit )
             int start = nptrs-1;
             do { --start; } while( start >= 0 && (strstr(strings[start], "(main+") == NULL) );
             if(start < 0) start = nptrs-1; /* handle threads */
+
+            if( oyjl_init_has_addr2line_ == 0 )
+            {
+              ++oyjl_init_has_addr2line_;
+              oyjl_has_addr2line_ = 0;
+              oyjl_has_eu_addr2line_ = 0;
+              if(oyjlHasApplication( "eu-addr2line" ))
+                ++oyjl_has_eu_addr2line_;
+              if(oyjlHasApplication( "addr2line" ))
+                ++oyjl_has_addr2line_;
+            }
 
             for(j = start; j >= (*oyjl_debug?0:1); j--)
             {
@@ -139,8 +153,7 @@ char *   oyjlBT                      ( int                 stack_limit )
                   fprintf(stderr, "prog = %s main_prog = %s\n", prog, main_prog );
               }
 
-
-              if( main_prog && prog && strstr(main_prog, prog) == NULL)
+              if( main_prog && prog && strstr(main_prog, prog) == NULL && oyjl_has_eu_addr2line_)
               {
                 char * addr2 = NULL;
                 txt = strchr( tmp?tmp:line, '(' );
@@ -158,7 +171,7 @@ char *   oyjlBT                      ( int                 stack_limit )
                   }
                 }
               }
-              else if(addr)
+              else if(addr && oyjl_has_addr2line_)
               {
                 char * addr2 = oyjlStringCopy( addr+1, NULL );
                 addr2[strlen(addr2)-1] = '\000';
@@ -1818,6 +1831,25 @@ char * oyjlFindApplication_(const char * app_name)
     oyjlStringListRelease( &paths, paths_n, free );
   }
   return full_app_name;
+}
+
+/** @brief detect program
+ *
+ *  Search for a command in the executeable path. It resembles 'which'.
+ *
+ *  @param[in]      app_name            application name withou path
+ *  @return                             1 - if found, otherwise 0
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2022/04/23
+ *  @since   2022/04/23 (Oyjl: 1.0.0)
+ */
+int        oyjlHasApplication        ( const char        * app_name)
+{
+  char * full_app_name = oyjlFindApplication_(app_name);
+  int found = full_app_name == NULL ? 0 : 1;
+  if(full_app_name) free(full_app_name);
+  return found;
 }
 
 /** @internal
