@@ -18,7 +18,8 @@
   TEST_RUN( testString, "String handling", 1 ); \
   TEST_RUN( testArgs, "Options handling", 1 ); \
   TEST_RUN( testTree, "Tree handling", 1 ); \
-  TEST_RUN( testIO, "File handling", 1 );
+  TEST_RUN( testIO, "File handling", 1 ); \
+  TEST_RUN( testFunction, "Funktions", 1 );
 
 void oyjlLibRelease();
 #define OYJL_TEST_MAIN_SETUP  printf("\n    OyjlCore Test Program\n");
@@ -1832,6 +1833,26 @@ oyjlTESTRESULT_e testIO ()
 
   if( verbose )
     fprintf( zout, "info: %s %s\n", info, info2 );
+
+  return result;
+}
+
+oyjlTESTRESULT_e testFunction ()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  char * bt = oyjlBT(0);
+
+  if(bt)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlBT() = %s", bt );
+    free(bt);
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlBT() = %s", bt );
+  }
 
   return result;
 }
