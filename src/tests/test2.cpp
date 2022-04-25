@@ -2990,15 +2990,18 @@ oyjlTESTRESULT_e testProfileLists ()
 oyjlTESTRESULT_e testEffects ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
-  oyOptions_s * opts = oyOptions_New(testobj),
+  oyOptions_s * opts,
               * result_opts = 0;
   const char * text = 0;
-  oyProfile_s * prof = oyProfile_FromStd( oyEDITING_CMYK, 0, testobj ),
+  oyProfile_s * prof,
               * abstract;
   int error;
   OBJECT_COUNT_SETUP
 
   fprintf(stdout, "\n" );
+
+  opts = oyOptions_New(testobj);
+  prof = oyProfile_FromStd( oyEDITING_CMYK, 0, testobj );
 
   error = oyOptions_MoveInStruct( &opts, "//" OY_TYPE_STD "/icc_profile.proofing_profile",
                                   (oyStruct_s**) &prof, OY_CREATE_NEW );
