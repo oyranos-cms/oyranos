@@ -73,7 +73,7 @@ int oy{{ class.baseName }}_Copy__Members( {{ class.privName }} * dst, {{ class.p
   oyAlloc_f allocateFunc_ = 0;
   oyDeAlloc_f deallocateFunc_ = 0;
 
-  if(!dst || !src)
+  if(!dst || !src || dst == src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;

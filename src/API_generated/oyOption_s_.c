@@ -215,7 +215,7 @@ int oyOption_Copy__Members( oyOption_s_ * dst, oyOption_s_ * src)
   oyDeAlloc_f deallocateFunc_ = 0;
   int error = 0;
 
-  if(!dst || !src)
+  if(!dst || !src || dst == src)
     return 1;
 
   allocateFunc_ = dst->oy_->allocateFunc_;
