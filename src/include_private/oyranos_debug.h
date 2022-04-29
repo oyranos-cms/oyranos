@@ -4,7 +4,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2012 (C) Kai-Uwe Behrmann
+ *            2005-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    internal helpers
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -206,7 +206,7 @@ char *   oyBT                        ( int                 stack_limit );
 #ifdef HAVE_BACKTRACE
 #define OY_BACKTRACE_PRINT { \
   char * text = oyBT(0); \
-  fprintf( stderr, "%s\n", text ); \
+  fprintf( stderr, "%s", text ); \
   free(text); \
 }
 #define OY_BACKTRACE_STRING(count) { \
