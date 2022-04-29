@@ -99,22 +99,35 @@ int oyExportReset_(int export_check)
  */
 void     oyFinish_                   ( int                 flags )
 {
+  oyMessageFunc_p(oyMSG_DBG, 0, OY_DBG_FORMAT_ "------------------------- flags: %d", OY_DBG_ARGS_, flags);
   if(!(flags & FINISH_IGNORE_I18N))
+  {
+    oyMessageFunc_p(oyMSG_DBG, 0, OY_DBG_FORMAT_ "oyI18Nreset_", OY_DBG_ARGS_);
     oyI18Nreset_();
+  }
   if(!(flags & FINISH_IGNORE_CORE) || !(flags & FINISH_IGNORE_CACHES))
+  {
+    oyMessageFunc_p(oyMSG_DBG, 0, OY_DBG_FORMAT_ "oyLibCoreRelease", OY_DBG_ARGS_);
     oyLibCoreRelease();
+  }
   if(!(flags & FINISH_IGNORE_CACHES))
+  {
+    oyMessageFunc_p(oyMSG_DBG, 0, OY_DBG_FORMAT_ "oyAlphaFinish_", OY_DBG_ARGS_);
     oyAlphaFinish_( 0 );
+  }
   if(oy_debug_objects >= 0)
     oyObjectTreePrint( 0x01 | 0x02, NULL );
   /* clean object tracks after print */
   if(!(flags & FINISH_IGNORE_OBJECT_LIST))
     oyObjectGetList( 0 );
+  oyMessageFunc_p(oyMSG_DBG, 0, OY_DBG_FORMAT_ "oyDebugLevelCacheRelease", OY_DBG_ARGS_);
   oyDebugLevelCacheRelease();
 
+  oyMessageFunc_p(oyMSG_DBG, 0, OY_DBG_FORMAT_ "oyDbHandlingReset", OY_DBG_ARGS_);
   oyDbHandlingReset();
 
 #ifdef HAVE_LIBXML2
+  oyMessageFunc_p(oyMSG_DBG, 0, OY_DBG_FORMAT_ "xmlCleanupParser", OY_DBG_ARGS_);
   xmlCleanupParser();
 #endif
 }
@@ -145,8 +158,9 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
     int n = oyStructList_Count( oy_cmm_infos_ ), i;
     for(i = 0; i < n; ++i)
     {
-      int error = 0;
+      int error = 0, api_count = 0, j = 0;
       oyCMMinfo_s * cmm_info = 0;
+      oyCMMapi_s ** apis;
       oyCMMhandle_s * cmmh = (oyCMMhandle_s *) oyStructList_GetType_(
                                                (oyStructList_s_*)oy_cmm_infos_,
                                                i,
@@ -160,10 +174,21 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
       oyCMMapi_s * api = oyCMMinfo_GetApi( (oyCMMinfo_s*) cmm_info );
       while(api)
       {
+        ++api_count;
+        api = oyCMMapi_GetNext(api);
+      }
+
+      apis = calloc( sizeof(oyCMMapi_s*), api_count );
+
+      api = oyCMMinfo_GetApi( (oyCMMinfo_s*) cmm_info );
+      while(api)
+      {
         const char * registration = oyCMMapi_GetRegistration(api);
         /* init */
         oyCMMReset_f reset = oyCMMapi_GetResetF(api);
         oyCMMapi_s_ * api_ = (oyCMMapi_s_*) api;
+
+        apis[j] = api; ++j;
 
         if(api_->id_)
           oyFree_m_(api_->id_);
@@ -178,6 +203,15 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
 
         api = oyCMMapi_GetNext(api);
       }
+      /* release in reverse order and avoid any miracles with chained objects */
+      for(j = api_count-1; j >= 0; --j)
+      {
+        oyCMMapi_s * api_ = apis[j];
+        if(api_->release)
+          api_->release((oyStruct_s**)&api_);
+      }
+      if(apis)
+        free(apis);
     }
   }
   oyStructList_Release( &oy_cmm_infos_ );

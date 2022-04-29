@@ -202,33 +202,15 @@ int  oyraInit                        ( oyStruct_s        * module_info OY_UNUSED
 }
 int  oyraReset                       ( oyStruct_s        * module_info )
 {
-  oyCMMapi_s * a = oyCMMinfo_GetApi( (oyCMMinfo_s*) module_info ),
-             * a_tmp = 0;
-
   if(!oyra_initialised)
     return 0;
 
   oyra_initialised = 0;
+  if(oy_debug)
+    oyra_msg( oyMSG_DBG, module_info, OY_DBG_FORMAT_, OY_DBG_ARGS_ );
 
   if((oyStruct_s*)&oyra_cmm_module != module_info)
     oyra_msg( oyMSG_WARN, module_info, OY_DBG_FORMAT_ "wrong module info passed in", OY_DBG_ARGS_ );
-
-  if(a->release)
-    oyCMMinfo_SetApi( (oyCMMinfo_s*) module_info, NULL );
-
-  /* traverse all filters */
-  while(a && ((a_tmp = oyCMMapi_GetNext( a )) != 0))
-  {
-    if(a_tmp->release)
-      oyCMMapi_SetNext( a, NULL );
-
-    if(a->release)
-      a->release( (oyStruct_s**) &a );
-
-    a = a_tmp;
-  }
-  if(a && a->release)
-    a->release( (oyStruct_s**) &a );
 
   return 0;
 }

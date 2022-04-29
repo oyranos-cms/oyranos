@@ -1427,9 +1427,6 @@ int  ojpgInit                        ( oyStruct_s        * module_info )
 
 int  ojpgReset                       ( oyStruct_s        * module_info )
 {
-  oyCMMapi_s * a = oyCMMinfo_GetApi( (oyCMMinfo_s*) module_info ),
-             * a_tmp = 0;
-
   if(!ojpg_initialised)
     return 0;
 
@@ -1439,23 +1436,6 @@ int  ojpgReset                       ( oyStruct_s        * module_info )
 
   if((oyStruct_s*)&oJPG_cmm_module != module_info)
     ojpg_msg( oyMSG_WARN, module_info, _DBG_FORMAT_ "wrong module info passed in", _DBG_ARGS_ );
-
-  if(a->release)
-    oyCMMinfo_SetApi( (oyCMMinfo_s*) module_info, NULL );
-
-  /* traverse all filters */
-  while(a && ((a_tmp = oyCMMapi_GetNext( a )) != 0))
-  {
-    if(a_tmp->release)
-      oyCMMapi_SetNext( a, NULL );
-
-    if(a->release)
-      a->release( (oyStruct_s**) &a );
-
-    a = a_tmp;
-  }
-  if(a && a->release)
-    a->release( (oyStruct_s**) &a );
 
   if(oJPG_category)
     free(oJPG_category);
