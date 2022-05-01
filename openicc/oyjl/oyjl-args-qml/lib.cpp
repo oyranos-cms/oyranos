@@ -207,7 +207,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
           LOG( QString("Assume file name or stream: ") + json );
       } else
         LOG( QString("Found Json org/freedesktop/oyjl/modules: ") + QString::number(strlen(json)) );
-      mgr.setUri( QString(json) );
+      mgr.setUri( QString(oyjlTermColorToPlain(json)) );
     }
     else
     {
@@ -237,7 +237,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
         LOG( QString("use generated UI JSON") );
       }
       oyjlTreeFree( root );
-      mgr.setUri( QString(merged) );
+      mgr.setUri( QString(oyjlTermColorToPlain(merged)) );
       if(merged)
         free(merged);
     }
