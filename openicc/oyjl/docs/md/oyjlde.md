@@ -10,11 +10,11 @@ oyjl v1.0.0 - Oyjl Json Bearbeitung
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyjl</strong> <a href="#json"><strong>json</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
+<strong>oyjl</strong> <a href="#json"><strong>json</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 <br />
-<strong>oyjl</strong> <a href="#yaml"><strong>yaml</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
+<strong>oyjl</strong> <a href="#yaml"><strong>yaml</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 <br />
-<strong>oyjl</strong> <a href="#xml"><strong>xml</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
+<strong>oyjl</strong> <a href="#xml"><strong>xml</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 <br />
 <strong>oyjl</strong> <a href="#count"><strong>count</strong></a> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
@@ -43,6 +43,7 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong>=<em>TEXT</em></td> <td>Setze Wert des Schlüssels  </td>
  </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--plain</strong></td> <td>No Markup</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--try-format</strong>=<em>FORMAT</em></td> <td>Versuche ein Datenformat zu finden, auch mit Versatz.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-r</strong> JSON</td><td># JSON</td></tr>
@@ -65,7 +66,7 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h3 id="json">Zeige JSON auf stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>json</strong></td> <td>Zeige JSON auf stdout</td> </tr>
@@ -73,7 +74,7 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h3 id="yaml">Zeige YAML auf stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>yaml</strong></td> <td>Zeige YAML auf stdout</td> </tr>
@@ -81,7 +82,7 @@ Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl und
 
 <h3 id="xml">Zeige XML auf stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>xml</strong></td> <td>Zeige XML auf stdout</td> </tr>

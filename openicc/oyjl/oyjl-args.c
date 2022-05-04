@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2019-2021  Kai-Uwe Behrmann
+ *  Copyright (C) 2019-2022  Kai-Uwe Behrmann
  *
  *  @brief    Oyjl Args Tool
  *  @internal
@@ -103,7 +103,7 @@ int myMain( int argc, const char ** argv )
 
   if(ui && verbose)
   {
-    char * json = oyjlOptions_ResultsToJson( ui->opts );
+    char * json = oyjlOptions_ResultsToJson( ui->opts, OYJL_JSON );
     if(json)
       fputs( json, stderr );
     fputs( "\n", stderr );
@@ -228,7 +228,7 @@ int myMain( int argc, const char ** argv )
   } else
   if(ui && !file)
   {
-    const char * r = oyjlOptions_ResultsToJson(ui->opts);
+    const char * r = oyjlOptions_ResultsToJson(ui->opts, OYJL_JSON);
     fprintf(stdout, "%s", r?r:"----");
   }
   else if(file)

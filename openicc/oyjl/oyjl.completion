@@ -166,13 +166,13 @@ _oyjl()
             set +x +v
             return
             ;;
-        -j|-y|-m|-c|-k|-t|-f|-v|-V)
+        -j|-y|-m|-c|-k|-t|-f|-p|-v|-V)
             : "finish short options without choices"
             COMPREPLY=("$cur ")
             set +x +v
             return
             ;;
-        --json|--yaml|--xml|--count|--key|--paths|--type|--format|--synopsis|--verbose|--version)
+        --json|--yaml|--xml|--count|--key|--paths|--type|--format|--plain|--synopsis|--verbose|--version)
             : "finish long options without choices"
             COMPREPLY=("$cur ")
             set +x +v
@@ -195,17 +195,17 @@ _oyjl()
     if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
       case "${COMP_WORDS[1]}" in
         -j|json)
-          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -w= --wrap= -W= --wrap-name=' -- "$cur"))
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -w= --wrap= -W= --wrap-name=' -- "$cur"))
             set +x +v
             return
             ;;
         -y|yaml)
-          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -w= --wrap= -W= --wrap-name=' -- "$cur"))
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -w= --wrap= -W= --wrap-name=' -- "$cur"))
             set +x +v
             return
             ;;
         -m|xml)
-          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -w= --wrap= -W= --wrap-name=' -- "$cur"))
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -w= --wrap= -W= --wrap-name=' -- "$cur"))
             set +x +v
             return
             ;;

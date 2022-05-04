@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2004-2019  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2022  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -1951,7 +1951,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   if(text) {free(text);} text = NULL;
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9996                      /*code_size*/,
+                           10007                     /*code_size*/,
                            1282                      /*help_size*/,
                            2174                      /*man_size*/,
                            4476                      /*markdown_size*/,
@@ -2072,7 +2072,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   result = testCode( json, "oiCR_enGB"               /*prog*/,
-                           9052                      /*code_size*/,
+                           9063                      /*code_size*/,
                            1185                      /*help_size*/,
                            2075                      /*man_size*/,
                            4034                      /*markdown_size*/,
@@ -2194,7 +2194,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 9058)
+  if(c_source && strlen(c_source) == 9069)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, c_source?strlen(c_source):0,
     "oyjlUiJsonToCode(de)" );
   } else

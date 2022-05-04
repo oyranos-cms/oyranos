@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2004-2021  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2022  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -811,21 +811,22 @@ oyjlTESTRESULT_e testString ()
     "oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
 #define REGEX_REPLACE( string_, regex_, replacement, check ) \
-  { char * text = oyjlStringCopy( string_, 0 ); \
+  { t = oyjlStringCopy( string_, 0 ); \
     char * escape = oyjlRegExpEscape( regex_ ); \
-    oyjlRegExpReplace( &text, regex_, replacement ); \
-    if(text && strcmp( text, check ) == 0) \
+    oyjlRegExpReplace( &t, regex_, replacement ); \
+    if(text && strcmp( t, check ) == 0) \
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS, \
-      "oyjlRegExpReplace( \"%s\", \"%s\" )", string_, escape ); \
+      "oyjlRegExpReplace( \"%s\", \"%s\", \"%s\" ) = \"%s\"", string_, escape, replacement, t ); \
     } else \
     { PRINT_SUB( oyjlTESTRESULT_FAIL, \
-      "oyjlRegExpReplace( \"%s\", \"%s\" ) = %s", string_, regex_, text ); \
+      "oyjlRegExpReplace( \"%s\", \"%s\", \"%s\" ) = \"%s\"", string_, regex_, replacement, t ); \
     } \
-    free(text); text = NULL; \
     free(escape); escape = NULL; \
   }
-  REGEX_REPLACE( "rotation", "tat", "", "roion" )
-  REGEX_REPLACE( "\033[1mSomeText\033[0m \033[38;2;0;200;0mSomeMoreText\033[0m", "\033[[0-9;]*[a-zA-Z]", "", "SomeText SomeMoreText" )
+  REGEX_REPLACE( "rotation", "ot", "ehabilit", "rehabilitation" )
+  if(t) { free(t); t = NULL; }
+  REGEX_REPLACE( "\033[1mSomeText\033[0m \033[38;2;0;200;0mSomeMoreText\033[0m", "\033[[0-9;]*m", "", "SomeText SomeMoreText" )
+  if(t) { free(t); t = NULL; }
 
   return result;
 }
@@ -1088,7 +1089,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9144                      /*code_size*/,
+                           9155                      /*code_size*/,
                            1080                      /*help_size*/,
                            1967                      /*man_size*/,
                            3899                      /*markdown_size*/,
@@ -1184,7 +1185,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           8889                      /*code_size*/,
+                           8900                      /*code_size*/,
                             613                      /*help_size*/,
                            1451                      /*man_size*/,
                            2355                      /*markdown_size*/,
@@ -1242,7 +1243,7 @@ oyjlTESTRESULT_e testArgs()
     fprintf( zout, "%s\n", text );
   if(text) {free(text);} text = NULL;
 
-  text = oyjlOptions_ResultsToJson( ui->opts );
+  text = oyjlOptions_ResultsToJson( ui->opts, OYJL_JSON );
   len = strlen(text);
   if(text && (len == 63 || len == 135))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 

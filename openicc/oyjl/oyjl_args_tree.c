@@ -3,14 +3,14 @@
  *  oyjl - UI helpers
  *
  *  @par Copyright:
- *            2018-2021 (C) Kai-Uwe Behrmann
+ *            2018-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl argument handling with libOyjlCore
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- *  Copyright (c) 2018-2021  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ *  Copyright (c) 2018-2022  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -47,10 +47,11 @@ oyjlOptionChoice_s * oyjlOption_GetChoices_ (
  *  @memberof oyjlOptions_s
  *
  *  @version Oyjl: 1.0.0
- *  @date    2019/12/01
+ *  @date    2022/05/01
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
-char * oyjlOptions_ResultsToJson  ( oyjlOptions_s  * opts )
+char * oyjlOptions_ResultsToJson     ( oyjlOptions_s     * opts,
+                                       int                 flags )
 {
   char * rjson = NULL;
   oyjlOptsPrivate_s * results = opts->private_data;
@@ -76,8 +77,7 @@ char * oyjlOptions_ResultsToJson  ( oyjlOptions_s  * opts )
     oyjlValueSetString( value, results->values[i] );
   }
 
-  i = 0;
-  oyjlTreeToJson( root, &i, &rjson );
+  rjson = oyjlTreeToText( root, flags );
   oyjlTreeFree( root );
 
   return rjson;
@@ -378,16 +378,14 @@ oyjl_val       oyjlUi_ExportToJson_  ( oyjlUi_s          * ui,
  *  @see oyjlUiJsonToCode()
  *
  *  @version Oyjl: 1.0.0
- *  @date    2020/10/12
+ *  @date    2022/05/01
  *  @since   2019/06/16 (Oyjl: 1.0.0)
  */
 char *       oyjlUi_ExportToJson     ( oyjlUi_s          * ui,
-                                       int                 flags OYJL_UNUSED )
+                                       int                 flags )
 {
-  char * t = NULL;
-  int i = 0;
   oyjl_val root = oyjlUi_ExportToJson_( ui, flags );
-  oyjlTreeToJson( root, &i, &t );
+  char * t = oyjlTreeToText( root, flags );
   oyjlTreeFree( root );
 
   return t;
@@ -1418,7 +1416,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "  {\n" );
     if(flags & OYJL_WITH_OYJL_ARGS_C)
     oyjlStr_Add( s, "#if 0\n" );
-    oyjlStr_Add( s, "    char * json = oyjlOptions_ResultsToJson( ui->opts );\n" );
+    oyjlStr_Add( s, "    char * json = oyjlOptions_ResultsToJson( ui->opts, OYJL_JSON );\n" );
     oyjlStr_Add( s, "    if(json)\n" );
     oyjlStr_Add( s, "      fputs( json, stderr );\n" );
     oyjlStr_Add( s, "    fputs( \"\\n\", stderr );\n" );
@@ -2057,11 +2055,11 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
  *  the -R option.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2021/11/14
+ *  @date    2022/05/01
  *  @since   2018/08/14 (OpenICC: 0.1.1)
  */
 char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
-                                       int                 flags OYJL_UNUSED )
+                                       int                 flags )
 {
   char * t = NULL, num[64];
   oyjl_val root, key;
@@ -2564,8 +2562,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     }
   }
 
-  i = 0;
-  oyjlTreeToJson( root, &i, &t );
+  t = oyjlTreeToText( root, flags );
   oyjlTreeFree( root );
 
   return t;
