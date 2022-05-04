@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2022 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -73,12 +73,14 @@ QString AppData::getJSON(QString url)
       a = jui.toLocal8Bit();
 
     QJsonParseError e;
+    QString qjson = plainJSON(QString(a));
+    a = qjson.toLocal8Bit();
     QJsonDocument jdoc = QJsonDocument::fromJson(a,&e);
     if(jdoc.isNull())
     {
         LOG(QString("%1: %2\n%3").arg(tr("Json is invalid")).arg(url).arg(jui));
         int size = 0;
-        const char * fn = url.toLocal8Bit().data();
+        const char * fn = url.toLocal8Bit().constData();
         char * json = oyjlReadFile(fn, &size);
         if(!size)
         {
@@ -103,9 +105,21 @@ QString AppData::getJSON(QString url)
     json["prefix"] = "LOCALE_";
     json["LOCALE_info"] = loc.name();
 
-    LOG(tr("finished loading"));
+    QString jtext = QString(QJsonDocument(json).toJson(QJsonDocument::Indented));
+    LOG(tr("finished loading") + " size: " + QString::number(jtext.length()));
 
-    return QString(QJsonDocument(json).toJson(QJsonDocument::Indented));
+    return jtext;
+}
+/** @brief filter JSON
+ */
+QString AppData::plainJSON(QString json)
+{
+    QByteArray a = json.toUtf8();
+    const char * jsont = a.constData();
+    const char * t = oyjlTermColorToPlain(jsont);
+    LOG( QString("json.length(): ") + QString::number(json.length()) + " strlen(jsont): " + QString::number(strlen(jsont)) );
+    QString txt( t );
+    return txt;
 }
 /** @brief export JSON string from internal model
  *

@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2021 (C) Kai-Uwe Behrmann
+ *            2018-2022 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -207,7 +207,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
           LOG( QString("Assume file name or stream: ") + json );
       } else
         LOG( QString("Found Json org/freedesktop/oyjl/modules: ") + QString::number(strlen(json)) );
-      mgr.setUri( QString(oyjlTermColorToPlain(json)) );
+      mgr.setUri( QString(json) );
     }
     else
     {
@@ -224,8 +224,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
           size_t size = sizeof(*rv);
           memcpy( mv, rv, size );
           memset( rv, 0, size );
-          int level = 0;
-          oyjlTreeToJson( module, &level, &merged );
+          merged = oyjlTreeToText( module, 0 );
           LOG( QString("merge UI JSON with translation") );
         } else
           LOG( QString("expected translation is missing") );
@@ -237,7 +236,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
         LOG( QString("use generated UI JSON") );
       }
       oyjlTreeFree( root );
-      mgr.setUri( QString(oyjlTermColorToPlain(merged)) );
+      mgr.setUri( QString(merged) );
       if(merged)
         free(merged);
     }

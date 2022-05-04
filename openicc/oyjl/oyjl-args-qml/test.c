@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2018-2019  Kai-Uwe Behrmann
+ *  Copyright (C) 2018-2022  Kai-Uwe Behrmann
  *
  *  @brief    Oyjl Args Qml test
  *  @internal
@@ -129,7 +129,7 @@ int testMain( int argc, const char ** argv )
         fprintf( stderr, "send to stderr\n" );
         sleep(2);
     }
-    fprintf(error ? stderr : stdout, "%s\n", oyjlOptions_ResultsToJson(ui->opts));
+    fprintf(error ? stderr : stdout, "%s\n", oyjlOptions_ResultsToJson(ui->opts, OYJL_JSON));
     result = oyjlTESTRESULT_SUCCESS;
   }
 

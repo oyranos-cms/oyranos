@@ -196,13 +196,13 @@ int main(int argc, char *argv[])
 
 
     if(inputJSON.length())
-        mgr.setUri( QString(oyjlTermColorToPlain(inputJSON.toLocal8Bit().data())) );
+        mgr.setUri( inputJSON );
     else
         mgr.setUri( "-" );
     if(outputJSON.length())
-        mgr.setOutput( QString(oyjlTermColorToPlain(outputJSON.toLocal8Bit().data())) );
+        mgr.setOutput( outputJSON );
     if(commandsJSON.length())
-        mgr.setCommands( QString(oyjlTermColorToPlain(commandsJSON.toLocal8Bit().data())) );
+        mgr.setCommands( commandsJSON );
 
     QQmlContext *ctxt = engine.rootContext();
     ctxt->setContextProperty("ApplicationVersion", QVariant::fromValue( app.applicationVersion() ));

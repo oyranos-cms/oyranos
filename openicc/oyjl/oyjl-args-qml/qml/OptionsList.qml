@@ -149,7 +149,7 @@ Rectangle {
                     if(type === "double")
                     {
                         init = true
-                        var j = JSON.parse(text)
+                        var j = JSON.parse(appData.plainJSON(text))
                         key = j.key
                         var v = parseFloat(j.current)
                         slider.from = parseFloat(j.dbl.start)
@@ -197,7 +197,7 @@ Rectangle {
                     if(type === "bool")
                     {
                         init = true
-                        var j = JSON.parse(text)
+                        var j = JSON.parse(appData.plainJSON(text))
                         key = j.key
                         var v = parseFloat(j.current)
                         defaultValue = v
@@ -270,7 +270,7 @@ Rectangle {
                     {
                         init = true
                         var t = text
-                        var j = JSON.parse(t)
+                        var j = JSON.parse(appData.plainJSON(t))
                         key = j.key
                         if(typeof j.suggest !== "undefined")
                             defaultValue = j.suggest
@@ -427,7 +427,7 @@ Rectangle {
     {
         dataText = t;
         appDataJsonString = t;
-        appJsonObject = JSON.parse(t);
+        appJsonObject = JSON.parse(appData.plainJSON(t));
         if( appJsonObject === "undefined" )
             logText = "Parsing failed: " + t;
         var j = appJsonObject;
@@ -463,7 +463,7 @@ Rectangle {
 
     function setDataText2( combo, t, value )
     {
-        var j = JSON.parse(t);
+        var j = JSON.parse(appData.plainJSON(t));
         var loc = j.loc;
         var def = j.default;
         var name = j.key;
