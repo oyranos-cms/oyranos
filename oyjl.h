@@ -232,7 +232,7 @@ void       oyjlTreeClearValue        ( oyjl_val            root,
                                        const char        * xpath );
 #define    OYJL_JSON                   0x0    /**< @brief  JSON format; default */
 #define    OYJL_YAML                   0x01   /**< @brief  YAML format */
-#define    OYJL_XML                    0x02   /**< @brief  XML format */
+#define    OYJL_XML                    0x08   /**< @brief  XML format */
 #define    OYJL_NO_MARKUP              0x100  /**< @brief  plain text; use oyjlTermColorToPlain() */
 char *     oyjlTreeToText            ( oyjl_val            v,
                                        int                 flags );
