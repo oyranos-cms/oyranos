@@ -2,7 +2,7 @@
  *
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
- *  Copyright 2018-2019 (C) Kai-Uwe Behrmann
+ *  Copyright 2018-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl Args + Qml example
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -219,7 +219,7 @@ int myMain( int argc, const char ** argv )
   else if(ui)
   {
     /* get the results and do something with it */
-    const char * result = oyjlOptions_ResultsToJson(ui->opts);
+    const char * result = oyjlOptions_ResultsToJson(ui->opts, OYJL_JSON);
     if(verbose)
         fprintf(stdout, "%s\n", result);
     if(output)

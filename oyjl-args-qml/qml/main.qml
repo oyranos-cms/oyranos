@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2021 (C) Kai-Uwe Behrmann
+ *            2018-2022 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -69,7 +69,7 @@ AppWindow {
         cJ = commandsJSON
         if( commandsJSON.length )
         {
-            var c = JSON.parse(commandsJSON)
+            var c = JSON.parse(appData.plainJSON(commandsJSON))
 
             if( typeof c.command_get !== "undefined" )
                 processGetCommand = c.command_get
@@ -1084,7 +1084,7 @@ AppWindow {
         appData.clearOptions()
         dataText = t;
         appDataJsonString = t;
-        appJsonObject = JSON.parse(t);
+        appJsonObject = JSON.parse(appData.plainJSON(t));
         if( appJsonObject === "undefined" )
             logText = "Parsing failed: " + t;
         var j = appJsonObject;

@@ -42,28 +42,28 @@
 <context>
     <name>AppData</name>
     <message>
-        <location filename="../src/app_data.cpp" line="79"/>
+        <location filename="../src/app_data.cpp" line="81"/>
         <source>Json is invalid</source>
         <translation>Json is ungültig</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="106"/>
+        <location filename="../src/app_data.cpp" line="109"/>
         <source>finished loading</source>
         <translation>Laden beendet</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="243"/>
-        <location filename="../src/app_data.cpp" line="245"/>
+        <location filename="../src/app_data.cpp" line="257"/>
+        <location filename="../src/app_data.cpp" line="259"/>
         <source>%1 Version</source>
         <translation>%1 Version</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="250"/>
+        <location filename="../src/app_data.cpp" line="264"/>
         <source>NONE</source>
         <translation>NICHTS</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="366"/>
+        <location filename="../src/app_data.cpp" line="380"/>
         <source>Permission not granted: </source>
         <translation>Berechtigung nicht gewährt: </translation>
     </message>
