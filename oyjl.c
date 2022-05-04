@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2021 (C) Kai-Uwe Behrmann
+ *            2016-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl command line
  *  @internal
@@ -210,6 +210,7 @@ int myMain( int argc, const char ** argv )
   const char * i_filename = NULL;
   const char * xpath = NULL;
   int format = 0;
+  int plain = 0;
   const char * try_format = NULL,
              * wrap = NULL,
              * wrap_name = "wrap";
@@ -269,6 +270,8 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&xpath}},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "f","format",        NULL,     _("Format"),   _("Print Data Format"),       NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&format}},
+    {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "p","plain",         NULL,     _("Plain"),    _("No Markup"),               NULL, NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&plain}},
     {"oiwi", 0,                          "r","try-format",    NULL,     _("Try Format"),_("Try to find data format, even with offset."), NULL, _("FORMAT"),
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), malloc )}, oyjlSTRING,    {.s=&try_format}},
     {"oiwi", 0,                          "w","wrap",          NULL,     _("Wrap Type"),_("language specific wrap"),  NULL, _("TYPE"),          
@@ -294,10 +297,10 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s,r,w,W"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s,r,w,W", "j"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s,r,w,W", "y"},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s,r,w,W", "m"},
+    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s,p,r,w,W"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s,r,p,w,W", "j"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s,r,p,w,W", "y"},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s,r,p,w,W", "m"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Count"),      _("Print node count"),    NULL,  "c",           "i,x,r",       "c"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Key Name"),   _("Print key name"),      NULL,  "k",           "i,x,r",       "k"},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Type"),       _("Print type"),          NULL,  "t",           "i,x,r",       "t"},
@@ -462,17 +465,18 @@ int myMain( int argc, const char ** argv )
           fprintf(stdout,"%s\n", first_path);
 
         if(text) { free(text); text = NULL; }
-        int level = 0;
+        int flags = plain?OYJL_NO_MARKUP:0;
+
         if(json)
-          oyjlTreeToJson( set ? root : value, &level, &text );
+          text = oyjlTreeToText( set ? root : value, OYJL_JSON | flags );
         else if(yaml)
         {
-          oyjlTreeToYaml( set ? root : value, &level, &text );
+          text = oyjlTreeToText( set ? root : value, OYJL_YAML | flags );
           oyjlStringAdd( &text, 0,0, "\n" );
         }
         else if(xml)
         {
-          oyjlTreeToXml( set ? root : value, &level, &text );
+          text = oyjlTreeToText( set ? root : value, OYJL_XML | flags );
           if(text && strcmp( text, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" ) == 0 )
           {
             free(text); text = NULL;
