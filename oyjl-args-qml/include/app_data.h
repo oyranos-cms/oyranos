@@ -81,6 +81,7 @@ public:
                                                    } else { LOG( "Set Icon: " + name ); a->setWindowIcon(icon); }}
 
     Q_INVOKABLE QString getJSON(QString url);
+    Q_INVOKABLE QString plainJSON(QString url);
     Q_INVOKABLE void  writeJSON(QString url);
     Q_INVOKABLE void  BT(void) { LOG( oyjlBT(0) );};
     Q_INVOKABLE QString getLibDescription(int);
