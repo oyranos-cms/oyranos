@@ -759,7 +759,8 @@ oyjlOPTIONSTATE_e  oyjlOptions_GetResult (
                                        const char       ** result_string,
                                        double            * result_dbl,
                                        int               * result_int );
-char *   oyjlOptions_ResultsToJson   ( oyjlOptions_s     * opts );
+char *   oyjlOptions_ResultsToJson   ( oyjlOptions_s     * opts,
+                                       int                 flags );
 char *   oyjlOptions_ResultsToText   ( oyjlOptions_s     * opts );
 char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
                                        const char        * option,

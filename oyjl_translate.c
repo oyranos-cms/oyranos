@@ -293,7 +293,7 @@ int myMain( int argc, const char ** argv )
 
   if(verbose)
   {
-    char * json = ui ? oyjlOptions_ResultsToJson( ui->opts ) : NULL;
+    char * json = ui ? oyjlOptions_ResultsToJson( ui->opts, OYJL_JSON ) : NULL;
     if(json)
       fputs( json, stderr );
     fputs( "\n", stderr );

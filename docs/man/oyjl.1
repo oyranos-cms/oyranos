@@ -2,11 +2,11 @@
 .SH NAME
 oyjl v1.0.0 \- Oyjl Json Manipulation
 .SH SYNOPSIS
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
@@ -35,6 +35,8 @@ The path consists of slash '/' separated terms. Each term can be a key name or a
 .RE
 \fB\-s\fR|\fB\-\-set\fR \fISTRING\fR	Set a key name to a value
 .br
+\fB\-p\fR|\fB\-\-plain\fR	No Markup
+.br
 \fB\-r\fR|\fB\-\-try-format\fR \fIFORMAT\fR	Try to find data format, even with offset.
 .br
 	\fB\-r\fR JSON		# JSON
@@ -51,19 +53,19 @@ Use only letters from alphabet [A-Z,a-z] including optional underscore '_'.
 .br
 .SS
 Print JSON to stdout
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBjson\fR	Print JSON to stdout
 .br
 .SS
 Print YAML to stdout
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fByaml\fR	Print YAML to stdout
 .br
 .SS
 Print XML to stdout
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBxml\fR	Print XML to stdout
 .br

@@ -334,7 +334,7 @@ int myMain( int argc, const char ** argv )
 
   if(ui && verbose)
   {
-    char * json = oyjlOptions_ResultsToJson( ui->opts );
+    char * json = oyjlOptions_ResultsToJson( ui->opts, OYJL_JSON );
     if(json)
       fputs( json, stderr );
     fputs( "\n", stderr );
