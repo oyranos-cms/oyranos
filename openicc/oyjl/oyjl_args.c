@@ -1087,6 +1087,43 @@ void     oyjlStringListAddList       ( char            *** list,
 
   *list = tmp;
 }
+#ifndef OYJL_CTEND
+/* true color codes */
+#define OYJL_RED_TC "\033[38;2;240;0;0m"
+#define OYJL_GREEN_TC "\033[38;2;0;250;100m"
+#define OYJL_BLUE_TC "\033[38;2;0;150;255m"
+/* basic color codes */
+#define OYJL_BOLD "\033[1m"
+#define OYJL_ITALIC "\033[3m"
+#define OYJL_UNDERLINE "\033[4m"
+#define OYJL_RED_B "\033[0;31m"
+#define OYJL_GREEN_B "\033[0;32m"
+#define OYJL_BLUE_B "\033[0;34m"
+/* switch back */
+#define OYJL_CTEND "\033[0m"
+#endif
+extern char * oyjl_term_color_plain_;
+const char * oyjlTermColorToPlain    ( const char        * text )
+{
+  const char * t;
+  oyjl_str tmp = oyjlStr_New(10,0,0);
+  oyjlStr_AppendN( tmp, text, strlen(text) );
+  oyjlStr_Replace( tmp, OYJL_RED_TC, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_GREEN_TC, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_BLUE_TC, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_BOLD, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_ITALIC, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_UNDERLINE, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_RED_B, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_GREEN_B, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_BLUE_B, "", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_CTEND, "", 0,NULL );
+  t = oyjlStr(tmp);
+  if(oyjl_term_color_plain_) free(oyjl_term_color_plain_);
+  oyjl_term_color_plain_ = strdup( t );
+  oyjlStr_Release( &tmp );
+  return oyjl_term_color_plain_;
+}
 
 int            oyjlVersion           ( int                 type OYJL_UNUSED )
 {
@@ -1315,7 +1352,6 @@ oyjlTr_s *     oyjlTr_Get            ( const char        * domain )
 }
 static char * oyjl_nls_path_ = NULL;
 extern char * oyjl_term_color_html_;
-extern char * oyjl_term_color_plain_;
 void oyjlLibRelease() {
   if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL; }
   if(oyjl_tr_context_)
@@ -1700,6 +1736,7 @@ const char * oyjlTermColorF( oyjlTEXTMARK_e rgb, const char * format, ...)
   return t;
 }
 
+char * oyjl_term_color_plain_ = NULL;
 char * oyjl_term_color_html_ = NULL;
 const char * oyjlTermColorFromHtml   ( const char        * text,
                                        int                 flags )
@@ -1722,29 +1759,6 @@ const char * oyjlTermColorFromHtml   ( const char        * text,
   oyjl_term_color_html_ = strdup( t );
   oyjlStr_Release( &tmp );
   return oyjl_term_color_html_;
-}
-
-char * oyjl_term_color_plain_ = NULL;
-const char * oyjlTermColorToPlain    ( const char        * text )
-{
-  const char * t;
-  oyjl_str tmp = oyjlStr_New(10,0,0);
-  oyjlStr_AppendN( tmp, text, strlen(text) );
-  oyjlStr_Replace( tmp, OYJL_RED_TC, "", 0,NULL );
-  oyjlStr_Replace( tmp, OYJL_GREEN_TC, "", 0,NULL );
-  oyjlStr_Replace( tmp, OYJL_BLUE_TC, "", 0,NULL );
-  oyjlStr_Replace( tmp, OYJL_BOLD, "", 0,NULL );
-  oyjlStr_Replace( tmp, OYJL_ITALIC, "", 0,NULL );
-  oyjlStr_Replace( tmp, OYJL_UNDERLINE, "", 0,NULL );
-  oyjlStr_Replace( tmp, OYJL_RED_B, "", 0,NULL );
-  oyjlStr_Replace( tmp, OYJL_GREEN_B, "", 0,NULL );
-  oyjlStr_Replace( tmp, OYJL_BLUE_B, "", 0,NULL );
-  oyjlStr_Replace( tmp, OYJL_CTEND, "", 0,NULL );
-  t = oyjlStr(tmp);
-  if(oyjl_term_color_plain_) free(oyjl_term_color_plain_);
-  oyjl_term_color_plain_ = strdup( t );
-  oyjlStr_Release( &tmp );
-  return oyjl_term_color_plain_;
 }
 
 /** @brief    Return number of array elements

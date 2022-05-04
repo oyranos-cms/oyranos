@@ -1207,7 +1207,7 @@ int        oyjlRegExpReplace         ( char             ** text,
     n = oyjlStr_Replace( str, &txt[re_match.rm_so], replacement, 0, NULL );
     if(len > re_match.rm_eo)
     {
-      oyjlStr_Add( str, tail );
+      oyjlStr_AppendN( str, tail, strlen(tail) );
       free(tail);
     }
     txt = oyjlStr(str);
@@ -1674,6 +1674,22 @@ void       oyjlStr_Release           ( oyjl_str          * string_ptr )
 const char*oyjlStr                   ( oyjl_str            string )
 {
   return (const char*)string->s;
+}
+extern char * oyjl_term_color_plain_;
+const char * oyjlTermColorToPlain    ( const char        * text )
+{
+  char * t = text ? oyjlStringCopy(text,0) : NULL;
+  int count = t ? oyjlRegExpReplace( &t, "\033[[0-9;]*m", "" ) : 0;
+  if(count)
+  {
+    if(oyjl_term_color_plain_) free(oyjl_term_color_plain_);
+    oyjl_term_color_plain_ = t;
+    t = NULL;
+    text = oyjl_term_color_plain_;
+  }
+  else if(t)
+    free(t);
+  return text;
 }
 /* --- String_Section --- */
 
@@ -2496,7 +2512,6 @@ static char * oyjl_nls_path_ = NULL;
 char * oyjl_debug_node_path_ = NULL;
 char * oyjl_debug_node_value_ = NULL;
 extern char * oyjl_term_color_html_;
-extern char * oyjl_term_color_plain_;
 void oyjlLibRelease() {
   int i;
   if(oyjl_nls_path_)
