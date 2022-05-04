@@ -3,7 +3,7 @@
  *  OpenICC JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2022 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -30,6 +30,7 @@
 
 #include "utils.h"
 extern QApplication * a;
+extern int app_debug;
 
 class AppData : public QObject
 {
@@ -69,6 +70,7 @@ public:
 
     QString log() { return m_log_msg; }
     void setLog( QString m ) {
+        if(app_debug) BT();
         m_log_msg = m;
         LOG( m_log_msg );
         emit logMessage();
@@ -80,6 +82,7 @@ public:
 
     Q_INVOKABLE QString getJSON(QString url);
     Q_INVOKABLE void  writeJSON(QString url);
+    Q_INVOKABLE void  BT(void) { LOG( oyjlBT(0) );};
     Q_INVOKABLE QString getLibDescription(int);
     Q_INVOKABLE void    setOption(QString key, QString value);
     Q_INVOKABLE QString getOption(QString key);
