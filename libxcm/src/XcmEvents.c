@@ -36,8 +36,8 @@ extern "C" {
 
 #define M(code, context, format, ...) XcmMessage_p( code,context, format, \
                                                        __VA_ARGS__)
-#define DE(format, ...) XcmMessage_p( XCME_MSG_DISPLAY_EVENT, 0, format, \
-                                         __VA_ARGS__); result = 0;
+#define DE(format, ...) { XcmMessage_p( XCME_MSG_DISPLAY_EVENT, 0, format, \
+                                         __VA_ARGS__); result = 0; }
 #define DERR(format, ...) XcmMessage_p( XCME_MSG_DISPLAY_ERROR, 0, format, \
                                          __VA_ARGS__)
 #define DS(format, ...) XcmMessage_p( XCME_MSG_DISPLAY_STATUS, 0, format, \

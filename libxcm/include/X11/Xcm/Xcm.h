@@ -186,7 +186,9 @@ enum {
   XCM_COLOR_SERVER_PROFILES = 0x02,          /**< _ICC_COLOR_PROFILES */
   XCM_COLOR_SERVER_DISPLAY_ADVANCED = 0x04,  /**< _ICC_COLOR_DISPLAY_ADVANCED */
   XCM_COLOR_SERVER_OUTPUTS = 0x08,           /**< _ICC_COLOR_OUTPUTS */
-  XCM_COLOR_SERVER_MANAGEMENT = 0x10         /**< _ICC_COLOR_MANAGEMENT */
+  XCM_COLOR_SERVER_MANAGEMENT = 0x10,        /**< _ICC_COLOR_MANAGEMENT */
+  XCM_COLOR_SERVER_03 = 0x100,               /**< |V0.3| Spec Version 0.3 */
+  XCM_COLOR_SERVER_04 = 0x200                /**< |V0.4| Spec Version 0.4 */
 };
 #ifdef XCM_HAVE_X11
 /** Function  XcmColorServerCapabilities
