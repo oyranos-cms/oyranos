@@ -411,7 +411,7 @@ oyjlTESTRESULT_e testI18N()
   char * oyjl_export, * txt;
   size = 0;
   oyjl_export = txt = oyjlReadCommandF( &size, "r", malloc, "LANG=C PATH=%s:$PATH %s --export export", OYJL_BUILDDIR, "oyjl" );
-  if(!txt || strlen(txt) != 22457)
+  if(!txt || strlen(txt) != 22943)
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(txt),
     "LANG=C oyjl --export export" );
   }
@@ -423,7 +423,7 @@ oyjlTESTRESULT_e testI18N()
   char ** paths = oyjlTreeToPaths( catalog, 10000000, NULL, OYJL_KEY, &count );
   clck = oyjlClock() - clck;
   count = 0; while(paths && paths[count]) ++count;
-  if( count == 647 )
+  if( count == 649 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,1,clck/(double)CLOCKS_PER_SEC,"wr",
     "oyjlTreeToPaths(catalog) = %d", count );
   } else
@@ -528,7 +528,7 @@ oyjlTESTRESULT_e testI18N()
   txt = testTranslateJson( oyjl_export, trc, key_list, n, &clck );
   i = 0;
   plain = oyjlTermColorToPlain(txt);
-  if( txt && strlen( plain ) == 22832 )
+  if( txt && strlen( plain ) == 23333 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
     "oyjlTranslateJson(\"%s\",%s) %s", loc, name, oyjlTr_GetLang( trc ) );
   } else
@@ -593,7 +593,7 @@ oyjlTESTRESULT_e testI18N()
   oyjlTr_SetLocale( trc, loc );
   txt = testTranslateJson( oyjl_export, trc, key_list, n, &clck );
   plain = oyjlTermColorToPlain(txt);
-  if( txt && strlen( plain ) == 22832 )
+  if( txt && strlen( plain ) == 23333 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
     "oyjlTranslateJson(gettext)" );
   } else
@@ -625,7 +625,7 @@ oyjlTESTRESULT_e testI18N()
   txt = NULL;
   oyjlTreeToJson( root, &i, &txt );
   plain = oyjlTermColorToPlain(txt);
-  if( txt && strlen( plain ) == 22832 )
+  if( txt && strlen( plain ) == 23333 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(plain),
     "oyjlTranslateJson(oyjl)" );
   } else
@@ -719,7 +719,7 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
   txt = NULL;
   oyjlTreeToJson( root, &i, &txt );
   plain = oyjlTermColorToPlain(txt);
-  if( txt && strlen( plain ) == 22832 )
+  if( txt && strlen( plain ) == 23333 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(plain),
     "oyjlTranslateJson(oyjl, static_catalog)" );
   } else
@@ -2469,10 +2469,10 @@ oyjlTESTRESULT_e testToolOyjl ()
     { "paths -i i18n_de_DE.c -x '////'",            292,  NULL,       NULL },
     { "format -i i18n_cs_CZ.json",                  5,    "JSON",     NULL },
     { "format -i none.file",                        9,    "no input", NULL },
-    { "-X man > oyjl.1 && cat oyjl.1",              5909, NULL,       NULL }
+    { "-X man > oyjl.1 && cat oyjl.1",              6021, NULL,       NULL }
   };
   int count = 14;
-  result = testTool( "oyjl", 3852/*help size*/, commands_oyjl, count, result, oyjlTESTRESULT_FAIL );
+  result = testTool( "oyjl", 3909/*help size*/, commands_oyjl, count, result, oyjlTESTRESULT_FAIL );
 
   return result;
 }
