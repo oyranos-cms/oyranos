@@ -568,7 +568,7 @@ int myMain( int argc, const char ** argv )
 
   if(verbose)
   {
-    char * json = oyjlOptions_ResultsToJson( opts );
+    char * json = oyjlOptions_ResultsToJson( opts, 0 );
     if(json)
       fputs( json, stderr );
     fputs( "\n", stderr );

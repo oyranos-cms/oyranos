@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-04-28 09:39+0200\n"
+"POT-Creation-Date: 2022-05-05 07:02+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1260,7 +1260,7 @@ msgstr "Konvertovat do neoznačeného CMYK se zachováním CMYK hodnot"
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/information/[1]/label
 #. oyranos_cmm_lcms.json:org/freedesktop/oyjl/modules/[0]/information/[1]/label
-#: API_generated/oyranos_module.c:1422 liboyranos_config/oyranos_icc.c:457
+#: API_generated/oyranos_module.c:1421 liboyranos_config/oyranos_icc.c:457
 #: modules/lcm2-i18n.c:20 modules/lcms-i18n.c:20
 msgid "Copyright"
 msgstr "Copyright"
@@ -1333,7 +1333,7 @@ msgstr ""
 msgid "Copyright:       "
 msgstr "Copyright:       "
 
-#: API_generated/oyranos_module.c:2048
+#: API_generated/oyranos_module.c:2047
 msgid "Could not allocate memory for:"
 msgstr "Nelze alokovat paměť pro:"
 
@@ -3372,7 +3372,7 @@ msgstr "Luv"
 #: API_generated/oyProfiles_s_.c:254 API_generated/oyProfiles_s_.c:262
 #: API_generated/oyRectangle_s_.c:250 API_generated/oyRectangle_s_.c:258
 #: API_generated/oyStructList_s_.c:296 API_generated/oyStructList_s_.c:304
-#: API_generated/oyranos_devices.c:3639 API_generated/oyranos_module.c:1584
+#: API_generated/oyranos_devices.c:3639 API_generated/oyranos_module.c:1583
 #: liboyranos/oyranos_alpha.c:312 liboyranos_modules/oyranos_forms.c:57
 #, fuzzy
 msgid "MEM Error."
@@ -3428,7 +3428,7 @@ msgstr "Datum:       "
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/information/[0]/label
 #. oyranos_cmm_lcms.json:org/freedesktop/oyjl/modules/[0]/information/[0]/label
-#: API_generated/oyranos_module.c:1421 API_generated/oyranos_profile.c:43
+#: API_generated/oyranos_module.c:1420 API_generated/oyranos_profile.c:43
 #: modules/lcm2-i18n.c:11 modules/lcms-i18n.c:11
 msgid "Manufacturer"
 msgstr "Výrobce"
@@ -3636,7 +3636,7 @@ msgstr ""
 
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
-#: API_generated/oyranos_module.c:1420 tools/oyranos-config.c:263
+#: API_generated/oyranos_module.c:1419 tools/oyranos-config.c:263
 msgid "Name"
 msgstr "Jméno"
 
@@ -6971,7 +6971,7 @@ msgstr "aktivovat jednoduché výchozí hodnoty"
 #: API_generated/oyConversion_s.c:208 API_generated/oyFilterNode_s_.c:928
 #: API_generated/oyranos_devices.c:2652 API_generated/oyranos_devices.c:2664
 #: API_generated/oyranos_devices.c:2697 API_generated/oyranos_devices.c:3213
-#: API_generated/oyranos_module.c:2040
+#: API_generated/oyranos_module.c:2039
 msgid "error in module:"
 msgstr "chyba v modulu:"
 
