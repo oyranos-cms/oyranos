@@ -561,6 +561,7 @@ AppWindow {
             t = t.replace(/\033\[00;34m/g, "<font color=dodgerblue>")
             t = t.replace(/\033\[01;34m/g, "<font color=dodgerblue>")
             t = t.replace(/\033\[38;2;150;0;0m/g, "<font color=dodgerblue>")
+            t = t.replace(/\033\[38;2;0;150;255m/g, "<font color=dodgerblue>")
             t = t.replace(/\033\[35m/g, "<font color=magenta>")
             t = t.replace(/\033\[0;35m/g, "<font color=magenta>")
             t = t.replace(/\033\[00;35m/g, "<font color=magenta>")
