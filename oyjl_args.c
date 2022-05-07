@@ -2095,6 +2095,13 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
         oyjl_h_choices_[1].description = _("List groups");
         oyjl_h_choices_[1].help = _("Show all groups including syntax");
         o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_h_choices_, sizeof(oyjl_h_choices_), malloc );
+        if(o->variable_type != oyjlSTRING)
+        {
+          fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
+          fprintf(stderr, "\"help\" has wrong variable_type=%s. Need %s together with oyjlOPTIONTYPE_CHOICE\n",
+              o->variable_type==oyjlNONE?"oyjlNONE":o->variable_type==oyjlDOUBLE?"oyjlDOUBLE":o->variable_type==oyjlINT?"oyjlINT":"----",
+              oyjlTermColor(oyjlGREEN, "oyjlSTRING") );
+        }
       }
       if(o->name == NULL)
       {
