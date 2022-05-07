@@ -296,8 +296,18 @@ char * tests_xfailed[OYJL_TEST_MAX_COUNT];
 int oyjlTestTermColumns()
 {
     struct winsize w;
+    int columns = 0;
+    int gitlab = 0;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    return w.ws_col;
+    columns = w.ws_col;
+    if( getenv("GITLAB_CI") )
+    {
+      columns = 80;
+      gitlab = 1;
+    }
+    if(verbose)
+      fprintf(stdout, "oyjlTestTermColumns(): %d/%d %s\n", columns,w.ws_col, gitlab?"GITLAB_CI":"" );
+    return columns;
 }
 #else
 int oyjlTestTermColumns() {return 0;}
@@ -329,8 +339,11 @@ oyjlTESTRESULT_e oyjlTestRun         ( oyjlTESTRESULT_e  (*test)(void),
   /** Handle columns width by checking ::OYJL_PRINT_SUB_LENGTH envar or
    *  using terminal window size by asking linux ioctl or
    *  use inbuild default. */
-  int i = 0, columns = oyjlTestTermColumns();
+  int i = 0, columns;
   const char * oyjl_print_sub_length_env = getenv(OYJL_PRINT_SUB_LENGTH);
+
+  puts( "\n" );
+  columns = oyjlTestTermColumns();
   if(oyjl_print_sub_length_env)
     oyjl_print_sub_length = atoi(oyjl_print_sub_length_env);
   else if(columns)
@@ -346,7 +359,7 @@ oyjlTESTRESULT_e oyjlTestRun         ( oyjlTESTRESULT_e  (*test)(void),
 
   /** Print header line and title. */
   text = (char*) malloc(80 + oyjl_print_sub_length);
-  sprintf( text, "\n" );
+  text[0] = '\000';
   i = oyjl_print_sub_length + 12;
   while(i--) sprintf( &text[strlen(text)], "_" );
   sprintf( &text[strlen(text)], "\n" );
