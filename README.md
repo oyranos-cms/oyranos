@@ -1,5 +1,5 @@
 # Oyranos README
-[![Build Status](https://travis-ci.org/oyranos-cms/oyranos.svg?branch=master)](https://travis-ci.org/oyranos-cms/oyranos)
+[![Pipeline](https://gitlab.com/oyranos/oyranos/badges/master/pipeline.svg)](https://gitlab.com/oyranos/oyranos/-/pipelines)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/13943/badge.svg)](https://scan.coverity.com/projects/13943)
 [![Documentation](https://codedocs.xyz/oyranos-cms/oyranos.svg)](https://codedocs.xyz/oyranos-cms/oyranos/)
 [![Codecov](https://codecov.io/gh/oyranos-cms/oyranos/branch/master/graph/badge.svg)](https://codecov.io/gh/oyranos-cms/oyranos)
