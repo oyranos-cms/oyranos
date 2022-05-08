@@ -1656,16 +1656,17 @@ static int oyjlTermColorCheck_( )
 }
 #ifndef OYJL_FORCE_COLORTERM
 #define OYJL_FORCE_COLORTERM           0x01
-#define OYJL_FORCE_NO_COLORTERM        0x04
+#define OYJL_FORCE_NO_COLORTERM        0x02
+#define OYJL_RESET_COLORTERM           0x04
 #endif
-int oyjlTermColorInit_( int flags )
+int          oyjlTermColorInit       ( int                 flags )
 {
   int color_env = 0;
   static int colorterm_init = 0;
   static const char * oyjl_colorterm = NULL;
   static int truecolor = 0,
              color = 0;
-  if(!colorterm_init)
+  if(!colorterm_init || flags & OYJL_RESET_COLORTERM)
   {
     colorterm_init = 1;
     oyjl_colorterm = getenv("COLORTERM");
@@ -1703,7 +1704,7 @@ int oyjlTermColorInit_( int flags )
 const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text) {
   int len = 0;
   static char t[256];
-  int color_env = oyjlTermColorInit_( *oyjl_debug > 1?OYJL_OBSERVE:0 ),
+  int color_env = oyjlTermColorInit( *oyjl_debug > 1?OYJL_OBSERVE:0 ),
       color = color_env & 0x01,
       truecolor = color_env & 0x02;
   if(!text)
@@ -1741,7 +1742,7 @@ char * oyjl_term_color_html_ = NULL;
 const char * oyjlTermColorFromHtml   ( const char        * text,
                                        int                 flags )
 {
-  int color_env = oyjlTermColorInit_( flags ),
+  int color_env = oyjlTermColorInit( flags ),
       color = color_env & 0x01,
       truecolor = color_env & 0x02;
   const char * t,

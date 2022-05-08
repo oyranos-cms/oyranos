@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2021 (C) Kai-Uwe Behrmann
+ *            2018-2022 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -60,7 +60,7 @@ void printObjectClassNames( QObject * o )
 
 int main(int argc, char *argv[])
 {
-    setenv("FORCE_COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
+    oyjlTermColorInit( OYJL_FORCE_COLORTERM );
 
     Q_INIT_RESOURCE(app);
 

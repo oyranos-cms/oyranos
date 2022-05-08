@@ -1089,7 +1089,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9155                      /*code_size*/,
+                           9193                      /*code_size*/,
                            1080                      /*help_size*/,
                            1967                      /*man_size*/,
                            3899                      /*markdown_size*/,
@@ -1185,7 +1185,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           8900                      /*code_size*/,
+                           8938                      /*code_size*/,
                             613                      /*help_size*/,
                            1451                      /*man_size*/,
                            2355                      /*markdown_size*/,

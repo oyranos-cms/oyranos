@@ -1951,7 +1951,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   if(text) {free(text);} text = NULL;
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           10007                     /*code_size*/,
+                           10045                     /*code_size*/,
                            1282                      /*help_size*/,
                            2174                      /*man_size*/,
                            4476                      /*markdown_size*/,
@@ -2072,7 +2072,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   result = testCode( json, "oiCR_enGB"               /*prog*/,
-                           9063                      /*code_size*/,
+                           9101                      /*code_size*/,
                            1185                      /*help_size*/,
                            2075                      /*man_size*/,
                            4034                      /*markdown_size*/,
@@ -2194,7 +2194,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(text) {free(text);} text = NULL;
 
   char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
-  if(c_source && strlen(c_source) == 9069)
+  if(c_source && strlen(c_source) == 9107)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, c_source?strlen(c_source):0,
     "oyjlUiJsonToCode(de)" );
   } else
