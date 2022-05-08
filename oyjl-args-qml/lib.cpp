@@ -73,8 +73,6 @@ int oyjlArgsQmlStart__               ( int                 argc,
       return 0;
     }
 
-    setenv("FORCE_COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
-
     Q_INIT_RESOURCE(app);
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

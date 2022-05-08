@@ -1452,6 +1452,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "  {\n" );
     oyjlStr_Add( s, "#if !defined(NO_OYJL_ARGS_RENDER)\n" );
     oyjlStr_Add( s, "    int debug = verbose;\n" );
+    oyjlStr_Add( s, "    oyjlTermColorInit( OYJL_RESET_COLORTERM | OYJL_FORCE_COLORTERM ); /* show rich text format on non GNU color extension environment */\n" );
     oyjlStr_Add( s, "    oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );\n" );
     oyjlStr_Add( s, "#else\n" );
     oyjlStr_Add( s, "    fprintf( stderr, \"No render support compiled in. For a GUI you might by able to use -X json+command and load into oyjl-args-render viewer.\\n\" );\n" );
@@ -1487,8 +1488,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "  const char * lang = getenv(\"LANG\");\n" );
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "#ifdef __ANDROID__\n" );
-    oyjlStr_Add( s, "  setenv(\"COLORTERM\", \"1\", 0); /* show rich text format on non GNU color extension environment */\n" );
-    oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "  argv = calloc( argc + 2, sizeof(char*) );\n" );
     oyjlStr_Add( s, "  memcpy( argv, argv_, (argc + 2) * sizeof(char*) );\n" );
     oyjlStr_Add( s, "  argv[argc++] = \"--render=gui\"; /* start Renderer (e.g. QML) */\n" );

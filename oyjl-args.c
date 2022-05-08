@@ -252,6 +252,7 @@ int myMain( int argc, const char ** argv )
     {    
 #if !defined(NO_OYJL_ARGS_RENDER)
       int debug = verbose;
+      oyjlTermColorInit( OYJL_RESET_COLORTERM | OYJL_FORCE_COLORTERM );
       oyjlArgsRender( argc, argv, text, NULL,NULL, debug, ui, NULL );
 #else
       fprintf( stderr, "No render support compiled in. Use a GUI use -X json and load into oyjl-args-qml viewer." );
@@ -297,8 +298,6 @@ int main( int argc_, char**argv_, char ** envv )
   char * lang = getenv("LANG");
 
 #ifdef __ANDROID__
-  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
-
   argv = calloc( argc + 2, sizeof(char*) );
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
   argv[argc++] = "--render=gui"; /* start QML */

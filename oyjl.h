@@ -536,7 +536,10 @@ const char * oyjlTermColorF          ( oyjlTEXTMARK_e      mark,
 const char * oyjlTermColorFromHtml   ( const char        * text,
                                        int                 flags );
 const char * oyjlTermColorToPlain    ( const char        * text );
-
+#define OYJL_FORCE_COLORTERM           0x01
+#define OYJL_FORCE_NO_COLORTERM        0x02
+#define OYJL_RESET_COLORTERM           0x04
+int          oyjlTermColorInit       ( int                 flags );
 char *       oyjlBT                  ( int                 stack_limit );
 #define OYJL_DATE           0x01
 #define OYJL_TIME           0x02
