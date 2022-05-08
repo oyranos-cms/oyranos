@@ -637,6 +637,7 @@ int myMain( int argc , const char** argv )
   if(render)
   { 
     int debug = verbose;
+    oyjlTermColorInit( OYJL_RESET_COLORTERM | OYJL_FORCE_COLORTERM );
     oyjlArgsRender( argc, argv, NULL, jcommands, NULL, debug, ui, myMain );
     oyjlUi_Release( &ui);
     return 0;
@@ -856,8 +857,6 @@ int main( int argc_, char ** argv_)
   char ** argv = argv_;
 
 #ifdef __ANDROID__
-  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
-
   argv = calloc( argc + 2, sizeof(char*) );
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
   argv[argc++] = "--render=gui"; /* start QML */

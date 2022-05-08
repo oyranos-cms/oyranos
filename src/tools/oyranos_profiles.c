@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2010-2020 (C) Kai-Uwe Behrmann
+ *            2010-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    ICC profile informations - on the command line
  *  @internal
@@ -244,6 +244,7 @@ int myMain( int argc, const char ** argv )
   {
 #if !defined(NO_OYJL_ARGS_RENDER)
     int debug = verbose;
+    oyjlTermColorInit( OYJL_RESET_COLORTERM | OYJL_FORCE_COLORTERM );
     oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
 #else
     fprintf( stderr, "No render support compiled in. For a GUI use -X json and load into oyjl-args-render viewer." );
@@ -520,8 +521,6 @@ int main( int argc_, char**argv_, char ** envv )
   char ** argv = argv_;
 
 #ifdef __ANDROID__
-  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
-
   argv = calloc( argc + 2, sizeof(char*) );
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
   argv[argc++] = "--render=gui"; /* start QML */

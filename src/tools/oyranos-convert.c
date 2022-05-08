@@ -326,6 +326,7 @@ int myMain( int argc, const char ** argv )
   {
 #if !defined(NO_OYJL_ARGS_RENDER)
     int debug = verbose;
+    oyjlTermColorInit( OYJL_RESET_COLORTERM | OYJL_FORCE_COLORTERM );
     oyjlArgsRender( argc, argv, NULL, NULL,NULL, debug, ui, myMain );
 #else
     fprintf( stderr, "No render support compiled in. For a GUI use -X json and load into oyjl-args-render viewer." );
@@ -952,8 +953,6 @@ int main( int argc_, char**argv_, char ** envv )
 
 
 #ifdef __ANDROID__
-  setenv("COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
-
   argv = calloc( argc + 2, sizeof(char*) );
   memcpy( argv, argv_, (argc + 2) * sizeof(char*) );
   argv[argc++] = "--render=gui"; /* start Renderer (e.g. QML) */
