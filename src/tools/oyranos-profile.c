@@ -180,6 +180,54 @@ oyjlOptionChoice_s * listTagName                ( oyjlOption_s      * o OYJL_UNU
   return c;
 }
 
+oyjlOptionChoice_s * listPpmcie                 ( oyjlOption_s      * o OYJL_UNUSED,
+                                                  int               * selected OYJL_UNUSED,
+                                                  oyjlOptions_s     * opts )
+{
+  oyjlOptionChoice_s * c = NULL;
+  int can_ppmcie = 0, has_xyz = 0, i, choices;
+  oyProfile_s * p = NULL;
+  oyProfileTag_s * tags[4] = {0,0,0,0};
+  OYJL_GET_RESULT_STRING( opts, "@", NULL, profile_name );
+  fputs( "listPpmcie\n", stderr );
+  if(!profile_name) return c;
+
+  p = oyProfile_FromName( profile_name, 0,0 );
+  tags[0] = oyProfile_GetTagById( p, icSigRedColorantTag );
+  tags[1] = oyProfile_GetTagById( p, icSigGreenColorantTag );
+  tags[2] = oyProfile_GetTagById( p, icSigBlueColorantTag );
+  tags[3] = oyProfile_GetTagById( p, icSigMediaWhitePointTag );
+  if(tags[0] && tags[1] && tags[2] && tags[3])
+    ++has_xyz;
+  if(has_xyz && oyjlHasApplication("ppmcie") && oyjlHasApplication("pamtopng"))
+    ++can_ppmcie;
+  choices = can_ppmcie + has_xyz;
+  if(choices)
+    c = calloc(choices+1, sizeof(oyjlOptionChoice_s));
+
+  if(c)
+  {
+    i = 0;
+    c[i].nick = strdup("TEXT");
+    c[i].name = strdup(_("TEXT"));
+    c[i].description = strdup("");
+    c[i].help = strdup("");
+    if(can_ppmcie)
+    {
+      ++i;
+      c[i].nick = strdup("PNG");
+      c[i].name = strdup(_("PNG"));
+      c[i].description = strdup("");
+      c[i].help = strdup("");
+    }
+  }
+
+  oyProfile_Release( &p );
+  for(i = 0; i < 4; ++i)
+    oyProfileTag_Release( &tags[i] );
+
+  return c;
+}
 
 /* This function is called the
  * * first time for GUI generation and then
@@ -199,7 +247,7 @@ int myMain( int argc, const char ** argv )
   int remove_tag = 0;
   int list_hash = 0;
   const char * profile_name = 0;
-  int ppmcie = 0;
+  const char * ppmcie = NULL;
   int verbose = 0;
   const char * dump_openicc_json = 0;
   const char * output = NULL;
@@ -259,8 +307,8 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list_hash}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "w","profile-name",  NULL,     _("Profile Name"),_("write profile with correct ID hash"),_("The -w option specifies the new internal and external profile name. PROFILENAME specifies the source profile."),_("ICC_FILE_NAME"),
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&profile_name}},
-    {"oiwi", 0,                          NULL,"ppmcie",        NULL,     _("Ppmcie"),   _("show CIE*xy chromaticities, if available, for use with ppmcie."),NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&ppmcie}},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,NULL,"ppmcie",    NULL,     _("Ppmcie"), _("show CIE*xy chromaticities, if available, for use with ppmcie."), NULL, _("FORMAT"),          
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = listPpmcie},  oyjlSTRING,    {.s=&ppmcie}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Dump Openicc Json"),NULL,                 _("write device informations to OpenICC JSON."),_("FILENAME"),      
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&output}},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "c","device-class",  NULL,     _("Device Class"),_("use device class. Useful device classes are monitor, scanner, printer, camera."),NULL, _("CLASS"),         
@@ -382,7 +430,16 @@ int myMain( int argc, const char ** argv )
     const char * device_class = "unknown";
 
     dump_openicc_json = output;
-    dump_chromaticities = ppmcie;
+    if(ppmcie)
+    {
+      if(strcmp(ppmcie,"TEXT") == 0)
+        dump_chromaticities = 1;
+      else
+      if(strcmp(ppmcie,"PNG") == 0)
+        dump_chromaticities = 2;
+      else if(strcmp(ppmcie,"1") == 0)
+        dump_chromaticities = 1;
+    }
     if(path)
       simple = 2;
     if(short_var)
@@ -870,6 +927,7 @@ int myMain( int argc, const char ** argv )
       setlocale(LC_NUMERIC,"C");
 #endif
 
+      if(dump_chromaticities == 1)
       for(i = 0; i < 4; ++i)
       {
         oyStructList_s * s = oyProfileTag_Get( tags[i] );
@@ -894,11 +952,20 @@ int myMain( int argc, const char ** argv )
               oyOption_GetValueDouble( opt, 1 ) /
                   (oyOption_GetValueDouble( opt, 0 )+oyOption_GetValueDouble( opt, 1 )+oyOption_GetValueDouble( opt, 2 ))
                    );
+            if(i == 3)
+              fprintf( stdout, "\n" );
           }
         }
         oyProfileTag_Release( &tags[i] );
+      } else
+      {
+        char * command = NULL;
+        oyjlStringAdd( &command, 0,0, "ppmcie `oyranos-profile \"%s\" --ppmcie=TEXT` | pamtopng", profile_desc );
+        system( command );
+        if(verbose)
+          fprintf( stderr, "command: %s\n", command );
+        free(command);
       }
-      fprintf( stdout, "\n" );
     } else
     if(remove_tag)
       oyProfile_TagReleaseAt( p, tag_pos );

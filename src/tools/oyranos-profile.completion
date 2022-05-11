@@ -44,6 +44,22 @@ _oyranos_profile()
             set +x +v
             return
             ;;
+        --ppmcie) # long option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --ppmcie=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            fi
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --export) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
@@ -118,7 +134,7 @@ _oyranos_profile()
             set +x +v
             return
             ;;
-        --tag-pos|--tag-name|--remove-tag|--profile-name|--output|--device-class|--format|--json-name|--name-space|--export|--render)
+        --tag-pos|--tag-name|--remove-tag|--profile-name|--ppmcie|--output|--device-class|--format|--json-name|--name-space|--export|--render)
             : "finish long options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
@@ -130,7 +146,7 @@ _oyranos_profile()
             set +x +v
             return
             ;;
-        --path|--short|--list-tags|--list-hash|--ppmcie|--icc-version-2|--icc-version-4|--help|--synopsis|--verbose|--version)
+        --path|--short|--list-tags|--list-hash|--icc-version-2|--icc-version-4|--help|--synopsis|--verbose|--version)
             : "finish long options without choices"
             COMPREPLY=("$cur ")
             set +x +v
@@ -199,7 +215,7 @@ _oyranos_profile()
         do WORD_LIST=("${WORD_LIST[@]}"
 "$OYJL_TEXT")
       done
-      WORD_LIST=("${WORD_LIST[@]}" -l --list-tags -r= --remove-tag= -m --list-hash --ppmcie -o= --output= -w= --profile-name= -h --help -X= --export= -V --version -R= --render=)
+      WORD_LIST=("${WORD_LIST[@]}" -l --list-tags -r= --remove-tag= -m --list-hash --ppmcie= -o= --output= -w= --profile-name= -h --help -X= --export= -V --version -R= --render=)
       COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return

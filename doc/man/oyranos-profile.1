@@ -10,7 +10,7 @@ oyranos-profile v0.9.7 \- Oyranos Profile
 .br
 \fBoyranos-profile\fR \fB\-m\fR [\fB\-w\fR \fIICC_FILE_NAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-\fBoyranos-profile\fR \fB\-\-ppmcie\fR [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-\-ppmcie\fR\fI[=FORMAT]\fR [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
 \fBoyranos-profile\fR \fB\-o\fR \fIFILENAME\fR [\fB\-c\fR \fICLASS\fR] [\fB\-f\fR \fIxml...\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
@@ -62,9 +62,9 @@ The -w option specifies the new internal and external profile name. PROFILENAME 
 .RE
 .SS
 Show CIE*xy chromaticities
-\fBoyranos-profile\fR \fB\-\-ppmcie\fR [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-\-ppmcie\fR\fI[=FORMAT]\fR [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 .br
-\fB\-\-ppmcie\fR	show CIE*xy chromaticities, if available, for use with ppmcie.
+\fB\-\-ppmcie\fR\fI[=FORMAT]\fR	show CIE*xy chromaticities, if available, for use with ppmcie.
 .br
 .SS
 Dump Device Infos to OpenICC device JSON

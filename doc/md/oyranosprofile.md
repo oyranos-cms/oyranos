@@ -18,7 +18,7 @@ oyranos-profile v0.9.7 - Oyranos Profile
 <br />
 <strong>oyranos-profile</strong> <a href="#list-hash"><strong>-m</strong></a> [<strong>-w</strong>=<em>ICC_FILE_NAME</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
-<strong>oyranos-profile</strong> <a href="#ppmcie"><strong>--ppmcie</strong></a> [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> <a href="#ppmcie"><strong>--ppmcie</strong><em>[=FORMAT]</em></a> [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
 <strong>oyranos-profile</strong> <a href="#output"><strong>-o</strong>=<em>FILENAME</em></a> [<strong>-c</strong>=<em>CLASS</em>] [<strong>-f</strong>=<em>xml...</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 <br />
@@ -73,10 +73,11 @@ The oyranos-profile programm shows informations about a ICC profile and allows s
 
 <h3 id="ppmcie">Show CIE*xy chromaticities</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>--ppmcie</strong> [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>--ppmcie</strong><em>[=FORMAT]</em> [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--ppmcie</strong></td> <td>show CIE*xy chromaticities, if available, for use with ppmcie.</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--ppmcie</strong><em>[=FORMAT]</em></td> <td>show CIE*xy chromaticities, if available, for use with ppmcie.  </td>
+ </tr>
 </table>
 
 <h3 id="output">Dump Device Infos to OpenICC device JSON</h3>
