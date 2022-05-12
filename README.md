@@ -3,6 +3,7 @@
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/13943/badge.svg)](https://scan.coverity.com/projects/13943)
 [![Documentation](https://codedocs.xyz/oyranos-cms/oyranos.svg)](https://codedocs.xyz/oyranos-cms/oyranos/)
 [![Codecov](https://codecov.io/gh/oyranos-cms/oyranos/branch/master/graph/badge.svg)](https://codecov.io/gh/oyranos-cms/oyranos)
+![coverage](https://gitlab.com/oyranos/oyranos/badges/master/coverage.svg?job=coverage)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 ![](http://www.oyranos.org/images/oyranos_logo.svg)
