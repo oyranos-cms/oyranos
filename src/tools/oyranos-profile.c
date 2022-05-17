@@ -71,23 +71,42 @@ extern char **environ;
 # endif
 #endif
 
-static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * z OYJL_UNUSED )
+static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts )
 {
-  oyProfiles_s * ps = oyProfiles_Create( NULL, 0, 0 );
-  int n = oyProfiles_Count( ps ), i;
-  oyjlOptionChoice_s * cs = (oyjlOptionChoice_s*) calloc( (unsigned int)n+20, sizeof(oyjlOptionChoice_s) );
-  for(i = 0; i < n; ++i)
+  OYJL_GET_RESULT_STRING( opts, "@", NULL, profile_name );
+  oyjlOptionChoice_s * cs = NULL;
+  uint32_t i = 0;
+  if(profile_name && strcmp(profile_name,"oyjl-list") == 0)
   {
-    oyProfile_s * p = oyProfiles_Get(ps, i);
-    const char * desc = oyProfile_GetText(p, oyNAME_DESCRIPTION);
-    const char * fn = oyProfile_GetFileName(p, -1);
-    if(desc)
-      cs[i].name = oyjlStringCopy( desc, 0 );
-    if(fn)
-      cs[i].nick = oyjlStringCopy( fn, 0 );
-    oyProfile_Release( &p );
+    uint32_t n = 0;
+    char ** profile_names = oyProfileListGet(0, &n, malloc);
+    cs = (oyjlOptionChoice_s*) calloc( (unsigned int)n+20, sizeof(oyjlOptionChoice_s) );
+    for(i = 0; i < n; ++i)
+    {
+      const char * fn = profile_names[i];
+      if(fn)
+        cs[i].nick = oyjlStringCopy( fn, 0 );
+    }
+    oyjlStringListRelease( &profile_names, n, free );
+
+  } else
+  {
+    oyProfiles_s * ps = oyProfiles_Create( NULL, 0, 0 );
+    int n = oyProfiles_Count( ps );
+    cs = (oyjlOptionChoice_s*) calloc( (unsigned int)n+20, sizeof(oyjlOptionChoice_s) );
+    for(i = 0; (int)i < n; ++i)
+    {
+      oyProfile_s * p = oyProfiles_Get(ps, i);
+      const char * desc = oyProfile_GetText(p, oyNAME_DESCRIPTION);
+      const char * fn = oyProfile_GetFileName(p, -1);
+      if(desc)
+        cs[i].name = oyjlStringCopy( desc, 0 );
+      if(fn)
+        cs[i].nick = oyjlStringCopy( fn, 0 );
+      oyProfile_Release( &p );
+    }
+    oyProfiles_Release( &ps );
   }
-  oyProfiles_Release( &ps );
 
   cs[i].nick = cs[i].name = "rgb"; ++i;
   cs[i].nick = cs[i].name = "cmyk"; ++i;
@@ -188,8 +207,14 @@ oyjlOptionChoice_s * listPpmcie                 ( oyjlOption_s      * o OYJL_UNU
   int can_ppmcie = 0, has_xyz = 0, i, choices;
   oyProfile_s * p = NULL;
   oyProfileTag_s * tags[4] = {0,0,0,0};
+  OYJL_GET_RESULT_INT( opts, "v", 0, verbose );
   OYJL_GET_RESULT_STRING( opts, "@", NULL, profile_name );
-  fputs( "listPpmcie\n", stderr );
+  if(verbose)
+  {
+    char * t = oyBT(0);
+    fprintf( stderr, "%slistPpmcie\n", t );
+    free(t);
+  }
   if(!profile_name) return c;
 
   p = oyProfile_FromName( profile_name, 0,0 );
@@ -432,13 +457,32 @@ int myMain( int argc, const char ** argv )
     dump_openicc_json = output;
     if(ppmcie)
     {
-      if(strcmp(ppmcie,"TEXT") == 0)
+      if(strcasecmp(ppmcie,"TEXT") == 0)
         dump_chromaticities = 1;
       else
-      if(strcmp(ppmcie,"PNG") == 0)
+      if(strcasecmp(ppmcie,"PNG") == 0)
         dump_chromaticities = 2;
       else if(strcmp(ppmcie,"1") == 0)
         dump_chromaticities = 1;
+      else
+      {
+        oyjlOptionChoice_s * choices = listPpmcie( NULL, NULL, ui->opts );
+        int i, n = oyjlOptionChoice_Count( choices );
+        if(strcmp(ppmcie,"oyjl-list") == 0)
+        {
+          for(i = 0; i < n; ++i)
+            printf( "%s\n", choices[i].nick );
+          return 0;
+        } 
+        else
+        {
+          fprintf(stderr, "%s %s", oyjlTermColor(oyjlRED, _("Usage Error")), _("Allowed option choices are:"));
+          for(i = 0; i < n; ++i)
+            fprintf(stderr, " --ppmcie=%s", choices[i].nick );
+          fprintf(stderr, " %s\n", _("Exit!"));
+          return 1;
+        }
+      }
     }
     if(path)
       simple = 2;

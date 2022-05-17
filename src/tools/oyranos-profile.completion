@@ -209,7 +209,7 @@ _oyranos_profile()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       local WORD_LIST=()
-      local OYJL_TEXTS=$(baseGetChoices)
+      local OYJL_TEXTS=$(${COMP_LINE} oyjl-list | sed 's/\[/_/g;s/\]/_/g')
       local IFS=$'\n'
       for OYJL_TEXT in $OYJL_TEXTS
         do WORD_LIST=("${WORD_LIST[@]}"
