@@ -7,6 +7,8 @@
 
 int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
 {
+  oyInit_();
+
   oyCMMapi6_s * api = oyCMMapi6_New(0);
   const char * in,*out;
   int error = 0;
@@ -23,6 +25,7 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
   oyMessageFunc_p(oyMSG_WARN,api,"%s %s", in?in:"",out?out:"");
 
   oyCMMapi6_Release(&api);
+  oyObjectTreePrint( 0x01 | 0x02 | 0x08, __FILE__ );
 
   {
     char ** files = NULL;
@@ -109,19 +112,38 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
   }
 
   oyLibCoreRelease(0);
+  oyAlphaFinish_(0);
+  oyObjectTreePrint( 0x01 | 0x02 | 0x08, __FILE__ );
+  oyDebugLevelCacheRelease();
+
+  return error;
+}
+
+/** @internal
+ *
+ *  @version Oyranos: 0.1.10
+ *  @since   2009/04/16 (Oyranos: 0.1.10)
+ *  @date    2009/04/16
+ */
+void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
+{
   if(get_oy_msg_func_n_())
   {
     fprintf(stderr, "FATAL: releasing modules before cleaning static structs\nUse oyLibCoreRelease() before oyAlphaFinish_()\n");
     if(!getenv("OYJL_NO_EXIT")) exit(1);
   }
+  /* before releasing all modules, the threads module should be used to close the mutex */
   oyObjectIdRelease();
+
+  //oyProfiles_Release( &oy_profile_list_cache_ );
   oyStructList_Release( &oy_cmm_cache_ );
   {
     int n = oyStructList_Count( oy_cmm_infos_ ), i;
     for(i = 0; i < n; ++i)
     {
-      int error = 0;
+      int error = 0, api_count = 0, j = 0;
       oyCMMinfo_s * cmm_info = 0;
+      oyCMMapi_s ** apis;
       oyCMMhandle_s * cmmh = (oyCMMhandle_s *) oyStructList_GetType_(
                                                (oyStructList_s_*)oy_cmm_infos_,
                                                i,
@@ -135,10 +157,21 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
       oyCMMapi_s * api = oyCMMinfo_GetApi( (oyCMMinfo_s*) cmm_info );
       while(api)
       {
+        ++api_count;
+        api = oyCMMapi_GetNext(api);
+      }
+
+      apis = calloc( sizeof(oyCMMapi_s*), api_count );
+
+      api = oyCMMinfo_GetApi( (oyCMMinfo_s*) cmm_info );
+      while(api)
+      {
         const char * registration = oyCMMapi_GetRegistration(api);
         /* init */
         oyCMMReset_f reset = oyCMMapi_GetResetF(api);
         oyCMMapi_s_ * api_ = (oyCMMapi_s_*) api;
+
+        apis[j] = api; ++j;
 
         if(api_->id_)
           free(api_->id_);
@@ -153,14 +186,23 @@ int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
 
         api = oyCMMapi_GetNext(api);
       }
+      /* release in reverse order and avoid any miracles with chained objects */
+      for(j = api_count-1; j >= 0; --j)
+      {
+        oyCMMapi_s * api_ = apis[j];
+        if(api_->release)
+          api_->release((oyStruct_s**)&api_);
+      }
+      if(apis)
+        free(apis);
     }
   }
   oyStructList_Release( &oy_cmm_infos_ );
+
   oyStructList_Release( &oy_cmm_handles_ );
   oyStructList_Release_( &oy_profile_s_file_cache_ );
   oyOptions_Release( &oy_db_cache_ );
-  oyDebugLevelCacheRelease();
+  //oyOptions_Release( &oy_config_options_dummy_ );
 
-  return error;
+  //*get_oy_db_cache_init_() = 0;
 }
-
