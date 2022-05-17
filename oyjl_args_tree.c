@@ -1680,7 +1680,12 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         if(!getChoices && use_getChoicesCompletionBash)
           continue;
         if(strcmp(o,"@") == 0)
-          found_at_arg_func = getChoices;
+        {
+          if(use_getChoicesCompletionBash)
+            found_at_arg_func = getChoices;
+          else
+            found_at_arg_func = "${COMP_LINE} oyjl-list | sed 's/\\\[/_/g;s/\\\]/_/g'";
+        }
         else
         {
           if(*oyjl_debug)
