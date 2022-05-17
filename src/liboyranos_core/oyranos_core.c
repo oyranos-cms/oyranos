@@ -523,6 +523,21 @@ int                oyMessageFormat   ( char             ** message_text,
     case oyMSG_ERROR:
          STRING_ADD( t, _("!!! ERROR"));
          break;
+    case oyjlMSG_INFO:
+         oyStringAddPrintf( &t, 0,0, "Oyjl%s: ", oyjlTermColor(oyjlGREEN,_("Info")));
+         break;
+    case oyjlMSG_CLIENT_CANCELED:
+         oyStringAddPrintf( &t, 0,0, "Oyjl%s: ", oyjlTermColor(oyjlBLUE,_("Client Canceled")));
+         break;
+    case oyjlMSG_INSUFFICIENT_DATA:
+         oyStringAddPrintf( &t, 0,0, "Oyjl%s: ", oyjlTermColor(oyjlRED,_("Insufficient data")));
+         break;
+    case oyjlMSG_ERROR:
+         oyStringAddPrintf( &t, 0,0, "Oyjl%s: ", oyjlTermColor(oyjlRED,_("Usage Error")));
+         break;
+    case oyjlMSG_PROGRAM_ERROR:
+         oyStringAddPrintf( &t, 0,0, "Oyjl%s: ", oyjlTermColor(oyjlRED,_("Program Error")));
+         break;
   }
 
   /* reduce output for non core messages */
