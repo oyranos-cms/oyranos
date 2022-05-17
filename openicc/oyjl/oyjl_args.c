@@ -2825,9 +2825,18 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
   int pos = -1, i, hits = 0;
   const char * t;
   oyjlOptsPrivate_s * results;
-  oyjlOption_s * o = oyjlOptions_GetOptionL( opts, opt, 0 );
+  oyjlOption_s * o;
 
-  if(!opts || !o) return state;
+  if(!opts)
+  {
+    char * t = oyjlBT(0);
+    oyjlMessage_p( oyjlMSG_PROGRAM_ERROR, 0, OYJL_DBG_FORMAT "missing argument: opts\n%s", OYJL_DBG_ARGS, t );
+    free(t);
+    return state;
+  }
+  o = oyjlOptions_GetOptionL( opts, opt, 0 );
+  if(!o)
+    return state;
   results = opts->private_data;
 
   if(!results || !results->values)
