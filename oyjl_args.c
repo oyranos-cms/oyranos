@@ -2262,6 +2262,55 @@ int oyjlOptions_IsOn_         ( oyjlOptions_s     * opts,
     oyjlOptions_GetResult( opts, o->o?o->o:o->option, 0, 0, &found );
   return found;
 }
+#define OYJL_CASE_COMPARE              0x01
+#define OYJL_LAZY                      0x02
+#define OYJL_SET                       0x04
+int oyjlOptions_HasValue_            ( oyjlOptions_s     * opts,
+                                       const char        * opt,
+                                       const char        * value,
+                                       int                 flags )
+{
+  int count = 0, i,
+      found = 0;
+  char ** results = oyjlOptions_ResultsToList( opts, opt, &count );
+  for(i = 0; i < count; ++i)
+  {
+    const char * val = results[i];
+    if(flags & OYJL_CASE_COMPARE)
+    {
+      if(strcasecmp(val, value) == 0)
+        ++found;
+    } else if(flags & OYJL_LAZY)
+    {
+      if(strstr(val, value) != NULL)
+        ++found;
+    } else
+      if(strcmp(val, value) == 0)
+        ++found;
+    if(found)
+    {
+      if(flags & OYJL_SET)
+      {
+        oyjlOption_s * o = oyjlOptions_GetOptionL( opts, opt, OYJL_QUIET );
+        if(o)
+        {
+          long l;
+          switch(o->variable_type)
+          {
+            case oyjlNONE:   break;
+            case oyjlSTRING: *o->variable.s = value; break;
+            case oyjlDOUBLE: oyjlStringToDouble( value, o->variable.d, NULL ); break;
+            case oyjlINT:    oyjlStringToLong( value, &l, NULL );
+                             *o->variable.i = l; break;
+          }
+        }
+      }
+      break;
+    }
+  }
+  oyjlStringListRelease( &results, count, free );
+  return found;
+}
 
 /** @brief    Obtain the specified option from option string
  *  @memberof oyjlOptions_s
@@ -2822,10 +2871,10 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
                                        int               * result_int )
 {
   oyjlOPTIONSTATE_e state = oyjlOPTION_NONE;
-  int pos = -1, i, hits = 0;
+  int pos = -1, i, hits = 0, verbose = 0;
   const char * t;
   oyjlOptsPrivate_s * results;
-  oyjlOption_s * o;
+  oyjlOption_s * o, * v;
 
   if(!opts)
   {
@@ -2838,6 +2887,10 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
   if(!o)
     return state;
   results = opts->private_data;
+
+  v = oyjlOptions_GetOptionL( opts, "v", 0 );
+  if(v && v->variable_type == oyjlINT && v->variable.i)
+    verbose = *v->variable.i;
 
   if(!results || !results->values)
   /* parse the command line arguments */
@@ -2864,6 +2917,8 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
       pos = i;
       ++hits;
       state = oyjlOPTION_USER_CHANGED;
+      if(verbose)
+        fprintf( stderr, OYJL_DBG_FORMAT "%s[%d]: \"%s\"\n", OYJL_DBG_ARGS, opt, hits, results->values[pos] );
     }
   }
   /* object search */
@@ -4046,6 +4101,15 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   X = oyjlOptions_GetOption( ui->opts, "X" );
   if(X && X->variable_type == oyjlSTRING && X->variable.s)
     export = *X->variable.s;
+  /* Give "json+command" and "json" proiority over e.g. "man" and others */
+  if(export)
+  {
+    if(oyjlOptions_HasValue_( ui->opts, "X", "json+command", OYJL_CASE_COMPARE | OYJL_SET ))
+      export = *X->variable.s;
+    else
+    if(oyjlOptions_HasValue_( ui->opts, "X", "json", OYJL_CASE_COMPARE | OYJL_SET ))
+      export = *X->variable.s;
+  }
   help = oyjlOptions_IsOn_( ui->opts, "h" );;
   h = oyjlOptions_GetOption( ui->opts, "h" );
   verbose = oyjlOptions_IsOn_( ui->opts, "v" );
@@ -4371,7 +4435,8 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     oyjlOptions_GetResult( opts, o->o, &value, 0, 0 );
     if( value &&
         strcmp(value, "oyjl-list") == 0 &&
-        o->value_type == oyjlOPTIONTYPE_FUNCTION )
+        o->value_type == oyjlOPTIONTYPE_FUNCTION &&
+        !(export && strcmp(export, "json+command") == 0))
     {
       int n = 0,l;
       oyjlOptionChoice_s * list;

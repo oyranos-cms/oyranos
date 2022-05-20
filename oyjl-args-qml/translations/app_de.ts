@@ -52,18 +52,18 @@
         <translation>Laden beendet</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="257"/>
-        <location filename="../src/app_data.cpp" line="259"/>
+        <location filename="../src/app_data.cpp" line="258"/>
+        <location filename="../src/app_data.cpp" line="260"/>
         <source>%1 Version</source>
         <translation>%1 Version</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="264"/>
+        <location filename="../src/app_data.cpp" line="265"/>
         <source>NONE</source>
         <translation>NICHTS</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="380"/>
+        <location filename="../src/app_data.cpp" line="381"/>
         <source>Permission not granted: </source>
         <translation>Berechtigung nicht gewährt: </translation>
     </message>
