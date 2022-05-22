@@ -3,7 +3,7 @@
  *  OpenICC JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2022 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -100,6 +100,55 @@ function getTranslatedItem( item, base, loc, catalog )
         text = item[base];
 
     return text;
+}
+
+/** Function to convert Oyjl term colors into HTML codes for QML */
+function toHtml ( t )
+{
+    if(t.match(/\033\[/)) // convert ansi color + format codes to HTML markup
+    {
+        t = t.replace(/\033\[1m/g, "<b>")
+        t = t.replace(/\033\[3m/g, "<i>")
+        t = t.replace(/\033\[4m/g, "<u>")
+        t = t.replace(/\033\[0m/g, "</u></b></i></font>")
+        t = t.replace(/\033\[00m/g, "</font>")
+        t = t.replace(/ /g, '&nbsp;')
+        t = t.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+        t = t.replace(/\n/g, "</font><br />")
+        // some color codes
+        t = t.replace(/\033\[31m/g, "<font color=red>")
+        t = t.replace(/\033\[0;31m/g, "<font color=red>")
+        t = t.replace(/\033\[00;31m/g, "<font color=red>")
+        t = t.replace(/\033\[01;31m/g, "<font color=red>")
+        t = t.replace(/\033\[38;2;240;0;0m/g, "<font color=red>")
+        t = t.replace(/\033\[38;2;250;0;0m/g, "<font color=red>")
+        t = t.replace(/\033\[32m/g, "<font color=green>")
+        t = t.replace(/\033\[0;32m/g, "<font color=green>")
+        t = t.replace(/\033\[00;32m/g, "<font color=green>")
+        t = t.replace(/\033\[01;32m/g, "<font color=green>")
+        t = t.replace(/\033\[38;2;0;250;100m/g, "<font color=green>")
+        t = t.replace(/\033\[33m/g, "<font color=lime>")
+        t = t.replace(/\033\[0;33m/g, "<font color=lime>")
+        t = t.replace(/\033\[00;33m/g, "<font color=lime>")
+        t = t.replace(/\033\[01;33m/g, "<font color=lime>")
+        t = t.replace(/\033\[34m/g, "<font color=dodgerblue>")
+        t = t.replace(/\033\[0;34m/g, "<font color=dodgerblue>")
+        t = t.replace(/\033\[00;34m/g, "<font color=dodgerblue>")
+        t = t.replace(/\033\[01;34m/g, "<font color=dodgerblue>")
+        t = t.replace(/\033\[38;2;150;0;0m/g, "<font color=dodgerblue>")
+        t = t.replace(/\033\[38;2;0;150;255m/g, "<font color=dodgerblue>")
+        t = t.replace(/\033\[35m/g, "<font color=magenta>")
+        t = t.replace(/\033\[0;35m/g, "<font color=magenta>")
+        t = t.replace(/\033\[00;35m/g, "<font color=magenta>")
+        t = t.replace(/\033\[01;35m/g, "<font color=magenta>")
+        t = t.replace(/\033\[36m/g, "<font color=cyan>")
+        t = t.replace(/\033\[0;36m/g, "<font color=cyan>")
+        t = t.replace(/\033\[00;36m/g, "<font color=cyan>")
+        t = t.replace(/\033\[01;36m/g, "<font color=cyan>")
+
+        t = "<div style\"word-wrap:nowhere;\">" + t + "</div>"
+    }
+    return t;
 }
 
 /** Function to extract items and add them to a QML based Combo box
