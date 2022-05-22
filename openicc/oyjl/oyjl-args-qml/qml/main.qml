@@ -105,7 +105,7 @@ AppWindow {
         onReadChannelFinished: {
             var text = readAll();
             textArea2.text = text;
-            setDataText(textArea2.text);
+            setDataText(text);
         }
     }
     property string processGetCommand: ""
@@ -143,13 +143,13 @@ AppWindow {
             var pGA = []
             var n = processGetArgs.length
             var i
-            for(i = 0; i < n; ++i)
-                pGA.push(processGetArgs[i])
             var cA = currentArgs
             n = cA.length
             for(i = 0; i < n; ++i)
                 if(!hasArg(pGA,cA[i],"onReadChannelFinished"))
                     pGA.push(cA[i])
+            for(i = 0; i < n; ++i)
+                pGA.push(processGetArgs[i])
 
             if(processGetCommand.length && setOnly <= 0)
             {
@@ -532,46 +532,7 @@ AppWindow {
 
         if(t.match(/\033\[/)) // convert ansi color + format codes to HTML markup
         {
-            t = t.replace(/\033\[1m/g, "<b>")
-            t = t.replace(/\033\[3m/g, "<i>")
-            t = t.replace(/\033\[4m/g, "<u>")
-            t = t.replace(/\033\[0m/g, "</u></b></i></font>")
-            t = t.replace(/\033\[00m/g, "</font>")
-            t = t.replace(/ /g, '&nbsp;')
-            t = t.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-            t = t.replace(/\n/g, "</font><br />")
-            // some color codes
-            t = t.replace(/\033\[31m/g, "<font color=red>")
-            t = t.replace(/\033\[0;31m/g, "<font color=red>")
-            t = t.replace(/\033\[00;31m/g, "<font color=red>")
-            t = t.replace(/\033\[01;31m/g, "<font color=red>")
-            t = t.replace(/\033\[38;2;240;0;0m/g, "<font color=red>")
-            t = t.replace(/\033\[38;2;250;0;0m/g, "<font color=red>")
-            t = t.replace(/\033\[32m/g, "<font color=green>")
-            t = t.replace(/\033\[0;32m/g, "<font color=green>")
-            t = t.replace(/\033\[00;32m/g, "<font color=green>")
-            t = t.replace(/\033\[01;32m/g, "<font color=green>")
-            t = t.replace(/\033\[38;2;0;250;100m/g, "<font color=green>")
-            t = t.replace(/\033\[33m/g, "<font color=lime>")
-            t = t.replace(/\033\[0;33m/g, "<font color=lime>")
-            t = t.replace(/\033\[00;33m/g, "<font color=lime>")
-            t = t.replace(/\033\[01;33m/g, "<font color=lime>")
-            t = t.replace(/\033\[34m/g, "<font color=dodgerblue>")
-            t = t.replace(/\033\[0;34m/g, "<font color=dodgerblue>")
-            t = t.replace(/\033\[00;34m/g, "<font color=dodgerblue>")
-            t = t.replace(/\033\[01;34m/g, "<font color=dodgerblue>")
-            t = t.replace(/\033\[38;2;150;0;0m/g, "<font color=dodgerblue>")
-            t = t.replace(/\033\[38;2;0;150;255m/g, "<font color=dodgerblue>")
-            t = t.replace(/\033\[35m/g, "<font color=magenta>")
-            t = t.replace(/\033\[0;35m/g, "<font color=magenta>")
-            t = t.replace(/\033\[00;35m/g, "<font color=magenta>")
-            t = t.replace(/\033\[01;35m/g, "<font color=magenta>")
-            t = t.replace(/\033\[36m/g, "<font color=cyan>")
-            t = t.replace(/\033\[0;36m/g, "<font color=cyan>")
-            t = t.replace(/\033\[00;36m/g, "<font color=cyan>")
-            t = t.replace(/\033\[01;36m/g, "<font color=cyan>")
-
-            t = "<div style\"word-wrap:nowhere;\">" + t + "</div>"
+            t = P.toHtml( t )
             helpText = Link.linkify( t );
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
@@ -869,6 +830,17 @@ AppWindow {
                         unsetBusyTimer.start()
                     }
                     onLinkHovered: (Qt.platform.os === "android") ? Qt.openUrlExternally(link) : statusText = link
+                    property bool textChanging: false
+                    onTextChanged:
+                    {
+                        if(textChanging) return
+                        textChanging = true
+                        if(text.match(/\033\[/)) // convert ansi color + format codes to HTML markup
+                        {
+                            text = P.toHtml( text )
+                        }
+                        textChanging = false
+                    }
                 }
                 ScrollBar.vertical: ScrollBar { }
             }
@@ -905,10 +877,10 @@ AppWindow {
                 height: logPage.height
                 color: fg
                 background: Rectangle { color: bg }
-                textFormat: Qt.PlainText
+                textFormat: showJson ? Qt.RichText : Qt.PlainText
                 wrapMode: TextEdit.Wrap
                 readOnly: true
-                text: showJson ? appDataJsonString : logHistory
+                text: showJson ? P.toHtml(appDataJsonString) : logHistory
             }
             }
             Button {
