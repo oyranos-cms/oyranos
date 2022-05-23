@@ -141,13 +141,13 @@ AppWindow {
 
             // add all actual args in order to show them the pGC
             var pGA = []
-            var n = processGetArgs.length
             var i
             var cA = currentArgs
-            n = cA.length
+            var n = cA.length
             for(i = 0; i < n; ++i)
                 if(!hasArg(pGA,cA[i],"onReadChannelFinished"))
                     pGA.push(cA[i])
+            n = processGetArgs.length
             for(i = 0; i < n; ++i)
                 pGA.push(processGetArgs[i])
 
