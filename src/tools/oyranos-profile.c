@@ -817,13 +817,20 @@ int myMain( int argc, const char ** argv )
     } else
     if( error <= 0 && dump_openicc_json )
     {
+      FILE * fp = stdout;
+      oyjl_val root = oyjlTreeNew("");
+      char * json = NULL;
+      if(strcmp( dump_openicc_json, "-" ) != 0)
+        fp = fopen( dump_openicc_json, "wb" );
       tag = oyProfile_GetTagById( p, icSigMetaDataTag );
       if(tag)
       {
         int32_t tag_size = 0;
         int size = 0;
         int has_prefix = 0;
+        char * prefix = NULL;
 
+        if(!format) format = "openicc";
         if(!(strcmp(format,"openicc") == 0 || 
              strcmp(format,"xml") == 0))
         {
@@ -867,10 +874,8 @@ int myMain( int argc, const char ** argv )
         }
 
         /* add device class */
-        if(strcmp(format,"openicc") == 0)
-          fprintf( stdout, OPENICC_DEVICE_JSON_HEADER, device_class );
-        else
-          fprintf( stdout, "    <dictType>\n      <TagSignature>meta</TagSignature>\n" );
+        if(strcmp(format,"openicc") != 0)
+          fprintf( fp, "    <dictType>\n      <TagSignature>meta</TagSignature>\n" );
 
         /* add prefix key */
         if(pn && !has_prefix &&
@@ -878,16 +883,11 @@ int myMain( int argc, const char ** argv )
         {
           for(j = 0; j < pn; ++j)
           {
-            if(j == 0)
-            {
-                fprintf( stdout, "              \"prefix\": \"" );
-            }
-                fprintf( stdout, "%s",
-                         prefixes[j] );
+            oyjlStringAdd( &prefix, 0,0, "%s", prefixes[j] );
             if(pn > 1 && j < pn-1)
-                fprintf( stdout, "," );
+              oyjlStringAdd( &prefix, 0,0, "," );
             if(j == pn-1)
-              fprintf( stdout, "\",\n" );
+              oyjlTreeSetStringF( root, OYJL_CREATE_NEW, prefix, "org/freedesktop/openicc/device/%s/prefix", device_class );
           }
         }
 
@@ -902,10 +902,9 @@ int myMain( int argc, const char ** argv )
             if(texts[j+1][0] == '<')
             {
               if(strcmp(format,"openicc") == 0)
-                fprintf( stdout, "              \"%s\": \"%s\"",
-                         texts[j], texts[j+1] );
+                oyjlTreeSetStringF( root, OYJL_CREATE_NEW, texts[j+1], "org/freedesktop/openicc/device/%s/%s", device_class, texts[j] );
               else
-                fprintf( stdout, "       <DictEntry Name=\"%s\" Values\"%s\"/>",
+                fprintf( fp, "       <DictEntry Name=\"%s\" Values\"%s\"/>",
                          texts[j], texts[j+1] );
             }
             else
@@ -919,6 +918,8 @@ int myMain( int argc, const char ** argv )
                 STRING_ADD( val, ": [" );
                 for(k = 0; k < vals_n; ++k)
                 {
+                  if(strcmp(format,"openicc") == 0)
+                    oyjlTreeSetStringF( root, OYJL_CREATE_NEW, vals[k], "org/freedesktop/openicc/device/%s/%s/[%d]", device_class, texts[j], k );
                   if(k != 0)
                   STRING_ADD( val, "," );
                   STRING_ADD( val, "\"" );
@@ -926,14 +927,14 @@ int myMain( int argc, const char ** argv )
                   STRING_ADD( val, "\"" );
                 }
                 STRING_ADD( val, "]");
-                fprintf( stdout, "%s", val );
+                if(strcmp(format,"openicc") != 0)
+                  fprintf( fp, "%s", val );
                 if(val) free( val );
               } else
                 if(strcmp(format,"openicc") == 0)
-                  fprintf( stdout, "              \"%s\": \"%s\"",
-                     texts[j], texts[j+1] );
+                  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, texts[j+1], "org/freedesktop/openicc/device/%s/%s", device_class, texts[j] );
                 else
-                  fprintf( stdout, "       <DictEntry Name=\"%s\" Value=\"%s\"/>",
+                  fprintf( fp, "       <DictEntry Name=\"%s\" Value=\"%s\"/>",
                      texts[j], texts[j+1] );
 
               oyStringListRelease_( &vals, vals_n, free );
@@ -941,17 +942,26 @@ int myMain( int argc, const char ** argv )
           }
           if(j < (texts_n - 2))
           {
-            if(strcmp(format,"openicc") == 0)
-              fprintf( stdout, ",\n" );
-            else
-              fprintf( stdout, "\n" );
+            if(strcmp(format,"openicc") != 0)
+              fprintf( fp, "\n" );
           }
         }
 
-        if(strcmp(format,"openicc") == 0)
-          fprintf( stdout, "\n"OPENICC_DEVICE_JSON_FOOTER );
-        else
-          fprintf( stdout, "\n    </dictType>\n" );
+        if(strcmp(format,"openicc") != 0)
+          fprintf( fp, "\n    </dictType>\n" );
+      }
+      if(oyjlValueCount(root))
+        json = oyjlTreeToText( root, strcmp(format,"openicc") == 0 ? OYJL_JSON : OYJL_XML );
+      if(json)
+      {
+        fputs( json, fp );
+        free(json);
+        json = NULL;
+      }
+      if(fp && fp != stdout)
+      {
+        fclose(fp);
+        fp = NULL;
       }
     } else
     if( error <= 0 && dump_chromaticities )
