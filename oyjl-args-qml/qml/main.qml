@@ -589,9 +589,9 @@ AppWindow {
             {
                 item = t[i]
                 if(item === '\n')
-                    high += '</i></b>' + item + '<b>'
+                    high += '</b></i>' + item + '<i>'
                 else if(item === ':')
-                    high += '</b>' + item + '<i>'
+                    high += '</i>' + item + '<b>'
                 else
                     high += item;
             };
@@ -609,9 +609,9 @@ AppWindow {
             {
                 item = t[i]
                 if(item === '<')
-                    high += '</i>&lt;<b>'
+                    high += '</b>&lt;<i>'
                 else if(item === '>')
-                    high += '</b>&gt;<i>'
+                    high += '</i>&gt;<b>'
                 else
                     high += item;
             };
