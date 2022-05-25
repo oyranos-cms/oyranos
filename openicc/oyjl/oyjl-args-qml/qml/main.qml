@@ -292,7 +292,7 @@ AppWindow {
             addArg1( args, key, value, type, sub_command, false );
     }
 
-    property var setOnly: false
+    property bool setOnly: false
     function interactiveCallback( key, value, type, group, setOnly_ )
     {
         var opts = optionsModel
@@ -301,23 +301,35 @@ AppWindow {
         var opt
         var explicite = typeof group.explicite !== "undefined"
         var pass = !explicite
-        var mkey = false
+        var mkey = false // mandatory key
         var arr = []
         var arrn = 0
 
         setOnly = setOnly_
 
-        statusText = group.description
+        if(app_debug)
+            statusText = "key: " + key + " value: " + value + " Group: " + group.description
 
-        var sub_command = false
-        if(typeof group.sub_command !== "undefined")
-            sub_command = true
         var mandatory_found = false
-        if(!sub_command && typeof group.mandatory !== "undefined" && group.mandatory.length && hasArg(group.mandatory, key,"interactiveCallback-mandatory"))
+        // detect mandatory key from passed in group
+        if(typeof group.mandatory !== "undefined" && group.mandatory.length && hasArg(group.mandatory, key,"interactiveCallback-mandatory"))
         {
             mandatory_found = true
             mkey = key;
         }
+        if(mandatory_found === false &&
+           // use group from previous mandatory key if this group has the key in its optional list
+           groupLast.optional.length && hasArg(groupLast.optional, key,"interactiveCallback-optional") &&
+           typeof groupLast !== "undefined")
+            group = groupLast
+
+        groupLast = group;
+
+        statusText = qsTr("Group") + ": " + group.description
+
+        var sub_command = false
+        if(typeof group.sub_command !== "undefined")
+            sub_command = true
         // passed in key might be not a mandatory one ...
         if(!mandatory_found && typeof group.mandatory !== "undefined" && group.mandatory.length)
         {
@@ -327,6 +339,8 @@ AppWindow {
             if(arrn)
                 mkey = arr[0];
             mandatory_found = true
+            if(app_debug)
+                statusText = "key: " + key + " mkey: " + mkey
         }
 
         for( i = 0; i < n; ++i )
@@ -375,7 +389,13 @@ AppWindow {
 
         // set mandatory switch when no other mandatory option is visible in group
         if(!(args.length && args[0].match(mkey)) && key === mkey && opt.type === "bool" && value === "false")
-            args[0] = sub_command ? "" : mkey.length === 1 ? "-" + mkey : "--" + mkey;
+        {
+            args[0] = (sub_command ? "" : mkey.length === 1 ? "-" : "--") + mkey;
+            if(app_debug)
+                statusText = "set args[0]: " + args[0]
+        }
+        if(app_debug)
+            statusText = "key: " + key + " mkey: " + mkey + " args[0]: " + args[0] + " opt.type: " + opt.type + " value: " + value
 
 
         var sCb = processSetCommand
@@ -653,6 +673,7 @@ AppWindow {
 
     property var groupDescriptions: []
     property int groupCount: 0
+    property var groupLast
     property url uiLogo: ""
 
     ListModel {  id: optionsModel; objectName: "optionsModel" }

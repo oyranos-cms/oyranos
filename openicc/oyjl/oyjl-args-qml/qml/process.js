@@ -105,6 +105,12 @@ function getTranslatedItem( item, base, loc, catalog )
 /** Function to convert Oyjl term colors into HTML codes for QML */
 function toHtml ( t )
 {
+    if(t.match(/^</)) // convert XML to HTML markup
+    {
+        t = t.replace(/</g, "&lt;")
+        t = t.replace(/>/g, "&gt;")
+    }
+
     if(t.match(/\033\[/)) // convert ansi color + format codes to HTML markup
     {
         t = t.replace(/\033\[1m/g, "<b>")
