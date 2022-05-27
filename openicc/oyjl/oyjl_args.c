@@ -68,9 +68,11 @@ extern int * oyjl_debug;
 #ifdef OYJL_HAVE_LANGINFO_H
 #include <langinfo.h> /* nl_langinfo() */
 #endif
+#ifndef OYJL_VERSION
 #define OYJL_VERSION 100
 #define OYJL_VERSION_NAME "1.0.0"
 #define OYJL_DOMAIN  "oyjl"
+#endif
 #ifndef OYJL_LOCALEDIR
 #define OYJL_LOCALEDIR  ""
 #endif
@@ -3989,7 +3991,7 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
   return status;
 }
 
-static const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
+const char * oyjlOPTIONSTATE_eToString_( oyjlOPTIONSTATE_e i )
 {
   switch(i)
   {
