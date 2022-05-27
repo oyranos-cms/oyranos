@@ -1002,8 +1002,8 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
   {
     if(error_buffer)
       snprintf( error_buffer, error_buffer_size, "%s\n", parser.problem ? parser.problem : "" );
-    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s", OYJL_DBG_ARGS,
-                   parser.problem ? parser.problem : "" );
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s\n%s", OYJL_DBG_ARGS,
+                   parser.problem ? parser.problem : "", yaml );
 
     return jroot;
   }

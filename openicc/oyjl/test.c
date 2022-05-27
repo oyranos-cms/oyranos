@@ -11,6 +11,41 @@
  *  @since    2008/12/04
  */
 
+#define OYJL_TEST_NAME "test"
+
+#include "oyjl_version.h"
+
+#ifdef USE_GCOV
+#define TESTS_RUN \
+  /* Oyjl */ \
+  /* OyjlArgs */ \
+  TEST_RUN( testArgsPrint, "Options print OyjlArgs", 1 ); \
+  TEST_RUN( testArgsCheck, "Options checking OyjlArgs", 1 ); \
+  TEST_RUN( testArgs, "Options handling OyjlArgs", 1 ); \
+  TEST_RUN( testArgsValues, "Value converting OyjlArgs", 1 ); \
+  /* Oyjl */ \
+  TEST_RUN( testVersion, "Version matching", 1 ); \
+  TEST_RUN( testI18N, "Internationalisation", 1 ); \
+  /* OyjlCore */ \
+  TEST_RUN( testString, "String handling OyjlCore", 1 ); \
+  TEST_RUN( testArgsCore, "Options handling OyjlCore", 1 ); \
+  TEST_RUN( testTree, "Tree handling OyjlCore", 1 ); \
+  TEST_RUN( testIO, "File handling OyjlCore", 1 ); \
+  TEST_RUN( testFunction, "Funktions OyjlCore", 1 ); \
+  /* Oyjl */ \
+  /*TEST_RUN( testVersion, "Version matching", 1 ); \
+  TEST_RUN( testI18N, "Internationalisation", 1 );*/ \
+  TEST_RUN( testDataFormat, "Data Format Detection", 1 ); \
+  TEST_RUN( testJson, "JSON handling", 1 ); \
+  TEST_RUN( testFromJson, "Data Writers", 1 ); \
+  TEST_RUN( testJsonRoundtrip, "Data Readers", 1 ); \
+  TEST_RUN( testUiRoundtrip, "Ui Export", 1 ); \
+  TEST_RUN( testUiTranslation, "Ui Translation", 1 ); \
+  TEST_RUN( testToolOyjl, "Tool oyjl", 1 ); \
+  TEST_RUN( testToolOyjlTranslation, "Tool oyjl-translation", 1 );
+#include "oyjl.h"
+
+#else
 #define TESTS_RUN \
   TEST_RUN( testVersion, "Version matching", 1 ); \
   TEST_RUN( testI18N, "Internationalisation", 1 ); \
@@ -22,11 +57,11 @@
   TEST_RUN( testUiTranslation, "Ui Translation", 1 ); \
   TEST_RUN( testToolOyjl, "Tool oyjl", 1 ); \
   TEST_RUN( testToolOyjlTranslation, "Tool oyjl-translation", 1 );
+#endif
 
 void oyjlLibRelease();
 #define OYJL_TEST_MAIN_SETUP  printf("\n    Oyjl Test Program\n");
 
-#include "oyjl_version.h"
 #include "oyjl.h"
 #ifdef OYJL_HAVE_LIBXML2
 #include <libxml/parser.h>
@@ -34,8 +69,12 @@ void oyjlLibRelease();
 #else
 # define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Test Program finished\n\n"); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub);
 #endif
-#define OYJL_TEST_NAME "test"
 #include "oyjl_test_main.h"
+
+#ifdef USE_GCOV
+# include "test-args.c"
+# include "test-core.c"
+#endif
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
@@ -749,120 +788,120 @@ oyjlTESTRESULT_e testDataFormat ()
   int format = oyjlDataFormat(data);
   if(format == -1)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (%s) = %d guessed", data?data:"NULL", format );
+    "oyjlDataFormat (%s) = %d/\"%s\" guessed", data?data:"NULL", format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (%s) = %d guessed", data?data:"NULL", format );
+    "oyjlDataFormat (%s) = %d/\"%s\" guessed", data?data:"NULL", format, oyjlDataFormatToString(format) );
   }
 
   data = "";
   format = oyjlDataFormat(data);
   if(format == -2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   data = "  \t ";
   format = oyjlDataFormat(data);
   if(format == -2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   data = "\t XYZ";
   format = oyjlDataFormat(data);
   if(format == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   data = " {\"a\":}";
   format = oyjlDataFormat(data);
   if(format == 7)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   data = " [{\"a\":}]";
   format = oyjlDataFormat(data);
   if(format == 7)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   data = "  <?xml attr=\"XX\"><p>";
   format = oyjlDataFormat(data);
   if(format == 8)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   data = "  <p>XYZ";
   format = oyjlDataFormat(data);
   if(format == 8)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   data = "  \n---\na:";
   format = oyjlDataFormat(data);
   if(format == 9)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   data = "  \n#include \"oyjl.h\"\nint i;";
   format = oyjlDataFormat(data);
   if(format == 10)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   data = "---a:";
   format = oyjlDataFormat(data);
   if(format == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   data = "  ---\na:";
   format = oyjlDataFormat(data);
   if(format == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlDataFormat (\"%s\") = %d guessed", data, format );
+    "oyjlDataFormat (\"%s\") = %d/\"%s\" guessed", data, format, oyjlDataFormatToString(format) );
   }
 
   return result;
@@ -1563,7 +1602,7 @@ oyjlTESTRESULT_e testJsonRoundtrip () /* Data Readers */
       text_size = strlen(plain);
   if(text && text_from_xml && text_from_xml_size == text_size)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlTreeToXml () <-> oyjlTreeParseXml () %ul<->%ul", text_from_xml_size, text_size );
+    "oyjlTreeToXml () <-> oyjlTreeParseXml () %i<->%i", text_from_xml_size, text_size );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTreeToXml () <-> oyjlTreeParseXml ()" );
@@ -1622,6 +1661,48 @@ oyjlTESTRESULT_e testJsonRoundtrip () /* Data Readers */
   myDeAllocFunc(text_to_xml); text_to_xml = NULL;
   myDeAllocFunc(text); text = NULL;
 
+#ifdef OYJL_HAVE_YAML
+  const char * yaml = "\
+---\n\
+org:\n\
+  free:\n\
+    -\n\
+      s1key_a: val_a\n\
+      s1key_b: val.b\n\
+    -\n\
+      xml@s2attribute_c: val_c\n\
+      xml@text: inner string d\n\
+  key_e: val_e\n\
+  xml@xmlns:xsi: http://www.w3.org/2001/XMLSchema-instance\n\
+  xml@attribute_f: val_f\n\
+  xsi:node:\n\
+    xml@text: inner string g\n\
+    xml@attr_h: val_h\n\
+  val_i: 1234\n\
+  val_j: true\n\
+  val_k: false\n\
+  val_l: 12.34\n\
+  val_m:\n\
+    - 0.0\n\
+    - 1\n\
+    - 2\n\
+    - 3\n\
+    - 4.5";
+  root = oyjlTreeParseYaml( yaml, 0, error_buffer, 128 );
+  text = oyjlTreeToText( root, OYJL_YAML );
+  int size_to = strlen( oyjlTermColorToPlain( yaml ) );
+  int size_from = strlen( oyjlTermColorToPlain( text ) );
+  if(root && size_to == size_from)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeParseYaml() <-> oyjlTreeToYaml()" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeParseYaml() <-> oyjlTreeToYaml()" );
+  }
+  oyjlTreeFree( root ); root = NULL;
+#endif
+  myDeAllocFunc(text); text = NULL;
+
   return result;
 }
 
@@ -1634,7 +1715,6 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
                                        size_t              json_size,
                                        size_t              json_command_size,
                                        size_t              export_size,
-                                       size_t              export_size2,
                                        size_t              bash_size,
                                        oyjlTESTRESULT_e    result,
                                        oyjlTESTRESULT_e    fail )
@@ -1751,13 +1831,14 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json", prog );
-  len = t ? strlen(t) : 0;
-  if(len == json_size)
+  const char * plain = oyjlTermColorToPlain(t);
+  len = t ? strlen(plain) : 0;
+  if(abs((int)len - (int)json_size) <= 1 && oyjlDataFormat(plain) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "%s -X json", prog );
   } else
   { PRINT_SUB_INT( fail, len,
-    "%s -X json", prog );
+    "%s -X json                       %lu/%lu %d", prog, json_size, len, oyjlDataFormat(plain) );
   }
   OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
   if(verbose && len)
@@ -1765,8 +1846,9 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json+command", prog );
-  len = t ? strlen(t) : 0;
-  if(len == json_command_size)
+  plain = oyjlTermColorToPlain(t);
+  len = t ? strlen(plain) : 0;
+  if(abs((int)len - (int)json_command_size) <= 1 && oyjlDataFormat(plain) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "%s -X json+command", prog );
   } else
@@ -1779,8 +1861,9 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X export", prog );
-  len = t ? strlen(t) : 0;
-  if(len == export_size)
+  plain = oyjlTermColorToPlain(t);
+  len = t ? strlen(plain) : 0;
+  if(abs((int)len - (int)export_size) <= 1 && oyjlDataFormat(plain) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "%s -X export", prog );
   } else
@@ -1798,8 +1881,8 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
 
   oyjlUi_s * ui = oyjlUi_ImportFromJson( root, 0 );
   t = oyjlUi_ExportToJson( ui, 0 );
-  len = t ? strlen(t) : 0;
-  if(abs((int)len - (int)export_len) <= 1 || abs((int)len - (int)export_size2) <= 1 )
+  len = t ? strlen(oyjlTermColorToPlain( t )) : 0;
+  if(abs((int)len - (int)export_len) <= 1 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "oyjlUi_ImportFromJson()" );
   } else
@@ -1808,15 +1891,15 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   }
   if(ui) oyjlOptions_SetAttributes( ui->opts, NULL );
   oyjlUi_Release( &ui);
-  OYJL_TEST_WRITE_RESULT( t, len, "oyjlUi_ImportFromJson", "txt" )
+  OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyjlUi_ImportFromJson", "txt" )
   if(verbose && t)
     fprintf( zout, "%s\n", t );
 
   oyjlStringAdd( &name, 0,0, "%s-import.json", prog );
-  oyjlWriteFile( name, t, len );
+  oyjlWriteFile( name, t, strlen(t) );
   if(name) {free(name);} name = NULL;
   oyjlStringAdd( &name, 0,0, "%s-export.json", prog );
-  oyjlWriteFile( name, t, len );
+  oyjlWriteFile( name, t, strlen(t) );
   if(name) {free(name);} name = NULL;
   if(t) {free(t);} t = NULL;
   t = oyjlReadCommandF( &size, "r", malloc, "diff -aur %s-export.json %s-import.json", prog, prog );
@@ -1965,7 +2048,6 @@ oyjlTESTRESULT_e testUiRoundtrip ()
                            8023                      /*json_size*/,
                            8050                      /*json_command_size*/,
                            11682                     /*export_size*/,
-                           16260                     /*export_size2 oyjlTermColor()*/,
                            4144                      /*bash_size*/,
                            result,
                            oyjlTESTRESULT_FAIL       /*fail*/ );
@@ -2086,7 +2168,6 @@ oyjlTESTRESULT_e testUiTranslation ()
                            7441                      /*json_size*/,
                            7473                      /*json_command_size*/,
                            10606                     /*export_size*/,
-                           14671                     /*export_size2 oyjlTermColor()*/,
                            3150                      /*bash_size*/,
                            result,
                            oyjlTESTRESULT_FAIL       /*fail*/ );
@@ -2397,7 +2478,7 @@ oyjlTESTRESULT_e   testTool          ( const char        * prog,
     len = t ? strlen(t) : 0;
     if(len && t[len-1] == '\n' && result_string && result_string[0] && result_string[strlen(result_string)-1] != '\n')
       oyjlStringAdd( &result_string, 0,0, "\n" );
-    if( len == result_size &&
+    if( (len == result_size || result_size == 0) &&
         (!result_string ||
          (result_string && t && strcmp(t, result_string) == 0)) )
     {
@@ -2476,9 +2557,10 @@ oyjlTESTRESULT_e testToolOyjl ()
     { "paths -i i18n_de_DE.c -x '////'",            292,  NULL,       NULL },
     { "format -i i18n_cs_CZ.json",                  5,    "JSON",     NULL },
     { "format -i none.file",                        9,    "no input", NULL },
-    { "-X man > oyjl.1 && cat oyjl.1",              6021, NULL,       NULL }
+    { "-X man > oyjl.1 && cat oyjl.1",              6021, NULL,       NULL },
+    { "-R cli > oyjl.txt && cat oyjl.txt",          0,    NULL,       NULL }
   };
-  int count = 14;
+  int count = 15;
   result = testTool( "oyjl", 3909/*help size*/, commands_oyjl, count, result, oyjlTESTRESULT_FAIL );
 
   return result;
