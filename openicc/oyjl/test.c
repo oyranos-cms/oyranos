@@ -2428,7 +2428,7 @@ oyjlTESTRESULT_e   testTool          ( const char        * prog,
   int size;
   char info[48];
 
-  fprintf( zout, "testing: %s  %d tests\n", oyjlTermColor(oyjlBOLD, prog), count );
+  fprintf( zout, "testing: %s  %d tests\n", oyjlTermColorF(oyjlBOLD, prog), count );
 
   char * command = NULL, *t;
   oyjlStringAdd( &command, 0,0, "%s/%s", OYJL_BUILDDIR, prog );
