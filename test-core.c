@@ -12,6 +12,14 @@
  *  @since    2008/12/04
  */
 
+#ifdef OYJL_TEST_NAME
+#define TEST_CORE_SKIP_MAIN 1
+#endif
+
+#ifdef progNAME
+#undef progNAME
+#endif
+#ifndef TEST_CORE_SKIP_MAIN
 #define TESTS_RUN \
   TEST_RUN( testVersion, "Version matching", 1 ); \
   TEST_RUN( testI18N, "Internationalisation", 1 ); \
@@ -27,6 +35,11 @@ void oyjlLibRelease();
 #define OYJL_TEST_NAME "test-core"
 #include "oyjl.h"
 #include "oyjl_test_main.h"
+#define progNAME( name ) name
+#else
+#define progNAME( name ) name##Core
+#endif
+
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
@@ -39,7 +52,8 @@ char *     oyjlTreePrint             ( oyjl_val            v );
 
 /* --- actual tests --- */
 
-oyjlTESTRESULT_e testVersion()
+#ifndef TEST_CORE_SKIP_MAIN
+oyjlTESTRESULT_e progNAME(testVersion) ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
@@ -60,7 +74,7 @@ int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context_object OYJL_UNUSED,
                                        const char        * format,
                                        ... );
-oyjlTESTRESULT_e testI18N()
+oyjlTESTRESULT_e progNAME(testI18N) ()
 {
   const char * clang;
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -166,6 +180,7 @@ oyjlTESTRESULT_e testI18N()
 
   return result;
 }
+#endif
 
 #define TEST_DOMAIN "org/freedesktop/openicc/tests"
 #define TEST_DOMAIN2 "org2/freedesktop2/openicc2/tests2"
@@ -843,6 +858,9 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
                                        size_t              bash_size,
                                        oyjlTESTRESULT_e    result,
                                        oyjlTESTRESULT_e    fail )
+#ifdef TEST_CORE_SKIP_MAIN
+;
+#else
 {
   char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
   size_t len = c_source ? strlen(c_source) : 0;
@@ -952,13 +970,14 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
-  len = t ? strlen(t) : 0;
-  if(len == json_size && oyjlDataFormat(t) == 7)
+  const char * plain = oyjlTermColorToPlain(t);
+  len = t ? strlen(plain) : 0;
+  if(len == json_size && oyjlDataFormat(plain) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "%s -X json", prog );
   } else
   { PRINT_SUB( fail,
-    "%s -X json                       %lu %d", prog, len, oyjlDataFormat(t) );
+    "%s -X json                       %lu/%lu %d", prog, json_size, len, oyjlDataFormat(plain) );
   system("ls -l oyjl");
   }
   OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
@@ -996,8 +1015,9 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
 
   return result;
 }
+#endif
 
-oyjlTESTRESULT_e testArgs()
+oyjlTESTRESULT_e progNAME(testArgs)()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
