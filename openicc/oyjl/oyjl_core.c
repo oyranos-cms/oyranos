@@ -2618,7 +2618,7 @@ void   oyjlGettextSetup_             ( int                 use_gettext OYJL_UNUS
         const char * gettext_call = OyjlToString2_M(_());
         const char * domain = textdomain(NULL);
 
-        oyjlMessage_p( oyjlMSG_INFO, 0,"bindtextdomain( \"%s\", \"%s\"/%s ) = ", loc_domain, path, dpath, d );
+        oyjlMessage_p( oyjlMSG_INFO, 0,"bindtextdomain( \"%s\", \"%s\" ) = %s textdomain( NULL ) = %s", loc_domain, path, dpath, d );
         if(path)
           oyjlStringAdd( &fn, 0,0, "%s/de/LC_MESSAGES/%s.mo", path ? path : "", loc_domain);
         if(fn)

@@ -163,7 +163,7 @@ oyjlTESTRESULT_e testI18N()
 
   const char * loc = setlocale(LC_ALL,"de_DE.UTF8");
   int use_gettext = 0;
-#ifdef OYJL_USE_GETTEXT
+#if defined(OYJL_USE_GETTEXT)
   use_gettext = 1;
 #endif
   static int my_debug = 0;
@@ -189,7 +189,9 @@ oyjlTESTRESULT_e testI18N()
     "setlocale() initialised failed %s", loc );
   }
 
-  const char * text = _("Example");
+  const char * text;
+#if defined(OYJL_USE_GETTEXT)
+  text = dgettext( OYJL_DOMAIN, "Example" );
   if(strcmp(text,"Beispiel") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "dgettext() good \"%s\"", text );
@@ -197,6 +199,7 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "dgettext() failed \"%s\"", text );
   }
+#endif
 
   oyjl_val catalog = NULL;
   int size;
@@ -544,7 +547,7 @@ oyjlTESTRESULT_e testI18N()
 
   //return result;
 
-#ifdef OYJL_USE_GETTEXT
+#if defined(OYJL_USE_GETTEXT) && !defined(USE_GCOV)
   n = 100000;
   name = "gettext";
   loc = "de_DE.UTF8";
@@ -1647,10 +1650,14 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
       size;
   char * command = NULL;
   char * t = oyjlReadCommandF( &size, "r", malloc, "pkg-config -libs-only-L openicc" );
-
+  const char * gcov_flags = "";
   if(t && t[0] && t[strlen(t)-1] == '\n') t[strlen(t)-1] = '\000';
 
   fprintf( zout, "compiling and testing: %s\n", oyjlTermColor(oyjlBOLD, prog) );
+#ifdef USE_GCOV
+  gcov_flags = " -g -O0 -fprofile-arcs -ftest-coverage ";
+  fprintf( zout, "Compiling with gcov: %s\n", gcov_flags );
+#endif
 
   if(c_source && len == code_size)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -1669,7 +1676,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(!(t && t[0]))
     fprintf( zout, "Compiling without OpenICC\n" );
   if(lib_a_size)
-    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -loyjl-static -loyjl-core-static %s %s -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, t&&t[0]?t:"", t&&t[0]?"-lopenicc-static":"", prog );
+    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -loyjl-static -loyjl-core-static %s %s -lyaml -lyajl -lxml2 %s -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, t&&t[0]?t:"", t&&t[0]?"-lopenicc-static":"", gcov_flags, prog );
   else if(lib_so_size)
     oyjlStringAdd( &command, 0,0, "cc %s -g -O0 -I %s -I %s %s -L %s -lOyjl -lOyjlCore -o %s", verbose?"-Wall -Wextra":"", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, prog );
   if(command)
@@ -1951,7 +1958,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   if(text) {free(text);} text = NULL;
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           10045                     /*code_size*/,
+                           9644                      /*code_size*/,
                            1282                      /*help_size*/,
                            2174                      /*man_size*/,
                            4476                      /*markdown_size*/,

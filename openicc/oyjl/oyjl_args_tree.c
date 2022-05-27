@@ -947,13 +947,16 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         const char * getChoices;
         char * tmp = NULL;
         v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);
-        if(!getChoices)
+        /* the none submitted funtion might be intentional, so skip */
+        if(0 && !getChoices)
         {
+          /* activate when the function prototype is really figured out */
           char * t = oyjlUiGetVariableNameC_(val, NULL);
           oyjlStringAdd( &tmp, 0,0, "getChoicesForVar_%s", t );
           getChoices = tmp;
           free(t);
         }
+        if(getChoices)
         oyjlStr_Add( s, "oyjlOptionChoice_s * %s( oyjlOption_s * opt OYJL_UNUSED, int * selected OYJL_UNUSED, oyjlOptions_s * context OYJL_UNUSED )\n{ fprintf(stderr, \"\\t%%s()\\n\", __func__); return NULL; }\n", getChoices );
         if(tmp) free(tmp);
       }
