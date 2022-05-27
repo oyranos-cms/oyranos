@@ -451,6 +451,7 @@ uint16_t * oyProfileGetWhitePointRamp( int                 width,
     oyFilterNode_Release( &icc );
   }
 
+  oyConversion_Release( &cc );
   oyImage_Release( &input );
   oyImage_Release( &output );
 
@@ -660,6 +661,7 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
   if(mix) oyDeAllocateFunc_(mix);
   if(ramp) oyDeAllocateFunc_(ramp);
   if(vcgt) oyDeAllocateFunc_(vcgt);
+  oyOptions_Release( &module_options );
 
   return error;
 }

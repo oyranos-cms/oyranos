@@ -4,7 +4,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2011 (C) Kai-Uwe Behrmann
+ *            2005-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    helpers
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -107,7 +107,7 @@ char * oyGetTempFileName_            ( const char        * name,
                                        uint32_t            flags,
                                        oyAlloc_f           allocateFunc );
 int  oyWriteMemToFile2_              ( const char        * name,
-                                       void              * mem,
+                                       const void        * mem,
                                        size_t              size,
                                        uint32_t            flags,
                                        char             ** result,
@@ -200,13 +200,13 @@ int      oyByteSwap                  ( void              * data,
 int                oyMiscBlobGetMD5_ ( const void        * buffer,
                                        size_t              size,
                                        unsigned char     * md5_return );
-uint32_t           oyMiscBlobL3_     ( void              * buffer,
+uint32_t           oyMiscBlobL3_     ( const void        * buffer,
                                        size_t              size );
 enum {
   oyHASH_MD5  = 1,
   oyHASH_L3   = 2
 };
-int                oyMiscBlobGetHash_( void              * buffer,
+int                oyMiscBlobGetHash_( const void        * buffer,
                                        size_t              size,
                                        uint32_t            flags,
                                        unsigned char     * md5_return );

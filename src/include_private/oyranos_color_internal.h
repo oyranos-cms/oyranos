@@ -16,6 +16,11 @@
 #ifndef OYRANOS_COLOR_INTERNAL_H
 #define OYRANOS_COLOR_INTERNAL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+
 /* libOyranosConfig */
 extern float bb_100K[92][3];
 double oyEstimateTemperature         ( double              cie_a_,
@@ -23,6 +28,10 @@ double oyEstimateTemperature         ( double              cie_a_,
                                        double            * dist );
 /* libOyranos */
 double oyGetTemperature              ( double              default_ );
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */
 
 #endif /* OYRANOS_COLOR_INTERNAL_H */
 

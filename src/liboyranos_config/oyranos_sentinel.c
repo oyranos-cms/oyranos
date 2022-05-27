@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2006-2012 (C) Kai-Uwe Behrmann
+ *            2006-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    library sentinels
  *  @internal
@@ -208,7 +208,16 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
       {
         oyCMMapi_s * api_ = apis[j];
         if(api_->release)
+        {
+          if(api_ == oyCMMinfo_GetApi(cmm_info))
+            oyCMMinfo_SetApi(cmm_info, NULL);
           api_->release((oyStruct_s**)&api_);
+          if(j > 0)
+          {
+            api_ = apis[j-1];
+            oyCMMapi_SetNext(api_, NULL);
+          }
+        }
       }
       if(apis)
         free(apis);

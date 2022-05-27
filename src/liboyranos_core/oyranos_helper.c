@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2005-2009 (C) Kai-Uwe Behrmann
+ *            2005-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    helpers
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -297,11 +297,11 @@ void* oyAllocateWrapFunc_       (size_t        size,
  *  @param[in]     flags               zero or oyHASH_MD5 or oyHASH_L3
  *  @param[out]    digest              result in OY_HASH_SIZE * 2 bytes
  *
- *  @version Oyranos: 0.9.5
- *  @date    2013/03/13
+ *  @version Oyranos: 0.9.7
+ *  @date    2022/05/26
  *  @since   2013/03/13 (Oyranos: 0.9.5)
  */
-int                oyMiscBlobGetHash_( void              * buffer,
+int                oyMiscBlobGetHash_( const void        * buffer,
                                        size_t              size,
                                        uint32_t            flags,
                                        unsigned char     * digest )
@@ -313,11 +313,12 @@ int                oyMiscBlobGetHash_( void              * buffer,
   {
     if(flags & oyHASH_L3)
     {
-      uint32_t * dig = (uint32_t*)digest;
+      uint32_t dig;
 
       memset( digest, 0, OY_HASH_SIZE * 2 );
 
-      dig[0] = oy_hashlittle( buffer, size, 0 );
+      dig = oy_hashlittle( buffer, size, 0 );
+      sprintf( (char*) digest, "%d", dig );
     }
     else
     {
@@ -381,7 +382,7 @@ int                oyMiscBlobGetMD5_ ( const void        * buffer,
   }
 }
 
-uint32_t           oyMiscBlobL3_     ( void              * buffer,
+uint32_t           oyMiscBlobL3_     ( const void        * buffer,
                                        size_t              size )
 {
   uint32_t ret = 0;

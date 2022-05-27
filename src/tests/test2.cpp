@@ -59,7 +59,8 @@
   TEST_RUN( testICCsCheck, "CMMs ICC conversion check", 1 ); \
   TEST_RUN( testCCorrectFlags, "Conversion Correct Option Flags", 1 ); \
   TEST_RUN( testCache, "Cache", 1 ); \
-  TEST_RUN( testPaths, "Paths", 1 );
+  TEST_RUN( testPaths, "Paths", 1 ); \
+  TEST_RUN( testIO, "I/O", 1 );
 
 #include "oyranos.h"
 #include "oyranos_string.h"
@@ -118,6 +119,8 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
 oyjlTESTRESULT_e testVersion()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  char * t;
+  int i;
 
   fprintf(stdout, "\n" );
   fprintf(zout, "compiled version:     %d\n", OYRANOS_VERSION );
@@ -130,6 +133,12 @@ oyjlTESTRESULT_e testVersion()
     result = oyjlTESTRESULT_SUCCESS;
   else
     result = oyjlTESTRESULT_FAIL;
+
+  for(i = 1; i < 5; ++i)
+  {
+    t = oyVersionString(i,0);
+    fprintf(zout, "oyVersionString( %d ) = %s\n", i, t );
+  }
 
   testobj = oyObject_NewWithAllocators( myAllocFunc, myDeAllocFunc, "testobj" );
 
@@ -168,6 +177,15 @@ oyjlTESTRESULT_e testI18N()
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyLanguage() uninitialised failed %s",lang?lang:"---" );
+  }
+
+  lang = oyLang();
+  if((lang && (strcmp(lang, "C") == 0)) || !lang)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyLang() uninitialised %s",lang?lang:"---" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oyLang() uninitialised %s",lang?lang:"---" );
   }
 
   setlocale(LC_ALL,"");
@@ -246,6 +264,17 @@ oyjlTESTRESULT_e testDBDefault()
     "oyGetPersistentString(%s) no", TEST_DOMAIN TEST_KEY );
   }
   oyFree_m_(start);
+
+  int ready = oyDbHandlingReady();
+  if(ready)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oyDbHandlingReady()" );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyDbHandlingReady()" );
+  }
 
   error = oySetPersistentString( TEST_DOMAIN TEST_KEY, oySCOPE_USER,
                                  "NULLTestValue", "NULLTestComment" );
@@ -770,7 +799,8 @@ oyjlTESTRESULT_e testStringRun ()
   oyFree_m_(test_out);
 
   int list_n = 0, filt_n = 0, orig_n;
-  char ** list = oyStringSplit( "org/domain/eins.lib;org/domain/eins.lib;org/domain/zwei.txt;org/domain/drei.lib;org/domain/zwei.txt;org/domain/eins.lib;net/welt/vier.lib;net/welt/vier.txt;/net/welt/fuenf;/net/welt/fuenf", ';', &list_n, oyAllocateFunc_ );
+  const char * separateable_text = "org/domain/eins.lib;org/domain/eins.lib;org/domain/zwei.txt;org/domain/drei.lib;org/domain/zwei.txt;org/domain/eins.lib;net/welt/vier.lib;net/welt/vier.txt;/net/welt/fuenf;/net/welt/fuenf";
+  char ** list = oyStringSplit( separateable_text, ';', &list_n, oyAllocateFunc_ );
   char ** filt = oyStringListFilter_( (const char**)list, list_n,
                                       "org/domain", NULL, "lib", &filt_n,
                                       oyAllocateFunc_ );
@@ -818,7 +848,40 @@ oyjlTESTRESULT_e testStringRun ()
     for(i = 0; i < list_n; ++i)
       fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
   }
+
+  oyStringListSetHeadingWhiteSpace( list, list_n, 4, oyAllocateFunc_,oyDeAllocateFunc_ );
+  if(strcmp(list[0],"    org/domain/eins.lib") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyStringListSetHeadingWhiteSpace()" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyStringListSetHeadingWhiteSpace()" );
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
+  }
   oyStringListRelease_( &list, list_n, oyDeAllocateFunc_ );
+
+  char * t = NULL;
+  size_t size = 0;
+  error = oyStringFromData_( separateable_text,
+                             strlen(separateable_text), &t,
+                             &size, oyAllocateFunc_ );
+  if( size == 186 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyStringFromData_()  %d", size );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyStringFromData_()  %d", size );
+  }
+  oyFree_m_(t);
+
+  if(oyStringCaseCmp_("Lab","lab") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyStringCaseCmp_()" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyStringCaseCmp_()" );
+  }
 
   return result;
 }
@@ -923,7 +986,7 @@ oyjlTESTRESULT_e testJson ()
         for(int j = 0; j < count; ++j)
           fprintf( zout, "%d: %s\n", j, paths[j] );
 
-      double clck = oyClock();
+      double clck = oyjlClock();
       const char * p = "org/free/[0]/s1key_b";
       int k = 0, n = 500;
       for(k = 0; k < n; ++k)
@@ -933,7 +996,7 @@ oyjlTESTRESULT_e testJson ()
         if(!t) break;
         oyFree_m_(t);
       }
-      clck = oyClock() - clck;
+      clck = oyjlClock() - clck;
       if( k == n )
       { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, n,clck/(double)CLOCKS_PER_SEC,"key",
         "oyjlValueText(%s)", p );
@@ -1798,6 +1861,7 @@ oyjlTESTRESULT_e testBlob ()
   const char static_ptr[16] = {0,1,0,1,0,1,0,1,  0,1,0,1,0,1,0,1};
   const char type[8] = "test";
   oyObject_s object = oyObject_New("testBlobobject");
+  const char * t;
   OBJECT_COUNT_SETUP
 
   fprintf(stdout, "\n" );
@@ -1813,6 +1877,11 @@ oyjlTESTRESULT_e testBlob ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyBlob_SetFromSatic() failed" );
   }
+
+  t = oyObject_Show(object);
+  fprintf( zout, "oyObject_Show(testBlobobject) %s\n", t );
+  t = oyObject_Show(a->oy_);
+  fprintf( zout, "oyObject_Show(oyBlob_s) %s", t );
 
   b = oyBlob_Copy( a, object );
 
@@ -2295,6 +2364,17 @@ oyjlTESTRESULT_e testInterpolation ()
     "Interpolation c failed: %f == %u", pol, ramp3[2*3+2] );
   }
 
+  float rampF[4] = { 0, 21845, 43690, 65535 };
+  pol = oyLinInterpolateRampF32( rampF, 4, 2.0/3.0 );
+  if(pol == rampF[2])
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "Interpolation is fine." );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "Interpolation failed: %f == %f", pol, rampF[2] );
+  }
 
   return result;
 }
@@ -2467,11 +2547,21 @@ oyjlTESTRESULT_e testProfile ()
     "found oyPROFILE_EFFECT" );
   }
   oyProfile_Release( &p_a );
+  int error = oySetDefaultProfile( oyPROFILE_EFFECT, oySCOPE_USER, name );
+  if(!error)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
+    "oySetDefaultProfile(oyPROFILE_EFFECT)" );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    "oySetDefaultProfile(oyPROFILE_EFFECT)" );
+  }
   if(name) oyFree_m_( name );
 
   /* get D50 */
   double XYZ[3] = {-1.0, -1.0, -1.0};
-  int error = oyGetDisplayWhitePoint( 2, XYZ );
+  error = oyGetDisplayWhitePoint( 2, XYZ );
   if(!error && XYZ[0] != -1.0 && XYZ[1] != -1.0 && XYZ[2] != -1.0)
   {
     PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
@@ -2495,6 +2585,8 @@ oyjlTESTRESULT_e testProfile ()
     "oyGetDisplayWhitePoint() %g %g %g mode[7] %d   ", XYZ[0], XYZ[1], XYZ[2], error );
   }
 
+  double XYZold[3] = {-1, -1, -1};
+  error = oyGetDisplayWhitePoint( 1, XYZold );
   /* set a custom white point */
   XYZ[0] = XYZ[1] = XYZ[2] = 0.333;
   oySetDisplayWhitePoint( XYZ, oySCOPE_USER, "test white point" );
@@ -2509,7 +2601,7 @@ oyjlTESTRESULT_e testProfile ()
     PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyGetDisplayWhitePoint() %g %g %g mode[1]", XYZ[0], XYZ[1], XYZ[2] );
   }
-
+  oySetDisplayWhitePoint( XYZold, oySCOPE_USER, "old automatic wtpt" );
 
   oyOption_s * matrix = oyOption_FromRegistration("///color_matrix."
               "from_primaries."
@@ -2602,7 +2694,97 @@ oyjlTESTRESULT_e testProfile ()
   }
   if(data) { free(data); data = NULL; }
 
+  icColorSpaceSignature csp = (icColorSpaceSignature) oyProfile_GetSignature( p, oySIGNATURE_COLOR_SPACE );
+  const char * t = oyICCColorSpaceGetName( csp );
+  if(t && t[0])
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyICCColorSpaceGetName() %s", oyNoEmptyString_m_(t) );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyICCColorSpaceGetName() %s", oyNoEmptyString_m_(t) );
+  }
+  t = oyICCColorSpaceGetChannelName( csp, 0, oyNAME_NAME);
+  if(t && t[0])
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyICCColorSpaceGetChannelName(0) %s", oyNoEmptyString_m_(t) );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyICCColorSpaceGetChannelName(0) %s", oyNoEmptyString_m_(t) );
+  }
+
+  icProfileClassSignature cl = (icProfileClassSignature) oyProfile_GetSignature( p, oySIGNATURE_CLASS );
+  t = oyICCDeviceClassDescription( cl );
+  if(t && t[0])
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyICCDeviceClassDescription() %s", oyNoEmptyString_m_(t) );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyICCDeviceClassDescription() %s", oyNoEmptyString_m_(t) );
+  }
+
+  icPlatformSignature plf = (icPlatformSignature) oyProfile_GetSignature( p, oySIGNATURE_PLATFORM );
+  t = oyICCPlatformDescription( plf );
+  if(t && t[0])
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyICCPlatformDescription() %s", oyNoEmptyString_m_(t) );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyICCPlatformDescription() %s", oyNoEmptyString_m_(t) );
+  }
+
+  icSignature cmm = oyProfile_GetSignature( p, oySIGNATURE_CMM );
+  t = oyICCCmmDescription( cmm );
+  if(t && t[0])
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyICCCmmDescription() %s", oyNoEmptyString_m_(t) );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyICCCmmDescription() %s", oyNoEmptyString_m_(t) );
+  }
   oyProfile_Release( &p );
+
+  const char * fn = "ITULab.icc";
+  error = oyCheckProfile(fn, 0);
+  if(!error)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyCheckProfile(%s) %d", fn, error );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyCheckProfile(%s) %d", fn, error );
+  }
+
+  size = oyGetProfileSize( fn );
+  if(size > 128)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyGetProfileSize(%s) %d", fn, (int)size );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyGetProfileSize(%s) %d", fn, (int)size );
+  }
+  char * pn = oyGetPathFromProfileName( fn, oyAllocateFunc_ );
+  if(pn)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyGetPathFromProfileName(%s) %s", fn, oyNoEmptyString_m_(pn) );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyGetPathFromProfileName(%s) %s", fn, oyNoEmptyString_m_(pn) );
+  }
 
   p = oyProfile_FromFile( ICC_TEST_NAME".icc", OY_SKIP_NON_DEFAULT_PATH, testobj );
   if(!p )
@@ -2642,6 +2824,54 @@ oyjlTESTRESULT_e testProfile ()
 
     oyProfile_Release( &p );
   }
+
+  union { char c[8]; icUInt64Number ic; } test64 = { .c = {'T','e','s','t',0,0,0,0} };
+  union { char c[8]; uint64_t lu; } test = { .c = {'T','e','s','t',0,0,0,0} };
+  test.lu = oyValueUInt64( test64.ic );
+  if( memcmp(test.c,"Test",4) == 0 || memcmp(test.c,"tseT",4) == 0 )
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyValueUInt64( \"Test\")  = %c %c %c %c %c %c %c %c", test.c[0], test.c[1], test.c[2], test.c[3], test.c[4], test.c[5], test.c[6], test.c[7] );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyValueUInt64( \"Test\")  = %c %c %c %c %c %c %c %c", test.c[0], test.c[1], test.c[2], test.c[3], test.c[4], test.c[5], test.c[6], test.c[7] );
+  }
+
+  union { unsigned char c[4]; icUInt32Number ic; uint32_t lu; } test32 = { .c = {'T','e','s','t'} };
+  test32.lu = oyValueUInt32( test32.ic );
+  if( memcmp(test32.c,"Test",4) == 0 || memcmp(test32.c,"tseT",4) == 0 )
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyValueUInt32( \"Test\")  = %c %c %c %c", test32.c[0], test32.c[1], test32.c[2], test32.c[3] );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyValueUInt32( \"Test\")  = %c %c %c %c", test32.c[0], test32.c[1], test32.c[2], test32.c[3] );
+  }
+  test32.ic = oyByteSwapUInt32( test32.ic );
+  if( memcmp(test32.c,"Test",4) == 0 || memcmp(test32.c,"tseT",4) == 0 )
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyByteSwapUInt32( \"Test\")  = %c %c %c %c", test32.c[0], test32.c[1], test32.c[2], test32.c[3] );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyByteSwapUInt32( \"Test\")  = %c %c %c %c", test32.c[0], test32.c[1], test32.c[2], test32.c[3] );
+  }
+
+  union { unsigned char c[2]; icUInt16Number ic; } test16 = { .c = {'T','e'} };
+  test16.ic = oyByteSwapUInt16( test16.ic );
+  if( memcmp(test16.c,"eT",2) == 0 )
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyByteSwapUInt16( \"Te\")  = %c %c", test16.c[0], test16.c[1] );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyByteSwapUInt16( \"Te\")  = %c %c", test16.c[0], test16.c[1] );
+  }
+
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
@@ -2981,11 +3211,25 @@ oyjlTESTRESULT_e testProfileLists ()
                 repeat,  oyjlProfilingToString(i,clck/(double)CLOCKS_PER_SEC, "calls") );
 #endif
 
+  int n = 0;
+  char ** path_names =  oyProfilePathsGet( &n, oyAllocateFunc_ );
+  if(n)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyProfilePathsGet() %d", n );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyProfilePathsGet() %d", n );
+  }
+
   return result;
 }
 
 #include "oyProfile_s_.h"           /* oyProfile_ToFile_ */
 #include "oyranos_color.h"
+#include "oyranos_color_internal.h" /* oyGetTemperature() */
+#include "oyranos_monitor_effect.h" /* oyProfile_CreateEffectVCGT() */
 
 oyjlTESTRESULT_e testEffects ()
 {
@@ -3172,6 +3416,47 @@ oyjlTESTRESULT_e testEffects ()
 
   oyProfile_ToFile_( (oyProfile_s_*)abstract, "test_wtpt_effect-bradford.icc" );
   oyProfile_Release( &abstract );
+
+  /* would need a profile containing VCGT */
+  oyProfile_s * p = oyProfile_FromStd( oyEDITING_RGB, 0, testobj );
+  int found = oyExistPersistentString( OY_DISPLAY_STD "/night", "1", 0, oySCOPE_USER_SYS );
+  fprintf( zout, "night is \"1\" %s\n", found?"on":"off" );
+  error = oyProfile_CreateEffectVCGT(p);
+  if(error == 0)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyProfile_CreateEffectVCGT() error = %d", error );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyProfile_CreateEffectVCGT() error = %d", error );
+  }
+  oyProfile_Release( &p );
+
+  error = oyGetDisplayWhitePoint( 2 /* D50 */, src_XYZ );
+  if(!error)
+    error = oyGetDisplayWhitePoint( 6 /* D95 */, dst_XYZ );
+  oyMAT3 wtpt_adapt;
+  oyCIEXYZ srcWtpt = {src_XYZ[0], src_XYZ[1], src_XYZ[2]},
+           dstIllu = {dst_XYZ[0], dst_XYZ[1], dst_XYZ[2]};
+  error = !oyAdaptationMatrix( &wtpt_adapt, NULL, &srcWtpt, &dstIllu );
+  oyMAT3 CHAD = { { { {1,0,0} },
+                    { {0,1,0} },
+                    { {0,0,1} } } };
+  const char * t = oyMAT3show( &CHAD );
+  if(t)
+  {
+    PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyMAT3show(oyMAT3)" );
+    fprintf( zout, "%s", t );
+  } else
+  {
+    PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyMAT3show(oyMAT3)" );
+  }
+
+  double temperature = oyGetTemperature(-1);
+  fprintf( zout, "oyGetTemperature() = %g°K\n", temperature );
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
@@ -4667,6 +4952,40 @@ oyjlTESTRESULT_e testPolicy ()
 #endif
   }
 
+  const char ** names = NULL;
+  int count = 0, i, current = -1;
+  oyOptionChoicesGet( oyWIDGET_POLICY, &count, &names, &current );
+
+  for(i = 0; i < count; ++i)
+  {
+    char * full_name = NULL;
+    int error = oyPolicyFileNameGet( names[i],
+                                 &full_name,
+                                 oyAllocateFunc_ );
+    if( full_name && error == 0 )
+    { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+      "oyPolicyFileNameGet( %s ) = %s", names[i], full_name );
+    } else
+    { PRINT_SUB( oyjlTESTRESULT_FAIL,
+      "oyPolicyFileNameGet( %s ) = %s", names[i], full_name );
+    }
+  }
+
+  const char * opts[] = {"add_html_header","1",
+                         "add_oyranos_title","1",
+                         "add_oyranos_copyright","1",
+                         "title","Title",
+                         "version","0.5",
+                         NULL};
+  xml = oyDescriptionToHTML( oyGROUP_ALL, opts, oyAllocateFunc_ );
+  if(xml)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyDescriptionToHTML() %d", strlen(xml) );
+    oyFree_m_(xml);
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyDescriptionToHTML() %d", strlen(xml) );
+  }
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
@@ -4694,7 +5013,7 @@ oyjlTESTRESULT_e testWidgets ()
 
   if( name && tooltip )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyWidgetTitleGet \"%s\" %d\n %s %d", name, type, tooltip, flags );
+    "oyWidgetTitleGet \"%s\" %d %s %d", name, type, tooltip, flags );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyWidgetTitleGet" );
@@ -4732,7 +5051,7 @@ oyjlTESTRESULT_e testWidgets ()
   if( name && tooltip && (flags & OY_LAYOUT_NO_CHOICES) &&
       type == oyWIDGETTYPE_DEFAULT_PROFILE )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyWidgetTitleGet \"%s\"\n\t%s %d", name, tooltip, flags );
+    "oyWidgetTitleGet \"%s\"  %s %d", name, tooltip, flags );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyWidgetTitleGet" );
@@ -4779,6 +5098,19 @@ oyjlTESTRESULT_e testWidgets ()
   }
 
   oyOptionChoicesFree( option, &choices_string_list, choices );
+
+  oyMessageFuncSet( oyGuiMessageFunc );
+  oyMessageFunc_p( oyMSG_ERROR, 0, "oyShowMessage() Test" );
+  oyMessageFuncSet( oyMessageFunc );
+
+  const char * t = oyPrintTime();
+  if( strlen(t) )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyPrintTime() = %s", t );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyPrintTime() = %s", t );
+  }
 
   fprintf( zout, "\n");
 
@@ -7668,6 +8000,28 @@ oyjlTESTRESULT_e testDAG2()
   }
   oyImage_Release( &image );
 
+  system( "pngtopnm " OY_SOURCEDIR "/extras/icons/oyranos.png > " OY_SOURCEDIR "/extras/icons/oyranos.ppm" );
+  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.ppm", 0, &image, 0 );
+  if( image )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_FromFile( \"oyranos.ppm\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyImage_FromFile()" );
+  }
+  oyImage_Release( &image );
+
+  system( "pnmtojpeg " OY_SOURCEDIR "/extras/icons/oyranos.ppm > " OY_SOURCEDIR "/extras/icons/oyranos.jpg" );
+  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.jpg", 0, &image, 0 );
+  if( image )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_FromFile( \"oyranos.jpg\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyImage_FromFile()" );
+  }
+  oyImage_Release( &image );
+
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
@@ -9603,6 +9957,42 @@ oyjlTESTRESULT_e testCache()
   }
 
   oyTestCacheListClear_();
+  
+  unsigned char md5_return[OY_HASH_SIZE*2];
+  clck = oyClock();
+  for(int j = 0; j < repeat; ++j)
+  for(i = 0; i < count; ++i)
+  {
+    oyMiscBlobGetHash_(hash_texts[7], strlen(hash_texts[7]), oyHASH_L3, md5_return);
+  }
+  clck = oyClock() - clck;
+  uint32_t hash32 = oyMiscBlobL3_( hash_texts[7], strlen(hash_texts[7]) );
+  if( strcmp( (const char*) md5_return, "51124909" ) == 0 &&
+      hash32 == 51124909 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, repeat,clck/(double)CLOCKS_PER_SEC,"entries",
+    "oyMiscBlobGetHash_(oyHASH_L3) = %s", md5_return );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyMiscBlobGetHash_(oyHASH_L3) = %s", md5_return );
+  }
+
+  uint32_t id[8]={0,0,0,0,0,0,0,0};
+  clck = oyClock();
+  for(int j = 0; j < repeat; ++j)
+  for(i = 0; i < count; ++i)
+    oyMiscBlobGetHash_(hash_texts[7], strlen(hash_texts[7]), oyHASH_MD5, (unsigned char*)id);
+  clck = oyClock() - clck;
+  char * t = NULL;
+  oyjlStringAdd( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                          "%08x%08x%08x%08x",
+                          id[0],id[1],id[2],id[3] );
+  if( strcmp( t, "99dff16d86c143ad68ff2a390fad6233" ) == 0 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, repeat,clck/(double)CLOCKS_PER_SEC,"entries",
+    "oyMiscBlobGetHash_(oyHASH_MD5) = %s", t );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyMiscBlobGetHash_(oyHASH_MD5) = %s", t );
+  }
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
@@ -9786,6 +10176,80 @@ oyjlTESTRESULT_e testConfDomain ()
   oyFree_m_( rank_list );
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
+
+  return result;
+}
+
+oyjlTESTRESULT_e testIO()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  size_t size = 0;
+  char * text = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
+                                        "https://location.services.mozilla.com/v1/geolocate?key=test", NULL );
+  if(text)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyReadUrlToMemf_( ): %d", strlen(text) );
+    oyDeAllocateFunc_(text);
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyReadUrlToMemf_( ): %d", strlen(text) );
+  }
+
+  const char * dir = "not_here";
+  int r = oyMakeDir_ (dir);
+  if(r == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyMakeDir_(\"%s\"): %d", dir, r );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyMakeDir_(\"%s\"): %d", dir, r );
+  }
+  char * out_name = NULL;
+  r = oyWriteMemToFile2_( "test-file",
+                          "Test", strlen("Test"), OY_FILE_TEMP_DIR,
+                          &out_name, oyAllocateFunc_ );
+  if(r == 0 && out_name)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyWriteMemToFile2_(\"%s\"): %d", out_name, r );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyWriteMemToFile2_(\"%s\"): %d", out_name, r );
+  }
+
+  r = oyRemoveFile_(out_name);
+  if(r == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyRemoveFile_(\"%s\"): %d", out_name, r );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyRemoveFile_(\"%s\"): %d", out_name, r );
+  }
+  oyFree_m_(out_name);
+
+  int files_n = 0;
+  char ** files = oyLibFilesGet_( &files_n, OY_CMMSUBPATH, oySCOPE_USER_SYS,
+                                  0, OY_MODULE_NAME, 0, oyAllocateFunc_ );
+  if(files_n > 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyLibFilesGet_(): %d", files_n );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyLibFilesGet_(): %d", files_n );
+  }
+  oyjlStringListRelease( &files, files_n, oyDeAllocateFunc_ );
+
+  files = oyGetFiles_( ".", &files_n );
+  if(files_n > 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyGetFiles_(): %d", files_n );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyGetFiles_(): %d", files_n );
+  }
+  oyjlStringListRelease( &files, files_n, oyDeAllocateFunc_ );
 
   return result;
 }

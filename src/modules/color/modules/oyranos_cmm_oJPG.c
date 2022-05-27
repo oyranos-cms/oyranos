@@ -3,7 +3,7 @@
  *  JPEG file i/o module for Oyranos 
  *
  *  @par Copyright:
- *            2014-2015 (C) Kai-Uwe Behrmann
+ *            2014-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    JPEG filter for Oyranos
  *  @internal
@@ -619,6 +619,7 @@ oyImage_s *  oyImage_FromJPEG        ( const char        * filename,
   /* create a Oyranos image */
   pixel_type = oyChannels_m(nchannels) | oyDataType_m(data_type); 
   image = oyImage_Create( width, height, NULL, pixel_type, prof, 0 );
+  oyProfile_Release( &prof );
   oyArray2d_s * a = oyArray2d_Create( buf, width*nchannels, height, data_type, NULL );
   oyImage_ReadArray(image, NULL, a, NULL);
   oyArray2d_Release( &a );

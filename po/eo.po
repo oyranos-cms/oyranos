@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-05-22 04:00+0200\n"
+"POT-Creation-Date: 2022-05-26 03:58+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -459,7 +459,7 @@ msgstr ""
 msgid "Allowed option choices are:"
 msgstr ""
 
-#: tools/oyranos-profile.c:831
+#: tools/oyranos-profile.c:838
 msgid "Allowed option values are -f openicc and -f xml. unknown format:"
 msgstr ""
 
@@ -2015,7 +2015,7 @@ msgstr ""
 
 #: tools/oyranos-profile.c:482 tools/oyranos-profile.c:511
 #: tools/oyranos-profile.c:528 tools/oyranos-profile.c:590
-#: tools/oyranos-profile.c:832 tools/oyranos-profile.c:966
+#: tools/oyranos-profile.c:839 tools/oyranos-profile.c:976
 msgid "Exit!"
 msgstr ""
 
@@ -4436,7 +4436,7 @@ msgstr ""
 msgid "Quit"
 msgstr ""
 
-#: tools/oyranos-profile.c:966
+#: tools/oyranos-profile.c:976
 msgid "RGB primaries missed"
 msgstr ""
 

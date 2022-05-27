@@ -755,7 +755,7 @@ char * oyGetTempFileName_            ( const char        * name,
 
 /* TODO: support flags - OY_FILE_APPEND */
 int  oyWriteMemToFile2_              ( const char        * name,
-                                       void              * mem,
+                                       const void        * mem,
                                        size_t              size,
                                        uint32_t            flags,
                                        char             ** result,

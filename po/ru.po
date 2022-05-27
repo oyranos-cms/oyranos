@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-05-22 04:00+0200\n"
+"POT-Creation-Date: 2022-05-26 03:58+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -445,7 +445,7 @@ msgstr ""
 msgid "Allowed option choices are:"
 msgstr ""
 
-#: tools/oyranos-profile.c:831
+#: tools/oyranos-profile.c:838
 msgid "Allowed option values are -f openicc and -f xml. unknown format:"
 msgstr ""
 
@@ -1952,7 +1952,7 @@ msgstr ""
 
 #: tools/oyranos-profile.c:482 tools/oyranos-profile.c:511
 #: tools/oyranos-profile.c:528 tools/oyranos-profile.c:590
-#: tools/oyranos-profile.c:832 tools/oyranos-profile.c:966
+#: tools/oyranos-profile.c:839 tools/oyranos-profile.c:976
 msgid "Exit!"
 msgstr "Выход!"
 
@@ -4340,7 +4340,7 @@ msgstr ""
 msgid "Quit"
 msgstr ""
 
-#: tools/oyranos-profile.c:966
+#: tools/oyranos-profile.c:976
 msgid "RGB primaries missed"
 msgstr ""
 

@@ -88,7 +88,7 @@ char*              oyStringAppend_   ( const char        * text,
  *  @since   2009/01/06 (Oyranos: 0.1.10)
  *  @date    2009/01/06
  */
-int                oyStringFromData_ ( const oyPointer     ptr,
+int                oyStringFromData_ ( const void        * ptr,
                                        size_t              size,
                                        char             ** text_new,
                                        size_t            * text_new_size,
@@ -370,23 +370,6 @@ int    oyStringSegmentX_             ( const char        * text,
   }
 
   return 0;
-}
-
-void               oyStringListAddString_ ( char       *** list,
-                                       int               * n,
-                                       char             ** string,
-                                       oyAlloc_f           allocateFunc,
-                                       oyDeAlloc_f         deallocateFunc )
-{
-  int alt_n = *n;
-  char ** tmp = oyStringListCat((const char**)*list, alt_n,
-                                    (const char**)string, 1,
-                                     n, allocateFunc);
-
-  deallocateFunc(*string); *string = 0;
-  oyStringListRelease(list, alt_n, deallocateFunc);
-
-  *list = tmp;
 }
 
 

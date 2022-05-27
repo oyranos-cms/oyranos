@@ -40,7 +40,7 @@ void               oyStringFree_     ( char             ** text,
 char*              oyStringAppend_   ( const char        * text,
                                        const char        * append,
                                        oyAlloc_f           allocateFunc );
-int                oyStringFromData_ ( const oyPointer     ptr,
+int                oyStringFromData_ ( const void        * ptr,
                                        size_t              size,
                                        char             ** text,
                                        size_t            * text_size,

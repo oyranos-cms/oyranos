@@ -18,6 +18,10 @@
 
 #include "oyProfiles_s.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 int      oyDisplayColorServerIsActive( );
 int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof );
 int      oyAddLinearDisplayEffect    ( oyOptions_s      ** module_options );
@@ -40,6 +44,10 @@ void     oyDeviceSetupVCGT           ( oyConfig_s        * device,
                                        const char        * profile_name );
 int      oyDeviceSetup2              ( oyConfig_s        * device,
                                        oyOptions_s       * options );
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */
 
 #endif /* OYRANOS_MONITOR_EFFECT_H */
 

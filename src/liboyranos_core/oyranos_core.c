@@ -147,7 +147,7 @@ void               oyLibCoreRelease  ( )
 {
   int i;
 
-  for(i = 1; i <= 5; ++i)
+  for(i = 0; i < 5; ++i)
     if(oy_version_string_[i])
     {
       oyFree_m_(oy_version_string_[i]);
@@ -1229,18 +1229,18 @@ unsigned long oyValueUInt64 (icUInt64Number val)
   {
     unsigned char        *temp  = (unsigned char*) &val;
 
-    unsigned char  uint64[8];
+    unsigned char  c8[8];
     int little = 0,
-        big    = 8;
+        big    = 8-1;
 
     for (; little < 8 ; little++ ) {
-      uint64[little] = temp[big--];
+      c8[little] = temp[big--];
     }
 
     {
-    unsigned long *erg = (unsigned long*) &uint64[0];
+    unsigned long *erg = (unsigned long*) &c8[0];
 
-    return (long)*erg;
+    return (unsigned long)*erg;
     }
   } else
   return (long)val;
