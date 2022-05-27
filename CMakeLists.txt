@@ -619,6 +619,24 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         DEPENDS oyjl-test-static
         DEPENDS oyjl-test-extra-static
         COMMENT "Check Fast" VERBATIM )
+  # coverage testing
+  IF(USE_GCOV AND CMAKE_COMPILER_IS_GNUCC)
+    MESSAGE("testing coverage using gcc's gcov; try target: coverage")
+    INCLUDE(CodeCoverage)
+    SET(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME} OFF)
+    MESSAGE( "-- ENABLE_SHARED_LIBS_${PROJECT_UP_NAME}: ${ENABLE_SHARED_LIBS_${PROJECT_UP_NAME}} (USE_GCOV + GNUCC)" )
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+    SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+    SETUP_TARGET_FOR_COVERAGE(
+				coverage  # Name for custom target.
+				oyjl-test-static # Name of the test driver executable that runs the tests.
+									# NOTE! This should always have a ZERO as exit code
+									# otherwise the coverage generation will not complete.
+				coverage            # Name of output directory.
+			)
+  ENDIF(USE_GCOV AND CMAKE_COMPILER_IS_GNUCC)
 ENDIF( ENABLE_TESTS_${PROJECT_UP_NAME} )
 
 IF(ENABLE_INSTALL_${PROJECT_UP_NAME})

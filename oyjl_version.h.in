@@ -25,6 +25,7 @@
 #cmakedefine OYJL_HAVE_LIBINTL_H
 #cmakedefine OYJL_USE_GETTEXT
 #cmakedefine OYJL_HAVE_REGEX_H
+#cmakedefine USE_GCOV
 #define OYJL_DOMAIN     "@PROJECT_DOWN_NAME@"
 #define OYJL_LOCALEDIR  "@OYJL_LOCALEDIR@"
 #define OYJL_DATADIR    "@CMAKE_INSTALL_FULL_DATAROOTDIR@"      /**< install variable */
