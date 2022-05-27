@@ -655,6 +655,7 @@ oyjlTESTRESULT_e testString ()
   clck = oyjlClock() - clck;
   fprintf( zout, "oyjlStr_AppendN()\t%dx9  %d    \t\%s\n", n, (int)strlen(oyjlStr(string)),
                  oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  oyjlStr_Clear( string );
   oyjlStr_Release( &string );
 
   int inside = 0;
@@ -842,6 +843,17 @@ oyjlTESTRESULT_e testString ()
   if(t) { free(t); t = NULL; }
   REGEX_REPLACE( "\033[1mSomeText\033[0m \033[38;2;0;200;0mSomeMoreText\033[0m", "\033[[0-9;]*m", "", "SomeText SomeMoreText" )
   if(t) { free(t); t = NULL; }
+
+  int length = 0;
+  regexp = "txt$";
+  tmp = oyjlRegExpDelimiter( text, regexp, &length );
+  if(tmp != text)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlRegExpDelimiter( \"%s\", \"%s\" ) = %s length=%d", text, oyjlNoEmpty(regexp), tmp, length );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
+  }
 
   return result;
 }
@@ -1055,6 +1067,9 @@ oyjlTESTRESULT_e progNAME(testArgs)()
                                     {"1", _("Print Camera"), _("JSON"), ""},
                                     {"2", _("Print None"), "", ""},
                                     {NULL,NULL,NULL,NULL}};
+  oyjlOptionChoice_s A_choices[] = {{"",_("Example"),_("prog --opt=arg"), NULL},
+                                    {"",_("Example"),_("prog --opt2=arg2"), NULL},
+                                    {NULL,NULL,NULL,NULL}};
 
   /*  declare options - the core information; use previously declared choices;
    *  only declared options are parsed
@@ -1069,6 +1084,8 @@ oyjlTESTRESULT_e progNAME(testArgs)()
     {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
     {"oiwi", 0,     "V", "version", NULL, _("version"), _("Version"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &version} },
+    {"oiwi", 0,     "A","man-examples",NULL,_("EXAMPLES"),NULL,              NULL, NULL,
+             oyjlOPTIONTYPE_CHOICE,{.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc )}, oyjlNONE, {}},
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
   };
 
@@ -1109,13 +1126,13 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9193                      /*code_size*/,
+                           9781                      /*code_size*/,
                            1080                      /*help_size*/,
-                           1967                      /*man_size*/,
-                           3899                      /*markdown_size*/,
-                           7196                      /*json_size*/,
-                           7223                      /*json_command_size*/,
-                           10581                     /*export_size*/,
+                           2068                      /*man_size*/,
+                           4065                      /*markdown_size*/,
+                           7382                      /*json_size*/,
+                           7409                      /*json_command_size*/,
+                           11617                     /*export_size*/,
                            3163                      /*bash_size*/,
                            result,
                            oyjlTESTRESULT_FAIL       /*fail*/ );
@@ -1205,13 +1222,13 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           8938                      /*code_size*/,
+                           9526                      /*code_size*/,
                             613                      /*help_size*/,
-                           1451                      /*man_size*/,
-                           2355                      /*markdown_size*/,
-                           4933                      /*json_size*/,
-                           4960                      /*json_command_size*/,
-                           10066                     /*export_size*/,
+                           1552                      /*man_size*/,
+                           2521                      /*markdown_size*/,
+                           5119                      /*json_size*/,
+                           5146                      /*json_command_size*/,
+                           11102                     /*export_size*/,
                            3030                      /*bash_size*/,
                            result,
                            oyjlTESTRESULT_FAIL       /*fail*/ );
@@ -1237,13 +1254,14 @@ oyjlTESTRESULT_e progNAME(testArgs)()
                                        "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
   text = oyjlUi_ToJson( ui, 0 );
-  int len = strlen(text);
-  if(text && (len == 5139 || len == 6763))
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ToJson() %lu", strlen(text) );
+  const char * plain = oyjlTermColorToPlain(text);
+  int len = strlen(plain);
+  if(text && len == 5325)
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "oyjlUi_ToJson()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson() 5139 == %lu", strlen(text) );
+    "oyjlUi_ToJson() 5325 == %lu", len );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson", "txt" )
   if(verbose && text)
@@ -1251,12 +1269,13 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToMan( ui, 0 );
-  if(text && strlen(text) == 863)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ToMan() %lu", strlen(text) );
+  len = strlen(text);
+  if(text && strlen(text) == 940)
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "oyjlUi_ToMan()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 863 == %lu", strlen(text) );
+    "oyjlUi_ToMan() 940 == %lu", strlen(text) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose)
@@ -1264,13 +1283,14 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   if(text) {free(text);} text = NULL;
 
   text = oyjlOptions_ResultsToJson( ui->opts, OYJL_JSON );
-  len = strlen(text);
-  if(text && (len == 63 || len == 135))
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOptions_ResultsToJson() %lu", strlen(text) );
+  plain = oyjlTermColorToPlain(text);
+  len = strlen(plain);
+  if(text && len == 63)
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "oyjlOptions_ResultsToJson()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlOptions_ResultsToJson() %lu", strlen(text) );
+    "oyjlOptions_ResultsToJson() %lu", len );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlOptions_ResultsToJson", "txt" )
   if(verbose)
@@ -1279,9 +1299,10 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   setlocale(LC_ALL,"");
 
   text = oyjlOptions_ResultsToText( ui->opts );
-  if(text && strlen(text) == 41)
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlOptions_ResultsToText() %lu", strlen(text) );
+  len = strlen(text);
+  if(text && len == 41)
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "oyjlOptions_ResultsToText()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
     "oyjlOptions_ResultsToText() %lu", strlen(text) );
@@ -1299,13 +1320,14 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   }
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  len = strlen(text);
-  if(text && (len == 6644 || len == 9352))
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "oyjlUi_ExportToJson()       %lu", strlen(text) );
+  plain = oyjlTermColorToPlain(text);
+  len = strlen(plain);
+  if(text && len == 7680)
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "oyjlUi_ExportToJson()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ExportToJson()       6644 == %lu", strlen(text) );
+    "oyjlUi_ExportToJson()       7680 == %lu", strlen(plain) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ExportToJson", "txt" )
   if(verbose && text)
@@ -1869,10 +1891,20 @@ oyjlTESTRESULT_e testFunction ()
   if(bt)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlBT() = %s", bt );
-    free(bt);
+    free(bt); bt = NULL;
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlBT() = %s", bt );
+  }
+
+  const char * html = "<strong>Bold</strong> Normal <em>italic</em>";
+  const char * ansi = oyjlTermColorFromHtml( html, 0 );
+  if(ansi && strlen(ansi) != strlen(html))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTermColorFromHtml() = %s", ansi );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTermColorFromHtml() %d / %d", strlen(ansi), strlen(html) );
   }
 
   return result;

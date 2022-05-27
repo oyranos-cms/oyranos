@@ -1639,7 +1639,8 @@ void       oyjlStr_Clear             ( oyjl_str            string )
 {
   struct oyjl_string_s * str = string;
   void (* deAlloc)(void*) = str->deAlloc;
-  char * s = oyjlStr_Pull( string );
+  char * s = str->s;
+  str->s = NULL;
   if(s) deAlloc(s);
 }
 
@@ -1657,7 +1658,7 @@ void       oyjlStr_Release           ( oyjl_str          * string_ptr )
   if(!string_ptr) return;
   str = *string_ptr;
   void (* deAlloc)(void*) = str->deAlloc;
-  if(str->s) deAlloc(str->s);
+  oyjlStr_Clear(str);
   deAlloc(str);
   *string_ptr = NULL;
 }
