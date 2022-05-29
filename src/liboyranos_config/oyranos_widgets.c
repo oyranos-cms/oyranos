@@ -24,7 +24,7 @@ oyjlUiHeaderSection_s *    oyUiInfo  ( const char          * documentation,
 {
   oyjlUiHeaderSection_s s[] = {
     /* type,  nick,      label,name,                 description */
-    { "oihs", "version", NULL, OYRANOS_VERSION_NAME, oyVersionString( 2, 0 ) },
+    { "oihs", "version", NULL, OYRANOS_VERSION_NAME, oyVersionString( 2 ) },
     { "oihs", "date", NULL, iso_dateTtime, date_description },
     { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.oyranos.org" },
     { "oihs", "copyright", NULL, "© 2005-2021 Kai-Uwe Behrmann and others", NULL },

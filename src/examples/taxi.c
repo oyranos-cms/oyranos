@@ -29,10 +29,10 @@
 
 void  printfHelp (int argc OY_UNUSED, char** argv)
 {
-  char * version = oyVersionString(1,0);
-  char * id = oyVersionString(2,0);
-  char * cfg_date =  oyVersionString(3,0);
-  char * devel_time = oyVersionString(4,0);
+  const char * version = oyVersionString(1),
+             * id = oyVersionString(2),
+             * cfg_date =  oyVersionString(3),
+             * devel_time = oyVersionString(4);
 
   fprintf( stderr, "\n");
   fprintf( stderr, "oyranos-taxi %s\n",
@@ -70,11 +70,6 @@ void  printfHelp (int argc OY_UNUSED, char** argv)
   fprintf( stderr, "      SAVEIFS=$IFS ; IFS=$'\\n\\b'; manufacturers=(`oyranos-taxi -l`); IFS=$SAVEIFS; for mnft in \"${manufacturers[@]}\"; do ls \"$mnft\"; done");
   fprintf( stderr, "\n");
   fprintf( stderr, "\n");
-
-  if(version) oyDeAllocateFunc_(version);
-  if(id) oyDeAllocateFunc_(id);
-  if(cfg_date) oyDeAllocateFunc_(cfg_date);
-  if(devel_time) oyDeAllocateFunc_(devel_time);
 }
 
 

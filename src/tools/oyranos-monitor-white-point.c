@@ -629,7 +629,7 @@ int myMain( int argc , const char** argv )
 
   if(oy_debug)
     fprintf( stderr, "  Oyranos v%s\n",
-                  oyNoEmptyName_m_(oyVersionString(1,0)));
+                  oyNoEmptyName_m_(oyVersionString(1)));
 
 
 #if !defined(NO_OYJL_ARGS_RENDER)

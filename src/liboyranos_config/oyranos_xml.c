@@ -709,8 +709,8 @@ char * oyGetDocHeader                ( const char       ** options )
 
   const char * SF = "#cccccc";
          /* HTML */
-  const char * title = _("About Oyranos");
-  char * version = NULL;
+  const char * title = _("About Oyranos"),
+             * version = NULL;
   int i = 0,
       format_type = 1;
 
@@ -727,14 +727,14 @@ char * oyGetDocHeader                ( const char       ** options )
     if( strcmp( options[i], "format" ) == 0 && options[i+1])
       format_type = atoi(options[i+1]);
     if( strcmp( options[i], "version" ) == 0 && options[i+1])
-      version = oyStringCopy_(options[i+1],0);
+      version = options[i+1];
 
     if(options[i+1]) i += 2;
     else i++;
   }
 
   if(!version)
-    version = oyVersionString(1,0);
+    version = oyVersionString(1);
 
   if(format_type == 1) /* HTML */
   {
@@ -764,8 +764,6 @@ char * oyGetDocHeader                ( const char       ** options )
     version/*,
     SF*/ );
   }
-
-  oyFree_m_(version);
 
   return text;
 }

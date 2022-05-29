@@ -449,13 +449,13 @@ int myMain( int argc, const char ** argv )
       if(oy_debug)
         fprintf(stderr, "%s\n", t);
       r = system(t);
-      return;
+      return 0;
     }
   }
 
   if(verbose)
     fprintf( stderr, "  Oyranos v%s\n",
-                  oyNoEmptyName_m_(oyVersionString(1,0)));
+                  oyNoEmptyName_m_(oyVersionString(1)));
 
 #if 1
   if(other_args)

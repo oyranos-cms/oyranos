@@ -1096,7 +1096,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       int byteps = oyDataTypeGetSize( data_type );
       const char * colorspacename = oyProfile_GetText( s->profile_,
                                                         oyNAME_DESCRIPTION );
-      char * vs = oyVersionString(1,malloc);
+      const char * vs = oyVersionString(1);
       uint8_t * out_values = 0;
       const uint8_t * u8 = NULL;
       double * dbls;
@@ -1145,7 +1145,6 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                 " oyImage_s: %d\n",
                 oyObject_GetId( image->oy_ ) );
-      if(vs) { free(vs); vs = 0; }
       len = strlen( t );
       do { fputc ( t[pt] , fp); if(t[pt] == '\n') fputc( '#', fp ); pt++; } while (--len); pt = 0;
       fputc( '\n', fp );

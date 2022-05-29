@@ -119,7 +119,7 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
 oyjlTESTRESULT_e testVersion()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
-  char * t;
+  const char * t;
   int i;
 
   fprintf(stdout, "\n" );
@@ -136,7 +136,7 @@ oyjlTESTRESULT_e testVersion()
 
   for(i = 1; i < 5; ++i)
   {
-    t = oyVersionString(i,0);
+    t = oyVersionString(i);
     fprintf(zout, "oyVersionString( %d ) = %s\n", i, t );
   }
 
@@ -7997,6 +7997,14 @@ oyjlTESTRESULT_e testDAG2()
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyImage_FromFile()" );
+  }
+  error = oyImage_WritePPM( image, OY_SOURCEDIR "/extras/icons/oyranos.pam", "plain copy of oyranos.png" );
+  if( error == 0 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_WritePPM( \"oyranos.pam\"" );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, error,
+    "oyImage_WritePPM( \"oyranos.pam\"" );
   }
   oyImage_Release( &image );
 

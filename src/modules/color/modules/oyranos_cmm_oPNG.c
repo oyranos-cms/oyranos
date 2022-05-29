@@ -333,24 +333,23 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   /* Optionally write comments into the image */
   if(oyOptions_FindString( options, "comment", 0 ))
   {
-    char * t = (char*) oyOptions_FindString( options, "comment", 0 );;
+    const char * t = oyOptions_FindString( options, "comment", 0 );;
     text_ptr[0].key = "Description";
-    text_ptr[0].text = t;
+    text_ptr[0].text = (char*)t;
     text_ptr[0].compression = PNG_TEXT_COMPRESSION_NONE;
 #ifdef PNG_iTXt_SUPPORTED
     text_ptr[0].lang = NULL;
     text_ptr[0].lang_key = NULL;
 #endif
-    t = oyVersionString(1,malloc);
+    t = oyVersionString(1);
     text_ptr[1].key = "Software";
-    text_ptr[1].text = t;
+    text_ptr[1].text = (char*)t;
     text_ptr[1].compression = PNG_TEXT_COMPRESSION_NONE;
 #ifdef PNG_iTXt_SUPPORTED
     text_ptr[1].lang = NULL;
     text_ptr[1].lang_key = NULL;
 #endif
     png_set_text(png_ptr, info_ptr, text_ptr, 2);
-    if(t) { free(t); t = 0; }
   }
 
    /* Other optional chunks like cHRM, bKGD, tRNS, tIME, oFFs, pHYs */

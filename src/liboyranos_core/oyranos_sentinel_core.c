@@ -41,10 +41,10 @@ void oyInit_()
 
   if(getenv(OY_DEBUG))
   {
-    char * version = oyVersionString(1,0);
-    char * id = oyVersionString(2,0);
-    char * cfg_date =  oyVersionString(3,0);
-    char * devel_time = oyVersionString(4,0);
+    const char * version = oyVersionString(1),
+               * id = oyVersionString(2),
+               * cfg_date =  oyVersionString(3),
+               * devel_time = oyVersionString(4);
 
     oy_debug = atoi(getenv(OY_DEBUG));
     DBG3_S( "Oyranos v%s config: %s devel period: %s",

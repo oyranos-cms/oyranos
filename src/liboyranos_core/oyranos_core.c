@@ -56,7 +56,7 @@ static oyStruct_RegisterStaticMessageFunc_f * oy_static_msg_funcs_ = NULL;
 static oyStruct_RegisterStaticFreeFunc_f * oy_static_free_funcs_ = NULL;
 static int oy_msg_func_n_ = 0;
 char * oy_object_show_text_ = NULL;
-char * oy_version_string_[] = {0,0,0,0,0};
+char * oy_version_string_[] = {0,0,0,0,0,0};
 
 
 
@@ -147,7 +147,7 @@ void               oyLibCoreRelease  ( )
 {
   int i;
 
-  for(i = 0; i < 5; ++i)
+  for(i = 0; i < 6; ++i)
     if(oy_version_string_[i])
     {
       oyFree_m_(oy_version_string_[i]);
@@ -1070,22 +1070,16 @@ int            oyVersion             ( int                 type )
                                - 2  git master hash, deprecated
                                - 3  OYRANOS_CONFIG_DATE, deprecated
                                - 4  development period
- *  @param     allocateFunc    user allocator, e.g. malloc
- *
  *  @return                    Oyranos configure output
  *
  *  @since     Oyranos: version 0.1.8
  *  @date      18 december 2007 (API 0.1.8)
  */
-char *       oyVersionString         ( int                 type,
-                                       oyAlloc_f           allocateFunc )
+const char *       oyVersionString         ( int                 type )
 {
   char * text = 0, * tmp = 0;
   char temp[24];
   char * git = OY_GIT_VERSION;
-
-  if(!allocateFunc)
-    allocateFunc = oyAllocateFunc_;
 
   if( 1 < type && type <= 4 &&
       oy_version_string_[type]  )
@@ -1095,17 +1089,17 @@ char *       oyVersionString         ( int                 type,
     return oy_version_string_[5];
 
   if(type == 1)
-    return oy_version_string_[1] = oyStringCopy_(OYRANOS_VERSION_NAME, allocateFunc);
+    return oy_version_string_[1] = oyStringCopy_(OYRANOS_VERSION_NAME, oyAllocateFunc_);
   if(type == 2)
   {
     if(oy_debug) fprintf( stderr, "OY_GIT_VERSION: %s\n", OY_GIT_VERSION );
     if(git[0])
-      return oy_version_string_[2] = oyStringCopy_(git, allocateFunc);
+      return oy_version_string_[2] = oyStringCopy_(git, oyAllocateFunc_);
     else
       return 0;
   }
   if(type == 3)
-    return oy_version_string_[3] = oyStringCopy_("", allocateFunc);
+    return oy_version_string_[3] = oyStringCopy_("", oyAllocateFunc_);
 
   if(type == 4)
   {
@@ -1122,12 +1116,12 @@ char *       oyVersionString         ( int                 type,
     oySprintf_( temp, " %d", oyVersion(4) );
     oyStringAdd_( &text, temp, oyAllocateFunc_, oyDeAllocateFunc_);
 
-    tmp = oyStringCopy_( text , allocateFunc);
+    tmp = oyStringCopy_( text , oyAllocateFunc_);
     oyDeAllocateFunc_(text);
     return oy_version_string_[4] = tmp;
   }
 
-  return oy_version_string_[5] = oyStringCopy_("----", allocateFunc);
+  return oy_version_string_[5] = oyStringCopy_("----", oyAllocateFunc_);
 }
 
 int                oyBigEndian       ( void )

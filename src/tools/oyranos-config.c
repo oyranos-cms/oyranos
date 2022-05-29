@@ -412,7 +412,7 @@ int myMain( int argc , const char** argv )
 
   if(oy_debug)
     fprintf( stderr, "  Oyranos v%s\n",
-                  oyNoEmptyName_m_(oyVersionString(1,0)));
+                  oyNoEmptyName_m_(oyVersionString(1)));
 
 
 
@@ -434,7 +434,7 @@ int myMain( int argc , const char** argv )
 
   if(oy_debug)
     fprintf( stderr, "  Oyranos v%s\n",
-                  oyNoEmptyName_m_(oyVersionString(1,0)));
+                  oyNoEmptyName_m_(oyVersionString(1)));
 
 
   int dir = 0;
@@ -460,7 +460,7 @@ int myMain( int argc , const char** argv )
   }
 
   if(Version)
-  { fprintf( stdout, "%s\n", oyVersionString(1,0) ); return 0; }
+  { fprintf( stdout, "%s\n", oyVersionString(1) ); return 0; }
   else if(api_version)
   { fprintf( stdout, "%d\n", OYRANOS_VERSION_A ); return 0; }
   else if(num_version)
