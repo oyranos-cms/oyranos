@@ -15,8 +15,8 @@ build:
   # instead of calling g++ directly you can also use some build toolkit like make
   # install the necessary build tools when needed
   before_script:
-     - apt-get update -qq
-     - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev
+    - apt-get update -qq
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev
 
   script:
     - cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYRANOS:BOOL=OFF
@@ -31,13 +31,36 @@ build:
   #  paths:
   #    - "*.o"
 
+Coverity:
+  variables:
+    COVERITY_SCAN_PROJECT_NAME: "oyranos-cms/oyranos"
+    COVERITY_SCAN_TOKEN: "movk9Tfe95jywzL1jf52tg"
+    GITLAB_USER_EMAIL: "ku.b@gmx.de"
+  only:
+    refs:
+      - coverity_scan
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev curl tar
+  script:
+  - echo run on $COVERITY_SCAN_PROJECT_NAME
+  - wget https://scan.coverity.com/download/linux64 --post-data "token=$COVERITY_SCAN_TOKEN&project=oyranos-cms%2Foyranos" -O coverity_tool.tgz
+  - tar xfz coverity_tool.tgz
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYRANOS:BOOL=OFF
+  - cov-analysis-linux64-*/bin/cov-build --dir cov-int make -j4
+  - tar cfz cov-int.tar.gz cov-int
+  - curl https://scan.coverity.com/builds?project=$COVERITY_SCAN_PROJECT_NAME
+    --form token=$COVERITY_SCAN_TOKEN --form email=$GITLAB_USER_EMAIL
+    --form file=@cov-int.tar.gz --form version="`git describe --tags`"
+    --form description="`git describe --tags` / $CI_COMMIT_TITLE / $CI_COMMIT_REF_NAME:$CI_PIPELINE_ID "
+
 # run tests using the binary built before
 #include:
 #- template: Security/SAST.gitlab-ci.yml
 test:
   stage: test
   before_script:
-     - apt-get update -qq
-     - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev
+    - apt-get update -qq
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev
   script:
     - src/tests/test_oyranos-static
