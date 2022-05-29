@@ -1037,6 +1037,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
     prof = oyProfile_FromStd( profile_type, icc_profile_flags, 0 );
 
   image_in = oyImage_Create( width, height, buf, pixel_type, prof, 0 );
+  oyProfile_Release( &prof );
 
   if (!image_in)
   {
