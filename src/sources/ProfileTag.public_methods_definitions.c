@@ -419,8 +419,9 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
               {
                 /* string with i18n infos -> "de_DE:Licht" */
                 oyjlStringAdd( &temp, oyAllocateFunc_, oyDeAllocateFunc_, "%s:%s", lang, text);
-                oyStringListAddString_( &texts, &texts_n, &temp,
+                oyjlStringListAddString( &texts, &texts_n, temp,
                                             oyAllocateFunc_, oyDeAllocateFunc_);
+                oyFree_m_(temp);
 
               } else {
                 /* pure string -> "Licht" */

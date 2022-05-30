@@ -12,7 +12,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2020 (C) Kai-Uwe Behrmann
+ *            2004-2022 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -192,8 +192,7 @@ OYAPI int  OYEXPORT
 OYAPI oyFilterNode_s * OYEXPORT
            oyFilterNodes_Get             ( oyFilterNodes_s       * list,
                                        int                 pos )
-{
-  int error = !list;
+{       
   oyFilterNodes_s_ * s = (oyFilterNodes_s_*)list;
 
   if(!s)
@@ -201,10 +200,7 @@ OYAPI oyFilterNode_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 0 )
 
-  if(!error)
-    return (oyFilterNode_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_FILTER_NODE_S);
-  else
-    return 0;
+  return (oyFilterNode_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_FILTER_NODE_S);
 }   
 
 /** Function oyFilterNodes_Count

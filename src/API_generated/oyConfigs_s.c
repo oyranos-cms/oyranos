@@ -12,7 +12,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2020 (C) Kai-Uwe Behrmann
+ *            2004-2022 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -196,7 +196,6 @@ OYAPI oyConfig_s * OYEXPORT
            oyConfigs_Get             ( oyConfigs_s       * list,
                                        int                 pos )
 {       
-  int error = !list;
   oyConfigs_s_ * s = (oyConfigs_s_*)list;
 
   if(!s)
@@ -204,10 +203,7 @@ OYAPI oyConfig_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_CONFIGS_S, return 0 )
 
-  if(!error)
-    return (oyConfig_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_CONFIG_S);
-  else
-    return 0;
+  return (oyConfig_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_CONFIG_S);
 }   
 
 /** Function oyConfigs_Count
@@ -224,7 +220,6 @@ OYAPI oyConfig_s * OYEXPORT
 OYAPI int  OYEXPORT
            oyConfigs_Count           ( oyConfigs_s       * list )
 {       
-  int error = !list;
   oyConfigs_s_ * s = (oyConfigs_s_*)list;
 
   if(!s)
@@ -232,9 +227,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CONFIGS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Count( s->list_ );
-  else return 0;
+  return oyStructList_Count( s->list_ );
 }
 
 /** Function oyConfigs_Clear
@@ -251,7 +244,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oyConfigs_Clear           ( oyConfigs_s       * list )
 {       
-  int error = !list;
   oyConfigs_s_ * s = (oyConfigs_s_*)list;
 
   if(!s)
@@ -259,9 +251,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CONFIGS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Clear( s->list_ );
-  else return 0;
+  return oyStructList_Clear( s->list_ );
 }
 
 /** Function oyConfigs_Sort
@@ -276,7 +266,6 @@ OYAPI int  OYEXPORT
            oyConfigs_Sort            ( oyConfigs_s       * list,
                                        int32_t           * rank_list )
 {       
-  int error = !list;
   oyConfigs_s_ * s = (oyConfigs_s_*)list;
 
   if(!s)
@@ -284,9 +273,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CONFIGS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Sort( s->list_, rank_list );
-  else return 0;
+  return oyStructList_Sort( s->list_, rank_list );
 }
 
 

@@ -645,8 +645,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
  *  @since   2009/02/02 (Oyranos: 0.1.10)
  *  @date    2009/03/27
  */
-OYAPI int  OYEXPORT
-           oyDeviceGetInfo           ( oyConfig_s        * device,
+OYAPI int  OYEXPORT oyDeviceGetInfo  ( oyConfig_s        * device,
                                        oyNAME_e            type,
                                        oyOptions_s       * options,
                                        char             ** info_text,
@@ -709,6 +708,28 @@ OYAPI int  OYEXPORT
         t = oyOption_GetValueText(o,oyAllocateFunc_);
         if(t)
         {
+          STRING_ADD( text, t );
+          oyDeAllocateFunc_(t); t = 0;
+        }
+        STRING_ADD( text, "\n" );
+
+        oyOption_Release( &o );
+      }
+      n = oyOptions_Count( device_->data );
+      if(n)
+        STRING_ADD( text, "data:\n" );
+      for( i = 0; i < n; ++i )
+      {
+        o = oyOptions_Get( device_->data, i );
+        
+        STRING_ADD( text, oyStrrchr_( oyOption_GetRegistration(o),
+                          OY_SLASH_C ) + 1 );
+        STRING_ADD( text, ":" );
+        t = oyOption_GetValueText(o,oyAllocateFunc_);
+        if(t)
+        {
+          if(strchr(t,'\n'))
+            STRING_ADD( text, "\n" );
           STRING_ADD( text, t );
           oyDeAllocateFunc_(t); t = 0;
         }
@@ -1495,13 +1516,14 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
 
           if(value && count > j)
           {
+            char * escaped = oyjlJsonEscape( value, OYJL_QUOTE | OYJL_NO_BACKSLASH );
             if(j)
               oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                                   ",\n" );
             if(value[0] == '<')
                oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                "              \"%s\": \"%s\"",
-                     key, value );
+                     key, escaped );
             else
             {
               /* split into a array with a useful delimiter */
@@ -1526,10 +1548,12 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
               } else
                 oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                      "              \"%s\": \"%s\"",
-                     key, value );
+                     key, escaped );
 
               oyStringListRelease_( &vals, vals_n, free );
             }
+            if(escaped)
+              oyFree_m_( escaped );
           }
           oyOption_Release( &opt );
           if(key)
@@ -2041,7 +2065,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
           if(!o)
           {
             o = oyOption_New( NULL );
-            oyOption_SetRegistration( o, OY_DEFAULT_CMM_RENDERER );
+            oyOption_SetRegistration( o, OY_DEFAULT_CMM_CONTEXT );
             is_new = 1;
           }
           api_pattern = cmm_api9_->oyCMMRegistrationToName(
@@ -2070,7 +2094,7 @@ oyOptions_s *  oyOptions_ForFilter_  ( oyFilterCore_s_   * core,
           if(!o)
           {
             o = oyOption_New( NULL );
-            oyOption_SetRegistration( o, OY_DEFAULT_CMM_CONTEXT );
+            oyOption_SetRegistration( o, OY_DEFAULT_CMM_RENDERER );
             is_new = 1;
           }
           oyOption_SetFromString( o, api_pattern, 0 );
@@ -2665,15 +2689,15 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
       root9 && root4 )
   {
     /* add api9 groups to api4 declaration */
-    oyjl_val g9 = oyjlTreeGetValue( root9, 0, "org/freedesktop/openicc/modules/[0]/groups" ),
-             g4 = oyjlTreeGetValue( root4, 0, "org/freedesktop/openicc/modules/[0]/groups" );
+    oyjl_val g9 = oyjlTreeGetValue( root9, 0, "org/freedesktop/oyjl/modules/[0]/groups" ),
+             g4 = oyjlTreeGetValue( root4, 0, "org/freedesktop/oyjl/modules/[0]/groups" );
     int n9 = oyjlValueCount( g9 ),
         n4 = oyjlValueCount( g4 ), i;
     for(i = 0; i < n9; ++i)
     {
-      oyjl_val group9 = oyjlTreeGetValueF( root9, 0, "org/freedesktop/openicc/modules/[0]/groups/[%d]", i );
+      oyjl_val group9 = oyjlTreeGetValueF( root9, 0, "org/freedesktop/oyjl/modules/[0]/groups/[%d]", i );
       /* allocate new array member */
-      oyjl_val g4new = oyjlTreeGetValueF( root4, OYJL_CREATE_NEW, "org/freedesktop/openicc/modules/[0]/groups/[%d]", n4 + i );
+      oyjl_val g4new = oyjlTreeGetValueF( root4, OYJL_CREATE_NEW, "org/freedesktop/oyjl/modules/[0]/groups/[%d]", n4 + i );
       /* move the node to the new tree */
       if(g4new && OYJL_IS_ARRAY(g4) && g4->u.array.values)
       {

@@ -6,7 +6,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2020 (C) Kai-Uwe Behrmann
+ *            2004-2022 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -659,8 +659,7 @@ int      oyDeviceUnset               ( oyConfig_s        * device )
  *  @since   2009/02/02 (Oyranos: 0.1.10)
  *  @date    2009/03/27
  */
-OYAPI int  OYEXPORT
-           oyDeviceGetInfo           ( oyConfig_s        * device,
+OYAPI int  OYEXPORT oyDeviceGetInfo  ( oyConfig_s        * device,
                                        oyNAME_e            type,
                                        oyOptions_s       * options,
                                        char             ** info_text,

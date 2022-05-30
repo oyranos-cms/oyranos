@@ -12,7 +12,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2020 (C) Kai-Uwe Behrmann
+ *            2004-2022 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -201,7 +201,6 @@ OYAPI oyOption_s * OYEXPORT
            oyOptions_Get             ( oyOptions_s       * list,
                                        int                 pos )
 {       
-  int error = !list;
   oyOptions_s_ * s = (oyOptions_s_*)list;
 
   if(!s)
@@ -209,10 +208,7 @@ OYAPI oyOption_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
-  if(!error)
-    return (oyOption_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_OPTION_S);
-  else
-    return 0;
+  return (oyOption_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_OPTION_S);
 }   
 
 /** Function oyOptions_Count
@@ -229,7 +225,6 @@ OYAPI oyOption_s * OYEXPORT
 OYAPI int  OYEXPORT
            oyOptions_Count           ( oyOptions_s       * list )
 {       
-  int error = !list;
   oyOptions_s_ * s = (oyOptions_s_*)list;
 
   if(!s)
@@ -237,9 +232,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Count( s->list_ );
-  else return 0;
+  return oyStructList_Count( s->list_ );
 }
 
 /** Function oyOptions_Clear
@@ -256,7 +249,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oyOptions_Clear           ( oyOptions_s       * list )
 {       
-  int error = !list;
   oyOptions_s_ * s = (oyOptions_s_*)list;
 
   if(!s)
@@ -264,9 +256,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Clear( s->list_ );
-  else return 0;
+  return oyStructList_Clear( s->list_ );
 }
 
 /** Function oyOptions_Sort
@@ -281,7 +271,6 @@ OYAPI int  OYEXPORT
            oyOptions_Sort            ( oyOptions_s       * list,
                                        int32_t           * rank_list )
 {       
-  int error = !list;
   oyOptions_s_ * s = (oyOptions_s_*)list;
 
   if(!s)
@@ -289,9 +278,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_OPTIONS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Sort( s->list_, rank_list );
-  else return 0;
+  return oyStructList_Sort( s->list_, rank_list );
 }
 
 
@@ -1489,8 +1476,7 @@ oyOption_s *   oyOptions_Find        ( oyOptions_s       * options,
 
       if(found && registration)
       {
-         const char * oreg = oyOptionPriv_m(o)->registration;
-         if(!oyOptionRegistrationMatch( oreg, registration, type ))
+         if(!oyOptionRegistrationMatch( oyOptionPriv_m(o)->registration, registration, type ))
           found = 0;
       }
 

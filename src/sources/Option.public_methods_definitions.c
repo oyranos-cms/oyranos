@@ -107,8 +107,11 @@ const char *   oyOption_GetText      ( oyOption_s        * obj,
   if(error <= 0)
     if(type == oyNAME_DESCRIPTION)
     {
-      char * text = oyStringCopy_(((oyOption_s_*)obj)->registration, oyAllocateFunc_),
+      const char * txt = ((oyOption_s_*)obj)->registration;
+      char * t = oyjlJsonEscape( txt, OYJL_REGEXP | OYJL_REVERSE );
+      char * text = oyStringCopy_(t, oyAllocateFunc_),
            * tmp = text ? oyStrrchr_(text, '/') : NULL;
+      if(t) { free(t); t = NULL; }
       if(tmp && oyStrchr_(tmp, '.'))
       {
         tmp = oyStrchr_(tmp, '.');

@@ -10,7 +10,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2020 (C) Kai-Uwe Behrmann
+ *            2004-2022 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -53,9 +53,9 @@ typedef struct oyObserver_s oyObserver_s;
  *
  *  @see oySignalToString()
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/02/26
  *  @since   2009/10/26 (Oyranos: 0.1.10)
- *  @date    2009/10/26
  */
 typedef enum {
   oySIGNAL_OK,

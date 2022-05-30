@@ -6,7 +6,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2020 (C) Kai-Uwe Behrmann
+ *            2004-2022 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -52,9 +52,11 @@ static oyObject_s oy_object_pool_[100] = {
 /** @brief   object management 
  *  @ingroup  objects_generic
  *
- *  @version Oyranos: 0.1.10
+ *  @param         name                initial track ID passed to oyObject_Track()
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/01/16
  *  @since   2007/11/00 (Oyranos: 0.1.8)
- *  @date    2009/06/02
  */
 oyObject_s         oyObject_New      ( const char        * name )
 {
@@ -68,9 +70,9 @@ void               oyObject_UnTrack    ( oyObject_s          obj );
 /** @brief   object management 
  *  @ingroup  objects_generic
  *
- *  @version Oyranos: 0.1.10
+ *  @version Oyranos: 0.9.7
+ *  @date    2020/01/16
  *  @since   2007/11/00 (Oyranos: 0.1.8)
- *  @date    2009/06/02
  */
 oyObject_s         oyObject_NewWithAllocators (
                                        oyAlloc_f           allocateFunc,

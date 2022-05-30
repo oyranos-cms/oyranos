@@ -874,6 +874,7 @@ oyPointer    oyCMMdsoGet_            ( const char        * lib_name )
 {
   int found = -1;
   oyPointer dso_handle = 0;
+  oyPointer_s * s = NULL;
 
   if(!lib_name)
     return 0;
@@ -882,20 +883,26 @@ oyPointer    oyCMMdsoGet_            ( const char        * lib_name )
 
   if(found >= 0)
   {
-    oyPointer_s * s = (oyPointer_s*)oyStructList_GetType_( (oyStructList_s_*)oy_cmm_handles_, found,
+    s = (oyPointer_s*)oyStructList_GetType_( (oyStructList_s_*)oy_cmm_handles_, found,
                                                   oyOBJECT_POINTER_S );
 
     if(s)
       dso_handle = oyPointer_GetPointer(s);
   }
 
-  if(!dso_handle)
+  if(!s)
   {
     int err = dlinit();
     if(err)
       WARNc1_S("dlinit() returned: %d", err);
 
     dso_handle = dlopen( lib_name, RTLD_LAZY );
+    if(oy_debug)
+    {
+      char * t = oyBT(0);
+      fprintf(stderr, "dlopen: %s\n%s", dso_handle?oyjlTermColor( oyjlGREEN, lib_name):oyjlTermColor( oyjlRED, lib_name), t );
+      if(t) free(t);
+    }
 
     if(!dso_handle)
     {
@@ -908,8 +915,7 @@ oyPointer    oyCMMdsoGet_            ( const char        * lib_name )
     if(!oyStruct_GetTextFromModule_p)
       oyStruct_GetTextFromModule_p = oyStruct_GetTextFromModule;
 
-    if(dso_handle)
-      oyCMMdsoReference_( lib_name, dso_handle );
+    oyCMMdsoReference_( lib_name, dso_handle );
 
     DBG_NUM1_S("dlopen(ed) %s", lib_name);
   }
@@ -1649,7 +1655,10 @@ int              oyCMMhandle_Release_( oyCMMhandle_s    ** obj )
 
   s->dso_handle = NULL;
   if(s->info && oyCMMinfo_GetResetF(s->info))
+  {
+    oyMessageFunc_p( oyMSG_DBG, s->info, "reset info of: %s", s->lib_name );
     oyCMMinfo_GetResetF(s->info)( (oyStruct_s*) s->info );
+  }    
   s->info = NULL;
   if( s->lib_name ) oyFree_m_( s->lib_name );
 
@@ -2297,8 +2306,7 @@ char **     oyLibFilesGet_           ( int             * count,
                                       dir_string, string, suffix, &filt_n,
                                       allocateFunc );
 
-  if(l && *l)
-    oyStringListRelease_(&l, l_n, oyDeAllocateFunc_);
+  oyStringListRelease_(&l, l_n, oyDeAllocateFunc_);
 
   if(count)
     *count = filt_n;

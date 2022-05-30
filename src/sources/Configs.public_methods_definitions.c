@@ -431,11 +431,13 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
   {
     /** 2.) get all module names for the module pattern */
     error = oyConfigDomainList( module_reg, &texts, &count, &d_rank_list, 0 );
+    free(d_rank_list); d_rank_list = NULL;
 
     if(error <= 0 && count && texts)
       cmm_api8 = (oyCMMapi8_s_*) oyCMMsGetFilterApi_( texts[0],
                                                      oyOBJECT_CMM_API8_S );
     error *= -1;
+    oyStringListRelease_( &texts, count, oyDeAllocateFunc_ );
 
     db_registration = oyStringCopy( registration, oyAllocateFunc_ );
     if(!db_registration) return 1;
@@ -468,6 +470,7 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
           if(error)
             WARNc2_S("obtained not all keys %d/%d", k_n-error, k_n)
         }
+        oyjlStringListRelease( &config_key_names, k_n, oyDeAllocateFunc_ ); k_n = 0;
 
         /** 4.1.) add information about the data's origin */
         oyStringAddPrintf( &key, oyAllocateFunc_, oyDeAllocateFunc_, "%s/key_set_name",
@@ -496,10 +499,10 @@ OYAPI int OYEXPORT oyConfigs_FromDB  ( const char        * registration,
 
         oyFree_m_( key );
       }
+      oyjlStringListRelease( &key_set_names, n, oyDeAllocateFunc_ ); n = 0;
     }
 
     oyDB_release( &db );
-    oyStringListRelease_( &texts, count, oyDeAllocateFunc_ );
     if(db_registration)
       oyFree_m_( db_registration );
   }

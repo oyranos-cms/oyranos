@@ -12,7 +12,7 @@
  *  Oyranos is an open source Color Management System
  *
  *  @par Copyright:
- *            2004-2020 (C) Kai-Uwe Behrmann
+ *            2004-2022 (C) Kai-Uwe Behrmann
  *
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
@@ -194,7 +194,6 @@ OYAPI oyProfile_s * OYEXPORT
            oyProfiles_Get             ( oyProfiles_s       * list,
                                        int                 pos )
 {       
-  int error = !list;
   oyProfiles_s_ * s = (oyProfiles_s_*)list;
 
   if(!s)
@@ -202,10 +201,7 @@ OYAPI oyProfile_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
-  if(!error)
-    return (oyProfile_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_PROFILE_S);
-  else
-    return 0;
+  return (oyProfile_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_PROFILE_S);
 }   
 
 /** Function oyProfiles_Count
@@ -222,7 +218,6 @@ OYAPI oyProfile_s * OYEXPORT
 OYAPI int  OYEXPORT
            oyProfiles_Count           ( oyProfiles_s       * list )
 {       
-  int error = !list;
   oyProfiles_s_ * s = (oyProfiles_s_*)list;
 
   if(!s)
@@ -230,9 +225,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
-  if(!error)
-    return oyStructList_Count( s->list_ );
-  else return 0;
+  return oyStructList_Count( s->list_ );
 }
 
 /** Function oyProfiles_Clear
