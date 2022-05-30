@@ -114,14 +114,10 @@ int            oyBlob_SetFromStatic  ( oyBlob_s          * blob,
 oyPointer          oyBlob_GetPointer ( oyBlob_s          * blob )
 {
   oyBlob_s_ * s = (oyBlob_s_*)blob;
-  int error = !s;
 
   oyCheckType__m( oyOBJECT_BLOB_S, return NULL )
 
-  if(error <= 0)
-    return s->ptr;
-
-  return NULL;
+  return s->ptr;
 }
 
 /** Function oyBlob_GetSize
@@ -138,14 +134,10 @@ oyPointer          oyBlob_GetPointer ( oyBlob_s          * blob )
 size_t             oyBlob_GetSize    ( oyBlob_s          * blob )
 {
   oyBlob_s_ * s = (oyBlob_s_*)blob;
-  int error = !s;
 
   oyCheckType__m( oyOBJECT_BLOB_S, return 0 )
 
-  if(error <= 0)
-    return s->size;
-
-  return 0;
+  return s->size;
 }
 
 /** Function oyBlob_GetType
@@ -162,13 +154,9 @@ size_t             oyBlob_GetSize    ( oyBlob_s          * blob )
 const char *       oyBlob_GetType    ( oyBlob_s          * blob )
 {
   oyBlob_s_ * s = (oyBlob_s_*)blob;
-  int error = !s;
 
   oyCheckType__m( oyOBJECT_BLOB_S, return 0 )
 
-  if(error <= 0)
-    return s->type;
-
-  return 0;
+  return s->type;
 }
 

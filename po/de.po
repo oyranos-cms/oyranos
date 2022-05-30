@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-05-30 06:01+0200\n"
+"POT-Creation-Date: 2022-05-30 07:40+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -56,7 +56,7 @@ msgstr "+ - Vergrößere Ansicht"
 msgid "- - zoom out"
 msgstr "- - Verkleinere Ansicht"
 
-#: API_generated/oyNamedColor_s.c:626 API_generated/oyranos_profile.c:54
+#: API_generated/oyNamedColor_s.c:624 API_generated/oyranos_profile.c:54
 #: API_generated/oyranos_profile.c:90 liboyranos_config/oyranos_icc.c:515
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:1908
 #: modules/color/modules/oyranos_cmm_oicc.c:247
@@ -1362,7 +1362,7 @@ msgstr "Konnte Profil nicht öffnen"
 msgid "Could not open default ICC profile"
 msgstr "Konnte voreingestelltes Profil nicht laden"
 
-#: API_generated/oyranos_devices.c:228 API_generated/oyranos_devices.c:980
+#: API_generated/oyranos_devices.c:228 API_generated/oyranos_devices.c:979
 #: liboyranos/oyranos_alpha.c:850 liboyranos/oyranos_alpha.c:933
 msgid "Could not open device"
 msgstr "Konnte Gerät nicht öffnen"
@@ -1375,7 +1375,7 @@ msgstr "Konnte Meta Schnittstelle nicht öffnen"
 msgid "Could not open or invalid data: "
 msgstr "Konnte nicht öffnen oder ungültige Daten: "
 
-#: API_generated/oyProfile_s.c:913 API_generated/oyranos_devices.c:991
+#: API_generated/oyProfile_s.c:913 API_generated/oyranos_devices.c:990
 #: liboyranos_core/oyranos_io_core.c:111 liboyranos_core/oyranos_io_core.c:279
 msgid "Could not open profile"
 msgstr "Konnte Profil nicht laden"
@@ -3253,7 +3253,7 @@ msgstr "Luv"
 #: API_generated/oyProfiles_s_.c:254 API_generated/oyProfiles_s_.c:262
 #: API_generated/oyRectangle_s_.c:250 API_generated/oyRectangle_s_.c:258
 #: API_generated/oyStructList_s_.c:296 API_generated/oyStructList_s_.c:304
-#: API_generated/oyranos_devices.c:3639 API_generated/oyranos_module.c:1583
+#: API_generated/oyranos_devices.c:3638 API_generated/oyranos_module.c:1583
 #: liboyranos/oyranos_alpha.c:312 liboyranos_modules/oyranos_forms.c:57
 msgid "MEM Error."
 msgstr "Speicher Fehler"
@@ -6761,7 +6761,7 @@ msgstr "Beschreibung"
 msgid "device position start from zero"
 msgstr "Geräteposition started von Null"
 
-#: API_generated/oyranos_devices.c:1395
+#: API_generated/oyranos_devices.c:1394
 msgid "device_class not found:"
 msgstr "Geräteklasse nicht gefunden:"
 
@@ -6791,8 +6791,8 @@ msgid "enable simple defaults"
 msgstr "benutze einfache Grundeinstellungen"
 
 #: API_generated/oyConversion_s.c:208 API_generated/oyFilterNode_s_.c:928
-#: API_generated/oyranos_devices.c:2652 API_generated/oyranos_devices.c:2664
-#: API_generated/oyranos_devices.c:2697 API_generated/oyranos_devices.c:3213
+#: API_generated/oyranos_devices.c:2651 API_generated/oyranos_devices.c:2663
+#: API_generated/oyranos_devices.c:2696 API_generated/oyranos_devices.c:3212
 #: API_generated/oyranos_module.c:2039
 msgid "error in module:"
 msgstr "Fehler in Modul:"
@@ -6809,7 +6809,7 @@ msgstr "f - Passe Bild ins Fenster ein"
 msgid "failed!"
 msgstr "daneben!"
 
-#: API_generated/oyranos_devices.c:2556 API_generated/oyranos_devices.c:2568
+#: API_generated/oyranos_devices.c:2555 API_generated/oyranos_devices.c:2567
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:724
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:730
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:742
@@ -6825,8 +6825,8 @@ msgid "found issues"
 msgstr "fand Probleme"
 
 #: API_generated/oyConfig_s.c:1050 API_generated/oyConfig_s.c:1351
-#: API_generated/oyOptions_s.c:481 API_generated/oyranos_devices.c:1378
-#: API_generated/oyranos_devices.c:1702 API_generated/oyranos_devices.c:1786
+#: API_generated/oyOptions_s.c:468 API_generated/oyranos_devices.c:1377
+#: API_generated/oyranos_devices.c:1701 API_generated/oyranos_devices.c:1785
 #: examples/taxi.c:228 examples/taxi.c:329
 #: modules/color/modules/oyranos_cmm_oyra_image_channel.c:143
 #: tools/oyranos-device.c:1311 tools/oyranos-device.c:1321
@@ -7079,7 +7079,7 @@ msgstr "normal"
 msgid "not a profile:"
 msgstr "kein Profil:"
 
-#: API_generated/oyConfig_s.c:1066 API_generated/oyranos_devices.c:1404
+#: API_generated/oyConfig_s.c:1066 API_generated/oyranos_devices.c:1403
 #: liboyranos_config/oyranos_check.c:76
 msgid "not found:"
 msgstr "nicht gefunden:"
@@ -7529,7 +7529,7 @@ msgstr "schreibe Profil mit korrekter ID"
 msgid "write to specified file"
 msgstr "schreibe nach Datei"
 
-#: API_generated/oyOptions_s.c:1633 examples/libraw/oyranos_file.cpp:236
+#: API_generated/oyOptions_s.c:1619 examples/libraw/oyranos_file.cpp:236
 #: examples/taxi.c:203 tools/oyranos_gamma.c:260 tools/oyranos_profiles.c:306
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"

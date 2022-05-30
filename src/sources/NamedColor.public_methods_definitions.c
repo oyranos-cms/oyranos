@@ -235,8 +235,6 @@ int          oyNamedColor_GetColor   ( oyNamedColor_s    * color,
      s->XYZ_[0] != -1 && s->XYZ_[1] != -1 && s->XYZ_[2] != -1)
   {
     p_in = oyProfile_FromStd ( oyEDITING_XYZ, flags, NULL );
-    if(!profile)
-      return 1;
  
     error = oyColorConvert_( p_in, profile,
                               s->XYZ_, buf,
