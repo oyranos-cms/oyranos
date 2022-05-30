@@ -1411,7 +1411,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "    goto clean_main;\n");
     oyjlStr_Add( s, "  if(state & oyjlUI_STATE_HELP)\n" );
     oyjlStr_Add( s, "  {\n" );
-    oyjlStr_Add( s, "    fprintf( stderr, \"%%s\\n\\tman %s\\n\\n\", _(\"For more information read the man page:\") );\n", nick, nick );
+    oyjlStr_Add( s, "    fprintf( stderr, \"%%s\\n\\tman %s\\n\\n\", _(\"For more information read the man page:\") );\n", nick );
     oyjlStr_Add( s, "    goto clean_main;\n" );
     oyjlStr_Add( s, "  }\n" );
     oyjlStr_Add( s, "\n" );
@@ -2377,7 +2377,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
               {
                 oyjlTreeFree( root );
                 if(t) { free(t); t = NULL; }
-                oyjlStringAdd( &t, malloc, free, "Option '%c' has no choices but is not editable (flag&OYJL_OPTION_FLAG_EDITABLE)", o->o );
+                oyjlStringAdd( &t, malloc, free, "Option '%s' has no choices but is not editable (flag&OYJL_OPTION_FLAG_EDITABLE)", o->o?o->o:o->option );
                 return t;
               }
             key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );

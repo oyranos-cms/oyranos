@@ -75,6 +75,11 @@ if(format_ && strchr(format_,'%') != NULL) { \
 } else if(format_) \
 { \
   text_ = strdup( format_ );\
+} \
+else \
+{ \
+  fprintf( stderr, "%s format argument is missing", oyjlTermColor_(oyjlRED,"Program Error:") ); \
+  error_action; \
 }
 #endif
 
@@ -740,8 +745,10 @@ const char * oyjlPrintSubProfiling   ( int                 space,
     i = strlen(prof);
     if(integer/duration < 10.0)
     {
+      const char * t;
       sprintf( prof, " %.04f", integer/duration );
-      sprintf( prof, "%s  %s/s", oyjlTermColor_(oyjlITALIC,prof), term );
+      t = oyjlTermColor_(oyjlITALIC,prof);
+      sprintf( prof, "%s  %s/s", t, term );
     }
     len = strlen(text);
     tmp = (char*) realloc( text, len + strlen(prof) + 2 );

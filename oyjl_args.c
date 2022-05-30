@@ -5245,7 +5245,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
         fprintf(stdout, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", option );
         if(!getenv("OYJL_NO_EXIT")) exit(1);
       }
-#define OYJL_LEFT_TD_STYLE " style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'"
+#define OYJL_LEFT_TD_STYLE " style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%%'"
       switch(o->value_type)
       {
         case oyjlOPTIONTYPE_CHOICE:

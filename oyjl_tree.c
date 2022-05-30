@@ -2009,7 +2009,7 @@ void oyjlTreeClearValue              ( oyjl_val            root,
 
                if(count > 1)
                  memmove( &p->u.array.values[i], &p->u.array.values[i+1],
-                          sizeof(oyjl_val *) * (count - i - 1) );
+                          sizeof(oyjl_val) * (count - i - 1) );
                else
                  delete_parent = 1;
 
