@@ -96,7 +96,6 @@ OYAPI {{ class.listOf }} * OYEXPORT
            oy{{ class.baseName }}_Get             ( {{ class.name }}       * list,
                                        int                 pos )
 {       
-  int error = !list;
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
   if(!s)
@@ -104,10 +103,7 @@ OYAPI {{ class.listOf }} * OYEXPORT
 
   {% block Get_CheckType %}oyCheckType__m{% endblock %}( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
-  if(!error)
-    return ({{ class.listOf }} *) {% block Get_RefType %}oyStructList_GetRefType( s->list_, pos, oyOBJECT_{{ class.content.baseName|underscores|upper }}_S){% endblock %};
-  else
-    return 0;
+  return ({{ class.listOf }} *) {% block Get_RefType %}oyStructList_GetRefType( s->list_, pos, oyOBJECT_{{ class.content.baseName|underscores|upper }}_S){% endblock %};
 }   
 
 /** Function oy{{ class.baseName }}_Count
@@ -124,7 +120,6 @@ OYAPI {{ class.listOf }} * OYEXPORT
 OYAPI int  OYEXPORT
            oy{{ class.baseName }}_Count           ( {{ class.name }}       * list )
 {       
-  int error = !list;
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
   if(!s)
@@ -132,9 +127,7 @@ OYAPI int  OYEXPORT
 
   {% block Count_CheckType %}oyCheckType__m{% endblock %}( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
-  if(!error)
-    return oyStructList_Count( s->list_ );
-  else return 0;
+  return oyStructList_Count( s->list_ );
 }
 
 /** Function oy{{ class.baseName }}_Clear
@@ -151,7 +144,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oy{{ class.baseName }}_Clear           ( {{ class.name }}       * list )
 {       
-  int error = !list;
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
   if(!s)
@@ -159,9 +151,7 @@ OYAPI int  OYEXPORT
 
   {% block Clear_CheckType %}oyCheckType__m{% endblock %}( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
-  if(!error)
-    return oyStructList_Clear( s->list_ );
-  else return 0;
+  return oyStructList_Clear( s->list_ );
 }
 
 /** Function oy{{ class.baseName }}_Sort
@@ -176,7 +166,6 @@ OYAPI int  OYEXPORT
            oy{{ class.baseName }}_Sort            ( {{ class.name }}       * list,
                                        int32_t           * rank_list )
 {       
-  int error = !list;
   {{ class.privName }} * s = ({{ class.privName }}*)list;
 
   if(!s)
@@ -184,8 +173,6 @@ OYAPI int  OYEXPORT
 
   {% block Sort_CheckType %}oyCheckType__m{% endblock %}( oyOBJECT_{{ class.baseName|underscores|upper }}_S, return 0 )
 
-  if(!error)
-    return oyStructList_Sort( s->list_, rank_list );
-  else return 0;
+  return oyStructList_Sort( s->list_, rank_list );
 }
 {% endblock GeneralPublicMethodsDefinitions %}

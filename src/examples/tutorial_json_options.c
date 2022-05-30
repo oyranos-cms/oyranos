@@ -61,35 +61,35 @@ void testOyjl(void)
   /* convert back to JSON */
   oyjlTreeToJson( root, &level, &json );
 
-    fprintf( stderr, "%s\n", json );
+    fprintf( stderr, "%s\n", json?json:"" );
     free(json); json = NULL;
 
   /* use a xpath to obtain a node */
   value = oyjlTreeGetValueF( root, 0, "org/test/[%d]", 1 );
 
     oyjlTreeToJson( value, &level, &json );
-    fprintf( stderr, "%s\n", json );
+    fprintf( stderr, "%s\n", json?json:"" );
     free(json); json = NULL;
 
   /* use a xpath to remove a node */
   oyjlTreeClearValue( root, "org/test/[0]" );
 
     oyjlTreeToJson( root, &level, &json );
-    fprintf( stderr, "%s\n", json );
+    fprintf( stderr, "%s\n", json?json:"" );
     free(json); json = NULL;
 
   /* use a xpath to get a new node in a existing tree */
   value = oyjlTreeGetValue( root, OYJL_CREATE_NEW, "org/add/opt" );
 
     oyjlTreeToJson( root, &level, &json );
-    fprintf( stderr, "%s\n", json );
+    fprintf( stderr, "%s\n", json?json:"" );
     free(json); json = NULL;
 
   /* set the new node to some string value  */
   oyjlValueSetString( value, "value" );
 
     oyjlTreeToJson( root, &level, &json );
-    fprintf( stderr, "%s\n", json );
+    fprintf( stderr, "%s\n", json?json:"" );
     free(json); json = NULL;
 
   /* release memory */
@@ -99,7 +99,7 @@ void testOyjl(void)
   root = oyjlTreeNew( "new/tree/key" );
 
     oyjlTreeToJson( root, &level, &json );
-    fprintf( stderr, "%s\n", json );
+    fprintf( stderr, "%s\n", json?json:"" );
     free(json); json = NULL;
 
   /* release memory */

@@ -461,19 +461,16 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
   {
     filename = oyOptions_FindString( opts, "filename", 0 );
     if(!filename)
+    {
       result = 1;
+      oPNG_msg( oyMSG_WARN, node,
+             OY_DBG_FORMAT_ "filename missed",
+             OY_DBG_ARGS_ );
+    }
   }
 
   if(filename)
     fp = fopen( filename, "wb" );
-  else
-  {
-    oPNG_msg( oyMSG_WARN, node,
-             OY_DBG_FORMAT_ "filename missed",
-             OY_DBG_ARGS_ );
-    if(result <= 0)
-      result = 1;
-  }
 
   if(fp)
   {

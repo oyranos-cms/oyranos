@@ -249,7 +249,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oyProfiles_Clear           ( oyProfiles_s       * list )
 {       
-  int error = !list;
   oyProfiles_s_ * s = (oyProfiles_s_*)list;
 
   if(!s)
@@ -257,9 +256,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
-  if(!error)
-    return oyStructList_Clear( s->list_ );
-  else return 0;
+  return oyStructList_Clear( s->list_ );
 }
 
 /** Function oyProfiles_Sort
@@ -274,7 +271,6 @@ OYAPI int  OYEXPORT
            oyProfiles_Sort            ( oyProfiles_s       * list,
                                        int32_t           * rank_list )
 {       
-  int error = !list;
   oyProfiles_s_ * s = (oyProfiles_s_*)list;
 
   if(!s)
@@ -282,9 +278,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_PROFILES_S, return 0 )
 
-  if(!error)
-    return oyStructList_Sort( s->list_, rank_list );
-  else return 0;
+  return oyStructList_Sort( s->list_, rank_list );
 }
 
 

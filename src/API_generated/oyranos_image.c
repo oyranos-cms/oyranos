@@ -37,7 +37,7 @@ char   *           oyPixelPrint      ( oyPixel_t           pixel_layout,
   oyDATATYPE_e t = oyToDataType_m( pixel_layout );
   char * text = 0;
 
-#define oyPixelLayoutPrint_FORMAT "channels: %d channel_offset: %d sample_type[%uByte]: %s planar: %d byte_swap %d color_swap: %d flawor: %d"
+#define oyPixelLayoutPrint_FORMAT "channels: %d channel_offset: %d sample_type[%luByte]: %s planar: %d byte_swap %d color_swap: %d flawor: %d"
 #define oyPixelLayoutPrint_ARGS \
   oyToChannels_m( pixel_layout ), \
   oyToColorOffset_m( pixel_layout ), \

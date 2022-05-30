@@ -192,7 +192,7 @@ OYAPI int  OYEXPORT
 OYAPI oyFilterNode_s * OYEXPORT
            oyFilterNodes_Get             ( oyFilterNodes_s       * list,
                                        int                 pos )
-{       
+{
   int error = !list;
   oyFilterNodes_s_ * s = (oyFilterNodes_s_*)list;
 
@@ -221,7 +221,6 @@ OYAPI oyFilterNode_s * OYEXPORT
 OYAPI int  OYEXPORT
            oyFilterNodes_Count           ( oyFilterNodes_s       * list )
 {       
-  int error = !list;
   oyFilterNodes_s_ * s = (oyFilterNodes_s_*)list;
 
   if(!s)
@@ -229,9 +228,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 0 )
 
-  if(!error)
-    return oyStructList_Count( s->list_ );
-  else return 0;
+  return oyStructList_Count( s->list_ );
 }
 
 /** Function oyFilterNodes_Clear
@@ -248,7 +245,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oyFilterNodes_Clear           ( oyFilterNodes_s       * list )
 {       
-  int error = !list;
   oyFilterNodes_s_ * s = (oyFilterNodes_s_*)list;
 
   if(!s)
@@ -256,9 +252,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 0 )
 
-  if(!error)
-    return oyStructList_Clear( s->list_ );
-  else return 0;
+  return oyStructList_Clear( s->list_ );
 }
 
 /** Function oyFilterNodes_Sort
@@ -273,7 +267,6 @@ OYAPI int  OYEXPORT
            oyFilterNodes_Sort            ( oyFilterNodes_s       * list,
                                        int32_t           * rank_list )
 {       
-  int error = !list;
   oyFilterNodes_s_ * s = (oyFilterNodes_s_*)list;
 
   if(!s)
@@ -281,9 +274,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_FILTER_NODES_S, return 0 )
 
-  if(!error)
-    return oyStructList_Sort( s->list_, rank_list );
-  else return 0;
+  return oyStructList_Sort( s->list_, rank_list );
 }
 
 

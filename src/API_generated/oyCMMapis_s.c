@@ -197,7 +197,6 @@ OYAPI oyCMMapi_s * OYEXPORT
            oyCMMapis_Get             ( oyCMMapis_s       * list,
                                        int                 pos )
 {       
-  int error = !list;
   oyCMMapis_s_ * s = (oyCMMapis_s_*)list;
 
   if(!s)
@@ -205,10 +204,7 @@ OYAPI oyCMMapi_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_CMM_APIS_S, return 0 )
 
-  if(!error)
-    return (oyCMMapi_s *) oyStructList_GetRef( s->list_, pos );
-  else
-    return 0;
+  return (oyCMMapi_s *) oyStructList_GetRef( s->list_, pos );
 }   
 
 /** Function oyCMMapis_Count
@@ -225,7 +221,6 @@ OYAPI oyCMMapi_s * OYEXPORT
 OYAPI int  OYEXPORT
            oyCMMapis_Count           ( oyCMMapis_s       * list )
 {       
-  int error = !list;
   oyCMMapis_s_ * s = (oyCMMapis_s_*)list;
 
   if(!s)
@@ -233,9 +228,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CMM_APIS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Count( s->list_ );
-  else return 0;
+  return oyStructList_Count( s->list_ );
 }
 
 /** Function oyCMMapis_Clear
@@ -252,7 +245,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oyCMMapis_Clear           ( oyCMMapis_s       * list )
 {       
-  int error = !list;
   oyCMMapis_s_ * s = (oyCMMapis_s_*)list;
 
   if(!s)
@@ -260,9 +252,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CMM_APIS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Clear( s->list_ );
-  else return 0;
+  return oyStructList_Clear( s->list_ );
 }
 
 /** Function oyCMMapis_Sort
@@ -277,7 +267,6 @@ OYAPI int  OYEXPORT
            oyCMMapis_Sort            ( oyCMMapis_s       * list,
                                        int32_t           * rank_list )
 {       
-  int error = !list;
   oyCMMapis_s_ * s = (oyCMMapis_s_*)list;
 
   if(!s)
@@ -285,9 +274,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CMM_APIS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Sort( s->list_, rank_list );
-  else return 0;
+  return oyStructList_Sort( s->list_, rank_list );
 }
 
 

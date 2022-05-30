@@ -638,7 +638,7 @@ const char * oiccProfilesGetText     ( oyStruct_s        * obj,
           STRING_ADD( tmp,    "  no info available\n" );
         if((int)type == oyNAME_JSON && i < n-1)
           oyStringAddPrintf_( &tmp, oyAllocateFunc_, oyDeAllocateFunc_,
-                              ",\n", t );
+                              ",\n" );
         oyProfile_Release( &p );
       }
       if(type == oyNAME_NAME)

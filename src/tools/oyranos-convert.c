@@ -596,8 +596,10 @@ int myMain( int argc, const char ** argv )
       {
         p = oyProfile_FromName( input, icc_profile_flags, 0 );
         if(!p)
+        {
           WARNc1_S("Could not open profile: %s", input);
-          error = 1;
+          return 1;
+        }
       } else
         p = oyProfile_FromStd( oyASSUMED_WEB, icc_profile_flags, 0 );
       image = oyImage_Create( width,width*width, buf, OY_TYPE_123_16,

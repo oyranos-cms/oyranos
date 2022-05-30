@@ -908,6 +908,7 @@ oyjlTESTRESULT_e testJson ()
     int flags = 0;
 
     root = oyjlTreeParse( json, error_buffer, 128 );
+    if(!root) continue;
 
     switch(i) {
     case 1: xpath = "org/free/[1]"; break;
@@ -1781,7 +1782,7 @@ oyjlTESTRESULT_e testOptionsCopy ()
   if(verbose)
   {
     const char * t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_DESCRIPTION );
-    fprintf( zout, "setA:%u %d %d\n%s\n", t?strlen(t):0, error, oyOptions_Count( setA ), t?t:0 );
+    fprintf( zout, "setA:%u %d %d\n%s\n", t?strlen(t):0, error, oyOptions_Count( setA ), t?t:"" );
   }
   oyOption_Release( &option );
 
@@ -1831,7 +1832,7 @@ oyjlTESTRESULT_e testOptionsCopy ()
     const char * t = oyOptions_GetText( resultA, (oyNAME_e) oyNAME_DESCRIPTION );
     const char * a = oyOptions_GetText( setA, (oyNAME_e) oyNAME_DESCRIPTION );
     const char * c = oyOptions_GetText( setC, (oyNAME_e) oyNAME_DESCRIPTION );
-    fprintf( zout, "setA:%u %d\n----\n%s----\n%s----\n%s----\n", t?strlen(t):0, count, a?a:0, c?c:0, t?t:0 );
+    fprintf( zout, "setA:%lu %d\n----\n%s----\n%s----\n%s----\n", t?strlen(t):0, count, a?a:"", c?c:"", t?t:"" );
   }
   oyOptions_Release( &resultA );
 

@@ -1119,7 +1119,7 @@ OYAPI int OYEXPORT
   switch(type)
   {
   case oySIGNATURE_COLOR_SPACE:       /* color space */
-       h->colorSpace = oyValueCSpaceSig( s->sig_ ); break;
+       break; /* already handled */
   case oySIGNATURE_PCS:                /* profile connection space */
        h->pcs = oyValueCSpaceSig( sig ); break;
   case oySIGNATURE_SIZE:               /* internal stored size */

@@ -196,7 +196,6 @@ OYAPI oyCMMapiFilter_s * OYEXPORT
            oyCMMapiFilters_Get             ( oyCMMapiFilters_s       * list,
                                        int                 pos )
 {       
-  int error = !list;
   oyCMMapiFilters_s_ * s = (oyCMMapiFilters_s_*)list;
 
   if(!s)
@@ -204,10 +203,7 @@ OYAPI oyCMMapiFilter_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_CMM_API_FILTERS_S, return 0 )
 
-  if(!error)
-    return (oyCMMapiFilter_s *) oyStructList_GetRef( s->list_, pos );
-  else
-    return 0;
+  return (oyCMMapiFilter_s *) oyStructList_GetRef( s->list_, pos );
 }   
 
 /** Function oyCMMapiFilters_Count
@@ -224,7 +220,6 @@ OYAPI oyCMMapiFilter_s * OYEXPORT
 OYAPI int  OYEXPORT
            oyCMMapiFilters_Count           ( oyCMMapiFilters_s       * list )
 {       
-  int error = !list;
   oyCMMapiFilters_s_ * s = (oyCMMapiFilters_s_*)list;
 
   if(!s)
@@ -232,9 +227,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CMM_API_FILTERS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Count( s->list_ );
-  else return 0;
+  return oyStructList_Count( s->list_ );
 }
 
 /** Function oyCMMapiFilters_Clear
@@ -251,7 +244,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oyCMMapiFilters_Clear           ( oyCMMapiFilters_s       * list )
 {       
-  int error = !list;
   oyCMMapiFilters_s_ * s = (oyCMMapiFilters_s_*)list;
 
   if(!s)
@@ -259,9 +251,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CMM_API_FILTERS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Clear( s->list_ );
-  else return 0;
+  return oyStructList_Clear( s->list_ );
 }
 
 /** Function oyCMMapiFilters_Sort
@@ -276,7 +266,6 @@ OYAPI int  OYEXPORT
            oyCMMapiFilters_Sort            ( oyCMMapiFilters_s       * list,
                                        int32_t           * rank_list )
 {       
-  int error = !list;
   oyCMMapiFilters_s_ * s = (oyCMMapiFilters_s_*)list;
 
   if(!s)
@@ -284,9 +273,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_CMM_API_FILTERS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Sort( s->list_, rank_list );
-  else return 0;
+  return oyStructList_Sort( s->list_, rank_list );
 }
 
 

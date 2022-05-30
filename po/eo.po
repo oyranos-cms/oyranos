@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-05-29 07:59+0200\n"
+"POT-Creation-Date: 2022-05-30 06:01+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -88,8 +88,8 @@ msgstr ""
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4802
 #: modules/color/modules/oyranos_cmm_lcms.c:2786
 #: modules/color/modules/oyranos_cmm_lcms.c:2789
-#: modules/color/modules/oyranos_cmm_oPNG.c:587
-#: modules/color/modules/oyranos_cmm_oPNG.c:1214
+#: modules/color/modules/oyranos_cmm_oPNG.c:584
+#: modules/color/modules/oyranos_cmm_oPNG.c:1211
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:269
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1173
 msgid "/"
@@ -2084,8 +2084,8 @@ msgstr ""
 #. The following strings must match the categories for a menu entry.
 #: modules/color/modules/oyranos_cmm_oJPG.c:780
 #: modules/color/modules/oyranos_cmm_oJPG.c:1323
-#: modules/color/modules/oyranos_cmm_oPNG.c:586
-#: modules/color/modules/oyranos_cmm_oPNG.c:1213
+#: modules/color/modules/oyranos_cmm_oPNG.c:583
+#: modules/color/modules/oyranos_cmm_oPNG.c:1210
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1172
 msgid "Files"
@@ -2593,12 +2593,12 @@ msgstr ""
 #: liboyranos/oyranos_cmm.c:355 liboyranos/oyranos_cmm.c:379
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2929
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2934
-#: modules/color/modules/oyranos_cmm_oPNG.c:1147
+#: modules/color/modules/oyranos_cmm_oPNG.c:1144
 #: modules/color/modules/oyranos_cmm_oydi.c:932
 msgid "Image"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1149
+#: modules/color/modules/oyranos_cmm_oPNG.c:1146
 msgid "Image PNG Socket"
 msgstr ""
 
@@ -2635,7 +2635,7 @@ msgstr ""
 msgid "Image[expose]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1205
+#: modules/color/modules/oyranos_cmm_oPNG.c:1202
 msgid "Image[input_png]"
 msgstr ""
 
@@ -2659,7 +2659,7 @@ msgstr ""
 msgid "Image[scale]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:578
+#: modules/color/modules/oyranos_cmm_oPNG.c:575
 msgid "Image[write_png]"
 msgstr ""
 
@@ -2668,7 +2668,7 @@ msgid "Image[write_ppm]"
 msgstr ""
 
 #: liboyranos/oyranos_cmm.c:353 liboyranos/oyranos_cmm.c:377
-#: modules/color/modules/oyranos_cmm_oPNG.c:1145
+#: modules/color/modules/oyranos_cmm_oPNG.c:1142
 msgid "Img"
 msgstr ""
 
@@ -2730,7 +2730,7 @@ msgstr ""
 msgid "Input Class"
 msgstr "Ekrano"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1207
+#: modules/color/modules/oyranos_cmm_oPNG.c:1204
 msgid "Input PNG Image Filter Object"
 msgstr ""
 
@@ -3774,12 +3774,12 @@ msgstr ""
 msgid "Option"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:602
+#: modules/color/modules/oyranos_cmm_oPNG.c:599
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:284
 msgid "Option \"filename\", a valid filename"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1229
+#: modules/color/modules/oyranos_cmm_oPNG.c:1226
 msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr ""
 
@@ -4463,7 +4463,7 @@ msgstr ""
 msgid "Read"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1215
+#: modules/color/modules/oyranos_cmm_oPNG.c:1212
 msgid "Read PNG"
 msgstr ""
 
@@ -5423,7 +5423,7 @@ msgid ""
 "data from. If the file does not exist, a error will occure."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1231
+#: modules/color/modules/oyranos_cmm_oPNG.c:1228
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the png data "
 "from. If the file does not exist, a error will occure.\n"
@@ -5439,7 +5439,7 @@ msgid ""
 "The oyEDITING_RGB ICC profile is attached."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:604
+#: modules/color/modules/oyranos_cmm_oPNG.c:601
 msgid ""
 "The Option \"filename\" should contain a valid filename to write the png "
 "data into. A existing file will be overwritten without notice."
@@ -6313,11 +6313,11 @@ msgstr ""
 msgid "Write"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:588
+#: modules/color/modules/oyranos_cmm_oPNG.c:585
 msgid "Write PNG"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:580
+#: modules/color/modules/oyranos_cmm_oPNG.c:577
 msgid "Write PNG Image Filter Object"
 msgstr ""
 
@@ -6596,7 +6596,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:742
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4508
 #: modules/color/modules/oyranos_cmm_lcms.c:2453
-#: modules/color/modules/oyranos_cmm_oPNG.c:991
+#: modules/color/modules/oyranos_cmm_oPNG.c:988
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:141
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:104
 #: tools/oyranos_gamma.c:691 tools/oyranos_gamma.c:864

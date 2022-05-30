@@ -199,10 +199,7 @@ OYAPI oyLis_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_LIST_S, return 0 )
 
-  if(!error)
-    return (oyLis_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_LIS_S);
-  else
-    return 0;
+  return (oyLis_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_LIS_S);
 }   
 
 /** Function oyList_Count
@@ -254,9 +251,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_LIST_S, return 0 )
 
-  if(!error)
-    return oyStructList_Clear( s->list_ );
-  else return 0;
+  return oyStructList_Clear( s->list_ );
 }
 
 /** Function oyList_Sort
@@ -279,9 +274,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_LIST_S, return 0 )
 
-  if(!error)
-    return oyStructList_Sort( s->list_, rank_list );
-  else return 0;
+  return oyStructList_Sort( s->list_, rank_list );
 }
 
 

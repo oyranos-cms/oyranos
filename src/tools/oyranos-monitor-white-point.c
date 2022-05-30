@@ -307,7 +307,7 @@ static oyjlOptionChoice_s * getColorSchemeChoices (
   char ** list;
   char * value;
   int night;
-  oyjlOptionChoice_s * c;
+  oyjlOptionChoice_s * c = NULL;
 
   if(man_page && strcmp(man_page,"man_page") == 0)
   {
@@ -373,7 +373,7 @@ static oyjlOptionChoice_s * getColorSchemeChoices (
     }
     oyjlStringListRelease( &list, n, oyDeAllocateFunc_ );
   }
-  if(selected && *selected > 0)
+  if(selected && *selected > 0 && c)
     fprintf( stderr, "%s %s selected: %d %s\n", o->option, value, *selected, c[*selected].nick );
 
   return c;
@@ -978,7 +978,7 @@ int findLocation(oySCOPE_e scope, int dry)
   {
     size_t size = 0;
     char * geo_json = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
-                                        "https://location.services.mozilla.com/v1/geolocate?key=test", NULL ),
+                                        "https://location.services.mozilla.com/v1/geolocate?key=test" ),
 	 * value = NULL;
     oyjl_val root = 0;
     oyjl_val v = 0;

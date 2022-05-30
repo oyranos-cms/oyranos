@@ -827,7 +827,7 @@ void   oyGetDocTitle                 ( const char       ** options,
     /* general informations */
       if(title || copyright)
          oyStringAddPrintf_( html,  oyAllocateFunc_, oyDeAllocateFunc_,
-"<table cellspacing=3 cellpadding=4 width=\"100%\"> \n");
+"<table cellspacing=3 cellpadding=4 width=\"100%%\"> \n");
       if(title)
          oyStringAddPrintf_( html,  oyAllocateFunc_, oyDeAllocateFunc_, " \
   <tr> \n\
