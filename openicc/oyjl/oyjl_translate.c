@@ -136,6 +136,7 @@ oyjl_val oyjlTreeParseXXX            ( const char        * text,
     fprintf( stderr, "%s %s\n%s\n", oyjlTermColor(oyjlRED,_("Usage Error:")), input, error_buffer );
   }
 
+  free( error_buffer );
   free( json );
 
   return root;
