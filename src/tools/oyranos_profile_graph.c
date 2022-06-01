@@ -2052,6 +2052,7 @@ int myMain( int argc, const char ** argv )
   oyProfile_Release( &p_lab );
   oyProfile_Release( &p_xyz );
   free(info);
+  oyjlUi_Release( &ui );
 
   return 0;
 }

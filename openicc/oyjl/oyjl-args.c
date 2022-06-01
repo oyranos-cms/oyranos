@@ -264,11 +264,13 @@ int myMain( int argc, const char ** argv )
       char * sources = oyjlUiJsonToCode( json, completion_bash ? OYJL_COMPLETION_BASH : oyjl_args ? OYJL_SOURCE_CODE_C | OYJL_WITH_OYJL_ARGS_C : OYJL_SOURCE_CODE_C );
       fprintf( stderr, "wrote %d to stdout\n", sources&&strlen(sources)?(int)strlen(sources):0 );
       if(sources)
+      {
         puts( sources );
+        free(sources);
+        sources = NULL;
+      }
     }
   }
-
-  oyjlUi_Release( &ui);
 
   fflush(stdout);
 
@@ -283,6 +285,7 @@ int myMain( int argc, const char ** argv )
       ++i;
     }
   }
+  oyjlUi_Release( &ui);
 
   return 0;
 }

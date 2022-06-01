@@ -205,7 +205,7 @@ oyjlTESTRESULT_e testI18N()
 #ifdef USE_GETTEXT
   use_gettext = 1;
 #endif
-  int debug = 0;
+  static int debug = 0; /* needs to be in global scope */
   oyjlTr_s * trc = oyjlTr_New( loc, 0, 0,0,0,0,0 );
   oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, &trc, oyMessageFunc_p );
 
@@ -10200,11 +10200,11 @@ oyjlTESTRESULT_e testIO()
                                         "https://location.services.mozilla.com/v1/geolocate?key=test", NULL );
   if(text)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyReadUrlToMemf_( ): %d", strlen(text) );
+    "oyReadUrlToMemf_( ): %d", (int)strlen(text) );
     oyDeAllocateFunc_(text);
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL,
-    "oyReadUrlToMemf_( ): %d", strlen(text) );
+    "oyReadUrlToMemf_( ): %d", (int)strlen(text) );
   }
 
   const char * dir = "not_here";

@@ -401,6 +401,7 @@ char * getCurrentColorScheme()
         char * txt = strstr(t, " (current color scheme)");
         txt[0] = '\000';
         current = strdup( t );
+        break;
       }
     }
     oyjlStringListRelease( &list, n, free );
@@ -848,6 +849,8 @@ int myMain( int argc , const char** argv )
   if(oy_debug)
     fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );
   free(info);
+  oyjlUi_Release( &ui);
+
   return error;
 }
 

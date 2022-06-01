@@ -1126,7 +1126,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9781                      /*code_size*/,
+                           9806                      /*code_size*/,
                            1080                      /*help_size*/,
                            2068                      /*man_size*/,
                            4065                      /*markdown_size*/,
@@ -1222,7 +1222,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9526                      /*code_size*/,
+                           9551                      /*code_size*/,
                             613                      /*help_size*/,
                            1552                      /*man_size*/,
                            2521                      /*markdown_size*/,
@@ -1341,6 +1341,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
 
   free(oarray[2].values.choices.list);
   free(oarray[3].values.choices.list);
+  free(oarray[7].values.choices.list);
 
   return result;
 }

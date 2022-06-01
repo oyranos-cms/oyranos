@@ -1606,6 +1606,21 @@ void oyjlOptionChoice_Release     ( oyjlOptionChoice_s**choices )
   free(*choices);
 }
 
+void oyjlOptsPrivate_Release         ( oyjlOptsPrivate_s** results_ )
+{
+  if(results_)
+  {
+    oyjlOptsPrivate_s * results = *results_;
+    if(results)
+    {
+      oyjlStringListRelease( &results->options, results->count, free );
+      oyjlStringListRelease( &results->values,  results->count, free );
+      results->count = 0;
+      free(results);
+    }
+  }
+}
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -2768,7 +2783,8 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           {
             if(!result->options[result->count])
               result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = oyjlOptionsResultValueCopy_("1",o->flags);
+            if(!result->values[result->count])
+              result->values[result->count] = oyjlOptionsResultValueCopy_("1",o->flags);
           }
         }
 
@@ -2841,9 +2857,9 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
 clean_parse:
   oyjlStringListRelease( &result->options, result->count, free );
   oyjlStringListRelease( &result->values, result->count, free );
-  result->values = NULL;
   result->count = 0;
   result->group = -1;
+  if(opts->private_data != result) free(result);
 
   return state;
 }

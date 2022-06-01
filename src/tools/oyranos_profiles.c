@@ -507,6 +507,7 @@ int myMain( int argc, const char ** argv )
       ++i;
     }
   }
+  oyjlUi_Release( &ui );
   oyjlLibRelease();
 
   oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );

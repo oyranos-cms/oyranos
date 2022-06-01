@@ -1476,6 +1476,10 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Add( s, "      ++i;\n" );
     oyjlStr_Add( s, "    }\n" );
     oyjlStr_Add( s, "  }\n" );
+    if(flags & OYJL_WITH_OYJL_ARGS_C)
+      oyjlStr_Add(s,"  oyjlUi_ReleaseArgs( &ui );\n" );
+    else
+      oyjlStr_Add(s,"  oyjlUi_Release( &ui );\n" );
     oyjlStr_Add( s, "\n" );
     oyjlStr_Add( s, "  return error;\n" );
     oyjlStr_Add( s, "}\n" );
@@ -1687,7 +1691,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
           if(use_getChoicesCompletionBash)
             found_at_arg_func = getChoices;
           else
-            found_at_arg_func = "${COMP_LINE} oyjl-list | sed 's/\\\[/_/g;s/\\\]/_/g'";
+            found_at_arg_func = "${COMP_LINE} oyjl-list | sed 's/\\[/_/g;s/\\]/_/g'";
         }
         else
         {

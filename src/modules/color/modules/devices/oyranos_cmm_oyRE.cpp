@@ -199,7 +199,7 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
       }
     }
     oyMAT3 cam_zyx, pre_mul, ab_cm, ab_cm_inverse;
-    oyCIExyYTriple ab_cm_inverse_xyY;
+    oyCIExyYTriple ab_cm_inverse_xyY = {{{0,0},{0,0},{0,0}}};
     
     // Convert camera matrix to ICC profile
     // In theory that should perform the same conversion like dcraw/libraw do.

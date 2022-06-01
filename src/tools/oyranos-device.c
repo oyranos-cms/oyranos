@@ -225,6 +225,7 @@ char **  listProfiles                ( oyConfig_s        * c, /* device */
 
       oyProfile_Release( &profile );
       oyProfiles_Release( &iccs );
+      free( rank_list );
       *count = pos;
 
   return list;
@@ -1659,6 +1660,7 @@ int myMain( int argc, const char ** argv )
       ++i;
     }
   }
+  oyjlUi_Release( &ui );
 
   return error;
 }

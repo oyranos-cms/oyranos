@@ -1016,6 +1016,8 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
       snprintf( error_buffer, error_buffer_size, "Found problem while parsing document tree.\n" );
     oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s", OYJL_DBG_ARGS,
                    "Found problem while parsing document tree." );
+    if(json) free(json);
+    json = NULL;
     return jroot;
   }
 
@@ -1024,6 +1026,7 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
   yaml_parser_delete(&parser);
   yaml_document_delete(&document);
   if(tmp) free(tmp);
+  if(json) free(json);
 
   return jroot;
 }
