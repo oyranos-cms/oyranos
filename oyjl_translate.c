@@ -771,6 +771,7 @@ int myMain( int argc, const char ** argv )
       ++i;
     }
   }
+  oyjlUi_Release( &ui);
 
   return error;
 }

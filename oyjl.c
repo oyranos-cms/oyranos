@@ -196,6 +196,8 @@ int myMain( int argc, const char ** argv )
   int size = 0;
   oyjl_val root = NULL;
   oyjl_val value = NULL;
+  int i_files_n = 0;
+  char ** i_files = NULL;
 
   int error = 0;
   int state = 0;
@@ -383,8 +385,8 @@ int myMain( int argc, const char ** argv )
 
     if(i_filename)
     {
-      int i_files_n = 0, i;
-      char ** i_files = oyjlOptions_ResultsToList( ui->opts, "i", &i_files_n );
+      int i;
+      i_files = oyjlOptions_ResultsToList( ui->opts, "i", &i_files_n );
       if(verbose)
       for(i = 0; i < i_files_n; ++i)
         fprintf(stderr, "going to union: %s\n", i_files[i] );
@@ -426,7 +428,10 @@ int myMain( int argc, const char ** argv )
 
           text = oyjlReadFileToMem( filename, &size );
           if(!text)
-            return 1;
+          {
+            error = 1;
+            goto clean_main;
+          }
           value = oyjlTreeParse2( text, size, xpath, key || set ? &first_path : NULL, !paths ? &root : NULL, root_union ? &path_list : NULL, try_format, paths, filename, verbose );
           while(path_list && path_list[path_list_n]) ++path_list_n;
 
@@ -603,6 +608,8 @@ int myMain( int argc, const char ** argv )
       ++i;
     }
   }
+  oyjlStringListRelease( &i_files, i_files_n, free );
+  oyjlUi_Release( &ui );
 
   return error;
 }
