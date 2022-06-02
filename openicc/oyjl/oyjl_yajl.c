@@ -1032,4 +1032,81 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
 }
 #endif
 
+/** @brief read a JSON, XML or YAML text string into a C data structure (libOyjl)
+ *
+ *  This function needs linking to libOyjl.
+ *
+ *  @see oyjlTreeParse() oyjlTreeParseXml oyjlTreeParseYaml() oyjlTreeToText() oyjlDataFormat()
+ *
+ *  @param[in]     test                the JSON/XML/YAML text
+ *  @param[in]     flags               for processing
+ *                                     - ::OYJL_NUMBER_DETECTION for parsing
+ *                                       of values as possibly numbers
+ *                                     - ::OYJL_QUIET for error reporting as oyjlMSG_INFO
+ *  @param[in]     error_name          add text for error messages
+ *  @param[out]    state               report ::oyjlPARSE_STATE_e
+ *  @return                            object tree on success,
+ *                                     else check error_buffer
+ */
+oyjl_val   oyjlTreeParse2            ( const char        * text,
+                                       int                 flags,
+                                       const char        * error_name,
+                                       int               * status )
+{
+  oyjl_val root = NULL;
+#define oyjl_error_buffer_size_ 256
+  char oyjl_error_buffer_[oyjl_error_buffer_size_] = {0};
+  int data_format = oyjlDataFormat(text);
+  oyjlPARSE_STATE_e state = oyjlPARSE_STATE_NONE;
+  oyjlMSG_e msg_type = flags & OYJL_QUIET ? oyjlMSG_INFO : oyjlMSG_ERROR;
+
+  if(text && strlen(text) > 4 && memcmp(text, "oiJS", 4) == 0)
+    /* static OYJL JSON */
+  {
+    if(flags & OYJL_ALLOW_STATIC)
+    {
+      root = (oyjl_val)text;
+      state = oyjlPARSE_STATE_RETURN_STATIC;
+    }
+    else
+      state = oyjlPARSE_STATE_FORMAT_ERROR;
+  }
+  else if(data_format == 7)
+    /* JSON */
+    root = oyjlTreeParse( text, oyjl_error_buffer_, oyjl_error_buffer_size_ );
+  else if(data_format == 8)
+    /* XML */
+#if defined(OYJL_HAVE_LIBXML2) || defined(DOXYGEN)
+    root = oyjlTreeParseXml( text, flags, oyjl_error_buffer_, oyjl_error_buffer_size_ );
+#else
+    state = oyjlPARSE_STATE_NOT_COMPILED;
+#endif
+
+  else if(data_format == 9)
+    /* YAML */
+#if defined(OYJL_HAVE_YAML) || defined(DOXYGEN)
+    root = oyjlTreeParseYaml( text, flags, oyjl_error_buffer_, oyjl_error_buffer_size_ );
+#else
+    state = oyjlPARSE_STATE_NOT_COMPILED;
+#endif
+  else
+    state = oyjlPARSE_STATE_FORMAT_ERROR;
+
+  if(oyjl_error_buffer_[0] != '\000')
+  {
+    oyjlMessage_p( msg_type, 0, OYJL_DBG_FORMAT "%s %s\t\"%s\"\n", OYJL_DBG_ARGS,
+                   oyjlTermColor(oyjlRED,_("Usage Error:")), error_name?error_name:"", oyjl_error_buffer_ );
+    state = oyjlPARSE_STATE_PARSER_ERROR;
+  } else if( ( state == oyjlPARSE_STATE_FORMAT_ERROR ||
+               state == oyjlPARSE_STATE_NOT_COMPILED ) &&
+             error_name)
+    oyjlMessage_p( msg_type, "file parsed:\t\"%s\" %s %s\n", error_name,
+                   oyjlDataFormatToString( data_format ),
+                   state == oyjlPARSE_STATE_NOT_COMPILED ? "format not compiled" :  "" );
+
+  if(status)
+    *status = state;
+
+  return root;
+}
 /** @} *//* oyjl_tree */

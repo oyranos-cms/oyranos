@@ -214,6 +214,18 @@ OYJL_API oyjl_val oyjlTreeGet ( oyjl_val parent, const char ** path, oyjl_type t
 #undef Florian_Forster_SOURCE_GUARD
 
 #define OYJL_NUMBER_DETECTION 0x01     /**< @brief try to parse values as number */
+#define OYJL_ALLOW_STATIC     0x10     /**< @brief allow to read static format */
+typedef enum {
+  oyjlPARSE_STATE_NONE,                /**< @brief nothing to report */
+  oyjlPARSE_STATE_NOT_COMPILED,        /**< @brief the format is currently not compiled */
+  oyjlPARSE_STATE_FORMAT_ERROR,        /**< @brief check with oyjlDataFormat() */
+  oyjlPARSE_STATE_PARSER_ERROR,        /**< @brief message is sent to oyjlMessage_p */
+  oyjlPARSE_STATE_RETURN_STATIC,       /**< @brief oyjl_val is static and must not be freed; needs OYJL_ALLOW_STATIC flag */
+} oyjlPARSE_STATE_e;
+oyjl_val   oyjlTreeParse2            ( const char        * text,
+                                       int                 flags,
+                                       const char        * error_name,
+                                       int               * status );
 #if defined(OYJL_HAVE_LIBXML2)
 oyjl_val   oyjlTreeParseXml          ( const char        * xml,
                                        int                 flags,
