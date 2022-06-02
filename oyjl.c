@@ -79,7 +79,7 @@ char *     oyjlReadFileToMem         ( const char        * filename,
   return text;
 }
 
-oyjl_val oyjlTreeParse2              ( const char        * input,
+oyjl_val oyjlTreeParse2_             ( const char        * input,
                                        int                 size,
                                        const char        * xpath,
                                        char             ** first_path, /* provide first path together with xpath */
@@ -432,7 +432,7 @@ int myMain( int argc, const char ** argv )
             error = 1;
             goto clean_main;
           }
-          value = oyjlTreeParse2( text, size, xpath, key || set ? &first_path : NULL, !paths ? &root : NULL, root_union ? &path_list : NULL, try_format, paths, filename, verbose );
+          value = oyjlTreeParse2_( text, size, xpath, key || set ? &first_path : NULL, !paths ? &root : NULL, root_union ? &path_list : NULL, try_format, paths, filename, verbose );
           while(path_list && path_list[path_list_n]) ++path_list_n;
 
           if(root_union)

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-01 05:28+0200\n"
+"POT-Creation-Date: 2022-06-02 17:23+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -1211,7 +1211,7 @@ msgstr "по́льзование"
 #: oyjl_args.c:2667 oyjl_args.c:2693 oyjl_args.c:2720 oyjl_args.c:2740
 #: oyjl_args.c:2774 oyjl_args.c:2804 oyjl_args.c:2836 oyjl_args.c:2974
 #: oyjl_args.c:4296 oyjl_args.c:4325 oyjl_core.c:348 oyjl_translate.c:136
-#: oyjl_translate.c:563
+#: oyjl_translate.c:563 oyjl_yajl.c:1098
 msgid "Usage Error:"
 msgstr ""
 
