@@ -1332,11 +1332,7 @@ int myMain( int argc, const char ** argv )
           return 0;
         }
 
-        t = oyAllocateFunc_(256);
-        device = oyjlTreeParse( json, t, 256 );
-        if(t[0])
-          WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
-        oyFree_m_(t);
+        device = oyJsonParse( json, NULL );
       }
       if(strcmp(format,"openicc-rank-map") == 0 ||
          strcmp(format,"openicc+rank-map") == 0)
@@ -1358,11 +1354,7 @@ int myMain( int argc, const char ** argv )
         { fprintf( stderr, "no JSON from RankMap available\n" ); return 0;
         }
 
-        t = oyAllocateFunc_(256);
-        rank_root = oyjlTreeParse( json, t, 256 );
-        if(t[0])
-          WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
-        oyFree_m_(t);
+        rank_root = oyJsonParse( json, NULL );
       }
 
       if(strcmp(format,"openicc+rank-map") == 0)
@@ -1384,7 +1376,7 @@ int myMain( int argc, const char ** argv )
 
             oyDeAllocFunc( json ); json = 0;
             oyjlTreeToJson( rank_map, &level, &json );
-            rank_map = oyjlTreeParse( json, 0,0 );
+            rank_map = oyJsonParse( json, 0 );
             if(json){ free(json); json = 0; }
 
             keys = openicc->u.object.keys;

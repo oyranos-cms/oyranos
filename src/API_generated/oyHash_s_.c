@@ -689,7 +689,7 @@ int                oyHash_SetPointer_( oyHash_s_         * hash,
     {
       hash->oy_struct = obj->copy( obj, 0 );
       if(oy_debug_objects >= 0)
-        oyObjectDebugMessage_( obj?obj->oy_:NULL, __func__, oyStructTypeToText(obj->type_) );
+        oyObjectDebugMessage_( obj->oy_, __func__, oyStructTypeToText(obj->type_) );
     } else
       hash->oy_struct = obj;
     return 0;

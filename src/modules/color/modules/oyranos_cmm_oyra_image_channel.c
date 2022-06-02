@@ -102,7 +102,6 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
     const char * channels_json;
     oyOptions_s * node_opts = oyFilterNode_GetOptions( node, 0 );
     oyjl_val json = 0;
-    char * t;
 
     if(!node_opts)
       dirty = 1;
@@ -136,14 +135,12 @@ int      oyraFilter_ImageChannelRun  ( oyFilterPlug_s    * requestor_plug,
       save_locale = oyStringCopy_( setlocale( LC_NUMERIC, 0 ),
                                          oyAllocateFunc_ );
       setlocale( LC_NUMERIC, "C" );
-      t = oyAllocateFunc_(256);
-      json = oyjlTreeParse( channels_json, t, 256 );
-      if(t[0])
+      json = oyJsonParse( channels_json, NULL );
+      if(!json)
       {
-        WARNc2_S( "channel option: %s: %s\n", _("found issues parsing JSON"), t );
+        WARNc1_S( "channel option: %s\n", _("found issues parsing JSON") );
         error = 1;
       }
-      oyFree_m_(t);
 
       setlocale(LC_NUMERIC, save_locale);
       if(save_locale)

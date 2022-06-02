@@ -782,12 +782,8 @@ OYAPI int  OYEXPORT oyDeviceGetInfo  ( oyConfig_s        * device,
   if(error <= 0 && device_->backend_core)
   {
     /** 1.2.1 add device_name to the string list */
-    if(type == oyNAME_NICK)
-      tmp = oyOptions_FindString( device_->backend_core,"device_name",0);
-    else if(type == oyNAME_NAME)
+    if(type == oyNAME_NAME)
       tmp = oyOptions_FindString( device_->data, "oyNAME_NAME", 0 );
-    else if(type == oyNAME_DESCRIPTION)
-      tmp = oyOptions_FindString( device_->data, "oyNAME_DESCRIPTION", 0 );
   }
 
   *info_text = oyStringCopy_( tmp, allocateFunc );
@@ -1371,11 +1367,7 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
 
   if(error) return error;
 
-  oyAllocHelper_m_(t, char, 256, 0, error = 1; return error );
-  json = oyjlTreeParse( json_text, t, 256 );
-  if(t[0])
-    WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
-  oyFree_m_(t);
+  json = oyJsonParse( json_text, NULL );
 
   oyOptions_FindInt( options, "pos", 0, &pos );
 
@@ -1695,11 +1687,7 @@ OYAPI int  OYEXPORT
     char * json_text = NULL;
     const char * prefix = oyConfig_FindString( device, "prefix", 0 );
 
-    char * t = oyAllocateFunc_(256);
-    root = oyjlTreeParse( manufacturers, t, 256 );
-    if(t[0])
-      WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
-    oyFree_m_(t);
+    root = oyJsonParse( manufacturers, NULL );
 
     if(prefix)
       oyStringAddPrintf_( &key, oyAllocateFunc_, oyDeAllocateFunc_,
@@ -1779,11 +1767,7 @@ OYAPI int  OYEXPORT
                        "https://icc.opensuse.org/devices/%s with header:\n%s",
                        OY_DBG_ARGS_,
                        val, oyNoEmptyString_m_(device_db) );
-        t = oyAllocateFunc_(256);
-        root = oyjlTreeParse( device_db, t, 256 );
-        if(t[0])
-          WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
-        oyFree_m_(t);
+        root = oyJsonParse( device_db, NULL );
 
         error = oyOptions_SetFromString( &opts,
                                  "//" OY_TYPE_STD "/argv/underline_key_suffix",
@@ -2658,7 +2642,7 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
           STRING_ADD( text, "\n" );
           if(flags & oyNAME_JSON)
           {
-            root9 = oyJsonParse( tmp );
+            root9 = oyJsonParse( tmp, NULL );
             if(tmp && !root9)
               WARNc3_S( "%s %s\n%s",_("error in module:"), (*cmm_api9_)->registration, tmp );
           }
@@ -2691,7 +2675,7 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
     /* @todo and how to mix in the values? */
     if(flags & oyNAME_JSON)
     {
-      root4 = oyJsonParse( tmp4 );
+      root4 = oyJsonParse( tmp4, NULL );
       if(!root4)
         WARNc3_S( "%s %s\n%s",_("error in module:"), (*node_)->core->api4_->registration, tmp4 );
     }
@@ -2726,8 +2710,10 @@ int            oyFilterNode_GetUi    ( oyFilterNode_s     * node,
     oyFree_m_( text );
     text = oyJsonPrint( root4 );
   }
-  oyjlTreeFree(root9);
-  oyjlTreeFree(root4);
+  if(root9)
+    oyjlTreeFree(root9);
+  if(root4)
+    oyjlTreeFree(root4);
 
   oyOptions_Release( &options );
 

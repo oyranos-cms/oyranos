@@ -900,7 +900,7 @@ int          l2cmsCMMProfileWrap_Create (
 
     s->type = l2cmsOBJECT_PROFILE;
     s->oy_ = oyObject_NewFrom( NULL, "l2cmsProfileWrap_s" );
-    oyObject_SetParent( s->oy_, l2cmsOBJECT_PROFILE, (oyPointer)s );
+    oyObject_SetParent( s->oy_, (oyOBJECT_e)l2cmsOBJECT_PROFILE, (oyPointer)s );
     s->size = size;
     s->block = block;
     if(oy_debug >= 2)
@@ -1706,7 +1706,7 @@ l2cmsProfileWrap_s*l2cmsAddProofProfile( oyProfile_s     * proof,
 
     s->type = l2cmsOBJECT_PROFILE;
     s->oy_ = oyObject_NewFrom( NULL, "l2cmsProfileWrap_s" );
-    oyObject_SetParent( s->oy_, l2cmsOBJECT_PROFILE, (oyPointer)s );
+    oyObject_SetParent( s->oy_, (oyOBJECT_e)l2cmsOBJECT_PROFILE, (oyPointer)s );
     s->size = size;
     s->block = block;
     s->id = oyStruct_GetId( (oyStruct_s*)proof );
@@ -1984,8 +1984,8 @@ oyPointer l2cmsPassThroughDL         ( icColorSpaceSignature csp_in,
   int cchann_in, cchann_out;
   oyPointer block = NULL;
 
-  cchann_in = cmsChannelsOf(csp_in);
-  cchann_out = cmsChannelsOf(csp_out);
+  cchann_in = cmsChannelsOf((cmsColorSpaceSignature)csp_in);
+  cchann_out = cmsChannelsOf((cmsColorSpaceSignature)csp_out);
   if(cchann_in == cchann_out)
   {
     cmsToneCurve * carr[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0},
@@ -1995,7 +1995,7 @@ oyPointer l2cmsPassThroughDL         ( icColorSpaceSignature csp_in,
       cmsHPROFILE pass_through = NULL;
       int i;
       for(i = 0; i < 16; ++i) carr[i] = null_curve;
-      pass_through = cmsCreateLinearizationDeviceLink( csp_in, carr );
+      pass_through = cmsCreateLinearizationDeviceLink( (cmsColorSpaceSignature)csp_in, carr );
       if(pass_through)
       {
         cmsMLU * mlu = cmsMLUalloc(0,1);
@@ -2632,7 +2632,7 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
   /* add hash in the first line */
   if(hash_text)
   {
-    oyjl_val root = oyJsonParse( hash_text );
+    oyjl_val root = oyJsonParse( hash_text, NULL );
     unsigned char hash[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     uint32_t * h = (uint32_t*)&hash;
 

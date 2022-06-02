@@ -768,12 +768,8 @@ OYAPI int  OYEXPORT oyDeviceGetInfo  ( oyConfig_s        * device,
   if(error <= 0 && device_->backend_core)
   {
     /** 1.2.1 add device_name to the string list */
-    if(type == oyNAME_NICK)
-      tmp = oyOptions_FindString( device_->backend_core,"device_name",0);
-    else if(type == oyNAME_NAME)
+    if(type == oyNAME_NAME)
       tmp = oyOptions_FindString( device_->data, "oyNAME_NAME", 0 );
-    else if(type == oyNAME_DESCRIPTION)
-      tmp = oyOptions_FindString( device_->data, "oyNAME_DESCRIPTION", 0 );
   }
 
   *info_text = oyStringCopy_( tmp, allocateFunc );

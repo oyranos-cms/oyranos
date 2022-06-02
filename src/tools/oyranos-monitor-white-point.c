@@ -990,11 +990,7 @@ int findLocation(oySCOPE_e scope, int dry)
 
     if(geo_json)
     {
-      char * t = oyAllocateFunc_(256);
-      root = oyjlTreeParse( geo_json, t, 256 );
-      if(t[0])
-        WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
-      oyFree_m_(t);
+      root = oyJsonParse( geo_json, NULL );
       if(oy_debug)
         fprintf(stdout, "%s\n", geo_json);
     } else

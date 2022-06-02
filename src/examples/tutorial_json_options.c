@@ -53,10 +53,9 @@ void testOyjl(void)
   oyjl_val value = 0;
   int level = 0;
   char * json = 0;
-  char error_buffer[128];
 
   /* read JSON into C data struct */
-  oyjl_val root = oyjlTreeParse( text, error_buffer, 128 );
+  oyjl_val root = oyJsonParse( text, NULL );
   
   /* convert back to JSON */
   oyjlTreeToJson( root, &level, &json );

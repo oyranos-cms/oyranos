@@ -191,7 +191,6 @@ OYAPI oyLis_s * OYEXPORT
            oyList_Get             ( oyList_s       * list,
                                        int                 pos )
 {       
-  int error = !list;
   oyList_s_ * s = (oyList_s_*)list;
 
   if(!s)
@@ -199,10 +198,7 @@ OYAPI oyLis_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_LIST_S, return 0 )
 
-  if(!error)
-    return (oyLis_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_LIS_S);
-  else
-    return 0;
+  return (oyLis_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_LIS_S);
 }   
 
 /** Function oyList_Count
@@ -219,7 +215,6 @@ OYAPI oyLis_s * OYEXPORT
 OYAPI int  OYEXPORT
            oyList_Count           ( oyList_s       * list )
 {       
-  int error = !list;
   oyList_s_ * s = (oyList_s_*)list;
 
   if(!s)
@@ -227,9 +222,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_LIST_S, return 0 )
 
-  if(!error)
-    return oyStructList_Count( s->list_ );
-  else return 0;
+  return oyStructList_Count( s->list_ );
 }
 
 /** Function oyList_Clear
@@ -246,7 +239,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oyList_Clear           ( oyList_s       * list )
 {       
-  int error = !list;
   oyList_s_ * s = (oyList_s_*)list;
 
   if(!s)
@@ -254,9 +246,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_LIST_S, return 0 )
 
-  if(!error)
-    return oyStructList_Clear( s->list_ );
-  else return 0;
+  return oyStructList_Clear( s->list_ );
 }
 
 /** Function oyList_Sort
@@ -271,7 +261,6 @@ OYAPI int  OYEXPORT
            oyList_Sort            ( oyList_s       * list,
                                        int32_t           * rank_list )
 {       
-  int error = !list;
   oyList_s_ * s = (oyList_s_*)list;
 
   if(!s)
@@ -279,9 +268,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_LIST_S, return 0 )
 
-  if(!error)
-    return oyStructList_Sort( s->list_, rank_list );
-  else return 0;
+  return oyStructList_Sort( s->list_, rank_list );
 }
 
 

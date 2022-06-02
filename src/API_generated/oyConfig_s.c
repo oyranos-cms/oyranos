@@ -1044,11 +1044,7 @@ OYAPI int OYEXPORT oyConfig_FromJSON ( const char        * registration,
     return error;
   }
 
-  t = oyAllocateFunc_(256);
-  json = oyjlTreeParse( json_text, t, 256 );
-  if(t[0])
-    WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
-  oyFree_m_(t);
+  json = oyJsonParse( json_text, NULL );
 
   /* set the registration string */
   config_ = oyConfig_FromRegistration( registration, object );
@@ -1344,14 +1340,9 @@ OYAPI int  OYEXPORT oyRankMapFromJSON( const char        * json_text,
     int32_t pos = 0;
     oyjl_val v;
 
-    t = oyAllocateFunc_(256);
-    json = oyjlTreeParse( json_text, t, 256 );
-    if(t[0])
-    {
-      WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
+    json = oyJsonParse( json_text, NULL );
+    if(!json)
       error = 1;
-    }
-    oyFree_m_(t);
 
     oyOptions_FindInt( options, "pos", 0, &pos );
     json_rankm = oyjlTreeGetValueF( json, 0, xpath, pos );

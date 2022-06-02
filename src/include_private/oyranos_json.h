@@ -24,7 +24,8 @@ extern "C" {
 #include "oyranos_string.h"
 #include "oyjl.h"
 
-oyjl_val     oyJsonParse             ( const char        * json );
+oyjl_val     oyJsonParse             ( const char        * json,
+                                       int               * status );
 char *       oyJsonFromModelAndUi    ( const char        * data,
                                        const char        * ui_text,
                                        oyAlloc_f           allocate_func );

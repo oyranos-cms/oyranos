@@ -868,10 +868,10 @@ oyjlTESTRESULT_e testStringRun ()
                              &size, oyAllocateFunc_ );
   if( size == 186 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyStringFromData_()  %d", size );
+    "oyStringFromData_()  %d", (int)size );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyStringFromData_()  %d", size );
+    "oyStringFromData_()  %d", (int)size );
   }
   oyFree_m_(t);
 
@@ -1782,7 +1782,7 @@ oyjlTESTRESULT_e testOptionsCopy ()
   if(verbose)
   {
     const char * t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_DESCRIPTION );
-    fprintf( zout, "setA:%u %d %d\n%s\n", t?strlen(t):0, error, oyOptions_Count( setA ), t?t:"" );
+    fprintf( zout, "setA:%d %d %d\n%s\n", t?(int)strlen(t):0, error, oyOptions_Count( setA ), t?t:"" );
   }
   oyOption_Release( &option );
 
@@ -1798,7 +1798,7 @@ oyjlTESTRESULT_e testOptionsCopy ()
   if(verbose)
   {
     const char * t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_DESCRIPTION );
-    fprintf( zout, "setA:%u %d %d\n%s\n", t?strlen(t):0, error, oyOptions_Count( setA ), t?t:0 );
+    fprintf( zout, "setA:%u %d %d\n%s\n", t?(int)strlen(t):0, error, oyOptions_Count( setA ), t?t:0 );
   }
 
   // Add many options the crude way
@@ -1832,7 +1832,7 @@ oyjlTESTRESULT_e testOptionsCopy ()
     const char * t = oyOptions_GetText( resultA, (oyNAME_e) oyNAME_DESCRIPTION );
     const char * a = oyOptions_GetText( setA, (oyNAME_e) oyNAME_DESCRIPTION );
     const char * c = oyOptions_GetText( setC, (oyNAME_e) oyNAME_DESCRIPTION );
-    fprintf( zout, "setA:%lu %d\n----\n%s----\n%s----\n%s----\n", t?strlen(t):0, count, a?a:"", c?c:"", t?t:"" );
+    fprintf( zout, "setA:%d %d\n----\n%s----\n%s----\n%s----\n", t?(int)strlen(t):0, count, a?a:"", c?c:"", t?t:"" );
   }
   oyOptions_Release( &resultA );
 
@@ -4981,11 +4981,11 @@ oyjlTESTRESULT_e testPolicy ()
   xml = oyDescriptionToHTML( oyGROUP_ALL, opts, oyAllocateFunc_ );
   if(xml)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyDescriptionToHTML() %d", strlen(xml) );
+    "oyDescriptionToHTML() %d", (int)strlen(xml) );
     oyFree_m_(xml);
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyDescriptionToHTML() %d", strlen(xml) );
+    "oyDescriptionToHTML() %d", (int)strlen(xml) );
   }
 
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
@@ -10197,7 +10197,7 @@ oyjlTESTRESULT_e testIO()
 
   size_t size = 0;
   char * text = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
-                                        "https://location.services.mozilla.com/v1/geolocate?key=test", NULL );
+                                  "https://location.services.mozilla.com/v1/geolocate?key=test" );
   if(text)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyReadUrlToMemf_( ): %d", (int)strlen(text) );

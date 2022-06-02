@@ -193,7 +193,6 @@ OYAPI oyNamedColor_s * OYEXPORT
            oyNamedColors_Get             ( oyNamedColors_s       * list,
                                        int                 pos )
 {       
-  int error = !list;
   oyNamedColors_s_ * s = (oyNamedColors_s_*)list;
 
   if(!s)
@@ -201,10 +200,7 @@ OYAPI oyNamedColor_s * OYEXPORT
 
   oyCheckType__m( oyOBJECT_NAMED_COLORS_S, return 0 )
 
-  if(!error)
-    return (oyNamedColor_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_NAMED_COLOR_S);
-  else
-    return 0;
+  return (oyNamedColor_s *) oyStructList_GetRefType( s->list_, pos, oyOBJECT_NAMED_COLOR_S);
 }   
 
 /** Function oyNamedColors_Count
@@ -221,7 +217,6 @@ OYAPI oyNamedColor_s * OYEXPORT
 OYAPI int  OYEXPORT
            oyNamedColors_Count           ( oyNamedColors_s       * list )
 {       
-  int error = !list;
   oyNamedColors_s_ * s = (oyNamedColors_s_*)list;
 
   if(!s)
@@ -229,9 +224,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_NAMED_COLORS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Count( s->list_ );
-  else return 0;
+  return oyStructList_Count( s->list_ );
 }
 
 /** Function oyNamedColors_Clear
@@ -248,7 +241,6 @@ OYAPI int  OYEXPORT
 OYAPI int  OYEXPORT
            oyNamedColors_Clear           ( oyNamedColors_s       * list )
 {       
-  int error = !list;
   oyNamedColors_s_ * s = (oyNamedColors_s_*)list;
 
   if(!s)
@@ -256,9 +248,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_NAMED_COLORS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Clear( s->list_ );
-  else return 0;
+  return oyStructList_Clear( s->list_ );
 }
 
 /** Function oyNamedColors_Sort
@@ -273,7 +263,6 @@ OYAPI int  OYEXPORT
            oyNamedColors_Sort            ( oyNamedColors_s       * list,
                                        int32_t           * rank_list )
 {       
-  int error = !list;
   oyNamedColors_s_ * s = (oyNamedColors_s_*)list;
 
   if(!s)
@@ -281,9 +270,7 @@ OYAPI int  OYEXPORT
 
   oyCheckType__m( oyOBJECT_NAMED_COLORS_S, return 0 )
 
-  if(!error)
-    return oyStructList_Sort( s->list_, rank_list );
-  else return 0;
+  return oyStructList_Sort( s->list_, rank_list );
 }
 
 

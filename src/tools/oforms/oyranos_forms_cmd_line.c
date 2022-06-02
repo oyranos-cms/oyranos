@@ -129,10 +129,6 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
 
   xmlNodePtr select1, choices = 0, items;
 
-
-  if(oy_debug && default_value && print)
-    printf( "found default: \"%s\"\n", default_value );
-
   if(cur)
   {
     if(oyXMLNodeNameIs(cur, "xf:select1"))
@@ -140,6 +136,8 @@ int        oyXML2XFORMsCmdLineSelect1Handler( xmlNodePtr          cur,
       select1 = cur->children;
       default_value = oyXFORMsModelGetXPathValue( cur, "ref", &xpath );
 
+      if(oy_debug && default_value && print)
+        printf( "found default: \"%s\"\n", default_value );
     }
     else
       select1 = 0;

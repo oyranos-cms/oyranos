@@ -21,24 +21,15 @@
 #include "oyranos_json.h"
 #include "oyranos_config_internal.h"
 
-oyjl_val     oyJsonParse             ( const char        * json )
+oyjl_val     oyJsonParse             ( const char        * json,
+                                       int               * status )
 {
   int error = !json;
   oyjl_val root;
-  char * error_buffer;
  
   if(error) return NULL;
 
-  error_buffer = (char*)oyAllocateFunc_( 256 );
-  if(!error_buffer) return NULL;
-
-  error_buffer[0] = '\000';
-
-  root = oyjlTreeParse( json, error_buffer, 256 );
-  if(error_buffer[0] != '\000')
-    oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_ "ERROR:\t\"%s\"\n%s", OY_DBG_ARGS_, error_buffer, json );
-
-  oyDeAllocateFunc_( error_buffer );
+  root = oyjlTreeParse2( json, oy_debug == 0 ? OYJL_QUIET : 0, NULL, status );
 
   return root;
 }
@@ -72,8 +63,8 @@ char *       oyJsonFromModelAndUi    ( const char        * data,
                                        oyAlloc_f           allocate_func )
 {
   char * text = NULL;
-  oyjl_val droot = oyJsonParse( data ),
-           uiroot = oyJsonParse( ui_text );
+  oyjl_val droot = oyJsonParse( data, NULL ),
+           uiroot = oyJsonParse( ui_text, NULL );
 
   int paths_n = 0, i;
   char ** paths = oyJsonPathsFromPattern( uiroot, "groups//options//key");

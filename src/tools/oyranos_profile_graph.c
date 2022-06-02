@@ -267,12 +267,10 @@ static oyjlOptionChoice_s * listPages ( oyjlOption_s * x OYJL_UNUSED, int * y OY
     size_t size = 0;
     char * text = oyReadFileToMem_( fn, &size, NULL );
     int data_format = oyjlDataFormat( text );
-    char error_buffer[128];
-    size_t error_buffer_size = 128;
     oyjl_val specT = NULL;
     if(data_format == oyNAME_JSON)
     {
-      specT = oyjlTreeParse( text, error_buffer, error_buffer_size );
+      specT = oyJsonParse( text, NULL );
       if(specT)
       {
         int i, pages;
@@ -532,10 +530,8 @@ int myMain( int argc, const char ** argv )
       }\n\
     }\n\
   }";
-  const size_t error_buffer_size = 128;
-  char error_buffer[128] = {0};
   oyjl_val root;
-  root = oyjlTreeParse( attr, error_buffer, error_buffer_size );
+  root = oyJsonParse( attr, NULL );
   oyjlOptions_SetAttributes( opts, &root );
   ui = oyjlUi_FromOptions( "oyranos-profile-graph", _("Oyranos Profile Graph"), _("The tool is a ICC color profile grapher."),
 #ifdef __ANDROID__
@@ -649,8 +645,6 @@ int myMain( int argc, const char ** argv )
     char * text = oyReadFileToMem_( fn, &size, NULL );
     double scale = 1.0;
     int data_format = oyjlDataFormat( text );
-    char error_buffer[128];
-    size_t error_buffer_size = 128;
 
     if(strcmp(input, "HLC_EPV_M0_V2_3") == 0)
     {
@@ -660,7 +654,7 @@ int myMain( int argc, const char ** argv )
 
     if(data_format == oyNAME_JSON)
     {
-      specT = oyjlTreeParse( text, error_buffer, error_buffer_size );
+      specT = oyJsonParse( text, NULL );
       oyTreeFilterColors( specT, pattern );
       spectra = oySpectrumFromTree( specT );
       if(verbose && spectra) fprintf( stderr, "NCC parsed\n" );

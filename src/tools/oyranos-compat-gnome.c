@@ -117,7 +117,7 @@ oyReadFileToMem_(const char* name, size_t *size)
     {
       mem = oyReadFilepToMem_( fp, size );
     } else {
-      fprintf( stderr, OY_DBG_FORMAT_ "%s: %s\n", OY_DBG_ARGS_, "Could not open file", filename?filename:"" );
+      fprintf( stderr, OY_DBG_FORMAT_ "%s: %s\n", OY_DBG_ARGS_, "Could not open file", filename );
     }
   }
  

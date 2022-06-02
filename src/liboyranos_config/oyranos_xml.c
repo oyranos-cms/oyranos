@@ -1341,14 +1341,12 @@ int          oyXFORMsRenderUi        ( const char        * xforms,
   else
 #endif
   {
-    char error_buffer[256] = {0};
-    root = oyjlTreeParse( text, error_buffer, 256 );
-    if(error_buffer[0] != '\000')
-      oyMessageFunc_p( oyMSG_WARN, NULL, OY_DBG_FORMAT_ "ERROR:\t\"%s\"\n", OY_DBG_ARGS_, error_buffer );
-    else
-      oyParseJsonDoc_( root, value, ui_handlers, user_data );
+    root = oyJsonParse( text, NULL );
     if(root)
+    {
+      oyParseJsonDoc_( root, value, ui_handlers, user_data );
       oyjlTreeFree( root );
+    }
   }
 
   if(!root && !has_xml)

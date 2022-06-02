@@ -140,8 +140,7 @@ static char ** getDBPaths( oySCOPE_e scope, int * n )
       db = oyReadFileToMem_( p, &size, oyAllocateFunc_ );
       if(db)
       {
-        char error_buffer[128] = {0};
-        oyjl_val root = oyjlTreeParse( db, error_buffer, 128 );
+        oyjl_val root = oyJsonParse( db, NULL );
 
         paths = oyjlTreeToPaths( root, 1000000, NULL, OYJL_KEY, &count );
         *n = count;
@@ -498,12 +497,11 @@ int myMain( int argc , const char** argv )
       size_t size = 0;
       int count = 0;
       char * db;
-      char error_buffer[128] = {0};
       oyjl_val root;
 
       STRING_ADD( v, "/openicc.json" );
       db = oyReadFileToMem_( v, &size, oyAllocateFunc_ );
-      root = oyjlTreeParse( db, error_buffer, 128 );
+      root = oyJsonParse( db, NULL );
       if(root)
       {
         char * json = NULL;

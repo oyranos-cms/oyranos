@@ -461,11 +461,9 @@ int          oyOptions_FromJSON      ( const char        * json_text,
     va_end  ( list );
   }
 
-  oyAllocHelper_m_(t, char, 256, oyAllocateFunc_, error = 1; goto cleanFJson );
-  json = oyjlTreeParse( json_text, t, 256 );
-  if(!json || t[0])
+  json = oyJsonParse( json_text, NULL );
+  if(!json)
   {
-    WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, json_text );
     error = 1;
     goto cleanFJson;
   }
@@ -1203,7 +1201,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
           val = oyOption_GetText( o, type );
           if(oyjlDataFormat(val) == oyNAME_JSON)
           {
-            oyjl_val opt_root = oyJsonParse( val );
+            oyjl_val opt_root = oyJsonParse( val, NULL );
             if(!opt_root)
               WARNc1_S("could not parse:\n%s", val);
 

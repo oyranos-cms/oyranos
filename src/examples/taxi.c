@@ -220,14 +220,11 @@ int main( int argc, char ** argv )
                                             &size, "r", oyAllocateFunc_ );
     if(manufacturers && manufacturers[0])
     {
-      char * t = oyAllocateFunc_(256);
-      memset(t,0,256);
-      root = oyjlTreeParse( manufacturers, t, 256 );
-      if(t[0])
+      root = oyJsonParse( manufacturers, NULL );
+      if(!root)
       {
-        WARNc3_S( "%s: %s\n%s", _("found issues parsing JSON"), t, manufacturers );
+        WARNc2_S( "%s:\n%s", _("found issues parsing JSON"), manufacturers );
       }
-      oyFree_m_(t);
     } else
     {
       fprintf(stderr, "%s\n", _("Could not download from WWW."));
@@ -319,15 +316,11 @@ int main( int argc, char ** argv )
                             "%s/%s.json", mnft, mnft );
 
                 oyWriteMemToFile_(fn, t, strlen(t+1) );
-                if(fn) oyDeAllocateFunc_(fn); fn = 0;
+                if(fn) { oyDeAllocateFunc_(fn); fn = 0; }
         }
         device_db = t; t = NULL;
 
-        oyAllocHelper_m_(t, char, 256, 0, error = 1; return error );
-        root = oyjlTreeParse( device_db, t, 256 );
-        if(t[0])
-          WARNc2_S( "%s: %s\n", _("found issues parsing JSON"), t );
-        oyFree_m_(t);
+        root = oyJsonParse( device_db, NULL );
 
 
         tv = oyjlTreeGetValueF( root, 0, "org/freedesktop/openicc/device/[0]" );
@@ -351,7 +344,7 @@ int main( int argc, char ** argv )
             if(!taxi_id)
               printf("%s/0 ",val);
 
-            if(val) oyDeAllocateFunc_(val); val = 0;
+            if(val) { oyDeAllocateFunc_(val); val = 0; }
 
             v = oyjlTreeGetValueF( root, 0, "org/freedesktop/openicc/device/[0]/[%d]/profile_description", i );
             n = oyjlValueCount(v);
@@ -361,7 +354,7 @@ int main( int argc, char ** argv )
               val = oyjlValueText( v, oyAllocateFunc_ );
               if(verbose && !taxi_id)
                 printf("%s",val);
-              if(val) oyDeAllocateFunc_(val); val = 0;
+              if(val) { oyDeAllocateFunc_(val); val = 0; }
               /* store all profile descriptions */
               if((taxi_id && strcmp(taxi_id, id_full) == 0) ||
                  db_download)
@@ -393,15 +386,15 @@ int main( int argc, char ** argv )
                   oyWriteMemToFile_(fn, t, strlen(t+1) );
                   printf( "wrote id %s to \"%s\"\n", id, fn );
                 }
-                if(fn) oyDeAllocateFunc_(fn); fn = 0;
+                if(fn) { oyDeAllocateFunc_(fn); fn = 0; }
 
                 oyStringAddPrintf_( &fn, oyAllocateFunc_, oyDeAllocateFunc_,
                             "%s/%s", mnft, profile_name ? profile_name : id );
                 storeTaxiProfile( fn, id_full, NULL );
 
-                if(val) oyDeAllocateFunc_(val); val = 0;
-                if(t) oyDeAllocateFunc_(t); t = 0;
-                if(fn) oyDeAllocateFunc_(fn); fn = 0;
+                if(val) { oyDeAllocateFunc_(val); val = 0; }
+                if(t) { oyDeAllocateFunc_(t); t = 0; }
+                if(fn) { oyDeAllocateFunc_(fn); fn = 0; }
               }
               //break;
             }
@@ -409,9 +402,9 @@ int main( int argc, char ** argv )
               printf("\n");
           }
 
-          if(val) oyDeAllocateFunc_(val); val = 0;
-          if(id) oyDeAllocateFunc_(id); id = 0;
-          if(id_full) oyDeAllocateFunc_(id_full); id_full = 0;
+          if(val) { oyDeAllocateFunc_(val); val = 0; }
+          if(id) { oyDeAllocateFunc_(id); id = 0; }
+          if(id_full) { oyDeAllocateFunc_(id_full); id_full = 0; }
         }
 
         if(!count)

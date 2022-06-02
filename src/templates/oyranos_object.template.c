@@ -32,37 +32,13 @@ int          oyTextboolean_          ( const char        * text_a,
   if(error <= 0)
   {
     if(type == oyBOOLEAN_INTERSECTION)
-    {
-      if(text_a && text_b)
-        erg = (oyStrcmp_( text_a, text_b ) == 0) ? 2 : 0;
-      else
-        erg = 0;
-    }
+      erg = (oyStrcmp_( text_a, text_b ) == 0) ? 2 : 0;
     if(type == oyBOOLEAN_SUBSTRACTION)
-    {
-      if(text_a && text_b)
-        erg = oyStrcmp_( text_a, text_b ) != 0;
-      else if(text_a)
-        erg = 1;
-      else
-        erg = 0;
-    }
+      erg = oyStrcmp_( text_a, text_b ) != 0;
     if(type == oyBOOLEAN_DIFFERENZ)
-    {
-      if(text_a && text_b)
-        erg = oyStrcmp_( text_a, text_b ) != 0;
-      else if(text_a || text_b)
-        erg = 1;
-      else
-        erg = 0;
-    }
+      erg = oyStrcmp_( text_a, text_b ) != 0;
     if(type == oyBOOLEAN_UNION)
-    {
-      if(text_a || text_b)
         erg = 2;
-      else
-        erg = 0;
-    }
   }
 
   return erg;
