@@ -338,7 +338,7 @@ int myMain( int argc, const char ** argv )
   {
     /* ... working code goes here ... */
     if( (!input && (add || extract || copy)) ||
-        (strcmp(input,"-") == 0 || strcmp(input,"stdin") == 0) )
+        (input && strcmp(input,"-") == 0 || strcmp(input,"stdin") == 0) )
     {
       json = oyjlReadFileStreamToMem( stdin, &size );
     }
@@ -675,7 +675,7 @@ int myMain( int argc, const char ** argv )
             goto clean_main;
           }
 
-          ptext = oyjlTermColorToPlain(text);
+          ptext = oyjlTermColorToPlain(text, OYJL_REGEXP);
           free(text);
           text = oyjlStringCopy(ptext,0);
           sname = strdup(domain);

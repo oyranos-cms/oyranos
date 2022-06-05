@@ -153,7 +153,7 @@ char *   oyjlBT                      ( int                 stack_limit )
                   fprintf(stderr, "prog = %s main_prog = %s\n", prog, main_prog );
               }
 
-              if( main_prog && prog && strstr(main_prog, prog) == NULL && oyjl_has_eu_addr2line_)
+              if( main_prog && strstr(main_prog, prog) == NULL && oyjl_has_eu_addr2line_)
               {
                 char * addr2 = NULL;
                 txt = strchr( tmp?tmp:line, '(' );
@@ -188,18 +188,15 @@ char *   oyjlBT                      ( int                 stack_limit )
                 {
                   addr_info = oyjlStringCopy( addr_infos, NULL );
 
-                  if(addr_info[strlen(addr_info)-1] == '\n') addr_info[strlen(addr_info)-1] = '\000';
+                  if( addr_info[strlen(addr_info)-1] == '\n' ) addr_info[strlen(addr_info)-1] = '\000';
 
-                  if(addr_info)
+                  if( addr_info[strlen(addr_info)-1] == ')' &&
+                      strrchr( addr_info, '(' ) )
                   {
-                    if( addr_info[strlen(addr_info)-1] == ')' &&
-                        strrchr( addr_info, '(' ) )
-                    {
-                      txt = strrchr( addr_info, '(' );
-                      discriminator = oyjlStringCopy( txt, NULL );
-                      txt[-1] = '\000';
-                    } 
-                  }
+                    txt = strrchr( addr_info, '(' );
+                    discriminator = oyjlStringCopy( txt, NULL );
+                    txt[-1] = '\000';
+                  } 
 
                   txt = strrchr( addr_info, ' ' );
                   if(txt && strrchr( txt, ' '))
@@ -1453,7 +1450,7 @@ int        oyjlStr_AppendN           ( oyjl_str            string,
   int error = 0;
   if(append && append_len)
   {
-    if((append_len + str->len) >= str->alloc_len)
+    if((append_len + str->len) >= str->alloc_len - 1)
     {
       int len = (append_len + str->len) * 2;
       char * edit = str->s;
@@ -1677,19 +1674,39 @@ const char*oyjlStr                   ( oyjl_str            string )
   return (const char*)string->s;
 }
 extern char * oyjl_term_color_plain_;
-const char * oyjlTermColorToPlain    ( const char        * text )
+const char * oyjlTermColorToPlainArgs( const char        * text );
+/** @brief   remove term color marks
+ *
+ *  The OYJL_REGEXP flag uses: int count = oyjlRegExpReplace( &t, "\033[[0-9;]*m", "" ); .
+ *
+ *  @param[in]     text                input
+ *  @param[in]     flags               support ::OYJL_REGEXP slower but work as well outside Oyjl
+ *  @return                            cleaned text
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2022/06/04
+ *  @since   2022/04/03 (Oyjl: 1.0.0)
+ */
+const char * oyjlTermColorToPlain    ( const char        * text,
+                                       int                 flags )
 {
-  char * t = text ? oyjlStringCopy(text,0) : NULL;
-  int count = t ? oyjlRegExpReplace( &t, "\033[[0-9;]*m", "" ) : 0;
-  if(count)
+  if(flags & OYJL_REGEXP)
   {
-    if(oyjl_term_color_plain_) free(oyjl_term_color_plain_);
-    oyjl_term_color_plain_ = t;
-    t = NULL;
-    text = oyjl_term_color_plain_;
+    char * t = text ? oyjlStringCopy(text,0) : NULL;
+    int count = t ? oyjlRegExpReplace( &t, "\033[[0-9;]*m", "" ) : 0;
+    if(count)
+    {
+      if(oyjl_term_color_plain_) free(oyjl_term_color_plain_);
+      oyjl_term_color_plain_ = t;
+      t = NULL;
+      text = oyjl_term_color_plain_;
+    }
+    else if(t)
+      free(t);
+  } else
+  {
+    text = oyjlTermColorToPlainArgs( text );
   }
-  else if(t)
-    free(t);
   return text;
 }
 /* --- String_Section --- */
@@ -2704,10 +2721,10 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
     oyjlDebugVariableSet( debug_variable );
   oyjlMessageFuncSet(msg);
 
-  if(*debug_variable)
+  if(debug_variable && *debug_variable)
     oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s loc_domain: %s", OYJL_DBG_ARGS, loc, loc_domain );
 
-  if(getenv(env_var_debug))
+  if(debug_variable && getenv(env_var_debug))
   {
     *debug_variable = atoi(getenv(env_var_debug));
     if(*debug_variable)

@@ -116,15 +116,8 @@ char *   testTranslateJson           ( const char        * json,
   char * txt = 0;
   int i;
   oyjl_val array[count];
-  char error_buffer[128] = {0};
   for(i = 0; i < count; ++i)
-    array[i] = oyjlTreeParse( json, error_buffer,128 );
-  if(error_buffer[0])
-  {
-    char * t = oyjlBT(0);
-    fprintf( stderr, "%s%s\n", t, error_buffer );
-    free(t);
-  }
+    array[i] = oyjlTreeParse2( json, 0, __func__, NULL );
   double clck = oyjlClock();
   for( i = 0; i < count; ++i )
     oyjlTranslateJson( array[i], tr_context, key_list );
@@ -280,7 +273,7 @@ oyjlTESTRESULT_e testI18N()
 }";
   oyjlWriteFile( "i18n.json", json, strlen(json) );
   int flags = 0;
-  catalog = oyjlTreeParse( json, NULL, 0 );
+  catalog = oyjlTreeParse2( json, OYJL_NO_MARKUP, __func__, NULL );
   trc = oyjlTr_New( loc, OYJL_DOMAIN, &catalog, NULL,NULL,NULL, flags );
   oyjlTr_Set( &trc );
   text = _("");
@@ -569,7 +562,7 @@ oyjlTESTRESULT_e testI18N()
   oyjlTr_SetLocale( trc, loc );
   txt = testTranslateJson( oyjl_export, trc, key_list, n, &clck );
   i = 0;
-  plain = oyjlTermColorToPlain(txt);
+  plain = oyjlTermColorToPlain(txt, 0);
   if( txt && strlen( plain ) == 23333 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
     "oyjlTranslateJson(\"%s\",%s) %s", loc, name, oyjlTr_GetLang( trc ) );
@@ -634,7 +627,7 @@ oyjlTESTRESULT_e testI18N()
   loc = "de_DE";
   oyjlTr_SetLocale( trc, loc );
   txt = testTranslateJson( oyjl_export, trc, key_list, n, &clck );
-  plain = oyjlTermColorToPlain(txt);
+  plain = oyjlTermColorToPlain(txt, 0);
   if( txt && strlen( plain ) == 23333 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
     "oyjlTranslateJson(gettext)" );
@@ -652,8 +645,8 @@ oyjlTESTRESULT_e testI18N()
   double tmp_d;
 #define printtime oyjlPrintTime(OYJL_TIME, oyjlNO_MARK), (int)(modf(oyjlSeconds(),&tmp_d)*1000)
 #define timeformat "[%s.%04d] "
-  fprintf( zout, timeformat "before oyjlTreeParse(liboyjl_i18n_oiJS)\n", printtime);
-  oyjl_val root = oyjlTreeParse( oyjl_export, NULL, 0 );
+  fprintf( zout, timeformat "before oyjlTreeParse2(liboyjl_i18n_oiJS)\n", printtime);
+  oyjl_val root = oyjlTreeParse2( oyjl_export, 0, __func__, NULL );
   fprintf( zout, timeformat "before while\n", printtime );
   size = sizeof(liboyjl_i18n_oiJS);
   catalog = (oyjl_val) oyjlStringAppendN( NULL, (const char*) liboyjl_i18n_oiJS, size, malloc );
@@ -666,7 +659,7 @@ oyjlTESTRESULT_e testI18N()
   i = 0;
   txt = NULL;
   oyjlTreeToJson( root, &i, &txt );
-  plain = oyjlTermColorToPlain(txt);
+  plain = oyjlTermColorToPlain(txt, 0);
   if( txt && strlen( plain ) == 23333 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(plain),
     "oyjlTranslateJson(oyjl)" );
@@ -682,7 +675,7 @@ oyjlTESTRESULT_e testI18N()
 
   size = 0;
   //flags = verbose ? OYJL_OBSERVE : 0;
-  catalog = oyjlTreeParse( json, NULL, 0 );
+  catalog = oyjlTreeParse2( json, OYJL_NO_MARKUP, __func__, NULL );
   oyjl_val static_catalog = oyjlTreeSerialise( catalog, flags, &size );
   if(size == 944 && memcmp( static_catalog, "oiJS", 4 ) == 0)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, size,
@@ -751,7 +744,7 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
   oyjlTr_Set( &trc );
   loc = setlocale(LC_ALL,"de_DE.UTF8");
   loc = oyjlLang(loc);
-  root = oyjlTreeParse( oyjl_export, NULL, 0 );
+  root = oyjlTreeParse2( oyjl_export, 0, __func__, NULL );
   fprintf( zout, timeformat "before while\n", printtime );
   size = 0; while(size < 1000) ++size;
   fprintf( zout, timeformat "after while; before oyjlTranslateJson\n", printtime );
@@ -760,7 +753,7 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
   i = 0;
   txt = NULL;
   oyjlTreeToJson( root, &i, &txt );
-  plain = oyjlTermColorToPlain(txt);
+  plain = oyjlTermColorToPlain(txt, 0);
   if( txt && strlen( plain ) == 23333 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(plain),
     "oyjlTranslateJson(oyjl, static_catalog)" );
@@ -934,9 +927,9 @@ oyjlTESTRESULT_e testEscapeJson      ( const char        * text_,
   oyjl_val root = oyjlTreeNew("");
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "data/key-%s", key );
   oyjlTreeToJson( root, &i, &text ); i = 0;
-  char error_buffer[128];
-  oyjl_val rroot = oyjlTreeParse( text, error_buffer, 128 );
-  if( text && strlen( oyjlTermColorToPlain(text) ) == tree_size && rroot )
+  int status = 0;
+  oyjl_val rroot = oyjlTreeParse2( text, 0, __func__, &status );
+  if( text && strlen( oyjlTermColorToPlain(text, 0) ) == tree_size && rroot && status == oyjlPARSE_STATE_NONE )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
     "set key  [%s,%s,%s] \"%s\"",
     flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_NO_INDEX?"\\[":"",
@@ -1020,9 +1013,9 @@ oyjlTESTRESULT_e testEscapeJsonVal   ( const char        * text_,
   oyjl_val root = oyjlTreeNew("");
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, value, "key" );
   oyjlTreeToJson( root, &i, &text ); i = 0;
-  char error_buffer[128];
-  oyjl_val rroot = oyjlTreeParse( text, error_buffer, 128 );
-  if( text && strlen( oyjlTermColorToPlain(text) ) == tree_size && rroot )
+  int status = 0;
+  oyjl_val rroot = oyjlTreeParse2( text, 0, __func__, &status );
+  if( text && strlen( oyjlTermColorToPlain(text, 0) ) == tree_size && rroot && status == oyjlPARSE_STATE_NONE )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text), 
     "set value [%s,%s,%s] \"%s\"",
     flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_NO_INDEX?"\\[":"",
@@ -1078,7 +1071,7 @@ oyjlTESTRESULT_e testJson ()
     const char * xpath = NULL;
     int flags = 0;
 
-    root = oyjlTreeParse( json, error_buffer, 128 );
+    root = oyjlTreeParse2( json, OYJL_NO_MARKUP, __func__, NULL );
 
     switch(i) {
     case 1: xpath = "org/free/[1]"; break;
@@ -1094,7 +1087,7 @@ oyjlTESTRESULT_e testJson ()
     {
       char * rjson = 0;
       oyjlTreeToJson( root, &level, &rjson );
-      plain = oyjlTermColorToPlain(rjson);
+      plain = oyjlTermColorToPlain(rjson, 0);
       if(json && json[0] && strlen(plain) == 210 && strcmp(json,plain) == 0)
       { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(rjson),
         "oyjlTreeToJson()" );
@@ -1226,7 +1219,7 @@ oyjlTESTRESULT_e testJson ()
           oyjlTreeToJson( root, &level, &rjson );
         } else
           oyjlTreeToJson( value, &level, &rjson );
-        plain = oyjlTermColorToPlain(rjson);
+        plain = oyjlTermColorToPlain(rjson, 0);
       }
       if(rjson && rjson[0])
         success = 1;
@@ -1254,14 +1247,14 @@ oyjlTESTRESULT_e testJson ()
       if(i == 4)
       {
         const char * new_tree = "{ \"root\": {\"embedded_key\": \"val\" } }";
-        oyjl_val new_sub = oyjlTreeParse( new_tree, error_buffer, 128 );
+        oyjl_val new_sub = oyjlTreeParse2( new_tree, OYJL_NO_MARKUP, __func__, NULL );
         oyjl_val rv = oyjlTreeGetValue( root, OYJL_CREATE_NEW, xpath );
         oyjl_val nv = oyjlTreeGetValue( new_sub, 0, "root" );
         size_t size = sizeof( * rv );
         memcpy( rv, nv, size );
         memset( nv, 0, size );
         oyjlTreeToJson( root, &level, &rjson );
-        plain = oyjlTermColorToPlain(rjson);
+        plain = oyjlTermColorToPlain(rjson, 0);
         if( strlen( plain ) == 291 )
         { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
           "copy node" );
@@ -1336,7 +1329,7 @@ oyjlTESTRESULT_e testJson ()
   char * text = NULL;
   int level = 0;
   oyjlTreeToJson( root, &level, &text );
-  if(text && strlen( oyjlTermColorToPlain(text) ) == 293)
+  if(text && strlen( oyjlTermColorToPlain(text, 0) ) == 293)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
     "escape roundtrip" );
   } else
@@ -1347,7 +1340,7 @@ oyjlTESTRESULT_e testJson ()
   if(verbose && text)
     fprintf( zout, "%s\n", text );
   oyjlTreeFree( root );
-  root = oyjlTreeParse( text, error_buffer, 128 );
+  root = oyjlTreeParse2( text, 0, __func__, NULL );
   char * tree_text = text; text = NULL;
 
   int size = 0,
@@ -1473,7 +1466,7 @@ const char * oyjlTreeGetString_      ( oyjl_val            v,
   oyjlTreeFree( value );
   value = NULL;
 
-  const char * ctext = oyjlTermColorToPlain(text);
+  const char * ctext = oyjlTermColorToPlain(text, 0);
   if(ctext && strlen( ctext ) == 293)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(ctext),
     "oyjlTreeDeSerialise()" );
@@ -1593,14 +1586,15 @@ oyjlTESTRESULT_e testJsonRoundtrip () /* Data Readers */
 
 
 #if defined(OYJL_HAVE_LIBXML2)
-  root = oyjlTreeParseXml( text_to_xml, OYJL_NUMBER_DETECTION, error_buffer, 128 );
+  int status = 0;
+  root = oyjlTreeParse2( text_to_xml, OYJL_NUMBER_DETECTION, __func__, &status );
   level = 0;
   oyjlTreeToJson( root, &level, &text_from_xml );
-  plain = oyjlStringCopy( oyjlTermColorToPlain( text ), 0 );
-  plain2 = oyjlStringCopy( oyjlTermColorToPlain( text_from_xml ), 0 );
+  plain = oyjlStringCopy( oyjlTermColorToPlain( text, 0 ), 0 );
+  plain2 = oyjlStringCopy( oyjlTermColorToPlain( text_from_xml, 0 ), 0 );
   int text_from_xml_size = strlen(plain2),
       text_size = strlen(plain);
-  if(text && text_from_xml && text_from_xml_size == text_size)
+  if(text && text_from_xml && text_from_xml_size == text_size && status == oyjlPARSE_STATE_NONE)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeToXml () <-> oyjlTreeParseXml () %i<->%i", text_from_xml_size, text_size );
   } else
@@ -1641,11 +1635,11 @@ oyjlTESTRESULT_e testJsonRoundtrip () /* Data Readers */
   level = 0;
   oyjlTreeToJson( root, &level, &text_from_xml );
   oyjlTreeFree( root ); root = NULL;
-  root = oyjlTreeParse( text_from_xml, error_buffer, 128 );
+  root = oyjlTreeParse2( text_from_xml, 0, __func__, NULL );
   level = 0;
   oyjlTreeToXml( root, &level, &text_to_xml );
   oyjlTreeFree( root ); root = NULL;
-  if(xml && text_to_xml && strlen(oyjlTermColorToPlain( text_to_xml )) == strlen(xml))
+  if(xml && text_to_xml && strlen(oyjlTermColorToPlain( text_to_xml, 0 )) == strlen(xml))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeParseXml () <-> oyjlTreeToXml ()" );
   } else
@@ -1690,8 +1684,8 @@ org:\n\
     - 4.5";
   root = oyjlTreeParseYaml( yaml, 0, error_buffer, 128 );
   text = oyjlTreeToText( root, OYJL_YAML );
-  int size_to = strlen( oyjlTermColorToPlain( yaml ) );
-  int size_from = strlen( oyjlTermColorToPlain( text ) );
+  int size_to = strlen( oyjlTermColorToPlain( yaml, 0 ) );
+  int size_from = strlen( oyjlTermColorToPlain( text, 0 ) );
   if(root && size_to == size_from)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeParseYaml() <-> oyjlTreeToYaml()" );
@@ -1831,7 +1825,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json", prog );
-  const char * plain = oyjlTermColorToPlain(t);
+  const char * plain = oyjlTermColorToPlain(t, 0);
   len = t ? strlen(plain) : 0;
   if(abs((int)len - (int)json_size) <= 1 && oyjlDataFormat(plain) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -1846,7 +1840,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json+command", prog );
-  plain = oyjlTermColorToPlain(t);
+  plain = oyjlTermColorToPlain(t, 0);
   len = t ? strlen(plain) : 0;
   if(abs((int)len - (int)json_command_size) <= 1 && oyjlDataFormat(plain) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -1861,7 +1855,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X export", prog );
-  plain = oyjlTermColorToPlain(t);
+  plain = oyjlTermColorToPlain(t, 0);
   len = t ? strlen(plain) : 0;
   if(abs((int)len - (int)export_size) <= 1 && oyjlDataFormat(plain) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -1874,14 +1868,13 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(verbose && len)
     fprintf( zout, "%s\n", t );
 
-  char error_buffer[128] = {0};
   char * export_text = t; t = NULL;
   size_t export_len = len;
-  oyjl_val root = oyjlTreeParse( export_text, error_buffer, 128 );
+  oyjl_val root = oyjlTreeParse2( export_text, 0, __func__, NULL );
 
   oyjlUi_s * ui = oyjlUi_ImportFromJson( root, 0 );
   t = oyjlUi_ExportToJson( ui, 0 );
-  len = t ? strlen(oyjlTermColorToPlain( t )) : 0;
+  len = t ? strlen(oyjlTermColorToPlain( t, 0 )) : 0;
   if(abs((int)len - (int)export_len) <= 1 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "oyjlUi_ImportFromJson()" );
@@ -2037,7 +2030,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   if(verbose && text)
     fprintf( zout, "%s\n", text );
 
-  oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
+  oyjl_val json = oyjlTreeParse2( text, 0, __func__, NULL );
   if(text) {free(text);} text = NULL;
 
   result = testCode( json, "oiCR"                    /*prog*/,
@@ -2156,8 +2149,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(verbose && text)
     fprintf( zout, "%s\n", text );
 
-  char error_buffer[128] = {0};
-  oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
+  oyjl_val json = oyjlTreeParse2( text, 0, __func__, NULL );
   if(text) {free(text);} text = NULL;
 
   result = testCode( json, "oiCR_enGB"               /*prog*/,
@@ -2277,8 +2269,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   if(verbose && text)
     fprintf( zout, "%s\n", text );
 
-  error_buffer[0] = 0;
-  json = oyjlTreeParse( text, error_buffer, 128 );
+  json = oyjlTreeParse2( text, 0, __func__, NULL );
   if(text) {free(text);} text = NULL;
 
   char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );

@@ -982,7 +982,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
-  const char * plain = oyjlTermColorToPlain(t);
+  const char * plain = oyjlTermColorToPlain(t, 0);
   len = t ? strlen(plain) : 0;
   if(len == json_size && oyjlDataFormat(plain) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -1254,7 +1254,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
                                        "oyjl-config-read", "Oyjl Config Reader", _("Short example tool using libOyjl"), "logo",
                                        sections, oarray, groups, NULL );
   text = oyjlUi_ToJson( ui, 0 );
-  const char * plain = oyjlTermColorToPlain(text);
+  const char * plain = oyjlTermColorToPlain(text, 0);
   int len = strlen(plain);
   if(text && len == 5325)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -1283,7 +1283,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   if(text) {free(text);} text = NULL;
 
   text = oyjlOptions_ResultsToJson( ui->opts, OYJL_JSON );
-  plain = oyjlTermColorToPlain(text);
+  plain = oyjlTermColorToPlain(text, 0);
   len = strlen(plain);
   if(text && len == 63)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -1320,7 +1320,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   }
 
   text = oyjlUi_ExportToJson( ui, 0 );
-  plain = oyjlTermColorToPlain(text);
+  plain = oyjlTermColorToPlain(text, 0);
   len = strlen(plain);
   if(text && len == 7680)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -1701,7 +1701,7 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
   clck = oyjlClock() - clck;
   fprintf( zout, "%s\n",
     oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
-    "oyjlTreeToJson2_()       1x %d", (int)strlen(text)) );
+    "oyjlTreeToJson2_()                  1x %d", (int)strlen(text)) );
   myDeAllocFunc( text ); text = NULL;
 
   clck = oyjlClock();
@@ -1709,7 +1709,21 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
   clck = oyjlClock() - clck;
   fprintf( zout, "%s\n",
     oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
-    "oyjlTreeToJson()         1x %d", (int)strlen(text)) );
+    "oyjlTreeToJson()                    1x %d", (int)strlen(text)) );
+
+  clck = oyjlClock();
+  txt = oyjlTermColorToPlain( text, OYJL_REGEXP );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "%s\n",
+    oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
+    "oyjlTermColorToPlain( OYJL_REGEXP ) 1x %d -> %d", (int)strlen(text), (int)strlen(txt)) );
+
+  clck = oyjlClock();
+  txt = oyjlTermColorToPlain( text, 0 );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "%s\n",
+    oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
+    "oyjlTermColorToPlain( 0 )           1x %d -> %d", (int)strlen(text), (int)strlen(txt)) );
   myDeAllocFunc( text ); text = NULL;
 
   clck = oyjlClock();
@@ -1717,7 +1731,15 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
   clck = oyjlClock() - clck;
   fprintf( zout, "%s\n",
     oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
-    "oyjlTreeToText()         1x %d", (int)strlen(text)) );
+    "oyjlTreeToText( OYJL_NO_MARKUP )    1x %d", (int)strlen(text)) );
+  myDeAllocFunc( text ); text = NULL;
+
+  clck = oyjlClock();
+  text = oyjlTreeToText( root, 0 );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "%s\n",
+    oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
+    "oyjlTreeToText( 0 )                 1x %d", (int)strlen(text)) );
   myDeAllocFunc( text ); text = NULL;
   oyjlTreeFree( root );
 

@@ -99,7 +99,6 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
 
   if(text)
   {
-    char error_buffer[256] = {0};
     char ** path_list_ = NULL;
     int count = 0, i = 0;
     char * first_path_ = NULL;
@@ -131,9 +130,10 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
       text = text_tmp;
     }
 
-    root_ = oyjlTreeParse( text, error_buffer, 256 );
-    if(error_buffer[0] != '\000')
-      fprintf(stderr, "%s\t\"%s\"\n", oyjlTermColor(oyjlRED,_("Usage Error:")), error_buffer);
+    int status = 0;
+    root_ = oyjlTreeParse2( text, 0, __func__, &status );
+    if(status)
+      fprintf(stderr, "%s\t\"%s\"\n", oyjlTermColor(oyjlRED,_("Usage Error:")), oyjlPARSE_STATE_eToString(status));
     else if(!root_)
       fprintf(stderr, "%s\tparsing \"%s\":\n%s", oyjlTermColor(oyjlRED,_("Usage Error:")), error_name, text);
     if(verbose)
