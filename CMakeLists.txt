@@ -588,7 +588,7 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
   UNSET( TOOL )
   ADD_CUSTOM_TARGET(check-core
         COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-core-static
-        COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static
+        COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static 1
         DEPENDS ${GETTEXT_TRANSLATIONS_TARGET_PREFIX}translations oyjl-test-core-static check-oyjl-args-ui-lib oyjl
         COMMENT "Test libOyjlCore" VERBATIM )
   ADD_CUSTOM_TARGET(check
