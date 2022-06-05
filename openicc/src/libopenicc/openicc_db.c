@@ -433,7 +433,7 @@ int      openiccDBSetString          ( const char        * keyName,
 
   if(!error)
   {
-    oyjl_val root;
+    oyjl_val root, root_tmp = NULL;
     char * file_name;
 
     if(openiccArray_Count( (openiccArray_s*)&db->ks ))
@@ -444,7 +444,7 @@ int      openiccDBSetString          ( const char        * keyName,
     else
     {
       openiccDB_Release( &db );
-      root = (oyjl_val) calloc( sizeof(struct oyjl_val_s), 1 );
+      root = root_tmp = (oyjl_val) calloc( sizeof(struct oyjl_val_s), 1 );
       file_name = openiccDBGetJSONFile( scope );
     }
     if(!file_name)
@@ -517,7 +517,7 @@ int      openiccDBSetString          ( const char        * keyName,
                _("Could not create root JSON node for"),
                openiccScopeGetString(scope), keyName?keyName:"" );
     }
-    if(root && !db) oyjlTreeFree(root);
+    if(root_tmp) oyjlTreeFree(root_tmp);
     openiccDB_Release( &db );
     if(file_name) free(file_name);
   }
