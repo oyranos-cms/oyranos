@@ -179,7 +179,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverAdd (
     {
       obs = (oyObserver_s_*) oyStructList_GetType( list,
                                                   i, oyOBJECT_OBSERVER_S );
-      if(observer == obs->observer && obs->signal == signalFunc)
+      if(obs && observer == obs->observer && obs->signal == signalFunc)
         ++found;
     }
 
@@ -221,7 +221,7 @@ OYAPI int  OYEXPORT oyStruct_ObserverAdd (
     {
       obs = (oyObserver_s_*) oyStructList_GetType( list,
                                                   i, oyOBJECT_OBSERVER_S );
-      if(model == obs->model && obs->signal == signalFunc)
+      if(obs && model == obs->model && obs->signal == signalFunc)
         ++found;
     }
 

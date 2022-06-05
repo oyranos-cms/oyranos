@@ -286,7 +286,7 @@ int oyDeviceCMMReset                 ( oyStruct_s        * filter )
   oyCMMapi8_s_ * s = (oyCMMapi8_s_*) filter;
 
   if(oy_debug)
-    oyMessageFunc_p( oyMSG_DBG, filter, "%s() %s", __func__, s->registration );
+    oyMessageFunc_p( oyMSG_DBG, filter, "%s() %s", __func__, s&&s->registration?s->registration:"----" );
 
   if(!error)
     oyRankMapRelease( &s->rank_map, oyDeAllocateFunc_ );

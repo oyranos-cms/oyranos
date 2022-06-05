@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-02 17:46+0200\n"
+"POT-Creation-Date: 2022-06-03 07:08+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: tools/oyranos-device.c:702 tools/oyranos-device.c:716
 #: tools/oyranos-device.c:743 tools/oyranos-device.c:784
 #: tools/oyranos-device.c:1165 tools/oyranos-device.c:1285
-#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:929
+#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:937
 #: tools/qcmsevents/qcmsevents.cpp:338
 #, c-format
 msgid "!!! ERROR"
@@ -409,7 +409,7 @@ msgstr "Aktivmatrixmonitor"
 msgid "Actual mode"
 msgstr "Aktueller Modus"
 
-#: tools/oyranos-monitor-white-point.c:1283
+#: tools/oyranos-monitor-white-point.c:1293
 msgid "Actual white point mode"
 msgstr "Aktueller Weißpunktmodus"
 
@@ -620,7 +620,7 @@ msgstr "Attribute:       "
 msgid "Automatic"
 msgstr "Automatisch"
 
-#: tools/oyranos-monitor-white-point.c:679
+#: tools/oyranos-monitor-white-point.c:687
 msgid "Automatic white point"
 msgstr "Automatischer Weißpunkt"
 
@@ -951,7 +951,7 @@ msgstr "Kanäle:"
 msgid "Check if this module can handle a certain command."
 msgstr "Prüfe ob dieses Modul ein bestimmtes Kommando behandeln kann."
 
-#: tools/oyranos-monitor-white-point.c:706
+#: tools/oyranos-monitor-white-point.c:714
 msgid "Choices:"
 msgstr "Auswahlmöglichkeiten:"
 
@@ -964,7 +964,7 @@ msgstr "Sättigung"
 msgid "Chromaticity"
 msgstr "Primärfarben"
 
-#: tools/oyranos-monitor-white-point.c:1026
+#: tools/oyranos-monitor-white-point.c:1034
 msgid "City"
 msgstr "Stadt"
 
@@ -1284,7 +1284,7 @@ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1224
+#: modules/color/modules/oyranos_cmm_oicc.c:1226
 msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 
@@ -1409,7 +1409,7 @@ msgstr "Konnte rank_json nicht auflösen"
 msgid "Could not write to file"
 msgstr "Konnte Datei nicht schreiben"
 
-#: tools/oyranos-monitor-white-point.c:1025
+#: tools/oyranos-monitor-white-point.c:1033
 msgid "Country"
 msgstr "Land"
 
@@ -1885,8 +1885,8 @@ msgid "Editing XYZ"
 msgstr "Editier XYZ"
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
-#: tools/oyranos-monitor-white-point.c:1284
-#: tools/oyranos-monitor-white-point.c:1376
+#: tools/oyranos-monitor-white-point.c:1294
+#: tools/oyranos-monitor-white-point.c:1386
 msgid "Effect"
 msgstr "Effekt"
 
@@ -2133,7 +2133,7 @@ msgstr "Bildschirm"
 #: examples/image_display/oyranos-image-display.c:124
 #: examples/libraw/oyranos_file.cpp:78 tools/oyranos-config.c:355
 #: tools/oyranos-convert.c:297 tools/oyranos-device.c:479
-#: tools/oyranos-monitor-white-point.c:598 tools/oyranos-policy.c:172
+#: tools/oyranos-monitor-white-point.c:601 tools/oyranos-policy.c:172
 #: tools/oyranos-profile.c:399 tools/oyranos_gamma.c:246
 #: tools/oyranos_profile_graph.c:560 tools/oyranos_profiles.c:178
 #, c-format
@@ -2203,7 +2203,7 @@ msgstr "Erzeuge Oyranos Dokumentation"
 msgid "Generate a 3D LUT"
 msgstr "Erzeuge eine 3D Interpolationstabelle"
 
-#: tools/oyranos-monitor-white-point.c:1191
+#: tools/oyranos-monitor-white-point.c:1199
 msgid "Geographical Position"
 msgstr "Geographische Position"
 
@@ -2419,11 +2419,11 @@ msgstr "ICC Version 4"
 msgid "ICC color conversion tool"
 msgstr "ICC Farbumwandlungswerkzeug"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:575
+#: modules/color/modules/oyranos_cmm_oicc.c:577
 msgid "ICC color profile for color transformations"
 msgstr "ICC Farbprofil zur Farbraumtransformation."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:616
+#: modules/color/modules/oyranos_cmm_oicc.c:618
 msgid "ICC color profiles for color transformations"
 msgstr "ICC Farbprofile zur Farbraumumwandlung"
 
@@ -2431,7 +2431,7 @@ msgstr "ICC Farbprofile zur Farbraumumwandlung"
 msgid "ICC header Attributes"
 msgstr "ICC Dateiattribute"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:573
+#: modules/color/modules/oyranos_cmm_oicc.c:575
 msgid "ICC profile"
 msgstr "ICC Profil"
 
@@ -2447,7 +2447,7 @@ msgstr "ICC Profil ID geschrieben"
 msgid "ICC profile search paths"
 msgstr "ICC Profilesuchpfade"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:614 tools/oyranos_profiles.c:278
+#: modules/color/modules/oyranos_cmm_oicc.c:616 tools/oyranos_profiles.c:278
 msgid "ICC profiles"
 msgstr "ICC Profile"
 
@@ -2835,7 +2835,7 @@ msgid "Kai-Uwe Behrmann (ku.b (at) gmx.de)"
 msgstr "Kai-Uwe Behrmann (ku.b (at) gmx.de)"
 
 #: tools/oyranos-monitor-white-point.c:239
-#: tools/oyranos-monitor-white-point.c:721 tools/oyranos_profile_graph.c:452
+#: tools/oyranos-monitor-white-point.c:729 tools/oyranos_profile_graph.c:452
 msgid "Kelvin"
 msgstr "Kelvin"
 
@@ -2915,7 +2915,7 @@ msgid "Lab2XYZ"
 msgstr "Lab nach XYZ"
 
 #: tools/oyranos-monitor-white-point.c:529
-#: tools/oyranos-monitor-white-point.c:1186
+#: tools/oyranos-monitor-white-point.c:1194
 msgid "Latitude"
 msgstr "Geographische Breite"
 
@@ -3138,7 +3138,7 @@ msgstr "Lade"
 msgid "Load Image File Object"
 msgstr "Lade Bilddateiobjekt"
 
-#: tools/oyranos-monitor-white-point.c:1170
+#: tools/oyranos-monitor-white-point.c:1178
 msgid "Local Time"
 msgstr "Ortszeit"
 
@@ -3160,7 +3160,7 @@ msgid "Long Help"
 msgstr "Lange Hilfe"
 
 #: tools/oyranos-monitor-white-point.c:531
-#: tools/oyranos-monitor-white-point.c:1186
+#: tools/oyranos-monitor-white-point.c:1194
 msgid "Longitude"
 msgstr "Geographische Länge"
 
@@ -3565,13 +3565,13 @@ msgstr "Benötigt die -c Option"
 msgid "New Profile Name"
 msgstr "Neuer Profilname"
 
-#: tools/oyranos-monitor-white-point.c:1404
+#: tools/oyranos-monitor-white-point.c:1414
 msgid "New color scheme"
 msgstr "Neues Farbschema"
 
-#: tools/oyranos-monitor-white-point.c:926
-#: tools/oyranos-monitor-white-point.c:929
-#: tools/oyranos-monitor-white-point.c:1375
+#: tools/oyranos-monitor-white-point.c:934
+#: tools/oyranos-monitor-white-point.c:937
+#: tools/oyranos-monitor-white-point.c:1385
 msgid "New white point mode"
 msgstr "Neuer Weißpunktmodus"
 
@@ -3849,11 +3849,11 @@ msgstr "Oyranos Beispiel"
 msgid "Oyranos Help"
 msgstr "Oyranos Hilfe"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1208
+#: modules/color/modules/oyranos_cmm_oicc.c:1210
 msgid "Oyranos ICC policy"
 msgstr "Oyranos ICC Richtlinie"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1210
+#: modules/color/modules/oyranos_cmm_oicc.c:1212
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos ICC Richtlinien Modul"
 
@@ -3985,7 +3985,7 @@ msgstr "Oyranospfad"
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1502
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1155
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
-#: modules/color/modules/oyranos_cmm_oicc.c:1218
+#: modules/color/modules/oyranos_cmm_oicc.c:1220
 #: modules/color/modules/oyranos_cmm_oydi.c:1366
 #: modules/color/modules/oyranos_cmm_oyra.c:151
 #: modules/color/modules/oyranos_cmm_trds.c:822
@@ -5189,8 +5189,8 @@ msgstr "Start"
 msgid "StdObs2°"
 msgstr "StdBetr2°"
 
-#: tools/oyranos-monitor-white-point.c:1186
-#: tools/oyranos-monitor-white-point.c:1191
+#: tools/oyranos-monitor-white-point.c:1194
+#: tools/oyranos-monitor-white-point.c:1199
 msgid "Sun Elevation"
 msgstr "Höhe"
 
@@ -5207,12 +5207,12 @@ msgid "Sun light effect"
 msgstr "Sonnenlicht Effekt"
 
 #: tools/oyranos-monitor-white-point.c:533
-#: tools/oyranos-monitor-white-point.c:1186
-#: tools/oyranos-monitor-white-point.c:1191
+#: tools/oyranos-monitor-white-point.c:1194
+#: tools/oyranos-monitor-white-point.c:1199
 msgid "Sunrise"
 msgstr "Sonnenaufgang"
 
-#: tools/oyranos-monitor-white-point.c:1205
+#: tools/oyranos-monitor-white-point.c:1213
 msgid "Sunset"
 msgstr "Sonnenuntergang"
 
@@ -5649,7 +5649,7 @@ msgstr ""
 msgid "The filter provides a generic image source."
 msgstr "Der Filter bietet eine allgemeine Bildquelle."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1232
+#: modules/color/modules/oyranos_cmm_oicc.c:1234
 msgid ""
 "The filter provides policy settings. These settings can be applied to a "
 "graph through the user function oyConversion_Correct()."
@@ -6008,7 +6008,7 @@ msgstr ""
 "sind rendering_bpc, cmyk_cmyk_black_preservation, precalculation_curves, "
 "adaption_state, no_white_on_white_fixup."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1234
+#: modules/color/modules/oyranos_cmm_oicc.c:1236
 msgid ""
 "The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
@@ -6316,13 +6316,13 @@ msgstr ""
 "Die Einstellung entscheidet was mit Farben ohne Farbprofil geschehen soll. "
 "Typischerweise wird das vermutete Farbprofil automatisch zugewiesen."
 
-#: tools/oyranos-monitor-white-point.c:1024
+#: tools/oyranos-monitor-white-point.c:1032
 msgid "Time Zone"
 msgstr "Zeitzone"
 
 #: tools/oyranos-monitor-white-point.c:534
-#: tools/oyranos-monitor-white-point.c:1186
-#: tools/oyranos-monitor-white-point.c:1191
+#: tools/oyranos-monitor-white-point.c:1194
+#: tools/oyranos-monitor-white-point.c:1199
 msgid "Twilight"
 msgstr "Dämmerung"
 
@@ -7043,7 +7043,7 @@ msgstr "Neue BSD Lizenz: http://www.opensource.org/licenses/BSD-3-Clause"
 #: modules/color/modules/oyranos_cmm_elDB.c:1102
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238
 #: modules/color/modules/oyranos_cmm_oiDB.c:522
-#: modules/color/modules/oyranos_cmm_oicc.c:1226
+#: modules/color/modules/oyranos_cmm_oicc.c:1228
 #: modules/color/modules/oyranos_cmm_oydi.c:1374
 #: modules/color/modules/oyranos_cmm_oyra.c:159
 #: modules/color/modules/oyranos_cmm_trds.c:830
@@ -7083,7 +7083,7 @@ msgstr "nicht gefunden:"
 msgid "ok"
 msgstr "gut "
 
-#: tools/oyranos-monitor-white-point.c:1405
+#: tools/oyranos-monitor-white-point.c:1415
 msgid "old/new"
 msgstr "alt/neu"
 
@@ -7524,7 +7524,7 @@ msgstr "schreibe Profil mit korrekter ID"
 msgid "write to specified file"
 msgstr "schreibe nach Datei"
 
-#: API_generated/oyOptions_s.c:1617 examples/libraw/oyranos_file.cpp:236
+#: API_generated/oyOptions_s.c:1618 examples/libraw/oyranos_file.cpp:236
 #: examples/taxi.c:203 tools/oyranos_gamma.c:260 tools/oyranos_profiles.c:306
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"

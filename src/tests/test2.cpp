@@ -924,7 +924,7 @@ oyjlTESTRESULT_e testJson ()
     {
       char * json = 0;
       oyjlTreeToJson( root, &level, &json );
-      t = oyjlTermColorToPlain( json );
+      t = oyjlTermColorToPlain( json, 0 );
       if(json && json[0] && strlen(t) == 210)
       { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(t),
         "oyjlTreeToJson()" );
@@ -1069,7 +1069,7 @@ oyjlTESTRESULT_e testJson ()
   root = oyjlTreeNew( "new/tree/key" );
   char * rjson = NULL; i = 0;
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
-  t = oyjlTermColorToPlain( rjson );
+  t = oyjlTermColorToPlain( rjson, 0 );
   size_t len = strlen(t);
   if(root && len == 56)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -1084,7 +1084,7 @@ oyjlTESTRESULT_e testJson ()
   value = oyjlTreeGetValue( root, 0, "new/tree/key" );
   oyjlValueSetString( value, "value" );
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
-  t = oyjlTermColorToPlain( rjson );
+  t = oyjlTermColorToPlain( rjson, 0 );
   if(len < strlen(t))
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(t),
     "oyjlValueSetString( \"value\" )" );
@@ -1108,7 +1108,7 @@ oyjlTESTRESULT_e testJson ()
 
   oyjlTreeClearValue( root,"new/tree/key" );
   oyjlTreeToJson( root, &i, &rjson ); i = 0;
-  t = oyjlTermColorToPlain( rjson );
+  t = oyjlTermColorToPlain( rjson, 0 );
   if(rjson && strcmp(t,"null") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeClearValue( \"new/tree/key\" )" );
@@ -1568,15 +1568,15 @@ oyjlTESTRESULT_e testOptionsSet ()
   t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_JSON );
   if(verbose) fprintf( zout, "%s\n", t?t:0 );
 
-  char error_buffer[128] = {0};
-  oyjl_val root = oyjlTreeParse( t, error_buffer, 128 );
-  const char * plain = oyjlTermColorToPlain(t);
+  int state = 0;
+  oyjl_val root = oyjlTreeParse2( t, 0, __func__, &state );
+  const char * plain = oyjlTermColorToPlain(t, 0);
   if(root && strlen(plain) == 154)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyOptions_GetText(oyNAME_JSON)" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyOptions_GetText(oyNAME_JSON) %d              %s", t?(int)strlen(plain):-1, error_buffer );
+    "oyOptions_GetText(oyNAME_JSON) %d              %s", t?(int)strlen(plain):-1, oyjlPARSE_STATE_eToString( state ) );
   }
   OYJL_TEST_WRITE_RESULT( t, strlen(t), "oyOptions_GetText-JSON", "txt" )
   oyjlTreeFree( root );
@@ -1590,7 +1590,7 @@ oyjlTESTRESULT_e testOptionsSet ()
   error = oyOptions_FromJSON( json3, options, &setA, "org/free/[1]" );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   t = oyOptions_GetText( setA, (oyNAME_e) oyNAME_JSON );
-  plain = oyjlTermColorToPlain(t);
+  plain = oyjlTermColorToPlain(t, 0);
   oyOptions_Release( &options );
   count = oyOptions_Count(setA);
   if(count == 8 && t && strlen(plain) == 315)
@@ -1607,7 +1607,7 @@ oyjlTESTRESULT_e testOptionsSet ()
   error = oyOptions_FromJSON( t, NULL, &options, "org" );
   if(error) PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyOptions_FromJSON() error: %d", error )
   t = oyOptions_GetText( options, (oyNAME_e) oyNAME_JSON );
-  plain = oyjlTermColorToPlain(t);
+  plain = oyjlTermColorToPlain(t, 0);
   if(!error && t && t && strlen(plain) == 60)
   {
     PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, t?strlen(plain):0,
@@ -10204,7 +10204,7 @@ oyjlTESTRESULT_e testIO()
     oyDeAllocateFunc_(text);
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL,
-    "oyReadUrlToMemf_( ): %d", (int)strlen(text) );
+    "oyReadUrlToMemf_( )" );
   }
 
   const char * dir = "not_here";

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-02 17:46+0200\n"
+"POT-Creation-Date: 2022-06-03 07:08+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: tools/oyranos-device.c:702 tools/oyranos-device.c:716
 #: tools/oyranos-device.c:743 tools/oyranos-device.c:784
 #: tools/oyranos-device.c:1165 tools/oyranos-device.c:1285
-#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:929
+#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:937
 #: tools/qcmsevents/qcmsevents.cpp:338
 #, c-format
 msgid "!!! ERROR"
@@ -427,7 +427,7 @@ msgstr "Matrize aktibozko monitorea"
 msgid "Actual mode"
 msgstr "Bereizketa"
 
-#: tools/oyranos-monitor-white-point.c:1283
+#: tools/oyranos-monitor-white-point.c:1293
 #, fuzzy
 msgid "Actual white point mode"
 msgstr "Puntu-zuria euskarria"
@@ -655,7 +655,7 @@ msgstr "Atributuak:     "
 msgid "Automatic"
 msgstr "Puntu-zuria euskarria"
 
-#: tools/oyranos-monitor-white-point.c:679
+#: tools/oyranos-monitor-white-point.c:687
 #, fuzzy
 msgid "Automatic white point"
 msgstr "Puntu-zuria euskarria"
@@ -995,7 +995,7 @@ msgstr "Kanala"
 msgid "Check if this module can handle a certain command."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:706
+#: tools/oyranos-monitor-white-point.c:714
 msgid "Choices:"
 msgstr ""
 
@@ -1009,7 +1009,7 @@ msgstr "Ñabardura"
 msgid "Chromaticity"
 msgstr "Ñabardura"
 
-#: tools/oyranos-monitor-white-point.c:1026
+#: tools/oyranos-monitor-white-point.c:1034
 msgid "City"
 msgstr ""
 
@@ -1319,7 +1319,7 @@ msgstr ""
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1224
+#: modules/color/modules/oyranos_cmm_oicc.c:1226
 msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 msgstr ""
 
@@ -1460,7 +1460,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not write to file"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: tools/oyranos-monitor-white-point.c:1025
+#: tools/oyranos-monitor-white-point.c:1033
 msgid "Country"
 msgstr ""
 
@@ -1975,8 +1975,8 @@ msgid "Editing XYZ"
 msgstr "Kolore-espazioa"
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
-#: tools/oyranos-monitor-white-point.c:1284
-#: tools/oyranos-monitor-white-point.c:1376
+#: tools/oyranos-monitor-white-point.c:1294
+#: tools/oyranos-monitor-white-point.c:1386
 msgid "Effect"
 msgstr ""
 
@@ -2228,7 +2228,7 @@ msgstr "Pantaila:"
 #: examples/image_display/oyranos-image-display.c:124
 #: examples/libraw/oyranos_file.cpp:78 tools/oyranos-config.c:355
 #: tools/oyranos-convert.c:297 tools/oyranos-device.c:479
-#: tools/oyranos-monitor-white-point.c:598 tools/oyranos-policy.c:172
+#: tools/oyranos-monitor-white-point.c:601 tools/oyranos-policy.c:172
 #: tools/oyranos-profile.c:399 tools/oyranos_gamma.c:246
 #: tools/oyranos_profile_graph.c:560 tools/oyranos_profiles.c:178
 #, c-format
@@ -2308,7 +2308,7 @@ msgstr "Dokumentazioa"
 msgid "Generate a 3D LUT"
 msgstr "Abstraktua"
 
-#: tools/oyranos-monitor-white-point.c:1191
+#: tools/oyranos-monitor-white-point.c:1199
 msgid "Geographical Position"
 msgstr ""
 
@@ -2526,11 +2526,11 @@ msgstr "ICC Examin-en bertsioa"
 msgid "ICC color conversion tool"
 msgstr "Oyranos-en ezarpenak"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:575
+#: modules/color/modules/oyranos_cmm_oicc.c:577
 msgid "ICC color profile for color transformations"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:616
+#: modules/color/modules/oyranos_cmm_oicc.c:618
 msgid "ICC color profiles for color transformations"
 msgstr ""
 
@@ -2539,7 +2539,7 @@ msgstr ""
 msgid "ICC header Attributes"
 msgstr "Aukeratu atribututa"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:573
+#: modules/color/modules/oyranos_cmm_oicc.c:575
 #, fuzzy
 msgid "ICC profile"
 msgstr "Zein ICC profila?"
@@ -2559,7 +2559,7 @@ msgstr "ICC profilaren goiburua"
 msgid "ICC profile search paths"
 msgstr "ICC profilaren goiburua"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:614 tools/oyranos_profiles.c:278
+#: modules/color/modules/oyranos_cmm_oicc.c:616 tools/oyranos_profiles.c:278
 #, fuzzy
 msgid "ICC profiles"
 msgstr "Zein ICC profila?"
@@ -2955,7 +2955,7 @@ msgid "Kai-Uwe Behrmann (ku.b (at) gmx.de)"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:239
-#: tools/oyranos-monitor-white-point.c:721 tools/oyranos_profile_graph.c:452
+#: tools/oyranos-monitor-white-point.c:729 tools/oyranos_profile_graph.c:452
 msgid "Kelvin"
 msgstr ""
 
@@ -3035,7 +3035,7 @@ msgid "Lab2XYZ"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:529
-#: tools/oyranos-monitor-white-point.c:1186
+#: tools/oyranos-monitor-white-point.c:1194
 #, fuzzy
 msgid "Latitude"
 msgstr "Bereizketa"
@@ -3278,7 +3278,7 @@ msgstr "Kargatu"
 msgid "Load Image File Object"
 msgstr "Iragazki pertsonalizatua"
 
-#: tools/oyranos-monitor-white-point.c:1170
+#: tools/oyranos-monitor-white-point.c:1178
 msgid "Local Time"
 msgstr ""
 
@@ -3302,7 +3302,7 @@ msgid "Long Help"
 msgstr "Modeloa:"
 
 #: tools/oyranos-monitor-white-point.c:531
-#: tools/oyranos-monitor-white-point.c:1186
+#: tools/oyranos-monitor-white-point.c:1194
 #, fuzzy
 msgid "Longitude"
 msgstr "Bereizketa"
@@ -3735,14 +3735,14 @@ msgstr ""
 msgid "New Profile Name"
 msgstr "Fitxategi-izena"
 
-#: tools/oyranos-monitor-white-point.c:1404
+#: tools/oyranos-monitor-white-point.c:1414
 #, fuzzy
 msgid "New color scheme"
 msgstr "Puntu-zuria euskarria"
 
-#: tools/oyranos-monitor-white-point.c:926
-#: tools/oyranos-monitor-white-point.c:929
-#: tools/oyranos-monitor-white-point.c:1375
+#: tools/oyranos-monitor-white-point.c:934
+#: tools/oyranos-monitor-white-point.c:937
+#: tools/oyranos-monitor-white-point.c:1385
 #, fuzzy
 msgid "New white point mode"
 msgstr "Puntu-zuria euskarria"
@@ -4047,12 +4047,12 @@ msgstr "Oyranos-en ezarpenak"
 msgid "Oyranos Help"
 msgstr "Oyranos-en ezarpenak"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1208
+#: modules/color/modules/oyranos_cmm_oicc.c:1210
 #, fuzzy
 msgid "Oyranos ICC policy"
 msgstr "Oyranos-en ezarpenak"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1210
+#: modules/color/modules/oyranos_cmm_oicc.c:1212
 #, fuzzy
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos-en ezarpenak"
@@ -4195,7 +4195,7 @@ msgstr "Oyranos-en ezarpenak"
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1502
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1155
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
-#: modules/color/modules/oyranos_cmm_oicc.c:1218
+#: modules/color/modules/oyranos_cmm_oicc.c:1220
 #: modules/color/modules/oyranos_cmm_oydi.c:1366
 #: modules/color/modules/oyranos_cmm_oyra.c:151
 #: modules/color/modules/oyranos_cmm_trds.c:822
@@ -5491,8 +5491,8 @@ msgstr "Izarra"
 msgid "StdObs2°"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1186
-#: tools/oyranos-monitor-white-point.c:1191
+#: tools/oyranos-monitor-white-point.c:1194
+#: tools/oyranos-monitor-white-point.c:1199
 #, fuzzy
 msgid "Sun Elevation"
 msgstr "Saturazioa"
@@ -5513,13 +5513,13 @@ msgid "Sun light effect"
 msgstr "Puntu-zuria euskarria"
 
 #: tools/oyranos-monitor-white-point.c:533
-#: tools/oyranos-monitor-white-point.c:1186
-#: tools/oyranos-monitor-white-point.c:1191
+#: tools/oyranos-monitor-white-point.c:1194
+#: tools/oyranos-monitor-white-point.c:1199
 #, fuzzy
 msgid "Sunrise"
 msgstr "Zein ICC profila?"
 
-#: tools/oyranos-monitor-white-point.c:1205
+#: tools/oyranos-monitor-white-point.c:1213
 msgid "Sunset"
 msgstr ""
 
@@ -5870,7 +5870,7 @@ msgstr ""
 msgid "The filter provides a generic image source."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1232
+#: modules/color/modules/oyranos_cmm_oicc.c:1234
 msgid ""
 "The filter provides policy settings. These settings can be applied to a "
 "graph through the user function oyConversion_Correct()."
@@ -6101,7 +6101,7 @@ msgid ""
 "adaption_state, no_white_on_white_fixup."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1234
+#: modules/color/modules/oyranos_cmm_oicc.c:1236
 msgid ""
 "The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
@@ -6351,13 +6351,13 @@ msgid ""
 "assigned. Typically the according assumed ICC profile should be assigned."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1024
+#: tools/oyranos-monitor-white-point.c:1032
 msgid "Time Zone"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:534
-#: tools/oyranos-monitor-white-point.c:1186
-#: tools/oyranos-monitor-white-point.c:1191
+#: tools/oyranos-monitor-white-point.c:1194
+#: tools/oyranos-monitor-white-point.c:1199
 msgid "Twilight"
 msgstr ""
 
@@ -7112,7 +7112,7 @@ msgstr ""
 #: modules/color/modules/oyranos_cmm_elDB.c:1102
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238
 #: modules/color/modules/oyranos_cmm_oiDB.c:522
-#: modules/color/modules/oyranos_cmm_oicc.c:1226
+#: modules/color/modules/oyranos_cmm_oicc.c:1228
 #: modules/color/modules/oyranos_cmm_oydi.c:1374
 #: modules/color/modules/oyranos_cmm_oyra.c:159
 #: modules/color/modules/oyranos_cmm_trds.c:830
@@ -7155,7 +7155,7 @@ msgstr "Biratu inguruan"
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1405
+#: tools/oyranos-monitor-white-point.c:1415
 msgid "old/new"
 msgstr ""
 
@@ -7609,7 +7609,7 @@ msgstr ""
 msgid "write to specified file"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: API_generated/oyOptions_s.c:1617 examples/libraw/oyranos_file.cpp:236
+#: API_generated/oyOptions_s.c:1618 examples/libraw/oyranos_file.cpp:236
 #: examples/taxi.c:203 tools/oyranos_gamma.c:260 tools/oyranos_profiles.c:306
 msgid "wrong argument to option:"
 msgstr ""

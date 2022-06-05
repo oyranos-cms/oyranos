@@ -209,9 +209,11 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
         oyCMMapi_s * api_ = apis[j];
         if(api_->release)
         {
-          if(api_ == oyCMMinfo_GetApi(cmm_info))
-            oyCMMinfo_SetApi(cmm_info, NULL);
+          oyCMMapi_s * api_ptr = api_,
+                     * cmm_info_api = oyCMMinfo_GetApi(cmm_info);
           api_->release((oyStruct_s**)&api_);
+          if(api_ptr == cmm_info_api)
+            oyCMMinfo_SetApi(cmm_info, NULL);
           if(j > 0)
           {
             api_ = apis[j-1];

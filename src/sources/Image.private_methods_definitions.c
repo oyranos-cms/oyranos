@@ -96,7 +96,7 @@ int oyImage_CombinePixelLayout2Mask_ ( oyImage_s_        * image,
                   image->resolution_y);
   hashTextAdd_m( text );
   i = strlen(text);
-  oySprintf_( text, "\"icc_profile\": %s\n", oyjlTermColorToPlain(oyProfile_GetText(profile, oyNAME_JSON)));
+  oySprintf_( text, "\"icc_profile\": %s\n", oyjlTermColorToPlain(oyProfile_GetText(profile, oyNAME_JSON), 0));
   if(text[16] == '\n') text[16] = ' ';
   i = strlen(text);
   if(text[i-3] == '\n') text[i-3] = ' ';

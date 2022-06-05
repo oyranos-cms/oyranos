@@ -485,7 +485,6 @@ int          oyOptions_FromJSON      ( const char        * json_text,
       if(val)
         oyOptions_SetFromString( &opts, xpath, val, OY_CREATE_NEW );
 
-      if(key) oyDeAllocateFunc_(key);
       if(val) oyDeAllocateFunc_(val);
     }
     oyjlStringListRelease( &paths, count, NULL );
@@ -1129,13 +1128,15 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
   char ** old_levels = 0;
   int old_levels_n = 0;
   int close_oy_struct = 0;
-  oyjl_val root = oyjlTreeNew("org"), v;
+  oyjl_val root = NULL, v;
 
   if(error <= 0)
   {
     n = oyOptions_Count( options );
     if(!n)
       return 0;
+
+    root = oyjlTreeNew("org");
     sort = oyAllocateFunc_( n * sizeof(int) );
     for( i = 0; i < n; ++i )
       sort[i]=i;
@@ -1358,7 +1359,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
     oyFree_m_( sort );
   }
 
-  oyjlTreeFree( root );
+  if(root) oyjlTreeFree( root );
 
   if(error <= 0)
     erg = oyObject_GetName( options->oy_, type );

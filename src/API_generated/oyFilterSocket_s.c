@@ -236,7 +236,7 @@ OYAPI int  OYEXPORT
   {
     WARNc4_S("oyFilterNode_s[%d]->oyFilterSocket_s[%d]\n"
              "  event: \"%s\" socket[%d]",
-            (c && (*c_)->node) ? oyObject_GetId((*c_)->node->oy_) : -1,
+            (c_ && *c_ && (*c_)->node) ? oyObject_GetId((*c_)->node->oy_) : -1,
             c ? oyObject_GetId(c->oy_) : -1,
             oyConnectorEventToText(e),
             (c) ? oyObject_GetId( c->oy_ ) : -1

@@ -967,7 +967,7 @@ oyCMMhandle_s *  oyCMMFromCache_     ( const char        * lib_name )
     oyCMMhandle_s * cmmh = (oyCMMhandle_s*) oyStructList_GetType_((oyStructList_s_*)oy_cmm_infos_,
                                                 i, oyOBJECT_CMM_HANDLE_S );
 
-    if( oyStrcmp_( cmmh->lib_name, lib_name ) == 0 )
+    if( cmmh && oyStrcmp_( cmmh->lib_name, lib_name ) == 0 )
     {
       cmm_handle = cmmh; /* just return; a single reference in the oy_cmm_infos_ is sufficient until the end of run time */
       break;

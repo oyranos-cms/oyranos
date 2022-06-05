@@ -541,6 +541,8 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
     oyjlTreeToJson( root, &level, &tmp );
   }
 
+  if(root) { oyjlTreeFree( root ); root = NULL; }
+
   if(allocateFunc && tmp)
   {
     char * t = oyStringCopy_( tmp, allocateFunc );

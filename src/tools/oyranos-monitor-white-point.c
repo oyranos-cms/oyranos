@@ -592,13 +592,21 @@ int myMain( int argc , const char** argv )
   if( state & oyjlUI_STATE_EXPORT &&
       export &&
       strcmp(export,"json+command") != 0)
+  {
+    free( opts );
     return 0;
+  }
   if(state & oyjlUI_STATE_HELP)
   {
     fprintf( stderr, "%s\n\tman oyranos-monitor-white-point\n\n", _("For more information read the man page:"));
+    free( opts );
     return 0;
   }
-  if(!ui) return 1;
+  if(!ui)
+  {
+    free( opts );
+    return 1;
+  }
 
   if((export && strcmp(export,"json+command") == 0))
   {
@@ -905,16 +913,16 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
   
   if(dry == 0)
   {
-    oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, scope, wtpt_mode );
+    error = oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, scope, wtpt_mode );
     updateVCGT();
+    /* ping X11 observers about option change
+     * ... by setting a known property again to its old value
+     */
+    if(!error)
+      pingNativeDisplay();
+    else
+      fprintf(stderr, "error %d in oySetBehaviour(oyBEHAVIOUR_DISPLAY_WHITE_POINT,%d,%d)\n", error, scope, wtpt_mode);
   }
-  /* ping X11 observers about option change
-   * ... by setting a known property again to its old value
-   */
-  if(!error)
-    pingNativeDisplay();
-  else
-    fprintf(stderr, "error %d in oySetBehaviour(oyBEHAVIOUR_DISPLAY_WHITE_POINT,%d,%d)\n", error, scope, wtpt_mode);
 
   {
     int current = -1;
@@ -1203,6 +1211,8 @@ int getSunriseSunset( double * rise, double * set, int dry, const char * format,
     else if(text)
       oyjlStringAdd( text, malloc, free, "%s%s:%s%d:%.2d:%.2d",
              verbose?"\n":" ",_("Sunset"), verbose?"\t":" ", hour, minute, second );
+
+    oyjlTreeFree( root );
   }
 
   return r;
