@@ -68,6 +68,7 @@
  *  @dontinclude tutorial_json_options.c
  *  @skip testOyjl(void)
  *  @until oyjlTreeFree(
+ *  @line }
  */
 
 
@@ -449,8 +450,6 @@ oyjl_val oyjlTreeParse   (const char *input,
                           char *error_buffer, size_t error_buffer_size)
 {
   char * tmp = NULL;
-  if(input && strlen(input) > 4 && memcmp(input, "oiJS", 4) == 0)
-    return (oyjl_val)input;
 
 #if (YAJL_VERSION) > 20000
 static yajl_callbacks oyjl_tree_callbacks_ = {
@@ -522,17 +521,12 @@ static yajl_callbacks oyjl_tree_callbacks_ = {
     yajl_config(handle, yajl_allow_comments, 1);
 #endif
 
-    if(strstr(input, "\033[0") != NULL)
-    {
-      const char * t = oyjlTermColorToPlain(input);
-      input = tmp = oyjlStringCopy( t, 0 );
-    }
-
     status = yajl_parse(handle,
                         (unsigned char *) input,
                         strlen (input));
     if (status != yajl_status_ok)
     {
+        char * t;
         internal_err_str = (char *) yajl_get_error(handle, 1,
                      (const unsigned char *) input,
                      strlen(input));
@@ -541,8 +535,10 @@ static yajl_callbacks oyjl_tree_callbacks_ = {
 #if YAJL_VERSION > 19999
         status = yajl_complete_parse (handle);
 #endif
-        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s", OYJL_DBG_ARGS,
-                       internal_err_str );
+        t = oyjlBT(0);
+        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s\n%s", OYJL_DBG_ARGS,
+                       internal_err_str, t );
+        free(t);
         yajl_free_error( handle, (unsigned char*)internal_err_str );
         internal_err_str = 0;
         yajl_free (handle);
@@ -821,12 +817,6 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
 
   if(!xml) return jroot;
 
-  if(strstr(xml, "\033[0") != NULL)
-  {
-    const char * t = oyjlTermColorToPlain(xml);
-    xml = tmp = oyjlStringCopy( t, 0 );
-  }
-
   doc = xmlParseMemory( xml, strlen(xml) );
   cur = xmlDocGetRootElement(doc);
 
@@ -839,8 +829,12 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
     snprintf( error_buffer, error_buffer_size, "XML loading failed" );
 
   if(error_buffer && error_buffer[0])
-    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s",
-                         OYJL_DBG_ARGS, error_buffer );
+  {
+    char * t = oyjlBT(0);
+    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s\n%s",
+                         OYJL_DBG_ARGS, error_buffer, t );
+    free(t);
+  }
 
   if(doc)
     xmlFreeDoc( doc );
@@ -989,12 +983,6 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
     return jroot;
   }
 
-  if(strstr(yaml, "\033[0") != NULL)
-  {
-    const char * t = oyjlTermColorToPlain(yaml);
-    yaml = tmp = oyjlStringCopy( t, 0 );
-  }
-
   yaml_parser_set_input_string( &parser, (const unsigned char*) yaml, strlen(yaml));
 
   yaml_parser_load( &parser, &document );
@@ -1032,17 +1020,43 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
 }
 #endif
 
+const char*oyjlPARSE_STATE_eToString ( int                 state )
+{
+  switch(state)
+  {
+    case oyjlPARSE_STATE_NONE: return "nothing to report";
+    case oyjlPARSE_STATE_NOT_COMPILED: return "the format is currently not compiled";
+    case oyjlPARSE_STATE_FORMAT_ERROR: return "check with oyjlDataFormat()";
+    case oyjlPARSE_STATE_PARSER_ERROR: return "message is sent to oyjlMessage_p";
+    case oyjlPARSE_STATE_RETURN_STATIC: return "oyjl_val is static and must not be freed; needs OYJL_ALLOW_STATIC flag";
+    default: return "----";
+  }
+}
 /** @brief read a JSON, XML or YAML text string into a C data structure (libOyjl)
  *
  *  This function needs linking to libOyjl.
  *
+ *  JSON, Xml and Yaml parsers can not handle term color codes
+ *  in the data structures. They need to be removed before parsing.
+ *
+ *  @code
+    const char * data_text = "{ \"key\": true }";
+    int status = 0;
+    oyjl_val root = oyjlTreeParse2( data_text, OYJL_NO_MARKUP, __func__, &status );
+    if(state)
+      fprintf( stderr, "%s() found issue: %s\n", __func__, oyjlPARSE_STATE_eToString(status) );
+    @endcode
+ *
  *  @see oyjlTreeParse() oyjlTreeParseXml oyjlTreeParseYaml() oyjlTreeToText() oyjlDataFormat()
  *
- *  @param[in]     test                the JSON/XML/YAML text
+ *  @param[in]     text                the JSON/XML/YAML text
  *  @param[in]     flags               for processing
  *                                     - ::OYJL_NUMBER_DETECTION for parsing
  *                                       of values as possibly numbers
  *                                     - ::OYJL_QUIET for error reporting as oyjlMSG_INFO
+ *                                     - ::OYJL_NO_MARKUP omit remove of term color codes;
+ *                                       deactivates oyjlTermColorToPlain( flags )
+ *                                     - ::OYJL_REGEXP for oyjlTermColorToPlain()
  *  @param[in]     error_name          add text for error messages
  *  @param[out]    state               report ::oyjlPARSE_STATE_e
  *  @return                            object tree on success,
@@ -1059,6 +1073,9 @@ oyjl_val   oyjlTreeParse2            ( const char        * text,
   int data_format = oyjlDataFormat(text);
   oyjlPARSE_STATE_e state = oyjlPARSE_STATE_NONE;
   oyjlMSG_e msg_type = flags & OYJL_QUIET ? oyjlMSG_INFO : oyjlMSG_ERROR;
+
+  if(!(flags & OYJL_NO_MARKUP) && strstr(text, "\033[0") != NULL)
+    text = oyjlTermColorToPlain(text, flags);
 
   if(text && strlen(text) > 4 && memcmp(text, "oiJS", 4) == 0)
     /* static OYJL JSON */

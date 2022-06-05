@@ -116,7 +116,7 @@ QString AppData::plainJSON(QString json)
 {
     QByteArray a = json.toUtf8();
     const char * jsont = a.constData();
-    const char * t = oyjlTermColorToPlain(jsont);
+    const char * t = oyjlTermColorToPlain(jsont, OYJL_REGEXP);
     if(app_debug)
       LOG( QString("json.length(): ") + QString::number(json.length()) + " strlen(jsont): " + QString::number(strlen(jsont)) );
     QString txt( t );

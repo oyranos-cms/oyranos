@@ -222,6 +222,7 @@ typedef enum {
   oyjlPARSE_STATE_PARSER_ERROR,        /**< @brief message is sent to oyjlMessage_p */
   oyjlPARSE_STATE_RETURN_STATIC,       /**< @brief oyjl_val is static and must not be freed; needs OYJL_ALLOW_STATIC flag */
 } oyjlPARSE_STATE_e;
+const char*oyjlPARSE_STATE_eToString ( int                 state );
 oyjl_val   oyjlTreeParse2            ( const char        * text,
                                        int                 flags,
                                        const char        * error_name,
@@ -245,7 +246,7 @@ void       oyjlTreeClearValue        ( oyjl_val            root,
 #define    OYJL_JSON                   0x0    /**< @brief  JSON format; default */
 #define    OYJL_YAML                   0x01   /**< @brief  YAML format */
 #define    OYJL_XML                    0x08   /**< @brief  XML format */
-#define    OYJL_NO_MARKUP              0x100  /**< @brief  plain text; use oyjlTermColorToPlain() */
+#define    OYJL_NO_MARKUP              0x100  /**< @brief  expect plain text */
 char *     oyjlTreeToText            ( oyjl_val            v,
                                        int                 flags );
 void       oyjlTreeToJson            ( oyjl_val            v,
@@ -547,7 +548,8 @@ const char * oyjlTermColorF          ( oyjlTEXTMARK_e      mark,
                                        ... );
 const char * oyjlTermColorFromHtml   ( const char        * text,
                                        int                 flags );
-const char * oyjlTermColorToPlain    ( const char        * text );
+const char * oyjlTermColorToPlain    ( const char        * text,
+                                       int                 flags );
 #define OYJL_FORCE_COLORTERM           0x01
 #define OYJL_FORCE_NO_COLORTERM        0x02
 #define OYJL_RESET_COLORTERM           0x04

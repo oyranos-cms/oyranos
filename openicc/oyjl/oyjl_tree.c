@@ -545,9 +545,23 @@ char *     oyjlJsonEscape            ( const char        * in,
   return out;
 }
 
-/** @brief convert a C tree into a text string
+/** @brief   convert a C tree into a text string
+ *
+ *  @param[in]     text                input
+ *  @param[in]     flags               support
+ *                                     - ::OYJL_JSON for JSON
+ *                                     - ::OYJL_XML for Xml
+ *                                     - ::OYJL_YAML for Yaml
+ *                                     - ::OYJL_NO_MARKUP remove term color codes;
+ *                                       activates oyjlTermColorToPlain( flags )
+ *                                     - ::OYJL_REGEXP for oyjlTermColorToPlain()
+ *  @return                            structured data text, which is possibly formatted with term color
  *
  *  @see oyjlTreeToJson() oyjlTreeToYaml() oyjlTreeToXml()
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2022/06/04
+ *  @since   2022/04/03 (Oyjl: 1.0.0)
  */
 char *     oyjlTreeToText            ( oyjl_val            v,
                                        int                 flags )
@@ -565,7 +579,7 @@ char *     oyjlTreeToText            ( oyjl_val            v,
   if(text && flags & OYJL_NO_MARKUP)
   {
     const char * t = NULL;
-    t = oyjlTermColorToPlain( text );
+    t = oyjlTermColorToPlain( text, flags );
     if(t && t != text)
     {
       free(text); text = NULL;
@@ -680,6 +694,7 @@ int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
  */
 void oyjlTreeToJson (oyjl_val v, int * level, char ** json)
 {
+  if(!json) return;
   oyjl_str string = oyjlStr_New(10, 0,0);
   oyjlTreeToJson21_( v, level, string );
   if(oyjlStr(string))
@@ -804,6 +819,7 @@ void               oyjlTreeToYaml    ( oyjl_val            v,
                                        int               * level,
                                        char             ** text)
 {
+  if(!text) return;
 #define YAML_INDENT " "
   if(*level == 0)
     oyjlStringAdd( text, 0,0, "---" );
@@ -1104,8 +1120,9 @@ void               oyjlTreeToXml     ( oyjl_val            v,
                                        int               * level,
                                        char             ** text)
 {
+  if(!text) return;
   oyjlStringAdd( text, 0,0, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" );
-  if(v && text && *text)
+  if(v && *text)
   switch(v->type)
   {
     case oyjl_t_null:
@@ -1499,8 +1516,6 @@ clean:
   {
     if(root)
       oyjlTreeFree(root);
-    else if(!v && parent)
-      oyjlTreeFree(parent);
     return NULL;
   }
 
@@ -2409,7 +2424,8 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
       oyjl_val val = oyjlTreeGetValue( v, 0, xpath );
       uint32_t v_offset = 0;
       int size__ = size_;
-      size_ += oyjlXPathGetSize_( val, xpath, &v_offset );
+      if(val)
+        size_ += oyjlXPathGetSize_( val, xpath, &v_offset );
       size_ += OYJL_PAD_SIZE( size_, PAD_SIZE );
       if(flags & OYJL_OBSERVE)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "xpath[%d]:\"%s\" %s v_offset: %d offset2: %d", OYJL_DBG_ARGS, i, xpath, val?"found":"not found", v_offset, size__ );
@@ -2509,7 +2525,8 @@ const char * oyjlXPath_Print_        ( oyjlXPath_s       * node )
   return text;
 }
 
-/** @brief   print
+/** @internal
+ *  @brief   print
  *
  *  @param         v                   block to decode
  *  @param[in]     flags               supported:
@@ -3152,8 +3169,8 @@ int          oyjlTr_GetFlags         ( oyjlTr_s          * context )
   return context && oyjlTr_Check_(context) ? context->flags : 0;
 }
 
-/** @brief get start
- *  @internal
+/** @internal
+ *  @brief get start
  *
  *  @version Oyjl: 1.0.0
  *  @date    2021/10/24
@@ -3164,8 +3181,8 @@ int          oyjlTr_GetStart_        ( oyjlTr_s          * context )
   return context && oyjlTr_Check_(context) ? context->start : 0;
 }
 
-/** @brief get end
- *  @internal
+/** @internal
+ *  @brief get end
  *
  *  @version Oyjl: 1.0.0
  *  @date    2021/10/24
@@ -3351,7 +3368,7 @@ int            oyjlTr_Set            ( oyjlTr_s         ** context )
   int state = -1;
   const char * domain;
 
-  if(context && *context && !oyjlTr_Check_(*context))
+  if(!context || !*context || !oyjlTr_Check_(*context))
     return -2;
 
   domain = oyjlTr_GetDomain( *context );
@@ -3379,9 +3396,9 @@ int            oyjlTr_Set            ( oyjlTr_s         ** context )
     state |= 1;
     if(*oyjl_debug)
     {
-      int erase = context && oyjl_tr_context && oyjl_tr_context != *context,
-          keep = context && oyjl_tr_context == *context,
-          replace = !erase && context && *context;
+      int erase = oyjl_tr_context && oyjl_tr_context != *context,
+          keep = oyjl_tr_context == *context,
+          replace = !erase;
       char * t = oyjlBT(0);
       oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s[%d] domain: \"%s\" show", OYJL_DBG_ARGS, t, pos, domain, erase?"erase":keep?"keep":replace?"replace":"show on return" );
       free(t);

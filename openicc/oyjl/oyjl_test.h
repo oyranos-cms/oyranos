@@ -710,7 +710,8 @@ const char * oyjlPrintSubProfiling   ( int                 space,
 
   OYJL_CREATE_VA_STRING(format, text, malloc, return NULL)
 
-  prof = (char*) malloc(256);
+  prof = (char*) malloc( 256 );
+  if(!prof) return NULL;
   if(integer/duration >= 1000000.0)
     sprintf( prof, " %.02f M%s/s", integer/duration/1000000.0, term );
   else if(integer/duration < 10.0)
@@ -740,26 +741,23 @@ const char * oyjlPrintSubProfiling   ( int                 space,
   }
   free(visual); visual = NULL;
 
-  if(prof)
+  i = strlen(prof);
+  if(integer/duration < 10.0)
   {
-    i = strlen(prof);
-    if(integer/duration < 10.0)
-    {
-      const char * t;
-      sprintf( prof, " %.04f", integer/duration );
-      t = oyjlTermColor_(oyjlITALIC,prof);
-      sprintf( prof, "%s  %s/s", t, term );
-    }
-    len = strlen(text);
-    tmp = (char*) realloc( text, len + strlen(prof) + 2 );
-    text = tmp;
-    if(vlen + i < space)
-      text[len-i] = '\000';
-    else
-      text[vlen + 1] = '\000';
-    sprintf( &text[strlen(text)], "%s", prof );
-    free(prof);
+    const char * t;
+    sprintf( prof, " %.04f", integer/duration );
+    t = oyjlTermColor_(oyjlITALIC,prof);
+    sprintf( prof, "%s  %s/s", t, term );
   }
+  len = strlen(text);
+  tmp = (char*) realloc( text, len + strlen(prof) + 2 );
+  text = tmp;
+  if(vlen + i < space)
+    text[len-i] = '\000';
+  else
+    text[vlen + 1] = '\000';
+  sprintf( &text[strlen(text)], "%s", prof );
+  free(prof);
 
   oyjl_print_sub = text;
 
