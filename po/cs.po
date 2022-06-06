@@ -2,12 +2,12 @@
 # Copyright (c) 2008 Milan Knizek
 # This file is distributed under the BSD licence (http://www.opensource.org/licenses/BSD-3-Clause)
 # First translator Milan Knizek <knizek@volny.cz>, 2008
-#: tools/oyranos-monitor-white-point.c:497
+#: tools/oyranos-monitor-white-point.c:499
 msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-03 07:08+0200\n"
+"POT-Creation-Date: 2022-06-06 07:47+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: tools/oyranos-device.c:702 tools/oyranos-device.c:716
 #: tools/oyranos-device.c:743 tools/oyranos-device.c:784
 #: tools/oyranos-device.c:1165 tools/oyranos-device.c:1285
-#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:937
+#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:939
 #: tools/qcmsevents/qcmsevents.cpp:338
 #, c-format
 msgid "!!! ERROR"
@@ -110,7 +110,7 @@ msgstr "0/45, 45/0"
 msgid "0/d or d/0"
 msgstr "0/d nebo d/0"
 
-#: tools/oyranos-monitor-white-point.c:534
+#: tools/oyranos-monitor-white-point.c:536
 msgid "0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical"
 msgstr ""
 
@@ -328,27 +328,27 @@ msgid ""
 "speed or resource overhead."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:522
-#: tools/oyranos-monitor-white-point.c:523
+#: tools/oyranos-monitor-white-point.c:524
+#: tools/oyranos-monitor-white-point.c:525
 msgid ""
 "A ICC profile of class abstract. Ideally the effect profile works on 1D RGB "
 "curves only and is marked meta:EFFECT_linear=yes ."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:517
+#: tools/oyranos-monitor-white-point.c:519
 msgid "A value from 2700 till 8000 Kelvin is expected to show no artefacts"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:515
+#: tools/oyranos-monitor-white-point.c:517
 msgid ""
 "A white point temperature of around 4000K and lower allows to get easier "
 "into sleep. Enable by setting this option to Automatic (-n=1) and "
 "Temperature to 3000 (-a=3000)."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:529
 #: tools/oyranos-monitor-white-point.c:531
-#: tools/oyranos-monitor-white-point.c:534
+#: tools/oyranos-monitor-white-point.c:533
+#: tools/oyranos-monitor-white-point.c:536
 msgid "ANGLE_IN_DEGREE"
 msgstr ""
 
@@ -379,7 +379,7 @@ msgstr "třída abstrakce"
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr "Akce v případě nesouladu profilu obrázku a editace."
 
-#: tools/oyranos-config.c:239 tools/oyranos-monitor-white-point.c:499
+#: tools/oyranos-config.c:239 tools/oyranos-monitor-white-point.c:501
 #, fuzzy
 msgid "Activate"
 msgstr "Aktivovat profily:"
@@ -397,12 +397,12 @@ msgstr "Aktivní politika:"
 msgid "Active matrix monitor"
 msgstr "Monitor s aktivní maticí"
 
-#: tools/oyranos-monitor-white-point.c:558
+#: tools/oyranos-monitor-white-point.c:560
 #, fuzzy
 msgid "Actual mode"
 msgstr "ukázat volby politiky"
 
-#: tools/oyranos-monitor-white-point.c:1293
+#: tools/oyranos-monitor-white-point.c:1295
 #, fuzzy
 msgid "Actual white point mode"
 msgstr "Bílý bod média"
@@ -488,7 +488,7 @@ msgid "Alt v - set window fullscreen"
 msgstr ""
 
 #: tools/oyranos-config.c:242 tools/oyranos-convert.c:198
-#: tools/oyranos-monitor-white-point.c:501 tools/oyranos_profile_graph.c:394
+#: tools/oyranos-monitor-white-point.c:503 tools/oyranos_profile_graph.c:394
 #: tools/oyranos_profiles.c:90
 msgid "Alternatively the -v option can be used."
 msgstr ""
@@ -621,12 +621,12 @@ msgstr "Atributy:        "
 msgid "Automatic"
 msgstr "Automaticky konvertovat"
 
-#: tools/oyranos-monitor-white-point.c:687
+#: tools/oyranos-monitor-white-point.c:689
 #, fuzzy
 msgid "Automatic white point"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:498
+#: tools/oyranos-monitor-white-point.c:500
 #, fuzzy
 msgid "Autostart"
 msgstr "Automaticky konvertovat"
@@ -965,7 +965,7 @@ msgstr "Kanály:"
 msgid "Check if this module can handle a certain command."
 msgstr "Ověřit, zda tento modul zvládne určitý příkaz."
 
-#: tools/oyranos-monitor-white-point.c:714
+#: tools/oyranos-monitor-white-point.c:716
 msgid "Choices:"
 msgstr ""
 
@@ -979,7 +979,7 @@ msgstr "Chromaticita"
 msgid "Chromaticity"
 msgstr "Chromaticita"
 
-#: tools/oyranos-monitor-white-point.c:1034
+#: tools/oyranos-monitor-white-point.c:1036
 msgid "City"
 msgstr ""
 
@@ -1234,7 +1234,7 @@ msgstr ""
 msgid "Config"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:512
+#: tools/oyranos-monitor-white-point.c:514
 #, fuzzy
 msgid "Control user daemon"
 msgstr "Automaticky konvertovat"
@@ -1446,7 +1446,7 @@ msgstr "Nelze rozpoznat zařízení"
 msgid "Could not write to file"
 msgstr "Nelze zapisovat do souboru"
 
-#: tools/oyranos-monitor-white-point.c:1033
+#: tools/oyranos-monitor-white-point.c:1035
 msgid "Country"
 msgstr ""
 
@@ -1592,7 +1592,7 @@ msgstr "Proměnná DISPLAY není nastavena: ukončeno."
 msgid "Daemon"
 msgstr "Zařízení"
 
-#: tools/oyranos-monitor-white-point.c:566
+#: tools/oyranos-monitor-white-point.c:568
 #, fuzzy
 msgid "Daemon Service"
 msgstr "Zařízení"
@@ -1609,15 +1609,15 @@ msgstr "Bar. prostor:"
 msgid "Date"
 msgstr "Datum"
 
-#: tools/oyranos-monitor-white-point.c:516
-#: tools/oyranos-monitor-white-point.c:564
+#: tools/oyranos-monitor-white-point.c:518
+#: tools/oyranos-monitor-white-point.c:566
 #, fuzzy
 msgid "Day Mode"
 msgstr "Model:"
 
 #. nick, name, description, help
 #. declare the option choices  *   nick,          name,               description,                  help
-#: tools/oyranos-config.c:238 tools/oyranos-monitor-white-point.c:497
+#: tools/oyranos-config.c:238 tools/oyranos-monitor-white-point.c:499
 #, fuzzy
 msgid "Deactivate"
 msgstr "Aktivovat profily:"
@@ -1670,7 +1670,7 @@ msgstr ""
 msgid "Description:     "
 msgstr "popis"
 
-#: tools/oyranos-monitor-white-point.c:528
+#: tools/oyranos-monitor-white-point.c:530
 msgid "Detect location by IP adress"
 msgstr ""
 
@@ -1949,8 +1949,9 @@ msgid "Editing XYZ"
 msgstr "Editace XYZ"
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
-#: tools/oyranos-monitor-white-point.c:1294
-#: tools/oyranos-monitor-white-point.c:1386
+#: tools/oyranos-monitor-white-point.c:1296
+#: tools/oyranos-monitor-white-point.c:1382
+#: tools/oyranos-monitor-white-point.c:1390
 msgid "Effect"
 msgstr ""
 
@@ -2026,7 +2027,7 @@ msgstr ""
 "s preferencí konkrétního média (papíru, inkoustu) a ponechá zpracování na "
 "systému. Tzn., že nepotřebují simulaci."
 
-#: tools/oyranos-monitor-white-point.c:504
+#: tools/oyranos-monitor-white-point.c:506
 msgid ""
 "Enable the daemon, set night white point to 3000 Kelvin and use that in "
 "night mode"
@@ -2109,7 +2110,7 @@ msgstr ""
 msgid "FILE_NAME"
 msgstr ""
 
-#: tools/oyranos-convert.c:236 tools/oyranos-monitor-white-point.c:533
+#: tools/oyranos-convert.c:236 tools/oyranos-monitor-white-point.c:535
 #: tools/oyranos-profile.c:335 tools/oyranos_profile_graph.c:437
 #: tools/oyranos_profile_graph.c:456 tools/oyranos_profile_graph.c:458
 msgid "FORMAT"
@@ -2202,7 +2203,7 @@ msgstr "Pro obrazovku"
 #: examples/image_display/oyranos-image-display.c:124
 #: examples/libraw/oyranos_file.cpp:78 tools/oyranos-config.c:355
 #: tools/oyranos-convert.c:297 tools/oyranos-device.c:479
-#: tools/oyranos-monitor-white-point.c:601 tools/oyranos-policy.c:172
+#: tools/oyranos-monitor-white-point.c:603 tools/oyranos-policy.c:172
 #: tools/oyranos-profile.c:399 tools/oyranos_gamma.c:246
 #: tools/oyranos_profile_graph.c:560 tools/oyranos_profiles.c:178
 #, fuzzy, c-format
@@ -2243,7 +2244,7 @@ msgid "Gamut Warning"
 msgstr "Varování gamutu"
 
 #: tools/oyranos-config.c:335 tools/oyranos-convert.c:277
-#: tools/oyranos-device.c:458 tools/oyranos-monitor-white-point.c:567
+#: tools/oyranos-device.c:458 tools/oyranos-monitor-white-point.c:569
 #: tools/oyranos-policy.c:151 tools/oyranos-profile.c:379
 #: tools/oyranos_profile_graph.c:501 tools/oyranos_profiles.c:157
 #, fuzzy
@@ -2280,7 +2281,7 @@ msgstr "Dokumentace"
 msgid "Generate a 3D LUT"
 msgstr "Vytvořit 3D CLUT"
 
-#: tools/oyranos-monitor-white-point.c:1199
+#: tools/oyranos-monitor-white-point.c:1201
 msgid "Geographical Position"
 msgstr ""
 
@@ -2586,8 +2587,8 @@ msgstr ""
 msgid "ICC_FILE_NAME"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:522
-#: tools/oyranos-monitor-white-point.c:523 tools/oyranos_profiles.c:122
+#: tools/oyranos-monitor-white-point.c:524
+#: tools/oyranos-monitor-white-point.c:525 tools/oyranos_profiles.c:122
 msgid "ICC_PROFILE"
 msgstr ""
 
@@ -2947,7 +2948,7 @@ msgstr "beze jmena"
 #. The white point profiles will be generated in many different shades, which will explode
 #. *  conversion cache. Thus we limit the possible shades to 100 kelvin steps, which in turn
 #. *  limits to around 100 profiles per monitor white point.
-#: tools/oyranos-monitor-white-point.c:521
+#: tools/oyranos-monitor-white-point.c:523
 msgid "KELVIN"
 msgstr ""
 
@@ -2967,8 +2968,8 @@ msgstr "Kai-Uwe Behrmann"
 msgid "Kai-Uwe Behrmann (ku.b (at) gmx.de)"
 msgstr "Kai-Uwe Behrmann"
 
-#: tools/oyranos-monitor-white-point.c:239
-#: tools/oyranos-monitor-white-point.c:729 tools/oyranos_profile_graph.c:452
+#: tools/oyranos-monitor-white-point.c:241
+#: tools/oyranos-monitor-white-point.c:731 tools/oyranos_profile_graph.c:452
 msgid "Kelvin"
 msgstr ""
 
@@ -3047,8 +3048,8 @@ msgstr ""
 msgid "Lab2XYZ"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:529
-#: tools/oyranos-monitor-white-point.c:1194
+#: tools/oyranos-monitor-white-point.c:531
+#: tools/oyranos-monitor-white-point.c:1196
 #, fuzzy
 msgid "Latitude"
 msgstr "ukázat volby politiky"
@@ -3317,16 +3318,16 @@ msgstr "Načíst"
 msgid "Load Image File Object"
 msgstr "Načíst objekt obrázkového souboru"
 
-#: tools/oyranos-monitor-white-point.c:1178
+#: tools/oyranos-monitor-white-point.c:1180
 msgid "Local Time"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:565
+#: tools/oyranos-monitor-white-point.c:567
 #, fuzzy
 msgid "Location"
 msgstr "ukázat volby politiky"
 
-#: tools/oyranos-monitor-white-point.c:565
+#: tools/oyranos-monitor-white-point.c:567
 msgid "Location and Twilight"
 msgstr ""
 
@@ -3340,8 +3341,8 @@ msgstr ""
 msgid "Long Help"
 msgstr "Ukázat model:"
 
-#: tools/oyranos-monitor-white-point.c:531
-#: tools/oyranos-monitor-white-point.c:1194
+#: tools/oyranos-monitor-white-point.c:533
+#: tools/oyranos-monitor-white-point.c:1196
 #, fuzzy
 msgid "Longitude"
 msgstr "ukázat volby politiky"
@@ -3567,7 +3568,7 @@ msgstr "Metadata"
 msgid "Microsoft"
 msgstr "Microsoft"
 
-#: tools/oyranos-config.c:335 tools/oyranos-monitor-white-point.c:567
+#: tools/oyranos-config.c:335 tools/oyranos-monitor-white-point.c:569
 #: tools/oyranos-policy.c:151 tools/oyranos_profile_graph.c:501
 #: tools/oyranos_profiles.c:157
 msgid "Misc"
@@ -3593,8 +3594,8 @@ msgstr ""
 "jediného prostoru barev."
 
 #. type,   flags, name, description, help, mandatory, optional, detail
-#: tools/oyranos-monitor-white-point.c:514
-#: tools/oyranos-monitor-white-point.c:558
+#: tools/oyranos-monitor-white-point.c:516
+#: tools/oyranos-monitor-white-point.c:560
 #, fuzzy
 msgid "Mode"
 msgstr "Model:"
@@ -3610,7 +3611,7 @@ msgstr "Model:"
 msgid "Model:           "
 msgstr "Model:       "
 
-#: tools/oyranos-monitor-white-point.c:513
+#: tools/oyranos-monitor-white-point.c:515
 #, fuzzy
 msgid "Modes"
 msgstr "Model:"
@@ -3770,45 +3771,45 @@ msgstr "Takže něco s volbami."
 msgid "New Profile Name"
 msgstr "jméno profilu"
 
-#: tools/oyranos-monitor-white-point.c:1414
+#: tools/oyranos-monitor-white-point.c:1419
 #, fuzzy
 msgid "New color scheme"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:934
-#: tools/oyranos-monitor-white-point.c:937
-#: tools/oyranos-monitor-white-point.c:1385
+#: tools/oyranos-monitor-white-point.c:936
+#: tools/oyranos-monitor-white-point.c:939
+#: tools/oyranos-monitor-white-point.c:1389
 #, fuzzy
 msgid "New white point mode"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:524
+#: tools/oyranos-monitor-white-point.c:526
 msgid "Night Backlight"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:589
+#: tools/oyranos-monitor-white-point.c:591
 #, fuzzy
 msgid "Night Manager"
 msgstr "Svetla sed"
 
-#: tools/oyranos-monitor-white-point.c:515
-#: tools/oyranos-monitor-white-point.c:560
+#: tools/oyranos-monitor-white-point.c:517
 #: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:564
 #, fuzzy
 msgid "Night Mode"
 msgstr "Svetla sed"
 
-#: tools/oyranos-monitor-white-point.c:527
+#: tools/oyranos-monitor-white-point.c:529
 msgid "Night color scheme"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:522
+#: tools/oyranos-monitor-white-point.c:524
 #, fuzzy
 msgid "Night effect"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:560
 #: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:564
 #, fuzzy
 msgid "Nightly appearance"
 msgstr "Bílý bod média"
@@ -3827,7 +3828,7 @@ msgstr "Bílý bod média"
 msgid "No"
 msgstr "Ne"
 
-#: tools/oyranos-monitor-white-point.c:545 tools/oyranos_profiles.c:133
+#: tools/oyranos-monitor-white-point.c:547 tools/oyranos_profiles.c:133
 #, fuzzy
 msgid "No Action"
 msgstr "ukázat volby politiky"
@@ -4096,7 +4097,7 @@ msgstr "Filter Oyranosu pro displej"
 msgid "Oyranos Image Display Info"
 msgstr "Filter Oyranosu pro displej"
 
-#: tools/oyranos-monitor-white-point.c:589
+#: tools/oyranos-monitor-white-point.c:591
 msgid "Oyranos Night Manager handles the monitor white point"
 msgstr ""
 
@@ -4293,7 +4294,7 @@ msgstr "PCS: "
 msgid "PCS Color Space: "
 msgstr "Bar. prostor:"
 
-#: tools/oyranos-monitor-white-point.c:524
+#: tools/oyranos-monitor-white-point.c:526
 msgid "PERCENT"
 msgstr ""
 
@@ -4844,7 +4845,7 @@ msgstr "Root Image"
 msgid "Root Image Filter Object"
 msgstr "Root Image Filter Object"
 
-#: tools/oyranos-monitor-white-point.c:566
+#: tools/oyranos-monitor-white-point.c:568
 #, fuzzy
 msgid "Run sunset daemon"
 msgstr "Automaticky konvertovat"
@@ -4857,8 +4858,8 @@ msgstr "SGI"
 msgid "SMPTE RP145-1994"
 msgstr "SMPTE RP145-1994"
 
-#: tools/oyranos-monitor-white-point.c:526
-#: tools/oyranos-monitor-white-point.c:527 tools/oyranos_profile_graph.c:450
+#: tools/oyranos-monitor-white-point.c:528
+#: tools/oyranos-monitor-white-point.c:529 tools/oyranos_profile_graph.c:450
 #: tools/oyranos_profile_graph.c:460
 msgid "STRING"
 msgstr ""
@@ -5059,21 +5060,21 @@ msgstr "Nastavit"
 msgid "Set ICC profiles in Oyranos for device Color Management."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:529
+#: tools/oyranos-monitor-white-point.c:531
 #, fuzzy
 msgid "Set Latitude"
 msgstr "ukázat volby politiky"
 
-#: tools/oyranos-monitor-white-point.c:531
+#: tools/oyranos-monitor-white-point.c:533
 #, fuzzy
 msgid "Set Longitude"
 msgstr "ukázat volby politiky"
 
-#: tools/oyranos-monitor-white-point.c:524
+#: tools/oyranos-monitor-white-point.c:526
 msgid "Set Nightly Backlight"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:534
+#: tools/oyranos-monitor-white-point.c:536
 msgid "Set Twilight angle"
 msgstr ""
 
@@ -5100,17 +5101,17 @@ msgstr ""
 msgid "Set basic parameters"
 msgstr "Parametry charakterizace"
 
-#: tools/oyranos-monitor-white-point.c:523
+#: tools/oyranos-monitor-white-point.c:525
 #, fuzzy
 msgid "Set day time effect"
 msgstr "ukázat volby politiky"
 
-#: tools/oyranos-monitor-white-point.c:516
+#: tools/oyranos-monitor-white-point.c:518
 #, fuzzy
 msgid "Set day time mode"
 msgstr "ukázat volby politiky"
 
-#: tools/oyranos-monitor-white-point.c:526
+#: tools/oyranos-monitor-white-point.c:528
 msgid "Set day time typical brighter color scheme"
 msgstr ""
 
@@ -5129,21 +5130,21 @@ msgstr "Uložit jako novou politiku:"
 msgid "Set new profile:"
 msgstr "Nastavit nový profil:"
 
-#: tools/oyranos-monitor-white-point.c:522
+#: tools/oyranos-monitor-white-point.c:524
 #, fuzzy
 msgid "Set night time effect"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:515
+#: tools/oyranos-monitor-white-point.c:517
 #, fuzzy
 msgid "Set night time mode"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:527
+#: tools/oyranos-monitor-white-point.c:529
 msgid "Set nightly typical darker color scheme"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:514
+#: tools/oyranos-monitor-white-point.c:516
 #, fuzzy
 msgid "Set white point mode"
 msgstr "Bílý bod média"
@@ -5281,7 +5282,7 @@ msgstr "profil ICC"
 msgid "Show identical multiple installed profiles"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:533
+#: tools/oyranos-monitor-white-point.c:535
 msgid ""
 "Show local time, used geographical location, twilight height angles, sun "
 "rise and sun set times"
@@ -5366,7 +5367,7 @@ msgstr "Verze ovladače:"
 msgid "Show which policy matches by combining all involved settings."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:513
+#: tools/oyranos-monitor-white-point.c:515
 #, fuzzy
 msgid "Show white point modes"
 msgstr "Bílý bod média"
@@ -5533,35 +5534,35 @@ msgstr "Začátek"
 msgid "StdObs2°"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1194
-#: tools/oyranos-monitor-white-point.c:1199
+#: tools/oyranos-monitor-white-point.c:1196
+#: tools/oyranos-monitor-white-point.c:1201
 #, fuzzy
 msgid "Sun Elevation"
 msgstr "Saturační"
 
-#: tools/oyranos-monitor-white-point.c:564
+#: tools/oyranos-monitor-white-point.c:566
 #, fuzzy
 msgid "Sun light appearance"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:526
+#: tools/oyranos-monitor-white-point.c:528
 #, fuzzy
 msgid "Sun light color scheme"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:523
+#: tools/oyranos-monitor-white-point.c:525
 #, fuzzy
 msgid "Sun light effect"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:533
-#: tools/oyranos-monitor-white-point.c:1194
-#: tools/oyranos-monitor-white-point.c:1199
+#: tools/oyranos-monitor-white-point.c:535
+#: tools/oyranos-monitor-white-point.c:1196
+#: tools/oyranos-monitor-white-point.c:1201
 #, fuzzy
 msgid "Sunrise"
 msgstr "Získat profil ICC"
 
-#: tools/oyranos-monitor-white-point.c:1213
+#: tools/oyranos-monitor-white-point.c:1215
 msgid "Sunset"
 msgstr ""
 
@@ -5578,7 +5579,7 @@ msgid ""
 "by e.g. oyranos-profile-graph --hlc=NUMBER -f ncc"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:505
+#: tools/oyranos-monitor-white-point.c:507
 msgid "Switch all day light intereference off such as white point and effect"
 msgstr ""
 
@@ -5602,7 +5603,7 @@ msgstr "systémová cesta"
 msgid "System path"
 msgstr "linuxová systémová cesta"
 
-#: tools/oyranos-config.c:276 tools/oyranos-monitor-white-point.c:536
+#: tools/oyranos-config.c:276 tools/oyranos-monitor-white-point.c:538
 #, fuzzy
 msgid "System wide DB setting"
 msgstr "systémová cesta"
@@ -5651,7 +5652,7 @@ msgstr "Taxi ID"
 msgid "Technologie"
 msgstr "Technologie"
 
-#: tools/oyranos-monitor-white-point.c:517
+#: tools/oyranos-monitor-white-point.c:519
 msgid "Temperature"
 msgstr ""
 
@@ -5717,8 +5718,8 @@ msgstr ""
 "neutrální šedá. Poznámka: barvový prostor pro editaci je totéž co pracovní "
 "prostor."
 
-#: tools/oyranos-monitor-white-point.c:560
 #: tools/oyranos-monitor-white-point.c:562
+#: tools/oyranos-monitor-white-point.c:564
 msgid ""
 "The Night white point mode shall allow to reduce influence of blue light "
 "during night time. A white point temperature of around 4000K and lower "
@@ -6347,7 +6348,7 @@ msgstr ""
 msgid "The my_handler takes a option with key name \"print\" and prints it."
 msgstr "my_handler akceptuje volbu se jménem klíče \"print\" a vytiskne ji."
 
-#: tools/oyranos-monitor-white-point.c:524
+#: tools/oyranos-monitor-white-point.c:526
 msgid ""
 "The option needs xbacklight installed and supporting your device for dimming "
 "the monitor lamp."
@@ -6566,7 +6567,7 @@ msgid ""
 "information."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:586
+#: tools/oyranos-monitor-white-point.c:588
 msgid ""
 "The tool can set the actual white point or set it by local day and night "
 "time. A additional effect profile can be selected."
@@ -6624,13 +6625,13 @@ msgstr ""
 "žádný barvový prostor. Obvykle by měl být přiřazen příslušný předpokládaný "
 "profil ICC."
 
-#: tools/oyranos-monitor-white-point.c:1032
+#: tools/oyranos-monitor-white-point.c:1034
 msgid "Time Zone"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:534
-#: tools/oyranos-monitor-white-point.c:1194
-#: tools/oyranos-monitor-white-point.c:1199
+#: tools/oyranos-monitor-white-point.c:536
+#: tools/oyranos-monitor-white-point.c:1196
+#: tools/oyranos-monitor-white-point.c:1201
 msgid "Twilight"
 msgstr ""
 
@@ -6719,8 +6720,8 @@ msgstr ""
 msgid "Use the -f icc argument."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:526
-#: tools/oyranos-monitor-white-point.c:527
+#: tools/oyranos-monitor-white-point.c:528
+#: tools/oyranos-monitor-white-point.c:529
 msgid "Use this to switch color scheme day/night dependent."
 msgstr ""
 
@@ -6746,7 +6747,7 @@ msgid "V4toV2"
 msgstr ""
 
 #: tools/oyranos-config.c:242 tools/oyranos-convert.c:198
-#: tools/oyranos-monitor-white-point.c:501 tools/oyranos_profile_graph.c:394
+#: tools/oyranos-monitor-white-point.c:503 tools/oyranos_profile_graph.c:394
 #: tools/oyranos_profiles.c:90
 msgid "Valid integer range is from 1-20."
 msgstr ""
@@ -6764,7 +6765,7 @@ msgstr "upovídaný výstup"
 #: examples/image_display/oyranos-image-display.c:97 tools/oyranos-config.c:290
 #: tools/oyranos-config.c:321 tools/oyranos-config.c:333
 #: tools/oyranos-convert.c:261 tools/oyranos-device.c:430
-#: tools/oyranos-monitor-white-point.c:544 tools/oyranos-policy.c:135
+#: tools/oyranos-monitor-white-point.c:546 tools/oyranos-policy.c:135
 #: tools/oyranos-profile.c:361 tools/oyranos_profile_graph.c:478
 #: tools/oyranos_profiles.c:139
 #, fuzzy
@@ -6975,8 +6976,8 @@ msgstr "Barva b"
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:3431
 #: tools/oyranos-monitor-white-point.c:94
 #: tools/oyranos-monitor-white-point.c:154
-#: tools/oyranos-monitor-white-point.c:319
-#: tools/oyranos-monitor-white-point.c:356 modules/lcm2-i18n.c:95
+#: tools/oyranos-monitor-white-point.c:321
+#: tools/oyranos-monitor-white-point.c:358 modules/lcm2-i18n.c:95
 #: modules/lcm2-i18n.c:137 modules/lcms-i18n.c:101
 msgid "[none]"
 msgstr "[žádný]"
@@ -7070,7 +7071,7 @@ msgid "create fallback ICC profile"
 msgstr "profil ICC"
 
 #. type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable
-#: tools/oyranos-monitor-white-point.c:512
+#: tools/oyranos-monitor-white-point.c:514
 msgid "daemon"
 msgstr ""
 
@@ -7359,7 +7360,7 @@ msgstr ""
 "support@littlecms.com; zdrojové kódy: http://www.littlecms.com/downloads."
 "htm; Oyranos wrapper: Kai-Uwe Behrmann pro projekt Oyranos"
 
-#: tools/oyranos-monitor-white-point.c:528
+#: tools/oyranos-monitor-white-point.c:530
 #, fuzzy
 msgid "location"
 msgstr "ukázat volby politiky"
@@ -7426,7 +7427,7 @@ msgstr "nenalezeno:"
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1415
+#: tools/oyranos-monitor-white-point.c:1420
 msgid "old/new"
 msgstr ""
 
@@ -7637,7 +7638,7 @@ msgid "reset session configuration to zero"
 msgstr ""
 
 #: examples/image_display/oyranos-image-display.c:57 tools/oyranos-config.c:243
-#: tools/oyranos-convert.c:199 tools/oyranos-monitor-white-point.c:502
+#: tools/oyranos-convert.c:199 tools/oyranos-monitor-white-point.c:504
 msgid "route Oyranos to additional directories containing modules."
 msgstr ""
 
@@ -7707,7 +7708,7 @@ msgstr ""
 #. declare the option choices  *   nick,          name,               description,                  help
 #. nick, name, description, help
 #: tools/oyranos-config.c:242 tools/oyranos-convert.c:198
-#: tools/oyranos-monitor-white-point.c:501 tools/oyranos-policy.c:78
+#: tools/oyranos-monitor-white-point.c:503 tools/oyranos-policy.c:78
 #: tools/oyranos_profile_graph.c:394 tools/oyranos_profiles.c:90
 msgid "set the Oyranos debug level."
 msgstr ""
@@ -7770,7 +7771,7 @@ msgstr "třída spojovacího profilu"
 msgid "strings. By default 'lcms' or 'lcm2' should be available."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:536
+#: tools/oyranos-monitor-white-point.c:538
 #, fuzzy
 msgid "system wide"
 msgstr "systémová cesta"
@@ -7820,14 +7821,14 @@ msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:69 tools/oyranos-config.c:320
 #: tools/oyranos-convert.c:260 tools/oyranos-device.c:397
-#: tools/oyranos-monitor-white-point.c:543 tools/oyranos-policy.c:134
+#: tools/oyranos-monitor-white-point.c:545 tools/oyranos-policy.c:134
 #: tools/oyranos-profile.c:360 tools/oyranos_profile_graph.c:477
 #: tools/oyranos_profiles.c:138
 msgid "verbose"
 msgstr "upovídaný výstup"
 
 #: examples/image_display/oyranos-image-display.c:97 tools/oyranos-config.c:321
-#: tools/oyranos-convert.c:261 tools/oyranos-monitor-white-point.c:544
+#: tools/oyranos-convert.c:261 tools/oyranos-monitor-white-point.c:546
 #: tools/oyranos-policy.c:135 tools/oyranos-profile.c:361
 #: tools/oyranos_profile_graph.c:478 tools/oyranos_profiles.c:139
 #, fuzzy

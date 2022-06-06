@@ -160,6 +160,8 @@ static oyjlOptionChoice_s * getLinearEffectProfileChoices (
         {
           oyProfile_s * p = oyProfiles_Get( profiles, i );
           const char * nick = oyProfile_GetFileName( p, -1 );
+          if(strchr(nick, OY_SLASH_C))
+            nick = strrchr(nick, OY_SLASH_C) + 1;
 
           c[i+1].nick = strdup(nick);
           c[i+1].name = strdup(oyProfile_GetText( p, oyNAME_DESCRIPTION ));
@@ -1384,17 +1386,6 @@ int checkWtptState(int dry)
       fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
       fprintf(  stderr, "%s: %s %s: %s\n", _("New white point mode"), oyjlTermColor(oyjlBOLD,new_mode<choices?choices_string_list[new_mode]:"----"),
                 _("Effect"), oyNoEmptyString_m_(new_effect) );
-
-      if(dry == 0 && (use_effect ||
-                      (effect?1:0) != (new_effect?1:0)))
-      {
-        if( !new_effect || (strcmp(new_effect,"-") == 0 ||
-                            strlen(new_effect) == 0 ))
-          oySetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, scope, NULL, NULL );
-        else
-          oySetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, scope, new_effect, NULL );
-        pingNativeDisplay();
-      }
 
       if(cmode != new_mode)
         error = setWtptMode( scope, new_mode, dry );
