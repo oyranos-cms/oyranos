@@ -207,6 +207,8 @@ static void replaceCb(const char * text OYJL_UNUSED, const char * start, const c
   }
 }
 
+int        oyjlStr_Append            ( oyjl_str            string,
+                                       const char        * append );
 oyjlTESTRESULT_e testString ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -653,7 +655,16 @@ oyjlTESTRESULT_e testString ()
   for(i = 0; i < n; ++i)
     oyjlStr_AppendN( string, "/more/and", 9 );
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjlStr_AppendN()\t%dx9  %d    \t\%s\n", n, (int)strlen(oyjlStr(string)),
+  fprintf( zout, "oyjlStr_AppendN() memcpy()\t%dx9  %d    \t\%s\n", n, (int)strlen(oyjlStr(string)),
+                 oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  oyjlStr_Clear( string );
+
+  clck = oyjlClock();
+  n = 10000;
+  for(i = 0; i < n; ++i)
+    oyjlStr_Append( string, "/more/and" );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "oyjlStr_Append() strcpy()\t%dx9  %d    \t\%s\n", n, (int)strlen(oyjlStr(string)),
                  oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
   oyjlStr_Clear( string );
   oyjlStr_Release( &string );
@@ -661,7 +672,7 @@ oyjlTESTRESULT_e testString ()
   int inside = 0;
   string = oyjlStr_New(10, 0,0);
   for(i = 0; i < 10; ++i)
-    oyjlStr_AppendN( string, "/more/and", 9 );
+    oyjlStr_Append( string, "/more/and" );
   oyjlStr_Replace( string, "/", "\\/", replaceCb, &inside );
   const char * tmp = oyjlStr(string);
   if(strstr(tmp, "/more\\/and/more"))

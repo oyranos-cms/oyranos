@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-05 10:56+0200\n"
+"POT-Creation-Date: 2022-06-06 09:15+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -213,7 +213,7 @@ msgstr ""
 msgid "Copyright"
 msgstr "Copyright-a"
 
-#: oyjl_core.c:1802
+#: oyjl_core.c:1832
 #, fuzzy
 msgid "Could not open: "
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -284,7 +284,7 @@ msgstr ""
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:1462 oyjl_core.c:2644 test-core.c:169 test-core.c:1070
+#: oyjl_args.c:1462 oyjl_core.c:2674 test-core.c:169 test-core.c:1070
 #: test-core.c:1071 test.c:226 test.c:288 test.c:398 test.c:418
 msgid "Example"
 msgstr ""
@@ -467,7 +467,7 @@ msgid ""
 "xml-format.tr"
 msgstr ""
 
-#: oyjl_core.c:2826
+#: oyjl_core.c:2856
 #, fuzzy
 msgid "Information"
 msgstr "Informazioa:"
@@ -972,7 +972,7 @@ msgstr "Puntua"
 msgid "Program Error:"
 msgstr ""
 
-#: oyjl_core.c:1955
+#: oyjl_core.c:1985
 #, fuzzy
 msgid "Program not found"
 msgstr "Profila-kolorea"
