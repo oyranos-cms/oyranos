@@ -3074,7 +3074,7 @@ oyjl_val    oyTreeFromCxf( const char * text )
         int error = 0;
         const char * in = oy_cxf_color_spec_json[j][0], * out = oy_cxf_color_spec_json[j][1];
         error = oyjlCopyNode(color_spec, in, specT, out, i);
-        if(j <= 2 && error)
+        if(error)
           oyMessageFunc_p( oyMSG_WARN, NULL, "copy from CxF node to NCC node failed: %s %s", in, out );
         ++j;
       }

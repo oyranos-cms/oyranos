@@ -304,7 +304,7 @@ const char * oyjlPrintTime           ( int                 flags,
     if(flags & OYJL_BRACKETS)
       sprintf( &t[strlen(t)], "[" );
     if(flags & OYJL_DATE)
-      strftime( &t[strlen(t)], 64, "%F", gmt );
+      strftime( &t[strlen(t)], 60, "%F", gmt );
     if(flags & OYJL_DATE && flags & OYJL_TIME)
       sprintf( &t[strlen(t)], "T" );
     if(flags & OYJL_TIME)

@@ -1041,7 +1041,7 @@ oyjlTESTRESULT_e testJson ()
         if(verbose) fprintf( zout, "%s\n", rjson );
       }
       if(rjson) oyFree_m_(rjson);
-      if(!root) oyjlTreeFree( value );
+      oyjlTreeFree( value );
     }
 
     oyjlTreeFree( root );
@@ -9225,7 +9225,7 @@ oyjlTESTRESULT_e testICCsCheck()
       )
 #else
     double lightness = 50.0; // percent Lab
-    double Lab[3] = { lightness, 0.0, 0.0 }, rgb[3];
+    double Lab[3] = { lightness, 0.0, 0.0 }, rgb[4];
     oyLab2XYZ( Lab, rgb );
     if(verbose) fprintf(stderr, "Background Lab: %.2f %.2f %.2f XYZ: %.2f %.2f %.2f\n", Lab[0], Lab[1], Lab[2], rgb[0], rgb[1], rgb[2] );
     oyXYZ2sRGB( rgb );
@@ -9832,7 +9832,7 @@ oyjlTESTRESULT_e testCache()
 
   if( i == count )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i*repeat,clck/(double)CLOCKS_PER_SEC,"entries",
-    "oyCacheListGetEntry_(unique long entry)" );
+    "oyCacheListGetEntry_(unique long entry) count: %d", count*repeat );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique long entry)" );
@@ -9857,7 +9857,7 @@ oyjlTESTRESULT_e testCache()
 
   if( i == count )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i*repeat,clck/(double)CLOCKS_PER_SEC,"entries",
-    "oyCacheListGetEntry_(unique long entry)" );
+    "oyCacheListGetEntry_(unique long entry) count: %d", count*repeat );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique long entry)  " );
@@ -9883,7 +9883,7 @@ oyjlTESTRESULT_e testCache()
 
   if( i == count )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i*repeat,clck/(double)CLOCKS_PER_SEC,"entries",
-    "oyCacheListGetEntry_(unique vlong entry)" );
+    "oyCacheListGetEntry_(unique vlong entry) count: %d", count*repeat );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique vlong entry)" );
@@ -9908,7 +9908,7 @@ oyjlTESTRESULT_e testCache()
 
   if( i == count )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i*repeat,clck/(double)CLOCKS_PER_SEC,"entries",
-    "oyCacheListGetEntry_(unique vlong entry)" );
+    "oyCacheListGetEntry_(unique vlong entry) count: %d", count*repeat );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique vlong entry)" );
@@ -9934,7 +9934,7 @@ oyjlTESTRESULT_e testCache()
 
   if( i == count )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i*repeat,clck/(double)CLOCKS_PER_SEC,"entries",
-    "oyCacheListGetEntry_(unique short entry)") ;
+    "oyCacheListGetEntry_(unique short entry) count: %d", count*repeat );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique short entry)" );
@@ -9959,7 +9959,7 @@ oyjlTESTRESULT_e testCache()
 
   if( i == count )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i*repeat,clck/(double)CLOCKS_PER_SEC,"entries",
-    "oyCacheListGetEntry_(unique short entry)" );
+    "oyCacheListGetEntry_(unique short entry) count: %d", count*repeat );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyCacheListGetEntry_(unique short entry) " );

@@ -1734,7 +1734,7 @@ const char * oyjlTermColorF( oyjlTEXTMARK_e rgb, const char * format, ...)
   const char * t;
   OYJL_CREATE_VA_STRING(format, text, malloc, return NULL)
   t = oyjlTermColor( rgb, text );
-  if(text) free(text);
+  if(t != text) free(text);
   return t;
 }
 

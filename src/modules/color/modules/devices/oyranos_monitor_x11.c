@@ -541,7 +541,7 @@ char * icProfileName( const char * p, int psize, int verbose )
                 break;
               }
             }
-            free(t);
+            if(t) { free(t); t = NULL; }
           }
         } else
         {

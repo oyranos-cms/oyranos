@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-06 07:47+0200\n"
+"POT-Creation-Date: 2022-06-06 12:00+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1886,8 +1886,7 @@ msgstr "Editier XYZ"
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
 #: tools/oyranos-monitor-white-point.c:1296
-#: tools/oyranos-monitor-white-point.c:1382
-#: tools/oyranos-monitor-white-point.c:1390
+#: tools/oyranos-monitor-white-point.c:1388
 msgid "Effect"
 msgstr "Effekt"
 
@@ -3566,13 +3565,13 @@ msgstr "Benötigt die -c Option"
 msgid "New Profile Name"
 msgstr "Neuer Profilname"
 
-#: tools/oyranos-monitor-white-point.c:1419
+#: tools/oyranos-monitor-white-point.c:1405
 msgid "New color scheme"
 msgstr "Neues Farbschema"
 
 #: tools/oyranos-monitor-white-point.c:936
 #: tools/oyranos-monitor-white-point.c:939
-#: tools/oyranos-monitor-white-point.c:1389
+#: tools/oyranos-monitor-white-point.c:1387
 msgid "New white point mode"
 msgstr "Neuer Weißpunktmodus"
 
@@ -7084,7 +7083,7 @@ msgstr "nicht gefunden:"
 msgid "ok"
 msgstr "gut "
 
-#: tools/oyranos-monitor-white-point.c:1420
+#: tools/oyranos-monitor-white-point.c:1406
 msgid "old/new"
 msgstr "alt/neu"
 

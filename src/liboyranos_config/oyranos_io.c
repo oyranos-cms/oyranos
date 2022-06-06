@@ -147,7 +147,7 @@ char *   oyGetPathFromProfileName_   ( const char        * fileName,
 
     if(oyStrlen_(fileName) < MAX_PATH)
     {
-      memcpy(search, fileName, len); search[len] = '\000';
+      snprintf(search, MAX_PATH, "%s", fileName);
     } else {
       WARNc2_S( "%s %d", _("name longer than"), MAX_PATH)
       goto clean;

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-06 07:47+0200\n"
+"POT-Creation-Date: 2022-06-06 12:00+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -1955,8 +1955,7 @@ msgstr "Espace colorimétrique"
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
 #: tools/oyranos-monitor-white-point.c:1296
-#: tools/oyranos-monitor-white-point.c:1382
-#: tools/oyranos-monitor-white-point.c:1390
+#: tools/oyranos-monitor-white-point.c:1388
 msgid "Effect"
 msgstr ""
 
@@ -3714,14 +3713,14 @@ msgstr ""
 msgid "New Profile Name"
 msgstr "Fichier"
 
-#: tools/oyranos-monitor-white-point.c:1419
+#: tools/oyranos-monitor-white-point.c:1405
 #, fuzzy
 msgid "New color scheme"
 msgstr "Model:"
 
 #: tools/oyranos-monitor-white-point.c:936
 #: tools/oyranos-monitor-white-point.c:939
-#: tools/oyranos-monitor-white-point.c:1389
+#: tools/oyranos-monitor-white-point.c:1387
 #, fuzzy
 msgid "New white point mode"
 msgstr "ICC Profils"
@@ -7106,7 +7105,7 @@ msgstr "Fichier"
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1420
+#: tools/oyranos-monitor-white-point.c:1406
 msgid "old/new"
 msgstr ""
 

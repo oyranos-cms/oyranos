@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-06 07:47+0200\n"
+"POT-Creation-Date: 2022-06-06 12:00+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1950,8 +1950,7 @@ msgstr "Editace XYZ"
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
 #: tools/oyranos-monitor-white-point.c:1296
-#: tools/oyranos-monitor-white-point.c:1382
-#: tools/oyranos-monitor-white-point.c:1390
+#: tools/oyranos-monitor-white-point.c:1388
 msgid "Effect"
 msgstr ""
 
@@ -3771,14 +3770,14 @@ msgstr "Takže něco s volbami."
 msgid "New Profile Name"
 msgstr "jméno profilu"
 
-#: tools/oyranos-monitor-white-point.c:1419
+#: tools/oyranos-monitor-white-point.c:1405
 #, fuzzy
 msgid "New color scheme"
 msgstr "Bílý bod média"
 
 #: tools/oyranos-monitor-white-point.c:936
 #: tools/oyranos-monitor-white-point.c:939
-#: tools/oyranos-monitor-white-point.c:1389
+#: tools/oyranos-monitor-white-point.c:1387
 #, fuzzy
 msgid "New white point mode"
 msgstr "Bílý bod média"
@@ -7427,7 +7426,7 @@ msgstr "nenalezeno:"
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1420
+#: tools/oyranos-monitor-white-point.c:1406
 msgid "old/new"
 msgstr ""
 
