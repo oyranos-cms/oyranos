@@ -1462,7 +1462,35 @@ int        oyjlStr_AppendN           ( oyjl_str            string,
     }
     memcpy( &str->s[str->len], append, append_len );
     str->len += append_len;
-    str->s[str->len] = '\000';
+    str->s[str->len] = 0;
+  }
+  return error;
+}
+
+/* slow - just for demonstration */
+int        oyjlStr_Append            ( oyjl_str            string,
+                                       const char        * append )
+{
+  struct oyjl_string_s * str = string;
+  int error = 0;
+  int append_len = append?strlen(append):0;
+  if(append && append_len)
+  {
+    if((append_len + str->len) >= str->alloc_len - (str->alloc_len?1:0))
+    {
+      int len = (append_len + str->len) * 2;
+      char * edit = str->s;
+      oyjlAllocHelper_m( str->s, char, len, str->alloc, return 1 );
+      str->alloc_len = len;
+      ++str->alloc_count;
+      if(edit)
+      {
+        strcpy(str->s, edit);
+        str->deAlloc(edit);
+      }
+    }
+    strcpy( &str->s[str->len], append );
+    str->len = strlen(str->s);
   }
   return error;
 }
@@ -1639,6 +1667,9 @@ void       oyjlStr_Clear             ( oyjl_str            string )
   char * s = str->s;
   str->s = NULL;
   if(s) deAlloc(s);
+  str->len = 0;
+  str->alloc_len = 0;
+  str->alloc_count = 0;
 }
 
 /** @brief   release a string object

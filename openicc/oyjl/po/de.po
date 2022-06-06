@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-05 10:56+0200\n"
+"POT-Creation-Date: 2022-06-06 09:15+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -207,7 +207,7 @@ msgstr "Kopiere übersetzte Schlüssel nach JSON. Lasse gettext aus."
 msgid "Copyright"
 msgstr "Kopierrecht"
 
-#: oyjl_core.c:1802
+#: oyjl_core.c:1832
 msgid "Could not open: "
 msgstr "Konnte nicht öffnen: "
 
@@ -273,7 +273,7 @@ msgstr "BEISPIELE"
 msgid "EXIT-STATE"
 msgstr "EXIT-STATUS"
 
-#: oyjl_args.c:1462 oyjl_core.c:2644 test-core.c:169 test-core.c:1070
+#: oyjl_args.c:1462 oyjl_core.c:2674 test-core.c:169 test-core.c:1070
 #: test-core.c:1071 test.c:226 test.c:288 test.c:398 test.c:418
 msgid "Example"
 msgstr "Beispiel"
@@ -452,7 +452,7 @@ msgstr ""
 "Importiere Übersetzungen aus anderen Formaten ohne gettext. Unterstützt ist "
 "--input=Qt-xml-format.tr"
 
-#: oyjl_core.c:2826
+#: oyjl_core.c:2856
 msgid "Information"
 msgstr "Informationen"
 
@@ -908,7 +908,7 @@ msgstr "Zeige Typ"
 msgid "Program Error:"
 msgstr "Programmfehler:"
 
-#: oyjl_core.c:1955
+#: oyjl_core.c:1985
 msgid "Program not found"
 msgstr "Programm nicht gefunden"
 

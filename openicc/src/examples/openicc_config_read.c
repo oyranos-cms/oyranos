@@ -126,7 +126,7 @@ int main(int argc, char ** argv)
       free(keys[j]);
       free(values[j]);
     }
-    free(keys); free(values);
+    free(keys); free(values); keys = NULL; values = NULL;
   }
 
   /* get a single JSON device */
