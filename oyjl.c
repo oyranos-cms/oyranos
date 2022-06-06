@@ -152,12 +152,12 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
         *first_path = first_path_;
 
       if(verbose)
-        fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
-
-      if(verbose)
         fprintf(stderr, "processed:\t\"%s\"\n", error_name);
 
       value = oyjlTreeGetValue( root_, 0, xpath_full );
+
+      if(verbose)
+        fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
     }
     else
       value = root_;

@@ -747,7 +747,10 @@ const char * oyjlPrintSubProfiling   ( int                 space,
     const char * t;
     sprintf( prof, " %.04f", integer/duration );
     t = oyjlTermColor_(oyjlITALIC,prof);
-    snprintf( prof, 256, "%s  %s/s", t, term );
+    if(t == prof)
+      snprintf( &prof[strlen(prof)], 256-strlen(prof), "  %s/s", term );
+    else
+      snprintf( prof, 256, "%s  %s/s", t, term );
   }
   len = strlen(text);
   tmp = (char*) realloc( text, len + strlen(prof) + 2 );
