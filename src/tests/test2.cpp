@@ -1041,7 +1041,6 @@ oyjlTESTRESULT_e testJson ()
         if(verbose) fprintf( zout, "%s\n", rjson );
       }
       if(rjson) oyFree_m_(rjson);
-      oyjlTreeFree( value );
     }
 
     oyjlTreeFree( root );
