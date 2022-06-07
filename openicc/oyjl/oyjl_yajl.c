@@ -449,8 +449,6 @@ static int handle_null (void *ctx)
 oyjl_val oyjlTreeParse   (const char *input,
                           char *error_buffer, size_t error_buffer_size)
 {
-  char * tmp = NULL;
-
 #if (YAJL_VERSION) > 20000
 static yajl_callbacks oyjl_tree_callbacks_ = {
   handle_null,
@@ -555,7 +553,6 @@ static yajl_callbacks oyjl_tree_callbacks_ = {
           }
           context_pop(&ctx);
         }
-        if(tmp) free(tmp);
         oyjlTreeFree( ctx.root );
         return NULL;
     }
@@ -564,7 +561,6 @@ static yajl_callbacks oyjl_tree_callbacks_ = {
     status = yajl_complete_parse (handle);
 #endif
     yajl_free (handle);
-    if(tmp) free(tmp);
     return (ctx.root);
 }
 #undef Florian_Forster_SOURCE_GUARD
@@ -813,7 +809,6 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
   xmlDocPtr doc = NULL;
   xmlNodePtr cur = NULL;
   oyjl_val jroot =  NULL;
-  char * tmp = NULL;
 
   if(!xml) return jroot;
 
@@ -838,7 +833,6 @@ oyjl_val   oyjlTreeParseXml          ( const char        * xml,
 
   if(doc)
     xmlFreeDoc( doc );
-  if(tmp) free(tmp);
 
   return jroot;
 }
@@ -968,7 +962,6 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
   yaml_document_t document;
   yaml_node_t * root = NULL;
   char * json = NULL;
-  char * tmp = NULL;
   oyjl_val jroot = NULL;
   int error = 0;
 
@@ -1013,7 +1006,6 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
 
   yaml_parser_delete(&parser);
   yaml_document_delete(&document);
-  if(tmp) free(tmp);
   if(json) free(json);
 
   return jroot;

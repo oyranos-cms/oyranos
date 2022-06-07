@@ -1073,9 +1073,6 @@ static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oy
               oyjlStr_Add( text, "</%s>", t );
               last_is_content = 0;
             }
-            else
-            if( is_attribute )
-              last_is_content = 0;
           }
 
           *level -= 2;
@@ -2133,7 +2130,7 @@ char *         oyjlTranslate2_       ( const char        * loc,
 {
   const char * translated = NULL;
   oyjl_val v;
-  char * key = NULL, * tmp = NULL, * loc_ = NULL;
+  char * key = NULL, * loc_ = NULL;
 
   if(flags & OYJL_GETTEXT)
   {
@@ -2156,8 +2153,7 @@ char *         oyjlTranslate2_       ( const char        * loc,
 
   key = oyjlJsonEscape( text, OYJL_KEY | OYJL_REGEXP );
   if(flags & OYJL_OBSERVE)
-    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "text: \"%s\" escape: \"%s\" key: \"%s\"", OYJL_DBG_ARGS, text, tmp, key );
-  if(tmp) {free(tmp); tmp = NULL;}
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "text: \"%s\" key: \"%s\"", OYJL_DBG_ARGS, text, key );
 
   if(strcmp(loc,"back") == 0 && text[0])
   {
@@ -2769,15 +2765,15 @@ char **  oyjlCatalogGetLangs_        ( char             ** paths,
       loc = len > base_len ? oyjlStringCopy(&path[base_len], 0) : NULL;
       if(!loc)
         continue;
-      t = loc ? strrchr(loc, '/') : NULL;
+      t = strrchr(loc, '/');
       if(t) t[0] = '\000';
       t = oyjlJsonEscape( loc, OYJL_REVERSE | OYJL_REGEXP | OYJL_KEY );
-      if(loc) { free(loc); loc = NULL; }
+      free(loc); loc = NULL;
       loc = t;
       for(j = 0; j < locs_n; ++j)
       {
         char * l = locs[j];
-        if(!loc || strcmp(l, loc) == 0)
+        if(strcmp(l, loc) == 0)
         {
           found = 1;
           break;
@@ -2790,7 +2786,7 @@ char **  oyjlCatalogGetLangs_        ( char             ** paths,
         locs_start[locs_n] = i;
         oyjlStringListAddString( &locs, &locs_n, loc, malloc,free );
       }
-      if(loc) free(loc);
+      free(loc);
     }
 
     if(langs_n)
