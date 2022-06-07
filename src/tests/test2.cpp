@@ -5805,15 +5805,16 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
     error = oyDeviceGetProfile( config, options, &p );
     if(error == -1)
       PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyDeviceGetProfile(\"fallback\") error:           %d", error )
+      "oyDeviceGetProfile( list \"fallback\") error:           %d", error )
     else
-      PRINT_SUB( oyjlTESTRESULT_XFAIL, "oyDeviceGetProfile(\"fallback\") error:       %d", error )
+      PRINT_SUB( oyjlTESTRESULT_XFAIL,
+      "oyDeviceGetProfile( list \"fallback\") error:           %d", error )
     if( p )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyDeviceGetProfile(\"fallb.\")\"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+      "oyDeviceGetProfile( list \"fallb.\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "oyDeviceGetProfile(\"fallback\")    " );
+      "oyDeviceGetProfile( list \"fallb.\")    " );
     }
     oyProfile_Release( &p );
     oyConfig_Release( &config );
@@ -5856,16 +5857,16 @@ oyjlTESTRESULT_e testCMMMonitorJSON ()
     error = oyDeviceGetProfile( config, options, &p );
     if(error == -1)
       PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyDeviceGetProfile(\"fallback\") error:           %d", error )
+      "oyDeviceGetProfile( properties \"fallback\") error:           %d", error )
     else
       PRINT_SUB( oyjlTESTRESULT_XFAIL,
-      "oyDeviceGetProfile(\"fallback\") error:           %d", error )
+      "oyDeviceGetProfile( properties \"fallback\") error:           %d", error )
     if( p )
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-      "oyDeviceGetProfile(\"fallb.\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
+      "oyDeviceGetProfile( properties \"fallb.\") \"%s\"", oyProfile_GetText(p,oyNAME_DESCRIPTION) );
     } else
     { PRINT_SUB( oyjlTESTRESULT_FAIL,
-      "oyDeviceGetProfile(\"fallb.\")    " );
+      "oyDeviceGetProfile( properties \"fallb.\")    " );
     }
 
 
@@ -6906,7 +6907,7 @@ oyjlTESTRESULT_e testCMMnmRun ()
     "oyConversion_RunPixels( oyPixelAcce." );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyConversion_RunPixels()" );
+    "oyConversion_RunPixels( oyPixelAcce." );
   }
 
   oy_debug_image_read_array_count = 0;
@@ -9239,7 +9240,7 @@ oyjlTESTRESULT_e testICCsCheck()
       "check XYZ -> Web" );
     } else
     { PRINT_SUB( oyjlTESTRESULT_XFAIL,
-      "check XYZ -> Web                                    " );
+      "check XYZ -> Web" );
       show_details = 1;
     }
     if(show_details)

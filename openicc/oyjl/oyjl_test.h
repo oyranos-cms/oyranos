@@ -358,6 +358,9 @@ oyjlTESTRESULT_e oyjlTestRun         ( oyjlTESTRESULT_e  (*test)(void),
       oyjl_print_sub_length -= 4 + 9 + oyjl_print_sub_length%8;
   }
 
+  if(oyjl_print_sub_length < 56)
+    oyjl_print_sub_length = 56;
+
   oyjl_test_file = NULL;
   oyjl_test_file_line = -1;
   oy_test_current_sub_count = 0;

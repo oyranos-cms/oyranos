@@ -300,7 +300,7 @@ int main(int argc, char **argv_)
       }
   }
 
-  if(verbose && (argc != 4 || argc != 6 || error != UCMM_EDID_ERROR_OK))
+  if(verbose && !(argc == 4 || argc == 6 || error == UCMM_EDID_ERROR_OK))
   {
     fprintf( stderr, "Synopsis:\n");
     fprintf( stderr, "\t%s [-q] -a [-i -| -i EDID_FILENAME] -p ICC_FILENAME\n", argv[0]);

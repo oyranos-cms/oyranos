@@ -50,7 +50,6 @@ int myMain( int argc, const char ** argv )
   int current_policy = 0;
   int file_name = 0;
   int internal_name = 0;
-  int v = 0;
   int list_policies = 0;
   int dump_policy = 0;
   const char * import_policy = 0;
@@ -162,7 +161,6 @@ int myMain( int argc, const char ** argv )
                                        "oyranos_logo",
 #endif
                                        sections, oarray, groups, &state );
-  verbose = v;
   if( state & oyjlUI_STATE_EXPORT &&
       export &&
       strcmp(export,"json+command") != 0)

@@ -1080,7 +1080,6 @@ void  oyX1Monitor_setCompatibility   ( oyMonitor_s       * disp,
 
   }
 
-  if(atom_name) free( atom_name );
   if(prop) free( prop );
   free( command );
 }

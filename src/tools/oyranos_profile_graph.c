@@ -623,7 +623,7 @@ int myMain( int argc, const char ** argv )
   pixel_w = (int)(pixel_width + 0.5);
   if(xyy_plane) proj = p_xyz;
 
-  if(profile_count && profile_names && profile_names[0] && profile_names[0][0] == 'l' && profile_names[0][1] == '\000')
+  if(profile_count && profile_names && profile_names[0][0] == 'l' && profile_names[0][1] == '\000')
   {
     system("oyranos-profiles -le");
     return 0;

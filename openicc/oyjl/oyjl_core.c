@@ -2104,7 +2104,9 @@ int   oyjlIsFile                     ( const char        * fullname,
 
   if (r)
   {
-    stat(fullname, &status);
+    int error = stat(fullname, &status);
+    if( error )
+      return 0;
 #   if defined(__APPLE__) || defined(BSD)
     mod_time = status.st_mtime ;
     mod_time += status.st_mtimespec.tv_nsec/1000000. ;

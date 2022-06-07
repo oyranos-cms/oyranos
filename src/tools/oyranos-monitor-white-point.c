@@ -963,6 +963,8 @@ void updateVCGT()
   char * cmd = NULL;
   fprintf(stderr, "monitor count: %d\n", count);
   free(result);
+  if(count < 0) count = 0;
+  if(count > 200) count = 0;
 
   DBG_S_( oyPrintTime() );
   for(i = 0; i < count; ++i)
