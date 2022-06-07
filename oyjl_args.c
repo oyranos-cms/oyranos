@@ -2740,6 +2740,8 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           o = oyjlOptions_GetOptionL( opts, str, OYJL_QUIET );
           if(o && o->flags & OYJL_OPTION_FLAG_ACCEPT_NO_ARG)
             might_have_value = 1;
+          if( strchr(str, '=') != NULL )
+            value = strchr(str, '=') + 1;
           if(o && !(o->flags & OYJL_OPTION_FLAG_NO_DASH))
           {
             oyjlOptions_Print_( opts, i );
@@ -2747,12 +2749,6 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
             fprintf( stderr, "%s \'%s\'\n", _("Option not supported without double dash"), oyjlTermColor(oyjlBOLD,str) );
             state = oyjlOPTION_NOT_SUPPORTED;
             goto clean_parse;
-          }
-          if(o && o->value_type == oyjlOPTIONTYPE_NONE)
-          {
-            result->options[result->count] = strdup(o->o?o->o:o->option);
-            result->values[result->count] = oyjlOptionsResultValueCopy_("1",o->flags);
-            state = oyjlOPTION_SUBCOMMAND;
           }
           if( might_have_value )
           {
@@ -2775,15 +2771,21 @@ oyjlOPTIONSTATE_e oyjlOptions_Parse  ( oyjlOptions_s     * opts )
           }
           else if( o && !might_have_value && value )
           {
-            char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | OYJL_GROUP_FLAG_SUBCOMMAND );
             oyjlOptions_Print_( opts, i );
             fputs( oyjlTermColor(oyjlRED,_("Usage Error:")), stderr ); fputs( " ", stderr );
-            fprintf( stderr, "%s (%s)\n", _("This option expects arguments"), t );
+            fprintf( stderr, "%s (%s)\n", _("This option expects no arguments"), t );
             fprintf( stderr, "%s\n", _("Options with arguments are not allowed in sub command style. A sub command has no leading '--'. It is a mandatory option of a option group.") );
             free(t);
             result->options[result->count] = strdup(o->o?o->o:o->option);
             result->values[result->count] = oyjlOptionsResultValueCopy_("0",o->flags);
             state = oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND;
+          }
+          else if(o && o->value_type == oyjlOPTIONTYPE_NONE)
+          {
+            result->options[result->count] = strdup(o->o?o->o:o->option);
+            result->values[result->count] = oyjlOptionsResultValueCopy_("1",o->flags);
+            state = oyjlOPTION_SUBCOMMAND;
           }
           else if(o)
           {
@@ -5255,7 +5257,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
       oyjlStringAdd( &text, malloc, free, "&nbsp;&nbsp;%s\n\n", g->help );
     }
     if(d)
-      oyjlStringAdd( &text, malloc, free, "<table style='width:100%'>\n" );
+      oyjlStringAdd( &text, malloc, free, "<table style='width:100%%'>\n" );
     for(j = 0; j < d; ++j)
     {
       const char * option = d_list[j];
