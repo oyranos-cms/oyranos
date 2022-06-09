@@ -203,6 +203,8 @@ void     oyAlphaFinish_              ( int                 unused OY_UNUSED )
 
         api = oyCMMapi_GetNext(api);
       }
+
+      if(cmm_info)
       /* release in reverse order and avoid any miracles with chained objects */
       for(j = api_count-1; j >= 0; --j)
       {
