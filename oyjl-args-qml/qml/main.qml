@@ -926,7 +926,11 @@ AppWindow {
     function setOptions( group, groupName, groupDescription )
     {
         if(typeof groupDescriptions[groupName] === "undefined")
+        {
+            if(app_debug && typeof groupDescription !== "undefined")
+                statusText = groupDescription
             groupDescriptions[groupName] = groupDescription
+        }
 
         var explicite = typeof group.explicite !== "undefined"
 
@@ -1194,7 +1198,7 @@ AppWindow {
               {
                   if(typeof help !== "undefined")
                   {
-                      help = help.replace(/ /g, '&nbsp;')
+                      help = help.replace(/  /g, '&nbsp;&nbsp;')
                       help = help.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
                       help = help.replace(/\n/g, "<br />")
                       help = Link.linkify( help );
