@@ -217,10 +217,11 @@ int oyjlArgsCliStart__               ( int                 argc,
   {
     if(oyjlDataFormat(input) == 7)
     {
-      root = oyjlTreeParse( input, error_buffer, 256 );
-      if(error_buffer[0] != '\000')
+      int state = 0;
+      root = oyjlTreeParse2( input, 0, __func__, &state );
+      if(state)
       {
-        fprintf(stderr, "ERROR:\t\"%s\"\n", error_buffer);
+        fprintf(stderr, "ERROR:\t\"%s\"\n", oyjlPARSE_STATE_eToString(state));
         char * error = NULL;
         oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", input );
         input = error;
