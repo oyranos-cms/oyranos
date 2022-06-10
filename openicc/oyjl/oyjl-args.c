@@ -259,8 +259,7 @@ int myMain( int argc, const char ** argv )
 #endif
     } else
     {
-      char error_buffer[128] = {0};
-      oyjl_val json = oyjlTreeParse( text, error_buffer, 128 );
+      oyjl_val json = oyjlTreeParse2( text, 0, __func__, NULL );
       char * sources = oyjlUiJsonToCode( json, completion_bash ? OYJL_COMPLETION_BASH : oyjl_args ? OYJL_SOURCE_CODE_C | OYJL_WITH_OYJL_ARGS_C : OYJL_SOURCE_CODE_C );
       fprintf( stderr, "wrote %d to stdout\n", sources&&strlen(sources)?(int)strlen(sources):0 );
       if(sources)

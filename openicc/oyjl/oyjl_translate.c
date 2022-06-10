@@ -91,7 +91,8 @@ oyjl_val oyjlTreeParseXXX            ( const char        * text,
 {
   int error_buffer_size = 256;
   char * error_buffer = malloc(error_buffer_size);
-  char * json = oyjlStringCopy( text, 0 );
+  const char * ptext = oyjlTermColorToPlain( text, OYJL_REGEXP );
+  char * json = oyjlStringCopy( ptext, 0 );
   int dformat = oyjlDataFormat( json );
   int size = 0;
   oyjl_val root = NULL;
@@ -338,7 +339,7 @@ int myMain( int argc, const char ** argv )
   {
     /* ... working code goes here ... */
     if( (!input && (add || extract || copy)) ||
-        (input && strcmp(input,"-") == 0 || strcmp(input,"stdin") == 0) )
+        (input && (strcmp(input,"-") == 0 || strcmp(input,"stdin") == 0)) )
     {
       json = oyjlReadFileStreamToMem( stdin, &size );
     }
