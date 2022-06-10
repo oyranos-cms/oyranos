@@ -189,22 +189,22 @@
         <translation>Zeige JSON</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1097"/>
+        <location filename="../qml/main.qml" line="1101"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1149"/>
+        <location filename="../qml/main.qml" line="1153"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1149"/>
+        <location filename="../qml/main.qml" line="1153"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1151"/>
+        <location filename="../qml/main.qml" line="1155"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>
