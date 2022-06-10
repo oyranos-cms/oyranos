@@ -1647,8 +1647,9 @@ static int oyjlTermColorCheck_( )
     default:       fprintf(stderr, "unknown?\n");                break;
   }
 
-  if( S_ISCHR( sout.st_mode ) &&
-      S_ISCHR( serr.st_mode ) )
+  if( ( S_ISCHR( sout.st_mode ) &&
+        S_ISCHR( serr.st_mode ) ) ||
+      S_ISFIFO( sout.st_mode ) )
     color_term = 1;
   if(*oyjl_debug)
     fprintf(stderr, "color_term: %d\n", color_term );
@@ -1681,7 +1682,7 @@ int          oyjlTermColorInit       ( int                 flags )
     if( getenv("FORCE_NO_COLORTERM") || flags & OYJL_FORCE_NO_COLORTERM )
       truecolor = color = 0;
     if(flags & OYJL_OBSERVE)
-      fprintf(stdout, "color: %d truecolor: %d oyjl_colorterm: %s\n", color, truecolor, oyjl_colorterm );
+      fprintf(stderr, "color: %d truecolor: %d oyjl_colorterm: %s\n", color, truecolor, oyjl_colorterm );
   }
   color_env = (color ? 0x01 : 0x00) | (truecolor ? 0x02 : 0x00);
   return color_env;
@@ -1738,7 +1739,6 @@ const char * oyjlTermColorF( oyjlTEXTMARK_e rgb, const char * format, ...)
   return t;
 }
 
-char * oyjl_term_color_plain_ = NULL;
 char * oyjl_term_color_html_ = NULL;
 const char * oyjlTermColorFromHtml   ( const char        * text,
                                        int                 flags )
@@ -1763,7 +1763,32 @@ const char * oyjlTermColorFromHtml   ( const char        * text,
   return oyjl_term_color_html_;
 }
 
-const char * oyjlTermColorToPlainArgs( const char        * text )
+const char * oyjlTermColorToHtml     ( const char        * text,
+                                       int                 flags OYJL_UNUSED )
+{
+  const char * t;
+  oyjl_str tmp = oyjlStr_New(10,0,0);
+  oyjlStr_AppendN( tmp, text, strlen(text) );
+  oyjlStr_Replace( tmp, OYJL_RED_TC, "<font color=red>", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_GREEN_TC, "<font color=green>", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_BLUE_TC, "<font color=blue>", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_BOLD, "<strong>", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_ITALIC, "<em>", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_UNDERLINE, "<u>", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_RED_B, "<font color=red>", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_GREEN_B, "<font color=green>", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_BLUE_B, "<font color=blue>", 0,NULL );
+  oyjlStr_Replace( tmp, OYJL_CTEND, "</u></strong></em></font>", 0,NULL );
+  t = oyjlStr(tmp);
+  if(oyjl_term_color_html_) free(oyjl_term_color_html_);
+  oyjl_term_color_html_ = strdup( t );
+  oyjlStr_Release( &tmp );
+  return oyjl_term_color_html_;
+}
+
+
+char * oyjl_term_color_plain_ = NULL;
+const char * oyjlTermColorToPlainArgs ( const char       * text )
 {
   const char * t;
   oyjl_str tmp = oyjlStr_New(10,0,0);
@@ -1784,6 +1809,7 @@ const char * oyjlTermColorToPlainArgs( const char        * text )
   oyjlStr_Release( &tmp );
   return oyjl_term_color_plain_;
 }
+
 
 /** @brief    Return number of array elements
  *  @memberof oyjlOptionChoice_s
