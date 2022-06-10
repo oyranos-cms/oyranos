@@ -951,7 +951,8 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(c_source) {free(c_source);} c_source = NULL;
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s --help", prog );
-  len = t ? strlen(t) : 0;
+  const char * plain = oyjlTermColorToPlain(t, 0);
+  len = plain ? strlen(plain) : 0;
   if(len == help_size)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "%s --help", prog );
@@ -993,7 +994,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
-  const char * plain = oyjlTermColorToPlain(t, 0);
+  plain = oyjlTermColorToPlain(t, 0);
   len = t ? strlen(plain) : 0;
   if(len == json_size && oyjlDataFormat(plain) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -1009,7 +1010,8 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json+command | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
-  len = t ? strlen(t) : 0;
+  plain = oyjlTermColorToPlain(t, 0);
+  len = t ? strlen(plain) : 0;
   if(len == json_command_size && oyjlDataFormat(t) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "%s -X json+command", prog );
@@ -1023,7 +1025,8 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X export | %s/oyjl json -i -", prog, OYJL_BUILDDIR );
-  len = t ? strlen(t) : 0;
+  plain = oyjlTermColorToPlain(t, 0);
+  len = t ? strlen(plain) : 0;
   if(len == export_size && oyjlDataFormat(t) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "%s -X export", prog );
@@ -1940,6 +1943,20 @@ oyjlTESTRESULT_e testFunction ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTermColorFromHtml() %d / %d", strlen(ansi), strlen(html) );
   }
+
+
+  ansi = "\033[1mbold\033[0m \033[3mitalic\033[0m \033[4munderline\033[0m \033[0;31mred\033[0m \033[0;32mgreen\033[0m \033[0;34mblue\033[0m";
+  html = oyjlTermColorToHtml( ansi, 0 );
+  char * text = malloc(20);
+  snprintf( text, 20, "%s", html );
+  if(html && strlen(ansi) != strlen(html))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTermColorToHtml(%s) = %s ...", ansi, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTermColorToHtml() %d / %d", strlen(ansi), strlen(html) );
+  }
+  free(text);
 
   return result;
 }
