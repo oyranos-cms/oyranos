@@ -548,6 +548,8 @@ const char * oyjlTermColorF          ( oyjlTEXTMARK_e      mark,
                                        ... );
 const char * oyjlTermColorFromHtml   ( const char        * text,
                                        int                 flags );
+const char * oyjlTermColorToHtml     ( const char        * text,
+                                       int                 flags );
 const char * oyjlTermColorToPlain    ( const char        * text,
                                        int                 flags );
 #define OYJL_FORCE_COLORTERM           0x01
