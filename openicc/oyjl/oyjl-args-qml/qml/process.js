@@ -113,10 +113,10 @@ function toHtml ( t )
 
     if(t.match(/\033\[/)) // convert ansi color + format codes to HTML markup
     {
-        t = t.replace(/\033\[1m/g, "<b>")
-        t = t.replace(/\033\[3m/g, "<i>")
+        t = t.replace(/\033\[1m/g, "<strong>")
+        t = t.replace(/\033\[3m/g, "<em>")
         t = t.replace(/\033\[4m/g, "<u>")
-        t = t.replace(/\033\[0m/g, "</u></b></i></font>")
+        t = t.replace(/\033\[0m/g, "</u></strong></em></font>")
         t = t.replace(/\033\[00m/g, "</font>")
         t = t.replace(/ /g, '&nbsp;')
         t = t.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
