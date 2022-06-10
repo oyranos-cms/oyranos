@@ -50,7 +50,7 @@
 #define DBG2_S_ if(oy_debug >= 1)DBG2_S
 int __sunriset__( int year, int month, int day, double lon, double lat,
                   double altit, int upper_limb, double *trise, double *tset );
-int findLocation(oySCOPE_e scope, int dry);
+int findLocation(oySCOPE_e scope, int dry, int verbose);
 int getLocation( double * lon, double * lat);
 double getSunHeight( double year, double month, double day, double gmt_hours, double lat, double lon, int verbose, oyjl_val root );
 int getSunriseSunset( double * rise, double * set, int dry, const char * format, char ** text, int verbose );
@@ -535,15 +535,15 @@ int myMain( int argc , const char** argv )
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "r", "sunrise", NULL, _("Sunrise"), _("Show local time, used geographical location, twilight height angles, sun rise and sun set times"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), 0 )}, oyjlSTRING, {.s=&sunrise} },
     {"oiwi", 0, "t", "twilight", NULL, _("Twilight"), _("Set Twilight angle"), _("0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical"), _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
       {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )}, oyjlDOUBLE, {.d=&twilight} },
-    {"oiwi", 0, "z", "system-wide", NULL, _("system wide"), _("System wide DB setting"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_wide} },
+    {"oiwi", 0, "z", "system-wide", NULL, _("System Wide"), _("System wide DB setting"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_wide} },
     /* default option template -X|--export */
     {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
     /* The --render option can be hidden and used only internally. */
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help",NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&help} },
     {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0} },
-    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
-    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
+    {"oiwi", 0, "v", "verbose", NULL, _("Verbose"), _("Verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
+    {"oiwi", 0, "V", "version", NULL, _("Version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_IMMEDIATE, "y", "test", NULL, _("No Action"), NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&dry} },
     {"oiwi", 0, "u", "hour", NULL, "hour", "hour", NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 0, .dbl.end = 48, .dbl.tick = 1, .dbl.d = 0}, oyjlDOUBLE, {.d=&hour_} },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE, "c", "check", NULL, "check", "check", NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&check} },
@@ -615,7 +615,10 @@ int myMain( int argc , const char** argv )
     char * json = NULL,
          * json_commands = strdup(jcommands),
          * text = NULL;
+    const char * t;
     error = getSunriseSunset( &rise, &set, dry, "TEXT", &text, 0 );
+    t = oyjlTermColorToHtml( text, 0 );
+    free(text); text = oyjlStringCopy( t, 0 ); t = NULL;
     ui->opts->groups[3].help = text;
     json = oyjlUi_ToJson( ui, 0 ),
     json_commands[strlen(json_commands)-2] = ',';
@@ -742,7 +745,7 @@ int myMain( int argc , const char** argv )
 
   if(location)
   {
-    error = findLocation(scope, dry);
+    error = findLocation(scope, dry, verbose);
     ++worked;
   }
 
@@ -986,7 +989,7 @@ void updateVCGT()
   DBG_S_( oyPrintTime() );
 }
 
-int findLocation(oySCOPE_e scope, int dry)
+int findLocation(oySCOPE_e scope, int dry, int verbose)
 {
   int error = 0;
 
@@ -995,18 +998,21 @@ int findLocation(oySCOPE_e scope, int dry)
     char * geo_json = oyReadUrlToMemf_( &size, "r", oyAllocateFunc_,
                                         "https://location.services.mozilla.com/v1/geolocate?key=test" ),
 	 * value = NULL;
-    oyjl_val root = 0;
+    oyjl_val root = NULL;
     oyjl_val v = 0;
     double lon = 0,
 	   lat = 0;
 
-    if(geo_json)
+    if(geo_json && geo_json[0])
     {
       root = oyJsonParse( geo_json, NULL );
       if(oy_debug)
-        fprintf(stdout, "%s\n", geo_json);
+        fprintf(stderr, "%s\n", geo_json);
     } else
+    {
       error = 1;
+      fprintf(stderr, "%s\n", _("Obtained no geo location information. Is your device connected to the internet?"));
+    }
 
     if(root)
     {
@@ -1025,24 +1031,30 @@ int findLocation(oySCOPE_e scope, int dry)
 
       if(lat != 0.0 && lon != 0.0)
       {
-        #define PRINT_VAL( key, name )\
-        v = oyjlTreeGetValueF( root, 0, key, NULL ); \
-        value = oyjlValueText( v, oyAllocateFunc_ ); \
-	if(value) \
-        { if(value[0]) \
-            fprintf( stderr, "%s: %s\n", name, value ); \
-          oyFree_m_(value); \
+        if(verbose)
+          fprintf( stdout, "%s\n", json );
+        else
+        {
+          #define PRINT_VAL( key, name )\
+          v = oyjlTreeGetValue( root, 0, key ); \
+          value = oyjlValueText( v, oyAllocateFunc_ ); \
+          if(value) \
+          { if(value[0]) \
+              fprintf( stderr, "%s: %s\n", name, value ); \
+            oyFree_m_(value); \
+          }
+          PRINT_VAL( "location/lat", _("Latitude") )
+          PRINT_VAL( "location/lng", _("Longitude") )
+          PRINT_VAL( "accuracy", _("Accuracy") )
+          #undef PRINT_VAL
         }
-        PRINT_VAL( "time_zone", _("Time Zone") )
-        PRINT_VAL( "country_name", _("Country") )
-        PRINT_VAL( "city", _("City") )
-        #undef PRINT_VAL
 
 #ifdef HAVE_LOCALE_H
         char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
         setlocale(LC_NUMERIC, "C");
 #endif
-        printf( "%g %g\n", lat,lon);
+        if(!verbose)
+          printf( "%g %g\n", lat,lon);
 
         oyStringAddPrintfC(&value, 0,0, "%g", lat);
         if(dry == 0)
@@ -1060,6 +1072,7 @@ int findLocation(oySCOPE_e scope, int dry)
 #endif
       } else
         error = 1;
+      oyFree_m_(json);
 
       oyjlTreeFree(root);
     } else
@@ -1117,7 +1130,7 @@ int getSunriseSunset( double * rise, double * set, int dry, const char * format,
  
   if(getLocation(&lon, &lat))
   {
-    findLocation( scope, dry );
+    findLocation( scope, dry, 0 );
     getLocation(&lon, &lat);
   }
 
@@ -1200,7 +1213,7 @@ int getSunriseSunset( double * rise, double * set, int dry, const char * format,
       else
       {
           oyjlStringAdd( text, malloc, free, " %s: %g° %g° %s: %g° (%s: %g°) %s: %d:%.2d:%.2d",
-             _("Geographical Position"), lat, lon, _("Twilight"), twilight, _("Sun Elevation"), elevation, _("Sunrise"), hour, minute, second );
+             _("Geographical Position"), lat, lon, _("Twilight"), twilight, oyjlTermColor(elevation > 0?oyjlBLUE:oyjlRED,_("Sun Elevation")), elevation, _("Sunrise"), hour, minute, second );
       }
     }
     oySplitHour( oyGetCurrentLocalHour( *set,  gmt_diff_second ), &hour, &minute, &second );

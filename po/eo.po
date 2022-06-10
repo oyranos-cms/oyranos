@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-06 12:00+0200\n"
+"POT-Creation-Date: 2022-06-10 11:38+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: tools/oyranos-device.c:702 tools/oyranos-device.c:716
 #: tools/oyranos-device.c:743 tools/oyranos-device.c:784
 #: tools/oyranos-device.c:1165 tools/oyranos-device.c:1285
-#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:939
+#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:942
 #: tools/qcmsevents/qcmsevents.cpp:338
 #, c-format
 msgid "!!! ERROR"
@@ -389,6 +389,10 @@ msgstr ""
 msgid "Abstract Class"
 msgstr ""
 
+#: tools/oyranos-monitor-white-point.c:1048
+msgid "Accuracy"
+msgstr ""
+
 #: liboyranos_config/oyranos_texts.c:549 liboyranos_config/oyranos_texts.c:559
 msgid "Action for Image profile and Editing profile mismatches."
 msgstr ""
@@ -415,7 +419,7 @@ msgstr ""
 msgid "Actual mode"
 msgstr "blanco punkto"
 
-#: tools/oyranos-monitor-white-point.c:1295
+#: tools/oyranos-monitor-white-point.c:1310
 #, fuzzy
 msgid "Actual white point mode"
 msgstr "blanco punkto"
@@ -634,7 +638,7 @@ msgstr ""
 msgid "Automatic"
 msgstr "blanco punkto"
 
-#: tools/oyranos-monitor-white-point.c:689
+#: tools/oyranos-monitor-white-point.c:692
 #, fuzzy
 msgid "Automatic white point"
 msgstr "blanco punkto"
@@ -960,7 +964,7 @@ msgstr "kanalo"
 msgid "Check if this module can handle a certain command."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:716
+#: tools/oyranos-monitor-white-point.c:719
 msgid "Choices:"
 msgstr ""
 
@@ -971,10 +975,6 @@ msgstr ""
 #. chrm
 #: liboyranos_config/oyranos_icc.c:506
 msgid "Chromaticity"
-msgstr ""
-
-#: tools/oyranos-monitor-white-point.c:1036
-msgid "City"
 msgstr ""
 
 #: API_generated/oyranos_profile.c:39
@@ -1402,10 +1402,6 @@ msgstr ""
 msgid "Could not write to file"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1035
-msgid "Country"
-msgstr ""
-
 #: tools/oyranos-convert.c:207
 msgid "Create 3D CLUT"
 msgstr ""
@@ -1494,20 +1490,20 @@ msgstr ""
 
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
-#: tools/oyranos-policy.c:98
+#: tools/oyranos-policy.c:97
 msgid "Current Policy"
 msgstr ""
 
 #. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
-#: tools/oyranos-policy.c:144
+#: tools/oyranos-policy.c:143
 msgid "Current policy"
 msgstr ""
 
-#: tools/oyranos-policy.c:85
+#: tools/oyranos-policy.c:84
 msgid "Currently active policy including its file name"
 msgstr ""
 
-#: tools/oyranos-policy.c:280
+#: tools/oyranos-policy.c:278
 msgid "Currently active policy:"
 msgstr ""
 
@@ -1763,29 +1759,29 @@ msgstr ""
 msgid "Display White Point for all screens"
 msgstr "blanco punkto"
 
-#: tools/oyranos-policy.c:114
+#: tools/oyranos-policy.c:113
 msgid "Do system wide, might need admin or root privileges"
 msgstr ""
 
-#: tools/oyranos-policy.c:120
+#: tools/oyranos-policy.c:119
 msgid "Doc Title"
 msgstr ""
 
-#: tools/oyranos-policy.c:122
+#: tools/oyranos-policy.c:121
 msgid "Doc Version"
 msgstr ""
 
-#: tools/oyranos-policy.c:118
+#: tools/oyranos-policy.c:117
 msgid "Docbook"
 msgstr ""
 
-#: tools/oyranos-policy.c:118
+#: tools/oyranos-policy.c:117
 msgid "Docbook Format"
 msgstr ""
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/information/[9]/label
 #. oyranos_cmm_lcms.json:org/freedesktop/oyjl/modules/[0]/information/[9]/label
-#: tools/oyranos-policy.c:150 modules/lcm2-i18n.c:74 modules/lcms-i18n.c:74
+#: tools/oyranos-policy.c:149 modules/lcm2-i18n.c:74 modules/lcms-i18n.c:74
 #, fuzzy
 msgid "Documentation"
 msgstr "kolora"
@@ -1805,7 +1801,7 @@ msgstr "Griza"
 msgid "Draw Raster"
 msgstr ""
 
-#: tools/oyranos-policy.c:106
+#: tools/oyranos-policy.c:105
 msgid "Dump"
 msgstr ""
 
@@ -1835,11 +1831,11 @@ msgstr ""
 msgid "Dump device color state"
 msgstr "kolora"
 
-#: tools/oyranos-policy.c:106
+#: tools/oyranos-policy.c:105
 msgid "Dump out all settings in Oyranos' own xml-ish text format"
 msgstr ""
 
-#: tools/oyranos-policy.c:82 tools/oyranos-policy.c:146
+#: tools/oyranos-policy.c:81 tools/oyranos-policy.c:145
 msgid "Dump out the actual settings"
 msgstr ""
 
@@ -1904,8 +1900,8 @@ msgid "Editing XYZ"
 msgstr "kolora"
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
-#: tools/oyranos-monitor-white-point.c:1296
-#: tools/oyranos-monitor-white-point.c:1388
+#: tools/oyranos-monitor-white-point.c:1311
+#: tools/oyranos-monitor-white-point.c:1403
 msgid "Effect"
 msgstr ""
 
@@ -2045,7 +2041,7 @@ msgstr ""
 
 #: examples/image_display/oyranos-image-display.c:79 tools/oyranos-device.c:417
 #: tools/oyranos-device.c:419 tools/oyranos-device.c:421
-#: tools/oyranos-policy.c:108 tools/oyranos-policy.c:112
+#: tools/oyranos-policy.c:107 tools/oyranos-policy.c:111
 #: tools/oyranos-profile.c:337 tools/oyranos-profile.c:343
 msgid "FILENAME"
 msgstr ""
@@ -2064,7 +2060,7 @@ msgstr ""
 msgid "File Magic"
 msgstr ""
 
-#: tools/oyranos-policy.c:100
+#: tools/oyranos-policy.c:99
 #, fuzzy
 msgid "File Name"
 msgstr "nomo"
@@ -2147,7 +2143,7 @@ msgstr "verda"
 #: examples/image_display/oyranos-image-display.c:124
 #: examples/libraw/oyranos_file.cpp:78 tools/oyranos-config.c:355
 #: tools/oyranos-convert.c:297 tools/oyranos-device.c:479
-#: tools/oyranos-monitor-white-point.c:603 tools/oyranos-policy.c:172
+#: tools/oyranos-monitor-white-point.c:603 tools/oyranos-policy.c:170
 #: tools/oyranos-profile.c:399 tools/oyranos_gamma.c:246
 #: tools/oyranos_profile_graph.c:560 tools/oyranos_profiles.c:178
 #, c-format
@@ -2187,7 +2183,7 @@ msgstr ""
 
 #: tools/oyranos-config.c:335 tools/oyranos-convert.c:277
 #: tools/oyranos-device.c:458 tools/oyranos-monitor-white-point.c:569
-#: tools/oyranos-policy.c:151 tools/oyranos-profile.c:379
+#: tools/oyranos-policy.c:150 tools/oyranos-profile.c:379
 #: tools/oyranos_profile_graph.c:501 tools/oyranos_profiles.c:157
 msgid "General options"
 msgstr ""
@@ -2210,7 +2206,7 @@ msgstr "kolora"
 msgid "Generate Image"
 msgstr ""
 
-#: tools/oyranos-policy.c:116 tools/oyranos-policy.c:118
+#: tools/oyranos-policy.c:115 tools/oyranos-policy.c:117
 #, fuzzy
 msgid "Generate Oyranos Documentation"
 msgstr "kolora"
@@ -2219,7 +2215,7 @@ msgstr "kolora"
 msgid "Generate a 3D LUT"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1201
+#: tools/oyranos-monitor-white-point.c:1216
 msgid "Geographical Position"
 msgstr ""
 
@@ -2293,7 +2289,7 @@ msgstr "kolora"
 msgid "HLC Color Atlas Pages"
 msgstr "kolora"
 
-#: tools/oyranos-policy.c:116
+#: tools/oyranos-policy.c:115
 msgid "HTML Format"
 msgstr ""
 
@@ -2672,7 +2668,7 @@ msgstr ""
 msgid "Img"
 msgstr ""
 
-#: tools/oyranos-policy.c:108
+#: tools/oyranos-policy.c:107
 msgid "Import Policy"
 msgstr ""
 
@@ -2784,7 +2780,7 @@ msgstr ""
 msgid "Internal Error"
 msgstr ""
 
-#: tools/oyranos-policy.c:102 tools/oyranos_profiles.c:113
+#: tools/oyranos-policy.c:101 tools/oyranos_profiles.c:113
 msgid "Internal Name"
 msgstr ""
 
@@ -2832,7 +2828,7 @@ msgid "Kai-Uwe Behrmann (ku.b (at) gmx.de)"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:241
-#: tools/oyranos-monitor-white-point.c:731 tools/oyranos_profile_graph.c:452
+#: tools/oyranos-monitor-white-point.c:734 tools/oyranos_profile_graph.c:452
 msgid "Kelvin"
 msgstr ""
 
@@ -2912,7 +2908,8 @@ msgid "Lab2XYZ"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:531
-#: tools/oyranos-monitor-white-point.c:1196
+#: tools/oyranos-monitor-white-point.c:1046
+#: tools/oyranos-monitor-white-point.c:1211
 #, fuzzy
 msgid "Latitude"
 msgstr "blanco punkto"
@@ -2954,11 +2951,11 @@ msgstr "kolora"
 msgid "List ICC Profiles:"
 msgstr ""
 
-#: tools/oyranos-policy.c:110 tools/oyranos_profiles.c:121
+#: tools/oyranos-policy.c:109 tools/oyranos_profiles.c:121
 msgid "List Paths"
 msgstr ""
 
-#: tools/oyranos-policy.c:104
+#: tools/oyranos-policy.c:103
 #, fuzzy
 msgid "List Policies"
 msgstr "kolora"
@@ -3002,8 +2999,8 @@ msgstr ""
 msgid "List available device manufacturers:"
 msgstr "kolora"
 
-#: tools/oyranos-policy.c:84 tools/oyranos-policy.c:104
-#: tools/oyranos-policy.c:145
+#: tools/oyranos-policy.c:83 tools/oyranos-policy.c:103
+#: tools/oyranos-policy.c:144
 #, fuzzy
 msgid "List available policies"
 msgstr "kolora"
@@ -3056,7 +3053,7 @@ msgstr ""
 msgid "List search URL:"
 msgstr ""
 
-#: tools/oyranos-policy.c:110 tools/oyranos-policy.c:148
+#: tools/oyranos-policy.c:109 tools/oyranos-policy.c:147
 #: tools/oyranos_profiles.c:155
 msgid "List search paths"
 msgstr ""
@@ -3143,7 +3140,7 @@ msgstr ""
 msgid "Load Image File Object"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1180
+#: tools/oyranos-monitor-white-point.c:1195
 msgid "Local Time"
 msgstr ""
 
@@ -3161,12 +3158,13 @@ msgstr ""
 msgid "LogoSync CMM"
 msgstr ""
 
-#: tools/oyranos-policy.c:116
+#: tools/oyranos-policy.c:115
 msgid "Long Help"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:533
-#: tools/oyranos-monitor-white-point.c:1196
+#: tools/oyranos-monitor-white-point.c:1047
+#: tools/oyranos-monitor-white-point.c:1211
 #, fuzzy
 msgid "Longitude"
 msgstr "blanco punkto"
@@ -3389,7 +3387,7 @@ msgid "Microsoft"
 msgstr ""
 
 #: tools/oyranos-config.c:335 tools/oyranos-monitor-white-point.c:569
-#: tools/oyranos-policy.c:151 tools/oyranos_profile_graph.c:501
+#: tools/oyranos-policy.c:150 tools/oyranos_profile_graph.c:501
 #: tools/oyranos_profiles.c:157
 msgid "Misc"
 msgstr ""
@@ -3471,7 +3469,7 @@ msgid ""
 "match the simulation color space."
 msgstr ""
 
-#: tools/oyranos-policy.c:108
+#: tools/oyranos-policy.c:107
 msgid "Must be in Oyranos' own xml-ish text format"
 msgstr ""
 
@@ -3577,14 +3575,14 @@ msgstr ""
 msgid "New Profile Name"
 msgstr "nomo"
 
-#: tools/oyranos-monitor-white-point.c:1405
+#: tools/oyranos-monitor-white-point.c:1420
 #, fuzzy
 msgid "New color scheme"
 msgstr "blanco punkto"
 
-#: tools/oyranos-monitor-white-point.c:936
 #: tools/oyranos-monitor-white-point.c:939
-#: tools/oyranos-monitor-white-point.c:1387
+#: tools/oyranos-monitor-white-point.c:942
+#: tools/oyranos-monitor-white-point.c:1402
 #, fuzzy
 msgid "New white point mode"
 msgstr "blanco punkto"
@@ -3703,6 +3701,12 @@ msgstr ""
 #, fuzzy
 msgid "Observe config changes"
 msgstr "numbro kanaloj"
+
+#: tools/oyranos-monitor-white-point.c:1014
+msgid ""
+"Obtained no geo location information. Is your device connected to the "
+"internet?"
+msgstr ""
 
 #. offs
 #: liboyranos_config/oyranos_icc.c:803
@@ -3850,7 +3854,7 @@ msgid "Oyranos CMM directory name"
 msgstr ""
 
 #. argc+argv are required for parsing the command line options
-#: tools/oyranos-policy.c:158
+#: tools/oyranos-policy.c:157
 #, fuzzy
 msgid "Oyranos CMS policy tool"
 msgstr "kolora"
@@ -4192,7 +4196,7 @@ msgstr ""
 msgid "Policy"
 msgstr ""
 
-#: tools/oyranos-policy.c:300
+#: tools/oyranos-policy.c:298
 msgid "Policy search paths"
 msgstr ""
 
@@ -4286,7 +4290,7 @@ msgstr ""
 msgid "Print Class"
 msgstr "Ekrano"
 
-#: tools/oyranos-policy.c:87
+#: tools/oyranos-policy.c:86
 msgid "Print a help text"
 msgstr ""
 
@@ -4630,7 +4634,7 @@ msgstr ""
 msgid "Saturation"
 msgstr "pureco"
 
-#: tools/oyranos-policy.c:112
+#: tools/oyranos-policy.c:111
 msgid "Save"
 msgstr ""
 
@@ -4638,11 +4642,11 @@ msgstr ""
 msgid "Save Mixed Color Space Documents"
 msgstr ""
 
-#: tools/oyranos-policy.c:86 tools/oyranos-policy.c:112
+#: tools/oyranos-policy.c:85 tools/oyranos-policy.c:111
 msgid "Save and Install to a new policy"
 msgstr ""
 
-#: tools/oyranos-policy.c:149
+#: tools/oyranos-policy.c:148
 msgid "Save to a new policy"
 msgstr ""
 
@@ -4770,7 +4774,7 @@ msgstr ""
 msgid "Select a white point target for all monitors."
 msgstr ""
 
-#: tools/oyranos-policy.c:147
+#: tools/oyranos-policy.c:146
 #, fuzzy
 msgid "Select active policy"
 msgstr "blanco punkto"
@@ -4854,7 +4858,7 @@ msgstr ""
 msgid "Set lcm2 Options"
 msgstr ""
 
-#: tools/oyranos-policy.c:83
+#: tools/oyranos-policy.c:82
 msgid "Set new policy"
 msgstr ""
 
@@ -4975,11 +4979,11 @@ msgid ""
 "The metadata from Taxi DB and from the device must fit."
 msgstr ""
 
-#: tools/oyranos-policy.c:98
+#: tools/oyranos-policy.c:97
 msgid "Show current active policy name"
 msgstr ""
 
-#: tools/oyranos-policy.c:102
+#: tools/oyranos-policy.c:101
 #, fuzzy
 msgid "Show display name."
 msgstr "Ekrano"
@@ -4993,7 +4997,7 @@ msgstr "blanco punkto"
 msgid "Show first tags content of profile"
 msgstr ""
 
-#: tools/oyranos-policy.c:100
+#: tools/oyranos-policy.c:99
 msgid "Show full filename including path."
 msgstr ""
 
@@ -5242,8 +5246,8 @@ msgstr ""
 msgid "StdObs2°"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1196
-#: tools/oyranos-monitor-white-point.c:1201
+#: tools/oyranos-monitor-white-point.c:1211
+#: tools/oyranos-monitor-white-point.c:1216
 #, fuzzy
 msgid "Sun Elevation"
 msgstr "pureco"
@@ -5264,12 +5268,12 @@ msgid "Sun light effect"
 msgstr "blanco punkto"
 
 #: tools/oyranos-monitor-white-point.c:535
-#: tools/oyranos-monitor-white-point.c:1196
-#: tools/oyranos-monitor-white-point.c:1201
+#: tools/oyranos-monitor-white-point.c:1211
+#: tools/oyranos-monitor-white-point.c:1216
 msgid "Sunrise"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1215
+#: tools/oyranos-monitor-white-point.c:1230
 msgid "Sunset"
 msgstr ""
 
@@ -5299,7 +5303,7 @@ msgid "System"
 msgstr ""
 
 #: tools/oyranos-config.c:276 tools/oyranos-device.c:387
-#: tools/oyranos-policy.c:114
+#: tools/oyranos-monitor-white-point.c:538 tools/oyranos-policy.c:113
 msgid "System Wide"
 msgstr ""
 
@@ -5315,7 +5319,7 @@ msgstr ""
 msgid "TAXI_ID"
 msgstr ""
 
-#: tools/oyranos-policy.c:120 tools/oyranos-policy.c:122
+#: tools/oyranos-policy.c:119 tools/oyranos-policy.c:121
 #: tools/oyranos-profile.c:237
 msgid "TEXT"
 msgstr ""
@@ -5481,7 +5485,7 @@ msgstr ""
 msgid "The Tool gives information around installed ICC color profiles."
 msgstr ""
 
-#: tools/oyranos-policy.c:158
+#: tools/oyranos-policy.c:157
 #, fuzzy
 msgid "The Tool gives information of Oyranos CMS policies."
 msgstr "kolora"
@@ -6044,7 +6048,7 @@ msgid ""
 "time. A additional effect profile can be selected."
 msgstr ""
 
-#: tools/oyranos-policy.c:155
+#: tools/oyranos-policy.c:154
 msgid ""
 "The tool dumps out / read a configuration of the Oyranos color management "
 "system (CMS)."
@@ -6093,13 +6097,9 @@ msgid ""
 "assigned. Typically the according assumed ICC profile should be assigned."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1034
-msgid "Time Zone"
-msgstr ""
-
 #: tools/oyranos-monitor-white-point.c:536
-#: tools/oyranos-monitor-white-point.c:1196
-#: tools/oyranos-monitor-white-point.c:1201
+#: tools/oyranos-monitor-white-point.c:1211
+#: tools/oyranos-monitor-white-point.c:1216
 msgid "Twilight"
 msgstr ""
 
@@ -6220,6 +6220,7 @@ msgid "Value"
 msgstr ""
 
 #: examples/image_display/oyranos-image-display.c:81 tools/oyranos-device.c:397
+#: tools/oyranos-monitor-white-point.c:545
 msgid "Verbose"
 msgstr ""
 
@@ -6227,7 +6228,7 @@ msgstr ""
 #: examples/image_display/oyranos-image-display.c:97 tools/oyranos-config.c:290
 #: tools/oyranos-config.c:321 tools/oyranos-config.c:333
 #: tools/oyranos-convert.c:261 tools/oyranos-device.c:430
-#: tools/oyranos-monitor-white-point.c:546 tools/oyranos-policy.c:135
+#: tools/oyranos-monitor-white-point.c:546 tools/oyranos-policy.c:134
 #: tools/oyranos-profile.c:361 tools/oyranos_profile_graph.c:478
 #: tools/oyranos_profiles.c:139
 msgid "Version"
@@ -6703,7 +6704,7 @@ msgstr ""
 msgid "http://www.opensource.org/licenses/mit-license.php"
 msgstr ""
 
-#: tools/oyranos-device.c:366 tools/oyranos-policy.c:79
+#: tools/oyranos-device.c:366 tools/oyranos-policy.c:78
 #: tools/oyranos-profile.c:298
 msgid "http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal"
 msgstr ""
@@ -6734,11 +6735,11 @@ msgstr ""
 msgid "install in the OpenIccDirectory icc path"
 msgstr ""
 
-#: tools/oyranos-policy.c:249
+#: tools/oyranos-policy.c:247
 msgid "installation of new policy file failed with error:"
 msgstr ""
 
-#: tools/oyranos-policy.c:246
+#: tools/oyranos-policy.c:244
 msgid "installed new policy"
 msgstr ""
 
@@ -6860,7 +6861,7 @@ msgstr "verda"
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1406
+#: tools/oyranos-monitor-white-point.c:1421
 msgid "old/new"
 msgstr ""
 
@@ -6925,27 +6926,27 @@ msgstr ""
 msgid "oyranos-image-display --no-logo image.ppm"
 msgstr ""
 
-#: tools/oyranos-policy.c:85
+#: tools/oyranos-policy.c:84
 msgid "oyranos-policy -cfe"
 msgstr ""
 
-#: tools/oyranos-policy.c:82
+#: tools/oyranos-policy.c:81
 msgid "oyranos-policy -d"
 msgstr ""
 
-#: tools/oyranos-policy.c:87
+#: tools/oyranos-policy.c:86
 msgid "oyranos-policy -h"
 msgstr ""
 
-#: tools/oyranos-policy.c:83
+#: tools/oyranos-policy.c:82
 msgid "oyranos-policy -i policy_filename"
 msgstr ""
 
-#: tools/oyranos-policy.c:84
+#: tools/oyranos-policy.c:83
 msgid "oyranos-policy -l"
 msgstr ""
 
-#: tools/oyranos-policy.c:86
+#: tools/oyranos-policy.c:85
 msgid "oyranos-policy -s policy_name"
 msgstr ""
 
@@ -7085,7 +7086,7 @@ msgid ""
 "%3Ftitle=OpenIccDirectoryProposal.html"
 msgstr ""
 
-#: tools/oyranos-policy.c:79
+#: tools/oyranos-policy.c:78
 msgid ""
 "route Oyranos to top directories containing resources. The derived paths for "
 "policies have a \"color/settings\" appended."
@@ -7133,7 +7134,7 @@ msgstr ""
 #. declare the option choices  *   nick,          name,               description,                  help
 #. nick, name, description, help
 #: tools/oyranos-config.c:242 tools/oyranos-convert.c:198
-#: tools/oyranos-monitor-white-point.c:503 tools/oyranos-policy.c:78
+#: tools/oyranos-monitor-white-point.c:503 tools/oyranos-policy.c:77
 #: tools/oyranos_profile_graph.c:394 tools/oyranos_profiles.c:90
 msgid "set the Oyranos debug level."
 msgstr ""
@@ -7190,10 +7191,6 @@ msgstr ""
 msgid "strings. By default 'lcms' or 'lcm2' should be available."
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:538
-msgid "system wide"
-msgstr ""
-
 #. 32BT
 #: liboyranos_config/oyranos_icc.c:690
 msgid "the imaging factory CMM"
@@ -7240,16 +7237,15 @@ msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:69 tools/oyranos-config.c:320
 #: tools/oyranos-convert.c:260 tools/oyranos-device.c:397
-#: tools/oyranos-monitor-white-point.c:545 tools/oyranos-policy.c:134
-#: tools/oyranos-profile.c:360 tools/oyranos_profile_graph.c:477
-#: tools/oyranos_profiles.c:138
+#: tools/oyranos-policy.c:133 tools/oyranos-profile.c:360
+#: tools/oyranos_profile_graph.c:477 tools/oyranos_profiles.c:138
 msgid "verbose"
 msgstr ""
 
 #: examples/image_display/oyranos-image-display.c:97 tools/oyranos-config.c:321
-#: tools/oyranos-convert.c:261 tools/oyranos-monitor-white-point.c:546
-#: tools/oyranos-policy.c:135 tools/oyranos-profile.c:361
-#: tools/oyranos_profile_graph.c:478 tools/oyranos_profiles.c:139
+#: tools/oyranos-convert.c:261 tools/oyranos-policy.c:134
+#: tools/oyranos-profile.c:361 tools/oyranos_profile_graph.c:478
+#: tools/oyranos_profiles.c:139
 msgid "version"
 msgstr ""
 
