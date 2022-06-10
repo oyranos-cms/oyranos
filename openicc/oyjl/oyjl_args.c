@@ -4397,21 +4397,6 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     )
     opt_state = oyjlUi_Check_(ui, *oyjl_debug?0:OYJL_QUIET );
 
-  if( help &&
-      ( opt_state == oyjlOPTION_NONE ||
-        opt_state == oyjlOPTION_MISSING_VALUE ||
-        opt_state == oyjlOPTION_SUBCOMMAND ||
-        opt_state == oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND )
-    )
-  {
-    oyjlOption_s * synopsis = oyjlOptions_GetOptionL( ui->opts, "synopsis", 0 );
-    oyjlOptions_PrintHelp( ui->opts, ui, (results && results->group >= 0) ? -1 : (results && results->count >= 1 && strcasecmp(results->values[0],"synopsis") == 0 && synopsis) ? -2 : verbose, NULL );
-    oyjlUi_ReleaseArgs( &ui);
-    if(status)
-      *status |= oyjlUI_STATE_HELP;
-    return NULL;
-  }
-
   if(version)
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui, "version" );
@@ -4454,6 +4439,10 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       oyjlUi_ReleaseArgs( &ui);
       return NULL;
     }
+    if(strcmp(export, "json+command") == 0)
+    {
+      return ui;
+    }
 #endif
     if(strcmp(export, "man") == 0)
     {
@@ -4477,6 +4466,21 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       return NULL;
     }
 #endif
+  }
+
+  if( help &&
+      ( opt_state == oyjlOPTION_NONE ||
+        opt_state == oyjlOPTION_MISSING_VALUE ||
+        opt_state == oyjlOPTION_SUBCOMMAND ||
+        opt_state == oyjlOPTION_NOT_ALLOWED_AS_SUBCOMMAND )
+    )
+  {
+    oyjlOption_s * synopsis = oyjlOptions_GetOptionL( ui->opts, "synopsis", 0 );
+    oyjlOptions_PrintHelp( ui->opts, ui, (results && results->group >= 0) ? -1 : (results && results->count >= 1 && strcasecmp(results->values[0],"synopsis") == 0 && synopsis) ? -2 : verbose, NULL );
+    oyjlUi_ReleaseArgs( &ui);
+    if(status)
+      *status |= oyjlUI_STATE_HELP;
+    return NULL;
   }
 
   nopts = oyjlOptions_Count( ui->opts );

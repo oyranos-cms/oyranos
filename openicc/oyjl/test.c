@@ -446,7 +446,8 @@ oyjlTESTRESULT_e testI18N()
   char * oyjl_export, * txt;
   size = 0;
   oyjl_export = txt = oyjlReadCommandF( &size, "r", malloc, "LANG=C PATH=%s:$PATH %s --export export", OYJL_BUILDDIR, "oyjl" );
-  if(!txt || strlen(txt) != 22943)
+  plain = oyjlTermColorToPlain(txt, 0);
+  if(!txt || strlen(plain) != 22943)
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(txt),
     "LANG=C oyjl --export export" );
   }
@@ -458,7 +459,7 @@ oyjlTESTRESULT_e testI18N()
   char ** paths = oyjlTreeToPaths( catalog, 10000000, NULL, OYJL_KEY, &count );
   clck = oyjlClock() - clck;
   count = 0; while(paths && paths[count]) ++count;
-  if( count == 649 )
+  if( count == 651 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,1,clck/(double)CLOCKS_PER_SEC,"wr",
     "oyjlTreeToPaths(catalog) = %d", count );
   } else
@@ -1307,7 +1308,8 @@ oyjlTESTRESULT_e testJson ()
   result = testEscapeJsonVal( "my.value", "my\\.value", OYJL_REGEXP, 25, result, oyjlTESTRESULT_XFAIL );
   result = testEscapeJsonVal( "my.value", "my.value", 0, 23, result, oyjlTESTRESULT_XFAIL );
   result = testEscapeJsonVal( "my\\.value", "my\\\\.value", OYJL_QUOTE | OYJL_NO_BACKSLASH, 27, result, oyjlTESTRESULT_XFAIL );
-  result = testEscapeJsonVal( "my/value", "my%37value", OYJL_KEY, 25, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJsonVal( "my/key", "my%37key", OYJL_KEY, 23, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJsonVal( "my/key.attribute", "my%37key.attribute", OYJL_KEY, 33, result, oyjlTESTRESULT_XFAIL );
   result = testEscapeJsonVal( "value\nafter_line_break", "value\\nafter_line_break", 0, 39, result, oyjlTESTRESULT_XFAIL );
 
   const char * json2 = "{\n\
@@ -1783,7 +1785,8 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(c_source) {free(c_source);} c_source = NULL;
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s --help", prog );
-  len = t ? strlen(t) : 0;
+  const char * plain = oyjlTermColorToPlain(t, 0);
+  len = t ? strlen(plain) : 0;
   if(len == help_size)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "%s --help", prog );
@@ -1825,7 +1828,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(t) {free(t);}
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C ./%s -X json", prog );
-  const char * plain = oyjlTermColorToPlain(t, 0);
+  plain = oyjlTermColorToPlain(t, 0);
   len = t ? strlen(plain) : 0;
   if(abs((int)len - (int)json_size) <= 1 && oyjlDataFormat(plain) == 7)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
@@ -2418,6 +2421,7 @@ oyjlTESTRESULT_e   testTool          ( const char        * prog,
   size_t len;
   int size;
   char info[48];
+  const char * plain;
 
   fprintf( zout, "testing: %s  %d tests\n", oyjlTermColorF(oyjlBOLD, prog), count );
 
@@ -2437,7 +2441,8 @@ oyjlTESTRESULT_e   testTool          ( const char        * prog,
   }
 
   t = oyjlReadCommandF( &size, "r", malloc, "LANG=C %s/%s --help", OYJL_BUILDDIR, prog );
-  len = t ? strlen(t) : 0;
+  plain = oyjlTermColorToPlain(t, 0);
+  len = t ? strlen(plain) : 0;
   if(len == help_size)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "%s --help", prog );
@@ -2466,7 +2471,8 @@ oyjlTESTRESULT_e   testTool          ( const char        * prog,
       fprintf( stderr, "cmd: %s : %ld\n", cmd, result_size );
 
     t = oyjlReadCommandF( &size, "r", malloc, "LANG=C PATH=%s:$PATH %s", OYJL_BUILDDIR, cmd );
-    len = t ? strlen(t) : 0;
+    plain = oyjlTermColorToPlain(t, 0);
+    len = t ? strlen(plain) : 0;
     if(len && t[len-1] == '\n' && result_string && result_string[0] && result_string[strlen(result_string)-1] != '\n')
       oyjlStringAdd( &result_string, 0,0, "\n" );
     if( (len == result_size || result_size == 0) &&
