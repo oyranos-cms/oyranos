@@ -1208,6 +1208,12 @@ AppWindow {
                       help = synopsis;
               }
             }
+            else
+            if(typeof group.name === "undefined" &&
+               typeof group.description === "undefined" &&
+               typeof group.help === "undefined")
+                continue;
+
             if(typeof options !== "undefined")
                 setOptions( group, groupName, help )
 
