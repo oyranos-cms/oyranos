@@ -295,6 +295,17 @@ AppWindow {
     property bool setOnly: false
     function interactiveCallback( key, value, type, group, setOnly_ )
     {
+        if(key === "oyjl-history")
+        {
+            currentArgs = JSON.parse(value)
+            setHistoryArgs() // take everything, even repetitions
+            statusText = processSetCommand + " " + JSON.stringify(currentArgs)
+            processSet.start( processSetCommand, currentArgs, "set" )
+            setBusyTimer.start()
+            processSet.waitForFinished()
+            return;
+        }
+
         var opts = optionsModel
         var n = optionsModel.count
         var i
@@ -492,21 +503,7 @@ AppWindow {
             currentArgs = [];
             currentArgs = args;
 
-            n = optionsModel.count
-            opt = optionsModel.get(n-1) // last might be "History" group
-            var choices = history_choices;
-            if(opt.key === "oyjl-history")
-            {
-                group = opt.group
-                choices = group.options[0].choices
-                var len = choices.length
-                choices.unshift( {"key":JSON.stringify(args), "nick": JSON.stringify(args)} ) // put in front
-                optionsModel.remove(n-1)
-            }
-            else
-                choices.unshift( {"key":JSON.stringify(args), "nick": JSON.stringify(args)} )
-            setHistory(choices)
-            
+            setHistoryArgs()
 
             processSet.start( processSetCommand, currentArgs, "set" )
             setBusyTimer.start()
@@ -1292,6 +1289,26 @@ AppWindow {
         var group = JSON.parse(text);
         setOptions( group, qsTr("History"), qsTr("Select here previous commands for modification or repetition.") )
     }
+    function setHistoryArgs()
+    {
+        var n = optionsModel.count
+        var opt = optionsModel.get(n-1) // last might be "History" group
+        var choices = history_choices;
+        var group
+        var args = currentArgs
+        if(opt.key === "oyjl-history")
+        {
+            group = opt.group
+            choices = group.options[0].choices
+            var len = choices.length
+            choices.unshift( {"key":JSON.stringify(args), "nick": JSON.stringify(args)} ) // put in front
+            optionsModel.remove(n-1)
+        }
+        else
+            choices.unshift( {"key":JSON.stringify(args), "nick": JSON.stringify(args)} )
+        setHistory(choices)
+    }
+
 
     closeFunction: function() { appData.writeJSON( outputJSON ) }
 }
