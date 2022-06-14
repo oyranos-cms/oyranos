@@ -1104,6 +1104,9 @@ AppWindow {
     // major stuff
     function setDataText( t )
     {
+        var json = JSON.parse(appData.plainJSON(t))
+        if(typeof json === "undefined")
+            return;
         optionsModel.clear()
         appData.clearOptions()
         dataText = t;
