@@ -423,27 +423,6 @@ Rectangle {
         }
     }
 
-    function setDataText( t )
-    {
-        dataText = t;
-        appDataJsonString = t;
-        appJsonObject = JSON.parse(appData.plainJSON(t));
-        if( appJsonObject === "undefined" )
-            logText = "Parsing failed: " + t;
-        var j = appJsonObject;
-        loc = j.LOCALE_info;
-        var modules = j.org.freedesktop.oyjl.modules[0];
-        var groups = modules.groups;
-        var group = groups[0];
-        var options= group.options;
-        for( var index in options )
-        {
-            var opt = options[index];
-            var def = opt.default;
-            P.setComboItems( ri, opt.choices, opt.nick, def, loc );
-        }
-    }
-
     function findListModel( model, type, value )
     {
         var n = model.count
