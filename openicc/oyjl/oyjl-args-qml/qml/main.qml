@@ -318,14 +318,15 @@ AppWindow {
             mkey = key;
         }
         if(mandatory_found === false &&
+           typeof groupLast !== "undefined" && typeof groupLast.optional !== "undefined" &&
            // use group from previous mandatory key if this group has the key in its optional list
-           groupLast.optional.length && hasArg(groupLast.optional, key,"interactiveCallback-optional") &&
-           typeof groupLast !== "undefined")
+           groupLast.optional.length && hasArg(groupLast.optional, key,"interactiveCallback-optional"))
             group = groupLast
 
         groupLast = group;
 
-        statusText = qsTr("Group") + ": " + group.description
+        if(app_debug)
+            statusText = qsTr("Group") + ": " + group.description
 
         var sub_command = false
         if(typeof group.sub_command !== "undefined")
@@ -484,12 +485,29 @@ AppWindow {
             }
 
             if(app_debug)
-                statusText = "command_set: " + processSetCommand + " " + args + " ex:" + mandatory_exclusive + " mand:" + group.mandatory
+                statusText = "command_set: " + processSetCommand + " " + JSON.stringify(args) + " ex:" + mandatory_exclusive + " mand:" + group.mandatory
+            else
+                statusText = processSetCommand + " " + JSON.stringify(args)
 
             currentArgs = [];
             currentArgs = args;
 
-            statusText = JSON.stringify(args)
+            n = optionsModel.count
+            opt = optionsModel.get(n-1) // last might be "History" group
+            var choices = history_choices;
+            if(opt.key === "oyjl-history")
+            {
+                group = opt.group
+                choices = group.options[0].choices
+                var len = choices.length
+                choices.unshift( {"key":JSON.stringify(args), "nick": JSON.stringify(args)} ) // put in front
+                optionsModel.remove(n-1)
+            }
+            else
+                choices.unshift( {"key":JSON.stringify(args), "nick": JSON.stringify(args)} )
+            setHistory(choices)
+            
+
             processSet.start( processSetCommand, currentArgs, "set" )
             setBusyTimer.start()
             processSet.waitForFinished()
@@ -923,6 +941,130 @@ AppWindow {
     property string loc: "";
     property var catalog: {"translations":""}
 
+    function setOption( opt, run, group, groupName )
+    {
+        var def = opt.default;
+        var key = opt.key
+        var nick = opt.nick;
+        var current = "";
+        var suggest = "";
+        var choices = [];
+        var type = "";
+        var dbl = {"start":0,"end":1}
+        var immediate = typeof opt.immediate !== "undefined"
+        var repetition = typeof opt.repetition !== "undefined"
+        var value = ""
+        var value_name = ""
+        var default_var = opt.default
+        var loc_var = loc
+        var changed = ""
+
+        if(typeof opt.type !== "undefined")
+            type = opt.type
+        if(typeof opt.value_name !== "undefined")
+          value_name = opt.value_name;
+        if( type === "double" )
+            // try slider
+        {
+            var start = 0
+            var end = 1
+            var tick = 0
+            if(typeof opt.start !== "undefined") start = opt.start
+            if(typeof opt.end !== "undefined") end = opt.end
+            if(typeof opt.tick !== "undefined") tick = opt.tick
+            if(typeof opt.default !== "undefined")
+            {
+                current = opt.default
+                value = current;
+            }
+            if(typeof tick !== "undefined")
+            {
+                dbl["start"] = start
+                dbl["end"] = end
+                dbl["tick"] = tick
+            }
+        }
+        if( type === "bool")
+        {
+            current = opt.default;
+            if( opt.default === "1" )
+                value = "true";
+            else
+                value = "false";
+        }
+        if( type === "string")
+        {
+            var opt_ = opt
+            if(typeof opt_.suggest !== "undefined")
+                suggest = opt_.suggest;
+        }
+
+        if(typeof opt.choices !== "undefined")
+            choices = opt.choices;
+        var name
+        if(type === "choice")
+        for( var i in choices )
+        {
+            if( typeof choices[i].name != "string" )
+                continue;
+            var item = choices[i];
+            var cnick = item.nick;
+            if(cnick === def)
+                current = name;
+        }
+
+        if(typeof opt.changed !== "undefined")
+        {
+            current = value.length ? value : opt.changed;
+            changed = current;
+        }
+
+        if(changed.length)
+            appData.setOption(key, changed);
+
+        name = P.getTranslatedItem( opt, "name", loc, catalog );
+        var l = 0;
+        if(typeof name !== "undefined" && name !== null)
+            l = name.length;
+        if( l === 0 )
+          name = opt.key;
+        var desc = P.getTranslatedItem( opt, "description", loc, catalog );
+        var help = P.getTranslatedItem( opt, "help", loc, catalog );
+        if(typeof nick === "undefined")
+            nick = ""
+        if(typeof desc === "undefined")
+            desc = ""
+        if(typeof help === "undefined")
+            help = ""
+        if(typeof default_var === "undefined")
+            default_var = "0"
+        var o = {
+            choices: choices,
+            current: current,
+            changed: changed,
+            dbl: dbl,
+            default: default_var,
+            description: desc,
+            group: group,
+            groupName: groupName,
+            help: help,
+            immediate: immediate,
+            key: key,
+            loc: loc_var,
+            name: name,
+            nick: nick,
+            repetition: repetition,
+            run: run,
+            suggest: suggest,
+            type: type,
+            value: value,
+            value_name: value_name
+        }
+        var text = JSON.stringify(o);
+        o.text = text;
+        optionsModel.append(o)
+    }
+
     function setOptions( group, groupName, groupDescription )
     {
         if(typeof groupDescriptions[groupName] === "undefined")
@@ -934,139 +1076,23 @@ AppWindow {
 
         var explicite = typeof group.explicite !== "undefined"
 
+        if(typeof groupName === "undefined")
+            groupName = ""
+
         var options = group.options
         for( var index in options )
         {
             var opt = options[index];
-            var def = opt.default;
-            var key = opt.key
-            var nick = opt.nick;
-            var current = "";
-            var suggest = "";
-            var choices = [];
-            var type = "";
-            var dbl = {"start":0,"end":1}
-            var immediate = typeof opt.immediate !== "undefined"
-            var repetition = typeof opt.repetition !== "undefined"
             var run = 0
-            var value = ""
-            var value_name = ""
-            var default_var = opt.default
-            var loc_var = loc
-            var changed = ""
 
-            if(typeof opt.type !== "undefined")
-                type = opt.type
-            if(typeof opt.value_name !== "undefined")
-              value_name = opt.value_name;
             // see mandatory key
             if(typeof group.mandatory !== "undefined" && group.mandatory.length && group.mandatory.match(opt.key))
                 run = 1
             // detect optonal active role
             else if(typeof group.mandatory !== "undefined" && group.mandatory.length === 0 && group.optional.length && group.optional.match(opt.key))
                 run = 2
-            if( type === "double" )
-                // try slider
-            {
-                var start = 0
-                var end = 1
-                var tick = 0
-                if(typeof opt.start !== "undefined") start = opt.start
-                if(typeof opt.end !== "undefined") end = opt.end
-                if(typeof opt.tick !== "undefined") tick = opt.tick
-                if(typeof opt.default !== "undefined")
-                {
-                    current = opt.default
-                    value = current;
-                }
-                if(typeof tick !== "undefined")
-                {
-                    dbl["start"] = start
-                    dbl["end"] = end
-                    dbl["tick"] = tick
-                }
-            }
-            if( type === "bool")
-            {
-                current = opt.default;
-                if( opt.default === "1" )
-                    value = "true";
-                else
-                    value = "false";
-            }
-            if( type === "string")
-            {
-                var opt_ = opt
-                if(typeof opt_.suggest !== "undefined")
-                    suggest = opt_.suggest;
-            }
 
-            if(typeof opt.choices !== "undefined")
-                choices = opt.choices;
-            var name
-            if(type === "choice")
-            for( var i in choices )
-            {
-                if( typeof choices[i].name != "string" )
-                    continue;
-                var item = choices[i];
-                var cnick = item.nick;
-                if(cnick === def)
-                    current = name;
-            }
-
-            if(typeof opt.changed !== "undefined")
-            {
-                current = value.length ? value : opt.changed;
-                changed = current;
-            }
-
-            if(changed.length)
-                appData.setOption(key, changed);
-
-            name = P.getTranslatedItem( opt, "name", loc, catalog );
-            var l = 0;
-            if(typeof name !== "undefined" && name !== null)
-                l = name.length;
-            if( l === 0 )
-              name = opt.key;
-            var desc = P.getTranslatedItem( opt, "description", loc, catalog );
-            var help = P.getTranslatedItem( opt, "help", loc, catalog );
-            if(typeof groupName === "undefined")
-                groupName = ""
-            if(typeof nick === "undefined")
-                nick = ""
-            if(typeof desc === "undefined")
-                desc = ""
-            if(typeof help === "undefined")
-                help = ""
-            if(typeof default_var === "undefined")
-                default_var = "0"
-            var o = {
-                choices: choices,
-                current: current,
-                changed: changed,
-                dbl: dbl,
-                default: default_var,
-                description: desc,
-                group: group,
-                groupName: groupName,
-                help: help,
-                immediate: immediate,
-                key: key,
-                loc: loc_var,
-                name: name,
-                nick: nick,
-                repetition: repetition,
-                run: run,
-                suggest: suggest,
-                type: type,
-                value: value,
-                value_name: value_name
-            }
-            var text = JSON.stringify(o);
-            o.text = text;
-            optionsModel.append(o)
+            setOption( opt, run, group, groupName );
         }
     }
 
@@ -1244,6 +1270,24 @@ AppWindow {
                     setOptions( g, groupName2, help2 )
                 }
         }
+        if(history_choices.length)
+            setHistory(history_choices)
+    }
+
+    property var history_choices: []
+    function setHistory(choices)
+    {
+        history_choices = choices
+        var ctext = JSON.stringify(choices)
+        var text = '{"options": [{ "key": "oyjl-history",
+                    "name": "' + qsTr("Options") + '",
+                    "description": "' + qsTr("Select or Edit Options") + '",
+                    "value_name": "-V|-h|",
+                    "default": "0",
+                    "choices": ' + ctext + ',
+                    "type": "string" }]}'
+        var group = JSON.parse(text);
+        setOptions( group, qsTr("History"), qsTr("Select here previous commands for modification or repetition.") )
     }
 
     closeFunction: function() { appData.writeJSON( outputJSON ) }
