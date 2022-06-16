@@ -264,6 +264,12 @@ AppWindow {
             }
         }
 
+        var i;
+        for( i = 0; i < args.length; ++i )
+            // check for double occurencies
+            if(args[i] == arg)
+                arg = null
+
         var count = args.length
         if(command_set_option.length === 0)
         {
@@ -1282,6 +1288,7 @@ AppWindow {
         var text = '{"options": [{ "key": "oyjl-history",
                     "name": "' + qsTr("Options") + '",
                     "description": "' + qsTr("Select or Edit Options") + '",
+                    "help": "' + qsTr("The Syntax is a JSON array with each element representing one command line argument.") + '",
                     "value_name": "-V|-h|",
                     "default": "0",
                     "choices": ' + ctext + ',
