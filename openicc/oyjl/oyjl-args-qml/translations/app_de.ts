@@ -167,64 +167,69 @@
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="340"/>
+        <location filename="../qml/main.qml" line="346"/>
         <source>Group</source>
         <translation>Gruppe</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="779"/>
-        <location filename="../qml/main.qml" line="830"/>
-        <location filename="../qml/main.qml" line="863"/>
+        <location filename="../qml/main.qml" line="785"/>
+        <location filename="../qml/main.qml" line="836"/>
+        <location filename="../qml/main.qml" line="869"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="927"/>
+        <location filename="../qml/main.qml" line="933"/>
         <source>Show Log</source>
         <translation>Zeige Meldungen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="927"/>
+        <location filename="../qml/main.qml" line="933"/>
         <source>Show JSON</source>
         <translation>Zeige JSON</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1127"/>
+        <location filename="../qml/main.qml" line="1133"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1179"/>
+        <location filename="../qml/main.qml" line="1185"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1179"/>
+        <location filename="../qml/main.qml" line="1185"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1181"/>
+        <location filename="../qml/main.qml" line="1187"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1283"/>
+        <location filename="../qml/main.qml" line="1289"/>
         <source>Options</source>
         <translation>Optionen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1284"/>
+        <location filename="../qml/main.qml" line="1290"/>
         <source>Select or Edit Options</source>
         <translation>Wähle oder Ändere Optionen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1290"/>
+        <location filename="../qml/main.qml" line="1291"/>
+        <source>The Syntax is a JSON array with each element representing one command line argument.</source>
+        <translation>Die Syntax ist ein JSON Feld mit jedem Element ein Kommandozeilenargument representierend.</translation>
+    </message>
+    <message>
+        <location filename="../qml/main.qml" line="1297"/>
         <source>History</source>
         <translation>Geschichte</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1290"/>
+        <location filename="../qml/main.qml" line="1297"/>
         <source>Select here previous commands for modification or repetition.</source>
         <translation>Wähle hier vorherige Kommandos zum Ändern oder Wiederholen.</translation>
     </message>
