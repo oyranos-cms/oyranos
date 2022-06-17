@@ -360,6 +360,8 @@ oyjlTESTRESULT_e oyjlTestRun         ( oyjlTESTRESULT_e  (*test)(void),
 
   if(oyjl_print_sub_length < 56)
     oyjl_print_sub_length = 56;
+  else if(oyjl_print_sub_length > 4000)
+    oyjl_print_sub_length = 4000;
 
   oyjl_test_file = NULL;
   oyjl_test_file_line = -1;
