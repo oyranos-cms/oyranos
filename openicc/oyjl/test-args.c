@@ -81,7 +81,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   char * txt;
 
   txt = oyjlOption_PrintArg_( o, style );
-  if((txt && res && strcmp(oyjlTermColorToPlain(txt),res) == 0) || (!txt && !res))
+  if((txt && res && strcmp(oyjlTermColorToPlain(txt,0),res) == 0) || (!txt && !res))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\"", txt?txt:"(none)" );
   } else
@@ -91,7 +91,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_MAN );
-  if((txt && res_man && strcmp(oyjlTermColorToPlain(txt),res_man) == 0) || (!txt && !res_man))
+  if((txt && res_man && strcmp(oyjlTermColorToPlain(txt,0),res_man) == 0) || (!txt && !res_man))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\" %s", txt?txt:"(none)", res_man );
   } else
@@ -101,7 +101,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_MARKDOWN );
-  if((txt && res_mark && strcmp(oyjlTermColorToPlain(txt),res_mark) == 0) || (!txt && !res_mark))
+  if((txt && res_mark && strcmp(oyjlTermColorToPlain(txt,0),res_mark) == 0) || (!txt && !res_mark))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\"", txt?txt:"(none)" );
   } else
@@ -111,7 +111,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_ONELETTER );
-  if((txt && res_o && strcmp(oyjlTermColorToPlain(txt),res_o) == 0) || (!txt && !res_o))
+  if((txt && res_o && strcmp(oyjlTermColorToPlain(txt,0),res_o) == 0) || (!txt && !res_o))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\" %s", txt?txt:"(none)", res_o );
   } else
@@ -121,7 +121,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MAN );
-  if((txt && res_o_man && strcmp(oyjlTermColorToPlain(txt),res_o_man) == 0) || (!txt && !res_o_man))
+  if((txt && res_o_man && strcmp(oyjlTermColorToPlain(txt,0),res_o_man) == 0) || (!txt && !res_o_man))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\"", txt?txt:"(none)" );
   } else
@@ -131,7 +131,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN );
-  if((txt && res_o_mark && strcmp(oyjlTermColorToPlain(txt),res_o_mark) == 0) || (!txt && !res_o_mark))
+  if((txt && res_o_mark && strcmp(oyjlTermColorToPlain(txt,0),res_o_mark) == 0) || (!txt && !res_o_mark))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\"", txt?txt:"(none)" );
   } else
@@ -141,7 +141,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_STRING );
-  if((txt && res_opt && strcmp(oyjlTermColorToPlain(txt),res_opt) == 0) || (!txt && !res_opt))
+  if((txt && res_opt && strcmp(oyjlTermColorToPlain(txt,0),res_opt) == 0) || (!txt && !res_opt))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\"", txt?txt:"(none)" );
   } else
@@ -151,7 +151,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN );
-  if((txt && res_opt_man && strcmp(oyjlTermColorToPlain(txt),res_opt_man) == 0) || (!txt && !res_opt_man))
+  if((txt && res_opt_man && strcmp(oyjlTermColorToPlain(txt,0),res_opt_man) == 0) || (!txt && !res_opt_man))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\"", txt?txt:"(none)" );
   } else
@@ -161,7 +161,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN );
-  if((txt && res_opt_mark && strcmp(oyjlTermColorToPlain(txt),res_opt_mark) == 0) || (!txt && !res_opt_mark))
+  if((txt && res_opt_mark && strcmp(oyjlTermColorToPlain(txt,0),res_opt_mark) == 0) || (!txt && !res_opt_mark))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\"", txt?txt:"(none)" );
   } else
@@ -171,7 +171,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING );
-  if((txt && res_oopt && strcmp(oyjlTermColorToPlain(txt),res_oopt) == 0) || (!txt && !res_oopt))
+  if((txt && res_oopt && strcmp(oyjlTermColorToPlain(txt,0),res_oopt) == 0) || (!txt && !res_oopt))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\"", txt?txt:"(none)" );
   } else
@@ -181,7 +181,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN );
-  if((txt && res_oopt_man && strcmp(oyjlTermColorToPlain(txt),res_oopt_man) == 0) || (!txt && !res_oopt_man))
+  if((txt && res_oopt_man && strcmp(oyjlTermColorToPlain(txt,0),res_oopt_man) == 0) || (!txt && !res_oopt_man))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\"", txt?txt:"(none)" );
   } else
@@ -191,7 +191,7 @@ oyjlTESTRESULT_e testArgsPrintOne( oyjlOption_s * o,
   if(txt) {free(txt); txt = NULL;}
 
   txt = oyjlOption_PrintArg_( o, style | oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN );
-  if((txt && res_oopt_mark && strcmp(oyjlTermColorToPlain(txt),res_oopt_mark) == 0) || (!txt && !res_oopt_mark))
+  if((txt && res_oopt_mark && strcmp(oyjlTermColorToPlain(txt,0),res_oopt_mark) == 0) || (!txt && !res_oopt_mark))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOption_PrintArg_() \"%s\"", txt?txt:"(none)" );
   } else
@@ -449,12 +449,12 @@ oyjlTESTRESULT_e testArgs()
   int size = 0;
   char * text;
   text = oyjlReadFile( fn , &size );
-  if(ui && text && strlen(oyjlTermColorToPlain(text)) == 2490)
+  if(ui && text && strlen(oyjlTermColorToPlain(text,0)) == 2490)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
-    "ui created - no args %d %d", size, strlen(oyjlTermColorToPlain(text)) );
+    "ui created - no args %d %d", size, strlen(oyjlTermColorToPlain(text,0)) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "ui created - no args %d %d", size, strlen(oyjlTermColorToPlain(text)) );
+    "ui created - no args %d %d", size, strlen(oyjlTermColorToPlain(text,0)) );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlOptions_PrintHelp", "txt" )
   if((oy_test_last_result == oyjlTESTRESULT_FAIL || verbose) && text)

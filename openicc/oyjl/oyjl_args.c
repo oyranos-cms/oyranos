@@ -1106,7 +1106,8 @@ void     oyjlStringListAddList       ( char            *** list,
 #endif
 extern char * oyjl_term_color_plain_;
 const char * oyjlTermColorToPlainArgs( const char        * text );
-const char * oyjlTermColorToPlain    ( const char        * text )
+const char * oyjlTermColorToPlain    ( const char        * text,
+                                       int                 flags OYJL_UNUSED )
 {
   return oyjlTermColorToPlainArgs( text );
 }
