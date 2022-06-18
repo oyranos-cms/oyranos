@@ -231,6 +231,7 @@ struct oyjlOption_s {
   oyjlOption_u values;
   oyjlVARIABLE_e variable_type;
   oyjlVariable_u variable;
+  const char * json;
 };
 
 #define OYJL_GROUP_FLAG_SUBCOMMAND     0x080
@@ -245,6 +246,7 @@ typedef struct oyjlOptionGroup_s {
   const char * mandatory;
   const char * optional;
   const char * detail;
+  const char * json;
 } oyjlOptionGroup_s;
 
 struct oyjlOptions_s {
