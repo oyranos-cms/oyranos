@@ -225,7 +225,7 @@ oyjlTESTRESULT_e testArgsPrint()
 
   setenv("FORCE_NO_COLORTERM", "1",1);
   oyjlOption_s o1 = {
-    "oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "o", "option", NULL, "Option", "Option Description", "Some Help", "args", oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = NULL}
+    "oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "o", "option", NULL, "Option", "Option Description", "Some Help", "args", oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = NULL}, NULL
   };
 
   result = testArgsPrintOne( &o1, 0,
@@ -407,32 +407,32 @@ oyjlTESTRESULT_e testArgs()
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", 0,     "#", "",        NULL, _("status"),  _("Show Status"),    NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &show_status} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,"@","",NULL,_("input"),_("Set Input"),NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlINT, {.i = &file_count} },
-    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
-    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
-    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help} },
-    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
-    {"oiwi", 0,     "b", NULL,      NULL, "blabla",     "BlaBla",            NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output} },
-    {"oiwi", 0,     NULL,"candle",  NULL, "candle",     "Candle",            _("This options explanation text."), NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output} },
-    {"oiwi", 0,     NULL,"degree",  NULL, "Degree",     "Degree",            _("This options explanation text."), "DEGREE",      oyjlOPTIONTYPE_DOUBLE, {.dbl.d = 0, .dbl.start = 0, .dbl.end = 25000, .dbl.tick = 100}, oyjlDOUBLE, {.d = &degree} },
-    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+    {"oiwi", 0,     "#", "",        NULL, _("status"),  _("Show Status"),    NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &show_status}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,"@","",NULL,_("input"),_("Set Input"),NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {}, oyjlINT, {.i = &file_count}, NULL },
+    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file}, NULL },
+    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output}, NULL },
+    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &help}, NULL },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_}, NULL },
+    {"oiwi", 0,     "b", NULL,      NULL, "blabla",     "BlaBla",            NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output}, NULL },
+    {"oiwi", 0,     NULL,"candle",  NULL, "candle",     "Candle",            _("This options explanation text."), NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &output}, NULL },
+    {"oiwi", 0,     NULL,"degree",  NULL, "Degree",     "Degree",            _("This options explanation text."), "DEGREE",      oyjlOPTIONTYPE_DOUBLE, {.dbl.d = 0, .dbl.start = 0, .dbl.end = 25000, .dbl.tick = 100}, oyjlDOUBLE, {.d = &degree}, NULL },
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{},NULL}
   };
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups_no_args[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o" }, /* accepted even if none of the mandatory options is set */
-    {"oiwg", 0,     _("Mode2"),_("Simple mode"),     NULL, "#",       "o,v",    "#,o" }, /* accepted even if none of the mandatory options is set */
-    {"oiwg", 0,     _("Mode3"),_("Simple mode"),     NULL, "#",       "",       "#" }, /* accepted even if none of the mandatory options is set */
-    {"oiwg", 0,     _("Mode4"),_("Simple mode"),     NULL, "#",       "",       "" }, /* accepted even if none of the mandatory options is set */
-    {"oiwg", 0,     _("Mode5"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o"},/* accepted if anonymous arguments are set */
-    {"oiwg", 0,     _("Mode6"),_("Actual mode"),     NULL, "i",       "o,v",    "i,o" },/* parsed and checked with -i option */
-    {"oiwg", 0,     _("Mode7"),_("Alternate"),       NULL, "i|o",     "h|v",    "i,o,h,v" },
-    {"oiwg", 0,     _("Mode8"),_("Long"),            _("This Group handles Long options"), "b",       "candle,degree,v","b,candle,degree,v" },
-    {"oiwg", 0,     _("Mode9"),_("Double mandatory"),_("This Group checks correct constraints."), "b,candle",  "v","b,candle,v" },
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },/* just show in documentation */
-    {"",0,0,0,0,0,0,0}
+    {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o", NULL }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode2"),_("Simple mode"),     NULL, "#",       "o,v",    "#,o", NULL }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode3"),_("Simple mode"),     NULL, "#",       "",       "#", NULL }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode4"),_("Simple mode"),     NULL, "#",       "",       "", NULL }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode5"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o", NULL},/* accepted if anonymous arguments are set */
+    {"oiwg", 0,     _("Mode6"),_("Actual mode"),     NULL, "i",       "o,v",    "i,o", NULL },/* parsed and checked with -i option */
+    {"oiwg", 0,     _("Mode7"),_("Alternate"),       NULL, "i|o",     "h|v",    "i,o,h,v", NULL },
+    {"oiwg", 0,     _("Mode8"),_("Long"),            _("This Group handles Long options"), "b",       "candle,degree,v","b,candle,degree,v", NULL },
+    {"oiwg", 0,     _("Mode9"),_("Double mandatory"),_("This Group checks correct constraints."), "b,candle",  "v","b,candle,v", NULL },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h", NULL },/* just show in documentation */
+    {"",0,0,0,0,0,0,0,0}
   };
 
   /* tell about the tool */
@@ -794,9 +794,9 @@ oyjlTESTRESULT_e testArgs()
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "o,v",    "i,o" },
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },
-    {"",0,0,0,0,0,0,0}
+    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "o,v",    "i,o", NULL },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h", NULL },
+    {"",0,0,0,0,0,0,0,0}
   };
 
   argc = 2;
@@ -968,19 +968,19 @@ oyjlTESTRESULT_e testArgs()
   const char * helpstr = NULL;
   oyjlOption_s oarray2[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
-    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "h", "help",    NULL, _("help"),    _("Help"), NULL, "synopsis|...",          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &helpstr} },
-    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
-    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file}, NULL },
+    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "h", "help",    NULL, _("help"),    _("Help"), NULL, "synopsis|...",          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &helpstr}, NULL },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_}, NULL },
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{},NULL}
   };
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups2[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "o,v",    "i,o" },
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },
-    {"",0,0,0,0,0,0,0}
+    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "o,v",    "i,o", NULL },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h", NULL },
+    {"",0,0,0,0,0,0,0,0}
   };
   argc = 3;
   const char * argv2[] = {"test-args","--help","input"};
@@ -1083,19 +1083,19 @@ oyjlTESTRESULT_e testArgs()
 
   oyjlOption_s oarray3[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", OYJL_OPTION_FLAG_NO_DASH,     NULL,"input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file} },
-    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_ACCEPT_NO_ARG,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &helpstr} },
-    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_} },
-    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+    {"oiwi", OYJL_OPTION_FLAG_NO_DASH,     NULL,"input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlSTRING, {.s = &file}, NULL },
+    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_ACCEPT_NO_ARG,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s = &helpstr}, NULL },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i = &verbose_}, NULL },
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{},NULL}
   };
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups3[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,     _("Mode"), _("Actual mode"),     NULL, "input,output",       "h,v",    "input,output" },
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h" },
-    {"",0,0,0,0,0,0,0}
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,     _("Mode"), _("Actual mode"),     NULL, "input,output",       "h,v",    "input,output", NULL },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "v,h", NULL },
+    {"",0,0,0,0,0,0,0,0}
   };
   argc = 4;
   const char * argv3[] = {"test-args", "-v", "input", "file-arg"};

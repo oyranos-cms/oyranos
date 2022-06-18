@@ -707,6 +707,7 @@ struct oyjlOption_s {
   oyjlOption_u values;                 /**< @brief the selectable values for the option; not used for oyjlOPTIONTYPE_NONE */
   oyjlVARIABLE_e variable_type;        /**< @brief type for *variable* */
   oyjlVariable_u variable;             /**< @brief automatically filled variable depending on *value_type* */
+  const char * json;                   /**< @brief extension JSON; known value is file_names, e.g.: "{\"file_names\":[\"*.[J,j][S,s][O,o][N,n]\"]}" */
 };
 
 /** For a related flag see ::OYJL_OPTION_FLAG_NO_DASH */
@@ -730,6 +731,7 @@ typedef struct oyjlOptionGroup_s {
   const char * mandatory;              /**< @brief list of mandatory options from a oyjlOption_s::o or oyjlOption_s::option for this group of associated options; one single option here makes a subcommand and is usualy easier to understand */
   const char * optional;               /**< @brief list of non mandatory options from a oyjlOption_s::o or oyjlOption_s::option for this group of associated options */
   const char * detail;                 /**< @brief list of options from a oyjlOption_s::o or oyjlOption_s::option for this group of associated options to display */
+  const char * json;                   /**< @brief extension JSON */
 } oyjlOptionGroup_s;
 
 /**

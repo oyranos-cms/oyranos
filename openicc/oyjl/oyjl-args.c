@@ -55,34 +55,34 @@ int myMain( int argc, const char ** argv )
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input", NULL, _("input"), _("Set Input"), _("For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON."), _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file} },
-    {"oiwi", 0,    NULL, "c-stand-alone",NULL, _("C Stand Alone"),_("Generate C code for oyjl_args.c inclusion."), _("Omit libOyjlCore reference."), NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &oyjl_args} },
-    {"oiwi", 0,    NULL, "completion-bash",NULL, _("Completion Bash"),_("Generate bash completion code"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &completion_bash} },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL,"test",    NULL, _("Test"),    _("Generate test Args Export"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &test} },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE,  "o",NULL,    NULL, "O",    NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {0} },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL, "option",    NULL, "Option",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  "t",NULL,    NULL, "T",    NULL, NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {0},oyjlDOUBLE, {.d=&d} },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE,  NULL, "format",    NULL, "Format",    NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {.s=&s} },
-    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"h", "help", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE,{0}, oyjlSTRING, {.s = &help} },
-    {"oiwi", 0,    NULL, "synopsis",NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0} },
-    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &verbose} },
-    {"oiwi", 0,     "V", "version", NULL, _("version"), _("Version"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &version} },
-    {"oiwi", 0,     "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input", NULL, _("input"), _("Set Input"), _("For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON."), _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file}, NULL },
+    {"oiwi", 0,    NULL, "c-stand-alone",NULL, _("C Stand Alone"),_("Generate C code for oyjl_args.c inclusion."), _("Omit libOyjlCore reference."), NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &oyjl_args}, NULL },
+    {"oiwi", 0,    NULL, "completion-bash",NULL, _("Completion Bash"),_("Generate bash completion code"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &completion_bash}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL,"test",    NULL, _("Test"),    _("Generate test Args Export"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &test}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE,  "o",NULL,    NULL, "O",    NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {0}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL, "option",    NULL, "Option",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  "t",NULL,    NULL, "T",    NULL, NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {0},oyjlDOUBLE, {.d=&d}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE,  NULL, "format",    NULL, "Format",    NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {.s=&s}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"h", "help", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE,{0}, oyjlSTRING, {.s = &help}, NULL },
+    {"oiwi", 0,    NULL, "synopsis",NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0}, NULL },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &verbose}, NULL },
+    {"oiwi", 0,     "V", "version", NULL, _("version"), _("Version"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &version}, NULL },
+    {"oiwi", 0,     "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export}, NULL },
     {"oiwi", 0,                          "A","man-examples",  NULL,     _("EXAMPLES"), NULL,                         NULL, NULL,               
-        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {}},
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,{}, NULL},
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
-        oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,      {}},
+        oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,{}, NULL},
     /* The --render option can be hidden and used only internally. */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "R", "render",  NULL, NULL,  NULL,         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render} },
-    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "R", "render",  NULL, NULL,  NULL,         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render}, NULL},
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{},NULL}
   };
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Convert"),_("Generate source code"),NULL, "i", "c-stand-alone,completion-bash,v","i,c-stand-alone,completion-bash" }, /* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X,R,V",   "i,v",      "h,X,R,V,v" }, /* just show in documentation */
-    {"",0,0,0,0,0,0,0}
+    {"oiwg", 0,     _("Convert"),_("Generate source code"),NULL, "i", "c-stand-alone,completion-bash,v","i,c-stand-alone,completion-bash", NULL }, /* parsed and checked with -i option */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X,R,V",   "i,v",      "h,X,R,V,v", NULL }, /* just show in documentation */
+    {"",0,0,0,0,0,0,0,0}
   };
 
   /* tell about the tool */
