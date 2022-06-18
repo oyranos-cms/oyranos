@@ -520,6 +520,11 @@ int  oyjlWriteTestFile               ( const char        * filename,
 
   return written_n;
 }
+#ifdef OYJL_H
+#define oyjlBT_test { char * t = oyjlBT(0); fprintf( zout, "%s", t ); free(t); }
+#else
+#define oyjlBT_test fprintf(zout, "%s:%d\n", strrchr(__FILE__,'/')?strrchr(__FILE__,'/') + 1:__FILE__, __LINE__);
+#endif
 
 /** @brief Store test data
  *
@@ -553,6 +558,7 @@ int  oyjlWriteTestFile               ( const char        * filename,
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL) { \
     char * fns = (char*)malloc((hint?strlen(hint):0)+64); \
     sprintf( fns, "%s-%d-%d-%s-%s.%s", OYJL_TEST_NAME, oyjl_test_number, oy_test_current_sub_count, hint?hint:"", oyjlTestResultToString(oyjlTESTRESULT_SUCCESS,0), suffix ); \
+    oyjlBT_test \
     FILE * fp = fopen(fns, "r"); \
     if(fp && strcmp(suffix, suffix) == 0) { \
       char * diff = (char*)malloc((hint?strlen(hint)*2:0)+128); \
