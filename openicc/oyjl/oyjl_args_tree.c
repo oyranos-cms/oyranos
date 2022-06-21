@@ -1240,8 +1240,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStr_AddSpaced_( s, name,        OYJL_QUOTE|OYJL_TRANSLATE, 15 );
       oyjlStr_AddSpaced_( s, desc,        OYJL_QUOTE|OYJL_TRANSLATE, 30 );
       oyjlStr_AddSpaced_( s, help,        OYJL_QUOTE|OYJL_TRANSLATE, 6 );
-      oyjlStr_AddSpaced_( s, value_name,  OYJL_QUOTE|OYJL_TRANSLATE, 20 );
-      oyjlStr_Add( s,       "\n        " );
+      oyjlStr_AddSpaced_( s, value_name,  OYJL_QUOTE|OYJL_TRANSLATE|OYJL_LAST, 2 );
+      oyjlStr_Add( s,       ",\n        " );
       oyjlStr_AddSpaced_( s, value_type && value_type[0] ? value_type : "oyjlOPTIONTYPE_NONE",  0,                         25 );
       if(value_type && strcmp(value_type, "oyjlOPTIONTYPE_CHOICE") == 0)
       {
@@ -1295,7 +1295,6 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       {
         oyjlStr_AddSpaced_(s,"{0}",        0, 20 );
       }
-      fprintf(stderr, "variable_type: %s\n", variable_type );
       oyjlStr_AddSpaced_( s, variable_type,0,                         15 );
       if(variable_type && strcmp(variable_type, "oyjlNONE") == 0)
         oyjlStr_AddSpaced_( s, variable_name?variable_name:"{0}", 0,                 15 );
@@ -1434,9 +1433,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       else
         oyjlStr_Add( s, "  verbose = v;\n" );
     }
-    oyjlStr_Add( s, "  if( state & oyjlUI_STATE_EXPORT &&\n" );
-    oyjlStr_Add( s, "      export_var &&\n" );
-    oyjlStr_Add( s, "      strcmp(export_var,\"json+command\") != 0)\n" );
+    oyjlStr_Add( s, "  if( state & oyjlUI_STATE_EXPORT && !ui )\n" );
     oyjlStr_Add( s, "    goto clean_main;\n");
     oyjlStr_Add( s, "  if(state & oyjlUI_STATE_HELP)\n" );
     oyjlStr_Add( s, "  {\n" );
