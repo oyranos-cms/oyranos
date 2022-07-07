@@ -109,7 +109,7 @@ if(format_ && strchr(format_,'%') != NULL) { \
       error_action; \
     } \
     va_start( list, format_); \
-    len = vsnprintf( text, len+1, format_, list); \
+    len = vsnprintf( text_, len+1, format_, list); \
     va_end  ( list ); \
   } \
 } else if(format_) \
