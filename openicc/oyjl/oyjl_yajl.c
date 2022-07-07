@@ -1066,7 +1066,8 @@ oyjl_val   oyjlTreeParse2            ( const char        * text,
   oyjlPARSE_STATE_e state = oyjlPARSE_STATE_NONE;
   oyjlMSG_e msg_type = flags & OYJL_QUIET ? oyjlMSG_INFO : oyjlMSG_ERROR;
 
-  if(!(flags & OYJL_NO_MARKUP) && strstr(text, "\033[0") != NULL)
+
+  if(!(flags & OYJL_NO_MARKUP) && text && strstr(text, "\033[0") != NULL)
     text = oyjlTermColorToPlain(text, flags);
 
   if(text && strlen(text) > 4 && memcmp(text, "oiJS", 4) == 0)
