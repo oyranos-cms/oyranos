@@ -43,7 +43,7 @@ void oyjlLibRelease();
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
-#include "oyjl_i18n.h"
+#include "oyjl_i18n_internal.h"
 #include "oyjl_internal.h"
 #include "oyjl_tree_internal.h"
 
@@ -960,7 +960,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   { PRINT_SUB_INT( fail, len,
     "%s --help", prog );
   }
-  OYJL_TEST_WRITE_RESULT( t, len, prog, "txt" )
+  OYJL_TEST_WRITE_RESULT( t, size, prog, "txt" )
   if(verbose && len)
     fprintf( zout, "%s\n", t );
   if(t) {free(t);}
@@ -1120,8 +1120,12 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   /* done with options handling */
 
   if(verbose)
-    oyjlOptions_PrintHelp( ui->opts, ui, 1, "%s v%s - %s", argv[0],
+  {
+    FILE * f = NULL;
+    char * t = oyjlOptions_PrintHelp( ui->opts, ui, 1, &f, "%s v%s - %s", argv[0],
                             "1.0", "Test Tool for testing" );
+    fputs( t, f ); free(t); t = NULL;
+  }
   if(ui)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "ui created - no args" );
@@ -1140,8 +1144,8 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9928                      /*code_size*/,
-                           1080                      /*help_size*/,
+                           9784                      /*code_size*/,
+                           1081                      /*help_size*/,
                            2068                      /*man_size*/,
                            4065                      /*markdown_size*/,
                            7382                      /*json_size*/,
@@ -1236,8 +1240,8 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9644                      /*code_size*/,
-                            613                      /*help_size*/,
+                           9500                      /*code_size*/,
+                            614                      /*help_size*/,
                            1552                      /*man_size*/,
                            2521                      /*markdown_size*/,
                            5119                      /*json_size*/,
@@ -1328,9 +1332,10 @@ oyjlTESTRESULT_e progNAME(testArgs)()
 
   if(verbose)
   {
-    fprintf(stdout, "Help text -> stderr:\n" );
-    oyjlOptions_PrintHelp( ui->opts, ui, 1, "%s v%s - %s", argv[0],
+    char * t = oyjlOptions_PrintHelp( ui->opts, ui, 1, NULL, "%s v%s - %s", argv[0],
                             "1.0", "Test Tool for testing" );
+    fprintf(stdout, "Help text -> stderr:\n%s", t );
+    free(t); t = NULL;
   }
 
   text = oyjlUi_ExportToJson( ui, 0 );
@@ -1909,6 +1914,30 @@ oyjlTESTRESULT_e testIO ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlReadCommandF() %s %d", text, size );
   }
+  if(text) { free(text); text = NULL; }
+
+  oyjlTermColorInit( OYJL_RESET_COLORTERM | OYJL_FORCE_COLORTERM );
+  const char * t = oyjlTermColor( oyjlBOLD, "test" );
+  len = strlen(t);
+  if(t && len == 12)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlColorTerm() = %s %d", t, len );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlColorTerm() = %s %d", t, len );
+  }
+  fputs(t,stderr);
+  fputs(" plain text",stderr);
+  fputs("\n",stderr);
+  oyjlStringAdd( &text, 0,0, "%s", t );
+  fputs(text,stderr);
+  fputs(" plain text",stderr);
+  fputs("\n",stderr);
+  if(text) { free(text); text = NULL; }
+  size = oyjlWriteFile( "test.txt", t, strlen(t) );
+  fprintf( zout, "oyjlWriteFile(%s) = %d\n", t, size );
+  text = oyjlReadFile( "test.txt", &size );
+  fprintf( zout, "oyjlReadFile() = \"%s\" %d\n", text, size );
   if(text) { free(text); text = NULL; }
 
   if( verbose )

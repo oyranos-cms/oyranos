@@ -17,7 +17,7 @@
 #include "oyjl_tree_internal.h"
 #include "oyjl_macros.h"
 #include "oyjl_version.h"
-#include "oyjl_i18n.h"
+#include "oyjl_i18n_internal.h"
 extern char **environ;
 
 
@@ -26,33 +26,6 @@ extern char **environ;
 #endif
 
 #include <ctype.h>   /* isspace() */
-
-static oyjlOptionChoice_s * listInput ( oyjlOption_s * o OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
-{
-  oyjlOptionChoice_s * c = NULL;
-
-  int size = 0, i,n = 0;
-  char * result = oyjlReadCommandF( &size, "r", malloc, "ls -1 *.[J,j][S,s][O,o][N,n]" );
-  char ** list = oyjlStringSplit( result, '\n', &n, 0 );
-
-  if(list)
-  {
-    c = calloc(n+1, sizeof(oyjlOptionChoice_s));
-    if(c)
-    {
-      for(i = 0; i < n; ++i)
-      {
-        c[i].nick = strdup( list[i] );
-        c[i].name = strdup("");
-        c[i].description = strdup("");
-        c[i].help = strdup("");
-      }
-    }
-    free(list);
-  }
-
-  return c;
-}
 
 char *     oyjlReadFileToMem         ( const char        * filename,
                                        int               * size )
@@ -267,7 +240,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "t","type",          NULL,     _("Type"),     _("Get node type"),          NULL,NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&type}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_REPETITION, "i","input",         NULL,     _("Input"),    _("File or Stream"),_("A JSON file name or a input stream like \"stdin\"."),_("FILENAME"),
-        oyjlOPTIONTYPE_FUNCTION, {.getChoices = listInput}, oyjlSTRING, {.s=&i_filename}, NULL},
+        oyjlOPTIONTYPE_FUNCTION, {0},                oyjlSTRING,    {.s=&i_filename}, "file_names=*.[J,j][S,s][O,o][N,n];*.[X,x][M,m][L,l];*.[Y,y][A,a][M,m][L,l]"},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "x","xpath",         NULL,     _("XPath"),    _("Path specifier"),_("The path consists of slash '/' separated terms. Each term can be a key name or a square bracketed index. A empty term is used for a search inside a tree."),_("PATH"),
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&xpath}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "f","format",        NULL,     _("Format"),   _("Print Data Format"),       NULL, NULL,
@@ -324,9 +297,7 @@ int myMain( int argc, const char ** argv )
 #endif
                                        sections, oarray, groups, &state );
   //fprintf(stderr,"%s myMain() oyjlUi_s created.\n", oyjlPrintTime(OYJL_TIME|OYJL_BRACKETS, oyjlNO_MARK));
-  if( state & oyjlUI_STATE_EXPORT &&
-      export &&
-      strcmp(export,"json+command") != 0)
+  if( state & oyjlUI_STATE_EXPORT && !ui)
     goto clean_main;
   if(state & oyjlUI_STATE_HELP)
   {
@@ -353,7 +324,9 @@ int myMain( int argc, const char ** argv )
          * json_commands = NULL;
     oyjlStringAdd( &json_commands, malloc, free, "{\n  \"command_set\": \"%s\",", argv[0] );
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
+    free(json);
     puts( json_commands );
+    free(json_commands);
     goto clean_main;
   }
 
