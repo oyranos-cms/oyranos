@@ -6,6 +6,9 @@ IF(ENABLE_DOCU_${PROJECT_UP_NAME})
         ${CMAKE_SOURCE_DIR}/oyjl_core.c
         ${CMAKE_SOURCE_DIR}/oyjl_tree.c
         ${CMAKE_SOURCE_DIR}/oyjl_yajl.c
+        ${CFILES_OYJL_CORE_PUBLIC}
+        ${CFILES_OYJL_YAJL_PUBLIC}
+        ${CFILES_OYJL_EXTRA}
         ${CMAKE_CURRENT_SOURCE_DIR}/doxymentation.dox
         ${CMAKE_CURRENT_SOURCE_DIR}/md/*.md
      )
