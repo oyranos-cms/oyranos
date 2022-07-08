@@ -857,7 +857,11 @@ int myMain( int argc , const char** argv )
   }
 
   if(worked == 0)
-    oyjlOptions_PrintHelp( opts, ui, verbose, NULL );
+  {
+    FILE * f = NULL;
+    char * t = oyjlOptions_PrintHelp( ui->opts, ui, verbose, &f, NULL );
+    fputs( t, f ); free(t);
+  }
 
   if(oy_debug)
     fprintf(stderr, " %.06g %s\n", DBG_UHR_, oyPrintTime() );

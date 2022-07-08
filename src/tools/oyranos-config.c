@@ -604,7 +604,9 @@ int myMain( int argc , const char** argv )
     }
     else
     {
-      oyjlOptions_PrintHelp( ui->opts, ui, verbose, NULL );
+      FILE * f = NULL;
+      char * t = oyjlOptions_PrintHelp( ui->opts, ui, verbose, &f, NULL );
+      fputs( t, f ); free(t);
       goto clean_main;
     }
   }

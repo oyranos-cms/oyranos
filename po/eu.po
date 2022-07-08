@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-06-19 09:18+0200\n"
+"POT-Creation-Date: 2022-07-08 20:46+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: tools/oyranos-device.c:702 tools/oyranos-device.c:716
 #: tools/oyranos-device.c:743 tools/oyranos-device.c:784
 #: tools/oyranos-device.c:1165 tools/oyranos-device.c:1285
-#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:942
+#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:946
 #: tools/qcmsevents/qcmsevents.cpp:338
 #, c-format
 msgid "!!! ERROR"
@@ -398,7 +398,7 @@ msgstr "Abstraktua"
 msgid "Abstract Class"
 msgstr "Abstraktua"
 
-#: tools/oyranos-monitor-white-point.c:1048
+#: tools/oyranos-monitor-white-point.c:1052
 msgid "Accuracy"
 msgstr ""
 
@@ -431,7 +431,7 @@ msgstr "Matrize aktibozko monitorea"
 msgid "Actual mode"
 msgstr "Bereizketa"
 
-#: tools/oyranos-monitor-white-point.c:1310
+#: tools/oyranos-monitor-white-point.c:1314
 #, fuzzy
 msgid "Actual white point mode"
 msgstr "Puntu-zuria euskarria"
@@ -1413,7 +1413,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not open meta module API"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: tools/oyranos_profiles.c:484
+#: tools/oyranos_profiles.c:486
 #, fuzzy
 msgid "Could not open or invalid data: "
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -1424,7 +1424,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not open profile"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: tools/oyranos_profiles.c:445
+#: tools/oyranos_profiles.c:447
 #, fuzzy
 msgid "Could not open: "
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -1971,8 +1971,8 @@ msgid "Editing XYZ"
 msgstr "Kolore-espazioa"
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
-#: tools/oyranos-monitor-white-point.c:1311
-#: tools/oyranos-monitor-white-point.c:1403
+#: tools/oyranos-monitor-white-point.c:1315
+#: tools/oyranos-monitor-white-point.c:1407
 msgid "Effect"
 msgstr ""
 
@@ -2226,7 +2226,7 @@ msgstr "Pantaila:"
 #: tools/oyranos-convert.c:297 tools/oyranos-device.c:479
 #: tools/oyranos-monitor-white-point.c:603 tools/oyranos-policy.c:170
 #: tools/oyranos-profile.c:398 tools/oyranos_gamma.c:246
-#: tools/oyranos_profile_graph.c:560 tools/oyranos_profiles.c:178
+#: tools/oyranos_profile_graph.c:562 tools/oyranos_profiles.c:178
 #, c-format
 msgid "For more information read the man page:"
 msgstr ""
@@ -2304,7 +2304,7 @@ msgstr "Dokumentazioa"
 msgid "Generate a 3D LUT"
 msgstr "Abstraktua"
 
-#: tools/oyranos-monitor-white-point.c:1216
+#: tools/oyranos-monitor-white-point.c:1220
 msgid "Geographical Position"
 msgstr ""
 
@@ -2550,7 +2550,7 @@ msgstr "Fitxategi-izena"
 msgid "ICC profile id written"
 msgstr "ICC profilaren goiburua"
 
-#: tools/oyranos_profiles.c:414
+#: tools/oyranos_profiles.c:416
 #, fuzzy
 msgid "ICC profile search paths"
 msgstr "ICC profilaren goiburua"
@@ -2897,7 +2897,7 @@ msgstr ""
 msgid "Intent"
 msgstr "Helburua:"
 
-#: tools/oyranos_profiles.c:609
+#: tools/oyranos_profiles.c:615
 msgid "Internal Error"
 msgstr ""
 
@@ -3031,8 +3031,8 @@ msgid "Lab2XYZ"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:531
-#: tools/oyranos-monitor-white-point.c:1046
-#: tools/oyranos-monitor-white-point.c:1211
+#: tools/oyranos-monitor-white-point.c:1050
+#: tools/oyranos-monitor-white-point.c:1215
 #, fuzzy
 msgid "Latitude"
 msgstr "Bereizketa"
@@ -3275,7 +3275,7 @@ msgstr "Kargatu"
 msgid "Load Image File Object"
 msgstr "Iragazki pertsonalizatua"
 
-#: tools/oyranos-monitor-white-point.c:1195
+#: tools/oyranos-monitor-white-point.c:1199
 msgid "Local Time"
 msgstr ""
 
@@ -3299,8 +3299,8 @@ msgid "Long Help"
 msgstr "Modeloa:"
 
 #: tools/oyranos-monitor-white-point.c:533
-#: tools/oyranos-monitor-white-point.c:1047
-#: tools/oyranos-monitor-white-point.c:1211
+#: tools/oyranos-monitor-white-point.c:1051
+#: tools/oyranos-monitor-white-point.c:1215
 #, fuzzy
 msgid "Longitude"
 msgstr "Bereizketa"
@@ -3736,14 +3736,14 @@ msgstr ""
 msgid "New Profile Name"
 msgstr "Fitxategi-izena"
 
-#: tools/oyranos-monitor-white-point.c:1420
+#: tools/oyranos-monitor-white-point.c:1424
 #, fuzzy
 msgid "New color scheme"
 msgstr "Puntu-zuria euskarria"
 
-#: tools/oyranos-monitor-white-point.c:939
-#: tools/oyranos-monitor-white-point.c:942
-#: tools/oyranos-monitor-white-point.c:1402
+#: tools/oyranos-monitor-white-point.c:943
+#: tools/oyranos-monitor-white-point.c:946
+#: tools/oyranos-monitor-white-point.c:1406
 #, fuzzy
 msgid "New white point mode"
 msgstr "Puntu-zuria euskarria"
@@ -3865,7 +3865,7 @@ msgstr ""
 msgid "Observe config changes"
 msgstr "Sarrerako kanal kopurua"
 
-#: tools/oyranos-monitor-white-point.c:1014
+#: tools/oyranos-monitor-white-point.c:1018
 msgid ""
 "Obtained no geo location information. Is your device connected to the "
 "internet?"
@@ -4305,7 +4305,7 @@ msgstr "Matrize pasibozko monitorea"
 msgid "Path"
 msgstr "Pausarazi"
 
-#: tools/oyranos_profiles.c:587
+#: tools/oyranos_profiles.c:593
 #, fuzzy
 msgid "Path can not be written"
 msgstr "Profila ez da idatzi."
@@ -4556,7 +4556,7 @@ msgid "Profile Tags"
 msgstr "Fitxategi-izena"
 
 #: API_generated/oyProfile_s.c:867 API_generated/oyProfile_s.c:873
-#: tools/oyranos_profiles.c:575
+#: tools/oyranos_profiles.c:581
 #, fuzzy
 msgid "Profile already installed"
 msgstr "Profila kapsulatuta dago eta "
@@ -4581,7 +4581,7 @@ msgstr "Profilaren azalpena, hizkuntza anitzetan"
 msgid "Profile exists already"
 msgstr "Profila kapsulatuta dago eta "
 
-#: tools/oyranos_profiles.c:599
+#: tools/oyranos_profiles.c:605
 #, fuzzy
 msgid "Profile not useable"
 msgstr "Profila-kolorea"
@@ -5498,8 +5498,8 @@ msgstr "Izarra"
 msgid "StdObs2°"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1211
-#: tools/oyranos-monitor-white-point.c:1216
+#: tools/oyranos-monitor-white-point.c:1215
+#: tools/oyranos-monitor-white-point.c:1220
 #, fuzzy
 msgid "Sun Elevation"
 msgstr "Saturazioa"
@@ -5520,13 +5520,13 @@ msgid "Sun light effect"
 msgstr "Puntu-zuria euskarria"
 
 #: tools/oyranos-monitor-white-point.c:535
-#: tools/oyranos-monitor-white-point.c:1211
-#: tools/oyranos-monitor-white-point.c:1216
+#: tools/oyranos-monitor-white-point.c:1215
+#: tools/oyranos-monitor-white-point.c:1220
 #, fuzzy
 msgid "Sunrise"
 msgstr "Zein ICC profila?"
 
-#: tools/oyranos-monitor-white-point.c:1230
+#: tools/oyranos-monitor-white-point.c:1234
 msgid "Sunset"
 msgstr ""
 
@@ -6359,8 +6359,8 @@ msgid ""
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:536
-#: tools/oyranos-monitor-white-point.c:1211
-#: tools/oyranos-monitor-white-point.c:1216
+#: tools/oyranos-monitor-white-point.c:1215
+#: tools/oyranos-monitor-white-point.c:1220
 msgid "Twilight"
 msgstr ""
 
@@ -7163,7 +7163,7 @@ msgstr "Biratu inguruan"
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1421
+#: tools/oyranos-monitor-white-point.c:1425
 msgid "old/new"
 msgstr ""
 

@@ -304,7 +304,9 @@ int myMain( int argc, const char ** argv )
           if(!pattern)
           {
             fprintf(stderr, "%s %s\n", _("wrong argument to option:"), meta);
-            oyjlOptions_PrintHelp( opts, ui, verbose, NULL );
+            FILE * f = NULL;
+            char * t = oyjlOptions_PrintHelp( ui->opts, ui, verbose, &f, NULL );
+            fputs( t, f ); free(t);
             exit(1);
           }
           patterns = oyProfiles_New(0);
@@ -494,7 +496,11 @@ int myMain( int argc, const char ** argv )
       oyStringListRelease_(&names, count, oyDeAllocateFunc_);
   } else
     if(ui)
-    oyjlOptions_PrintHelp( opts, ui, verbose, NULL );
+    {
+    FILE * f = NULL;
+    char * t = oyjlOptions_PrintHelp( ui->opts, ui, verbose, &f, NULL );
+    fputs( t, f ); free(t);
+    }
 #undef flags
 
   clean_main:

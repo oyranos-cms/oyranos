@@ -549,9 +549,11 @@ int myMain( int argc, const char ** argv )
   {
     oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
                                                                "version" );
-    oyjlOptions_PrintHelp( ui->opts, ui, verbose, "%s v%s - %s", argv[0],
+    FILE * f = NULL;
+    char * t = oyjlOptions_PrintHelp( ui->opts, ui, verbose, &f, "%s v%s - %s", argv[0],
                               version && version->name ? version->name : "",
                               ui->description ? ui->description : "" );
+    fputs( t, f ); free(t);
     state = oyjlUI_STATE_HELP;
   }
 
