@@ -106,56 +106,56 @@ int myMain( int argc, const char ** argv )
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
-    {"oiwi", 0, "2", "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2} },
-    {"oiwi", 0, "4", "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4} },
-    {"oiwi", 0, "l", "list-profiles", NULL, _("List Profiles"), _("List Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT,{.i=&list_profiles} },
-    {"oiwi", 0, "f", "full-names", NULL, _("Full Names"), _("List profile full names"), _("Show path name and file name."), NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_profile_full_names} },
-    {"oiwi", 0, "e", "internal-names", NULL, _("Internal Name"), _("List profile internal names"), _("The text string comes from the 'desc' tag."), NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_profile_internal_names} },
-    {"oiwi", 0, "c", "color-space", NULL, _("Color Space Class"), _("Select Color Space profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&color_space} },
-    {"oiwi", 0, "d", "display", NULL, _("Display Class"), _("Select Monitor profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&display} },
-    {"oiwi", 0, "i", "input", NULL, _("Input Class"), _("Select Input profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&input} },
-    {"oiwi", 0, "o", "output", NULL, _("Output Class"), _("Select Output profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&output} },
-    {"oiwi", 0, "a", "abstract", NULL, _("Abstract Class"), _("Select Abstract profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&abstract} },
-    {"oiwi", 0, "k", "device-link", NULL, _("(Device) Link Class"), _("Select Device Link profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&device_link} },
-    {"oiwi", 0, "n", "named-color", NULL, _("Named Color Class"), _("Select Named Color profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&named_color} },
-    {"oiwi", 0, "p", "list-paths", NULL, _("List Paths"), _("List ICC Profile Paths"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_paths} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "I", "install", NULL, _("Install"), _("Install Profile"), NULL, _("ICC_PROFILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&install} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "t", "taxi", NULL, _("Taxi DB"), _("ICC Taxi Profile DataBase"), NULL, _("TAXI_ID"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&taxi_id} },
-    {"oiwi", 0, "g", "gui", NULL, _("GUI"), _("Use Graphical User Interface"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&show_gui} },
-    {"oiwi", 0, "u", "user", NULL, _("User"), _("User path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&user_path} },
-    {"oiwi", 0, "y", "oyranos", NULL, _("Oyranos"), _("Oyranos path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&oyranos_path} },
-    {"oiwi", 0, "s", "system", NULL, _("System"), _("System path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_path} },
-    {"oiwi", 0, "m", "machine", NULL, _("Machine"), _("Machine path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&machine_path} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "path", NULL, _("Path filter"), _("Show profiles containing a string as part of their full name"), NULL, _("PATH_SUB_STRING"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)path_choices, sizeof(path_choices), 0 )}, oyjlSTRING, {.s=&path} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "T", "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY;VALUE"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)effect_meta, sizeof(effect_meta), 0 )}, oyjlSTRING, {.s=&meta} },
-    {"oiwi", 0, "r", "no-repair", NULL, _("No repair"), _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair} },
-    {"oiwi", 0, "D", "duplicates", NULL, _("Duplicates"), _("Show identical multiple installed profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&duplicates} },
-    {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE, NULL,"test", NULL, _("Test"), _("No Action"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&test} },
+    {"oiwi", 0, "2", "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v2}, },
+    {"oiwi", 0, "4", "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&v4},NULL},
+    {"oiwi", 0, "l", "list-profiles", NULL, _("List Profiles"), _("List Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT,{.i=&list_profiles},NULL},
+    {"oiwi", 0, "f", "full-names", NULL, _("Full Names"), _("List profile full names"), _("Show path name and file name."), NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_profile_full_names},NULL},
+    {"oiwi", 0, "e", "internal-names", NULL, _("Internal Name"), _("List profile internal names"), _("The text string comes from the 'desc' tag."), NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_profile_internal_names},NULL},
+    {"oiwi", 0, "c", "color-space", NULL, _("Color Space Class"), _("Select Color Space profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&color_space},NULL},
+    {"oiwi", 0, "d", "display", NULL, _("Display Class"), _("Select Monitor profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&display},NULL},
+    {"oiwi", 0, "i", "input", NULL, _("Input Class"), _("Select Input profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&input},NULL},
+    {"oiwi", 0, "o", "output", NULL, _("Output Class"), _("Select Output profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&output},NULL},
+    {"oiwi", 0, "a", "abstract", NULL, _("Abstract Class"), _("Select Abstract profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&abstract},NULL},
+    {"oiwi", 0, "k", "device-link", NULL, _("(Device) Link Class"), _("Select Device Link profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&device_link},NULL},
+    {"oiwi", 0, "n", "named-color", NULL, _("Named Color Class"), _("Select Named Color profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&named_color},NULL},
+    {"oiwi", 0, "p", "list-paths", NULL, _("List Paths"), _("List ICC Profile Paths"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&list_paths},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "I", "install", NULL, _("Install"), _("Install Profile"), NULL, _("ICC_PROFILE"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&install},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "t", "taxi", NULL, _("Taxi DB"), _("ICC Taxi Profile DataBase"), NULL, _("TAXI_ID"), oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING, {.s=&taxi_id},NULL},
+    {"oiwi", 0, "g", "gui", NULL, _("GUI"), _("Use Graphical User Interface"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&show_gui},NULL},
+    {"oiwi", 0, "u", "user", NULL, _("User"), _("User path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&user_path},NULL},
+    {"oiwi", 0, "y", "oyranos", NULL, _("Oyranos"), _("Oyranos path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&oyranos_path},NULL},
+    {"oiwi", 0, "s", "system", NULL, _("System"), _("System path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_path},NULL},
+    {"oiwi", 0, "m", "machine", NULL, _("Machine"), _("Machine path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&machine_path},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "path", NULL, _("Path filter"), _("Show profiles containing a string as part of their full name"), NULL, _("PATH_SUB_STRING"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)path_choices, sizeof(path_choices), 0 )}, oyjlSTRING, {.s=&path},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "T", "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY;VALUE"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)effect_meta, sizeof(effect_meta), 0 )}, oyjlSTRING, {.s=&meta},NULL},
+    {"oiwi", 0, "r", "no-repair", NULL, _("No repair"), _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair},NULL},
+    {"oiwi", 0, "D", "duplicates", NULL, _("Duplicates"), _("Show identical multiple installed profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&duplicates},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE, NULL,"test", NULL, _("Test"), _("No Action"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&test},NULL},
 
     /* default options -h and -v */
-    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help",NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
-    {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0} },
-    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
-    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help",NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help},NULL},
+    {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0},NULL},
+    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose},NULL},
+    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version},NULL},
     /* default option template -X|--export */
-    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export},NULL},
     /* The --render option can be hidden and used only internally. */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render},NULL},
     /* blind options, useful only for man page generation */
-    {"oiwi", 0, "E", "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL} },
-    {"oiwi", 0, "A", "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL} },
-    {"oiwi", 0, "S", "man-see_as_well", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)see_as_well, sizeof(see_as_well), 0 )}, oyjlNONE, {.i=NULL} },
-    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+    {"oiwi", 0, "E", "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL},NULL},
+    {"oiwi", 0, "A", "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL},NULL},
+    {"oiwi", 0, "S", "man-see_as_well", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)see_as_well, sizeof(see_as_well), 0 )}, oyjlNONE, {.i=NULL},NULL},
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{},0}
   };
   opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     _("List"),          _("List of available ICC color profiles"), NULL,  "l",           "f,e,a,c,d,k,n,o,i,2,4,P,T,v", "l,f,e,a,c,d,k,n,o,i,2,4,P,T,D" },
-    {"oiwg", 0,     _("Paths"),         _("List search paths"),       NULL,               "p",           "u|s|y|m,v",   "p,u,s,y,m"},
-    {"oiwg", OYJL_GROUP_FLAG_EXPLICITE,_("Install"),_("Install Profile"), NULL,           "I|t",         "u|s|y|m,g,v", "I,t,u,s,y,m,g,test"},
-    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL,         "h|X|V",       "",            "h,X,V,R,v"},
-    {"",0,0,0,0,0,0,0}
+    {"oiwg", 0,     _("List"),          _("List of available ICC color profiles"), NULL,  "l",           "f,e,a,c,d,k,n,o,i,2,4,P,T,v", "l,f,e,a,c,d,k,n,o,i,2,4,P,T,D", NULL},
+    {"oiwg", 0,     _("Paths"),         _("List search paths"),       NULL,               "p",           "u|s|y|m,v",   "p,u,s,y,m",NULL},
+    {"oiwg", OYJL_GROUP_FLAG_EXPLICITE,_("Install"),_("Install Profile"), NULL,           "I|t",         "u|s|y|m,g,v", "I,t,u,s,y,m,g,test",NULL},
+    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL,         "h|X|V",       "",            "h,X,V,R,v",NULL},
+    {"",0,0,0,0,0,0,0,0}
   };
   opts->groups = (oyjlOptionGroup_s*)oyjlStringAppendN( NULL, (const char*)groups, sizeof(groups), 0);
 

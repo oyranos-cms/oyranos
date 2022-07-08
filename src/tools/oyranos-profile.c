@@ -71,7 +71,7 @@ extern char **environ;
 # endif
 #endif
 
-static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts )
+static oyjlOptionChoice_s * baseGetChoices ( oyjlOption_s * x OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts )
 {
   OYJL_GET_RESULT_STRING( opts, "@", NULL, profile_name );
   oyjlOptionChoice_s * cs = NULL;
@@ -120,7 +120,7 @@ static oyjlOptionChoice_s * listProfiles ( oyjlOption_s * x OYJL_UNUSED, int * y
   return cs;
 }
 
-oyjlOptionChoice_s * listTagPos                 ( oyjlOption_s      * o OYJL_UNUSED,
+oyjlOptionChoice_s * tag_posGetChoices          ( oyjlOption_s      * o OYJL_UNUSED,
                                                   int               * selected OYJL_UNUSED,
                                                   oyjlOptions_s     * opts )
 {
@@ -157,7 +157,7 @@ oyjlOptionChoice_s * listTagPos                 ( oyjlOption_s      * o OYJL_UNU
   return c;
 }
 
-oyjlOptionChoice_s * listTagName                ( oyjlOption_s      * o OYJL_UNUSED,
+oyjlOptionChoice_s * tag_nameGetChoices         ( oyjlOption_s      * o OYJL_UNUSED,
                                                   int               * selected OYJL_UNUSED,
                                                   oyjlOptions_s     * opts )
 {
@@ -199,7 +199,7 @@ oyjlOptionChoice_s * listTagName                ( oyjlOption_s      * o OYJL_UNU
   return c;
 }
 
-oyjlOptionChoice_s * listPpmcie                 ( oyjlOption_s      * o OYJL_UNUSED,
+oyjlOptionChoice_s * ppmcieGetChoices           ( oyjlOption_s      * o OYJL_UNUSED,
                                                   int               * selected OYJL_UNUSED,
                                                   oyjlOptions_s     * opts )
 {
@@ -313,71 +313,70 @@ int myMain( int argc, const char ** argv )
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,         
-        value_type,              values,             variable_type, variable_name */
-    {"oiwi", 0,                          NULL,"path",         NULL,     _("Path"),     _("show the full ICC profile path and file name"),NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&path}},
-    {"oiwi", 0,                          NULL,"short",        NULL,     _("Short"),    _("show only the ICC profiles file name"),NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&short_var}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "@", NULL,           NULL,     _("Input"),    _("ICC Profile"),             _("can  be  file  name,  internal  description  string,  ICC profile ID or wildcard \"rgb\", \"cmyk\", \"gray\", \"lab\", \"xyz\", \"web\", \"rgbi\", \"cmyki\", \"grayi\", \"labi\", \"xyzi\".  Wildcards ending with \"i\" are assumed profiles. \"web\" is a sRGB profile. The other wildcards are editing profiles."), "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE",
-        oyjlOPTIONTYPE_FUNCTION, {.getChoices = listProfiles}, oyjlSTRING,    {.s=&file_name}},
-    {"oiwi", 0,                          "l","list-tags",     NULL,     _("List Tags"),_("list contained tags additional to overview and header."),NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list_tags}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "p","tag-pos",       NULL,     _("Tag Pos"),  _("select tag"),              NULL, _("NUMBER"),        
-        oyjlOPTIONTYPE_FUNCTION, {.getChoices = listTagPos},   oyjlINT,       {.i=&tag_pos}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "n","tag-name",      NULL,     _("Tag Name"), _("select tag"),              NULL, _("NAME"),          
-        oyjlOPTIONTYPE_FUNCTION, {.getChoices = listTagName},  oyjlSTRING,    {.s=&tag_name}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "r","remove-tag",    NULL,     _("Remove Tag"),NULL,                         _("remove selected tag number."),_("NUMBER"),        
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlINT,       {.i=&remove_tag}},
-    {"oiwi", 0,                          "m","list-hash",     NULL,     _("List Hash"),_("show internal hash value."),NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list_hash}},
+        value_type,              values,             variable_type, variable_name, json */
+    {"oiwi", 0,                          NULL,"path",         NULL,     _("Path"),     _("show the full ICC profile path and file name"),NULL,NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&path},    NULL},
+    {"oiwi", 0,                          NULL,"short",        NULL,     _("Short"),    _("show only the ICC profiles file name"),NULL,NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&short_var},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "@",NULL,            NULL,     _("Input"),    _("ICC Profile"),             _("can  be  file  name,  internal  description  string,  ICC profile ID or wildcard \"rgb\", \"cmyk\", \"gray\", \"lab\", \"xyz\", \"web\", \"rgbi\", \"cmyki\", \"grayi\", \"labi\", \"xyzi\".  Wildcards ending with \"i\" are assumed profiles. \"web\" is a sRGB profile. The other wildcards are editing profiles."),_("l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE"),
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = baseGetChoices},oyjlSTRING,{.s=&file_name},NULL},
+    {"oiwi", 0,                          "l","list-tags",     NULL,     _("List Tags"),_("list contained tags additional to overview and header."),NULL,NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list_tags},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "p","tag-pos",       NULL,     _("Tag Pos"),  _("select tag"),              NULL, _("NUMBER"),
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = tag_posGetChoices},oyjlINT,{.i=&tag_pos},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "n","tag-name",      NULL,     _("Tag Name"), _("select tag"),              NULL, _("NAME"),
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = tag_nameGetChoices},oyjlSTRING,{.s=&tag_name},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "r","remove-tag",    NULL,     _("Remove Tag"),NULL,                        _("remove selected tag number."),_("NUMBER"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlINT,       {.i=&remove_tag},NULL},
+    {"oiwi", 0,                          "m","list-hash",     NULL,     _("List Hash"),_("show internal hash value."),NULL,NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&list_hash},NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "w","profile-name",  NULL,     _("Profile Name"),_("write profile with correct ID hash"),_("The -w option specifies the new internal and external profile name. PROFILENAME specifies the source profile."),_("ICC_FILE_NAME"),
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&profile_name}},
-    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,NULL,"ppmcie",    NULL,     _("Ppmcie"), _("show CIE*xy chromaticities, if available, for use with ppmcie."), NULL, _("FORMAT"),          
-        oyjlOPTIONTYPE_FUNCTION, {.getChoices = listPpmcie},  oyjlSTRING,    {.s=&ppmcie}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Dump Openicc Json"),NULL,                 _("write device informations to OpenICC JSON."),_("FILENAME"),      
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&output}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "c","device-class",  NULL,     _("Device Class"),_("use device class. Useful device classes are monitor, scanner, printer, camera."),NULL, _("CLASS"),         
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&device_class}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("use IccXML format"),       NULL, _("xml"),        
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&format}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "j","json-name",     NULL,     _("Json Name"),_("embed OpenICC JSON device from file"),NULL, _("FILENAME"),      
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&json_name}},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","name-space",    NULL,     _("Name Space"),_("add prefix"),              NULL, _("NAME"),          
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&name_space}},
-    {"oiwi", 0,                          "2","icc-version-2", NULL,     _("Icc Version 2"),_("Select ICC v2 Profiles"),  NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&icc_version_2}},
-    {"oiwi", 0,                          "4","icc-version-4", NULL,     _("Icc Version 4"),_("Select ICC v4 Profiles"),  NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&icc_version_4}},
-    {"oiwi", 0,                          "E","man-environment",NULL,    NULL,          NULL,                         NULL, NULL,               
-        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)E_choices, sizeof(E_choices), malloc ), 0}}, oyjlNONE,      {}},
-    {"oiwi", 0,                          "A","man-examples",  NULL,     NULL,          NULL,                         NULL, NULL,               
-        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {}},
-    {"oiwi", 0,                          "S","man-see_also",  NULL,     NULL,          NULL,                         NULL, NULL,               
-        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc ), 0}}, oyjlNONE,      {}},
-    /* default options -h and -v */
-    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help",NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
-    {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0} },
-    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
-    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&profile_name},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,NULL,"ppmcie",    NULL,     _("Ppmcie"),   _("show CIE*xy chromaticities, if available, for use with ppmcie."),NULL,_("FORMAT"),
+        oyjlOPTIONTYPE_FUNCTION, {.getChoices = ppmcieGetChoices},oyjlSTRING,{.s=&ppmcie},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Dump Openicc Json"),NULL,                 _("write device informations to OpenICC JSON."),_("FILENAME"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&output},  NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "c","device-class",  NULL,     _("Device Class"),_("use device class. Useful device classes are monitor, scanner, printer, camera."),NULL,_("CLASS"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&device_class},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("use IccXML format"),       NULL, _("xml"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&format},  NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "j","json-name",     NULL,     _("Json Name"),_("embed OpenICC JSON device from file"),NULL,_("FILENAME"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&json_name},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","name-space",    NULL,     _("Name Space"),_("add prefix"),             NULL, _("NAME"),
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&name_space},NULL},
+    {"oiwi", 0,                          "2","icc-version-2", NULL,     _("Icc Version 2"),_("Select ICC v2 Profiles"),NULL,NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&icc_version_2},NULL},
+    {"oiwi", 0,                          "4","icc-version-4", NULL,     _("Icc Version 4"),_("Select ICC v4 Profiles"),NULL,NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&icc_version_4},NULL},
+    {"oiwi", 0,                          "E","man-environment",NULL,    _("Man Environment"),NULL,                   NULL, NULL,
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)E_choices, sizeof(E_choices), malloc ), 0}},oyjlNONE,{0},NULL},
+    {"oiwi", 0,                          "A","man-examples",  NULL,     _("Man Examples"),NULL,                      NULL, NULL,
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}},oyjlNONE,{0},NULL},
+    {"oiwi", 0,                          "S","man-see_also",  NULL,     _("Man See_also"),NULL,                      NULL, NULL,
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc ), 0}},oyjlNONE,{0},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help",NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help}, NULL},
+    {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0}, NULL},
+    {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose}, NULL},
+    {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version}, NULL},
     /* default option template -X|--export */
-    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices = {NULL, 0}}, oyjlSTRING, {.s=&export} },
+    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices = {NULL, 0}}, oyjlSTRING, {.s=&export}, NULL},
     /* The --render option can be hidden and used only internally. */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
-    {"",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render}, NULL},
+    {"",0,0,NULL,NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_END, {0},oyjlNONE,{0},0}
   };
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
-  /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     NULL,               _("Show ICC Profile"),        NULL,               "@",           "path,short,v",  "@,path,short"},
-    {"oiwg", 0,     NULL,               _("List included ICC tags"),  NULL,               "l,@",         "p,n,v",         "l,p,n"},
-    {"oiwg", 0,     NULL,               _("Remove included ICC tag"), NULL,               "r,@",         NULL,          "r"},
-    {"oiwg", 0,     NULL,               _("Show Profile ID"),         NULL,               "m,@",         "w",           "m,w"},
-    {"oiwg", 0,     NULL,               _("Show CIE*xy chromaticities"),NULL,             "ppmcie,@",    "v",           "ppmcie"},
-    {"oiwg", 0,     NULL,               _("Dump Device Infos to OpenICC device JSON"),NULL,"o,@",        "c,f",         "o,c,f"},
-    {"oiwg", 0,     NULL,               _("Write to ICC profile"),    NULL,               "w,@",         "j|m,s,2,4",   "w,j|m,s,2,4"},
-    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, NULL, _("General options"),NULL,               "h|X|V|R",     "v",           "h,X,V,R,v"},
-    {"",0,0,0,0,0,0,0}
+  /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail,        json */
+    {"oiwg", 0,     NULL,               _("Show ICC Profile"),        NULL,               "@",           "path,short,v","@,path,short",NULL},
+    {"oiwg", 0,     NULL,               _("List included ICC tags"),  NULL,               "l,@",         "p,n,v",       "l,p,n",       NULL},
+    {"oiwg", 0,     NULL,               _("Remove included ICC tag"), NULL,               "r,@",         NULL,          "r",           NULL},
+    {"oiwg", 0,     NULL,               _("Show Profile ID"),         NULL,               "m,@",         "w",           "m,w",         NULL},
+    {"oiwg", 0,     NULL,               _("Show CIE*xy chromaticities"),NULL,             "ppmcie,@",    "v",           "ppmcie",      NULL},
+    {"oiwg", 0,     NULL,               _("Dump Device Infos to OpenICC device JSON"),NULL,"o,@",        "c,f",         "o,c,f",       NULL},
+    {"oiwg", 0,     NULL,               _("Write to ICC profile"),    NULL,               "w,@",         "j|m,s,2,4",   "w,j|m,s,2,4", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS,NULL,_("General options"),  NULL,               "h|X|V|R",     "v",           "h,X,V,R,v",   NULL},
+    {"",0,0,0,0,0,0,0,0}
   };
 
   oyjlUiHeaderSection_s * sections = oyUiInfo(_("The oyranos-profile programm shows informations about a ICC profile and allows some modifications."),
@@ -466,7 +465,7 @@ int myMain( int argc, const char ** argv )
         dump_chromaticities = 1;
       else
       {
-        oyjlOptionChoice_s * choices = listPpmcie( NULL, NULL, ui->opts );
+        oyjlOptionChoice_s * choices = ppmcieGetChoices( NULL, NULL, ui->opts );
         int i, n = oyjlOptionChoice_Count( choices );
         if(strcmp(ppmcie,"oyjl-list") == 0)
         {

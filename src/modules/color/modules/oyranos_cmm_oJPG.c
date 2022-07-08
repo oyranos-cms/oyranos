@@ -845,7 +845,7 @@ oyCMMapi_s * ojpgApi7CmmCreateWrite  ( const char        * format,
   
   const char * properties[] =
   {
-    "file=write",    /* file read|write */
+    "file=write",   /* file read|write */
     "image=pixel",  /* image type, pixel/vector/font */
     "layers=1",     /* layer count, one for plain images */
     "icc=1",        /* image type ICC profile support */

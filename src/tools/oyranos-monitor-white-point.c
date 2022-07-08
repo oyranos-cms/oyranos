@@ -511,63 +511,63 @@ int myMain( int argc , const char** argv )
                                     {NULL,NULL,NULL,NULL}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
-    {"oiwi", 0, "d", "daemon", NULL, _("daemon"), _("Control user daemon"), NULL, "0|1|2", oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)d_choices, sizeof(d_choices), 0 )}, oyjlINT, {.i=&daemon} },
-    {"oiwi", 0, "m", "modes", NULL, _("Modes"), _("Show white point modes"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&show} },
-    {"oiwi", 0, "w", "white-point", NULL, _("Mode"), _("Set white point mode"), NULL, "0|1|2|3|4|5|6|7", oyjlOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, oyjlINT,{.i=&wtpt_mode} },
-    {"oiwi", 0, "n", "night-white-point", NULL, _("Night Mode"), _("Set night time mode"), _("A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (-n=1) and Temperature to 3000 (-a=3000)."), "0|1|2|3|4|5|6|7", oyjlOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, oyjlINT, {.i=&wtpt_mode_night} },
-    {"oiwi", 0, "s", "sun-white-point", NULL, _("Day Mode"), _("Set day time mode"), NULL, "0|1|2|3|4|5|6|7", oyjlOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, oyjlINT, {.i=&wtpt_mode_sunlight} },
+    {"oiwi", 0, "d", "daemon", NULL, _("daemon"), _("Control user daemon"), NULL, "0|1|2", oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)d_choices, sizeof(d_choices), 0 )}, oyjlINT, {.i=&daemon},NULL},
+    {"oiwi", 0, "m", "modes", NULL, _("Modes"), _("Show white point modes"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&show},NULL},
+    {"oiwi", 0, "w", "white-point", NULL, _("Mode"), _("Set white point mode"), NULL, "0|1|2|3|4|5|6|7", oyjlOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, oyjlINT,{.i=&wtpt_mode},NULL},
+    {"oiwi", 0, "n", "night-white-point", NULL, _("Night Mode"), _("Set night time mode"), _("A white point temperature of around 4000K and lower allows to get easier into sleep. Enable by setting this option to Automatic (-n=1) and Temperature to 3000 (-a=3000)."), "0|1|2|3|4|5|6|7", oyjlOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, oyjlINT, {.i=&wtpt_mode_night},NULL},
+    {"oiwi", 0, "s", "sun-white-point", NULL, _("Day Mode"), _("Set day time mode"), NULL, "0|1|2|3|4|5|6|7", oyjlOPTIONTYPE_FUNCTION, {.getChoices = getWhitePointChoices}, oyjlINT, {.i=&wtpt_mode_sunlight},NULL},
     {"oiwi", 0, "a", "automatic", NULL, _("Temperature"), _("A value from 2700 till 8000 Kelvin is expected to show no artefacts"), NULL,
       /*  The white point profiles will be generated in many different shades, which will explode
        *  conversion cache. Thus we limit the possible shades to 100 kelvin steps, which in turn
        *  limits to around 100 profiles per monitor white point. */
-      _("KELVIN"), oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 1100, .dbl.end = 10100, .dbl.tick = 100, .dbl.d = temperature_man}, oyjlDOUBLE, {.d=&temperature} },
-    {"oiwi", 0, "g", "night-effect", NULL, _("Night effect"), _("Set night time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&night_effect} },
-    {"oiwi", 0, "e", "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&sunlight_effect} },
+      _("KELVIN"), oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 1100, .dbl.end = 10100, .dbl.tick = 100, .dbl.d = temperature_man}, oyjlDOUBLE, {.d=&temperature},NULL},
+    {"oiwi", 0, "g", "night-effect", NULL, _("Night effect"), _("Set night time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&night_effect},NULL},
+    {"oiwi", 0, "e", "sunlight-effect", NULL, _("Sun light effect"), _("Set day time effect"), _("A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curves only and is marked meta:EFFECT_linear=yes ."), _("ICC_PROFILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getLinearEffectProfileChoices}, oyjlSTRING, {.s=&sunlight_effect},NULL},
     {"oiwi", 0, "b", "night-backlight", NULL, _("Night Backlight"), _("Set Nightly Backlight"), _("The option needs xbacklight installed and supporting your device for dimming the monitor lamp."), _("PERCENT"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = 0, .dbl.end = 100, .dbl.tick = 1, .dbl.d = man?4:getDoubleFromDB( OY_DISPLAY_STD "/display_backlight_night", 0 )}, oyjlDOUBLE, {.d=&night_backlight} },
-    {"oiwi", 0, NULL, "sunlight-color-scheme", NULL, _("Sun light color scheme"), _("Set day time typical brighter color scheme"), _("Use this to switch color scheme day/night dependent."), _("STRING"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getColorSchemeChoices}, oyjlSTRING, {.s=&sunlight_color_scheme} },
-    {"oiwi", 0, NULL, "night-color-scheme", NULL, _("Night color scheme"), _("Set nightly typical darker color scheme"), _("Use this to switch color scheme day/night dependent."), _("STRING"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getColorSchemeChoices}, oyjlSTRING, {.s=&night_color_scheme} },
-    {"oiwi", 0, "l", "location", NULL, _("location"), _("Detect location by IP adress"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&location} },
+      {.dbl.start = 0, .dbl.end = 100, .dbl.tick = 1, .dbl.d = man?4:getDoubleFromDB( OY_DISPLAY_STD "/display_backlight_night", 0 )}, oyjlDOUBLE, {.d=&night_backlight},NULL},
+    {"oiwi", 0, NULL, "sunlight-color-scheme", NULL, _("Sun light color scheme"), _("Set day time typical brighter color scheme"), _("Use this to switch color scheme day/night dependent."), _("STRING"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getColorSchemeChoices}, oyjlSTRING, {.s=&sunlight_color_scheme},NULL},
+    {"oiwi", 0, NULL, "night-color-scheme", NULL, _("Night color scheme"), _("Set nightly typical darker color scheme"), _("Use this to switch color scheme day/night dependent."), _("STRING"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getColorSchemeChoices}, oyjlSTRING, {.s=&night_color_scheme},NULL},
+    {"oiwi", 0, "l", "location", NULL, _("location"), _("Detect location by IP adress"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&location},NULL},
     {"oiwi", 0, "i", "latitude", NULL, _("Latitude"), _("Set Latitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = -90, .dbl.end = 90, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/latitude", 0 )}, oyjlDOUBLE, {.d=&latitude} },
+      {.dbl.start = -90, .dbl.end = 90, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/latitude", 0 )}, oyjlDOUBLE, {.d=&latitude},NULL},
     {"oiwi", 0, "o", "longitude", NULL, _("Longitude"), _("Set Longitude"), NULL, _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )}, oyjlDOUBLE, {.d=&longitude} },
-    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "r", "sunrise", NULL, _("Sunrise"), _("Show local time, used geographical location, twilight height angles, sun rise and sun set times"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), 0 )}, oyjlSTRING, {.s=&sunrise} },
+      {.dbl.start = -180, .dbl.end = 180, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/longitude", 0 )}, oyjlDOUBLE, {.d=&longitude},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "r", "sunrise", NULL, _("Sunrise"), _("Show local time, used geographical location, twilight height angles, sun rise and sun set times"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), 0 )}, oyjlSTRING, {.s=&sunrise},NULL},
     {"oiwi", 0, "t", "twilight", NULL, _("Twilight"), _("Set Twilight angle"), _("0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical"), _("ANGLE_IN_DEGREE"), oyjlOPTIONTYPE_DOUBLE,
-      {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )}, oyjlDOUBLE, {.d=&twilight} },
-    {"oiwi", 0, "z", "system-wide", NULL, _("System Wide"), _("System wide DB setting"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_wide} },
+      {.dbl.start = 18, .dbl.end = -18, .dbl.tick = 1, .dbl.d = man?0.0:getDoubleFromDB( OY_DISPLAY_STD "/twilight", 0 )}, oyjlDOUBLE, {.d=&twilight},NULL},
+    {"oiwi", 0, "z", "system-wide", NULL, _("System Wide"), _("System wide DB setting"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_wide},NULL},
     /* default option template -X|--export */
-    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export} },
+    {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export},NULL},
     /* The --render option can be hidden and used only internally. */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render} },
-    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help",NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&help} },
-    {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0} },
-    {"oiwi", 0, "v", "verbose", NULL, _("Verbose"), _("Verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
-    {"oiwi", 0, "V", "version", NULL, _("Version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_IMMEDIATE, "y", "test", NULL, _("No Action"), NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&dry} },
-    {"oiwi", 0, "u", "hour", NULL, "hour", "hour", NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 0, .dbl.end = 48, .dbl.tick = 1, .dbl.d = 0}, oyjlDOUBLE, {.d=&hour_} },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE, "c", "check", NULL, "check", "check", NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&check} },
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "R", "render", NULL, NULL,  NULL,  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h", "help",NULL,NULL,NULL,NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&help},NULL},
+    {"oiwi", 0, NULL,"synopsis",NULL, NULL,         NULL,         NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlNONE, {0},NULL},
+    {"oiwi", 0, "v", "verbose", NULL, _("Verbose"), _("Verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose},NULL},
+    {"oiwi", 0, "V", "version", NULL, _("Version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_IMMEDIATE, "y", "test", NULL, _("No Action"), NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&dry},NULL},
+    {"oiwi", 0, "u", "hour", NULL, "hour", "hour", NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {.dbl.start = 0, .dbl.end = 48, .dbl.tick = 1, .dbl.d = 0}, oyjlDOUBLE, {.d=&hour_},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE, "c", "check", NULL, "check", "check", NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&check},NULL},
     /* blind options, useful only for man page generation */
-    {"oiwi", 0, "E", "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL} },
-    {"oiwi", 0, "A", "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL} },
-    {"oiwi", 0, "S", "man-see_as_well", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)see_as_well, sizeof(see_as_well), 0 )}, oyjlNONE, {.i=NULL} },
-    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+    {"oiwi", 0, "E", "man-environment_variables", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)env_vars, sizeof(env_vars), 0 )}, oyjlNONE, {.i=NULL},NULL},
+    {"oiwi", 0, "A", "man-examples", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)examples, sizeof(examples), 0 )}, oyjlNONE, {.i=NULL},NULL},
+    {"oiwi", 0, "S", "man-see_as_well", NULL, "", "", NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)see_as_well, sizeof(see_as_well), 0 )}, oyjlNONE, {.i=NULL},NULL},
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{},0}
   };
   opts->array = (oyjlOption_s*)oyjlStringAppendN( NULL, (const char*)oarray, sizeof(oarray), 0 );
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
-    {"oiwg", 0, _("Mode"), _("Actual mode"), NULL, "w,a", "z,v", "w,a,y" },
+    {"oiwg", 0, _("Mode"), _("Actual mode"), NULL, "w,a", "z,v", "w,a,y",NULL},
 #if defined( XCM_HAVE_X11 )
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g,b,night-color-scheme", "z,v,y", "n,g,b,night-color-scheme" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g,b,night-color-scheme", "z,v,y", "n,g,b,night-color-scheme",NULL},
 #else
-    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g,night-color-scheme", "z,v,y", "n,g,night-color-scheme" },
+    {"oiwg", 0, _("Night Mode"), _("Nightly appearance"), _("The Night white point mode shall allow to reduce influence of blue light during night time. A white point temperature of around 4000K and lower allows to get easier into sleep and is recommended along with warm room illumination in evening and night times."), "n,g,night-color-scheme", "z,v,y", "n,g,night-color-scheme",NULL},
 #endif
-    {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s,e,sunlight-color-scheme", "z,v,y", "s,e,sunlight-color-scheme" },
-    {"oiwg", OYJL_GROUP_FLAG_EXPLICITE, _("Location"), _("Location and Twilight"), NULL, "l|i,o", "t,z,v,y", "l,i,o,t"},
-    {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d" },
-    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL, "m|r|X|h|V|R", "v", "h,m,r,X,R,V,z,y,v" },
-    {"",0,0,0,0,0,0,0}
+    {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s,e,sunlight-color-scheme", "z,v,y", "s,e,sunlight-color-scheme",NULL},
+    {"oiwg", OYJL_GROUP_FLAG_EXPLICITE, _("Location"), _("Location and Twilight"), NULL, "l|i,o", "t,z,v,y", "l,i,o,t",NULL},
+    {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d",NULL},
+    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL, "m|r|X|h|V|R", "v", "h,m,r,X,R,V,z,y,v",NULL},
+    {"",0,0,0,0,0,0,0,0}
   };
   double night = isNight(0);
   oyjlOptionGroup_s ng;
