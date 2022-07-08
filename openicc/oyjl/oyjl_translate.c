@@ -20,7 +20,7 @@
 #include "oyjl_version.h"
 #include "oyjl.h"
 #include "oyjl_macros.h"
-#include "oyjl_i18n.h"
+#include "oyjl_i18n_internal.h"
 #include "oyjl_tree_internal.h"
 
 oyjl_val oyjlTreeParsePo             ( const char        * text,

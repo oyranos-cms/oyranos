@@ -18,7 +18,7 @@
 #define OYJL_TREE_INTERNAL_H 1
 
 #include "oyjl.h"
-#include "oyjl_i18n.h"
+#include "oyjl_i18n_internal.h"
 
 #ifdef __cplusplus
 extern "C" {

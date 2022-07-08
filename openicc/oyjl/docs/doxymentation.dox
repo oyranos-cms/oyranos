@@ -27,8 +27,8 @@
 
     @section api API Documentation
     The API of the @ref oyjl is declared in the oyjl.h header file.
-    - @ref oyjl_tree - JSON modeled C data structure with data I/O API: *libOyjlCore*, all parsers (JSON,YAML,XML) reside in *libOyjl*
-    - @ref oyjl_core - Core API: *libOyjlCore*
+    - @ref oyjl_tree - JSON modeled C data structure with writers: *libOyjlCore*, all parsers (JSON,YAML,XML) reside in *libOyjl*
+    - @ref oyjl_core - Core API: string, internationalisation, terminal colors and file i/o in *libOyjlCore*
     - @ref oyjl_test - Test API: header only implementation in *oyjl_test.h* and *oyjl_test_main.h*
     - @ref oyjl_args - Argument Handling API: link to *libOyjlCore* or with slightly reduced functionality in the stand alone *oyjl_args.c* version
 
@@ -97,7 +97,10 @@
  *  (G)UI's and further processing. oyjlUi_ToMan() creates unix manual pages.
  *  oyjlUi_ToMarkdown() lets you produce a man page for your web page.
  *  Generation of other formats is simple. The implementation in *oyjl_args.c*
- *  can simply be included or use oyjl.h and link to *libOyjlCore*.
+ *  can simply be included or use oyjl.h and link to *libOyjlCore*. The
+ *  OyjlArgsBase subset, as declared in oyjl_args_base.h, can be activated by
+ *  the OYJL_ARGS_BASE macro for *oyjl_args.c* inclusion or by linking with
+ *  *libOyjlArgsBase*.
  *  Translations are supported by *oyjl-tanslate* tool through gettext.
  *
  *  Command line options support single letter in oyjlOption_s::o and

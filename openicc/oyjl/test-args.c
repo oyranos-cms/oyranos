@@ -443,7 +443,7 @@ oyjlTESTRESULT_e testArgs()
 
   const char * fn = "test-args-0-help.txt"; remove(fn);
   oyjl_help_zout = fopen(fn, "w");
-  oyjlOptions_PrintHelp( ui->opts, ui, 1, "%s v%s - %s", argv[0],
+  oyjlOptions_PrintHelp( ui->opts, ui, 1, NULL, "%s v%s - %s", argv[0],
                             "1.0", "Test Tool for testing" );
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   int size = 0;
@@ -955,8 +955,10 @@ oyjlTESTRESULT_e testArgs()
   if(verbose)
   {
     fprintf(stdout, "Help text -> stderr:\n" );
-    oyjlOptions_PrintHelp( ui->opts, ui, 1, "%s v%s - %s", argv[0],
+    FILE * file = NULL;
+    char * t = oyjlOptions_PrintHelp( ui->opts, ui, 1, &file, "%s v%s - %s", argv[0],
                             "1.0", "Test Tool for testing" );
+    fputs( t, file ); free(t);
   }
 
   oyjlUi_ReleaseArgs( &ui);

@@ -16,7 +16,7 @@
 #include <stdlib.h> // free()
 #include "oyjl.h"
 #include "oyjl_macros.h"
-#include "oyjl_i18n.h"
+#include "oyjl_i18n_internal.h"
 
 void oyjlArgsCliGroupPrintSection_   ( oyjl_val            g,
                                        int                 level )

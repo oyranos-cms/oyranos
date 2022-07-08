@@ -175,26 +175,26 @@ int myMain( int argc, const char ** argv )
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", 0,     "#", "",        NULL, _("status"),  _("Show Status"),    NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &show_status} },
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "@", "",       NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlINT, {.i = &file_count} },
-    {"oiwi", 0/*OYJL_OPTION_FLAG_EDITABLE*/,     "i", "input",  NULL, _("input"),   _("Set Input"), _("File"), _("FILENAME"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getFileChoices}, oyjlSTRING, {.s=&file} },
-    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output} },
+    {"oiwi", 0,     "#", "",        NULL, _("status"),  _("Show Status"),    NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &show_status}, NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "@", "",       NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)i_choices, sizeof(i_choices), malloc )}, oyjlINT, {.i = &file_count}, NULL},
+    {"oiwi", 0/*OYJL_OPTION_FLAG_EDITABLE*/,     "i", "input",  NULL, _("input"),   _("Set Input"), _("File"), _("FILENAME"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getFileChoices}, oyjlSTRING, {.s=&file}, NULL},
+    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output}, NULL},
     /* The --render option can be hidden and used only internally. */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "R", "render", NULL, _("render"),  _("Render"),         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render} },
-    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           _("Print help for command line style interface"), NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &help} },
-    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &verbose} },
-    {"oiwi", 0,     "e", "error",   NULL, _("error"),   NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &error} },
-    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {0},0,{0}}
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "R", "render", NULL, _("render"),  _("Render"),         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render}, NULL},
+    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           _("Print help for command line style interface"), NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &help}, NULL},
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &verbose}, NULL},
+    {"oiwi", 0,     "e", "error",   NULL, _("error"),   NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &error}, NULL},
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {0},0,{0},0}
   };
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups_no_args[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o" }, /* accepted even if none of the mandatory options is set */
-    {"oiwg", 0,     _("Mode2"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o" },/* accepted if anonymous arguments are set */
-    {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "R,o,v",  "i,o" },/* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,e",     "v",      "h,v,e" },/* -v appears in documentation */
-    {"",0,0,0,0,0,0,0}
+    {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o", NULL}, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode2"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o", NULL},/* accepted if anonymous arguments are set */
+    {"oiwg", 0,     _("Mode3"),_("Actual mode"),     NULL, "i",       "R,o,v",  "i,o", NULL},/* parsed and checked with -i option */
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,e",     "v",      "h,v,e", NULL},/* -v appears in documentation */
+    {"",0,0,0,0,0,0,0,0}
   };
 
   /* tell about the tool */

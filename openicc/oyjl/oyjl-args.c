@@ -18,7 +18,7 @@ extern char **environ;
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
-#include "oyjl_i18n.h"
+#include "oyjl_i18n_internal.h"
 
 #include "oyjl_tree_internal.h"
 

@@ -484,7 +484,7 @@ char *     oyjlJsonEscape            ( const char        * in,
   if(!in) return NULL;
 
   tmp = oyjlStr_New(10,0,0);
-  oyjlStr_AppendN( tmp, t, strlen(t) );
+  oyjlStr_Push( tmp, t );
   if(flags & OYJL_REVERSE)
   {
     if(flags & OYJL_NO_INDEX || flags & OYJL_KEY)
@@ -547,7 +547,7 @@ char *     oyjlJsonEscape            ( const char        * in,
 
 /** @brief   convert a C tree into a text string
  *
- *  @param[in]     text                input
+ *  @param[in]     v                   input
  *  @param[in]     flags               support
  *                                     - ::OYJL_JSON for JSON
  *                                     - ::OYJL_XML for Xml
@@ -599,24 +599,24 @@ int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
   {
     case oyjl_t_null:
          t = oyjlTermColor(oyjlUNDERLINE,"null");
-         oyjlStr_AppendN (json, t, strlen(t)); break;
+         oyjlStr_Push (json, t); break;
          break;
     case oyjl_t_number:
          t = oyjlTermColor(oyjlBLUE, v->u.number.r);
-         oyjlStr_AppendN (json, t, strlen(t));
+         oyjlStr_Push (json, t);
          break;
     case oyjl_t_true:
          t = oyjlTermColor(oyjlGREEN,"true");
-         oyjlStr_AppendN (json, t, strlen(t)); break;
+         oyjlStr_Push (json, t); break;
     case oyjl_t_false:
          t = oyjlTermColor(oyjlRED,"false");
-         oyjlStr_AppendN (json, t, strlen(t)); break;
+         oyjlStr_Push (json, t); break;
     case oyjl_t_string:
          {
           char * escaped = oyjlJsonEscape( v->u.string, OYJL_QUOTE | OYJL_NO_BACKSLASH );
           t = oyjlTermColor(oyjlBOLD,escaped);
           oyjlStr_AppendN( json, "\"", 1 );
-          oyjlStr_AppendN( json, t, strlen(t) );
+          oyjlStr_Push( json, t );
           oyjlStr_AppendN( json, "\"", 1 );
           free( escaped );
          }
@@ -663,7 +663,7 @@ int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
              {
               char * escaped = oyjlJsonEscape( v->u.object.keys[i], OYJL_QUOTE | OYJL_NO_BACKSLASH );
               const char * t = oyjlTermColor(oyjlITALIC,escaped);
-              oyjlStr_AppendN( json, t, strlen(t) );
+              oyjlStr_Push( json, t );
               free( escaped );
              }
              oyjlStr_AppendN( json, "\": ", 3 );
@@ -904,18 +904,18 @@ static void oyjlTreeToXml2_(oyjl_val v, const char * parent_key, int * level, oy
          break;
     case oyjl_t_number:
          t = oyjlTermColor(oyjlBLUE, v->u.number.r);
-         oyjlStr_AppendN (text, t, strlen(t));
+         oyjlStr_Push (text, t);
          break;
     case oyjl_t_true:
          t = oyjlTermColor(oyjlGREEN,"true");
-         oyjlStr_AppendN (text, t, strlen(t)); break;
+         oyjlStr_Push (text, t); break;
     case oyjl_t_false:
          t = oyjlTermColor(oyjlRED,"false");
-         oyjlStr_AppendN (text, t, strlen(t)); break;
+         oyjlStr_Push (text, t); break;
     case oyjl_t_string:
          {
           const char * t = oyjlTermColor(oyjlBOLD,v->u.string);
-          oyjlStr_AppendN (text, t, strlen(t));
+          oyjlStr_Push (text, t);
          }
          break;
     case oyjl_t_array:
@@ -2120,6 +2120,9 @@ const char*oyjlTreeGetStringF2_      ( oyjl_val            v,
                                        const char        * format,
                                                            ... );
 
+/** \addtogroup oyjl_i18n
+ *  @{ *//* oyjl_i18n */
+
 char *         oyjlTranslate2_       ( const char        * loc,
                                        oyjl_val            catalog,
                                        int                 start,
@@ -2558,7 +2561,7 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
 
 /** @brief   create tree from serialised data block
  *
- *  @param         v                   serialised tree
+ *  @param[in]     v                   serialised tree
  *  @param[in]     flags               unused:
  *  @param[in]     size                the size of the data block v - not used
  *  @return                            serialised tree
@@ -2571,7 +2574,7 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
  */
 oyjl_val   oyjlTreeDeSerialise       ( oyjl_val            v,
                                        int                 flags OYJL_UNUSED,
-                                       int                 size OYJL_UNUSED )
+                                       int                 size  OYJL_UNUSED )
 {
   oyjl_val root = NULL;
 
@@ -3493,5 +3496,6 @@ int            oyjlTr_Unset          ( const char        * domain )
   return state;
 }
 
+/** @} *//* oyjl_i18n */
 /** @} *//* oyjl */
 
