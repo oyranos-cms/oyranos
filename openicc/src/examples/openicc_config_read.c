@@ -59,21 +59,21 @@ int main(int argc, char ** argv)
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
-    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( i_choices, sizeof(i_choices) )}, oyjlSTRING, {.s = &file} },
-    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( o_choices, sizeof(o_choices) )}, oyjlINT, {.i = &output} },
-    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE,   {}, oyjlINT, {.i = &help} },
-    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE,   {}, oyjlINT, {.i = &verbose} },
+    {"oiwi", 0,     "i", "input",   NULL, _("input"),   _("Set Input"),      NULL, _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( i_choices, sizeof(i_choices) )}, oyjlSTRING, {.s = &file}, NULL },
+    {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = openiccMemDup( o_choices, sizeof(o_choices) )}, oyjlINT, {.i = &output}, NULL },
+    {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           NULL, NULL,          oyjlOPTIONTYPE_NONE,   {}, oyjlINT, {.i = &help}, NULL },
+    {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE,   {}, oyjlINT, {.i = &verbose}, NULL },
     /* default option template -X|--export */
-    {"oiwi", 0,     "X", "export",  NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING,{.s=&export} },
-    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{}}
+    {"oiwi", 0,     "X", "export",  NULL, NULL,         NULL,                NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {}, oyjlSTRING,{.s=&export}, NULL },
+    {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{},NULL}
   };
 
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
-    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "o,v",    "i,o" },
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "X,v,h" },
-    {"",0,0,0,0,0,0,0}
+    {"oiwg", 0,     _("Mode"), _("Actual mode"),     NULL, "i",       "o,v",    "i,o", NULL },
+    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "",        "",       "X,v,h", NULL },
+    {"",0,0,0,0,0,0,0,NULL}
   };
 
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
@@ -96,7 +96,11 @@ int main(int argc, char ** argv)
   text = openiccReadFile( file_name, &size );
   if(!text)
   {
-    oyjlOptions_PrintHelp( ui->opts, ui, verbose, "%s example tool", argv[0] );
+    FILE * f = NULL;
+    char * t = oyjlOptions_PrintHelp( ui->opts, ui, verbose, &f, "%s example tool", argv[0] );
+    fprintf( f, "Obtained no text from file_name: %s\n", file_name );
+    fputs( t, f );
+    free(t);
     return 0;
   }
  
