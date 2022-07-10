@@ -3142,7 +3142,7 @@ oyjl_val    oyTreeFromCxf( const char * text )
              cmyk = oyjlTreeGetValueFilteredF( obj, 0, "cc:", "cc:ColorValues/cc:ColorCMYK" );
     int n = 0, j, r = 0;
     long startNm = 0;
-    double * list = NULL, d;
+    double * list = NULL, d = 0.0;
     char * colorSpec = oyjlValueText( oyjlTreeGetValueFilteredF( obj, 0, "cc:", "cc:ColorValues//@ColorSpecification" ), 0 );
 
     if(!reflSpec_text)
