@@ -32,6 +32,7 @@ extern "C" {
 /** \addtogroup oyjl_core
  *  @{ *//* oyjl_core */
 
+#define OYJL_NO_BACKTRACE              0x02                /**< @brief skip oyjlBT() output */
 char *       oyjlBT                  ( int                 stack_limit );
 void         oyjlDebugVariableSet    ( int               * debug );
 
