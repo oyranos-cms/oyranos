@@ -163,7 +163,7 @@ static oyjlOptionChoice_s * listKeys ( oyjlOption_s * o OYJL_UNUSED, int * y OYJ
 
   return c;
 }
-char ** getDBVals( oySCOPE_e scope, int *n )
+char ** getDBVals( oySCOPE_e scope, int *n, int mark )
 {
   int count = 0, i;
   char ** paths = getDBPaths( scope, &count );
@@ -172,7 +172,9 @@ char ** getDBVals( oySCOPE_e scope, int *n )
   {
     char * key = paths[i];
     char * v = oyGetPersistentString( key, 0, scope, malloc );
-    oyjlStringAdd( &key, 0,0, ":%s", v );
+    char * tmp = oyjlStringCopy( oyjlTermColor(mark?oyjlITALIC:oyjlNO_MARK,key), 0 );
+    free(key); key = tmp; tmp = NULL;
+    oyjlStringAdd( &key, 0,0, ":%s", oyjlTermColor(mark?oyjlBOLD:oyjlNO_MARK,v) );
     paths[i] = key;
   }
   *n = count;
@@ -182,7 +184,7 @@ char ** getDBVals( oySCOPE_e scope, int *n )
 static oyjlOptionChoice_s * listVals ( oyjlOption_s * o OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
 {
   int count = 0;
-  char ** paths = getDBVals( oySCOPE_USER, &count );
+  char ** paths = getDBVals( oySCOPE_USER, &count, oyjlNO_MARK );
   oyjlOptionChoice_s * c = choicesFromStringList( paths, count );
   oyjlStringListRelease( &paths, count, free );
 
@@ -529,7 +531,7 @@ int myMain( int argc , const char** argv )
 
     if(scope == oySCOPE_USER_SYS) scope = oySCOPE_USER;
     if(verbose)
-      paths = getDBVals( scope, &count );
+      paths = getDBVals( scope, &count, 1 );
     else
       paths = getDBPaths( scope, &count );
 
