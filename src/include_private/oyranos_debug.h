@@ -202,10 +202,9 @@ void oy_backtrace_();
 #define OY_TRACE_END_( t )   if(oy_debug_objects > 0) \
     oyObjectIdListShowDiffAndRelease( &ids_old, t );
 
-char *   oyBT                        ( int                 stack_limit );
 #ifdef HAVE_BACKTRACE
 #define OY_BACKTRACE_PRINT { \
-  char * text = oyBT(0); \
+  char * text = oyjlBT(0); \
   fprintf( stderr, "%s", text ); \
   free(text); \
 }
