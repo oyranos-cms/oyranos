@@ -282,7 +282,7 @@ int            oyOption_SetFromString( oyOption_s        * obj,
     {
       char * t = NULL;
       if(getenv(OY_DEBUG_OPTION_BACKTRACE))
-        t = oyBT(0);
+        t = oyjlBT(0);
       oyMessageFunc_p( oy_debug?oyMSG_DBG:oyMSG_WARN, (oyStruct_s*)obj,
                        OY_DBG_FORMAT_ "%s %s", OY_DBG_ARGS_,
                        oyNoEmptyName_m_(text), t?t:"" );

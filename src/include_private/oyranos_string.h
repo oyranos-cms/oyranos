@@ -177,7 +177,7 @@ int                oyIconvGet        ( const char        * text,
 #define oyStringListAdd             oyjlStringListAddList
 #define oyStringListCat             oyjlStringListCatList
 #define oyStringListFreeDoubles     oyjlStringListFreeDoubles
-#define oyStringListAddStaticString oyjlStringListAddString
+#define oyStringListAddStaticString oyjlStringListPush
 
 
 #ifdef __cplusplus

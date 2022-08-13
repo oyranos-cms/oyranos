@@ -525,7 +525,7 @@ int          oyX1MoveOptions_Handle  ( oyOptions_s       * options,
     _msg( oyMSG_DBG, (oyStruct_s*)options,
           OY_DBG_FORMAT_ "move_color_server_profiles: display_name: %s screen: %d setup: %d", OY_DBG_ARGS_,
           display_name, screen, setup );
-    t = oyBT(0);
+    t = oyjlBT(0);
     fprintf( stderr, "%s", t );
     free(t);
     if(oy_debug)

@@ -899,7 +899,7 @@ oyPointer    oyCMMdsoGet_            ( const char        * lib_name )
     dso_handle = dlopen( lib_name, RTLD_LAZY );
     if(oy_debug)
     {
-      char * t = oyBT(0);
+      char * t = oyjlBT(0);
       fprintf(stderr, "dlopen: %s\n%s", dso_handle?oyjlTermColor( oyjlGREEN, lib_name):oyjlTermColor( oyjlRED, lib_name), t );
       if(t) free(t);
     }

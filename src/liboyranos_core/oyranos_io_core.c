@@ -398,9 +398,9 @@ char * oyReadCmdToMem_               ( const char        * command,
   if(command && command[0] && size )
   {
     {
-      if(oy_debug && (strstr(command, "addr2line") == NULL || oy_debug > 1))
+      if(oy_debug && ((strstr(command, "addr2line") == NULL) || oy_debug == 2))
       {
-        if(oy_debug > 1)
+        if(oy_debug == 2)
         {
           char * t = oyjlBT(0);
           fprintf( stderr, "%s", t );

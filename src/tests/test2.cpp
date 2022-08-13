@@ -96,7 +96,7 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
     { \
       if(onfail == oyjlTESTRESULT_FAIL) \
       { \
-        char * text = oyBT(-1); \
+        char * text = oyjlBT(-1); \
         oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ ); \
         oyFree_m_( text ) \
       } \
@@ -2011,7 +2011,7 @@ oyjlTESTRESULT_e testDAGbasic ()
 
     if(verbose)
     {
-      char * text = oyBT(-1);
+      char * text = oyjlBT(-1);
       oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
       oyFree_m_( text )
     }
@@ -2026,7 +2026,7 @@ oyjlTESTRESULT_e testDAGbasic ()
                                  0, NULL );
   if(verbose)
   {
-    char * text = oyBT(-1);
+    char * text = oyjlBT(-1);
     oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
     oyFree_m_( text )
   }
@@ -2044,7 +2044,7 @@ oyjlTESTRESULT_e testDAGbasic ()
                                  (oyStruct_s*)blob, mySignal );
   if(verbose)
   {
-    char * text = oyBT(-1);
+    char * text = oyjlBT(-1);
     oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ );
     oyFree_m_( text )
   }
@@ -7911,7 +7911,7 @@ oyjlTESTRESULT_e testDAG2()
   error = oyStruct_ObserverAdd( (oyStruct_s*)node, (oyStruct_s*)node,
                                 (oyStruct_s*)option, myNodeSignal );
 
-  //{ char * text = oyBT(-1); oyObjectTreePrint( 0x01 | 0x02 | 0x04 | 0x08, text ? text : __func__ ); oyFree_m_( text ) }
+  //{ char * text = oyjlBT(-1); oyObjectTreePrint( 0x01 | 0x02 | 0x04 | 0x08, text ? text : __func__ ); oyFree_m_( text ) }
 #if 0
   /* graph broadcast */
   socket = oyFilterNode_GetSocket( input_node, 0 );
@@ -7920,7 +7920,7 @@ oyjlTESTRESULT_e testDAG2()
   /* let oyFilterNode_Run() emit a signal on filter call and observe the ticket */
   oyConversion_RunPixels( cc, NULL );
 #endif
-  //{ char * text = oyBT(-1); oyObjectTreePrint( 0x01 | 0x02 | 0x04 | 0x08, text ? text : __func__ ); oyFree_m_( text ) }
+  //{ char * text = oyjlBT(-1); oyObjectTreePrint( 0x01 | 0x02 | 0x04 | 0x08, text ? text : __func__ ); oyFree_m_( text ) }
 
   n = oyOption_GetValueInt( option, -1 );
   if( n > 0 )

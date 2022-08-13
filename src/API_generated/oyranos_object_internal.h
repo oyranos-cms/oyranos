@@ -44,7 +44,7 @@ int oyCheckType_( oyOBJECT_e type1, oyOBJECT_e type2 );
 
 #define oyCheckType_m( typ, action ) \
   if( !s || oyCheckType_(s->type_, typ)) \
-  { char * text = oyBT(0); \
+  { char * text = oyjlBT(0); \
     const char * info = oyStruct_GetInfo(s, oyNAME_NAME, 0x01); \
     WARNc5_S( "%s %s %s(%s)\n%s", _("Unexpected object type:"), oyNoEmptyString_m_(info), \
               oyStructTypeToText( s ? s->type : oyOBJECT_NONE ), \
@@ -54,7 +54,7 @@ int oyCheckType_( oyOBJECT_e type1, oyOBJECT_e type2 );
   }
 #define oyCheckType__m( type, action ) \
   if( !s || oyCheckType_( s->type_, type )) \
-  { char * text = oyBT(0); \
+  { char * text = oyjlBT(0); \
     const char * info = oyStruct_GetInfo(s, oyNAME_NAME, 0x01); \
     WARNc5_S( "%s %s %s(%s)\n%s", _("Unexpected object type:"), oyNoEmptyString_m_(info), \
               oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE ), \
@@ -64,7 +64,7 @@ int oyCheckType_( oyOBJECT_e type1, oyOBJECT_e type2 );
   }
 #define oyCheckTypeRange_m( type1, type2, action ) \
   if( !s || ( s->type_ < type1 || s->type_ > type2 )) \
-  { char * text = oyBT(0); \
+  { char * text = oyjlBT(0); \
     const char * info = oyStruct_GetInfo(s, oyNAME_NAME, 0x01); \
     WARNc6_S( "%s %s %s(%s-%s)\n%s", _("Unexpected object type:"), oyNoEmptyString_m_(info), \
               oyStructTypeToText( s ? s->type_ : oyOBJECT_NONE ), \

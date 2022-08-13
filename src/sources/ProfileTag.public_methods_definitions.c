@@ -419,14 +419,12 @@ char **        oyProfileTag_GetText  ( oyProfileTag_s    * tag,
               {
                 /* string with i18n infos -> "de_DE:Licht" */
                 oyjlStringAdd( &temp, oyAllocateFunc_, oyDeAllocateFunc_, "%s:%s", lang, text);
-                oyjlStringListAddString( &texts, &texts_n, temp,
-                                            oyAllocateFunc_, oyDeAllocateFunc_);
+                oyjlStringListPush( &texts, &texts_n, temp, oyAllocateFunc_, oyDeAllocateFunc_);
                 oyFree_m_(temp);
 
               } else {
                 /* pure string -> "Licht" */
-                oyStringListAddStaticString( &texts, &texts_n, text,
-                                             oyAllocateFunc_, oyDeAllocateFunc_);
+                oyjlStringListPush( &texts, &texts_n, text, oyAllocateFunc_, oyDeAllocateFunc_);
                 /* no selection for best i18n match and no lang: take all */
                 if(k == 3 && implicite_i18n)
                 {
