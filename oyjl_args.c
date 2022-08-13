@@ -865,8 +865,7 @@ clean_oyjlStringToDouble:
 
   return error;
 }
-void       oyjlStringListAddString (
-                                       char            *** list,
+void       oyjlStringListPush        ( char            *** list,
                                        int               * n,
                                        const char        * string,
                                        void*            (* alloc)(size_t),
@@ -1839,7 +1838,6 @@ typedef struct {
 /** \addtogroup oyjl_args
  *  @{ */
 
-#if !defined(OYJL_ARGS_BASE)
 /** @brief    Release dynamic structure
  *  @memberof oyjlOptionChoice_s
  *
@@ -1866,6 +1864,7 @@ void oyjlOptionChoice_Release     ( oyjlOptionChoice_s**choices )
   free(*choices);
 }
 
+#if !defined(OYJL_ARGS_BASE)
 void oyjlOptsPrivate_Release         ( oyjlOptsPrivate_s** results_ )
 {
   if(results_)
@@ -3456,7 +3455,7 @@ char **  oyjlOptions_ResultsToList   ( oyjlOptions_s     * opts,
       oyjlStringPush( &text, value, malloc, free );
     if(text)
     {
-      oyjlStringListAddString( &list, &list_len, text, malloc, free );
+      oyjlStringListPush( &list, &list_len, text, malloc, free );
       free(text); text = NULL;
     }
   }
@@ -4739,6 +4738,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         int n = oyjlOptionChoice_Count( choices );
         for(k = 0; k < n; ++k)
           fprintf( stdout, "%s\n", choices[k].nick );
+        oyjlOptionChoice_Release( &choices );
         if(!(flags&oyjlUI_STATE_NO_RELEASE))
           oyjlUi_ReleaseArgs( &ui);
         if(status)
@@ -5242,8 +5242,8 @@ char *       oyjlStringToLower_      ( const char        * t )
 
 #define ADD_SECTION( sec, link, format, ... ) { \
   oyjlStringAdd( &text, malloc, free, "\n<h2>%s <a href=\"#toc\" name=\"%s\">&uarr;</a></h2>\n\n" format, sec, link, __VA_ARGS__ ); \
-  oyjlStringListAddString( sections, sn, sec, 0,0 ); \
-  oyjlStringListAddString( sections, sn, link, 0,0 ); }
+  oyjlStringListPush( sections, sn, sec, 0,0 ); \
+  oyjlStringListPush( sections, sn, link, 0,0 ); }
 
 static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
                                        const char        * opt_name,

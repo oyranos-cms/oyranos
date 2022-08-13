@@ -50,12 +50,12 @@ void listFiles(const char * path, char *** list, int * count, const char * suffi
         else
             oyjlStringAdd( &name, 0,0, "%s/%s", path, dir->d_name);
         if(!suffix)
-            oyjlStringListAddString( list, count, name, malloc, free );
+            oyjlStringListPush( list, count, name, malloc, free );
         else
         {
           char * end = &name[strlen(name) - strlen(suffix)];
           if(strcasecmp(end, suffix) == 0)
-            oyjlStringListAddString( list, count, name, malloc, free );
+            oyjlStringListPush( list, count, name, malloc, free );
         }
         free(name);
       }

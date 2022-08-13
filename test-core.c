@@ -414,16 +414,16 @@ oyjlTESTRESULT_e testString ()
 
   double clck = oyjlClock();
   for( i = 0; i < 10000; ++i )
-    oyjlStringListAddString( &list, &list_n, NULL, malloc,free );
+    oyjlStringListPush( &list, &list_n, NULL, malloc,free );
   if(list && list_n)
     oyjlStringListRelease( &list, list_n, free );
   clck = oyjlClock() - clck;
   if( list_n == 10000 )
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"wr",
-    "oyjlStringListAddString()" );
+    "oyjlStringListPush()" );
   } else
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, list_n,
-    "oyjlStringListAddString()" );
+    "oyjlStringListPush()" );
   }
 
   long l = 0;
