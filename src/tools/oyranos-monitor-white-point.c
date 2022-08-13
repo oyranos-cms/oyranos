@@ -292,7 +292,7 @@ char ** listColorSchemes( int * count )
         txt[0] = '\000';
       }
 
-      oyjlStringListAddString( &result_list, count, t, oyAllocateFunc_, oyDeAllocateFunc_ );
+      oyjlStringListPush( &result_list, count, t, oyAllocateFunc_, oyDeAllocateFunc_ );
     }
     oyjlStringListRelease( &list, n, free );
   }
@@ -1405,6 +1405,17 @@ int checkWtptState(int dry)
       fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
       fprintf(  stderr, "%s: %s %s: %s\n", _("New white point mode"), oyjlTermColor(oyjlBOLD,new_mode<choices?choices_string_list[new_mode]:"----"),
                 _("Effect"), oyNoEmptyString_m_(new_effect) );
+
+      if(dry == 0 && (use_effect ||
+                      (effect?1:0) != (new_effect?1:0)))
+      {
+        if( !new_effect || (strcmp(new_effect,"-") == 0 ||
+                            strlen(new_effect) == 0 ))
+          oySetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, scope, NULL, NULL );
+        else
+          oySetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, scope, new_effect, NULL );
+        pingNativeDisplay();
+      }
 
       if(cmode != new_mode)
         error = setWtptMode( scope, new_mode, dry );
