@@ -229,10 +229,6 @@
 
 /** Oyranos default profiles key path in the data base */
 #define OY_REGISTRED_PROFILES    OY_STD OY_SLASH "device_profiles"
-/** system keys */
-#define OY_SYS                   "system/"
-/** user keys */
-#define OY_USER                  "user/"
 
 #ifndef MAX_PATH
 /** maximal path lenght, if not allready defined elsewhere */
