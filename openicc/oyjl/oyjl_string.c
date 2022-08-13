@@ -489,7 +489,7 @@ void       oyjlStringListRelease     ( char            *** l,
 }
 
 /** @brief append a string to a string list */
-void       oyjlStringListAddString   ( char            *** list,
+void       oyjlStringListPush        ( char            *** list,
                                        int               * n,
                                        const char        * string,
                                        void*            (* alloc)(size_t),

@@ -301,7 +301,7 @@ static void  oyjlTreeFind_           ( oyjl_val            root,
              {
                n = 0; while(paths && *paths && (*paths)[n]) ++n;
                if(tn-1 <= level)
-                 oyjlStringListAddString( paths, &n, xpath, malloc,free );
+                 oyjlStringListPush( paths, &n, xpath, malloc,free );
              }
 
              if(levels != 1)
@@ -338,7 +338,7 @@ static void  oyjlTreeFind_           ( oyjl_val            root,
              {
                n = 0; while(paths && *paths && (*paths)[n]) ++n;
                if(tn-1 <= level)
-                 oyjlStringListAddString( paths, &n, xpath, malloc,free );
+                 oyjlStringListPush( paths, &n, xpath, malloc,free );
              }
 
              if(levels != 1)
@@ -2787,7 +2787,7 @@ char **  oyjlCatalogGetLangs_        ( char             ** paths,
         if(!locs_start)
           oyjlAllocHelper_m( locs_start, int, 1024, malloc, return NULL );
         locs_start[locs_n] = i;
-        oyjlStringListAddString( &locs, &locs_n, loc, malloc,free );
+        oyjlStringListPush( &locs, &locs_n, loc, malloc,free );
       }
       free(loc);
     }

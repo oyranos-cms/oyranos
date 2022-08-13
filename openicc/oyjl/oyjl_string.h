@@ -92,7 +92,7 @@ char **    oyjlStringListCatList     ( const char       ** list,
                                        int                 n_app,
                                        int               * count,
                                        void*            (* alloc)(size_t) );
-void       oyjlStringListAddString   ( char            *** list,
+void       oyjlStringListPush        ( char            *** list,
                                        int               * n,
                                        const char        * string,
                                        void*            (* alloc)(size_t),
