@@ -61,6 +61,7 @@ char * oyjlFindApplication_(const char * app_name);
 /** @brief backtrace
  *
  *  Create backtrace of execution stack.
+ *  Honour ::OYJL_NO_BACKTRACE environment variable.
  *
  *  @param[in]      stack_limit         set limit of stack depth
  *  @return                             one line string with function names and belonging lines of code
@@ -80,6 +81,8 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
           int j, nptrs;
           void *buffer[BT_BUF_SIZE];
           char **strings;
+          if(getenv("OYJL_NO_BACKTRACE"))
+            return strdup("");
 
           nptrs = backtrace(buffer, BT_BUF_SIZE);
 
@@ -135,7 +138,7 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
                   }
                   if(app) oyjlFree_m_( app );
                 }
-                if(*oyjl_debug)
+                if(*oyjl_debug == 2)
                   fprintf(stderr, "prog = %s main_prog = %s\n", prog, main_prog );
               }
 
@@ -165,7 +168,7 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
                 oyjlFree_m_(addr2);
               }
 
-              if(*oyjl_debug > 1)
+              if(*oyjl_debug == 2 && !getenv("FORCE_COLORTERM"))
                 fprintf(stderr, "%s\n", line);
 
               {
@@ -243,7 +246,7 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
           }
   return text;
 #else
-  return NULL;
+  return  strdup("");
 #endif
 }
 

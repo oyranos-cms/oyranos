@@ -36,6 +36,10 @@ Allows to trace node changes in the tree API.
 .br
   A value can be appended after a double point ':' separator like "my/xpath/key:value". The node is printed in case of a match.
 .TP
+OYJL_NO_BACKTRACE
+.br
+The oyjlBT() function creates a backtrace of the execution stack, which can be time consuming and scattering output. This variable switches this output off.
+.TP
 OYJL_NO_EXIT
 .br
 by default the args parser exits a tool on very grave conditions. This variable switches the behaviour off.
