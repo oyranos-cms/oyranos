@@ -240,7 +240,7 @@ char * oyjlReadCmdToMem_             ( const char        * command,
   if(command && command[0] && size )
   {
     {
-      if(*oyjl_debug && (strstr(command, "addr2line") == NULL || *oyjl_debug > 1))
+      if(*oyjl_debug && (strstr(command, "addr2line") == NULL && *oyjl_debug == 2))
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s", OYJL_DBG_ARGS, command );
       fp = oyjlPOPEN_m( command, mode );
     }
@@ -564,7 +564,7 @@ int  oyjlWriteFile                   ( const char        * filename,
         r = fputc ( block[pt++] , fp);
       } while (--size);
 #else
-      if(*oyjl_debug && *oyjl_debug > 1)
+      if(*oyjl_debug && *oyjl_debug == 2)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s(%d)", OYJL_DBG_ARGS, full_name, size );
       written_n = fwrite( mem, 1, size, fp );
       if(written_n != size)
