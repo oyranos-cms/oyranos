@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2016-2018 (C) Kai-Uwe Behrmann
+ *            2016-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    Elektra DB module for Oyranos
  *  @internal
@@ -83,6 +83,13 @@ int                elDBReset      ( oyStruct_s        * filter OY_UNUSED );
 #include <stdio.h>
 #include <string.h>
 #include <kdb.h>
+#ifndef KDB_VERSION_NUM
+#define KDB_VERSION_NUM KDB_VERSION_MAJOR*100000 + KDB_VERSION_MINOR*100 + KDB_VERSION_PATCH
+#endif
+#if KDB_VERSION_NUM >= 900
+#define KDB_VERSION_MICRO      KDB_VERSION_PATCH
+#define keyNewOpen(x)          keyNew("/org/freedesktop/oyranos", x)
+#endif
 
 char oy_elektra_error_text[24] = {0};
 
@@ -90,7 +97,7 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
                                  return oy_elektra_error_text; }
 #define kdbStrError(t) oy__kdbStrError(t)
 
-#define oyERRopen(k) { const Key *meta = NULL; keyRewindMeta(k); \
+#define oyERRopen(k) { const Key *meta = NULL; \
                    if(!oy_handle_) { \
                      while((meta = keyNextMeta(k)) != 0) { \
                        if(oy_debug || strstr(oyNoEmptyString_m_( keyName(meta) ),"warnings") == 0) \
@@ -99,7 +106,7 @@ char * oy__kdbStrError(int rc) { sprintf(oy_elektra_error_text, "elektra: %d", r
                                    oyNoEmptyString_m_( keyString(meta) ) ); \
                      } \
                  } }
-#define oyERR(k) { const Key *meta = NULL; keyRewindMeta(k); \
+#define oyERR(k) { const Key *meta = NULL; \
                    if(rc < 0) { \
                      while((meta = keyNextMeta(k)) != 0) { \
                        if(oy_debug || strstr(oyNoEmptyString_m_( keyName(meta) ),"warnings") == 0) \
@@ -124,6 +131,7 @@ char *       oyGetScopeString        ( oySCOPE_e           scope,
                                        oySCOPE_e           scope_prefered,
                                        const char        * reg );
 oySCOPE_e    oyStringToScope         ( const char        * reg );
+oySCOPE_e    oyStringHasScope        ( const char        * reg );
 
   /* ksNext uses the same entry twice in a 1 component KeySet, we avoid this */
 #define FOR_EACH_IN_KDBKEYSET( current_, list ) \
@@ -188,13 +196,23 @@ static char *   jsonToEl             ( const char        * key_name,
   int count = 0, i;
   char** list;
   char * key = NULL, *r;
+  oySCOPE_e scope;
+
 
   if(!key_name || !*key_name) return NULL;
+
+  scope = oyStringHasScope(key_name);
 
   if(strchr(key_name,'#'))
     elDB_msg( oyMSG_DBG, 0, OY_DBG_FORMAT_ "expected JSON style array index but obtained: %s", OY_DBG_ARGS_, key_name );
 
   list = oyStringSplit( key_name, '/', &count, 0 );
+
+  if(count)
+  {
+    if(scope == oySCOPE_USER_SYS && key_name[0] != '/')
+      key = oyStringCopy( "/", 0 );
+  }
 
   for(i = 0; i < count; ++i)
   {
@@ -211,6 +229,8 @@ static char *   jsonToEl             ( const char        * key_name,
     else
       oyStringAddPrintf( &key, 0,0, "%s%s", i && i < count ? "/":"", k );
   }
+  if(oy_debug)
+    elDB_msg( oyMSG_DBG, 0, OY_DBG_FORMAT_ "%s scope:%d", OY_DBG_ARGS_, key, scope );
 
   if(alloc && alloc != oyAllocateFunc_)
   {
@@ -224,91 +244,47 @@ static char *   jsonToEl             ( const char        * key_name,
   return key;
 }
 
-int oyGetByName(KeySet * ks, const char * key_name)
+int oyDBcheckJson(oySCOPE_e scope)
 {
-  Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
-  Key * top =  keyNew(key_name, KEY_END);
-
-  int rc = kdbGet(oy_handle_, ks, top); oyERR(top)
-  if(rc == -1)
+  char * p = oyGetInstallPath( oyPATH_POLICY, scope, oyAllocateFunc_ ), * json;
+  size_t size = 0;
+  int r = 0;
+  STRING_ADD( p, "/openicc.json" );
+  json = oyReadFileToMem_( p, &size, NULL );
+  if((r = oyjlDataFormat(json)) != 7)
   {
-    oySCOPE_e scope = oyStringToScope(key_name);
-    char * p = oyGetInstallPath( oyPATH_POLICY, scope, oyAllocateFunc_ ), * json;
-    size_t size = 0;
-    int r = 0;
-    STRING_ADD( p, "/openicc.json" );
-    json = oyReadFileToMem_( p, &size, NULL );
-    if((r = oyjlDataFormat(json)) != 7)
-    {
-      WARNc2_S( "Clearing unreadable config file: %s %d", oyNoEmptyString_m_(p), r );
-      oyRemoveFile_(p);
-    }
+    WARNc2_S( "Clearing unreadable config file: %s %d", oyNoEmptyString_m_(p), r );
+    oyRemoveFile_(p);
   }
-
-  keyDel(top);
-  kdbClose(oy_handle_, error_key);
-  keyDel(error_key);
-
-  return rc;
-}
-
-int  oyGetKey                        ( KDB               * oy_handle_,
-                                       Key               * key )
-{
-  Key * result;
-  int rc;
-  KeySet * oy_config_ = ksNew(0,NULL);
-
-  DBG_EL1_S( "xxxxxxxxxxxx Try to get %s\n", keyName(key));
-
-  DBG_EL1_S( "oy_config_ == %s", oy_config_ ? "good":"NULL" );
-  rc = kdbGet( oy_handle_, oy_config_, key ); oyERR(key)
-  DBG_EL1_S( "rc = kdbGet( oy_handle_, oy_config_, key ) == %d", rc );
-
-  result = ksLookup( oy_config_, key, KDB_O_NONE);
-  DBG_EL1_S( "result = ksLookup( oy_config_, key, KDB_O_NONE) == %s", result ? "good":"NULL" );
-  if(rc < 0 && !result)
-  {
-    WARNc1_S( "keyString(key) == %s", oyNoEmptyString_m_(keyString(key)) );
-    oyERR(key)
-  }
-  else
-  {
-    rc = 0;
-  }
-  DBG_EL1_S ( "xxxxxxxxxxxx Got %s\n", keyString(result));
-  DBG_EL_S( "keyCopy( key, result )" );
-  keyCopy( key, result );
-
-  keyDel( result );
-  DBG_EL_S( "keyDel( result )" );
-  ksDel(oy_config_);
-  return rc;
+  return r;
 }
 
 int  oySetKey                        ( Key               * key )
 {
   int rc;
-  Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
+  Key * top = keyNewOpen(KEY_END);
+  KDB * oy_handle_ = kdbOpen(NULL,top); oyERRopen(top)
   KeySet * oy_config_ = ksNew(0, KS_END);
   const char * key_name = keyName(key);
   Key * parent_key = keyNew( key_name, KEY_END );
 
   DBG_EL1_S( "oy_config_ == %s", oy_config_ ? "good":"NULL" );
-  rc = kdbGet( oy_handle_, oy_config_, parent_key ); oyERR(key)
+  rc = kdbGet( oy_handle_, oy_config_, parent_key ); oyERR(top)
   DBG_EL1_S( "kdbGet( oy_handle_, oy_config_, key ) = %d", rc );
   if(rc >= 0)
   {
-    Key * dup = keyDup (key);
+    Key * dup = keyDup (key, KEY_CP_ALL);
     //keyNeedSync(dup);
     ksAppendKey(oy_config_, dup);
     rc = kdbSet( oy_handle_, oy_config_, parent_key ); oyERR(key)
     DBG_EL1_S( "kdbSet( oy_handle_, oy_config_, key ) = %d", rc );
+  } else
+  {
+    oySCOPE_e scope = oyStringToScope(key_name);
+    oyDBcheckJson(scope);
   }
-  kdbClose( oy_handle_,error_key ); oyERR(error_key)
-  keyDel(error_key);
+  kdbClose( oy_handle_,top ); oyERR(top)
+  keyDel(top);
   keyDel(parent_key);
   ksDel(oy_config_);
   return rc;
@@ -327,7 +303,7 @@ struct oyDB_s {
 
   /* private members */
   KDB      * h;
-  Key      * error;
+  Key      * key;
   int        err;
   KeySet   * ks;
 };
@@ -335,9 +311,8 @@ struct oyDB_s {
 void     oyDB_printWarn              ( oyDB_s            * db )
 {
   const Key * meta = NULL;
-  Key * k = db->error;
+  Key * k = db->key;
 
-  keyRewindMeta(k);
   while((meta = keyNextMeta(k)) != 0)
   {
     if(oy_debug || strstr(oyNoEmptyString_m_( keyName(meta) ),"warnings") == 0)
@@ -345,71 +320,6 @@ void     oyDB_printWarn              ( oyDB_s            * db )
                 oyNoEmptyString_m_( keyName(meta) ),
                 oyNoEmptyString_m_( keyString(meta) ) );
   }
-}
-
-int      oyDB_GetChildren            ( oyDB_s            * db )
-{
-  int rc = 0;
-  KeySet*list_user = NULL;
-  KeySet*list_sys = NULL;
-  char  *list_name_user = NULL;
-  char  *list_name_sys = NULL;
-
-  DBG_PROG_START
-
-  if(db->ks)
-    WARNc_S("please use only one call to oyDB_GetChildren")
-  else
-    db->ks = ksNew(0,NULL);
-
-  if( db->scope == oySCOPE_USER_SYS || db->scope == oySCOPE_USER )
-  {
-    list_user = ksNew(0,NULL);
-    list_name_user = oyGetScopeString( db->scope, oySCOPE_USER, db->top_key_name );
-    if(!db->h)
-      return 0;
-
-    rc =
-      oyGetByName( list_user, list_name_user );
-    if(rc < 0)
-      oyDB_printWarn(db);
-
-    if(rc > 0)
-      DBG_NUM1_S("oyGetByName returned with %d", rc);
-  }
-
-  if( db->scope == oySCOPE_USER_SYS || db->scope == oySCOPE_SYSTEM )
-  {
-    list_sys = ksNew(0,NULL);
-    list_name_sys = oyGetScopeString( db->scope, oySCOPE_SYSTEM, db->top_key_name );
-    if(!db->h)
-      return 0;
-
-    rc =
-      oyGetByName( list_sys, list_name_sys );
-    if(rc < 0)
-      oyDB_printWarn(db);
-
-    if(rc > 0)
-      DBG_NUM1_S("kdbGetChildKeys returned with %d", rc);
-  }
-
-  if(list_user)
-  {
-    ksAppend( db->ks, list_user );
-    ksDel( list_user );
-  }
-  if(list_sys)
-  {
-    ksAppend( db->ks, list_sys );
-    ksDel( list_sys );
-  }
-
-  if(list_name_user) oyFree_m_( list_name_user )
-  if(list_name_sys) oyFree_m_( list_name_sys )
-
-  DBG_PROG_ENDE
-  return rc;
 }
 
 /** system keys */
@@ -459,13 +369,26 @@ char * oyGetScopeString              ( oySCOPE_e           scope,
   return full_elektra_key_reg;
 }
 
-oySCOPE_e    oyStringToScope         ( const char        * reg )
+oySCOPE_e    oyStringHasScope        ( const char        * reg )
 {
-  oySCOPE_e scope = oySCOPE_USER;
-  if(reg && strlen(reg) > strlen(OY_SYS) && memcmp(reg,OY_SYS,strlen(OY_SYS)) == 0)
+  oySCOPE_e scope = oySCOPE_USER_SYS;
+  size_t len;
+  if(!reg) return scope;
+  len = strlen(reg);
+  if(len > strlen(OY_USER) && memcmp(reg,OY_USER,strlen(OY_USER)) == 0)
+    scope = oySCOPE_USER;
+  if(len > strlen(OY_SYS) && memcmp(reg,OY_SYS,strlen(OY_SYS)) == 0)
     scope = oySCOPE_SYSTEM;
   return scope;
 }
+oySCOPE_e    oyStringToScope         ( const char        * reg )
+{
+  oySCOPE_e scope = oyStringHasScope(reg);
+  if(scope == oySCOPE_USER_SYS)
+    scope = oySCOPE_USER;
+  return scope;
+}
+
 
 
 /* oyranos hook part */
@@ -480,21 +403,30 @@ oyDB_s * elDB_newFrom                ( const char        * top_key_name,
 
   if(db)
   {
+    char * top_key_name_el = jsonToEl( top_key_name, allocFunc );
+    ssize_t size;
     memset( db,0, sizeof(oyDB_s) );
 
     sprintf( db->type, CMM_NICK );
-    db->error = keyNew(KEY_END);
-    db->h = kdbOpen(db->error);
+    db->key = keyNew(top_key_name_el, KEY_END);
+    db->h = kdbOpen(NULL,db->key);
     if(!db->h)
     {
+      oySCOPE_e scope = oyStringToScope(top_key_name);
       db->err = -1;
       oyDB_printWarn( db );
+      oyDBcheckJson(scope);
     }
     db->top_key_name = oyStringCopy( top_key_name, oyAllocateFunc_ );
-    db->ks = NULL;
+    db->ks = ksNew(0, KEY_END);
+    kdbGet(db->h, db->ks, db->key);
+    size = ksGetSize(db->ks);
+    if(oy_debug)
+      elDB_msg( oyMSG_DBG, 0, OY_DBG_FORMAT_ "top_key_name: %s top_key_name_el: %s keys: %d", OY_DBG_ARGS_, top_key_name, top_key_name_el, size );
     db->alloc = allocFunc;
     db->deAlloc = deAllocFunc;
     db->scope = scope;
+    deAllocFunc(top_key_name_el);
   }
 
   return db;
@@ -512,10 +444,10 @@ void     elDB_release                ( oyDB_s           ** db )
     if(s->top_key_name) { deAlloc(s->top_key_name); s->top_key_name = NULL; }
     memset( s->type, 0, 8 );
 
-    kdbClose( s->h, s->error );
+    kdbClose( s->h, s->key );
     s->h = NULL;
-    keyDel(s->error);
-    s->error = NULL;
+    keyDel(s->key);
+    s->key = NULL;
     if(s->ks)
       ksDel( s->ks );
     s->ks = NULL;
@@ -539,9 +471,6 @@ char *   elDB_getString              ( oyDB_s            * db,
 
   if(!error)
     name = jsonToEl( key_name, oyAllocateFunc_ );
-
-  if(!db->ks)
-    oyDB_GetChildren( db );
 
   if(!error)
     my_key_set = db->ks;
@@ -628,9 +557,6 @@ char **  elDB_getKeyNames            ( oyDB_s            * db,
   if(n)
     *n = 0;
 
-  if(!db->ks)
-    oyDB_GetChildren( db );
-
   if(!error)
     my_key_set = db->ks;
 
@@ -682,9 +608,6 @@ char **  elDB_getKeyNamesOneLevel    ( oyDB_s            * db,
   if(n)
     *n = 0;
 
-  if(!db->ks)
-    oyDB_GetChildren( db );
-
   if(!error)
     my_key_set = db->ks;
 
@@ -735,8 +658,8 @@ int elDBSetString                    ( const char        * key_name,
                                        const char        * value,
                                        const char        * comment)
 {
-  Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
+  Key * top = keyNewOpen(KEY_END);
+  KDB * oy_handle_ = kdbOpen(NULL,top); oyERRopen(top)
   int rc=0,
       max_len;
   Key *key;
@@ -774,7 +697,7 @@ int elDBSetString                    ( const char        * key_name,
   if (!key_name || !strlen(key_name))
     WARNc_S( "no key_name given" );
 
-  key = keyNew( KEY_END );
+  key = keyNewOpen( KEY_END );
   DBG_EL1_S( "key = keyNew( KEY_END ) == %s", key ? "good":"NULL" );
   keySetName( key, name );
   DBG_EL1_S( "keySetName( key, \"%s\" )", name );
@@ -812,8 +735,8 @@ int elDBSetString                    ( const char        * key_name,
   oyFree_m_( name )
   oyFree_m_( value_utf8 )
   oyFree_m_( comment_utf8 )
-  kdbClose( oy_handle_,error_key ); oyERR(error_key)
-  keyDel(error_key);
+  kdbClose( oy_handle_,top ); oyERR(top)
+  keyDel(top);
   DBG_PROG_ENDE
   return rc < 0 ? 1 : 0;
 }
@@ -825,11 +748,11 @@ char*    elDBSearchEmptyKeyname        ( const char      * key_parent_name,
   char * new_key_name = NULL;
   int nth = -1, i = 0, rc=0;
   Key *key = 0;
-  KeySet * ks = ksNew(0,NULL);
+  KeySet * ks = ksNew(0,KS_END);
   KeySet * cut;
   size_t count;
-  Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
+  Key * top = keyNewOpen(KEY_END);
+  KDB * oy_handle_ = kdbOpen(NULL,top); oyERRopen(top)
 
   DBG_PROG_START
 
@@ -866,8 +789,8 @@ char*    elDBSearchEmptyKeyname        ( const char      * key_parent_name,
 
   oyFree_m_( key_base_name );
   ksDel( ks );
-  kdbClose( oy_handle_,error_key ); oyERR(error_key)
-  keyDel(error_key);
+  kdbClose( oy_handle_,top ); oyERR(top)
+  keyDel(top);
 
   DBG_PROG_ENDE
   return elToJson2(new_key_name, 0,0, 1);
@@ -881,16 +804,16 @@ int      elDBEraseKey                ( const char        * key_name,
   KeySet * ks = 0;
   char * name = NULL;
 
-  Key * error_key = keyNew(KEY_END);
-  KDB * oy_handle_ = kdbOpen(error_key); oyERRopen(error_key)
-  Key * top =  keyNew(KEY_END);
+  Key * key = keyNewOpen(KEY_END);
+  KDB * oy_handle_ = kdbOpen(NULL, key); oyERRopen(key)
+  Key * top =  keyNewOpen(KEY_END);
   KeySet * cut;
 
   name = oyGetScopeString( scope, oySCOPE_USER, key_name );
 
   keySetName( top, name );
 
-  ks = ksNew(0,NULL);
+  ks = ksNew(0,KS_END);
   rc = kdbGet(oy_handle_, ks, top);
   keySetName( top, name );
   cut = ksCut(ks, top);
@@ -899,8 +822,8 @@ int      elDBEraseKey                ( const char        * key_name,
   ksDel(ks);
   ksDel(cut);
   keyDel(top);
-  kdbClose(oy_handle_, error_key);
-  keyDel(error_key);
+  kdbClose(oy_handle_, key);
+  keyDel(key);
   oyFree_m_( name );
 
   return error;
@@ -1101,7 +1024,7 @@ const char * elDBInfoGetText         ( const char        * select,
          if(type == oyNAME_NICK)
       return "BSD-3-Clause";
     else if(type == oyNAME_NAME)
-      return _("Copyright (c) 2016 Kai-Uwe Behrmann; new BSD");
+      return _("Copyright (c) 2016-2022 Kai-Uwe Behrmann; new BSD");
     else
       return _("new BSD license: http://www.opensource.org/licenses/BSD-3-Clause");
   } else if(strcmp(select, "help")==0)
@@ -1120,8 +1043,8 @@ oyIcon_s elDB_icon = {oyOBJECT_ICON_S, 0,0,0, 0,0,0, "oyranos_logo.png"};
 
 /** @brief    elDB module infos
  *
- *  @version Oyranos: 0.9.6
- *  @date    2016/10/23
+ *  @version Oyranos: 0.9.7
+ *  @date    2022/08/13
  *  @since   2016/05/01 (Oyranos: 0.9.6)
  */
 oyCMM_s elDB_cmm_module = {
@@ -1129,7 +1052,7 @@ oyCMM_s elDB_cmm_module = {
   oyOBJECT_CMM_INFO_S,                 /**< type, struct type */
   0,0,0,                               /**< ,dynamic object functions */
   CMM_NICK,                            /**< cmm, ICC signature */
-  "0.6",                               /**< backend_version */
+  "0.9",                               /**< backend_version */
   elDBInfoGetText,                     /**< getText */
   (char**)elDB_texts,                  /**<texts; list of arguments to getText*/
   OYRANOS_VERSION,                     /**< oy_compatibility */
