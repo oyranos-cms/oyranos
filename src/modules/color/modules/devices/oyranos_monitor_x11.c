@@ -50,6 +50,10 @@
 #include <errno.h>
 #include <time.h>
 
+#ifdef PRINT_TIME_INCLUDE
+#include PRINT_TIME_INCLUDE
+#endif
+
 /* ---  Helpers  --- */
 
 #define noE( string ) ((string)?(string):"")
@@ -1240,43 +1244,62 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
 
   if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "profile_name = %s\n", OY_DBG_ARGS_, profile_name?profile_name:"" );
 
+  int version = 0; char * t = NULL;
+  const char * xs = "-s";
+  FILE * fp = popen("xcalib -version", "r");
+  if(fp)
+  {
+    int n;
+    oyX1Alloc( t, 48, pclose(fp); free(dpy_name); return 1;)
+    n = fread( t, sizeof(char), 48, fp );
+    if(0 <= n && n < 48) t[n] = '\000';
+    else t[47] = '\000';
+    pclose(fp);
+  } else
+  {
+    fprintf( stderr, OY_DBG_FORMAT_ "xcalib not found for setting with %s\n", OY_DBG_ARGS_, profile_name );
+    status |= OY_CALIB_ERROR;
+  }
+  if(t && strstr(t, "xcalib "))
+  {
+    int major = -1, minor = -1, micro = 0;
+    char * tmp = strstr(t, "xcalib ");
+
+    tmp = &tmp[7];
+    sscanf( tmp, "%d.%d.%d", &major, &minor, &micro );
+    version = major*10000 + minor * 100 + micro;
+
+    if(version < 0 || oy_debug)
+      fprintf( stderr, OY_DBG_FORMAT_ "xcalib version string: \"%s\" \"%s\" version: %d\n", OY_DBG_ARGS_, t, tmp, version );
+  }
+  if(t) { free(t); t = NULL; }
+
+  if(version >= 1000)
+    xs = "-o";
+
+  oyX1Alloc(text, MAX_PATH, goto Clean;)
+  oyX1Alloc(clear, MAX_PATH, goto Clean;)
+
+  sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, disp->geo[1],
+               oy_debug?"-v":"");
+  if(oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
+  {
+#if defined(HAVE_XRANDR)
+    sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, oyX1Monitor_rrScreen_(disp),
+            oy_debug?"-v":"");
+#else
+    sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, 0,
+            oy_debug?"-v":"");
+#endif
+  }
+  else
+  {
+    sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, disp->geo[1],
+            oy_debug?"-v":"");
+  }
+
   if( profile_name && profile_name[0] )
   {
-    int version = 0; char * t = NULL;
-    const char * xs = "-s";
-    FILE * fp = popen("xcalib -version", "r");
-    if(fp)
-    {
-      int n;
-      oyX1Alloc( t, 48, pclose(fp); free(dpy_name); return 1;)
-      n = fread( t, sizeof(char), 48, fp );
-      if(0 <= n && n < 48) t[n] = '\000';
-      else t[47] = '\000';
-      pclose(fp);
-    } else
-    {
-      fprintf( stderr, OY_DBG_FORMAT_ "xcalib not found for setting with %s\n", OY_DBG_ARGS_, profile_name );
-      status |= OY_CALIB_ERROR;
-    }
-    if(t && strstr(t, "xcalib "))
-    {
-      int major = -1, minor = -1, micro = 0;
-      char * tmp = strstr(t, "xcalib ");
-
-      tmp = &tmp[7];
-      sscanf( tmp, "%d.%d.%d", &major, &minor, &micro );
-      version = major*10000 + minor * 100 + micro;
-
-      if(version < 0 || oy_debug)
-        fprintf( stderr, OY_DBG_FORMAT_ "xcalib version string: \"%s\" \"%s\" version: %d\n", OY_DBG_ARGS_, t, tmp, version );
-    }
-    if(t) { free(t); t = NULL; }
-
-    if(version >= 1000)
-      xs = "-o";
-
-    oyX1Alloc(text, MAX_PATH, goto Clean;)
-    oyX1Alloc(clear, MAX_PATH, goto Clean;)
 
     /** set vcgt tag with xcalib
        not useable with multihead Xinerama at one screen
@@ -1285,28 +1308,20 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
      */
     sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, disp->geo[1],
                  oy_debug?"-v":"", profile_name);
-    sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, disp->geo[1],
-                 oy_debug?"-v":"");
     if(oyX1Monitor_infoSource_( disp ) == oyX11INFO_SOURCE_XRANDR)
     {
 #if defined(HAVE_XRANDR)
       sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, oyX1Monitor_rrScreen_(disp),
               oy_debug?"-v":"", profile_name);
-      sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, oyX1Monitor_rrScreen_(disp),
-              oy_debug?"-v":"");
 #else
       sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, 0,
               oy_debug?"-v":"", profile_name);
-      sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, 0,
-              oy_debug?"-v":"");
 #endif
     }
     else
     {
       sprintf(text,"xcalib -d %s %s %d %s \'%s\'", dpy_name, xs, disp->geo[1],
               oy_debug?"-v":"", profile_name);
-      sprintf(clear,"xcalib -d %s %s %d %s -c", dpy_name, xs, disp->geo[1],
-              oy_debug?"-v":"");
     }
 
     {
@@ -1374,7 +1389,13 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
         }
         printf("%s : %s\n", text, t);
         if(status & OY_CALIB_VCGT_NOT_CONTAINED)
+        {
+#ifdef PRINT_TIME
+          PRINT_TIME;
+#endif
+          fprintf( stderr,OY_DBG_FORMAT_ "Clearing VCGT\n", OY_DBG_ARGS_ );
           error = system(clear); // causes flicker, but profile without VCGT tag will not change any curves.
+        }
         if(t) { free(t); t = NULL; }
 #endif
       }
@@ -1395,6 +1416,14 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
 
     if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "system: %s\n", OY_DBG_ARGS_, clear );
     if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "system: %s\n", OY_DBG_ARGS_, text );
+  }
+  else
+  {
+#ifdef PRINT_TIME
+        PRINT_TIME;
+#endif
+        fprintf( stderr, OY_DBG_FORMAT_ "Clearing VCGT\n", OY_DBG_ARGS_ );
+        error = system(clear); // causes flicker, but profile without VCGT tag will not change any curves.
   }
 
   Clean:
