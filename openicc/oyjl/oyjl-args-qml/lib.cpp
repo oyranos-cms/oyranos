@@ -82,6 +82,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
 
     QTranslator translator;
     QString lname( ":/translations/app_" + QLocale::system().name() );
+    LOG( QString("Qlocale::system():") +QLocale::system().name() );
     if(!translator.load( lname ))
         LOG( QString("failed loading locale: ") + lname );
     else
