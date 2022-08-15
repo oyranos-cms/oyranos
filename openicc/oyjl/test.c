@@ -645,9 +645,8 @@ oyjlTESTRESULT_e testI18N()
   oyjlTr_Release( &trc );
 #endif
 
-  double tmp_d;
-#define printtime oyjlPrintTime(OYJL_TIME, oyjlNO_MARK), (int)(modf(oyjlSeconds(),&tmp_d)*1000)
-#define timeformat "[%s.%04d] "
+#define printtime oyjlPrintTime(OYJL_BRACKETS, oyjlNO_MARK)
+#define timeformat "%s "
   fprintf( zout, timeformat "before oyjlTreeParse2(liboyjl_i18n_oiJS)\n", printtime);
   oyjl_val root = oyjlTreeParse2( oyjl_export, 0, __func__, NULL );
   fprintf( zout, timeformat "before while\n", printtime );
