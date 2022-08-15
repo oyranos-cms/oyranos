@@ -829,7 +829,7 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
 # include <unistd.h>
 #endif
 
-time_t             oyjlTime          ( )
+time_t             oyjlTime_         ( )
 {
   time_t time_;
   double divider = TIME_DIVIDER;
@@ -841,15 +841,15 @@ time_t             oyjlTime          ( )
                      * divider*divider);
   return time_;
 }
-double             oyjlSeconds       ( )
+double             oyjlSeconds_      ( )
 {
-           time_t zeit_ = oyjlTime();
+           time_t zeit_ = oyjlTime_();
            double teiler = TIME_DIVIDER;
            double dzeit = zeit_ / teiler;
     return dzeit;
 }
 double             oyjlClock         ( )
-{ return oyjlSeconds()*1000000; }
+{ return oyjlSeconds_()*1000000; }
 
 /** @} *//* oyjl_test */
 /** @} *//* oyjl */
