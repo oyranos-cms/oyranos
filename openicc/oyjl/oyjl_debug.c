@@ -250,6 +250,63 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
 #endif
 }
 
+#if defined(_WIN32) && !defined(__GNU__)
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <stdint.h> // portable: uint64_t   MSVC: __int64 
+
+// MSVC defines this in winsock2.h!?
+typedef struct timeval {
+    long tv_sec;
+    long tv_usec;
+} timeval;
+
+int gettimeofday(struct timeval * tp, struct timezone * tzp)
+{
+    // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
+    static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
+
+    SYSTEMTIME  system_time;
+    FILETIME    file_time;
+    uint64_t    time;
+
+    GetSystemTime( &system_time );
+    SystemTimeToFileTime( &system_time, &file_time );
+    time =  ((uint64_t)file_time.dwLowDateTime )      ;
+    time += ((uint64_t)file_time.dwHighDateTime) << 32;
+
+    tp->tv_sec  = (long) ((time - EPOCH) / 10000000L);
+    tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
+    return 0;
+}
+# define   TIME_DIVIDER CLOCKS_PER_SEC
+#else
+# include <time.h>
+# include <sys/time.h>
+# define   TIME_DIVIDER 10000
+# include <unistd.h>
+#endif
+
+time_t             oyjlTime          ( )
+{
+  time_t time_;
+  double divider = TIME_DIVIDER;
+  struct timeval tv;
+  double tmp_d;
+  gettimeofday( &tv, NULL );
+  time_ = tv.tv_usec/(1000000/(time_t)divider)
+                   + (time_t)(modf( (double)tv.tv_sec / divider,&tmp_d )
+                     * divider*divider);
+  return time_;
+}
+double             oyjlSeconds       ( )
+{
+           time_t zeit_ = oyjlTime();
+           double teiler = TIME_DIVIDER;
+           double dzeit = zeit_ / teiler;
+    return dzeit;
+}
+
 /** @brief print current date time
  *
  *  Create a static string to contain ISO conforming date/time string.
@@ -257,6 +314,7 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
  *  @param[in]      flags               0 default so ISO dateTtime+-TimeZoneDiff == OYJL_DATE | OYJL_TIME | OYJL_OYJL_TIME_ZONE_DIFF
  *                                      - OYJL_DATE : %F
  *                                      - OYJL_TIME : %H:%M:%S
+ *                                      - OYJL_TIME_MILLI : %H:%M:%S.%d
  *                                      - OYJL_OYJL_TIME_ZONE : %Z
  *                                      - OYJL_OYJL_TIME_ZONE_DIFF : %z
  *                                      - OYJL_BRACKETS : [datetime]
@@ -280,9 +338,10 @@ const char * oyjlPrintTime           ( int                 flags,
     strftime( t, 64, "%FT%H:%M:%S%z", gmt );
   else
   {
+    double tmp_d;
     /** One can use OYJL_BRACKETS alone and has dateTtime+-TimeZoneDiff included. */
     if(flags == OYJL_BRACKETS)
-      flags |= OYJL_DATE | OYJL_TIME | OYJL_TIME_ZONE_DIFF;
+      flags |= OYJL_DATE | OYJL_TIME_MILLI | OYJL_TIME_ZONE_DIFF;
     /** One can use OYJL_TIME_ZONE or OYJL_TIME_ZONE_DIFF alone and has dateTtime included. */
     if(!(flags & OYJL_DATE || flags & OYJL_TIME))
       flags |= OYJL_DATE | OYJL_TIME;
@@ -291,10 +350,14 @@ const char * oyjlPrintTime           ( int                 flags,
       sprintf( &t[strlen(t)], "[" );
     if(flags & OYJL_DATE)
       strftime( &t[strlen(t)], 60, "%F", gmt );
-    if(flags & OYJL_DATE && flags & OYJL_TIME)
+    if(flags & OYJL_DATE && (flags & OYJL_TIME || flags & OYJL_TIME_MILLI))
       sprintf( &t[strlen(t)], "T" );
-    if(flags & OYJL_TIME)
+    if(flags & OYJL_TIME || flags & OYJL_TIME_MILLI)
+    {
       strftime( &t[strlen(t)], 50, "%H:%M:%S", gmt );
+      if(flags & OYJL_TIME_MILLI)
+        snprintf( &t[strlen(t)], 44, ".%03d", (int)(modf(oyjlSeconds(),&tmp_d)*1000) );
+    }
     if(flags & OYJL_TIME_ZONE)
       strftime( &t[strlen(t)], 40, "%Z", gmt );
     if(flags & OYJL_TIME_ZONE_DIFF)
