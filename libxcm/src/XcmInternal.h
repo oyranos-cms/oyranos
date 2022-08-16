@@ -3,7 +3,7 @@
  *  libXcm  Xorg Colour Management
  *
  *  @par Copyright:
- *            2017 (C) Kai-Uwe Behrmann
+ *            2017-2022 (C) Kai-Uwe Behrmann
  *
  *  @brief    X Color Management library
  *  @internal

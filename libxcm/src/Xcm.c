@@ -17,6 +17,10 @@
 
 #include <Xcm.h>
 #include <stdio.h>
+#include "XcmEvents.h"
+
+extern int * xcm_debug;
+extern XcmMessage_f XcmMessage_p;
 
 int  XcmChangeProperty_              ( Display           * dpy,
                                        Window              win,
@@ -197,6 +201,8 @@ static unsigned char * XcmFetchProperty(Display *dpy, Window w, Atom prop, Atom 
   return NULL;
 }
 
+#define DS(format, ...) XcmMessage_p( XCME_MSG_DISPLAY_STATUS, 0, format, \
+                                         __VA_ARGS__)
 int    XcmColorServerCapabilities    ( Display *dpy )
 {
   int active = 0;
@@ -234,10 +240,14 @@ int    XcmColorServerCapabilities    ( Display *dpy )
       if(strstr(atom_capabilities_text, "|V0.4|"))
         active |= XCM_COLOR_SERVER_04;
     }
+    if(*xcm_debug)
+      DS( "XCM_COLOR_DESKTOP: %s", atom_capabilities_text );
     free(atom_capabilities_text);
     free(atom_time_text);
     free(atom_colour_server_name);
-  }
+  } else
+    if(*xcm_debug)
+      DS( "XCM_COLOR_DESKTOP: %s", "---" );
   return active;
 }
 

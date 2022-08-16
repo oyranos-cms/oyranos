@@ -84,6 +84,7 @@ typedef int  (*XcmMessage_f)         ( XCME_MSG_e            error_code,
                                        const char        * format,
                                        ... );
 int            XcmMessageFuncSet     ( XcmMessage_f        message_func );
+void           XcmDebugVariableSet   ( int               * debug );
 
 typedef void*(*XcmICCprofileGetFromMD5_f) (
                                        const void        * md5_hash,

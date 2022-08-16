@@ -20,6 +20,7 @@ extern "C" {
 #include "XcmInternal.h"
 
 #define __USE_POSIX2 1
+#include <math.h>   /* modf() */
 #include <stdio.h>  /* popen() */
 #include <string.h>
 #include <stdlib.h>
@@ -34,9 +35,10 @@ extern "C" {
 #endif
 
 
+const char * xcmPrintTime            ( );
 #define M(code, context, format, ...) XcmMessage_p( code,context, format, \
                                                        __VA_ARGS__)
-#define DE(format, ...) { XcmMessage_p( XCME_MSG_DISPLAY_EVENT, 0, format, \
+#define DE(format, ...) { XcmMessage_p( XCME_MSG_DISPLAY_EVENT, 0, "%s " format, xcmPrintTime(), \
                                          __VA_ARGS__); result = 0; }
 #define DERR(format, ...) XcmMessage_p( XCME_MSG_DISPLAY_ERROR, 0, format, \
                                          __VA_ARGS__)
@@ -163,6 +165,12 @@ int            XcmMessageFuncSet     ( XcmMessage_f        message_func )
   return 0;
 }
 
+int xcm_debug_local_ = 0;
+int * xcm_debug = &xcm_debug_local_;
+
+/** @brief   set own debug variable */
+void       XcmDebugVariableSet       ( int               * debug )
+{ xcm_debug = debug; }
 
 static char * net_color_desktop_text = 0;
 char * printfNetColorDesktop ( XcmeContext_s * c, int verbose )
@@ -739,7 +747,7 @@ int      XcmeContext_Setup           ( XcmeContext_s    * c,
   M( XCME_MSG_TITLE, 0,
      "libXcm based X11 colour management system events observer%s", "");
   M( XCME_MSG_COPYRIGHT, 0,
-     "(c) 2009-2013 - Kai-Uwe Behrmann  License: MIT%s", "" );
+     "(c) 2009-2022 - Kai-Uwe Behrmann  License: MIT%s", "" );
   DS( "atom: \"" XCM_COLOR_PROFILES "\": %d", (int)c->aProfile );
   DS( "atom: \"" XCM_COLOR_OUTPUTS "\": %d", (int)c->aOutputs );
   DS( "atom: \"_ICC_COLOR_MANAGEMENT\": %d", (int)c->aCM );
@@ -1227,6 +1235,85 @@ int      XcmeContext_WindowSet       ( XcmeContext_s    * c,
   c->w = window;
   return 0;
 }
+
+#if defined(_WIN32) && !defined(__GNU__)
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <stdint.h> // portable: uint64_t   MSVC: __int64 
+
+// MSVC defines this in winsock2.h!?
+typedef struct timeval {
+    long tv_sec;
+    long tv_usec;
+} timeval;
+
+int gettimeofday(struct timeval * tp, struct timezone * tzp)
+{
+    // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
+    static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
+
+    SYSTEMTIME  system_time;
+    FILETIME    file_time;
+    uint64_t    time;
+
+    GetSystemTime( &system_time );
+    SystemTimeToFileTime( &system_time, &file_time );
+    time =  ((uint64_t)file_time.dwLowDateTime )      ;
+    time += ((uint64_t)file_time.dwHighDateTime) << 32;
+
+    tp->tv_sec  = (long) ((time - EPOCH) / 10000000L);
+    tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
+    return 0;
+}
+# define   TIME_DIVIDER CLOCKS_PER_SEC
+#else
+# include <time.h>
+# include <sys/time.h>
+# define   TIME_DIVIDER 10000
+# include <unistd.h>
+#endif
+
+time_t             xcmTime           ( )
+{
+  time_t time_;
+  double divider = TIME_DIVIDER;
+  struct timeval tv;
+  double tmp_d;
+  gettimeofday( &tv, NULL );
+  time_ = tv.tv_usec/(1000000/(time_t)divider)
+                   + (time_t)(modf( (double)tv.tv_sec / divider,&tmp_d )
+                     * divider*divider);
+  return time_;
+}
+double             xcmSeconds        ( )
+{
+           time_t zeit_ = xcmTime();
+           double teiler = TIME_DIVIDER;
+           double dzeit = zeit_ / teiler;
+    return dzeit;
+}
+
+const char * xcmPrintTime            ( )
+{
+  static char t[64];
+  struct tm * gmt;
+  time_t cutime = time(NULL); /* time right NOW */
+  gmt = localtime( &cutime );
+  t[0] = '\000';
+
+  {
+    double tmp_d;
+    sprintf( &t[strlen(t)], "[" );
+    strftime( &t[strlen(t)], 60, "%F", gmt );
+    sprintf( &t[strlen(t)], "T" );
+    strftime( &t[strlen(t)], 50, "%H:%M:%S", gmt );
+    snprintf( &t[strlen(t)], 44, ".%03d", (int)(modf(xcmSeconds(),&tmp_d)*1000) );
+    strftime( &t[strlen(t)], 40, "%z", gmt );
+    sprintf( &t[strlen(t)], "]" );
+  }
+  return t;
+}
+
 
 /** @} XcmEvents */
 
