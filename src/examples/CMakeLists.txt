@@ -89,3 +89,11 @@ TARGET_LINK_LIBRARIES( tutorial-taxi
 ADD_EXECUTABLE( tutorial-json-options tutorial_json_options.c )
 TARGET_LINK_LIBRARIES( tutorial-json-options
              ${TARGET_LIB} ${EXTRA_LIBS} )
+
+IF( HAVE_LCMS2 )
+# Tutorial lcm2_profiler
+INCLUDE_DIRECTORIES( ../modules/color/modules/lcms2 )
+ADD_EXECUTABLE( tutorial-lcm2-profiler tutorial_lcm2_profiler.c )
+TARGET_LINK_LIBRARIES( tutorial-lcm2-profiler
+             ${LCMS2_LIBRARIES} ${LIBM_LIBRARIES} )
+ENDIF()
