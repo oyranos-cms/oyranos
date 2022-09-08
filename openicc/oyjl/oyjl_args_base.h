@@ -212,7 +212,7 @@ typedef struct oyjlUi_s {
   const char * name;                   /**< @brief i18n short name for tool bars, app lists */
   const char * description;            /**< @brief i18n name, version, maybe more for a prominent one liner */
   const char * logo;                   /**< @brief file name body without path, for relocation, nor file type ending; typical a PNG or SVG icon; e.g. "lcms_icon" for lcms_icon.png or lcms_icon.svg; optional */
-  /** We describe here a particular tool/module. Each property object contains at least one 'name' key. All values shall be strings. *nick* or *description* keys are optional. If they are not contained, fall back to *name*. Well known objects are *version*, *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *development*, *oyjl_modules_author*, *documentation*, *date* and *logo*. The *modules/[]/nick* shall contain a four byte string in as the CMM identifier. */
+  /** We describe here a particular tool/module. Each property object contains at least one 'nick' and one 'name' key. All values shall be strings. *label* or *description* keys are optional. If they are not contained, fall back to *name*. Well known *nick* values are *version*, *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *development*, *oyjl_modules_author*, *documentation*, *date* and *logo*. */
   oyjlUiHeaderSection_s * sections;
   oyjlOptions_s * opts;                /**< @brief info for UI logic */
 } oyjlUi_s;
