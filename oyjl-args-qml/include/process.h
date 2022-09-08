@@ -131,7 +131,8 @@ public:
         if(a.length() > 16)
         {
             QString t = a;
-            if(t.startsWith( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg"))
+            if((t.startsWith( "<?xml version=\"1.0\"") && t.contains( "<svg" )) ||
+                t.startsWith( "<svg" ))
             {
                 QString s = QString("data:image/svg+xml;utf8,") + a;
                 a = s.toUtf8();
