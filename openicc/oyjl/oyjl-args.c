@@ -32,7 +32,7 @@ int myMain( int argc, const char ** argv )
   const char * file = NULL;
   int oyjl_args = 0;
   int completion_bash = 0;
-  int test = 0;
+  const char * test = 0;
   double d = 0;
   const char * s = NULL;
   const char * export = NULL;
@@ -58,7 +58,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input", NULL, _("input"), _("Set Input"), _("For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON."), _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file}, NULL },
     {"oiwi", 0,    NULL, "c-stand-alone",NULL, _("C Stand Alone"),_("Generate C code for oyjl_args.c inclusion."), _("Omit libOyjlCore reference."), NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &oyjl_args}, NULL },
     {"oiwi", 0,    NULL, "completion-bash",NULL, _("Completion Bash"),_("Generate bash completion code"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &completion_bash}, NULL },
-    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL,"test",    NULL, _("Test"),    _("Generate test Args Export"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &test}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_ACCEPT_NO_ARG,  NULL,"test",    NULL, _("Test"),    _("Generate test Args Export"), NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {.s = &test}, NULL },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE,  "o",NULL,    NULL, "O",    NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {0}, NULL },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  NULL, "option",    NULL, "Option",    NULL, NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlNONE, {0}, NULL },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE,  "t",NULL,    NULL, "T",    NULL, NULL, NULL, oyjlOPTIONTYPE_DOUBLE, {0},oyjlDOUBLE, {.d=&d}, NULL },
@@ -136,95 +136,151 @@ int myMain( int argc, const char ** argv )
   } else
   if(ui && test)
   {
-    puts("{");
-    puts("  \"command_set\": \"oyjl-args\",");
-    puts("  \"command_get\": \"oyjl-args\",");
-    puts("  \"command_get_args\": [\"-X\",\"json+command\"],");
-    puts("  \"org\": {");
-    puts("    \"freedesktop\": {");
-    puts("      \"oyjl\": {");
-    puts("        \"modules\": [{");
-    puts("            \"oyjl_module_api_version\": \"1\",");
-    puts("            \"type\": \"tool\",");
-    puts("            \"label\": \"Werkzeug\",");
-    puts("            \"nick\": \"oyjl-test\",");
-    puts("            \"name\": \"Test OyjlArgsUi\",");
-    puts("            \"description\": \"Test file for various Oyjl Args Ui elements.\",");
-    puts("            \"logo\": \"oyjl\",");
-    puts("            \"information\": [{");
-    puts("                \"type\": \"version\",");
-    puts("                \"label\": \"Version\",");
-    puts("                \"name\": \"1.0.0\"");
-    puts("              }],");
-    puts("            \"groups\": [{");
-    puts("                \"name\": \"Group\",");
-    puts("                \"description\": \"Simple Group\",");
-    puts("                \"help\": \"Simple Group help text\",");
-    puts("                \"mandatory\": \"o\",");
-    puts("                \"optional\": \"option,t,format\",");
-    puts("                \"changed\": \"-o=ARG2,--option,-t=-3\",");
-    puts("                \"options\": [{");
-    puts("                    \"key\": \"o\",");
-    puts("                    \"name\": \"Option\",");
-    puts("                    \"description\": \"Option with single dash and single letter\",");
-    puts("                    \"help\": \"Option help text\",");
-    puts("                    \"value_name\": \"ARGUMENT\",");
-    puts("                    \"choices\": [{");
-    puts("                        \"nick\": \"ARG1\",");
-    puts("                        \"name\": \"ARG1\"");
-    puts("                      },{");
-    puts("                        \"nick\": \"ARG2\",");
-    puts("                        \"name\": \"ARG2\"");
-    puts("                      }],");
-    puts("                    \"default\": \"ARG2\",");
-    puts("                    \"changed\": \"ARG2\",");
-    puts("                    \"type\": \"string\"");
-    puts("                  },{");
-    puts("                    \"key\": \"option\",");
-    puts("                    \"name\": \"Long Option\",");
-    puts("                    \"description\": \"Option with double dash and multiple letters [a-z,A-Z,0-9,-,+]\",");
-    puts("                    \"default\": \"1\",");
-    puts("                    \"changed\": \"1\",");
-    puts("                    \"type\": \"bool\",");
-    puts("                    \"choices\": [{");
-    puts("                        \"nick\": \"0\",");
-    puts("                        \"name\": \"No\"");
-    puts("                      },{");
-    puts("                        \"nick\": \"1\",");
-    puts("                        \"name\": \"Yes\"");
-    puts("                      }]");
-    puts("                  },{");
-    puts("                    \"key\": \"t\",");
-    puts("                    \"name\": \"Twilight\",");
-    puts("                    \"description\": \"Set Twilight angle\",");
-    puts("                    \"help\": \"0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical\",");
-    puts("                    \"value_name\": \"ANGLE_IN_DEGREE\",");
-    puts("                    \"default\": \"-3\",");
-    puts("                    \"changed\": \"-3\",");
-    puts("                    \"start\": -18,");
-    puts("                    \"end\": 18,");
-    puts("                    \"tick\": 1,");
-    puts("                    \"type\": \"double\"");
-    puts("                  },{");
-    puts("                    \"key\": \"format\",");
-    puts("                    \"name\": \"Format\",");
-    puts("                    \"description\": \"Option with single dash and single letter\",");
-    puts("                    \"value_name\": \"ARGUMENT\",");
-    puts("                    \"choices\": [{");
-    puts("                        \"nick\": \"ARG1\",");
-    puts("                        \"name\": \"ARG1\"");
-    puts("                      },{");
-    puts("                        \"nick\": \"ARG2\",");
-    puts("                        \"name\": \"ARG2\"");
-    puts("                      }],");
-    puts("                    \"type\": \"choice\"");
-    puts("                  }]");
-    puts("              }]");
-    puts("          }]");
-    puts("      }");
-    puts("    }");
-    puts("  }");
-    puts("}");
+    if(strcmp(test,"1") == 0 || strcmp(test,"json") == 0 || strcmp(test, "json+command") == 0)
+    {
+      puts("{");
+      if(strcmp(test, "json+command") == 0)
+      {
+        puts("  \"comment\": \"Use *command_set* to name a command to be combined with the supplied arguments. With the -R|--render=gui|cli option a renderer can detect the calling command.\",");
+        puts("  \"command_set\": \"oyjl-args\",");
+        puts("  \"comment\": \"Use *command_get* to name a command to obtain the UI JSON for a UI update. Without no UI update will be performed.\",");
+        puts("  \"command_get\": \"oyjl-args\",");
+        puts("  \"comment\": \"Use *command_get_args* to name custom args together with *command_get*. Without *command_get_args* \\\"-X=json+command\\\" will be used.\",");
+        puts("  \"command_get_args\": [\"-X\",\"json+command\"],");
+      }
+      puts("  \"comment\": \"Following is the path to the Oyjl UI render array org/freedesktop/oyjl/modules\",");
+      puts("  \"comment\": \"1. path part\",");
+      puts("  \"org\": {");
+      puts("    \"comment\": \"2. path part\",");
+      puts("    \"freedesktop\": {");
+      puts("      \"comment\": \"3. path part\",");
+      puts("      \"oyjl\": {");
+      puts("        \"comment\": \"4. path part\",");
+      puts("        \"modules\": [{");
+      puts("            \"comment\": \"*oyjl_module_api_version*: name the version\",");
+      puts("            \"oyjl_module_api_version\": \"1\",");
+      puts("            \"comment\": \"*type* of the source can be *tool* for command line or *module* for other UIs\",");
+      puts("            \"type\": \"tool\",");
+      puts("            \"comment\": \"*label* of the modules *type*\",");
+      puts("            \"label\": \"Werkzeug\",");
+      puts("            \"comment\": \"*nick* is a short four byte ID for *type*:*module* or the command line name for *type*:*tool*\",");
+      puts("            \"nick\": \"oyjl-test\",");
+      puts("            \"comment\": \"*name* translated display name for tool bars, app lists ...\",");
+      puts("            \"name\": \"Test OyjlArgsUi\",");
+      puts("            \"comment\": \"*description* translated display short explanation in one sentence.\",");
+      puts("            \"description\": \"Test file for various Oyjl Args Ui elements.\",");
+      puts("            \"comment\": \"*logo* icon file name to search on disk or path. Typical without ending of PNG or SVG.\",");
+      puts("            \"logo\": \"oyjl\",");
+      puts("            \"comment\": \"*information* object is a array of sections for dynamic header information. We describe here a particular tool/module. Each property object contains at least one 'type' and one 'name' key. All values shall be strings. *description* keys are optional. If they are not contained, fall back to *name*. Well known *type* values are *version*, *manufacturer*, *copyright*, *license*, *url*, *support*, *download*, *sources*, *development*, *oyjl_modules_author*, *documentation*, *date* and *logo*. The *modules/[]/nick* shall contain a four byte string in as the CMM identifier.\",");
+      puts("            \"information\": [{");
+      puts("                \"comment\": \"*type* marker. Well known types are mentioned in the information comment above.\",");
+      puts("                \"type\": \"version\",");
+      puts("                \"comment\": \"*label* translated *type* for display, in case this section *type* is not well known. It shall explain to users what kind of information is shown.\",");
+      puts("                \"label\": \"Version\",");
+      puts("                \"comment\": \"*name* translated display item. The actual pice of information for the *type*.\",");
+      puts("                \"name\": \"1.0.0\"");
+      puts("              }],");
+      puts("            \"comment\": \"*groups* is a array of single groups containing the UI.\",");
+      puts("            \"groups\": [{");
+      puts("                \"comment\": \"*name* translated title.\",");
+      puts("                \"name\": \"Group\",");
+      puts("                \"comment\": \"*description* translated longer text.\",");
+      puts("                \"description\": \"Simple Group\",");
+      puts("                \"comment\": \"*help* translated usage explanations.\",");
+      puts("                \"help\": \"Simple Group help text\",");
+      puts("                \"synopsis\": \"<strong>oyjl-args</strong> <strong>-o=ARGUMENT</strong> ... [<strong>--option</strong>] [<strong>-t</strong>=<em>ANGLE_IN_DEGREE</em>] [<strong>--format</strong>=<em>ARGUMENT</em>]\",");
+      puts("                \"comment\": \"*mandatory* list of mandatory options from a one letter option or multi letter option for this group of associated options; one single option here makes a subcommand and is usualy easier to understand.\",");
+      puts("                \"mandatory\": \"o\",");
+      puts("                \"comment\": \"*optional* list of non mandatory options from a one letter option or multi letter option for this group of associated options.\",");
+      puts("                \"optional\": \"option,t,format\",");
+      puts("                \"comment\": \"*changed* names altered option with the actual value. It is useful for preserving options during a UI update.\",");
+      puts("                \"changed\": \"-o=ARG2,--option,-t=-3\",");
+      puts("                \"comment\": \"*options* the group interactive options.\",");
+      puts("                \"options\": [{");
+      puts("                    \"comment\": \"*key* one letter UTF-8 e.g. 'm' on command line shown as '-m' or string without white space, e.g. 'my-option' option name on command line typical shown as '--my-option'.\",");
+      puts("                    \"key\": \"o\",");
+      puts("                    \"comment\": \"*name* translated display string for key.\",");
+      puts("                    \"name\": \"Option Name\",");
+      puts("                    \"comment\": \"*description* translated elaborating display string for *key*.\",");
+      puts("                    \"description\": \"Description of option with single dash and single letter\",");
+      puts("                    \"comment\": \"*help* translated display string for *key* containing addional usage information.\",");
+      puts("                    \"help\": \"Option help text\",");
+      puts("                    \"comment\": \"*value_name* is a optional string hinting the options arguments usage in preferedly upper letters. Or it contains a list of valid arguments in usual lower letter or numbers divided by '|'.\",");
+      puts("                    \"value_name\": \"ARGUMENT\",");
+      puts("                    \"comment\": \"*repetition* marks the *key* option as accepting multiple times occuring.\",");
+      puts("                    \"repetition\": \"1\",");
+      puts("                    \"comment\": \"*choices* array\",");
+      puts("                    \"choices\": [{");
+      puts("                        \"comment\": \"*nick* value\",");
+      puts("                        \"nick\": \"ARG1\",");
+      puts("                        \"comment\": \"*name* short display string\",");
+      puts("                        \"name\": \"ARG1\"");
+      puts("                      },{");
+      puts("                        \"nick\": \"ARG2\",");
+      puts("                        \"name\": \"ARG2\"");
+      puts("                      }],");
+      puts("                    \"comment\": \"*default* recommended value\",");
+      puts("                    \"default\": \"ARG2\",");
+      puts("                    \"comment\": \"*changed* names preselected actual value\",");
+      puts("                    \"changed\": \"ARG2\",");
+      puts("                    \"comment\": \"*type* accepted is here *string* for editable choices, *choice* for fixed choices, *double* for numbers, *bool* for yes:'1' no:'0' options. \",");
+      puts("                    \"type\": \"string\"");
+      puts("                  },{");
+      puts("                    \"key\": \"option\",");
+      puts("                    \"name\": \"Long Option\",");
+      puts("                    \"description\": \"Option with double dash and multiple letters [a-z,A-Z,0-9,-,+]\",");
+      puts("                    \"default\": \"1\",");
+      puts("                    \"changed\": \"1\",");
+      puts("                    \"comment\": \"*type* accepted is *bool* for yes:'1' no:'0'. For simplicity values are made of strings \\\"0\\\" and \\\"1\\\".\",");
+      puts("                    \"type\": \"bool\",");
+      puts("                    \"choices\": [{");
+      puts("                        \"nick\": \"0\",");
+      puts("                        \"name\": \"No\"");
+      puts("                      },{");
+      puts("                        \"nick\": \"1\",");
+      puts("                        \"name\": \"Yes\"");
+      puts("                      }]");
+      puts("                  },{");
+      puts("                    \"key\": \"t\",");
+      puts("                    \"name\": \"Twilight\",");
+      puts("                    \"description\": \"Set Twilight angle\",");
+      puts("                    \"help\": \"0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical\",");
+      puts("                    \"value_name\": \"ANGLE_IN_DEGREE\",");
+      puts("                    \"default\": \"-3\",");
+      puts("                    \"changed\": \"-3\",");
+      puts("                    \"comment\": \"*start* for *type*:*double* is the minimum value.\",");
+      puts("                    \"start\": -18,");
+      puts("                    \"comment\": \"*end* for *type*:*double* is the maximum value.\",");
+      puts("                    \"end\": 18,");
+      puts("                    \"comment\": \"*tick* for *type*:*double* is a UI hint on how to in-or decrease the value.\",");
+      puts("                    \"tick\": 1,");
+      puts("                    \"comment\": \"*type* accepted is *double*. Values are made of strings and need to be string converted to numbers for applications.\",");
+      puts("                    \"type\": \"double\"");
+      puts("                  },{");
+      puts("                    \"key\": \"format\",");
+      puts("                    \"name\": \"Format\",");
+      puts("                    \"description\": \"Option with double dash and multiple letters [a-z,A-Z,0-9,-,+]\",");
+      puts("                    \"value_name\": \"ARGUMENT\",");
+      puts("                    \"choices\": [{");
+      puts("                        \"nick\": \"ARG1\",");
+      puts("                        \"name\": \"ARG1\"");
+      puts("                      },{");
+      puts("                        \"nick\": \"ARG2\",");
+      puts("                        \"name\": \"ARG2\"");
+      puts("                      }],");
+      puts("                    \"comment\": \"*type* accepted is *choice*. Values are non editable.\",");
+      puts("                    \"type\": \"choice\"");
+      puts("                  }]");
+      puts("              }]");
+      puts("          }]");
+      puts("      }");
+      puts("    }");
+      puts("  }");
+      puts("}");
+    } else
+    if(strcmp(test,"export") == 9)
+    {
+    }
   } else
   if(ui && !file)
   {
