@@ -71,49 +71,49 @@
 <context>
     <name>AppWindow</name>
     <message>
-        <location filename="../qml/AppWindow.qml" line="125"/>
-        <location filename="../qml/AppWindow.qml" line="165"/>
+        <location filename="../qml/AppWindow.qml" line="126"/>
+        <location filename="../qml/AppWindow.qml" line="166"/>
         <source>discharging</source>
         <translation>entladend</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="125"/>
+        <location filename="../qml/AppWindow.qml" line="126"/>
         <source>charging</source>
         <translation>aufladend</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="125"/>
+        <location filename="../qml/AppWindow.qml" line="126"/>
         <source>full</source>
         <translation>voll</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="126"/>
-        <location filename="../qml/AppWindow.qml" line="165"/>
+        <location filename="../qml/AppWindow.qml" line="127"/>
+        <location filename="../qml/AppWindow.qml" line="166"/>
         <source>Battery</source>
         <translation>Batterie</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="145"/>
+        <location filename="../qml/AppWindow.qml" line="146"/>
         <source>Night</source>
         <translation>Nacht</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="147"/>
+        <location filename="../qml/AppWindow.qml" line="148"/>
         <source>Day</source>
         <translation>Tag</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="165"/>
+        <location filename="../qml/AppWindow.qml" line="166"/>
         <source>not used</source>
         <translation>nicht benutzt</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="185"/>
+        <location filename="../qml/AppWindow.qml" line="186"/>
         <source>Busy</source>
         <translation>Beschäftigt</translation>
     </message>
     <message>
-        <location filename="../qml/AppWindow.qml" line="455"/>
+        <location filename="../qml/AppWindow.qml" line="456"/>
         <source>Ok</source>
         <translation>Ja</translation>
     </message>
