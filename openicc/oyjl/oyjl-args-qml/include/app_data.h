@@ -82,6 +82,7 @@ public:
 
     Q_INVOKABLE QString getJSON(QString url);
     Q_INVOKABLE QString plainJSON(QString url);
+    Q_INVOKABLE QString toHtml(QString ansi) { return QString(oyjlTermColorToHtml(ansi.toLocal8Bit().constData(),0)); };
     Q_INVOKABLE void  writeJSON(QString url);
     Q_INVOKABLE void  BT(void) { LOG( oyjlBT(0) );};
     Q_INVOKABLE QString getLibDescription(int);
@@ -93,6 +94,7 @@ public:
     Q_INVOKABLE QString readFile(QString url);
     Q_INVOKABLE QString requestPermission( QString name );
     Q_INVOKABLE int hasPermission( QString name );
+    Q_INVOKABLE void  setFG(bool bright) { setenv("COLORFGBG", bright?"0;15":"15;0", 1); };
 
 public slots:
     void readBattery();

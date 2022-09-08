@@ -72,6 +72,7 @@ ApplicationWindow {
     Material.theme: theme
     Material.accent: accent
     property bool bright: (bg.r + bg.g) > 1
+    onBrightChanged: appData.setFG(bright);
 
     property alias myPalette: myPalette
     SystemPalette {
