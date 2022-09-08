@@ -573,7 +573,7 @@ AppWindow {
 
         if(t.match(/\033\[/)) // convert ansi color + format codes to HTML markup
         {
-            t = P.toHtml( t )
+            t = appData.toHtml( t )
             helpText = Link.linkify( t );
             helpTextArea.font.family = "sans";
             helpTextArea.textFormat = Qt.RichText
@@ -879,7 +879,7 @@ AppWindow {
                         textChanging = true
                         if(text.match(/\033\[/)) // convert ansi color + format codes to HTML markup
                         {
-                            text = P.toHtml( text )
+                            text = appData.toHtml( text )
                         }
                         textChanging = false
                     }
@@ -922,7 +922,7 @@ AppWindow {
                 textFormat: showJson ? Qt.RichText : Qt.PlainText
                 wrapMode: TextEdit.Wrap
                 readOnly: true
-                text: showJson ? P.toHtml(appDataJsonString) : logHistory
+                text: showJson ? appData.toHtml(appDataJsonString) : logHistory
             }
             }
             Button {
