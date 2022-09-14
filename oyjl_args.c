@@ -672,7 +672,14 @@ int        oyjlStr_Add               ( oyjl_str            string,
 int        oyjlStr_Replace           ( oyjl_str            text,
                                        const char        * search,
                                        const char        * replacement,
-                                       void             (* modifyReplacement)(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * user_data),
+                                       void             (* modifyReplacement)
+                                                             (const char * text,
+                                                              const char * start,
+                                                              const char * end,
+                                                              const char * search,
+                                                              const char ** replace,
+                                                              int * replace_len,
+                                                              void * user_data),
                                        void              * user_data )
 {
   struct oyjl_string_s * str = text;
@@ -692,7 +699,7 @@ int        oyjlStr_Replace           ( oyjl_str            text,
     {
       if(!t) t = oyjlStr_New(10,0,0);
       oyjlStr_AppendN( t, start, end-start );
-      if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement, user_data );
+      if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement, &s_len, user_data );
       oyjlStr_Push( t, replacement );
       ++n;
       if(strlen(end) >= (size_t)s_len)
@@ -1182,6 +1189,7 @@ void     oyjlStringListAddList       ( char            *** list,
 #define OYJL_BLUE_B "\033[0;34m"
 /* switch back */
 #define OYJL_CTEND "\033[0m"
+#define OYJL_X11_CLUT_256_BASE "\033[38;5;"
 #endif
 extern char * oyjl_term_color_plain_;
 #if !defined (OYJL_ARGS_BASE)
@@ -1992,6 +2000,8 @@ int          oyjlTermColorInit       ( int                 flags )
 #define OYJL_BLUE_B "\033[0;34m"
 /* switch back */
 #define OYJL_CTEND "\033[0m"
+/* 256 CLUT */
+#define OYJL_X11_CLUT_256_BASE "\033[38;5;"
 #endif
 /** @brief text formating for terminals
  *
@@ -2052,7 +2062,7 @@ char * oyjl_term_color_html_ = NULL;
 char * oyjl_term_color_plain_ = NULL;
 /** @brief convert a subset of HTML to terminal colors
  *
- *  The supported codes are "<strong>" and "<em>" only.
+ *  The supported codes are "<strong>", "<em>", "<u>" and "&nbsp;".
  *
  *  @version Oyjl: 1.0.0
  *  @date    2022/05/08
@@ -2067,6 +2077,7 @@ const char * oyjlTermColorFromHtml   ( const char        * text,
   const char * t,
              * bold = color || truecolor ? OYJL_BOLD : "",
              * italic = color || truecolor ? OYJL_ITALIC : "",
+             * underline = color || truecolor ? OYJL_UNDERLINE : "",
              * end = color || truecolor ? OYJL_CTEND : "";
   oyjl_str tmp = oyjlStr_New(10,0,0);
   oyjlStr_Push( tmp, text );
@@ -2074,6 +2085,11 @@ const char * oyjlTermColorFromHtml   ( const char        * text,
   oyjlStr_Replace( tmp, "</strong>", end, 0,NULL );
   oyjlStr_Replace( tmp, "<em>", italic, 0,NULL );
   oyjlStr_Replace( tmp, "</em>", end, 0,NULL );
+  oyjlStr_Replace( tmp, "<u>", underline, 0,NULL );
+  oyjlStr_Replace( tmp, "</u>", end, 0,NULL );
+  oyjlStr_Replace( tmp, "</font>", end, 0,NULL );
+  oyjlStr_Replace( tmp, "&nbsp;", " ", 0,NULL );
+  oyjlStr_Replace( tmp, "<br />", "", 0,NULL );
   t = oyjlStr(tmp);
   if(oyjl_term_color_html_) free(oyjl_term_color_html_);
   oyjl_term_color_html_ = strdup( t );
@@ -2081,18 +2097,333 @@ const char * oyjlTermColorFromHtml   ( const char        * text,
   return oyjl_term_color_html_;
 }
 
+const char * oyjlX11_CLUT_256[256] = {
+    /* 8 colors */
+    "000000",
+    "800000",
+    "008000",
+    "808000",
+    "000080",
+    "800080",
+    "008080",
+    "c0c0c0",
+
+    /* "bright" version of 8 colors. */
+    "808080",
+    "ff0000",
+    "00ff00",
+    "ffff00",
+    "0000ff",
+    "ff00ff",
+    "00ffff",
+    "ffffff",
+
+    /**/
+    "000000",
+    "00005f",
+    "000087",
+    "0000af",
+    "0000d7",
+    "0000ff",
+    "005f00",
+    "005f5f",
+    "005f87",
+    "005faf",
+    "005fd7",
+    "005fff",
+    "008700",
+    "00875f",
+    "008787",
+    "0087af",
+    "0087d7",
+    "0087ff",
+    "00af00",
+    "00af5f",
+    "00af87",
+    "00afaf",
+    "00afd7",
+    "00afff",
+    "00d700",
+    "00d75f",
+    "00d787",
+    "00d7af",
+    "00d7d7",
+    "00d7ff",
+    "00ff00",
+    "00ff5f",
+    "00ff87",
+    "00ffaf",
+    "00ffd7",
+    "00ffff",
+    "5f0000",
+    "5f005f",
+    "5f0087",
+    "5f00af",
+    "5f00d7",
+    "5f00ff",
+    "5f5f00",
+    "5f5f5f",
+    "5f5f87",
+    "5f5faf",
+    "5f5fd7",
+    "5f5fff",
+    "5f8700",
+    "5f875f",
+    "5f8787",
+    "5f87af",
+    "5f87d7",
+    "5f87ff",
+    "5faf00",
+    "5faf5f",
+    "5faf87",
+    "5fafaf",
+    "5fafd7",
+    "5fafff",
+    "5fd700",
+    "5fd75f",
+    "5fd787",
+    "5fd7af",
+    "5fd7d7",
+    "5fd7ff",
+    "5fff00",
+    "5fff5f",
+    "5fff87",
+    "5fffaf",
+    "5fffd7",
+    "5fffff",
+    "870000",
+    "87005f",
+    "870087",
+    "8700af",
+    "8700d7",
+    "8700ff",
+    "875f00",
+    "875f5f",
+    "875f87",
+    "875faf",
+    "875fd7",
+    "875fff",
+    "878700",
+    "87875f",
+    "878787",
+    "8787af",
+    "8787d7",
+    "8787ff",
+    "87af00",
+    "87af5f",
+    "87af87",
+    "87afaf",
+    "87afd7",
+    "87afff",
+    "87d700",
+    "87d75f",
+    "87d787",
+    "87d7af",
+    "87d7d7",
+    "87d7ff",
+    "87ff00",
+    "87ff5f",
+    "87ff87",
+    "87ffaf",
+    "87ffd7",
+    "87ffff",
+    "af0000",
+    "af005f",
+    "af0087",
+    "af00af",
+    "af00d7",
+    "af00ff",
+    "af5f00",
+    "af5f5f",
+    "af5f87",
+    "af5faf",
+    "af5fd7",
+    "af5fff",
+    "af8700",
+    "af875f",
+    "af8787",
+    "af87af",
+    "af87d7",
+    "af87ff",
+    "afaf00",
+    "afaf5f",
+    "afaf87",
+    "afafaf",
+    "afafd7",
+    "afafff",
+    "afd700",
+    "afd75f",
+    "afd787",
+    "afd7af",
+    "afd7d7",
+    "afd7ff",
+    "afff00",
+    "afff5f",
+    "afff87",
+    "afffaf",
+    "afffd7",
+    "afffff",
+    "d70000",
+    "d7005f",
+    "d70087",
+    "d700af",
+    "d700d7",
+    "d700ff",
+    "d75f00",
+    "d75f5f",
+    "d75f87",
+    "d75faf",
+    "d75fd7",
+    "d75fff",
+    "d78700",
+    "d7875f",
+    "d78787",
+    "d787af",
+    "d787d7",
+    "d787ff",
+    "d7af00",
+    "d7af5f",
+    "d7af87",
+    "d7afaf",
+    "d7afd7",
+    "d7afff",
+    "d7d700",
+    "d7d75f",
+    "d7d787",
+    "d7d7af",
+    "d7d7d7",
+    "d7d7ff",
+    "d7ff00",
+    "d7ff5f",
+    "d7ff87",
+    "d7ffaf",
+    "d7ffd7",
+    "d7ffff",
+    "ff0000",
+    "ff005f",
+    "ff0087",
+    "ff00af",
+    "ff00d7",
+    "ff00ff",
+    "ff5f00",
+    "ff5f5f",
+    "ff5f87",
+    "ff5faf",
+    "ff5fd7",
+    "ff5fff",
+    "ff8700",
+    "ff875f",
+    "ff8787",
+    "ff87af",
+    "ff87d7",
+    "ff87ff",
+    "ffaf00",
+    "ffaf5f",
+    "ffaf87",
+    "ffafaf",
+    "ffafd7",
+    "ffafff",
+    "ffd700",
+    "ffd75f",
+    "ffd787",
+    "ffd7af",
+    "ffd7d7",
+    "ffd7ff",
+    "ffff00",
+    "ffff5f",
+    "ffff87",
+    "ffffaf",
+    "ffffd7",
+    "ffffff",
+    /* gray scale */
+    "080808",
+    "121212",
+    "1c1c1c",
+    "262626",
+    "303030",
+    "3a3a3a",
+    "444444",
+    "4e4e4e",
+    "585858",
+    "626262",
+    "6c6c6c",
+    "767676",
+    "808080",
+    "8a8a8a",
+    "949494",
+    "9e9e9e",
+    "a8a8a8",
+    "b2b2b2",
+    "bcbcbc",
+    "c6c6c6",
+    "d0d0d0",
+    "dadada",
+    "e4e4e4",
+    "eeeeee"
+};
+
+int          oyjlTermColor256GetIndex( const char        * term_color )
+{
+  long index = 0;
+  /*int offset = strlen(OYJL_X11_CLUT_256_BASE);*/
+  char * number = strdup(strstr(term_color,"38;5;") + 5);
+  char * t = strchr( number, 'm' );
+  if(t) t[0] = '\000';
+  if(oyjlStringToLong( number, &index, 0 ) != 0)
+    index = -1;
+  free(number);
+  return (int)index;
+}
+
+static void convertXterm256ToHex_(const char * text OYJL_UNUSED, const char * start OYJL_UNUSED, const char * end, const char * search, const char ** replace, int * r_len, void * data)
+{
+  int index = oyjlTermColor256GetIndex(end);
+  char ** txt = data, * t = *txt;
+  int bold = strstr(search, "\033[1;") ? 1 : 0;
+  int italic = strstr(search, "\033[3;") ? 1 : 0;
+  int bold_italic = bold || italic ? 2 : 0;
+  if(t) { free(t); *txt = t = NULL; }
+  if(0 <= index && index <= 255)
+  {
+    if(bold_italic)
+      oyjlStringAdd(&t, 0,0, "%s", bold ? "<strong>" : "<em>" );
+    oyjlStringAdd(&t, 0,0, "<font color=\"#%s\">", oyjlX11_CLUT_256[index]);
+    *replace = *txt = t;
+    *r_len = bold_italic + 7 + (index >= 100 ? 3 : index >= 10 ? 2 : 1) + 1;
+  }
+  else
+  {
+    const char * m = strchr(end, 'm');
+    const char * index = end+bold_italic+7;
+    int add = 0;
+    if(m - (index) < 4)
+      add = m-index + 1;
+    *replace = "";
+    *r_len = bold_italic + 7 + add;
+  }
+}
+
+
+#ifndef OYJL_WRAP
+#define OYJL_WRAP                      0x001
+#endif
 /** @brief convert internal used terminal colors to HTML
  *
+ *  Support OYJL_WRAP in flags
+ *
  *  @version Oyjl: 1.0.0
- *  @date    2022/06/10
+ *  @date    2022/09/14
  *  @since   2022/06/10 (Oyjl: 1.0.0)
  */
 const char * oyjlTermColorToHtml     ( const char        * text,
-                                       int                 flags OYJL_UNUSED )
+                                       int                 flags )
 {
   const char * t;
+  char * txt = NULL;
   oyjl_str tmp = oyjlStr_New(10,0,0);
   oyjlStr_Push( tmp, text );
+  oyjlStr_Replace( tmp, "<", "&lt;", 0,NULL );
+  oyjlStr_Replace( tmp, ">", "&gt;", 0,NULL );
   oyjlStr_Replace( tmp, OYJL_RED_TC, "<font color=red>", 0,NULL );
   oyjlStr_Replace( tmp, OYJL_GREEN_TC, "<font color=green>", 0,NULL );
   oyjlStr_Replace( tmp, OYJL_BLUE_TC, "<font color=blue>", 0,NULL );
@@ -2102,10 +2433,30 @@ const char * oyjlTermColorToHtml     ( const char        * text,
   oyjlStr_Replace( tmp, OYJL_RED_B, "<font color=red>", 0,NULL );
   oyjlStr_Replace( tmp, OYJL_GREEN_B, "<font color=green>", 0,NULL );
   oyjlStr_Replace( tmp, OYJL_BLUE_B, "<font color=blue>", 0,NULL );
+  /* ansi colors */
+  oyjlStr_Replace( tmp, "\033[00;31m", "<font color=red>", 0,NULL );
+  oyjlStr_Replace( tmp, "\033[00;32m", "<font color=green>", 0,NULL );
+  oyjlStr_Replace( tmp, "\033[00;33m", "<font color=orange>", 0,NULL );
+  oyjlStr_Replace( tmp, "\033[00;34m", "<font color=blue>", 0,NULL );
+  oyjlStr_Replace( tmp, "\033[00;35m", "<font color=magenta>", 0,NULL );
+  oyjlStr_Replace( tmp, "\033[00;39m", "", 0,NULL ); /* used as default foreground color */
+  oyjlStr_Replace( tmp, OYJL_X11_CLUT_256_BASE, "", convertXterm256ToHex_,&txt );
+  oyjlStr_Replace( tmp, "\033[1;38;5;", "", convertXterm256ToHex_,&txt ); /* bold xterm256 color */
+  oyjlStr_Replace( tmp, "\033[3;38;5;", "", convertXterm256ToHex_,&txt ); /* italic xterm256 color */
+  if(txt) { free(txt); txt = NULL; }
   oyjlStr_Replace( tmp, OYJL_CTEND, "</u></strong></em></font>", 0,NULL );
+#define OYJL_CTENDM "\033[m"
+  oyjlStr_Replace( tmp, OYJL_CTENDM, "</u></strong></em></font>", 0,NULL );
+  oyjlStr_Replace( tmp, "  ", "&nbsp;&nbsp;", 0,NULL );
+  oyjlStr_Replace( tmp, "\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", 0,NULL );
+  oyjlStr_Replace( tmp, "\n", "<br />\n", 0,NULL );
   t = oyjlStr(tmp);
-  if(oyjl_term_color_html_) free(oyjl_term_color_html_);
-  oyjl_term_color_html_ = strdup( t );
+  if(oyjl_term_color_html_) { free(oyjl_term_color_html_); oyjl_term_color_html_ = NULL; }
+  if(flags & OYJL_WRAP)
+    oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n\
+<html><body>\n%s</body></html>", t );
+  else
+    oyjl_term_color_html_ = strdup( t );
   oyjlStr_Release( &tmp );
   return oyjl_term_color_html_;
 }
@@ -5615,7 +5966,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   return text;
 }
 
-static void replaceOutsideHTML_(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, void * data)
+static void replaceOutsideHTML_(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, int * r_len OYJL_UNUSED, void * data)
 {
   if(start < end)
   {

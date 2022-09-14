@@ -68,7 +68,7 @@ _oyjl_args()
             set +x +v
             return
             ;;
-        --input|--format|--help|--export|--render)
+        --input|--test|--format|--help|--export|--render)
             : "finish long options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
@@ -80,7 +80,7 @@ _oyjl_args()
             set +x +v
             return
             ;;
-        --c-stand-alone|--completion-bash|--test|--option|--synopsis|--verbose|--version)
+        --c-stand-alone|--completion-bash|--option|--synopsis|--verbose|--version)
             : "finish long options without choices"
             COMPREPLY=("$cur ")
             set +x +v

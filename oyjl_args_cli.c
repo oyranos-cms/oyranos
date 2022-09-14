@@ -1,6 +1,6 @@
 /** @file oyjl_args_cli.c
  *
- *  Oyjl JSON Clil is a command line renderer of UI files.
+ *  Oyjl Args Cli is a command line renderer of UI files.
  *
  *  @par Copyright:
  *            2021 (C) Kai-Uwe Behrmann
