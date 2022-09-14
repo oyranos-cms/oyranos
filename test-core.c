@@ -186,24 +186,30 @@ oyjlTESTRESULT_e progNAME(testI18N) ()
 #define TEST_DOMAIN2 "org2/freedesktop2/openicc2/tests2"
 #define TEST_KEY "/test_key"
 
-static void replaceCb(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, void * data)
+static void replaceCb(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, int * r_len, void * data)
 {
   if(start < end)
   {
     const char * word = start;
     int * test = (int*) data;
-    while(word && (word = strstr(word+1,"nd")) != NULL && word < end)
+    while(word && (word = strstr(word+1,"d")) != NULL && word < end)
       ++test[0];
     word = start;
-    while(word && (word = strstr(word+1,"or")) != NULL && word < end)
+    while(word && (word = strstr(word+1,"e")) != NULL && word < end)
       --test[0];
     if(test[0] < 0) test[0] = 0;
     word = start;
 
     if( test[0] )
+    {
       *replace = search;
+      *r_len = 1;
+    }
     else
+    {
       *replace = "\\/";
+      *r_len = 2;
+    }
   }
 }
 
@@ -675,12 +681,12 @@ oyjlTESTRESULT_e testString ()
     oyjlStr_Append( string, "/more/and" );
   oyjlStr_Replace( string, "/", "\\/", replaceCb, &inside );
   const char * tmp = oyjlStr(string);
-  if(strstr(tmp, "/more\\/and/more"))
+  if(strstr(tmp, "/more\\/nd/more"))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStr_Replace(callback,user_data)" );
+    "oyjlStr_Replace(callback,user_data) = %s", tmp );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStr_Replace(callback,user_data)" );
+    "oyjlStr_Replace(callback,user_data) = %s", tmp );
   }
   oyjlStr_Release( &string );
 
@@ -1986,6 +1992,26 @@ oyjlTESTRESULT_e testFunction ()
     "oyjlTermColorToHtml() %d / %d", strlen(ansi), strlen(html) );
   }
   free(text);
+
+  int          oyjlTermColor256GetIndex( const char        * term_color );
+  const char * ansi_256_color = "\033[38;5;28mcolor\033[0m\033[38;5;284mnope\033[0m\033[1;38;5;217mred\033[0m";
+  int index = oyjlTermColor256GetIndex( ansi_256_color );
+  if(index == 28)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTermColor256GetIndex(%s) = %d", ansi_256_color, index );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTermColor256GetIndex(%s) = %d", ansi_256_color, index );
+  }
+
+  html = oyjlTermColorToHtml( ansi_256_color, 0 );
+  if(html && strstr(html, ">color<") != 0 && strstr(html, ">nope<") != 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTermColorToHtml(%s) = %s ...", ansi_256_color, html );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTermColorToHtml() %d / %d", strlen(ansi_256_color), strlen(html) );
+  }
 
   return result;
 }
