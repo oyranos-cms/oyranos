@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-09-14 04:58+0200\n"
+"POT-Creation-Date: 2022-09-14 17:56+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -224,7 +224,7 @@ msgid "Date"
 msgstr ""
 
 #: oyjl_args.c:4342 oyjl_args_cli.c:270 oyjl_args_tree.c:510
-#: oyjl_args_web.c:693
+#: oyjl_args_web.c:695
 #, fuzzy
 msgid "Description"
 msgstr "kolora"
@@ -1233,7 +1233,7 @@ msgid "Url"
 msgstr ""
 
 #: oyjl_args.c:4361 oyjl_args_cli.c:275 oyjl_args_tree.c:512
-#: oyjl_args_web.c:698 oyjl_translate.c:308
+#: oyjl_args_web.c:700 oyjl_translate.c:308
 msgid "Usage"
 msgstr ""
 
