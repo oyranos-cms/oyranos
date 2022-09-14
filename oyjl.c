@@ -396,10 +396,18 @@ int myMain( int argc, const char ** argv )
         {
           int path_list_n = 0, j;
           char ** path_list = NULL;
+          int type;
 
           filename = i_files[i];
 
-          text = oyjlReadFileToMem( filename, &size );
+          type = oyjlDataFormat(filename);
+          if(type == 7 /* JSON */ ||
+             type == 8 /* XML */  ||
+             type == 9 /* YAML */ ||
+             type == 10 /* C */)
+            text = oyjlStringCopy( filename, 0 );
+          else
+            text = oyjlReadFileToMem( filename, &size );
           if(!text)
           {
             error = 1;
@@ -534,13 +542,16 @@ int myMain( int argc, const char ** argv )
 
     if(format)
     {
-      int type;
+      int type = oyjlDataFormat( i_filename );
       const char * r;
-      text = oyjlReadFileToMem( i_filename, &size );
+      if(7 <= type && type <= 10)
+        text = oyjlStringCopy( i_filename, 0);
+      else
+        text = oyjlReadFileToMem( i_filename, &size );
       type = oyjlDataFormat(text);
       r = oyjlDataFormatToString(type);
       fprintf(stdout, "%s\n", r);
-
+      if(text) { free(text); text = NULL; }
     }
 
     if(value)
@@ -618,7 +629,12 @@ int main( int argc_, char**argv_, char ** envv )
 
   lang = getenv("LANG");
   if((!loc && lang) || (loc && lang && strcmp(loc,lang) != 0))
+  {
     locale = lang;
+#ifdef OYJL_HAVE_LOCALE_H
+    locale = setlocale(LC_ALL, locale);
+#endif
+  }
   if(!loc && lang)
   {
     fprintf( stderr, "%s", oyjlTermColor(oyjlRED,"Usage Error:") );
