@@ -146,6 +146,7 @@ int        oyjlStr_Replace           ( oyjl_str            text,
                                                               const char * end,
                                                               const char * search,
                                                               const char ** replace,
+                                                              int * replace_len,
                                                               void * user_data),
                                        void              * user_data );
 

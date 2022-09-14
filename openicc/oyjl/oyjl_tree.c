@@ -458,7 +458,7 @@ static void oyjlJsonIndent_( char ** json, const char * before, int level, const
 }
 
 void       oyjlRegExpEscape2_        ( oyjl_str            text );
-void       oyjlNoBracketCb_(const char * text, const char * start, const char * end, const char * search, const char ** replace, void * data OYJL_UNUSED);
+void       oyjlNoBracketCb_(const char * text, const char * start, const char * end, const char * search, const char ** replace, int * r_len OYJL_UNUSED, void * data OYJL_UNUSED);
 /** @brief Convert strings to pass through JSON
  *
  *  @param         in                  input string

@@ -892,7 +892,7 @@ int        oyjlRegExpReplace         ( char             ** text,
 }
 
 
-void oyjlNoBracketCb_(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, void * data OYJL_UNUSED)
+void oyjlNoBracketCb_(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, int * r_len OYJL_UNUSED, void * data OYJL_UNUSED)
 {
   if(start < end)
   {
@@ -1212,16 +1212,17 @@ int        oyjlStr_Add               ( oyjl_str            string,
  *  @param[in]     replacement         string to be put in place of search sub string
  *  @param[in]     modifyReplacement   hook to dynamically modify the replacement text; optional
  *                                     - text: the full search text
- *                                     - start: current start inside text
- *                                     - end: current end inside text
- *                                     - search: used term to find actual start
- *                                     - replace: possibly modified replacement text
+ *                                     - start: current start inside text; on first occurence it provides &text[0]
+ *                                     - end: current end inside text; the actual occurence of search in text
+ *                                     - search: used term
+ *                                     - replace: possibly modified replacement text for search
+ *                                     - replace_len: length of original replace; can be changed
  *                                     - context: user data
  *  @param[in,out] user_data           optional user data for modifyReplacement
  *  @return                            number of occurences
  *
  *  @version Oyjl: 1.0.0
- *  @date    2021/10/24
+ *  @date    2022/09/04
  *  @since   2019/02/15 (Oyjl: 1.0.0)
  */
 int        oyjlStr_Replace           ( oyjl_str            text,
@@ -1233,6 +1234,7 @@ int        oyjlStr_Replace           ( oyjl_str            text,
                                                               const char * end,
                                                               const char * search,
                                                               const char ** replace,
+                                                              int * replace_len,
                                                               void * user_data),
                                        void              * user_data )
 {
@@ -1253,7 +1255,7 @@ int        oyjlStr_Replace           ( oyjl_str            text,
     {
       if(!t) t = oyjlStr_New(10,0,0);
       oyjlStr_AppendN( t, start, end-start );
-      if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement, user_data );
+      if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement, &s_len, user_data );
       oyjlStr_Push( t, replacement );
       ++n;
       if(strlen(end) >= (size_t)s_len)
