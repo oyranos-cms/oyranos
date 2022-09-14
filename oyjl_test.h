@@ -28,6 +28,7 @@
 #include <iostream>
 #include <cmath>
 #define USE_NEW
+extern "C" {
 #else
 #include <math.h>
 #endif
@@ -853,5 +854,9 @@ double             oyjlClock         ( )
 
 /** @} *//* oyjl_test */
 /** @} *//* oyjl */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* OYJL_TEST_H */

@@ -16,6 +16,10 @@
 
 #include "oyjl_test.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** \addtogroup oyjl
  *  @{ *//* oyjl */
 
@@ -170,5 +174,9 @@ int main(int argc, char** argv)
 }
 /** @} *//* oyjl_test */
 /** @} *//* oyjl */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* OYJL_TEST_MAIN_H */
