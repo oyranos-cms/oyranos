@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-09-14 04:58+0200\n"
+"POT-Creation-Date: 2022-09-14 17:56+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -227,7 +227,7 @@ msgid "Date"
 msgstr "Datum"
 
 #: oyjl_args.c:4342 oyjl_args_cli.c:270 oyjl_args_tree.c:510
-#: oyjl_args_web.c:693
+#: oyjl_args_web.c:695
 #, fuzzy
 msgid "Description"
 msgstr "popis"
@@ -1284,7 +1284,7 @@ msgid "Url"
 msgstr ""
 
 #: oyjl_args.c:4361 oyjl_args_cli.c:275 oyjl_args_tree.c:512
-#: oyjl_args_web.c:698 oyjl_translate.c:308
+#: oyjl_args_web.c:700 oyjl_translate.c:308
 msgid "Usage"
 msgstr "Použití"
 
