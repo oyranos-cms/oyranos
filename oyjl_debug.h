@@ -54,6 +54,7 @@ const char * oyjlTermColorF          ( oyjlTEXTMARK_e      mark,
                                        ... );
 const char * oyjlTermColorFromHtml   ( const char        * text,
                                        int                 flags );
+#define OYJL_WRAP                      0x001               /**< @brief wrap into format specifix code */
 const char * oyjlTermColorToHtml     ( const char        * text,
                                        int                 flags );
 const char * oyjlTermColorToPlain    ( const char        * text,
