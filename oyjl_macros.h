@@ -83,6 +83,7 @@
 # endif
 #endif
 
+#define OYJL_E(x_,empty_) (x_?x_:empty_)
 
 extern oyjlMessage_f oyjlMessage_p;
 /** convert ( const char * format, ... ) function args into a string */
