@@ -50,10 +50,14 @@
 static char * oyjl_nls_path_ = NULL;
 char * oyjl_debug_node_path_ = NULL;
 char * oyjl_debug_node_value_ = NULL;
+extern char * oyjl_term_color_;
 extern char * oyjl_term_color_html_;
 extern char * oyjl_term_color_plain_;
 extern int oyjl_args_render_init_;
 extern void *  oyjl_args_render_lib_;
+#ifdef HAVE_DL
+# include <dlfcn.h>   /* dlopen() dlclose() */
+#endif
 /** @brief Reset and free all resources */
 void oyjlLibRelease() {
   int i;
@@ -87,6 +91,11 @@ void oyjlLibRelease() {
   {
     free(oyjl_debug_node_value_);
     oyjl_debug_node_value_ = NULL;
+  }
+  if(oyjl_term_color_)
+  {
+    free(oyjl_term_color_);
+    oyjl_term_color_ = NULL;
   }
   if(oyjl_term_color_html_)
   {
