@@ -161,7 +161,7 @@ static enum MHD_Result oyjlMhdIteratePost_cb(
   (void)off;                /* Unused. Silent compiler warning. */
 
 
-  fprintf(stderr,"key:%s filename:%s content_type:%s data:%s size:%lu\n", key, filename, content_type, data, size );
+  fprintf(stderr,"key:%s filename:%s content_type:%s data:%s size:%lu\n", key, OYJL_E(filename,""), OYJL_E(content_type,""), OYJL_E(data,""), size );
 
   if(!con_info->answernode) con_info->answernode = oyjlTreeNew("");
 
@@ -431,6 +431,44 @@ const char srv_signed_cert_pem[] = "-----BEGIN CERTIFICATE-----\n"
                                    "4ToyOKPDmamiTuN5KzLN3cw7DQlvWMvqSOChPLnA3Q==\n"
                                    "-----END CERTIFICATE-----\n";
 
+#define OYJL_HTML                      0x100
+extern char * oyjl_term_color_html_;
+const char * oyjlStringColor         ( oyjlTEXTMARK_e      mark,
+                                       int                 flags,
+                                       const char        * format,
+                                                           ... )
+{
+  char * tmp = NULL;
+  const char * t = NULL,
+             * text = format;
+
+  if(strchr(format, '%'))
+  { OYJL_CREATE_VA_STRING(format, tmp, malloc, return NULL)
+    text = tmp;
+  }
+
+  if(flags & OYJL_HTML)
+  {
+    if(oyjl_term_color_html_) free(oyjl_term_color_html_);
+    oyjl_term_color_html_ = NULL;
+    switch(mark)
+    {
+      case oyjlNO_MARK: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "%s", text ); break;
+      case oyjlRED: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<font color=red>%s</font>", text ); break;
+      case oyjlGREEN: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<font color=green>%s</font>", text ); break;
+      case oyjlBLUE: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<font color=blue>%s</font>", text ); break;
+      case oyjlBOLD: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<strong>%s</strong>", text ); break;
+      case oyjlITALIC: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<em>%s</em>", text ); break;
+      case oyjlUNDERLINE: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<u>%s</u>", text ); break;
+    }
+    t = oyjl_term_color_html_;
+  }
+  else
+    t = oyjlTermColor( mark, text );
+
+  if(tmp) free(tmp);
+  return t;
+}
 
 void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
                                        char             ** t_,
@@ -449,25 +487,31 @@ void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
   v = oyjlTreeGetValue(g, 0, "synopsis");
   synopsis = OYJL_GET_STRING(v);
   if(gname || gdesc || ghelp)
-    oyjlStringAdd( &t, 0,0, "  %s", level?"  ":"" );
+    oyjlStringAdd( &t, 0,0, "&nbsp;&nbsp;%s", level?"  ":"" );
   if(gname)
-    oyjlStringAdd( &t, 0,0, "%s", oyjlTermColor(oyjlUNDERLINE,gname) );
+    oyjlStringAdd( &t, 0,0, "%s", oyjlStringColor(oyjlUNDERLINE, OYJL_HTML, gname) );
   if(gdesc)
-    oyjlStringAdd( &t, 0,0, " %s", oyjlTermColor(oyjlUNDERLINE,gdesc) );
+    oyjlStringAdd( &t, 0,0, " %s", oyjlStringColor(oyjlUNDERLINE, OYJL_HTML, gdesc) );
   if(synopsis)
   {
-    synopsis = oyjlTermColorFromHtml( synopsis, 0 );
-    oyjlStringAdd( &t, 0,0, "\n    %s%s", oyjlJsonEscape(synopsis, OYJL_REVERSE), ghelp?"":"\n" );
+    oyjlStringAdd( &t, 0,0, "<br />\n&nbsp;&nbsp;&nbsp;&nbsp;%s%s", synopsis, ghelp?"":"<br />\n" );
   }
   if(ghelp)
-    oyjlStringAdd( &t, 0,0, "\n%s%s\n", level?"      ":"    ", ghelp );
+    oyjlStringAdd( &t, 0,0, "<br />\n%s%s<br />\n", level?"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;":"&nbsp;&nbsp;&nbsp;&nbsp;", ghelp );
   if(gname || gdesc || ghelp)
-    oyjlStringAdd( &t, 0,0, "\n" );
+    oyjlStringAdd( &t, 0,0, "<br />\n" );
   *t_ = t;
 }
 
+typedef enum {
+  oyjlSECURITY_READONLY,
+  oyjlSECURITY_INTERACTIVE,
+  oyjlSECURITY_LAZY
+} oyjlSECURITY_e;
+
 void oyjlArgsWebGroupPrint_          ( oyjl_val            g,
-                                       char             ** t_)
+                                       char             ** t_,
+                                       oyjlSECURITY_e      sec )
 {
   oyjl_val v;
   const char * txt;
@@ -480,7 +524,7 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            g,
   {
     int k, kn = 0;
     const char * key, * name, * desc, * help, * value_name/*, * default_var*/, * type, * no_dash;
-    char * text;
+    char * text = NULL;
     oyjl_val opt = oyjlTreeGetValueF(v, 0, "[%d]", j);
     oyjl_val o = oyjlTreeGetValue(opt, 0, "option");
     oyjl_val choices;
@@ -497,7 +541,7 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            g,
     help = OYJL_GET_STRING(o);
     o = oyjlTreeGetValue(opt, 0, "value_name");
     value_name = OYJL_GET_STRING(o);
-    if(value_name) text = oyjlStringCopy(oyjlTermColor(oyjlITALIC,value_name),0); else text = NULL;
+    if(value_name) text = oyjlStringCopy( oyjlStringColor( oyjlITALIC, OYJL_HTML, value_name), 0 );
     /*o = oyjlTreeGetValue(opt, 0, "default");
     default_var = OYJL_GET_STRING(o);*/
     o = oyjlTreeGetValue(opt, 0, "type");
@@ -506,15 +550,21 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            g,
     no_dash = OYJL_GET_STRING(o);
     if(key[0] == '@')
       no_dash = "1";
-    oyjlStringAdd( &t, 0,0, "      %s%s%s%s%s%s%s%s%s%s\n",
-        no_dash?"":strlen(key) == 1?"-":"--", key[0] == '@'?"":oyjlTermColor(oyjlBOLD,key),
+    oyjlStringAdd( &t, 0,0, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s%s%s%s%s%s%s%s%s%s<br />\n",
+        no_dash?"":strlen(key) == 1?"-":"--", key[0] == '@'?"":oyjlStringColor(oyjlBOLD, OYJL_HTML,key),
         value_name && key[0] != '@'?"=":"", value_name?text:"",
-        name?"\t":"", name?name:"",
+        name?"&nbsp;&nbsp;":"", name?name:"",
         desc?" : ":"", desc?desc:"",
         help&&help[0]?" - ":"", help&&help[0]?help:"" );
     if(text) { free(text); text = NULL; }
     choices = oyjlTreeGetValue(opt, 0, "choices");
-    if(type && strcmp(type,"bool") != 0)
+    if(type && strcmp(type,"bool") == 0)
+    {
+      if(sec)
+        oyjlStringAdd( &t, 0,0, "<input type=\"checkbox\" name=\"%s\" id=\"%s\" value=\"true\" checked=\"true\"/><label for=\"%s\">%s</label><br />\n",
+         key /*name*/, key/* id */, /*label for id*/key, name /*i18n label*/ );
+    }
+    else
       kn = oyjlValueCount( choices );
     for(k = 0; k < kn; ++k)
     {
@@ -529,9 +579,9 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            g,
       desc = OYJL_GET_STRING(cv);
       cv = oyjlTreeGetValue(c, 0, "help");
       help = OYJL_GET_STRING(cv);
-      oyjlStringAdd( &t, 0,0, "        %s%s%s%s%s%s%s%s%s%s\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
+      oyjlStringAdd( &t, 0,0, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s%s%s%s%s%s%s%s%s%s<br />\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
         nick && key[0] != '@'?" ":"", nick?nick:"",
-        name&&name[0]?"\t\t# ":"", name?name:"",
+        name&&name[0]?"    # ":"", name?name:"",
         desc?" : ":"", desc&&desc[0]?desc:"",
         help&&help[0]?" - ":"", help&&help[0]?help:"" );
     }
@@ -550,6 +600,10 @@ int oyjlArgsWebStart__               ( int                 argc,
 {
   char * input = NULL;
   char * t = NULL;
+  int port = PORT;
+  char * https_key = NULL,
+       * https_cert = NULL;
+  oyjlSECURITY_e sec = oyjlSECURITY_READONLY;
 
   if(debug)
   {
@@ -575,6 +629,55 @@ int oyjlArgsWebStart__               ( int                 argc,
         oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", json );
         json = error;
         r = -1;
+      }
+    }
+  }
+
+  if(ui)
+  {
+    const char * web_pameters = NULL;
+    int list_n = 0, i;
+    char ** list;
+    oyjlOptions_GetResult( ui->opts, "R", &web_pameters, 0,0 );
+    if(web_pameters)
+    {
+      long lo = 8888;
+      list = oyjlStringSplit( web_pameters, ':', &list_n, 0 );
+
+      for(i = 1 /* zero param is "web" */; i < list_n; ++i)
+      {
+        char * param = list[i],
+             * arg = strchr(param, '='),
+             * security = NULL;
+        if(arg)
+        {
+          arg[0] = '\000';
+          ++arg;
+        }
+#define OYJL_SUB_ARG_LONG( param_, position_, lo_ ) \
+        if( ( (i == position_ && !arg) || \
+              (arg && strcasecmp(param,param_) == 0) ) && \
+            oyjlStringToLong(arg?arg:param, &lo, NULL) == 0 ) \
+          lo_ = lo;
+        OYJL_SUB_ARG_LONG( "port", 1, port )
+#define OYJL_SUB_ARG_STRING( param_, position_, txt_ ) \
+        if( ( (i == position_ && !arg) || \
+              (arg && strcasecmp(param,param_) == 0) ) ) \
+          txt_ = arg?arg:param;
+        OYJL_SUB_ARG_STRING( "https_key", 0, https_key )
+        OYJL_SUB_ARG_STRING( "https_cert", 0, https_cert )
+        OYJL_SUB_ARG_STRING( "security", 0, security )
+        if(security)
+        {
+          if(strcasecmp(security,"readonly") == 0)
+            sec = oyjlSECURITY_READONLY;
+          else
+          if(strcasecmp(security,"interactive") == 0)
+            sec = oyjlSECURITY_INTERACTIVE;
+          else
+          if(strcasecmp(security,"lazy") == 0)
+            sec = oyjlSECURITY_LAZY;
+        }
       }
     }
   }
@@ -663,9 +766,9 @@ int oyjlArgsWebStart__               ( int                 argc,
     const char * key_list = "name,description,help,label";
     const char * lang = oyjlLang("");
     struct MHD_Daemon * daemon;
-    int port = PORT, tls_flag = 0;
+    int tls_flag = 0;
     char * get_page = NULL;
-    char * https_key = NULL, * https_cert = NULL, * https_key_pem = NULL, * https_cert_pem = NULL;
+    char * https_key_pem = NULL, * https_cert_pem = NULL;
     if(debug)
       fprintf( stderr, "using lang: %s\n", lang );
     oyjlTranslateJson( root, NULL, key_list );
@@ -689,15 +792,15 @@ int oyjlArgsWebStart__               ( int                 argc,
         docu = OYJL_GET_STRING(info);
       }
     }
-    oyjlStringAdd( &t, 0,0, "%s%s%s - %s\n", nick?oyjlTermColor(oyjlBOLD,nick):v?val?"found nick node":"found modules node":"----", version?" v":"", version?version:"", desc );
+    oyjlStringAdd( &t, 0,0, "%s%s%s - %s<br />\n", nick?oyjlStringColor(oyjlBOLD, OYJL_HTML, nick):v?val?"found nick node":"found modules node":"----", version?" v":"", version?version:"", desc );
     if(docu)
     {
-      oyjlStringAdd( &t, 0,0, "\n%s:\n  %s\n\n", oyjlTermColor(oyjlBOLD,_("Description")), docu );
+      oyjlStringAdd( &t, 0,0, "<br />\n%s:<br />\n&nbsp;&nbsp;%s<br />\n<br />\n", oyjlStringColor(oyjlBOLD, OYJL_HTML,_("Description")), docu );
     }
     val = oyjlTreeGetValue(v, 0, "groups");
     n = oyjlValueCount( val );
     if(n)
-      oyjlStringAdd( &t, 0,0, "%s:\n", oyjlTermColor(oyjlBOLD,_("Usage")) );
+      oyjlStringAdd( &t, 0,0, "%s:<br />\n", oyjlStringColor(oyjlBOLD, OYJL_HTML,_("Usage")) );
     for(i = 0; i < n; ++i)
     {
       int j, count, has_options;
@@ -708,57 +811,34 @@ int oyjlArgsWebStart__               ( int                 argc,
       if(count || has_options)
         oyjlArgsWebGroupPrintSection_(g, &t, 0);
       if(has_options)
-        oyjlArgsWebGroupPrint_(g, &t);
+      {
+        if(sec)
+          oyjlStringAdd( &t, 0,0, "<form action=\"/result\" method=\"post\" enctype=\"multipart/form-data\">\n" );
+        oyjlArgsWebGroupPrint_(g, &t, sec);
+        if(sec)
+          oyjlStringAdd( &t, 0,0, "<input type=\"submit\" value=\" Send \"></form>\n" );
+      }
       for(j = 0; j < count; ++j)
       {
         g = oyjlTreeGetValueF(v, 0, "[%d]", j);
         if(oyjlTreeGetValue(g, 0, "options"))
         {
           oyjlArgsWebGroupPrintSection_(g, &t, 1);
-          oyjlArgsWebGroupPrint_(g, &t);
+          if(sec)
+            oyjlStringAdd( &t, 0,0, "<form action=\"/result\" method=\"post\" enctype=\"multipart/form-data\">\n" );
+          oyjlArgsWebGroupPrint_(g, &t, sec);
+          if(sec)
+            oyjlStringAdd( &t, 0,0, "<input type=\"submit\" value=\" Send \"></form>\n" );
         }
       }
       if(count || has_options)
-        oyjlStringAdd( &t, 0,0, "\n" );
+        oyjlStringAdd( &t, 0,0, "<br />\n" );
     }
     if(n)
-      oyjlStringAdd( &t, 0,0, "\n" );
+      oyjlStringAdd( &t, 0,0, "<br />\n" );
 
-    if(ui)
-    {
-      const char * web_pameters = NULL;
-      int list_n = 0;
-      char ** list;
-      oyjlOptions_GetResult( ui->opts, "R", &web_pameters, 0,0 );
-      if(web_pameters)
-      {
-        long lo = 8888;
-        list = oyjlStringSplit( web_pameters, ':', &list_n, 0 );
 
-        for(i = 1 /* zero param is "web" */; i < list_n; ++i)
-        {
-          char * param = list[i],
-               * arg = strchr(param, '=');
-          if(arg)
-          {
-            arg[0] = '\000';
-            ++arg;
-          }
-#define OYJL_SUB_ARG_LONG( param_, position_, lo_ ) \
-          if( ( (i == position_ && !arg) || \
-                (arg && strcasecmp(param,param_) == 0) ) && \
-              oyjlStringToLong(arg?arg:param, &lo, NULL) == 0 ) \
-            lo_ = lo;
-          OYJL_SUB_ARG_LONG( "port", 1, port )
-#define OYJL_SUB_ARG_STRING( param_, position_, txt_ ) \
-          if( ( (i == position_ && !arg) || \
-                (arg && strcasecmp(param,param_) == 0) ) ) \
-            txt_ = arg?arg:param;
-          OYJL_SUB_ARG_STRING( "https_key", 0, https_key )
-          OYJL_SUB_ARG_STRING( "https_cert", 0, https_cert )
-        }
-      }
-    }
+
     if(https_key && https_cert)
     {
       int size = 0;
@@ -778,7 +858,8 @@ int oyjlArgsWebStart__               ( int                 argc,
                 "%s not found. Falling back to server side https_cert\n", oyjlTermColor(oyjlRED, https_cert));
       }
     }
-    get_page = oyjlStringCopy( oyjlTermColorToHtml(t, OYJL_WRAP), 0 );
+    oyjlStringAdd( &get_page, 0,0, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n\
+<html><body>\n%s</body></html>", t );
     daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | tls_flag,
                                port, NULL, NULL,
                                &oyjlMhdAnswerToConnection_cb, get_page,
@@ -794,12 +875,13 @@ int oyjlArgsWebStart__               ( int                 argc,
                "Failed to start daemon, port:%s\n", oyjlTermColorF( oyjlRED, "%d", port));
       return 1;
     }
-    fprintf( stderr, "port:%s%s%s%s%s %s",
+    fprintf( stderr, "port:%s%s%s%s%s %s ",
         oyjlTermColorF( oyjlGREEN, "%d", port ),
         https_key?" https_key:":"", https_key?https_key:"",
         https_cert?" https_cert:":"", https_cert?https_cert:"",
-        tls_flag?"MHD_USE_TLS":"noTLS:need both https_key and https_cert filenames " );
-    fprintf( stderr, "connect to %s\n", oyjlTermColorF( oyjlBOLD, "%s//localhost:%d", tls_flag?"https":"http", port) ),
+        tls_flag?"MHD_USE_TLS":https_key||https_cert?"noTLS:need both https_key and https_cert filenames":"" );
+    fprintf( stderr, "sec:%s ", oyjlTermColor(oyjlITALIC,sec == oyjlSECURITY_LAZY?"lazy":sec==oyjlSECURITY_INTERACTIVE?"interactive":"readonly" ));
+    fprintf( stderr, "connect to %s\n", oyjlTermColorF( oyjlBOLD, "%s//localhost:%d", tls_flag?"https":"http", port) );
 
     (void) getchar ();
 
