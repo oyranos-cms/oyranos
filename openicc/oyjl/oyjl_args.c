@@ -1191,7 +1191,6 @@ void     oyjlStringListAddList       ( char            *** list,
 #define OYJL_CTEND "\033[0m"
 #define OYJL_X11_CLUT_256_BASE "\033[38;5;"
 #endif
-extern char * oyjl_term_color_plain_;
 #if !defined (OYJL_ARGS_BASE)
 const char * oyjlTermColorToPlainArgs( const char        * text );
 const char * oyjlTermColorToPlain    ( const char        * text,
@@ -1617,7 +1616,9 @@ oyjlTr_s *     oyjlTr_Get            ( const char        * domain )
   return context;
 }
 static char * oyjl_nls_path_ = NULL;
+extern char * oyjl_term_color_;
 extern char * oyjl_term_color_html_;
+extern char * oyjl_term_color_plain_;
 void oyjlLibRelease() {
   if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL; }
   if(oyjl_tr_context_)
@@ -1632,6 +1633,7 @@ void oyjlLibRelease() {
     oyjl_tr_context_ = NULL;
     oyjl_tr_context_reserve_ = 0;
   }
+  if(oyjl_term_color_) { free(oyjl_term_color_); oyjl_term_color_ = NULL; }
   if(oyjl_term_color_html_) { free(oyjl_term_color_html_); oyjl_term_color_html_ = NULL; }
   if(oyjl_term_color_plain_) { free(oyjl_term_color_plain_); oyjl_term_color_plain_ = NULL; }
 }
@@ -2003,57 +2005,60 @@ int          oyjlTermColorInit       ( int                 flags )
 /* 256 CLUT */
 #define OYJL_X11_CLUT_256_BASE "\033[38;5;"
 #endif
+char * oyjl_term_color_ = NULL;
 /** @brief text formating for terminals
  *
  *  Input text can be up to 200 chars wide. The returned text is cached.
  *  So copy or flush the text before reusing this function.
  *
  *  @version Oyjl: 1.0.0
- *  @date    2022/05/08
+ *  @date    2022/09/15
  *  @since   2019/06/16 (Oyjl: 1.0.0)
  */
 const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text)
 {
-  int len = 0;
-  static char t[256];
   int color_env = oyjlTermColorInit( *oyjl_debug > 1?OYJL_OBSERVE:0 ),
       color = color_env & 0x01,
       truecolor = color_env & 0x02;
   if(!text)
     return "---";
 
-  len = strlen(text);
-  if(len < 200)
+  if(oyjl_term_color_) free(oyjl_term_color_);
+  oyjl_term_color_ = NULL;
+  switch(rgb)
   {
-    switch(rgb)
-    {
-      case oyjlNO_MARK:   sprintf( t, "%s", text ); break;
-      case oyjlRED:       sprintf( t, "%s%s%s", truecolor          ? OYJL_RED_TC   : color ? OYJL_RED_B   : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-      case oyjlGREEN:     sprintf( t, "%s%s%s", truecolor          ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-      case oyjlBLUE:      sprintf( t, "%s%s%s", truecolor          ? OYJL_BLUE_TC  : color ? OYJL_BLUE_B  : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-      case oyjlBOLD:      sprintf( t, "%s%s%s", truecolor || color ? OYJL_BOLD                            : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-      case oyjlITALIC:    sprintf( t, "%s%s%s", truecolor || color ? OYJL_ITALIC                          : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-      case oyjlUNDERLINE: sprintf( t, "%s%s%s", truecolor || color ? OYJL_UNDERLINE                       : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-    }
-    return t;
-  } else
-    return text;
+    case oyjlNO_MARK:   oyjlStringAdd( &oyjl_term_color_, 0,0, "%s", text ); break;
+    case oyjlRED:       oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor          ? OYJL_RED_TC   : color ? OYJL_RED_B   : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    case oyjlGREEN:     oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor          ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    case oyjlBLUE:      oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor          ? OYJL_BLUE_TC  : color ? OYJL_BLUE_B  : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    case oyjlBOLD:      oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor || color ? OYJL_BOLD                            : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    case oyjlITALIC:    oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor || color ? OYJL_ITALIC                          : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    case oyjlUNDERLINE: oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor || color ? OYJL_UNDERLINE                       : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+  }
+  return oyjl_term_color_;
 }
 /** @brief variable text formating for terminals
  *
  *  @see oyjlTermColor()
  *
  *  @version Oyjl: 1.0.0
- *  @date    2022/04/03
+ *  @date    2022/09/15
  *  @since   2022/06/06 (Oyjl: 1.0.0)
  */
 const char * oyjlTermColorF( oyjlTEXTMARK_e rgb, const char * format, ...)
 {
-  char * text = NULL;
-  const char * t;
-  OYJL_CREATE_VA_STRING(format, text, malloc, return NULL)
+  char * tmp = NULL;
+  const char * t = NULL,
+             * text = format;
+
+  if(strchr(format, '%'))
+  { OYJL_CREATE_VA_STRING(format, tmp, malloc, return NULL)
+    text = tmp;
+  }
+
   t = oyjlTermColor( rgb, text );
-  if(t != text) free(text);
+
+  if(tmp) free(tmp);
   return t;
 }
 
@@ -2651,7 +2656,6 @@ int oyjlManArgIsEditable_( const char * arg )
 }
 
 
-#define OYJL_E(x_) (x_?x_:"")
 #define OYJL_IS_NOT_O( x ) (!o || !o->o || strcmp(o->o,x) != 0)
 #define OYJL_IS_NOT_OPT( x ) (!o || !o->option || strcmp(o->option,x) != 0)
 #define OYJL_IS_O( x ) (o && o->o && strcmp(o->o,x) == 0)
@@ -2915,7 +2919,7 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
       oyjl_R_choices_[1].help = _("Print on Command Line Interface.");
       oyjl_R_choices_[2].name = _("Web");
       oyjl_R_choices_[2].description = _("Start Web Server");
-      oyjl_R_choices_[2].help = _("Start a local Web Service to connect a Webbrowser with.");
+      oyjl_R_choices_[2].help = _("Start a local Web Service to connect a Webbrowser with. Supported subargs are: port for port number, https_key and https_cert for passing in encryption filenames, security=readonly|interactive|lazy with \"readonly\" showing a static page, \"interactive\" showing GUI elements and \"lazy\" executing the tool.");
 #endif
       o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_R_choices_, sizeof(oyjl_R_choices_), malloc );
       if(o->value_name == NULL)
@@ -2930,7 +2934,7 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
           {
             o->description = _("Select Renderer");
             if(o->help == NULL)
-              o->help = _("Select and possibly configure Renderer. -R=\"gui\" will just launch a graphical UI."); /* -R=\"web:port_number:api_path:TLS_private_key:TLS_CA_certificate:style.css\" will launch a local Web Server, which listens on local port."); web is not yet implemented. */
+              o->help = _("Select and possibly configure Renderer. -R=\"gui\" will just launch a graphical UI. -R=\"web:port=port_number:https_key=TLS_private_key_filename:https_cert=TLS_CA_certificate_filename\" will launch a local Web Server, which listens on local port.");
           }
         }
       }
@@ -6290,7 +6294,7 @@ static const char * oyjlLibNameCreate_()
 }
 void * oyjl_core_lib_ArgsBase = NULL;
 #ifdef HAVE_DL
-# include <dlfcn.h>
+# include <dlfcn.h>   /* dlopen() dlclose() */
 #endif
 #undef oyjlUi_ToText
 #undef oyjlTermColor

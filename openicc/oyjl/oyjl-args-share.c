@@ -31,7 +31,6 @@
 #include <ctype.h> /* toupper() */
 
 #define OYJL_REG "org/freedesktop/oyjl"
-#define OYJL_E(x_) (x_?x_:"")
 #define OYJL_IS_NOT_O( x ) (!o->o || strcmp(o->o,x) != 0)
 #define OYJL_IS_O( x ) (o->o && strcmp(o->o,x) == 0)
 
