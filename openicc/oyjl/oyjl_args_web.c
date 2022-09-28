@@ -162,6 +162,8 @@ static enum MHD_Result oyjlMhdIteratePost_cb(
 
 
   fprintf(stderr,"key:%s filename:%s content_type:%s data:%s size:%lu\n", key, OYJL_E(filename,""), OYJL_E(content_type,""), OYJL_E(data,""), size );
+  if(size == 0)
+    return MHD_YES;
 
   if(!con_info->answernode) con_info->answernode = oyjlTreeNew("");
 
@@ -470,9 +472,28 @@ const char * oyjlStringColor         ( oyjlTEXTMARK_e      mark,
   return t;
 }
 
+int  oyjlArgsWebGroupIsMan_          ( oyjl_val            g )
+{
+  oyjl_val first_o = oyjlTreeGetValue(g, 0, "options/[0]/option");
+  const char * txt = OYJL_GET_STRING(first_o);
+  if(txt && strlen(txt) > 4 && memcmp( txt, "man-", 4 ) == 0)
+    return 1;
+  return 0;
+}
+
+typedef enum {
+  oyjlSECURITY_READONLY,
+  oyjlSECURITY_INTERACTIVE,
+  oyjlSECURITY_LAZY
+} oyjlSECURITY_e;
+
 void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
                                        char             ** t_,
-                                       int                 level )
+                                       char             ** css_toc_text,
+                                       int                 gcount,
+                                       char             ** description,
+                                       int                 level OYJL_UNUSED,
+                                       oyjlSECURITY_e      sec)
 {
   oyjl_val v;
   char * t = *t_;
@@ -486,31 +507,28 @@ void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
   ghelp = OYJL_GET_STRING(v);
   v = oyjlTreeGetValue(g, 0, "synopsis");
   synopsis = OYJL_GET_STRING(v);
-  if(gname || gdesc || ghelp)
-    oyjlStringAdd( &t, 0,0, "&nbsp;&nbsp;%s", level?"  ":"" );
-  if(gname)
-    oyjlStringAdd( &t, 0,0, "%s", oyjlStringColor(oyjlUNDERLINE, OYJL_HTML, gname) );
-  if(gdesc)
-    oyjlStringAdd( &t, 0,0, " %s", oyjlStringColor(oyjlUNDERLINE, OYJL_HTML, gdesc) );
-  if(synopsis)
+  if(gname || gdesc || ghelp || synopsis)
   {
-    oyjlStringAdd( &t, 0,0, "<br />\n&nbsp;&nbsp;&nbsp;&nbsp;%s%s", synopsis, ghelp?"":"<br />\n" );
+    if(gname)
+    {
+      oyjlStringAdd( css_toc_text, 0,0, "#h%did:focus ~ p#h%ddescription { display: block; }\n", gcount, gcount );
+      oyjlStringAdd( &t, 0,0, "  <h3 id=\"h%did\" tabindex=\"0\">%s</h3>", gcount, gname );
+    }
+    oyjlStringAdd( description, 0,0, "  <p id=\"h%ddescription\"%s>", gcount, sec?" class=\"hide\"":"" );
+    if(gdesc)
+      oyjlStringAdd( description, 0,0, "%s%s", gdesc, ghelp?"<br />\n":synopsis?"<br />\n<br />\n":"" );
+    if(ghelp)
+      oyjlStringAdd( description, 0,0, "%s%s", ghelp, synopsis?"<br />\n<br />\n":"" );
+    if(synopsis)
+      oyjlStringAdd( description, 0,0, "%s<br />\n<br />\n", synopsis );
   }
-  if(ghelp)
-    oyjlStringAdd( &t, 0,0, "<br />\n%s%s<br />\n", level?"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;":"&nbsp;&nbsp;&nbsp;&nbsp;", ghelp );
-  if(gname || gdesc || ghelp)
-    oyjlStringAdd( &t, 0,0, "<br />\n" );
   *t_ = t;
 }
 
-typedef enum {
-  oyjlSECURITY_READONLY,
-  oyjlSECURITY_INTERACTIVE,
-  oyjlSECURITY_LAZY
-} oyjlSECURITY_e;
-
 void oyjlArgsWebGroupPrint_          ( oyjl_val            g,
                                        char             ** t_,
+                                       char             ** description,
+                                       int                 gcount,
                                        oyjlSECURITY_e      sec )
 {
   oyjl_val v;
@@ -522,7 +540,7 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            g,
   count = oyjlValueCount( v );
   for(j = 0; j < count; ++j)
   {
-    int k, kn = 0;
+    int k, kn = 0, is_choice = 0;
     const char * key, * name, * desc, * help, * value_name/*, * default_var*/, * type, * no_dash;
     char * text = NULL;
     oyjl_val opt = oyjlTreeGetValueF(v, 0, "[%d]", j);
@@ -550,22 +568,51 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            g,
     no_dash = OYJL_GET_STRING(o);
     if(key[0] == '@')
       no_dash = "1";
-    oyjlStringAdd( &t, 0,0, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s%s%s%s%s%s%s%s%s%s<br />\n",
-        no_dash?"":strlen(key) == 1?"-":"--", key[0] == '@'?"":oyjlStringColor(oyjlBOLD, OYJL_HTML,key),
+
+    choices = oyjlTreeGetValue(opt, 0, "choices");
+    oyjlStringAdd( description, 0,0, "%s%s[%s%s%s%s]%s%s%s%s<br />\n",
+        name?oyjlStringColor(oyjlBOLD, OYJL_HTML,name):"", name?"&nbsp;&nbsp;":"",
+        no_dash?"":strlen(key) == 1?"-":"--", key[0] == '@'?"":key,
         value_name && key[0] != '@'?"=":"", value_name?text:"",
-        name?"&nbsp;&nbsp;":"", name?name:"",
         desc?" : ":"", desc?desc:"",
         help&&help[0]?" - ":"", help&&help[0]?help:"" );
-    if(text) { free(text); text = NULL; }
-    choices = oyjlTreeGetValue(opt, 0, "choices");
+
     if(type && strcmp(type,"bool") == 0)
     {
       if(sec)
-        oyjlStringAdd( &t, 0,0, "<input type=\"checkbox\" name=\"%s\" id=\"%s\" value=\"true\" checked=\"true\"/><label for=\"%s\">%s</label><br />\n",
-         key /*name*/, key/* id */, /*label for id*/key, name /*i18n label*/ );
+        oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\">%s</label><input type=\"checkbox\" name=\"%s\" id=\"%s-%d\" value=\"true\" checked=\"true\"/><br />\n",
+         /*label for id*/key, gcount, name /*i18n label*/, key /*name*/, key/* id */, gcount );
     }
     else
+    {
       kn = oyjlValueCount( choices );
+      if(kn && sec )
+      {
+        if(type && strcmp(type,"choice") == 0)
+        {
+          is_choice = 1;
+  	      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\">%s</label>\n  <select id=\"%s-%d\" name=\"%s\">\n", key, gcount, name?name:"", key, gcount, key );
+        }
+        else if(type && strcmp(type,"string") == 0)
+        {
+          is_choice = 2;
+  	      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\">%s</label>\n  <input id=\"%s-%d\" list=\"%s-%d-states\" name=\"%s\" />\n\
+    <datalist id=\"%s-%d-states\">\n", key, gcount, name?name:"", key, gcount, key, gcount, key, key, gcount );
+        }
+      } else if(type && strcmp(type,"string") == 0)
+      {
+        is_choice = 2;
+  	    oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\">%s</label>\n  <input id=\"%s-%d\" name=\"%s\" /><br />\n", key, gcount, name?name:"", key, gcount, key );
+      }
+    }
+      
+    if(kn && sec)
+    {
+      if(is_choice == 1)
+	        oyjlStringAdd( &t, 0,0, "    <option value=\"\"></option>\n" );
+      else if(is_choice == 2)
+	        oyjlStringAdd( &t, 0,0, "      <option value=\"\"></option>\n" );
+    }
     for(k = 0; k < kn; ++k)
     {
       oyjl_val c = oyjlTreeGetValueF(choices, 0, "[%d]", k);
@@ -579,12 +626,28 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            g,
       desc = OYJL_GET_STRING(cv);
       cv = oyjlTreeGetValue(c, 0, "help");
       help = OYJL_GET_STRING(cv);
-      oyjlStringAdd( &t, 0,0, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s%s%s%s%s%s%s%s%s%s<br />\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
+      if(sec)
+      {
+        if(is_choice == 1)
+	        oyjlStringAdd( &t, 0,0, "    <option value=\"%s\">%s</option>\n", nick, name?name:nick );
+        else if(is_choice == 2)
+	        oyjlStringAdd( &t, 0,0, "      <option value=\"%s\">%s</option>\n", nick, name?name:nick );
+      }
+      oyjlStringAdd( description, 0,0, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s%s%s%s%s%s%s%s%s%s<br />\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
         nick && key[0] != '@'?" ":"", nick?nick:"",
         name&&name[0]?"    # ":"", name?name:"",
         desc?" : ":"", desc&&desc[0]?desc:"",
         help&&help[0]?" - ":"", help&&help[0]?help:"" );
     }
+    if(kn && sec)
+    {
+      if(is_choice == 1)
+        oyjlStringAdd( &t, 0,0, "  </select><br />\n" );
+      else if(is_choice == 2)
+        oyjlStringAdd( &t, 0,0, "    </datalist>\n\
+  </input><br />\n" );
+    }
+    if(text) { free(text); text = NULL; }
   }
   *t_ = t;
 }
@@ -600,14 +663,16 @@ int oyjlArgsWebStart__               ( int                 argc,
 {
   char * input = NULL;
   char * t = NULL;
+  int i;
   int port = PORT;
   char * https_key = NULL,
-       * https_cert = NULL;
+       * https_cert = NULL,
+       * css = NULL,
+       * css2 = NULL;
   oyjlSECURITY_e sec = oyjlSECURITY_READONLY;
 
   if(debug)
   {
-    int i;
     for(i = 0; i < argc; ++i)
       fprintf( stderr, "%s ", argv[i] );
     fprintf( stderr, "\n" );
@@ -636,7 +701,7 @@ int oyjlArgsWebStart__               ( int                 argc,
   if(ui)
   {
     const char * web_pameters = NULL;
-    int list_n = 0, i;
+    int list_n = 0;
     char ** list;
     oyjlOptions_GetResult( ui->opts, "R", &web_pameters, 0,0 );
     if(web_pameters)
@@ -654,16 +719,18 @@ int oyjlArgsWebStart__               ( int                 argc,
           arg[0] = '\000';
           ++arg;
         }
-#define OYJL_SUB_ARG_LONG( param_, position_, lo_ ) \
+        if(debug)
+          fprintf( stderr, "parsing sub param[%d]:%s\targ:%s\n", i, param, OYJL_E(arg,"") );
+#define OYJL_SUB_ARG_LONG( param_, position_, lo_ ) { \
         if( ( (i == position_ && !arg) || \
               (arg && strcasecmp(param,param_) == 0) ) && \
             oyjlStringToLong(arg?arg:param, &lo, NULL) == 0 ) \
-          lo_ = lo;
+          lo_ = lo; }
         OYJL_SUB_ARG_LONG( "port", 1, port )
-#define OYJL_SUB_ARG_STRING( param_, position_, txt_ ) \
+#define OYJL_SUB_ARG_STRING( param_, position_, txt_ ) { \
         if( ( (i == position_ && !arg) || \
               (arg && strcasecmp(param,param_) == 0) ) ) \
-          txt_ = arg?arg:param;
+          txt_ = arg?arg:param; }
         OYJL_SUB_ARG_STRING( "https_key", 0, https_key )
         OYJL_SUB_ARG_STRING( "https_cert", 0, https_cert )
         OYJL_SUB_ARG_STRING( "security", 0, security )
@@ -678,6 +745,10 @@ int oyjlArgsWebStart__               ( int                 argc,
           if(strcasecmp(security,"lazy") == 0)
             sec = oyjlSECURITY_LAZY;
         }
+        if(css)
+          OYJL_SUB_ARG_STRING( "css", 0, css2 )
+        else
+          OYJL_SUB_ARG_STRING( "css", 0, css )
       }
     }
   }
@@ -753,7 +824,7 @@ int oyjlArgsWebStart__               ( int                 argc,
       }
     }
     if(debug)
-      fprintf( stderr, "input: %s\n", input );
+      fprintf( stderr, "input: %ld\n", strlen(input) );
   }
 
   if(root)
@@ -761,20 +832,33 @@ int oyjlArgsWebStart__               ( int                 argc,
     oyjl_val v = oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules/[0]"); // use UI JSON
     oyjl_val val = oyjlTreeGetValue(v, 0, "nick");
     const char * nick = OYJL_GET_STRING(val),
-               * desc = NULL, * version = NULL, * docu = NULL, * txt;
-    int i = 0, n;
+               * name = NULL, * desc = NULL, * version = NULL, * docu = NULL, * type = NULL, * txt;
+    int i = 0, n, size = 0;
     const char * key_list = "name,description,help,label";
     const char * lang = oyjlLang("");
     struct MHD_Daemon * daemon;
     int tls_flag = 0;
     char * get_page = NULL;
-    char * https_key_pem = NULL, * https_cert_pem = NULL;
+    char * https_key_pem = NULL, * https_cert_pem = NULL,
+         * css_text = NULL,
+         * css2_text = NULL,
+         * css_toc_text = NULL;
+    int gcount = 0;
     if(debug)
       fprintf( stderr, "using lang: %s\n", lang );
     oyjlTranslateJson( root, NULL, key_list );
 
+    val = oyjlTreeGetValue(v, 0, "name");
+    name = OYJL_GET_STRING(val);
     val = oyjlTreeGetValue(v, 0, "description");
     desc = OYJL_GET_STRING(val);
+    val = oyjlTreeGetValue(v, 0, "type");
+    type = OYJL_GET_STRING(val);
+    if(!type) type = "module";
+    if(strcmp(type,"tool") == 0)
+      type = _("Tool");
+    if(strcmp(type,"module") == 0)
+      type = _("Module");
     val = oyjlTreeGetValue(v, 0, "information");
     n = oyjlValueCount( val );
     for(i = 0; i < n; ++i)
@@ -792,56 +876,83 @@ int oyjlArgsWebStart__               ( int                 argc,
         docu = OYJL_GET_STRING(info);
       }
     }
-    oyjlStringAdd( &t, 0,0, "%s%s%s - %s<br />\n", nick?oyjlStringColor(oyjlBOLD, OYJL_HTML, nick):v?val?"found nick node":"found modules node":"----", version?" v":"", version?version:"", desc );
-    if(docu)
+    oyjlStringAdd( &t, 0,0, "<h1 id=\"h1intro\" tabindex=\"0\">%s</h1>\n", OYJL_E(OYJL_E(name,OYJL_E(nick,type)),type) );
+    if((name && nick) || version || desc || docu)
     {
-      oyjlStringAdd( &t, 0,0, "<br />\n%s:<br />\n&nbsp;&nbsp;%s<br />\n<br />\n", oyjlStringColor(oyjlBOLD, OYJL_HTML,_("Description")), docu );
+      oyjlStringAdd( &t, 0,0, "<div class=\"text\">\n\
+  <p%s id=\"introdescription\">\n", sec?" class=\"hide\"":"" );
+      oyjlStringAdd( &t, 0,0, "%s: ", type );
+      if(name && nick)
+        oyjlStringAdd( &t, 0,0, "%s", oyjlStringColor(oyjlBOLD, OYJL_HTML, nick) );
+      if(version)
+        oyjlStringAdd( &t, 0,0, " v%s", oyjlStringColor(oyjlITALIC, OYJL_HTML, version) );
+      if(docu)
+        oyjlStringAdd( &t, 0,0, " %s", docu );
+      oyjlStringAdd( &t, 0,0, "\n  </p>\n" );
+      oyjlStringAdd( &t, 0,0, "</div>\n" );
     }
+    oyjlStringAdd( &t, 0,0, "<div class=\"tiles\">\n" );
     val = oyjlTreeGetValue(v, 0, "groups");
     n = oyjlValueCount( val );
-    if(n)
-      oyjlStringAdd( &t, 0,0, "%s:<br />\n", oyjlStringColor(oyjlBOLD, OYJL_HTML,_("Usage")) );
     for(i = 0; i < n; ++i)
     {
       int j, count, has_options;
+      char * description = NULL;
       oyjl_val g = oyjlTreeGetValueF(val, 0, "[%d]", i);
-      has_options = oyjlTreeGetValue(g, 0, "options") == 0?0:1;
+      has_options = oyjlTreeGetValue(g, 0, "options") == 0?0:oyjlArgsWebGroupIsMan_(g)?0:1;
       v = oyjlTreeGetValue(g, 0, "groups");
       count = oyjlValueCount( v );
       if(count || has_options)
-        oyjlArgsWebGroupPrintSection_(g, &t, 0);
+      {
+        oyjlStringAdd( &t, 0,0, "<div class=\"tile2\">\n" );
+        oyjlArgsWebGroupPrintSection_(g, &t, &css_toc_text, gcount, &description, 0, sec);
+      }
       if(has_options)
       {
         if(sec)
           oyjlStringAdd( &t, 0,0, "<form action=\"/result\" method=\"post\" enctype=\"multipart/form-data\">\n" );
-        oyjlArgsWebGroupPrint_(g, &t, sec);
+        oyjlArgsWebGroupPrint_(g, &t, &description, gcount, sec);
         if(sec)
-          oyjlStringAdd( &t, 0,0, "<input type=\"submit\" value=\" Send \"></form>\n" );
+          oyjlStringAdd( &t, 0,0, "  <input type=\"submit\" value=\" Send \"></form>\n" );
+        if(description)
+        {
+          oyjlStringAdd( &t, 0,0, "%s  </p>\n", description );
+          free(description);
+          description = NULL;
+        }
+        ++gcount;
       }
       for(j = 0; j < count; ++j)
       {
         g = oyjlTreeGetValueF(v, 0, "[%d]", j);
         if(oyjlTreeGetValue(g, 0, "options"))
         {
-          oyjlArgsWebGroupPrintSection_(g, &t, 1);
+          oyjlArgsWebGroupPrintSection_(g, &t, &css_toc_text, gcount, &description, 1, sec);
           if(sec)
             oyjlStringAdd( &t, 0,0, "<form action=\"/result\" method=\"post\" enctype=\"multipart/form-data\">\n" );
-          oyjlArgsWebGroupPrint_(g, &t, sec);
+          oyjlArgsWebGroupPrint_(g, &t, &description, gcount, sec);
           if(sec)
             oyjlStringAdd( &t, 0,0, "<input type=\"submit\" value=\" Send \"></form>\n" );
+          if(description)
+          {
+            oyjlStringAdd( &t, 0,0, "%s  </p>\n", description );
+            free(description);
+            description = NULL;
+          }
+          ++gcount;
         }
       }
       if(count || has_options)
-        oyjlStringAdd( &t, 0,0, "<br />\n" );
+        oyjlStringAdd( &t, 0,0, "</div>\n" );
     }
     if(n)
       oyjlStringAdd( &t, 0,0, "<br />\n" );
+    oyjlStringAdd( &t, 0,0, "</div>\n" );
 
 
 
     if(https_key && https_cert)
     {
-      int size = 0;
       tls_flag = MHD_USE_TLS;
       https_key_pem = oyjlReadFile( https_key, &size );
       if(!https_key_pem)
@@ -858,8 +969,24 @@ int oyjlArgsWebStart__               ( int                 argc,
                 "%s not found. Falling back to server side https_cert\n", oyjlTermColor(oyjlRED, https_cert));
       }
     }
-    oyjlStringAdd( &get_page, 0,0, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n\
-<html><body>\n%s</body></html>", t );
+    if(css)
+      css_text = oyjlReadFile( css, &size );
+    if(css2)
+      css2_text = oyjlReadFile( css2, &size );
+    oyjlStringAdd( &get_page, 0,0, "\
+<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n\
+<html xmlns=\"http://www.w3.org/1999/xhtml\">\n\
+<head>\n\
+  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n\
+  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n\
+  <style type=\"text/css\">%s%s%scode{white-space: pre;}\n\
+  #h1intro:focus ~ div p#introdescription { display: block; }\n\
+  </style>\n\
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
+</head><body>\n\
+%s</body></html>", OYJL_E(css_text,""), OYJL_E(css2_text,""), OYJL_E(css_toc_text,""), t );
+    if(debug)
+      oyjlWriteFile("oyjl_args_web-debug.html", get_page, strlen(get_page+1) );
     daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | tls_flag,
                                port, NULL, NULL,
                                &oyjlMhdAnswerToConnection_cb, get_page,
@@ -880,7 +1007,9 @@ int oyjlArgsWebStart__               ( int                 argc,
         https_key?" https_key:":"", https_key?https_key:"",
         https_cert?" https_cert:":"", https_cert?https_cert:"",
         tls_flag?"MHD_USE_TLS":https_key||https_cert?"noTLS:need both https_key and https_cert filenames":"" );
-    fprintf( stderr, "sec:%s ", oyjlTermColor(oyjlITALIC,sec == oyjlSECURITY_LAZY?"lazy":sec==oyjlSECURITY_INTERACTIVE?"interactive":"readonly" ));
+    fprintf( stderr, "sec:%s ", oyjlTermColor(oyjlITALIC,sec == oyjlSECURITY_LAZY?"lazy":sec==oyjlSECURITY_INTERACTIVE?"interactive":"readonly" ) );
+    fprintf( stderr, "css:%s ", OYJL_E(oyjlTermColor(css_text?oyjlITALIC:oyjlRED,css),"") );
+    fprintf( stderr, "css2:%s ", OYJL_E(oyjlTermColor(css2_text?oyjlITALIC:oyjlRED,css2),"") );
     fprintf( stderr, "connect to %s\n", oyjlTermColorF( oyjlBOLD, "%s//localhost:%d", tls_flag?"https":"http", port) );
 
     (void) getchar ();
