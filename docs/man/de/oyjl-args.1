@@ -50,13 +50,13 @@ Hole Benutzerschnittstelle als Text
 .br
 \fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Wähle Darstellung
 .RS
-Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten. -R="web:port=port_nummer:https_key=TLS_privater_Schlüssel_Dateiname:https_cert=TLS_CA_Zertifikat_Dateiname" wird einen Web Service starten.
+Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe starten. -R="web:port=port_nummer:https_key=TLS_privater_Schlüssel_Dateiname:https_cert=TLS_CA_Zertifikat_Dateiname:css=Stil_Dateiname.css" wird einen Web Service starten.
 .RE
 	\fB\-R\fR gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
 .br
 	\fB\-R\fR cli		# Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.
 .br
-	\fB\-R\fR web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser. Unterstützr Unterargumente sind: port für Türnummer, https_key und https_cert für Verschlüsselungsdateinamen, security=readonly|interactive|lazy mit "readonly" für eine statische Seitenansicht, "interactive" zeigt interaktive Bestandteile an und "lazy" für die Ausführung des Werkzeuges.
+	\fB\-R\fR web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser. Unterstützr Unterargumente sind: port für Türnummer, https_key und https_cert für Verschlüsselungsdateinamen, security=readonly|interactive|lazy mit "readonly" für eine statische Seitenansicht, "interactive" zeigt interaktive Bestandteile an und "lazy" für die Ausführung des Werkzeuges. "css=Stil.css" erlaubt einn Gestaltungsstil mittels CSS.
 .br
 	\fB\-R\fR -
 .br

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-09-16 04:55+0200\n"
+"POT-Creation-Date: 2022-09-28 14:54+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -38,7 +38,7 @@ msgstr "Ein JSON-Dateiname oder Ausgangsdatenstrom wie \"stdout\""
 
 #: oyjl_translate.c:242
 msgid "A input function name string. e.g.: \"i18n(\\\"\""
-msgstr "Ein eingabeseiter Funktionsname. z.B.: \"i18n(\\\"\""
+msgstr "Ein eingabeseitiger Funktionsname. z.B.: \"i18n(\\\"\""
 
 #: oyjl_args.c:5187
 msgid "A mandatory sub command option needs to be placed first"
@@ -54,7 +54,7 @@ msgstr "Ausgabeformat"
 
 #: oyjl_translate.c:244
 msgid "A output funtion name string. e.g.: \"_\""
-msgstr "Ein ausgabeseiter Funktionsname. z.B.: \"_\""
+msgstr "Ein ausgabeseitiger Funktionsname. z.B.: \"_\""
 
 #: oyjl_args.c:5956 oyjl_args.c:6230 oyjl_args_tree.c:514
 msgid "AUTHOR"
@@ -224,7 +224,6 @@ msgid "Date"
 msgstr "Datum"
 
 #: oyjl_args.c:4346 oyjl_args_cli.c:270 oyjl_args_tree.c:510
-#: oyjl_args_web.c:798
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -266,7 +265,7 @@ msgstr "UMGEBUNGSVARIABLEN"
 
 #: oyjl-args.c:71 oyjl.c:256 oyjl_args.c:5632 oyjl_args_tree.c:518
 #: oyjl_translate.c:246 oyjl_web.c:83 test-core.c:1107
-#: oyjl-args-qml/main.cpp:93
+#: oyjl-args-qml/main.cpp:94
 msgid "EXAMPLES"
 msgstr "BEISPIELE"
 
@@ -335,7 +334,7 @@ msgstr ""
 "X=export JSON. Für --render=XXX nutze -X=json JSON."
 
 #: oyjl-args.c:100 oyjl.c:304 oyjl_translate.c:292 oyjl_web.c:107
-#: oyjl-args-qml/main.cpp:117
+#: oyjl-args-qml/main.cpp:118
 msgid "For more information read the man page:"
 msgstr "Mehr Informationen stehen im Handbuch:"
 
@@ -372,7 +371,7 @@ msgid "GENERAL OPTIONS"
 msgstr "ALLGEMEINE OPTIONEN"
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: oyjl_args.c:2875 oyjl_web.c:93 oyjl-args-qml/main.cpp:103
+#: oyjl_args.c:2875 oyjl_web.c:93 oyjl-args-qml/main.cpp:104
 msgid "GUI"
 msgstr "GUI"
 
@@ -383,7 +382,7 @@ msgstr "GUI + Kommando"
 #: oyjl-args.c:84 oyjl.c:284 oyjl_translate.c:274 oyjl_web.c:94 test-args.c:434
 #: test-args.c:798 test-args.c:984 test-args.c:1099 test-core.c:1118
 #: test-core.c:1202 test.c:1979 test.c:2116 oyjl-args-qml/mini-app.c:196
-#: oyjl-args-qml/main.cpp:104
+#: oyjl-args-qml/main.cpp:105
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
@@ -582,7 +581,7 @@ msgstr "Markdown"
 #: oyjl-args.c:84 oyjl.c:284 oyjl_translate.c:274 oyjl_web.c:94 test-args.c:434
 #: test-args.c:798 test-args.c:984 test-args.c:1099 test-core.c:1118
 #: test-core.c:1202 test.c:1979 test.c:2116 oyjl-args-qml/mini-app.c:196
-#: oyjl-args-qml/main.cpp:104
+#: oyjl-args-qml/main.cpp:105
 msgid "Misc"
 msgstr "Verschiedenes"
 
@@ -651,7 +650,7 @@ msgstr "Modus8"
 msgid "Mode9"
 msgstr "Modus9"
 
-#: oyjl_args_tree.c:451
+#: oyjl_args_tree.c:451 oyjl_args_web.c:861
 msgid "Module"
 msgstr "Modul"
 
@@ -760,7 +759,7 @@ msgstr "Ausgabe"
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: oyjl-args-qml/main.cpp:110
+#: oyjl-args-qml/main.cpp:111
 msgid "Oyjl Args QML Viewer"
 msgstr "Oyjl Args QML Betrachter"
 
@@ -913,7 +912,7 @@ msgstr "Programmfehler:"
 msgid "Program not found"
 msgstr "Programm nicht gefunden"
 
-#: oyjl-args-qml/main.cpp:103
+#: oyjl-args-qml/main.cpp:104
 msgid "QML UI"
 msgstr "QML Benutzeroberfläche"
 
@@ -927,7 +926,7 @@ msgstr ""
 "Schreibe externen Speicher zum Erzeugen und Verändern globaler Daten."
 
 #. The --render option can be hidden and used only internally.
-#: oyjl-args-qml/mini-app.c:183 oyjl-args-qml/main.cpp:92
+#: oyjl-args-qml/mini-app.c:183 oyjl-args-qml/main.cpp:93
 msgid "Render"
 msgstr "Darstellung"
 
@@ -944,7 +943,7 @@ msgid "Results JSON"
 msgstr "Ergebnis JSON"
 
 #: oyjl-args.c:73 oyjl.c:258 oyjl_args.c:5644 oyjl_args_tree.c:524
-#: oyjl_translate.c:248 oyjl_web.c:85 oyjl-args-qml/main.cpp:95
+#: oyjl_translate.c:248 oyjl_web.c:85 oyjl-args-qml/main.cpp:96
 msgid "SEE ALSO"
 msgstr "SIEHE AUCH"
 
@@ -970,13 +969,14 @@ msgstr "Wähle Darstellung"
 msgid ""
 "Select and possibly configure Renderer. -R=\"gui\" will just launch a "
 "graphical UI. -R=\"web:port=port_number:https_key=TLS_private_key_filename:"
-"https_cert=TLS_CA_certificate_filename\" will launch a local Web Server, "
-"which listens on local port."
+"https_cert=TLS_CA_certificate_filename:css=layout_filename.css\" will launch "
+"a local Web Server, which listens on local port."
 msgstr ""
 "Wähle und konfiguriere eine Ausgabeform. -R=gui wird eine grafische Ausgabe "
 "starten. -R=\"web:port=port_nummer:"
 "https_key=TLS_privater_Schlüssel_Dateiname:"
-"https_cert=TLS_CA_Zertifikat_Dateiname\" wird einen Web Service starten."
+"https_cert=TLS_CA_Zertifikat_Dateiname:css=Stil_Dateiname.css\" wird einen "
+"Web Service starten."
 
 #: oyjl-args.c:58 test-args.c:411 test-args.c:412 test-args.c:973
 #: test-args.c:1088 test-core.c:1100 test-core.c:1101 test.c:1963 test.c:1964
@@ -1043,7 +1043,7 @@ msgstr "Einfacher Modus \"(1)\""
 msgid "Single Locale"
 msgstr "Einzelne Sprache"
 
-#: oyjl-args-qml/main.cpp:110
+#: oyjl-args-qml/main.cpp:111
 msgid "Small JSON UI tool using libOyjl and QML"
 msgstr "Kleines JSON UI Werkzeug, welches libOyjl und QML nutzt"
 
@@ -1067,14 +1067,14 @@ msgid ""
 "are: port for port number, https_key and https_cert for passing in "
 "encryption filenames, security=readonly|interactive|lazy with \"readonly\" "
 "showing a static page, \"interactive\" showing GUI elements and \"lazy\" "
-"executing the tool."
+"executing the tool. The \"css=layout.css\" lets you style your output by CSS."
 msgstr ""
 "Starte lokalen Web Service für die Darstellung in einem Webbrowser. "
-"Unterstützr Unterargumente sind: port für Türnummer, https_key und "
+"Unterstützte Unterargumente sind: port für Türnummer, https_key und "
 "https_cert für Verschlüsselungsdateinamen, security=readonly|interactive|"
 "lazy mit \"readonly\" für eine statische Seitenansicht, \"interactive\" "
 "zeigt interaktive Bestandteile an und \"lazy\" für die Ausführung des "
-"Werkzeuges."
+"Werkzeuges. \"css=Stil.css\" erlaubt einn Gestaltungsstil mittels CSS."
 
 #: oyjl_args_tree.c:477
 msgid "Support"
@@ -1143,7 +1143,7 @@ msgid ""
 "The oyjl program can be used to parse, filter sub trees, select values and "
 "modify values in JSON texts."
 msgstr ""
-"Das oyjl Programm unterstütz Einlesen, Filtern von Untermengen, Wertauswahl "
+"Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl "
 "und Wertveränderung in einem JSON Text."
 
 #: oyjl.c:244
@@ -1191,7 +1191,7 @@ msgstr "Die Erklärung zur Option."
 msgid "Too many input files for option"
 msgstr "Zu viele Eingangsdateien für diese Option"
 
-#: oyjl_args_tree.c:449
+#: oyjl_args_tree.c:449 oyjl_args_web.c:859
 msgid "Tool"
 msgstr "Werkzeug"
 
@@ -1249,7 +1249,7 @@ msgid "Url"
 msgstr "Url"
 
 #: oyjl_args.c:4365 oyjl_args_cli.c:275 oyjl_args_tree.c:512
-#: oyjl_args_web.c:803 oyjl_translate.c:308
+#: oyjl_translate.c:308
 msgid "Usage"
 msgstr "Benutzung"
 
@@ -1273,12 +1273,12 @@ msgstr ""
 "Benutze nur Buchstaben aus den Alphabet [A-Z,a-z] einschließlich möglichem "
 "Understrich '_'."
 
-#: oyjl.c:263 oyjl_translate.c:254 oyjl-args-qml/main.cpp:87
+#: oyjl.c:263 oyjl_translate.c:254 oyjl-args-qml/main.cpp:88
 msgid "Verbose"
 msgstr "Plaudernd"
 
 #: oyjl-args.c:69 oyjl.c:266 oyjl_args_tree.c:484 oyjl_translate.c:256
-#: test-core.c:1106 oyjl-args-qml/main.cpp:89
+#: test-core.c:1106 oyjl-args-qml/main.cpp:90
 msgid "Version"
 msgstr "Version"
 
@@ -1524,12 +1524,12 @@ msgstr "zu benutzende Schlüsselwörter in einer kommagetrennten Liste"
 
 #: oyjl-args.c:68 oyjl_web.c:79 test-args.c:415 test-args.c:976
 #: test-args.c:1091 test-core.c:1105 test.c:1969 test.c:2106
-#: oyjl-args-qml/mini-app.c:185 oyjl-args-qml/main.cpp:87
+#: oyjl-args-qml/mini-app.c:185 oyjl-args-qml/main.cpp:88
 msgid "verbose"
 msgstr "plaudernd"
 
 #: oyjl-args.c:69 oyjl.c:266 oyjl_translate.c:256 oyjl_web.c:80
-#: test-core.c:1106 oyjl-args-qml/main.cpp:89
+#: test-core.c:1106 oyjl-args-qml/main.cpp:90
 msgid "version"
 msgstr "Version"
 

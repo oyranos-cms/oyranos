@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-09-16 04:55+0200\n"
+"POT-Creation-Date: 2022-09-28 14:54+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -232,7 +232,6 @@ msgid "Date"
 msgstr "Data"
 
 #: oyjl_args.c:4346 oyjl_args_cli.c:270 oyjl_args_tree.c:510
-#: oyjl_args_web.c:798
 #, fuzzy
 msgid "Description"
 msgstr "Azalpena"
@@ -277,7 +276,7 @@ msgstr ""
 
 #: oyjl-args.c:71 oyjl.c:256 oyjl_args.c:5632 oyjl_args_tree.c:518
 #: oyjl_translate.c:246 oyjl_web.c:83 test-core.c:1107
-#: oyjl-args-qml/main.cpp:93
+#: oyjl-args-qml/main.cpp:94
 msgid "EXAMPLES"
 msgstr ""
 
@@ -347,7 +346,7 @@ msgid ""
 msgstr ""
 
 #: oyjl-args.c:100 oyjl.c:304 oyjl_translate.c:292 oyjl_web.c:107
-#: oyjl-args-qml/main.cpp:117
+#: oyjl-args-qml/main.cpp:118
 msgid "For more information read the man page:"
 msgstr ""
 
@@ -387,7 +386,7 @@ msgid "GENERAL OPTIONS"
 msgstr ""
 
 #. type,   flags, name,      description,          help, mandatory, optional, detail
-#: oyjl_args.c:2875 oyjl_web.c:93 oyjl-args-qml/main.cpp:103
+#: oyjl_args.c:2875 oyjl_web.c:93 oyjl-args-qml/main.cpp:104
 #, fuzzy
 msgid "GUI"
 msgstr "SGI"
@@ -399,7 +398,7 @@ msgstr ""
 #: oyjl-args.c:84 oyjl.c:284 oyjl_translate.c:274 oyjl_web.c:94 test-args.c:434
 #: test-args.c:798 test-args.c:984 test-args.c:1099 test-core.c:1118
 #: test-core.c:1202 test.c:1979 test.c:2116 oyjl-args-qml/mini-app.c:196
-#: oyjl-args-qml/main.cpp:104
+#: oyjl-args-qml/main.cpp:105
 #, fuzzy
 msgid "General options"
 msgstr "Bereizketa"
@@ -610,7 +609,7 @@ msgstr ""
 #: oyjl-args.c:84 oyjl.c:284 oyjl_translate.c:274 oyjl_web.c:94 test-args.c:434
 #: test-args.c:798 test-args.c:984 test-args.c:1099 test-core.c:1118
 #: test-core.c:1202 test.c:1979 test.c:2116 oyjl-args-qml/mini-app.c:196
-#: oyjl-args-qml/main.cpp:104
+#: oyjl-args-qml/main.cpp:105
 msgid "Misc"
 msgstr ""
 
@@ -690,7 +689,7 @@ msgstr "Modeloa:"
 msgid "Mode9"
 msgstr "Modeloa:"
 
-#: oyjl_args_tree.c:451
+#: oyjl_args_tree.c:451 oyjl_args_web.c:861
 #, fuzzy
 msgid "Module"
 msgstr "Bereizketa"
@@ -800,7 +799,7 @@ msgstr "Irteera"
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
-#: oyjl-args-qml/main.cpp:110
+#: oyjl-args-qml/main.cpp:111
 #, fuzzy
 msgid "Oyjl Args QML Viewer"
 msgstr "kargatuta"
@@ -978,7 +977,7 @@ msgstr ""
 msgid "Program not found"
 msgstr "Profila-kolorea"
 
-#: oyjl-args-qml/main.cpp:103
+#: oyjl-args-qml/main.cpp:104
 msgid "QML UI"
 msgstr ""
 
@@ -990,7 +989,7 @@ msgid ""
 msgstr ""
 
 #. The --render option can be hidden and used only internally.
-#: oyjl-args-qml/mini-app.c:183 oyjl-args-qml/main.cpp:92
+#: oyjl-args-qml/mini-app.c:183 oyjl-args-qml/main.cpp:93
 #, fuzzy
 msgid "Render"
 msgstr "Oyranos-en ezarpenak"
@@ -1010,7 +1009,7 @@ msgid "Results JSON"
 msgstr ""
 
 #: oyjl-args.c:73 oyjl.c:258 oyjl_args.c:5644 oyjl_args_tree.c:524
-#: oyjl_translate.c:248 oyjl_web.c:85 oyjl-args-qml/main.cpp:95
+#: oyjl_translate.c:248 oyjl_web.c:85 oyjl-args-qml/main.cpp:96
 msgid "SEE ALSO"
 msgstr ""
 
@@ -1037,8 +1036,8 @@ msgstr "kargatuta"
 msgid ""
 "Select and possibly configure Renderer. -R=\"gui\" will just launch a "
 "graphical UI. -R=\"web:port=port_number:https_key=TLS_private_key_filename:"
-"https_cert=TLS_CA_certificate_filename\" will launch a local Web Server, "
-"which listens on local port."
+"https_cert=TLS_CA_certificate_filename:css=layout_filename.css\" will launch "
+"a local Web Server, which listens on local port."
 msgstr ""
 
 #: oyjl-args.c:58 test-args.c:411 test-args.c:412 test-args.c:973
@@ -1110,7 +1109,7 @@ msgstr ""
 msgid "Single Locale"
 msgstr ""
 
-#: oyjl-args-qml/main.cpp:110
+#: oyjl-args-qml/main.cpp:111
 msgid "Small JSON UI tool using libOyjl and QML"
 msgstr ""
 
@@ -1132,7 +1131,7 @@ msgid ""
 "are: port for port number, https_key and https_cert for passing in "
 "encryption filenames, security=readonly|interactive|lazy with \"readonly\" "
 "showing a static page, \"interactive\" showing GUI elements and \"lazy\" "
-"executing the tool."
+"executing the tool. The \"css=layout.css\" lets you style your output by CSS."
 msgstr ""
 
 #: oyjl_args_tree.c:477
@@ -1237,7 +1236,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr ""
 
-#: oyjl_args_tree.c:449
+#: oyjl_args_tree.c:449 oyjl_args_web.c:859
 msgid "Tool"
 msgstr ""
 
@@ -1289,7 +1288,7 @@ msgid "Url"
 msgstr ""
 
 #: oyjl_args.c:4365 oyjl_args_cli.c:275 oyjl_args_tree.c:512
-#: oyjl_args_web.c:803 oyjl_translate.c:308
+#: oyjl_translate.c:308
 msgid "Usage"
 msgstr ""
 
@@ -1311,12 +1310,12 @@ msgid ""
 "Use only letters from alphabet [A-Z,a-z] including optional underscore '_'."
 msgstr ""
 
-#: oyjl.c:263 oyjl_translate.c:254 oyjl-args-qml/main.cpp:87
+#: oyjl.c:263 oyjl_translate.c:254 oyjl-args-qml/main.cpp:88
 msgid "Verbose"
 msgstr ""
 
 #: oyjl-args.c:69 oyjl.c:266 oyjl_args_tree.c:484 oyjl_translate.c:256
-#: test-core.c:1106 oyjl-args-qml/main.cpp:89
+#: test-core.c:1106 oyjl-args-qml/main.cpp:90
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin-en bertsioa"
@@ -1567,12 +1566,12 @@ msgstr ""
 
 #: oyjl-args.c:68 oyjl_web.c:79 test-args.c:415 test-args.c:976
 #: test-args.c:1091 test-core.c:1105 test.c:1969 test.c:2106
-#: oyjl-args-qml/mini-app.c:185 oyjl-args-qml/main.cpp:87
+#: oyjl-args-qml/mini-app.c:185 oyjl-args-qml/main.cpp:88
 msgid "verbose"
 msgstr ""
 
 #: oyjl-args.c:69 oyjl.c:266 oyjl_translate.c:256 oyjl_web.c:80
-#: test-core.c:1106 oyjl-args-qml/main.cpp:89
+#: test-core.c:1106 oyjl-args-qml/main.cpp:90
 #, fuzzy
 msgid "version"
 msgstr "ICC Examin-en bertsioa"
