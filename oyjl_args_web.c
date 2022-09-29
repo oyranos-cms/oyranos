@@ -33,6 +33,7 @@
 #include "oyjl_io.h"
 #include "oyjl_macros.h"
 #include "oyjl_i18n_internal.h"
+#include "oyjl_tree_internal.h" /* oyjl_debug */
 
 #ifdef _MSC_VER
 #ifndef strcasecmp
@@ -525,131 +526,273 @@ void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
   *t_ = t;
 }
 
-void oyjlArgsWebGroupPrint_          ( oyjl_val            g,
+int oyjlSetHasOptionL_               ( char             ** set,
+                                       const char        * option )
+{
+  int found = 0;
+  char ** list;
+  int i, n;
+  if(set && *set && *set[0])
+  {
+    n = 0;
+    list = oyjlStringSplit2( *set, "|,", 0, &n, NULL, malloc );
+    if(!option)
+      found = n;
+    else
+    {
+      char * new_set = NULL;
+      for( i = 0; i  < n; ++i )
+      {
+        const char * opt = list[i];
+        if(strcmp(opt, option) == 0)
+        {
+          found = n;
+          if(*oyjl_debug)
+            fprintf( stderr, "%s found inside %s\n", option, *set );
+        } else
+          oyjlStringAdd( &new_set, 0,0, "%s%s", i?",":"", opt );
+      }
+      free(*set); *set = new_set;
+    }
+    oyjlStringListRelease( &list, n, free );
+  }
+
+  return found;
+}
+
+
+
+void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
+                                       int                 is_mandatory,
                                        char             ** t_,
                                        char             ** description,
                                        int                 gcount,
                                        oyjlSECURITY_e      sec )
 {
-  oyjl_val v;
   const char * txt;
   char * t = *t_;
 
-  int j, count;
+  int k, kn = 0, is_choice = 0;
+  const char * key, * name, * desc, * help, * value_name, * default_var, * type, * no_dash;
+  char * text = NULL;
+  oyjl_val o = oyjlTreeGetValue(opt, 0, "option");
+  oyjl_val choices;
+  txt = OYJL_GET_STRING(o);
+  if(txt && strlen(txt) > 4 && memcmp( txt, "man-", 4 ) == 0)
+    return;
+  o = oyjlTreeGetValue(opt, 0, "key");
+  key = OYJL_GET_STRING(o);
+  o = oyjlTreeGetValue(opt, 0, "name");
+  name = OYJL_GET_STRING(o);
+  o = oyjlTreeGetValue(opt, 0, "description");
+  desc = OYJL_GET_STRING(o);
+  o = oyjlTreeGetValue(opt, 0, "help");
+  help = OYJL_GET_STRING(o);
+  o = oyjlTreeGetValue(opt, 0, "value_name");
+  value_name = OYJL_GET_STRING(o);
+  if(value_name) text = oyjlStringCopy( oyjlStringColor( oyjlITALIC, OYJL_HTML, value_name), 0 );
+  o = oyjlTreeGetValue(opt, 0, "default");
+  default_var = OYJL_GET_STRING(o);
+  o = oyjlTreeGetValue(opt, 0, "type");
+  type = OYJL_GET_STRING(o);
+  o = oyjlTreeGetValue(opt, 0, "no_dash");
+  no_dash = OYJL_GET_STRING(o);
+  if(key[0] == '@')
+    no_dash = "1";
+
+  choices = oyjlTreeGetValue(opt, 0, "choices");
+  oyjlStringAdd( description, 0,0, "%s%s[%s%s%s%s]%s%s%s%s<br />\n",
+      name?oyjlStringColor(oyjlBOLD, OYJL_HTML,name):"", name?"&nbsp;&nbsp;":"",
+      no_dash?"":strlen(key) == 1?"-":"--", key[0] == '@'?"":key,
+      value_name && key[0] != '@'?"=":"", value_name?text:"",
+      desc?" : ":"", desc?desc:"",
+      help&&help[0]?" - ":"", help&&help[0]?help:"" );
+
+  if(type && strcmp(type,"bool") == 0)
+  {
+    if(sec)
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label><input type=\"checkbox\" name=\"%s\" id=\"%s-%d\" value=\"true\" checked=\"true\"%s/><br />\n",
+       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", name /*i18n label*/, key /*name*/, key/* id */, gcount, is_mandatory?" class=\"mandatory\"":"" );
+  }
+  else if(sec)
+  {
+    kn = oyjlValueCount( choices );
+    if(kn)
+    {
+      if(type && strcmp(type,"choice") == 0)
+      {
+        is_choice = 1;
+        oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label>\n  <select id=\"%s-%d\" name=\"%s\">\n", key, gcount,
+            is_mandatory?" class=\"mandatory\"":"", name?name:"", key, gcount, key );
+      }
+      else if(type && strcmp(type,"string") == 0)
+      {
+        is_choice = 2;
+        oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label>\n  <input id=\"%s-%d\" list=\"%s-%d-states\" name=\"%s\" />\n\
+  <datalist id=\"%s-%d-states\">\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?name:"", key, gcount, key, gcount, key, key, gcount );
+      }
+    } else if(type && strcmp(type,"string") == 0)
+    {
+      is_choice = 2;
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label>\n  <input id=\"%s-%d\" name=\"%s\" /><br />\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?name:"", key, gcount, key );
+    }
+  }
+    
+  if(kn && sec)
+  {
+    if(is_choice == 1)
+        oyjlStringAdd( &t, 0,0, "    <option value=\"\"></option>\n" );
+    else if(is_choice == 2)
+        oyjlStringAdd( &t, 0,0, "      <option value=\"\"></option>\n" );
+  }
+  for(k = 0; k < kn; ++k)
+  {
+    oyjl_val c = oyjlTreeGetValueF(choices, 0, "[%d]", k);
+    oyjl_val cv;
+    const char * nick;
+    cv = oyjlTreeGetValue(c, 0, "name");
+    name = OYJL_GET_STRING(cv);
+    cv = oyjlTreeGetValue(c, 0, "nick");
+    nick = OYJL_GET_STRING(cv);
+    cv = oyjlTreeGetValue(c, 0, "description");
+    desc = OYJL_GET_STRING(cv);
+    cv = oyjlTreeGetValue(c, 0, "help");
+    help = OYJL_GET_STRING(cv);
+    if(sec)
+    {
+      if(is_choice == 1)
+        oyjlStringAdd( &t, 0,0, "    <option value=\"%s\">%s</option>\n", nick, name?name:nick );
+      else if(is_choice == 2)
+        oyjlStringAdd( &t, 0,0, "      <option value=\"%s\">%s</option>\n", nick, name?name:nick );
+    }
+    oyjlStringAdd( description, 0,0, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s%s%s%s%s%s%s%s%s%s<br />\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
+      nick && key[0] != '@'?" ":"", nick?nick:"",
+      name&&name[0]?"    # ":"", name?name:"",
+      desc?" : ":"", desc&&desc[0]?desc:"",
+      help&&help[0]?" - ":"", help&&help[0]?help:"" );
+  }
+  if(kn && sec)
+  {
+    if(is_choice == 1)
+      oyjlStringAdd( &t, 0,0, "  </select><br />\n" );
+    else if(is_choice == 2)
+      oyjlStringAdd( &t, 0,0, "    </datalist>\n\
+</input><br />\n" );
+  }
+
+  if(text) { free(text); text = NULL; }
+  *t_ = t;
+}
+
+oyjl_val oyjlArgsWebGroupFindOption_ ( oyjl_val            root,
+                                       const char        * option,
+                                       int               * gcount )
+{
+  int i, n;
+  oyjl_val v = oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules/[0]"); // use UI JSON
+  oyjl_val val = oyjlTreeGetValue(v, 0, "groups");
+  n = oyjlValueCount( val );
+  for(i = 0; i < n; ++i)
+  {
+    int j, count, has_options;
+    oyjl_val g = oyjlTreeGetValueF(val, 0, "[%d]", i);
+    has_options = oyjlTreeGetValue(g, 0, "options") == 0?0:oyjlArgsWebGroupIsMan_(g)?0:1;
+    if(has_options)
+    {
+      ++(*gcount);
+      v = oyjlTreeGetValue(g, 0, "options");
+      count = oyjlValueCount( v );
+      for(j = 0; j < count; ++j)
+      {
+        oyjl_val opt = oyjlTreeGetValueF(v, 0, "[%d]", j);
+        oyjl_val o = oyjlTreeGetValue(opt, 0, "key");
+        const char * key = OYJL_GET_STRING(o);
+        if(key && strcmp(option, key) == 0)
+          return opt;
+      }
+    }
+    v = oyjlTreeGetValue(g, 0, "groups");
+    count = oyjlValueCount( v );
+    for(j = 0; j < count; ++j)
+    {
+      g = oyjlTreeGetValueF(v, 0, "[%d]", j);
+      if(oyjlTreeGetValue(g, 0, "options"))
+      {
+        ++(*gcount);
+      }
+    }
+  }
+
+  return 0;
+}
+
+void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
+                                       int                 i,
+                                       char             ** t_,
+                                       char             ** description,
+                                       int                 gcount,
+                                       oyjlSECURITY_e      sec,
+                                       oyjl_val            root,
+                                       int                 debug )
+{
+  oyjl_val v;
+  const char * txt,
+             * gname;
+  char * mandatory = NULL, * optional = NULL;
+  oyjl_val g = oyjlTreeGetValueF( groups, 0, "[%d]", i );
+
+  int j, count, mandatory_n = 0, mandatory_found = 0, optional_n = 0, optional_found = 0;
+
+  v = oyjlTreeGetValue(g, 0, "name");
+  gname = OYJL_GET_STRING(v);
+  v = oyjlTreeGetValue(g, 0, "mandatory");
+  mandatory = oyjlStringCopy( OYJL_GET_STRING(v), 0 );
+  mandatory_n = oyjlSetHasOptionL_(&mandatory, NULL);
+  v = oyjlTreeGetValue(g, 0, "optional");
+  optional = oyjlStringCopy( OYJL_GET_STRING(v), 0 );
+  optional_n = oyjlSetHasOptionL_(&optional, NULL);
   v = oyjlTreeGetValue(g, 0, "options");
   count = oyjlValueCount( v );
   for(j = 0; j < count; ++j)
   {
-    int k, kn = 0, is_choice = 0;
-    const char * key, * name, * desc, * help, * value_name/*, * default_var*/, * type, * no_dash;
-    char * text = NULL;
+    int is_mandatory = 0, is_optional = 0;
     oyjl_val opt = oyjlTreeGetValueF(v, 0, "[%d]", j);
-    oyjl_val o = oyjlTreeGetValue(opt, 0, "option");
-    oyjl_val choices;
-    txt = OYJL_GET_STRING(o);
-    if(txt && strlen(txt) > 4 && memcmp( txt, "man-", 4 ) == 0)
-      continue;
-    o = oyjlTreeGetValue(opt, 0, "key");
-    key = OYJL_GET_STRING(o);
-    o = oyjlTreeGetValue(opt, 0, "name");
-    name = OYJL_GET_STRING(o);
-    o = oyjlTreeGetValue(opt, 0, "description");
-    desc = OYJL_GET_STRING(o);
-    o = oyjlTreeGetValue(opt, 0, "help");
-    help = OYJL_GET_STRING(o);
-    o = oyjlTreeGetValue(opt, 0, "value_name");
-    value_name = OYJL_GET_STRING(o);
-    if(value_name) text = oyjlStringCopy( oyjlStringColor( oyjlITALIC, OYJL_HTML, value_name), 0 );
-    /*o = oyjlTreeGetValue(opt, 0, "default");
-    default_var = OYJL_GET_STRING(o);*/
-    o = oyjlTreeGetValue(opt, 0, "type");
-    type = OYJL_GET_STRING(o);
-    o = oyjlTreeGetValue(opt, 0, "no_dash");
-    no_dash = OYJL_GET_STRING(o);
-    if(key[0] == '@')
-      no_dash = "1";
-
-    choices = oyjlTreeGetValue(opt, 0, "choices");
-    oyjlStringAdd( description, 0,0, "%s%s[%s%s%s%s]%s%s%s%s<br />\n",
-        name?oyjlStringColor(oyjlBOLD, OYJL_HTML,name):"", name?"&nbsp;&nbsp;":"",
-        no_dash?"":strlen(key) == 1?"-":"--", key[0] == '@'?"":key,
-        value_name && key[0] != '@'?"=":"", value_name?text:"",
-        desc?" : ":"", desc?desc:"",
-        help&&help[0]?" - ":"", help&&help[0]?help:"" );
-
-    if(type && strcmp(type,"bool") == 0)
-    {
-      if(sec)
-        oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\">%s</label><input type=\"checkbox\" name=\"%s\" id=\"%s-%d\" value=\"true\" checked=\"true\"/><br />\n",
-         /*label for id*/key, gcount, name /*i18n label*/, key /*name*/, key/* id */, gcount );
-    }
-    else
-    {
-      kn = oyjlValueCount( choices );
-      if(kn && sec )
-      {
-        if(type && strcmp(type,"choice") == 0)
-        {
-          is_choice = 1;
-  	      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\">%s</label>\n  <select id=\"%s-%d\" name=\"%s\">\n", key, gcount, name?name:"", key, gcount, key );
-        }
-        else if(type && strcmp(type,"string") == 0)
-        {
-          is_choice = 2;
-  	      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\">%s</label>\n  <input id=\"%s-%d\" list=\"%s-%d-states\" name=\"%s\" />\n\
-    <datalist id=\"%s-%d-states\">\n", key, gcount, name?name:"", key, gcount, key, gcount, key, key, gcount );
-        }
-      } else if(type && strcmp(type,"string") == 0)
-      {
-        is_choice = 2;
-  	    oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\">%s</label>\n  <input id=\"%s-%d\" name=\"%s\" /><br />\n", key, gcount, name?name:"", key, gcount, key );
-      }
-    }
-      
-    if(kn && sec)
-    {
-      if(is_choice == 1)
-	        oyjlStringAdd( &t, 0,0, "    <option value=\"\"></option>\n" );
-      else if(is_choice == 2)
-	        oyjlStringAdd( &t, 0,0, "      <option value=\"\"></option>\n" );
-    }
-    for(k = 0; k < kn; ++k)
-    {
-      oyjl_val c = oyjlTreeGetValueF(choices, 0, "[%d]", k);
-      oyjl_val cv;
-      const char * nick;
-      cv = oyjlTreeGetValue(c, 0, "name");
-      name = OYJL_GET_STRING(cv);
-      cv = oyjlTreeGetValue(c, 0, "nick");
-      nick = OYJL_GET_STRING(cv);
-      cv = oyjlTreeGetValue(c, 0, "description");
-      desc = OYJL_GET_STRING(cv);
-      cv = oyjlTreeGetValue(c, 0, "help");
-      help = OYJL_GET_STRING(cv);
-      if(sec)
-      {
-        if(is_choice == 1)
-	        oyjlStringAdd( &t, 0,0, "    <option value=\"%s\">%s</option>\n", nick, name?name:nick );
-        else if(is_choice == 2)
-	        oyjlStringAdd( &t, 0,0, "      <option value=\"%s\">%s</option>\n", nick, name?name:nick );
-      }
-      oyjlStringAdd( description, 0,0, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s%s%s%s%s%s%s%s%s%s<br />\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
-        nick && key[0] != '@'?" ":"", nick?nick:"",
-        name&&name[0]?"    # ":"", name?name:"",
-        desc?" : ":"", desc&&desc[0]?desc:"",
-        help&&help[0]?" - ":"", help&&help[0]?help:"" );
-    }
-    if(kn && sec)
-    {
-      if(is_choice == 1)
-        oyjlStringAdd( &t, 0,0, "  </select><br />\n" );
-      else if(is_choice == 2)
-        oyjlStringAdd( &t, 0,0, "    </datalist>\n\
-  </input><br />\n" );
-    }
-    if(text) { free(text); text = NULL; }
+    oyjl_val o = oyjlTreeGetValue(opt, 0, "key");
+    const char * key = OYJL_GET_STRING(o);
+    if(oyjlSetHasOptionL_(&mandatory, key)) { is_mandatory = 1; ++mandatory_found; };
+    if(oyjlSetHasOptionL_(&optional, key)) { is_optional = 1; ++optional_found; };
+    oyjlArgsWebOptionPrint_( opt, is_mandatory, t_, description, gcount, sec );
   }
-  *t_ = t;
+
+  if(optional && strlen(optional))
+  {
+    int i, n = 0;
+    char ** list = oyjlStringSplit2( optional, "|,", 0, &n, NULL, malloc );
+    for( i = 0; i  < n; ++i )
+    {
+      const char * opt = list[i];
+      int src_gcount = 0;
+      oyjl_val o = oyjlArgsWebGroupFindOption_( root, opt, &src_gcount );
+      char * opt_bold = oyjlStringCopy( oyjlTermColor(oyjlBOLD,opt), 0 );
+      if(!o)
+        oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, OYJL_DBG_FORMAT "OyjlArgsWeb option not found: %s", OYJL_DBG_ARGS, opt_bold );
+      else
+      {
+        if(debug)
+          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsWeb add option from group %d to form %s: %s", OYJL_DBG_ARGS, src_gcount-1, gname, opt_bold );
+        oyjlArgsWebOptionPrint_( o, 0/* is_mandatory */, t_, NULL /* add no repeating description */, gcount, sec );
+      }
+      free(opt_bold);
+    }
+    oyjlStringListRelease( &list, n, free );
+  }
+
+  if(debug)
+  {
+    fprintf( stderr, "%s: mandatory(%s): %d[%d], optional(%s): %d[%d] count: %d\n", OYJL_E(gname,""),
+           OYJL_E(mandatory,""), mandatory_found, mandatory_n,
+           OYJL_E(optional,""),  optional_found,  optional_n,  count );
+  }
 }
 
 int oyjlArgsWebStart__               ( int                 argc,
@@ -670,6 +813,9 @@ int oyjlArgsWebStart__               ( int                 argc,
        * css = NULL,
        * css2 = NULL;
   oyjlSECURITY_e sec = oyjlSECURITY_READONLY;
+
+  int web_pameters_list_n = 0;
+  char ** web_pameters_list;
 
   if(debug)
   {
@@ -701,17 +847,15 @@ int oyjlArgsWebStart__               ( int                 argc,
   if(ui)
   {
     const char * web_pameters = NULL;
-    int list_n = 0;
-    char ** list;
     oyjlOptions_GetResult( ui->opts, "R", &web_pameters, 0,0 );
     if(web_pameters)
     {
       long lo = 8888;
-      list = oyjlStringSplit( web_pameters, ':', &list_n, 0 );
+      web_pameters_list = oyjlStringSplit( web_pameters, ':', &web_pameters_list_n, 0 );
 
-      for(i = 1 /* zero param is "web" */; i < list_n; ++i)
+      for(i = 1 /* zero param is "web" */; i < web_pameters_list_n; ++i)
       {
-        char * param = list[i],
+        char * param = web_pameters_list[i],
              * arg = strchr(param, '='),
              * security = NULL;
         if(arg)
@@ -773,8 +917,8 @@ int oyjlArgsWebStart__               ( int                 argc,
   }
   else
   {
-    json = oyjlUi_ToJson( ui, 0 ); // generate JSON from ui data struct
-    char * merged = NULL;
+    char * merged = NULL, * tmp = NULL;
+    tmp = json = oyjlUi_ToJson( ui, 0 ); // generate JSON from ui data struct
     if(debug)
       fprintf( stderr, "oyjlUi_ToJson(): %lu\n", json?strlen(json):0);
     if(root && json)
@@ -802,8 +946,8 @@ int oyjlArgsWebStart__               ( int                 argc,
         fprintf( stderr, "use generated UI JSON\n");
     }
     input = oyjlStringCopy( merged, 0 );
-    if(merged)
-      free(merged);
+    if(merged) free(merged);
+    if(tmp) free(tmp);
   }
 
   if(root) { oyjlTreeFree( root ); root = NULL; }
@@ -911,9 +1055,9 @@ int oyjlArgsWebStart__               ( int                 argc,
       {
         if(sec)
           oyjlStringAdd( &t, 0,0, "<form action=\"/result\" method=\"post\" enctype=\"multipart/form-data\">\n" );
-        oyjlArgsWebGroupPrint_(g, &t, &description, gcount, sec);
+        oyjlArgsWebGroupPrint_(val, i, &t, &description, gcount, sec, root, debug);
         if(sec)
-          oyjlStringAdd( &t, 0,0, "  <input type=\"submit\" value=\" Send \"></form>\n" );
+          oyjlStringAdd( &t, 0,0, "  <input type=\"submit\" value=\" %s \"></form>\n", _("Send") );
         if(description)
         {
           oyjlStringAdd( &t, 0,0, "%s  </p>\n", description );
@@ -930,9 +1074,9 @@ int oyjlArgsWebStart__               ( int                 argc,
           oyjlArgsWebGroupPrintSection_(g, &t, &css_toc_text, gcount, &description, 1, sec);
           if(sec)
             oyjlStringAdd( &t, 0,0, "<form action=\"/result\" method=\"post\" enctype=\"multipart/form-data\">\n" );
-          oyjlArgsWebGroupPrint_(g, &t, &description, gcount, sec);
+          oyjlArgsWebGroupPrint_(val, i, &t, &description, gcount, sec, root, debug);
           if(sec)
-            oyjlStringAdd( &t, 0,0, "<input type=\"submit\" value=\" Send \"></form>\n" );
+            oyjlStringAdd( &t, 0,0, "<input type=\"submit\" value=\" %s \"></form>\n", _("Send") );
           if(description)
           {
             oyjlStringAdd( &t, 0,0, "%s  </p>\n", description );
@@ -1015,7 +1159,17 @@ int oyjlArgsWebStart__               ( int                 argc,
     (void) getchar ();
 
     MHD_stop_daemon (daemon);
+    oyjlTreeFree( root );
+    free(get_page);
+    free(t);
+    if(https_key_pem) free(https_key_pem);
+    if(https_cert_pem) free(https_cert_pem);
+    if(css_toc_text) free(css_toc_text);
+    if(css_text) free(css_text);
+    if(css2_text) free(css2_text);
   }
+
+  oyjlStringListRelease( &web_pameters_list, web_pameters_list_n, free );
 
   return 0;
 }
