@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-09-28 14:54+0200\n"
+"POT-Creation-Date: 2022-09-29 08:57+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -464,6 +464,10 @@ msgstr "kolora"
 msgid "Input"
 msgstr "Ekrano"
 
+#: oyjl_args.c:413 oyjl_message.c:74
+msgid "Insufficient Data:"
+msgstr ""
+
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
 #: oyjl.c:226 test-args.c:403 test-core.c:1087
@@ -663,7 +667,7 @@ msgstr "kolora"
 msgid "Mode9"
 msgstr "kolora"
 
-#: oyjl_args_tree.c:451 oyjl_args_web.c:861
+#: oyjl_args_tree.c:451 oyjl_args_web.c:1005
 msgid "Module"
 msgstr ""
 
@@ -995,6 +999,10 @@ msgid ""
 "a local Web Server, which listens on local port."
 msgstr ""
 
+#: oyjl_args_web.c:1060 oyjl_args_web.c:1079
+msgid "Send"
+msgstr ""
+
 #: oyjl-args.c:58 test-args.c:411 test-args.c:412 test-args.c:973
 #: test-args.c:1088 test-core.c:1100 test-core.c:1101 test.c:1963 test.c:1964
 #: test.c:2102 test.c:2103 oyjl-args-qml/mini-app.c:179
@@ -1187,7 +1195,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr ""
 
-#: oyjl_args_tree.c:449 oyjl_args_web.c:859
+#: oyjl_args_tree.c:449 oyjl_args_web.c:1003
 msgid "Tool"
 msgstr ""
 
