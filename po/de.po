@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-09-28 14:54+0200\n"
+"POT-Creation-Date: 2022-09-29 08:57+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -464,6 +464,10 @@ msgstr "Informationen"
 msgid "Input"
 msgstr "Eingabe"
 
+#: oyjl_args.c:413 oyjl_message.c:74
+msgid "Insufficient Data:"
+msgstr "Unzureichende Daten:"
+
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
 #: oyjl.c:226 test-args.c:403 test-core.c:1087
@@ -650,7 +654,7 @@ msgstr "Modus8"
 msgid "Mode9"
 msgstr "Modus9"
 
-#: oyjl_args_tree.c:451 oyjl_args_web.c:861
+#: oyjl_args_tree.c:451 oyjl_args_web.c:1005
 msgid "Module"
 msgstr "Modul"
 
@@ -978,6 +982,10 @@ msgstr ""
 "https_cert=TLS_CA_Zertifikat_Dateiname:css=Stil_Dateiname.css\" wird einen "
 "Web Service starten."
 
+#: oyjl_args_web.c:1060 oyjl_args_web.c:1079
+msgid "Send"
+msgstr "Absenden"
+
 #: oyjl-args.c:58 test-args.c:411 test-args.c:412 test-args.c:973
 #: test-args.c:1088 test-core.c:1100 test-core.c:1101 test.c:1963 test.c:1964
 #: test.c:2102 test.c:2103 oyjl-args-qml/mini-app.c:179
@@ -1191,7 +1199,7 @@ msgstr "Die Erklärung zur Option."
 msgid "Too many input files for option"
 msgstr "Zu viele Eingangsdateien für diese Option"
 
-#: oyjl_args_tree.c:449 oyjl_args_web.c:859
+#: oyjl_args_tree.c:449 oyjl_args_web.c:1003
 msgid "Tool"
 msgstr "Werkzeug"
 
