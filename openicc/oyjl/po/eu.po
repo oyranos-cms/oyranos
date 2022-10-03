@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-10-01 22:15+0200\n"
+"POT-Creation-Date: 2022-10-03 13:19+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -693,7 +693,7 @@ msgstr "Modeloa:"
 msgid "Mode9"
 msgstr "Modeloa:"
 
-#: oyjl_args_tree.c:450 oyjl_args_web.c:1139
+#: oyjl_args_tree.c:450 oyjl_args_web.c:1141
 #, fuzzy
 msgid "Module"
 msgstr "Bereizketa"
@@ -1044,7 +1044,7 @@ msgid ""
 "a local Web Server, which listens on local port."
 msgstr ""
 
-#: oyjl_args_web.c:1194 oyjl_args_web.c:1213
+#: oyjl_args_web.c:1196 oyjl_args_web.c:1215
 msgid "Send"
 msgstr ""
 
@@ -1244,7 +1244,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr ""
 
-#: oyjl_args_tree.c:448 oyjl_args_web.c:1137
+#: oyjl_args_tree.c:448 oyjl_args_web.c:1139
 msgid "Tool"
 msgstr ""
 

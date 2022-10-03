@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-10-01 22:15+0200\n"
+"POT-Creation-Date: 2022-10-03 13:19+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -654,7 +654,7 @@ msgstr "Modus8"
 msgid "Mode9"
 msgstr "Modus9"
 
-#: oyjl_args_tree.c:450 oyjl_args_web.c:1139
+#: oyjl_args_tree.c:450 oyjl_args_web.c:1141
 msgid "Module"
 msgstr "Modul"
 
@@ -982,7 +982,7 @@ msgstr ""
 "https_cert=TLS_CA_Zertifikat_Dateiname:css=Stil_Dateiname.css\" wird einen "
 "Web Service starten."
 
-#: oyjl_args_web.c:1194 oyjl_args_web.c:1213
+#: oyjl_args_web.c:1196 oyjl_args_web.c:1215
 msgid "Send"
 msgstr "Absenden"
 
@@ -1199,7 +1199,7 @@ msgstr "Die Erklärung zur Option."
 msgid "Too many input files for option"
 msgstr "Zu viele Eingangsdateien für diese Option"
 
-#: oyjl_args_tree.c:448 oyjl_args_web.c:1137
+#: oyjl_args_tree.c:448 oyjl_args_web.c:1139
 msgid "Tool"
 msgstr "Werkzeug"
 
