@@ -708,7 +708,7 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
   if(type && strcmp(type,"bool") == 0)
   {
     if(sec)
-      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label><input type=\"checkbox\" name=\"%s\" id=\"%s-%d\" value=\"false\" %s%s/><br />\n",
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label><input type=\"checkbox\" name=\"%s\" id=\"%s-%d\" value=\"true\" %s%s/><br />\n",
        /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", name /*i18n label*/, key /*name*/, key/* id */, gcount, default_var && strcmp(default_var,"1") == 0?"checked":"",is_mandatory?" class=\"mandatory\"":"" );
   }
   else if(type && strcmp(type,"double") == 0)
@@ -945,7 +945,8 @@ int oyjlArgsWebStart__               ( int                 argc,
   char * https_key = NULL,
        * https_cert = NULL,
        * css = NULL,
-       * css2 = NULL;
+       * css2 = NULL,
+       * help = NULL;
   oyjlSECURITY_e sec = oyjlSECURITY_READONLY;
 
   int web_pameters_list_n = 0;
@@ -1007,7 +1008,7 @@ int oyjlArgsWebStart__               ( int                 argc,
         OYJL_SUB_ARG_LONG( "port", 1, port )
 #define OYJL_SUB_ARG_STRING( param_, position_, txt_ ) { \
         if( ( (i == position_ && !arg) || \
-              (arg && strcasecmp(param,param_) == 0) ) ) \
+              (strcasecmp(param,param_) == 0) ) ) \
           txt_ = arg?arg:param; }
         OYJL_SUB_ARG_STRING( "https_key", 0, https_key )
         OYJL_SUB_ARG_STRING( "https_cert", 0, https_cert )
@@ -1027,6 +1028,7 @@ int oyjlArgsWebStart__               ( int                 argc,
           OYJL_SUB_ARG_STRING( "css", 0, css2 )
         else
           OYJL_SUB_ARG_STRING( "css", 0, css )
+        OYJL_SUB_ARG_STRING( "help", 0, help )
       }
     }
   }
@@ -1266,6 +1268,17 @@ int oyjlArgsWebStart__               ( int                 argc,
     if(debug)
       oyjlWriteFile("oyjl_args_web-debug.html", get_page, strlen(get_page+1) );
     struct oyjl_mhd_context_struct context = { get_page, sec, "/", callback, argv[0], debug };
+    if(help)
+      fprintf( stderr, "Help:\n  %s\n\
+    port: select the port for the host; defailt is 8888\n\
+    https_key: adds a https key file; default is none, if no filename is provided it uses a self certified inbuild key\n\
+    https_cert: adds a certificate for https; default is none, if no filename is provided it uses a self certified inbuild certificate\n\
+    css: can by called two times to add CSS layout file(s), which will by embedded into the HTML code\n\
+    security: specifies the security level used; default is readonly inactive web page generation\n\
+      \"=readonly\": is passive and default\n\
+      \"=interactive\": contains interactive forms element and returns the respond JSON\n\
+      \"=lazy\": calls the specified callback from oyjlArgsRender(callback)\n\
+    help: show this help text\n", oyjlTermColor(oyjlBOLD,"--render=web:port=8888:https_key=filename.tls:https_cert=filename.tls:css=first.css:css=second.css:security=level") );
     daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | tls_flag,
                                port, NULL, NULL,
                                &oyjlMhdAnswerToConnection_cb, &context,
@@ -1291,6 +1304,7 @@ int oyjlArgsWebStart__               ( int                 argc,
     fprintf( stderr, "css2:%s ", OYJL_E(oyjlTermColor(css2_text?oyjlITALIC:oyjlRED,css2),"") );
     fprintf( stderr, "connect to %s\n", oyjlTermColorF( oyjlBOLD, "%s//localhost:%d", tls_flag?"https":"http", port) );
 
+    if(!help)
     (void) getchar ();
 
     MHD_stop_daemon (daemon);
