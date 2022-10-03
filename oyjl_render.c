@@ -108,7 +108,7 @@ int oyjl_args_render_init_ = 0;
 static int oyjlArgsRendererLoad_( const char * render_lib )
 {
   const char * name = render_lib;
-  char * fn = oyjlLibNameCreate_(name, 1), * func = NULL;
+  char * fn = oyjlLibNameCreate_(name, 1);
   int error = -1;
 
 #ifdef HAVE_DL
@@ -124,12 +124,13 @@ static int oyjlArgsRendererLoad_( const char * render_lib )
   }
   else
   {
-    func = oyjlFuncNameCreate_(name);
+    char * func = oyjlFuncNameCreate_(name);
     oyjlArgsRender_p = (oyjlArgsRender_f)dlsym( oyjl_args_render_lib_, func );
     if(oyjlArgsRender_p)
       error = 0; /* found */
     else
       oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s: %s", OYJL_DBG_ARGS, func, dlerror() );
+    if(func) free(func);
   }
 #else
   oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "no dlopen() API available for %s", OYJL_DBG_ARGS, fn );
@@ -142,7 +143,8 @@ static int oyjlArgsRendererLoad_( const char * render_lib )
 
 static int oyjlArgsRendererSelect_  (  oyjlUi_s          * ui )
 {
-  const char * arg = NULL, * name = NULL;
+  const char * name = NULL;
+  char * arg;
   oyjlOption_s * R;
   int error = 0;
 
@@ -222,6 +224,8 @@ static int oyjlArgsRendererSelect_  (  oyjlUi_s          * ui )
 
     free(fn);
   }
+
+  if(arg) free(arg);
 
   return error;
 }
