@@ -90,6 +90,53 @@ char *     oyjlReadFileStreamToMem   ( FILE              * fp,
 
 #define WARNc_S(...) oyjlMessage_p( oyjlMSG_ERROR, 0, __VA_ARGS__ )
 #include <errno.h>
+/** @brief Read a local FILE pointer to memory */
+char *     oyjlReadFileP             ( FILE              * fp,
+                                       int               * size_ptr,
+                                       void*            (* alloc)(size_t),
+                                       const char        * file_name )
+{
+  int size = 0, s = 0;
+  char * text = NULL;
+
+  if(fp)
+  {
+    fseek( fp, 0L, SEEK_END );
+    size = ftell( fp );
+    if(size == -1)
+    {
+      switch(errno)
+      {
+        case EBADF:        WARNc_S("Not a seekable stream %d", errno); break;
+        case EINVAL:       WARNc_S("Wrong argument %d", errno); break;
+        default:           WARNc_S("%s", strerror(errno)); break;
+      }
+      if(size_ptr)
+        *size_ptr = size;
+      return NULL;
+    }
+    rewind(fp);
+    text = (char*) alloc(size+1);
+    if(text == NULL)
+    {
+      WARNc_S( "Could allocate memory: %lu", (long unsigned int)size);
+      return NULL;
+    }
+    s = fread(text, sizeof(char), size, fp);
+    text[size] = '\000';
+    if(s != size)
+      WARNc_S( "fread %lu but should read %lu",
+              (long unsigned int) s, (long unsigned int)size);
+  } else
+  {
+    WARNc_S( "%s\"%s\"", _("Could not open: "), file_name);
+  }
+
+  if(size_ptr)
+    *size_ptr = size;
+
+  return text;
+}
 /** @brief read local file into memory
  *
  *  uses malloc()
@@ -98,7 +145,7 @@ char *    oyjlReadFile( const char * file_name,
                         int        * size_ptr )
 {
   FILE * fp = NULL;
-  int size = 0, s = 0;
+  int size = 0;
   char * text = NULL;
 
   if(file_name)
@@ -106,34 +153,7 @@ char *    oyjlReadFile( const char * file_name,
     fp = fopen(file_name,"rb");
     if(fp)
     {
-      fseek( fp, 0L, SEEK_END );
-      size = ftell( fp );
-      if(size == -1)
-      {
-        switch(errno)
-        {
-          case EBADF:        WARNc_S("Not a seekable stream %d", errno); break;
-          case EINVAL:       WARNc_S("Wrong argument %d", errno); break;
-          default:           WARNc_S("%s", strerror(errno)); break;
-        }
-        if(size_ptr)
-          *size_ptr = size;
-        fclose( fp );
-        return NULL;
-      }
-      rewind(fp);
-      text = (char*) malloc(size+1);
-      if(text == NULL)
-      {
-        WARNc_S( "Could allocate memory: %lu", (long unsigned int)size);
-        fclose( fp );
-        return NULL;
-      }
-      s = fread(text, sizeof(char), size, fp);
-      text[size] = '\000';
-      if(s != size)
-        WARNc_S( "fread %lu but should read %lu",
-                (long unsigned int) s, (long unsigned int)size);
+      text = oyjlReadFileP(fp, &size, malloc, file_name);
       fclose( fp );
     } else
     {
@@ -319,6 +339,75 @@ char *     oyjlReadCommandF          ( int               * size,
   result = oyjlReadCmdToMem_( text, size, mode, alloc );
 
   free(text);
+
+  return result;
+}
+
+/** @brief Read a stream from a function.
+ *
+ *  Read stdout and stderr.
+ */
+int        oyjlReadFunction          ( int                 argc,
+                                       const char       ** argv,
+                                       int              (* callback)(int argc, const char ** argv),
+                                       void*            (* alloc)(size_t),
+                                       int               * size_stdout,
+                                       char             ** data_stdout,
+                                       int               * size_stderr,
+                                       char             ** data_stderr )
+{
+  int result = 0;
+  FILE * fm_cb;
+  int mf_fd_cb;
+  int stdout_fd;
+  int saved_stdout;
+  FILE * fme_cb;
+  int mfe_fd_cb;
+  int stderr_fd;
+  int saved_stderr;
+
+  if(!alloc)
+    alloc = malloc;
+
+  /* create temporary file for stdout and stderr */
+  fm_cb = tmpfile();
+  mf_fd_cb = fileno(fm_cb);
+  stdout_fd = fileno(stdout);
+  saved_stdout = dup(STDOUT_FILENO);
+  if(dup2( mf_fd_cb, stdout_fd ) == -1)
+  {
+    fprintf(stderr, "mf_fd_cb: %d stdout_fd: %d %s\n", mf_fd_cb, stdout_fd, strerror(errno));
+  }
+
+  fme_cb = tmpfile();
+  mfe_fd_cb = fileno(fme_cb);
+  stderr_fd = fileno(stderr);
+  saved_stderr = dup(STDERR_FILENO);
+  if(dup2( mfe_fd_cb, stderr_fd ) == -1)
+  {
+    fprintf(stderr, "mfe_fd_cb: %d stderr_fd: %d %s\n", mfe_fd_cb, stderr_fd, strerror(errno));
+  }
+
+  result = callback( argc, argv );
+
+  fflush(fm_cb);
+  fflush(stdout); /* stdout is bufferd */
+  fflush(fme_cb);
+  fflush(stderr); /* stderr is bufferd */
+
+  if(data_stdout && size_stdout)
+    *data_stdout = oyjlReadFileP( fm_cb, size_stdout, alloc, "stdout" );
+  if(data_stderr && size_stderr)
+    *data_stderr = oyjlReadFileP( fme_cb, size_stderr, alloc, "stderr" );
+
+  fclose(fm_cb); fm_cb = NULL;
+  fclose(fme_cb); fme_cb = NULL;
+
+  /* restore stdout */
+  if(saved_stdout >= 0)
+    dup2(saved_stdout, STDOUT_FILENO);
+  if(saved_stderr >= 0)
+    dup2(saved_stderr, STDERR_FILENO);
 
   return result;
 }
