@@ -479,6 +479,27 @@ IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} AND NOT TARGET ${PACKAGE_NAME}-core-sta
   ADD_LIBRARY( ${PACKAGE_NAME}-args-cli-static STATIC  ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_args_cli.c )
   TARGET_LINK_LIBRARIES( ${PACKAGE_NAME}-args-cli-static ${PACKAGE_NAME}-static ${PACKAGE_NAME}-core-static ${EXTRA_LIBS} )
 
+  IF(OYJL_HAVE_MHD)
+    IF(HAVE_QT)
+      SET( QT_RENDER_LIB_FOR_WEB oyjl-args-qml-static )
+      ADD_LIBRARY( ${PACKAGE_NAME}-args-web-static-client STATIC ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_args_web.c )
+      SET_TARGET_PROPERTIES(${PACKAGE_NAME}-args-web-static-client PROPERTIES COMPILE_DEFINITIONS "${COMPILE_DEFINITIONS_STATIC};NO_RENDER_START=1" )
+      TARGET_LINK_LIBRARIES(${PACKAGE_NAME}-args-web-static-client
+                            ${PACKAGE_NAME}-static
+                            ${PACKAGE_NAME}-core-static
+                            ${EXTRA_LIBS}
+                            ${MHD_LIBRARIES} )
+    ENDIF()
+    ADD_LIBRARY( ${PACKAGE_NAME}-args-web-static STATIC ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_args_web.c )
+    SET_TARGET_PROPERTIES(  ${PACKAGE_NAME}-args-web-static PROPERTIES COMPILE_DEFINITIONS "${COMPILE_DEFINITIONS_STATIC}" )
+    TARGET_LINK_LIBRARIES(  ${PACKAGE_NAME}-args-web-static
+                            ${PACKAGE_NAME}-args-cli-static
+                            ${PACKAGE_NAME}-static
+                            ${PACKAGE_NAME}-core-static
+                            ${EXTRA_LIBS}
+                            ${MHD_LIBRARIES} )
+  ENDIF(OYJL_HAVE_MHD)
+
   IF(ENABLE_INSTALL_${PROJECT_UP_NAME})
     INSTALL( TARGETS       ${PACKAGE_NAME}-core-static
            RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -497,6 +518,14 @@ IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} AND NOT TARGET ${PACKAGE_NAME}-core-sta
            RESOURCE      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/color/settings
          )
     INSTALL( TARGETS       ${PACKAGE_NAME}-args-cli-static
+           RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
+           FRAMEWORK     DESTINATION ${FRAMEWORK_DIR}
+           LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+           ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
+           PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_DOWN_NAME}
+           RESOURCE      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/color/settings
+         )
+    INSTALL( TARGETS       ${PACKAGE_NAME}-args-web-static
            RUNTIME       DESTINATION ${CMAKE_INSTALL_BINDIR}
            FRAMEWORK     DESTINATION ${FRAMEWORK_DIR}
            LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -559,15 +588,19 @@ IF( OYJL_USE_GETTEXT )
 ENDIF()
 
 INCLUDE( "${CMAKE_CURRENT_BINARY_DIR}/cmake/OyjlConfig.cmake" ) # OYJL_DOCUMENT_TOOL
-BUILD_TOOL(   ${PACKAGE_NAME}-translate "${CMAKE_CURRENT_SOURCE_DIR}/oyjl_translate.c" "${TGMO_${PROJECT_UP_NAME}}" ""               TRUE  TRUE TRUE )
 
 IF(ENABLE_TOOLS_${PROJECT_UP_NAME})
 
-  BUILD_TOOL( ${PACKAGE_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                     ""                       ""                   TRUE  TRUE TRUE )
-  BUILD_TOOL( ${PACKAGE_NAME}-args "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args.c"           ""                       ""                   TRUE  TRUE FALSE )
+  BUILD_TOOL( ${PACKAGE_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                     ""                       ""                   TRUE  TRUE  TRUE )
+  BUILD_TOOL( ${PACKAGE_NAME}-args "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args.c"           ""                       ""                   TRUE  TRUE  FALSE )
   TARGET_LINK_LIBRARIES( ${PACKAGE_NAME}-args ${QT_RENDER_LIB} ${PACKAGE_NAME}-extra-static ${OYJL_TARGET_LIB} ${EXTRA_LIBS} ${_LIBS} )
-  BUILD_TOOL( jsontoyaml "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                          ""                       ""                   FALSE TRUE TRUE )
-  BUILD_TOOL( jsontoxml "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                           ""                       ""                   FALSE TRUE TRUE )
+  BUILD_TOOL( ${PACKAGE_NAME}-translate "${CMAKE_CURRENT_SOURCE_DIR}/oyjl_translate.c" "${TGMO_${PROJECT_UP_NAME}}" ""               TRUE  TRUE  TRUE )
+  IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
+    BUILD_TOOL( ${PACKAGE_NAME}-translate-static "${CMAKE_CURRENT_SOURCE_DIR}/oyjl_translate.c" "${TGMO_${PROJECT_UP_NAME}}" ""      FALSE FALSE FALSE )
+    TARGET_LINK_LIBRARIES( ${PACKAGE_NAME}-translate-static ${PACKAGE_NAME}-args-qml-static ${PACKAGE_NAME}-static ${EXTRA_LIBS} )
+  ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
+  BUILD_TOOL( jsontoyaml "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                          ""                       ""                   FALSE TRUE  TRUE )
+  BUILD_TOOL( jsontoxml "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                           ""                       ""                   FALSE TRUE  TRUE )
 
   # needs libyaml
   IF( OYJL_HAVE_YAML )
