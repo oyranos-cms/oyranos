@@ -24,6 +24,7 @@
 #cmakedefine OYJL_HAVE_LOCALE_H
 #cmakedefine OYJL_HAVE_LIBINTL_H
 #cmakedefine OYJL_USE_GETTEXT
+#cmakedefine OYJL_HAVE_MHD
 #cmakedefine OYJL_HAVE_REGEX_H
 #cmakedefine USE_GCOV
 #define OYJL_DOMAIN     "@PROJECT_DOWN_NAME@"
