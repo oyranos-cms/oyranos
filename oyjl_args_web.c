@@ -34,6 +34,7 @@
 #include "oyjl_macros.h"
 #include "oyjl_i18n_internal.h"
 #include "oyjl_tree_internal.h" /* oyjl_debug */
+#include "oyjl_version.h"
 
 #ifdef _MSC_VER
 #ifndef strcasecmp
@@ -58,6 +59,21 @@ enum ConnectionType
 
 static unsigned int oyjl_nr_of_uploading_clients = 0;
 
+typedef enum {
+  oyjlSECURITY_READONLY,
+  oyjlSECURITY_INTERACTIVE,
+  oyjlSECURITY_LAZY
+} oyjlSECURITY_e;
+
+struct oyjl_mhd_context_struct
+{
+  char * html;
+  oyjlSECURITY_e sec;
+  char * path;
+  int (*callback)(int argc, const char ** argv);
+  const char * tool_name;
+  int debug;
+};
 
 /**
  * Information we keep per connection.
@@ -88,6 +104,11 @@ struct oyjl_mhd_connection_info_struct
 
   /** Oyjl tree */
   oyjl_val answernode;
+
+  oyjlSECURITY_e sec;
+
+  /* part after the TLD url */
+  const char * path;
 };
 
 
@@ -160,9 +181,15 @@ static enum MHD_Result oyjlMhdIteratePost_cb(
   (void)content_type;       /* Unused. Silent compiler warning. */
   (void)transfer_encoding;  /* Unused. Silent compiler warning. */
   (void)off;                /* Unused. Silent compiler warning. */
+  char * text = NULL;
 
+  if(size)
+  {
+    text = (char*)calloc( size+1, sizeof(char) );
+    memcpy( text, data, size );
+  }
 
-  fprintf(stderr,"key:%s filename:%s content_type:%s data:%s size:%lu\n", key, OYJL_E(filename,""), OYJL_E(content_type,""), OYJL_E(data,""), size );
+  fprintf(stderr,"key:%s filename:%s content_type:%s data:%s size:%lu\n", key, OYJL_E(filename,""), OYJL_E(content_type,""), OYJL_E(text,""), size );
   if(size == 0)
     return MHD_YES;
 
@@ -172,11 +199,12 @@ static enum MHD_Result oyjlMhdIteratePost_cb(
   {
     con_info->answerstring = servererrorpage;
     con_info->answercode = MHD_HTTP_BAD_REQUEST;
-    oyjlTreeSetStringF( con_info->answernode, OYJL_CREATE_NEW, data, key );
+    oyjlTreeSetStringF( con_info->answernode, OYJL_CREATE_NEW, text, key );
+    if(text) free(text);
     return MHD_YES;
   } else
   {
-    oyjlTreeSetStringF( con_info->answernode, OYJL_CREATE_NEW, data, "%s/data", key );
+    oyjlTreeSetStringF( con_info->answernode, OYJL_CREATE_NEW, text, "%s/data", key );
     oyjlTreeSetStringF( con_info->answernode, OYJL_CREATE_NEW, filename, "%s/filename", key );
   }
 
@@ -205,13 +233,16 @@ static enum MHD_Result oyjlMhdIteratePost_cb(
 
   if(size > 0)
   {
-    if(! fwrite (data, sizeof (char), size, con_info->fp))
+    if(! fwrite (text, sizeof (char), size, con_info->fp))
     {
       con_info->answerstring = fileioerror;
       con_info->answercode = MHD_HTTP_INTERNAL_SERVER_ERROR;
+      if(text) free(text);
       return MHD_YES;
     }
   }
+
+  if(text) free(text);
 
   return MHD_YES;
 }
@@ -258,14 +289,16 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
                       size_t *upload_data_size,
                       void **con_cls)
 {
-  (void)cls;               /* Unused. Silent compiler warning. */
-  (void)url;               /* Unused. Silent compiler warning. */
   (void)version;           /* Unused. Silent compiler warning. */
+
+  struct oyjl_mhd_context_struct * context = (struct oyjl_mhd_context_struct*)cls;
 
   if (NULL == *con_cls)
   {
     /* First call, setup data structures */
     struct oyjl_mhd_connection_info_struct *con_info;
+
+    fprintf(stderr,"url:%s method:%s version:%s upload_data_size:%ln\n", OYJL_E(url,""), OYJL_E(method,""), OYJL_E(version,""), upload_data_size );
 
     if(oyjl_nr_of_uploading_clients >= MAXCLIENTS)
       return oyjlMhdSendPage (connection,
@@ -277,6 +310,8 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
 
     con_info->answercode = 0; /* none yet */
     con_info->fp = NULL;
+    con_info->path = context->path;
+    con_info->sec = context->sec;
 
     if(0 == strcasecmp (method, MHD_HTTP_METHOD_POST))
     {
@@ -319,7 +354,7 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
               oyjl_nr_of_uploading_clients);
 
     return oyjlMhdSendPage (connection,
-                      cls,
+                      context->html,
                       MHD_HTTP_OK);
   }
 
@@ -365,11 +400,75 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
 
     if(oyjlValueCount(con_info->answernode))
     {
-      char * answerstring = oyjlTreeToText( con_info->answernode, OYJL_JSON );
-      con_info->answerstring = oyjlTermColorToHtml( answerstring, 0 );
-      free(answerstring); answerstring = NULL;
-      int ret = oyjlMhdSendPage(connection, con_info->answerstring, con_info->answercode);
-      fprintf(stderr,  "oyjlMhdSendPage: %d\n", ret );
+      int ret = 0;
+      con_info->answerstring = NULL;
+      if(con_info->sec == oyjlSECURITY_LAZY)
+      {
+        char ** argv;
+        int n = oyjlValueCount(con_info->answernode), i;
+        argv = calloc( n+1, sizeof(char*) );
+        fprintf(stderr, "run: " );
+        argv[0] = oyjlStringCopy(context->tool_name, 0);
+        for(i = 1; i < n+1; ++i)
+        {
+          oyjl_val o = oyjlTreeGetValueF(con_info->answernode, 0, "[%d]", i-1);
+          char * path = oyjlTreeGetPath( con_info->answernode, o );
+          const char * txt = OYJL_GET_STRING(o);
+          int is_bool = strcmp(txt,"true") == 0;
+          if(path)
+          {
+            oyjlStringAdd( &argv[i], 0,0, "%s%s%s%s", strlen(path) == 1?"-":"--", path, is_bool?"":"=", is_bool?"":txt );
+            free(path);
+          }
+        }
+        for(i = 0; i < n+1; ++i)
+          fprintf(stderr, "%s ", argv[i]);
+        fprintf(stderr, "\n");
+        {
+          int size_stdout = 0, size_stderr = 0;
+          char * data_stdout = NULL, * data_stderr = NULL;
+          const char * html;
+          char * html_tmp = NULL;
+          int data_format = 0;
+
+          int result = oyjlReadFunction( n+1, (const char **)argv, context->callback, malloc, &size_stdout, &data_stdout, &size_stderr, &data_stderr );
+          html = size_stdout?data_stdout:data_stderr;
+          data_format = oyjlDataFormat(html);
+          if(result || (!size_stdout && !size_stderr) || context->debug)
+            fprintf(stderr, "returned: %d size_stdout: %d size_stderr: %d format: %s[%d]\n", result, size_stdout, size_stderr, oyjlDataFormatToString(data_format), data_format );
+
+          if(data_format != 8)
+          {
+            oyjlStringAdd( &html_tmp, 0,0, "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /></head><body>%s</body></html>",
+                           oyjlTermColorToHtml( html, 0 ) );
+            html = html_tmp;
+          }
+          con_info->answerstring = html;
+          con_info->answercode = MHD_HTTP_OK;
+          if(con_info->answerstring)
+          {
+            ret = oyjlMhdSendPage(connection, con_info->answerstring, con_info->answercode);
+            fprintf(stderr,  "oyjlMhdSendPage: %d\n", ret );
+          }
+          if(data_stdout) free(data_stdout);
+          if(data_stderr) free(data_stderr);
+          if(html_tmp) free(html_tmp);
+        }
+        oyjlStringListRelease( &argv, n, free );
+      }
+      else
+        fprintf( stderr,  "no run\n" );
+
+      if(!con_info->answerstring)
+      {
+        char * answerstring = oyjlTreeToText( con_info->answernode, OYJL_JSON );
+        con_info->answerstring = oyjlTermColorToHtml( answerstring, 0 );
+        free(answerstring); answerstring = NULL;
+        ret = oyjlMhdSendPage(connection, con_info->answerstring, con_info->answercode);
+        fprintf(stderr,  "oyjlMhdSendPage: %d\n", ret );
+      }
+
+      oyjlTreeFree( con_info->answernode ); con_info->answernode = NULL;
       return ret;
       
     } else
@@ -482,12 +581,6 @@ int  oyjlArgsWebGroupIsMan_          ( oyjl_val            g )
   return 0;
 }
 
-typedef enum {
-  oyjlSECURITY_READONLY,
-  oyjlSECURITY_INTERACTIVE,
-  oyjlSECURITY_LAZY
-} oyjlSECURITY_e;
-
 void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
                                        char             ** t_,
                                        char             ** css_toc_text,
@@ -508,6 +601,10 @@ void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
   ghelp = OYJL_GET_STRING(v);
   v = oyjlTreeGetValue(g, 0, "synopsis");
   synopsis = OYJL_GET_STRING(v);
+
+  if(!gname) { gname = gdesc; gdesc = NULL; }
+  if(!gdesc) { gdesc = ghelp; ghelp = NULL; }
+
   if(gname || gdesc || ghelp || synopsis)
   {
     if(gname)
@@ -550,7 +647,7 @@ int oyjlSetHasOptionL_               ( char             ** set,
           if(*oyjl_debug)
             fprintf( stderr, "%s found inside %s\n", option, *set );
         } else
-          oyjlStringAdd( &new_set, 0,0, "%s%s", i?",":"", opt );
+          oyjlStringAdd( &new_set, 0,0, "%s%s", i&&new_set?",":"", opt );
       }
       free(*set); *set = new_set;
     }
@@ -611,8 +708,19 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
   if(type && strcmp(type,"bool") == 0)
   {
     if(sec)
-      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label><input type=\"checkbox\" name=\"%s\" id=\"%s-%d\" value=\"true\" checked=\"true\"%s/><br />\n",
-       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", name /*i18n label*/, key /*name*/, key/* id */, gcount, is_mandatory?" class=\"mandatory\"":"" );
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label><input type=\"checkbox\" name=\"%s\" id=\"%s-%d\" value=\"false\" %s%s/><br />\n",
+       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", name /*i18n label*/, key /*name*/, key/* id */, gcount, default_var && strcmp(default_var,"1") == 0?"checked":"",is_mandatory?" class=\"mandatory\"":"" );
+  }
+  else if(type && strcmp(type,"double") == 0)
+  {
+    double start, end;
+    o = oyjlTreeGetValue(opt, 0, "start");
+    start = OYJL_GET_DOUBLE(o);
+    o = oyjlTreeGetValue(opt, 0, "end");
+    end = OYJL_GET_DOUBLE(o);
+    if(sec)
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label><input type=\"range\" name=\"%s\" id=\"%s-%d\" value=\"%s\" min=\"%g\" max=\"%g\"%s/><br />\n",
+       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", name /*i18n label*/, key /*name*/, key/* id */, gcount, default_var, start, end, is_mandatory?" class=\"mandatory\"":"" );
   }
   else if(sec)
   {
@@ -726,48 +834,19 @@ oyjl_val oyjlArgsWebGroupFindOption_ ( oyjl_val            root,
   return 0;
 }
 
-void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
-                                       int                 i,
+void oyjlArgsWebGroupPrintNonDetail_ ( oyjl_val            root,
+                                       const char        * set,
                                        char             ** t_,
-                                       char             ** description,
+                                       const char        * gname,
                                        int                 gcount,
-                                       oyjlSECURITY_e      sec,
-                                       oyjl_val            root,
-                                       int                 debug )
+                                       int                 sec,
+                                       int                 debug,
+                                       const char        * set_orig )
 {
-  oyjl_val v;
-  const char * txt,
-             * gname;
-  char * mandatory = NULL, * optional = NULL;
-  oyjl_val g = oyjlTreeGetValueF( groups, 0, "[%d]", i );
-
-  int j, count, mandatory_n = 0, mandatory_found = 0, optional_n = 0, optional_found = 0;
-
-  v = oyjlTreeGetValue(g, 0, "name");
-  gname = OYJL_GET_STRING(v);
-  v = oyjlTreeGetValue(g, 0, "mandatory");
-  mandatory = oyjlStringCopy( OYJL_GET_STRING(v), 0 );
-  mandatory_n = oyjlSetHasOptionL_(&mandatory, NULL);
-  v = oyjlTreeGetValue(g, 0, "optional");
-  optional = oyjlStringCopy( OYJL_GET_STRING(v), 0 );
-  optional_n = oyjlSetHasOptionL_(&optional, NULL);
-  v = oyjlTreeGetValue(g, 0, "options");
-  count = oyjlValueCount( v );
-  for(j = 0; j < count; ++j)
-  {
-    int is_mandatory = 0, is_optional = 0;
-    oyjl_val opt = oyjlTreeGetValueF(v, 0, "[%d]", j);
-    oyjl_val o = oyjlTreeGetValue(opt, 0, "key");
-    const char * key = OYJL_GET_STRING(o);
-    if(oyjlSetHasOptionL_(&mandatory, key)) { is_mandatory = 1; ++mandatory_found; };
-    if(oyjlSetHasOptionL_(&optional, key)) { is_optional = 1; ++optional_found; };
-    oyjlArgsWebOptionPrint_( opt, is_mandatory, t_, description, gcount, sec );
-  }
-
-  if(optional && strlen(optional))
+  if(set && strlen(set))
   {
     int i, n = 0;
-    char ** list = oyjlStringSplit2( optional, "|,", 0, &n, NULL, malloc );
+    char ** list = oyjlStringSplit2( set, "|,", 0, &n, NULL, malloc );
     for( i = 0; i  < n; ++i )
     {
       const char * opt = list[i];
@@ -775,7 +854,7 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
       oyjl_val o = oyjlArgsWebGroupFindOption_( root, opt, &src_gcount );
       char * opt_bold = oyjlStringCopy( oyjlTermColor(oyjlBOLD,opt), 0 );
       if(!o)
-        oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, OYJL_DBG_FORMAT "OyjlArgsWeb option not found: %s", OYJL_DBG_ARGS, opt_bold );
+        oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, OYJL_DBG_FORMAT "OyjlArgsWeb option not found: %s from set: %s/%s", OYJL_DBG_ARGS, opt_bold, set, set_orig );
       else
       {
         if(debug)
@@ -786,6 +865,56 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
     }
     oyjlStringListRelease( &list, n, free );
   }
+}
+
+void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
+                                       int                 i,
+                                       char             ** t_,
+                                       char             ** description,
+                                       int                 gcount,
+                                       oyjlSECURITY_e      sec,
+                                       oyjl_val            root,
+                                       int                 debug )
+{
+  oyjl_val v;
+  const char * gname;
+  char * mandatory = NULL, * optional = NULL, * mandatory_orig = NULL, * optional_orig = NULL;
+  oyjl_val g = oyjlTreeGetValueF( groups, 0, "[%d]", i );
+
+  int j, count, mandatory_n = 0, mandatory_found = 0, optional_n = 0, optional_found = 0;
+
+  v = oyjlTreeGetValue(g, 0, "name");
+  gname = OYJL_GET_STRING(v);
+  if(!gname)
+  {
+    v = oyjlTreeGetValue(g, 0, "description");
+    gname = OYJL_GET_STRING(v);
+  }
+  v = oyjlTreeGetValue(g, 0, "mandatory");
+  mandatory = oyjlStringCopy( OYJL_GET_STRING(v), 0 );
+  mandatory_orig = oyjlStringCopy( mandatory, 0 );
+  mandatory_n = oyjlSetHasOptionL_(&mandatory, NULL);
+  v = oyjlTreeGetValue(g, 0, "optional");
+  optional = oyjlStringCopy( OYJL_GET_STRING(v), 0 );
+  optional_orig = oyjlStringCopy( optional, 0 );
+  optional_n = oyjlSetHasOptionL_(&optional, NULL);
+  v = oyjlTreeGetValue(g, 0, "options");
+  count = oyjlValueCount( v );
+  for(j = 0; j < count; ++j)
+  {
+    int is_mandatory = 0/*, is_optional = 0*/;
+    oyjl_val opt = oyjlTreeGetValueF(v, 0, "[%d]", j);
+    oyjl_val o = oyjlTreeGetValue(opt, 0, "key");
+    const char * key = OYJL_GET_STRING(o);
+    if(oyjlSetHasOptionL_(&mandatory, key)) { is_mandatory = 1; ++mandatory_found; };
+    if(oyjlSetHasOptionL_(&optional, key)) { /*is_optional = 1;*/ ++optional_found; };
+    oyjlArgsWebOptionPrint_( opt, is_mandatory, t_, description, gcount, sec );
+  }
+
+  if(mandatory && strlen(mandatory))
+    oyjlArgsWebGroupPrintNonDetail_( root, mandatory, t_, gname, gcount, sec, debug, mandatory_orig );
+  if(optional && strlen(optional))
+    oyjlArgsWebGroupPrintNonDetail_( root, optional, t_, gname, gcount, sec, debug, optional_orig );
 
   if(debug)
   {
@@ -793,6 +922,11 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
            OYJL_E(mandatory,""), mandatory_found, mandatory_n,
            OYJL_E(optional,""),  optional_found,  optional_n,  count );
   }
+
+  if(mandatory) free(mandatory);
+  if(optional) free(optional);
+  if(mandatory_orig) free(mandatory_orig);
+  if(optional_orig) free(optional_orig);
 }
 
 int oyjlArgsWebStart__               ( int                 argc,
@@ -802,7 +936,7 @@ int oyjlArgsWebStart__               ( int                 argc,
                                        const char        * output OYJL_UNUSED,
                                        int                 debug,
                                        oyjlUi_s          * ui,
-                                       int               (*callback)(int argc, const char ** argv) OYJL_UNUSED)
+                                       int               (*callback)(int argc, const char ** argv))
 {
   char * input = NULL;
   char * t = NULL;
@@ -918,7 +1052,7 @@ int oyjlArgsWebStart__               ( int                 argc,
   else
   {
     char * merged = NULL, * tmp = NULL;
-    tmp = json = oyjlUi_ToJson( ui, 0 ); // generate JSON from ui data struct
+    json = tmp = oyjlUi_ToJson( ui, 0 ); // generate JSON from ui data struct
     if(debug)
       fprintf( stderr, "oyjlUi_ToJson(): %lu\n", json?strlen(json):0);
     if(root && json)
@@ -1131,9 +1265,10 @@ int oyjlArgsWebStart__               ( int                 argc,
 %s</body></html>", OYJL_E(css_text,""), OYJL_E(css2_text,""), OYJL_E(css_toc_text,""), t );
     if(debug)
       oyjlWriteFile("oyjl_args_web-debug.html", get_page, strlen(get_page+1) );
+    struct oyjl_mhd_context_struct context = { get_page, sec, "/", callback, argv[0], debug };
     daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | tls_flag,
                                port, NULL, NULL,
-                               &oyjlMhdAnswerToConnection_cb, get_page,
+                               &oyjlMhdAnswerToConnection_cb, &context,
                                /* Optionally, the gnutls_load_file() can be used to
                                   load the key and the certificate from file. */
                                tls_flag?MHD_OPTION_HTTPS_MEM_KEY:MHD_OPTION_HTTPS_PRIORITIES, tls_flag?https_key_pem:"NORMAL",
@@ -1167,6 +1302,7 @@ int oyjlArgsWebStart__               ( int                 argc,
     if(css_toc_text) free(css_toc_text);
     if(css_text) free(css_text);
     if(css2_text) free(css2_text);
+    if(input) free(input);
   }
 
   oyjlStringListRelease( &web_pameters_list, web_pameters_list_n, free );
@@ -1192,11 +1328,12 @@ int oyjlArgsWeb_                     ( int                 argc,
     return r;
 }
 
-#ifdef COMPILE_STATIC
-#include "oyjl_tree_internal.h" /* oyjlStringToLower() */
+#if defined(COMPILE_STATIC) && !defined(NO_RENDER_START)
+#include "oyjl_tree_internal.h" /* oyjlStringToLower_() */
 static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
 {
-  const char * arg = NULL, * name = NULL;
+  const char * name = NULL;
+  char * arg = NULL;
   oyjlOption_s * R;
   int error = -1;
 
@@ -1229,7 +1366,7 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
   {
     if(arg[0])
     {
-      char * low = oyjlStringToLower( arg );
+      char * low = oyjlStringToLower_( arg );
       if(low)
       {
         if(strlen(low) >= strlen("gui") && memcmp("gui",low,strlen("gui")) == 0)
@@ -1252,6 +1389,9 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
         if(strcmp(name,"OyjlArgsWeb") == 0)
           error = 0;
         else
+        if(strcmp(name,"OyjlArgsCli") == 0)
+          error = -2;
+        else
           oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s|%s", OYJL_DBG_ARGS, arg,low );
         free(low);
       }
@@ -1260,11 +1400,20 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
     {
       oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsWeb available - option -R=\"cli\"", OYJL_DBG_ARGS );
     }
+    free(arg); arg = NULL;
   }
 
   return error;
 }
-// public API for liboyjl-args-cli-static.a
+int oyjlArgsCli_                     ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv));
+// public API for liboyjl-args-web-static.a
 int oyjlArgsRender                   ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
@@ -1275,8 +1424,11 @@ int oyjlArgsRender                   ( int                 argc,
                                        int               (*callback)(int argc, const char ** argv))
 {
   int result = 1;
-  if(oyjlArgsRendererSelect(ui) == 0)
+  int select = oyjlArgsRendererSelect(ui);
+  if(select == 0)
     result = oyjlArgsWeb_(argc, argv, json, commands, output, debug, ui, callback );
+  else if(select == -2)
+    result = oyjlArgsCli_(argc, argv, json, commands, output, debug, ui, callback );
   fflush(stdout);
   fflush(stderr);
   return result;
