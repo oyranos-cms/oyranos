@@ -167,7 +167,6 @@ static const char * oyjlVARIABLE_eToString_( oyjlVARIABLE_e e )
 }
 
 #define OYJL_REG "org/freedesktop/oyjl"
-#define OYJL_E(x_) (x_?x_:"")
 #define OYJL_IS_NOT_O( x ) (!o->o || strcmp(o->o,x) != 0)
 #define OYJL_IS_O( x ) (o->o && strcmp(o->o,x) == 0)
 
@@ -622,9 +621,9 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
       mandatory_index = oyjlOptionMandatoryIndex_( o, g );
       num[0] = '\000';
       if(!o->key)
-        sprintf(num, "%s", OYJL_E(option));
+        sprintf(num, "%s", OYJL_E(option,""));
       if(sub_command && mandatory_index == 0)
-        sprintf(num, "%s", OYJL_E(o->option));
+        sprintf(num, "%s", OYJL_E(o->option,""));
       if(*oyjl_debug)
         fprintf( stderr, "%d %d %s\n", sub_command, mandatory_index, num );
       if(num[0] || o->key)
