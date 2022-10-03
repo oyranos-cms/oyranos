@@ -41,6 +41,18 @@ char *     oyjlReadCommandF          ( int               * size,
                                        void*            (* alloc)(size_t),
                                        const char        * format,
                                                            ... );
+char *     oyjlReadFileP             ( FILE              * fp,
+                                       int               * size_ptr,
+                                       void*            (* alloc)(size_t),
+                                       const char        * file_name );
+int        oyjlReadFunction          ( int                 argc,
+                                       const char       ** argv,
+                                       int              (* callback)(int argc, const char ** argv),
+                                       void*            (* alloc)(size_t),
+                                       int               * size_stdout,
+                                       char             ** data_stdout,
+                                       int               * size_stderr,
+                                       char             ** data_stderr );
 int        oyjlWriteFile             ( const char        * filename,
                                        const void        * mem,
                                        int                 size );
