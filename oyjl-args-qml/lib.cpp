@@ -275,7 +275,8 @@ int oyjlArgsQml_                     ( int                 argc,
 #include "oyjl_tree_internal.h" /* oyjlStringToLower_() */
 static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
 {
-  const char * arg = NULL, * name = NULL;
+  const char * name = NULL;
+  char * arg = NULL;
   oyjlOption_s * R;
   int error = -1;
 
@@ -317,6 +318,9 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
         if(strlen(low) >= strlen("qml") && memcmp("qml",low,strlen("qml")) == 0)
           name = "OyjlArgsQml";
         else
+        if(strlen(low) >= strlen("cli") && memcmp("cli",low,strlen("cli")) == 0)
+          name = "OyjlArgsCli";
+        else
         if(strlen(low) >= strlen("web") && memcmp("web",low,strlen("web")) == 0)
           name = "OyjlArgsWeb";
         if(!name)
@@ -328,6 +332,14 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
         if(strcmp(name,"OyjlArgsQml") == 0)
           error = 0;
         else
+        if(strcmp(name,"OyjlArgsCli") == 0)
+          error = -2;
+#ifdef OYJL_HAVE_MHD
+        else
+        if(strcmp(name,"OyjlArgsWeb") == 0)
+          error = -3;
+#endif
+        else
           oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s|%s", OYJL_DBG_ARGS, arg,low );
         free(low);
       }
@@ -336,11 +348,28 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
     {
       oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsQml available - option -R=\"gui\"", OYJL_DBG_ARGS );
     }
+    free(arg); arg = NULL;
   }
 
   return error;
 }
-// public API for liboyjl-args-qml-static.a
+// public API from liboyjl-args-cli-static.a
+int oyjlArgsCli_                     ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv));
+int oyjlArgsWeb_                     ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv));
 int oyjlArgsRender                   ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
@@ -351,8 +380,15 @@ int oyjlArgsRender                   ( int                 argc,
                                        int               (*callback)(int argc, const char ** argv))
 {
   int result = 1;
-  if(oyjlArgsRendererSelect(ui) == 0)
+  int use = oyjlArgsRendererSelect(ui);
+  if(use == 0)
     result = oyjlArgsQml_(argc, argv, json, commands, output, debug, ui, callback );
+  else if(use == -2)
+    result = oyjlArgsCli_(argc, argv, json, commands, output, debug, ui, callback );
+#ifdef OYJL_HAVE_MHD
+  else if(use == -3)
+    result = oyjlArgsWeb_(argc, argv, json, commands, output, debug, ui, callback );
+#endif
   fflush(stdout);
   fflush(stderr);
   return result;

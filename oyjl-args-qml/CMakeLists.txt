@@ -182,6 +182,8 @@ IF( HAVE_QT)
                 ${QT5_DBUS_LIB}
                 ${QT5_ANDROIDEXTRAS_LIB}
                 ${OPENICC_LIBRARY_STATIC}
+                oyjl-args-cli-static
+                oyjl-args-web-static-client
                 ${OYJL_TARGET_LIB_STATIC}
                 ${OYJL_CORE_LIB_STATIC}
                 ${EXTRA_LIBS}
