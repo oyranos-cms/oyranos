@@ -505,7 +505,8 @@ void       oyjlStringListPush        ( char            *** list,
 
   oyjlAllocHelper_m(nlist, char*, n_alt + 2, alloc, return);
 
-  memmove( nlist, *list, sizeof(char*) * n_alt);
+  if(*list)
+    memmove( nlist, *list, sizeof(char*) * n_alt);
   nlist[n_alt] = oyjlStringCopy( string, alloc );
   nlist[n_alt+1] = NULL;
 
@@ -515,6 +516,29 @@ void       oyjlStringListPush        ( char            *** list,
     deAlloc(*list);
 
   *list = nlist;
+}
+
+/** @brief add a variable string to a string list */
+int        oyjlStringListAdd         ( char            *** list,
+                                       int               * n,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*),
+                                       const char        * format,
+                                                           ... )
+{
+  char * text = 0;
+
+  void (* deAllocate)(void * data ) = deAlloc?deAlloc:free;
+
+  OYJL_CREATE_VA_STRING(format, text, alloc, return 1)
+
+  if(text)
+  {
+    oyjlStringListPush( list, n, text, alloc, deAlloc );
+    deAllocate( text );
+  }
+
+  return 0;
 }
 
 /** @brief filter doubles out

@@ -97,6 +97,12 @@ void       oyjlStringListPush        ( char            *** list,
                                        const char        * string,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
+int        oyjlStringListAdd         ( char            *** list,
+                                       int               * n,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*),
+                                       const char        * format,
+                                                           ... );
 int        oyjlStringToLong          ( const char        * text,
                                        long              * value,
                                        const char       ** end );
