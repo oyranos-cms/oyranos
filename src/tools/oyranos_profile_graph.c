@@ -144,6 +144,11 @@ void drawIlluminant ( cairo_t * cr,
                       float min_x, float max_x, float min_y, float max_y,
                       COLOR_MODE mode, double color[4],
                       uint32_t icc_profile_flags, const char * id );
+void drawTextTopLeft( cairo_t * cr,
+                      double background_lightness, int frame,
+                      double xO, double yO, double width, double height,
+                      double min_x, double max_x, double min_y, double max_y,
+                      char * format, ... );
 
 int         oyjlCopyNode             ( oyjl_val            src,
                                        const char        * in,
@@ -1685,6 +1690,14 @@ int myMain( int argc, const char ** argv )
         free(utf8); utf8 = NULL;
       }
     }
+    {
+      char * utf8 = NULL;
+      int j;
+      for( j = 0; j < profile_count; ++j)
+        oyjlStringAdd( &utf8, 0,0, " %s", profile_names[j] );
+      drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s %s %s", OYJL_E(input,""), OYJL_E(pattern,""), OYJL_E(utf8,""));
+      if(utf8) { free(utf8); utf8 = NULL; }
+    }
 
     for(x = 0; x < columns; ++x)
     {
@@ -1806,12 +1819,12 @@ int myMain( int argc, const char ** argv )
     {
       if(i < min_x) continue;
       cairo_move_to(cr, xToImage(i), yToImage(min_y));
-      cairo_line_to(cr, xToImage(i), yToImage(max_y));
+      cairo_line_to(cr, xToImage(i), yToImage(max_y-((i<=((kelvin > 0.0||illuminant)?340:400))?0.03:0.0025)));
     }
     cairo_stroke(cr);
 
     /* 100 nm */
-    char utf8[8];
+    char utf8[32];
     cairo_select_font_face(cr, "Sans",
                            CAIRO_FONT_SLANT_NORMAL,
                            CAIRO_FONT_WEIGHT_NORMAL);
@@ -1821,7 +1834,7 @@ int myMain( int argc, const char ** argv )
     {
       if(i < min_x) continue;
       cairo_move_to(cr, xToImage(i), yToImage(min_y));
-      cairo_line_to(cr, xToImage(i), yToImage(max_y));
+      cairo_line_to(cr, xToImage(i), yToImage(max_y-((i<=((kelvin > 0.0||illuminant)?340:400))?0.03:0.0025)));
       sprintf( utf8, "%d", i );
       cairo_move_to (cr, xToImage(i) - frame * 0.8,
                          yToImage(max_y + 0.0025));
@@ -1866,6 +1879,7 @@ int myMain( int argc, const char ** argv )
     drawSpectralCurve(cieXYZ_31_2, 2, .0,.0,1.,1.)
     cairo_stroke(cr);
     oyImage_Release( &a );
+    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s", id );
   }
   if(observer64)
   {
@@ -1879,6 +1893,7 @@ int myMain( int argc, const char ** argv )
     drawSpectralCurve(cieXYZ_64_10, 2, .0, .0, 1.0, 1.)
     cairo_stroke(cr);
     oyImage_Release( &a );
+    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s", id );
   }
 #undef drawSpectralCurve
   if(kelvin > 0.0)
@@ -1901,6 +1916,8 @@ int myMain( int argc, const char ** argv )
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
                       pflags, "kelvin" );
     oyImage_Release( &a );
+
+    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%d K", (int) kelvin );
   }
 #define ILLUMINANT( DXX ) \
     if(oyStringCaseCmp_(illuminant, "D" #DXX) == 0) \
@@ -1922,6 +1939,7 @@ int myMain( int argc, const char ** argv )
     } else
   if(illuminant != 0)
   {
+    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s", illuminant );
     if(oyStringCaseCmp_(illuminant,"A") == 0)
     {
       oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 );
@@ -2020,6 +2038,7 @@ int myMain( int argc, const char ** argv )
                       pflags, input );
     }
     oyImage_Release( &spectra );
+    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s    %s", OYJL_E(input,""), OYJL_E(pattern,"") );
 
     min_x=min_y=0.0;
     max_x=max_y=1.0;
@@ -2692,6 +2711,34 @@ void drawIlluminant( cairo_t * cr,
   oyConversion_Release( &lab_srgb );
 }
 
+void drawTextTopLeft( cairo_t * cr,
+                      double background_lightness, int frame,
+                      double xO, double yO, double width, double height,
+                      double min_x, double max_x, double min_y, double max_y,
+                      char * format, ... )
+{
+  char * tmp = NULL;
+  const char * text = format;
+
+  if(strchr(format, '%'))
+  { OYJL_CREATE_VA_STRING(format, tmp, malloc, return)
+    text = tmp;
+  }
+
+  cairo_set_source_rgba( cr, 0, 0, 0, 1.0 );
+  if(0.0 <= background_lightness && background_lightness < 50.0)
+    /* set font color */
+    cairo_set_source_rgba( cr, 1.0, 1.0, 1.0, 1.0 );
+  cairo_select_font_face(cr, "Sans",
+                         CAIRO_FONT_SLANT_NORMAL,
+                         CAIRO_FONT_WEIGHT_NORMAL);
+  cairo_set_font_size (cr, frame);
+  cairo_move_to (cr, xToImage(min_x) - frame * 0.8,
+                     yToImage(max_y - 0.025));
+  cairo_show_text (cr, text);
+
+  if(tmp) { free(tmp); tmp = NULL; }
+}
 
 /*                            BB_SPECTRUM
 
