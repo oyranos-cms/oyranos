@@ -215,18 +215,25 @@ oyjlOptionChoice_s * ppmcieGetChoices           ( oyjlOption_s      * o OYJL_UNU
     fprintf( stderr, "%slistPpmcie\n", t );
     free(t);
   }
-  if(!profile_name) return c;
 
-  p = oyProfile_FromName( profile_name, 0,0 );
-  tags[0] = oyProfile_GetTagById( p, icSigRedColorantTag );
-  tags[1] = oyProfile_GetTagById( p, icSigGreenColorantTag );
-  tags[2] = oyProfile_GetTagById( p, icSigBlueColorantTag );
-  tags[3] = oyProfile_GetTagById( p, icSigMediaWhitePointTag );
-  if(tags[0] && tags[1] && tags[2] && tags[3])
-    ++has_xyz;
-  if(has_xyz && oyjlHasApplication("ppmcie") && oyjlHasApplication("pamtopng"))
-    ++can_ppmcie;
-  choices = can_ppmcie + has_xyz;
+  if(!profile_name)
+  {
+    can_ppmcie = 1;
+    choices = 2;
+  }
+  else
+  {
+    p = oyProfile_FromName( profile_name, 0,0 );
+    tags[0] = oyProfile_GetTagById( p, icSigRedColorantTag );
+    tags[1] = oyProfile_GetTagById( p, icSigGreenColorantTag );
+    tags[2] = oyProfile_GetTagById( p, icSigBlueColorantTag );
+    tags[3] = oyProfile_GetTagById( p, icSigMediaWhitePointTag );
+    if(tags[0] && tags[1] && tags[2] && tags[3])
+      ++has_xyz;
+    if(has_xyz && oyjlHasApplication("ppmcie") && oyjlHasApplication("pamtopng"))
+      ++can_ppmcie;
+    choices = can_ppmcie + has_xyz;
+  }
   if(choices)
     c = calloc(choices+1, sizeof(oyjlOptionChoice_s));
 
