@@ -2777,25 +2777,27 @@ char *       oyjlOption_PrintArg_    ( oyjlOption_s      * o,
 }
 #define oyjlHELP 0x01
 #define oyjlDESCRIPTION 0x02
+#define oyjlNO_BRACKETS 0x04
 /** @internal
  * 
  * @param[in]      flags               modifier
  *                                     - oyjlDESCRIPTION
  *                                     - oyjlHELP
+ *                                     - oyjlNO_BRACKETS
  */
 static char* oyjlOption_PrintArg_Double_( oyjlOption_s   * o,
-                                       int                 flags OYJL_UNUSED )
+                                       int                 flags )
 {
   char * text = NULL;
 #if !defined(OYJL_ARGS_BASE)
-  oyjlStringAdd( &text, malloc, free, "%s%s%s (%s%s%g [≥%g ≤%g Δ%g])",
+  oyjlStringAdd( &text, malloc, free, "%s%s%s %s%s%s%g [≥%g ≤%g Δ%g]%s",
       (o->description && flags & oyjlDESCRIPTION) ? o->description:"",
       (o->help && flags & oyjlHELP)?": ":"", (o->help && flags & oyjlHELP)?o->help :"",
-      o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end, o->values.dbl.tick );
+      flags&oyjlNO_BRACKETS?"":"(", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end, o->values.dbl.tick, flags&oyjlNO_BRACKETS?"":")" );
 #else
   text = malloc((o->value_name?strlen(o->value_name):0) + 80);
-  sprintf(text, "(%s%s%g [≥%g ≤%g Δ%g])",
-      o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end, o->values.dbl.tick );
+  sprintf(text, "%s%s%s%g [≥%g ≤%g Δ%g]%s",
+      !(flags&oyjlNO_BRACKETS)?"(":"", o->value_name?o->value_name:"", o->value_name?":":"", o->values.dbl.d, o->values.dbl.start, o->values.dbl.end, o->values.dbl.tick, !(flags&oyjlNO_BRACKETS)?")":"" );
 #endif /* OYJL_ARGS_BASE */
   return text;
 }
@@ -4828,6 +4830,20 @@ static oyjlOPTIONSTATE_e oyjlUi_Check_(oyjlUi_s          * ui,
         case oyjlOPTIONTYPE_FUNCTION:
           break;
         case oyjlOPTIONTYPE_DOUBLE:
+          if( o->value_type == oyjlOPTIONTYPE_DOUBLE &&
+              ( o->values.dbl.start > o->values.dbl.d ||
+                o->values.dbl.end < o->values.dbl.d) )
+          {
+            char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING);
+            char * txt = oyjlOption_PrintArg_Double_( o, oyjlNO_BRACKETS );
+            fputs( oyjlBT(0), stderr );
+            fputs( oyjlTermColor(oyjlRED,_("Program Error:")), stderr ); fputs( " ", stderr );
+            fprintf( stderr, "%s \'%s\' %s\n", _("Option range error"), t, oyjlTermColor(oyjlBOLD,txt) );
+            free(t);
+            free(txt);
+            if(!getenv("OYJL_NO_EXIT")) exit(1);
+            status = oyjlOPTION_NOT_SUPPORTED;
+          }
           break;
         case oyjlOPTIONTYPE_NONE:
         break;
