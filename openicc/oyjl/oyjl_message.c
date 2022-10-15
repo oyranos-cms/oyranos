@@ -74,6 +74,7 @@ int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
   if(error_code == oyjlMSG_INSUFFICIENT_DATA) status_text = oyjlTermColor(oyjlRED,_("Insufficient Data:"));
   if(error_code == oyjlMSG_ERROR) status_text = oyjlTermColor(oyjlRED,_("Usage Error:"));
   if(error_code == oyjlMSG_PROGRAM_ERROR) status_text = oyjlTermColor(oyjlRED,_("Program Error:"));
+  if(error_code == oyjlMSG_SECURITY_ALERT) status_text = oyjlTermColor(oyjlRED,_("Security Alert:"));
 
   if(status_text)
     fprintf( stderr, "%s ", status_text );
