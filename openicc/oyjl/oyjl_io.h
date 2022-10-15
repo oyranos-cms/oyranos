@@ -34,7 +34,9 @@ extern "C" {
  *  @{ *//* oyjl_io */
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,
                                        int               * size );
+#define    OYJL_IO_STREAM              0x100
 char *     oyjlReadFile              ( const char        * file_name,
+                                       int                 flags,
                                        int               * size_ptr );
 char *     oyjlReadCommandF          ( int               * size,
                                        const char        * mode,
@@ -56,11 +58,31 @@ int        oyjlReadFunction          ( int                 argc,
 int        oyjlWriteFile             ( const char        * filename,
                                        const void        * mem,
                                        int                 size );
+#define    OYJL_NO_CHECK               0x1000
 int        oyjlIsFile                ( const char        * fullname,
                                        const char        * mode,
+                                       int                 flags,
                                        char              * info,
                                        int                 info_len );
 int        oyjlHasApplication        ( const char        * app_name);
+
+/** @brief custom file name checker function type
+ *
+ *  This function allows to implement file i/o access policies for the
+ *  oyjlReadFile(), oyjlWriteFile() and oyjlIsFile() funtions.
+ *
+ *  @param[in,out] filename            filename can be replaced
+ *  @param[in]     size                is write file size otherwise read from
+ *  @return                            < 0: issue, 0: fine, > 0: error
+ */
+typedef int (* oyjlFileNameCheck_f)  ( const char       ** full_filename,
+                                       int                 write_size );
+#define    OYJL_IO_READ                0x2000
+#define    OYJL_IO_WRITE               0x4000
+int            oyjlFileNameCheckFuncSet (
+                                       oyjlFileNameCheck_f check_func,
+                                       int                 flags );
+
 /** @} *//* oyjl_io */
 
 #ifdef __cplusplus
