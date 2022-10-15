@@ -139,13 +139,13 @@ Get UI converted into text formats
 .br
 \fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Select Renderer
 .RS
-Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
+Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="web:port=port_number:https_key=TLS_private_key_filename:https_cert=TLS_CA_certificate_filename:css=layout_filename.css" will launch a local Web Server, which listens on local port.
 .RE
 	\fB\-R\fR gui		# Gui : Show UI - Display a interactive graphical User Interface.
 .br
 	\fB\-R\fR cli		# Cli : Show UI - Print on Command Line Interface.
 .br
-	\fB\-R\fR web		# Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.
+	\fB\-R\fR web		# Web : Start Web Server - Start a local Web Service to connect a Webbrowser with. Supported subargs are: port for port number, https_key and https_cert for passing in encryption filenames, security=readonly|interactive|lazy with "readonly" showing a static page, "interactive" showing GUI elements and "lazy" executing the tool. The "css=layout.css" lets you style your output by CSS.
 .br
 	\fB\-R\fR -
 .br

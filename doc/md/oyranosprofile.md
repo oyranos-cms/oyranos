@@ -76,7 +76,12 @@ The oyranos-profile programm shows informations about a ICC profile and allows s
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>--ppmcie</strong><em>[=FORMAT]</em> [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--ppmcie</strong><em>[=FORMAT]</em></td> <td>show CIE*xy chromaticities, if available, for use with ppmcie.  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--ppmcie</strong><em>[=FORMAT]</em></td> <td>show CIE*xy chromaticities, if available, for use with ppmcie.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>--ppmcie</strong> TEXT</td><td># TEXT</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>--ppmcie</strong> PNG</td><td># PNG</td></tr>
+  </table>
+  </td>
  </tr>
 </table>
 
@@ -129,11 +134,11 @@ The oyranos-profile programm shows informations about a ICC profile and allows s
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-V</strong>|<strong>--version</strong></td> <td>Version</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="web:port=port_number:https_key=TLS_private_key_filename:https_cert=TLS_CA_certificate_filename:css=layout_filename.css" will launch a local Web Server, which listens on local port.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Show UI - Display a interactive graphical User Interface.</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Show UI - Print on Command Line Interface.</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with. Supported subargs are: port for port number, https_key and https_cert for passing in encryption filenames, security=readonly|interactive|lazy with "readonly" showing a static page, "interactive" showing GUI elements and "lazy" executing the tool. The "css=layout.css" lets you style your output by CSS.</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>

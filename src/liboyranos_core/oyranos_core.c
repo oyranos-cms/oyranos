@@ -538,6 +538,9 @@ int                oyMessageFormat   ( char             ** message_text,
     case oyjlMSG_PROGRAM_ERROR:
          oyStringAddPrintf( &t, 0,0, "Oyjl%s: ", oyjlTermColor(oyjlRED,_("Program Error")));
          break;
+    case oyjlMSG_SECURITY_ALERT:
+         oyStringAddPrintf( &t, 0,0, "Oyjl%s: ", oyjlTermColor(oyjlRED,_("Security Alert")));
+         break;
   }
 
   /* reduce output for non core messages */

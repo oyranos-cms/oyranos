@@ -130,7 +130,7 @@ The tool can set the actual white point or set it by local day and night time. A
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--location</strong></td> <td>Detect location by IP adress</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--latitude</strong>=<em>ANGLE_IN_DEGREE</em></td> <td>Set Latitude (ANGLE_IN_DEGREE:0 [≥-90 ≤90 Δ1])</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--longitude</strong>=<em>ANGLE_IN_DEGREE</em></td> <td>Set Longitude (ANGLE_IN_DEGREE:0 [≥-180 ≤180 Δ1])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--twilight</strong>=<em>ANGLE_IN_DEGREE</em></td> <td>Set Twilight angle: 0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical (ANGLE_IN_DEGREE:0 [≥18 ≤-18 Δ1])</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--twilight</strong>=<em>ANGLE_IN_DEGREE</em></td> <td>Set Twilight angle: 0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical (ANGLE_IN_DEGREE:0 [≥-18 ≤18 Δ1])</td> </tr>
 </table>
 
 <h3 id="daemon">Run sunset daemon</h3>
@@ -181,11 +181,11 @@ The tool can set the actual white point or set it by local day and night time. A
   </table>
   </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-R</strong>|<strong>--render</strong>=<em>gui|cli|web|...</em></td> <td>Select Renderer<br />Select and possibly configure Renderer. -R="gui" will just launch a graphical UI. -R="web:port=port_number:https_key=TLS_private_key_filename:https_cert=TLS_CA_certificate_filename:css=layout_filename.css" will launch a local Web Server, which listens on local port.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Show UI - Display a interactive graphical User Interface.</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Show UI - Print on Command Line Interface.</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with. Supported subargs are: port for port number, https_key and https_cert for passing in encryption filenames, security=readonly|interactive|lazy with "readonly" showing a static page, "interactive" showing GUI elements and "lazy" executing the tool. The "css=layout.css" lets you style your output by CSS.</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>

@@ -347,6 +347,8 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
   /* try ICC ID */
   if(!s && name && strlen(name) == 32)
   {
+    if(oy_debug)
+      fprintf(stderr, "try ICC ID: \"%s\"\n", name);
     sscanf(name, "%08x%08x%08x%08x", &md5[0],&md5[1],&md5[2],&md5[3] );
     s = oyProfile_FromMD5( md5, flags, object );
   }
@@ -355,12 +357,19 @@ OYAPI oyProfile_s * OYEXPORT oyProfile_FromName (
   if(!s)
   {
     char * fn = NULL;
+    if(oy_debug)
+      fprintf(stderr, "try wildcard: \"%s\"\n", name);
     if(strcmp(name,"rgb") == 0)
       fn = oyGetDefaultProfileName( oyEDITING_RGB, oyAllocateFunc_ );
     else if(strcmp(name,"web") == 0)
       fn = oyGetDefaultProfileName( oyASSUMED_WEB, oyAllocateFunc_ );
     else if(strcmp(name,"cmyk") == 0)
+    {
       fn = oyGetDefaultProfileName( oyEDITING_CMYK, oyAllocateFunc_ );
+      if(!fn) { WARNc2_S("%s \"%s\"", _("Default profile not found:"), name ); }
+      else if(oy_debug)
+        fprintf(stderr, "Found: %s \"%s\"\n", name, fn);
+    }
     else if(strcmp(name,"gray") == 0)
       fn = oyGetDefaultProfileName( oyEDITING_GRAY, oyAllocateFunc_ );
     else if(strcmp(name,"lab") == 0)

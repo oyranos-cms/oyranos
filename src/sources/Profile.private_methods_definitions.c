@@ -268,7 +268,7 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
         oyjlAllocHelper_m( info, char, 128, malloc, return NULL );
 
         file_name = oyFindProfile_( name, flags );
-        oyjlIsFile( file_name, "r", info, 128 );
+        oyjlIsFile( file_name, "r", 0, info, 128 );
         oyjlStringAdd( &hash, 0,0, "%s:%s", name, info );
         oyFree_m_( info );
       }

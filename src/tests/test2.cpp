@@ -3513,7 +3513,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   }
   oyFilterNode_Release( &out_node );
   oyFilterNode_Release( &in_node );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "Node Connect" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 0, "Node Connect" )
 
   in_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/root", 0, testobj );
   out_node = oyFilterNode_NewWith( "//" OY_TYPE_STD "/output", 0, testobj );
@@ -3532,7 +3532,7 @@ oyjlTESTRESULT_e testDeviceLinkProfile ()
   }
   oyFilterNode_Release( &out_node );
   oyFilterNode_Release( &in_node );
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "Node Connect" )
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "Node Disconnect" )
 
   cc = oyConversion_New( NULL );
   oyConversion_Set( cc, in_node, NULL );
