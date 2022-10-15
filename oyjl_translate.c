@@ -338,18 +338,17 @@ int myMain( int argc, const char ** argv )
   else if(ui)
   {
     /* ... working code goes here ... */
-    if( (!input && (add || extract || copy)) ||
-        (input && (strcmp(input,"-") == 0 || strcmp(input,"stdin") == 0)) )
+    if( (!input && (add || extract || copy)) )
     {
       json = oyjlReadFileStreamToMem( stdin, &size );
     }
     else
     if(input)
     {
-      json = oyjlReadFile( input, &size );
+      json = oyjlReadFile( input, OYJL_IO_STREAM, &size );
       if(!json && verbose)
       {
-        if(oyjlIsFile(input, "r", NULL, 0))
+        if(oyjlIsFile(input, "r", 0, NULL, 0))
           fprintf(stderr, "File does exist: %s\n", input);
         else
         {
@@ -490,7 +489,7 @@ int myMain( int argc, const char ** argv )
               char * t = NULL;
               char * language = oyjlLanguage( lang );
               oyjlStringAdd( &t, 0,0, "%s/%s/LC_MESSAGES/%s.mo", oyjl_domain_path, language, domain );
-              if(oyjlIsFile(t, "r", NULL, 0))
+              if(oyjlIsFile(t, "r", OYJL_NO_CHECK, NULL, 0))
                 fprintf(stderr, "Found translation file: %s\n", t);
               free(t);
               free(language);

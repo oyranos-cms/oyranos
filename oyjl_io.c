@@ -137,27 +137,52 @@ char *     oyjlReadFileP             ( FILE              * fp,
 
   return text;
 }
+
+int oyjlFileNameCheckNotDummy_( const char       ** OYJL_UNUSED, int OYJL_UNUSED ) { return 0; }
+oyjlFileNameCheck_f oyjlFileNameCheckRead_p = oyjlFileNameCheckNotDummy_;
+oyjlFileNameCheck_f oyjlFileNameCheckWrite_p = oyjlFileNameCheckNotDummy_;
+int            oyjlFileNameCheckFuncSet (
+                                       oyjlFileNameCheck_f check_func,
+                                       int                 flags )
+{
+  if(!flags || flags & OYJL_IO_READ)
+    oyjlFileNameCheckRead_p = check_func;
+  if(!flags || flags & OYJL_IO_WRITE)
+    oyjlFileNameCheckWrite_p = check_func;
+  return 0;
+}
+
 /** @brief read local file into memory
  *
  *  uses malloc()
  */
-char *    oyjlReadFile( const char * file_name,
-                        int        * size_ptr )
+char *     oyjlReadFile              ( const char        * file_name,
+                                       int                 flags,
+                                       int               * size_ptr )
 {
   FILE * fp = NULL;
   int size = 0;
   char * text = NULL;
 
-  if(file_name)
+  if(oyjlFileNameCheckRead_p(&file_name, 0) == 0)
   {
-    fp = fopen(file_name,"rb");
-    if(fp)
+    if((flags & OYJL_IO_STREAM) && (strcmp(file_name,"-") == 0 || strcmp(file_name,"stdin") == 0))
     {
-      text = oyjlReadFileP(fp, &size, malloc, file_name);
-      fclose( fp );
-    } else
+      fp = stdin;
+      text = oyjlReadFileStreamToMem( fp, &size );
+      if(fp != stdin) { fclose( fp ); fp = NULL; }
+    }
+    else
     {
-      WARNc_S( "%s\"%s\"", _("Could not open: "), file_name);
+      fp = fopen(file_name,"rb");
+      if(fp)
+      {
+        text = oyjlReadFileP(fp, &size, malloc, file_name);
+        fclose( fp );
+      } else
+      {
+        WARNc_S( "%s\"%s\"", _("Could not open: "), file_name);
+      }
     }
   }
 
@@ -398,7 +423,10 @@ int        oyjlReadFunction          ( int                 argc,
   if(data_stdout && size_stdout)
     *data_stdout = oyjlReadFileP( fm_cb, size_stdout, alloc, "stdout" );
   if(data_stderr && size_stderr)
+  {
     *data_stderr = oyjlReadFileP( fme_cb, size_stderr, alloc, "stderr" );
+    fprintf( stderr, OYJL_DBG_FORMAT "size_stdout: %d size_stderr: %d\n", OYJL_DBG_ARGS, size_stdout?*size_stdout:0, *size_stderr );
+  }
 
   fclose(fm_cb); fm_cb = NULL;
   fclose(fme_cb); fme_cb = NULL;
@@ -408,6 +436,9 @@ int        oyjlReadFunction          ( int                 argc,
     dup2(saved_stdout, STDOUT_FILENO);
   if(saved_stderr >= 0)
     dup2(saved_stderr, STDERR_FILENO);
+
+  if(size_stdout && *size_stderr)
+    fputs( *data_stderr, stderr );
 
   return result;
 }
@@ -464,7 +495,8 @@ int oyjlIsDirFull_ (const char* name)
 
   memset(&status,0,sizeof(struct stat));
   if(name && name[0])
-    r = stat(name, &status);
+    if(oyjlFileNameCheckWrite_p(&name, 0) == 0)
+      r = stat(name, &status);
 
   if(r != 0 && *oyjl_debug > 1)
   switch (errno)
@@ -488,6 +520,7 @@ int oyjlIsDirFull_ (const char* name)
 
 int   oyjlIsFile                     ( const char        * fullname,
                                        const char        * mode,
+                                       int                 flags,
                                        char              * info,
                                        int                 info_len )
 {
@@ -496,7 +529,8 @@ int   oyjlIsFile                     ( const char        * fullname,
   memset(&status,0,sizeof(struct stat));
   double mod_time = 0.0;
 
-  r = oyjlIsFileFull_( fullname, mode );
+  if(flags & OYJL_NO_CHECK || ((flags & OYJL_IO_WRITE) ? oyjlFileNameCheckWrite_p( &fullname, 0 ) == 0 : oyjlFileNameCheckRead_p( &fullname, 0 ) == 0))
+    r = oyjlIsFileFull_( fullname, mode );
 
   if (r)
   {
@@ -635,11 +669,12 @@ int  oyjlWriteFile                   ( const char        * filename,
   int written_n = 0;
   char * path = 0;
 
-  if(!r)
+  if(!r && oyjlFileNameCheckWrite_p( &filename, 0 ) == 0)
   {
     path = oyjlExtractPathFromFileName_( full_name );
     r = oyjlMakeDir_( path );
   }
+  full_name = filename;
 
   if(!r)
   {

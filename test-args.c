@@ -21,7 +21,8 @@
   TEST_RUN( testArgsPrint, "Options print", 1 ); \
   TEST_RUN( testArgsCheck, "Options checking", 1 ); \
   TEST_RUN( testArgs, "Options handling", 1 ); \
-  TEST_RUN( testArgsValues, "Value converting", 1 );
+  TEST_RUN( testArgsValues, "Value converting", 1 ); \
+  TEST_RUN( testFunction, "Functions", 1 );
 #endif
 
 //#include "oyjl.h"
@@ -635,7 +636,7 @@ oyjlTESTRESULT_e testArgs()
   }
   if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
   for(i = 0; i < count; ++i)
-    fprintf( zout, "%s\n", results[i] );
+    fprintf( zout, "%s/%s\n", argv_anonymous[2+i],results[i] );
   oyjlStringListRelease( &results, count, 0 );
 
   count = 0;
@@ -1225,5 +1226,78 @@ char *    oyjlReadFile( const char * file_name,
     *size_ptr = size;
 
   return text;
+}
+
+#include "oyjl_macros.h" /* OYJL_DBG_FORMAT */
+
+oyjlTESTRESULT_e testFunction ()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  char * bt = oyjlBT(0);
+
+  if(bt)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlBT() = %s", bt );
+    free(bt); bt = NULL;
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlBT() = %s", bt );
+  }
+
+  const char * html = "<strong>Bold</strong> Normal <em>italic</em>";
+  const char * ansi = oyjlTermColorFromHtml( html, 0 );
+  if(ansi && strlen(ansi) != strlen(html))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTermColorFromHtml() = %s", ansi );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTermColorFromHtml() %d / %d", strlen(ansi), strlen(html) );
+  }
+
+
+  ansi = "\033[1mbold\033[0m \033[3mitalic\033[0m \033[4munderline\033[0m \033[0;31mred\033[0m \033[0;32mgreen\033[0m \033[0;34mblue\033[0m";
+  html = oyjlTermColorToHtml( ansi, 0 );
+  char * text = malloc(20);
+  snprintf( text, 20, "%s", html );
+  if(html && strlen(ansi) != strlen(html))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTermColorToHtml(%s) = %s ...", ansi, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTermColorToHtml() %d / %d", strlen(ansi), strlen(html) );
+  }
+  free(text);
+
+  int          oyjlTermColor256GetIndex( const char        * term_color );
+  const char * ansi_256_color = "\033[38;5;28mcolor\033[0m\033[38;5;284mnope\033[0m\033[1;38;5;217mred\033[0m";
+  int index = oyjlTermColor256GetIndex( ansi_256_color );
+  if(index == 28)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTermColor256GetIndex(%s) = %d", ansi_256_color, index );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTermColor256GetIndex(%s) = %d", ansi_256_color, index );
+  }
+
+  html = oyjlTermColorToHtml( ansi_256_color, 0 );
+  if(html && strstr(html, ">color<") != 0 && strstr(html, ">nope<") != 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTermColorToHtml(%s) = %s ...", ansi_256_color, html );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTermColorToHtml() %d / %d", strlen(ansi_256_color), strlen(html) );
+  }
+
+  oyjlMessage_p( oyjlMSG_INFO, NULL, OYJL_DBG_FORMAT "Test Info message", OYJL_DBG_ARGS );
+  oyjlMessage_p( oyjlMSG_CLIENT_CANCELED, NULL, OYJL_DBG_FORMAT "Test ClientCanceled message", OYJL_DBG_ARGS );
+  oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, NULL, OYJL_DBG_FORMAT "Test InsufficientData message", OYJL_DBG_ARGS );
+  oyjlMessage_p( oyjlMSG_ERROR, NULL, OYJL_DBG_FORMAT "Test Error message", OYJL_DBG_ARGS );
+  oyjlMessage_p( oyjlMSG_PROGRAM_ERROR, NULL, OYJL_DBG_FORMAT "Test ProgramError message", OYJL_DBG_ARGS );
+  oyjlMessage_p( oyjlMSG_SECURITY_ALERT, NULL, OYJL_DBG_FORMAT "Test SecurityAlert message", OYJL_DBG_ARGS );
+
+  return result;
 }
 #endif

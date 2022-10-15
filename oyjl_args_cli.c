@@ -143,7 +143,7 @@ int oyjlArgsCliStart__               ( int                 argc,
   int r = 0;
   if( json && strlen( json ) )
   {
-    r = oyjlIsFile( json, "r", NULL, 0 );
+    r = oyjlIsFile( json, "r", OYJL_NO_CHECK, NULL, 0 );
     if(!r && oyjlDataFormat(json) == 7)
     {
       root = oyjlTreeParse( json, error_buffer, 256 );

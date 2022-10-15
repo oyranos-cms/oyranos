@@ -1721,9 +1721,9 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   char * name = NULL;
   char info[48];
   const char * lib_so = "libOyjl.so";
-  int lib_so_size = oyjlIsFile( lib_so, "r", info, 48 );
+  int lib_so_size = oyjlIsFile( lib_so, "r", OYJL_NO_CHECK, info, 48 );
   const char * lib_a = "liboyjl-static.a";
-  int lib_a_size = oyjlIsFile( lib_a, "r", info, 48 ),
+  int lib_a_size = oyjlIsFile( lib_a, "r", OYJL_NO_CHECK, info, 48 ),
       size;
   char * command = NULL;
   char * t = oyjlReadCommandF( &size, "r", malloc, "pkg-config -libs-only-L openicc" );
@@ -1762,7 +1762,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
       fprintf( stderr, "compiling: %s\n", oyjlTermColor( oyjlBOLD, command ) );
     int r = system(command);
     if(command) {free(command); command = NULL;}
-    int size = oyjlIsFile( prog, "r", info, 48 );
+    int size = oyjlIsFile( prog, "r", OYJL_NO_CHECK, info, 48 );
     if(!size || verbose)
     {
       fprintf(stderr, "%scompile: %s %s %d %d\n", size == 0?"Could not ":"", oyjlTermColor(oyjlBOLD,prog), info, size, r);
@@ -2431,7 +2431,7 @@ oyjlTESTRESULT_e   testTool          ( const char        * prog,
   {
     if(verbose)
       fprintf( stderr, "detecting: %s\n", oyjlTermColor( oyjlBOLD, command ) );
-    size = oyjlIsFile( command, "r", info, 48 );
+    size = oyjlIsFile( command, "r", OYJL_NO_CHECK, info, 48 );
     if(!size || verbose)
     {
       fprintf(stderr, "%sread: %s %s %d\n", size == 0?"Could not ":"", oyjlTermColor(oyjlBOLD,prog), info, size);

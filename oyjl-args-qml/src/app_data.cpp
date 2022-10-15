@@ -81,7 +81,7 @@ QString AppData::getJSON(QString url)
         LOG(QString("%1: %2\n%3").arg(tr("Json is invalid")).arg(url).arg(jui));
         int size = 0;
         const char * fn = url.toLocal8Bit().constData();
-        char * json = oyjlReadFile(fn, &size);
+        char * json = oyjlReadFile(fn, 0, &size);
         if(!size)
         {
           char * error = NULL;

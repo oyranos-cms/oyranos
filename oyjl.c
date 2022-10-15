@@ -27,31 +27,6 @@ extern char **environ;
 
 #include <ctype.h>   /* isspace() */
 
-char *     oyjlReadFileToMem         ( const char        * filename,
-                                       int               * size )
-{
-  char * text = NULL;
-  FILE * fp;
-
-  if(!filename || !filename[0])
-    return text;
-  else
-  if(strcmp(filename,"-") == 0)
-    fp = stdin;
-  else
-    fp = fopen(filename,"rb");
-
-  if(fp)
-  {
-    text = oyjlReadFileStreamToMem( fp, size );
-    if(fp != stdin) fclose( fp );
-  }
-  else
-    oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "no data input: \"%s\"", OYJL_DBG_ARGS, filename );
-
-  return text;
-}
-
 oyjl_val oyjlTreeParse2_             ( const char        * input,
                                        int                 size,
                                        const char        * xpath,
@@ -245,7 +220,7 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&xpath}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "f","format",        NULL,     _("Format"),   _("Print Data Format"),       NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&format}, NULL},
-    {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "p","plain",         NULL,     _("Plain"),    _("No Markup"),               NULL, NULL,
+    {"oiwi", 0,                          "p","plain",         NULL,     _("Plain"),    _("No Markup"),               NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&plain}, NULL},
     {"oiwi", 0,                          "r","try-format",    NULL,     _("Try Format"),_("Try to find data format, even with offset."), NULL, _("FORMAT"),
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), malloc )}, oyjlSTRING,    {.s=&try_format}, NULL},
@@ -407,7 +382,7 @@ int myMain( int argc, const char ** argv )
              type == 10 /* C */)
             text = oyjlStringCopy( filename, 0 );
           else
-            text = oyjlReadFileToMem( filename, &size );
+            text = oyjlReadFile( filename, OYJL_IO_STREAM, &size );
           if(!text)
           {
             error = 1;
@@ -547,7 +522,7 @@ int myMain( int argc, const char ** argv )
       if(7 <= type && type <= 10)
         text = oyjlStringCopy( i_filename, 0);
       else
-        text = oyjlReadFileToMem( i_filename, &size );
+        text = oyjlReadFile( i_filename, OYJL_IO_STREAM, &size );
       type = oyjlDataFormat(text);
       r = oyjlDataFormatToString(type);
       fprintf(stdout, "%s\n", r);
