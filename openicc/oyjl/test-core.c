@@ -27,7 +27,7 @@
   TEST_RUN( testArgs, "Options handling", 1 ); \
   TEST_RUN( testTree, "Tree handling", 1 ); \
   TEST_RUN( testIO, "File handling", 1 ); \
-  TEST_RUN( testFunction, "Funktions", 1 );
+  TEST_RUN( testFunction, "Functions", 1 );
 
 void oyjlLibRelease();
 #define OYJL_TEST_MAIN_SETUP  printf("\n    OyjlCore Test Program\n");
@@ -420,7 +420,7 @@ oyjlTESTRESULT_e testString ()
 
   double clck = oyjlClock();
   for( i = 0; i < 10000; ++i )
-    oyjlStringListPush( &list, &list_n, NULL, malloc,free );
+    oyjlStringListPush( &list, &list_n, "text ", malloc,free );
   if(list && list_n)
     oyjlStringListRelease( &list, list_n, free );
   clck = oyjlClock() - clck;
@@ -430,6 +430,21 @@ oyjlTESTRESULT_e testString ()
   } else
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, list_n,
     "oyjlStringListPush()" );
+  }
+
+  clck = oyjlClock();
+  list_n = 0;
+  for( i = 0; i < 10000; ++i )
+    oyjlStringListAdd( &list, &list_n, malloc,free, "%d ", i );
+  if(list && list_n)
+    oyjlStringListRelease( &list, list_n, free );
+  clck = oyjlClock() - clck;
+  if( list_n == 10000 )
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"wr",
+    "oyjlStringListAdd()" );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, list_n,
+    "oyjlStringListAdd()" );
   }
 
   long l = 0;
@@ -896,9 +911,9 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   char * name = NULL;
   char info[48];
   const char * lib_so = "libOyjl.so";
-  int lib_so_size = oyjlIsFile( lib_so, "r", info, 48 );
+  int lib_so_size = oyjlIsFile( lib_so, "r", OYJL_NO_CHECK, info, 48 );
   const char * lib_a = "liboyjl-static.a";
-  int lib_a_size = oyjlIsFile( lib_a, "r", info, 48 ),
+  int lib_a_size = oyjlIsFile( lib_a, "r", OYJL_NO_CHECK, info, 48 ),
       size;
   char * command = NULL;
   char * t = oyjlReadCommandF( &size, "r", malloc, "pkg-config -libs-only-L openicc" );
@@ -934,7 +949,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
       fprintf( stderr, "compiling: %s\n", oyjlTermColor( oyjlBOLD, command ) );
     system(command);
     if(command) {free(command); command = NULL;}
-    int size = oyjlIsFile( prog, "r", info, 48 );
+    int size = oyjlIsFile( prog, "r", OYJL_NO_CHECK, info, 48 );
     if(!size || verbose)
     {
       fprintf(stderr, "%scompile: %s %s %d\n", size == 0?"Could not ":"", oyjlTermColor(oyjlBOLD,prog), info, size);
@@ -1881,10 +1896,10 @@ oyjlTESTRESULT_e testIO ()
   int len = 48;
   int size = oyjlWriteFile( "test.txt", "test", 5 );
   char info[len];
-  int r = oyjlIsFile( "test.txt", "r", info, len );
+  int r = oyjlIsFile( "test.txt", "r", OYJL_NO_CHECK, info, len );
   int size2 = oyjlWriteFile( "test2.txt", "test2", 6 );
   char info2[len];
-  int r2 = oyjlIsFile( "test2.txt", "r", info2, len );
+  int r2 = oyjlIsFile( "test2.txt", "r", OYJL_NO_CHECK, info2, len );
 
   if(r && r2 && size == 5 && size2 == 6)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -1902,7 +1917,7 @@ oyjlTESTRESULT_e testIO ()
     "oyjlIsFile()" );
   }
 
-  char * text = oyjlReadFile( "test2.txt", &size );
+  char * text = oyjlReadFile( "test2.txt", 0, &size );
   if(text && strcmp(text, "test2") == 0 && size == 6)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlReadFile()" );
@@ -1942,7 +1957,7 @@ oyjlTESTRESULT_e testIO ()
   if(text) { free(text); text = NULL; }
   size = oyjlWriteFile( "test.txt", t, strlen(t) );
   fprintf( zout, "oyjlWriteFile(%s) = %d\n", t, size );
-  text = oyjlReadFile( "test.txt", &size );
+  text = oyjlReadFile( "test.txt", 0, &size );
   fprintf( zout, "oyjlReadFile() = \"%s\" %d\n", text, size );
   if(text) { free(text); text = NULL; }
 
@@ -1951,6 +1966,8 @@ oyjlTESTRESULT_e testIO ()
 
   return result;
 }
+
+#include "oyjl_macros.h" /* OYJL_DBG_FORMAT */
 
 oyjlTESTRESULT_e testFunction ()
 {
@@ -2012,6 +2029,13 @@ oyjlTESTRESULT_e testFunction ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTermColorToHtml() %d / %d", strlen(ansi_256_color), strlen(html) );
   }
+
+  oyjlMessage_p( oyjlMSG_INFO, NULL, OYJL_DBG_FORMAT "Test Info message", OYJL_DBG_ARGS );
+  oyjlMessage_p( oyjlMSG_CLIENT_CANCELED, NULL, OYJL_DBG_FORMAT "Test ClientCanceled message", OYJL_DBG_ARGS );
+  oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, NULL, OYJL_DBG_FORMAT "Test InsufficientData message", OYJL_DBG_ARGS );
+  oyjlMessage_p( oyjlMSG_ERROR, NULL, OYJL_DBG_FORMAT "Test Error message", OYJL_DBG_ARGS );
+  oyjlMessage_p( oyjlMSG_PROGRAM_ERROR, NULL, OYJL_DBG_FORMAT "Test ProgramError message", OYJL_DBG_ARGS );
+  oyjlMessage_p( oyjlMSG_SECURITY_ALERT, NULL, OYJL_DBG_FORMAT "Test SecurityAlert message", OYJL_DBG_ARGS );
 
   return result;
 }

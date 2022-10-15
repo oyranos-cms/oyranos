@@ -126,11 +126,11 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
               if(j == start)
               {
                 main_prog = oyjlStringCopy( prog, 0 );
-                if(!oyjlIsFile(main_prog, "r", NULL, 0))
+                if(!oyjlIsFile(main_prog, "r", OYJL_NO_CHECK, NULL, 0))
                 {
                   char *app = NULL;
                   if((app = oyjlFindApplication_( main_prog )) != NULL &&
-                      oyjlIsFile(app, "r", NULL, 0))
+                      oyjlIsFile(app, "r", OYJL_NO_CHECK, NULL, 0))
                   {
                     if( main_prog ) oyjlFree_m_( main_prog );
                     main_prog = app;
