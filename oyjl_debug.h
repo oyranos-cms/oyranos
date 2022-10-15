@@ -77,7 +77,8 @@ typedef enum {
   oyjlMSG_CLIENT_CANCELED,             /**< @brief user side requested stop */
   oyjlMSG_INSUFFICIENT_DATA,           /**< @brief missing or insufficient data */
   oyjlMSG_ERROR,                       /**< @brief usage error */
-  oyjlMSG_PROGRAM_ERROR                /**< @brief program error */
+  oyjlMSG_PROGRAM_ERROR,                /**< @brief program error */
+  oyjlMSG_SECURITY_ALERT              /**< @brief chanceld by security policy */
 } oyjlMSG_e;
 /** @brief custom message function type
  *
