@@ -798,8 +798,7 @@ void oyjlTreeToJson2_ (oyjl_val v, int * level, char ** json)
 char * oyjlTreePrint (oyjl_val v)
 {
   char * json = NULL;
-  int level = 0;
-  oyjlTreeToJson( v, &level, &json );
+  json = oyjlTreeToText( v, OYJL_JSON|OYJL_NO_MARKUP );
   return json;
 }
 
