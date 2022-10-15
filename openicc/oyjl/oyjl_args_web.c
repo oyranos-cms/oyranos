@@ -35,6 +35,12 @@
 #include "oyjl_i18n_internal.h"
 #include "oyjl_tree_internal.h" /* oyjl_debug */
 #include "oyjl_version.h"
+#ifdef OYJL_HAVE_LOCALE_H
+#include <locale.h> /* setlocale LC_NUMERIC */
+#endif
+
+int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
+                                       int                 write_size );
 
 #ifdef _MSC_VER
 #ifndef strcasecmp
@@ -62,6 +68,9 @@ static unsigned int oyjl_nr_of_uploading_clients = 0;
 typedef enum {
   oyjlSECURITY_READONLY,
   oyjlSECURITY_INTERACTIVE,
+  oyjlSECURITY_CHECK,          /* check read and write file i/o */
+  oyjlSECURITY_CHECK_READ,     /* check read file input */
+  oyjlSECURITY_CHECK_WRITE,    /* check write file output */
   oyjlSECURITY_LAZY
 } oyjlSECURITY_e;
 
@@ -73,6 +82,9 @@ struct oyjl_mhd_context_struct
   int (*callback)(int argc, const char ** argv);
   const char * tool_name;
   int debug;
+  const char * ignore;
+  const char * css;
+  const char * css2;
 };
 
 /**
@@ -109,6 +121,9 @@ struct oyjl_mhd_connection_info_struct
 
   /* part after the TLD url */
   const char * path;
+
+  /* arguments for the tool */
+  char * command;
 };
 
 
@@ -135,31 +150,52 @@ const char *fileioerror =
   "<html><body>IO error writing to disk.</body></html>";
 const char* const postprocerror =
   "<html><head><title>Error</title></head><body>Error processing POST data</body></html>";
+const char *responsepage =
+"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n\
+<html xmlns=\"http://www.w3.org/1999/xhtml\">\n\
+<head>\n\
+  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n\
+  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n\
+  <style type=\"text/css\">%s%s%scode{white-space: pre;}\n\
+  #h1intro:focus ~ div p#introdescription { display: block; }\n\
+  </style>\n\
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
+</head><body>\n\
+%s</body></html>";
 
-
-static int
-oyjlMhdSendPage (struct MHD_Connection *connection,
-           const char *page,
-           int status_code)
+#define OYJL_HTML                      0x100
+#define OYJL_PNG                       0x200
+#define OYJL_SVG                       0x400
+static int oyjlMhdSendPage           ( struct MHD_Connection * connection,
+                                       const char        * page,
+                                       int                 size,
+                                       int                 format,
+                                       int                 status_code )
 {
   int ret;
-  struct MHD_Response *response;
+  struct MHD_Response * response;
+  char * t = oyjlBT(0);
+  const char * content_type = "text/html";
 
-  response =
-    MHD_create_response_from_buffer (strlen (page),
-                                     (void *) page,
-				     MHD_RESPMEM_MUST_COPY);
+  switch(format)
+  {
+    case OYJL_PNG: content_type = "image/png"; break;
+    case OYJL_XML: content_type = "text/xml"; break;
+  }
+
+  response = MHD_create_response_from_buffer( size, (void*)page, MHD_RESPMEM_MUST_COPY );
   if(!response)
     return MHD_NO;
-  MHD_add_response_header (response,
+  MHD_add_response_header( response,
                            MHD_HTTP_HEADER_CONTENT_TYPE,
-                           "text/html");
-  ret = MHD_queue_response (connection,
+                           content_type );
+  ret = MHD_queue_response( connection,
                             status_code,
-                            response);
-  MHD_destroy_response (response);
-  fprintf(stderr, "page: %s status_code: %d\n", oyjlTermColorFromHtml(page,0), status_code );
+                            response );
+  MHD_destroy_response( response );
 
+  //fprintf(stderr, "%ssize:%d: page[%s]:%s status_code: %d\n", t, size, content_type, oyjlTermColorFromHtml(page,0), status_code );
+  free(t);
   return ret;
 }
 
@@ -199,7 +235,20 @@ static enum MHD_Result oyjlMhdIteratePost_cb(
   {
     con_info->answerstring = servererrorpage;
     con_info->answercode = MHD_HTTP_BAD_REQUEST;
-    oyjlTreeSetStringF( con_info->answernode, OYJL_CREATE_NEW, text, key );
+    if(text && strchr(text,';'))
+    {
+      int i, n = 0;
+      char ** list = oyjlStringSplit2( text, ";", 0, &n, NULL, malloc );
+      for(i = 0; i < n; ++i)
+      {
+        const char * arg = list[i];
+        fprintf(stderr, OYJL_DBG_FORMAT "key[%d]:%s \n", OYJL_DBG_ARGS, i, arg );
+        oyjlTreeSetStringF( con_info->answernode, OYJL_CREATE_NEW, arg, "%s/[%d]", key, i );
+      }
+      oyjlStringListRelease( &list, n, free );
+    }
+    else
+      oyjlTreeSetStringF( con_info->answernode, OYJL_CREATE_NEW, text, key );
     if(text) free(text);
     return MHD_YES;
   } else
@@ -208,6 +257,7 @@ static enum MHD_Result oyjlMhdIteratePost_cb(
     oyjlTreeSetStringF( con_info->answernode, OYJL_CREATE_NEW, filename, "%s/filename", key );
   }
 
+  if(!oyjlArgsWebFileNameSecurity(&filename, 0))
   if(! con_info->fp && filename)
   {
     if(0 != con_info->answercode) /* something went wrong */
@@ -274,8 +324,48 @@ oyjlMhdRequestCompleted_cb           ( void              * cls,
       fclose (con_info->fp);
   }
 
+  if(con_info->command) free(con_info->command);
   free (con_info);
   *con_cls = NULL;
+}
+
+#define OYJL_REMOVE                    0x01
+int oyjlStringSplitFind_             ( char             ** set,
+                                       const char        * delimiters,
+                                       const char        * option,
+                                       int                 flags )
+{
+  int found = 0;
+  char ** list;
+  int i, n;
+  if(set && *set && *set[0])
+  {
+    n = 0;
+    list = oyjlStringSplit2( *set, delimiters, 0, &n, NULL, malloc );
+    if(!option)
+      found = n;
+    else
+    {
+      char * new_set = NULL;
+      for( i = 0; i  < n; ++i )
+      {
+        const char * opt = list[i];
+        if(strcmp(opt, option) == 0)
+        {
+          found = n;
+          if(*oyjl_debug)
+            fprintf( stderr, "%s found inside %s\n", option, *set );
+        } else if(!(flags & OYJL_REMOVE))
+          oyjlStringAdd( &new_set, 0,0, "%s%s", i&&new_set?",":"", opt );
+      }
+
+      if(!(flags & OYJL_REMOVE))
+      { free(*set); *set = new_set; }
+    }
+    oyjlStringListRelease( &list, n, free );
+  }
+
+  return found;
 }
 
 
@@ -292,6 +382,7 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
   (void)version;           /* Unused. Silent compiler warning. */
 
   struct oyjl_mhd_context_struct * context = (struct oyjl_mhd_context_struct*)cls;
+  int format = OYJL_HTML;
 
   if (NULL == *con_cls)
   {
@@ -302,7 +393,7 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
 
     if(oyjl_nr_of_uploading_clients >= MAXCLIENTS)
       return oyjlMhdSendPage (connection,
-                        busypage,
+                        busypage, strlen(busypage), format,
                         MHD_HTTP_SERVICE_UNAVAILABLE);
 
     con_info = calloc (sizeof (struct oyjl_mhd_connection_info_struct), 1);
@@ -354,7 +445,7 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
               oyjl_nr_of_uploading_clients);
 
     return oyjlMhdSendPage (connection,
-                      context->html,
+                      context->html, strlen(context->html), format,
                       MHD_HTTP_OK);
   }
 
@@ -401,71 +492,126 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
     if(oyjlValueCount(con_info->answernode))
     {
       int ret = 0;
+      int n = oyjlValueCount(con_info->answernode), argc = 0, i;
+      char ** argv = NULL;
+      char * ignore = context->ignore ? oyjlStringCopy( context->ignore, 0 ) : NULL;
       con_info->answerstring = NULL;
-      if(con_info->sec == oyjlSECURITY_LAZY)
+      fprintf( stderr, "%s prepare", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+      oyjlStringListPush( &argv, &argc, context->tool_name, 0,0 );
+      for(i = 1; i < n+1; ++i)
       {
-        char ** argv;
-        int n = oyjlValueCount(con_info->answernode), i;
-        argv = calloc( n+1, sizeof(char*) );
-        fprintf(stderr, "run: " );
-        argv[0] = oyjlStringCopy(context->tool_name, 0);
-        for(i = 1; i < n+1; ++i)
+        oyjl_val o = oyjlTreeGetValueF(con_info->answernode, 0, "[%d]", i-1);
+        char * path = oyjlTreeGetPath( con_info->answernode, o );
+        const char * txt = OYJL_GET_STRING(o);
+        int is_bool = txt && (strcmp(txt,"true") == 0 || strcmp(txt,"true_no_dash") == 0);
+        int is_no_dash = txt && strcmp(txt,"true_no_dash") == 0;
+        int count = oyjlValueCount( o );
+        //fprintf(stderr, " count: %d %s %s ", count, OYJL_E(path,"----"), o?"opt":"");
+        if(count)
         {
-          oyjl_val o = oyjlTreeGetValueF(con_info->answernode, 0, "[%d]", i-1);
-          char * path = oyjlTreeGetPath( con_info->answernode, o );
-          const char * txt = OYJL_GET_STRING(o);
-          int is_bool = strcmp(txt,"true") == 0;
-          if(path)
+          int j;
+          for(j = 0; j < count; ++j)
           {
-            oyjlStringAdd( &argv[i], 0,0, "%s%s%s%s", strlen(path) == 1?"-":"--", path, is_bool?"":"=", is_bool?"":txt );
-            free(path);
+            char * t;
+            o = oyjlTreeGetValueF(con_info->answernode, 0, "[%d]/[%d]", i-1, j);
+            path = oyjlTreeGetPath( con_info->answernode, o );
+            t = strchr(path,'/');
+            if(t)
+              t[0] = '\000';
+            txt = OYJL_GET_STRING(o);
+            if(!oyjlStringSplitFind_(&ignore, ",", path, 0))
+              oyjlStringListAdd( &argv, &argc, 0,0, "%s%s%s%s", is_no_dash?"":strlen(path) == 1?"-":"--", path, is_bool || is_no_dash?"":"=", is_bool?"":txt );
+            //fprintf(stderr, " path: %s arg: %s argv[%d]: %s ", path, txt, argc, argv[argc-1]);
+            if(path) { free(path); path = NULL; }
           }
         }
-        for(i = 0; i < n+1; ++i)
-          fprintf(stderr, "%s ", argv[i]);
-        fprintf(stderr, "\n");
+        else if(path && !oyjlStringSplitFind_(&ignore, ",", path, 0))
+          oyjlStringListAdd( &argv, &argc, 0,0, "%s%s%s%s", is_no_dash?"":strlen(path) == 1?"-":"--", path, is_bool || is_no_dash?"":"=", is_bool?"":txt );
+
+        if(path) free(path);
+      }
+
+      fprintf(stderr, "[%d]: ", argc );
+      for(i = 0; i < argc; ++i)
+        oyjlStringAdd( &con_info->command, 0,0, "%s ", argv[i] );
+      fputs( con_info->command, stderr );
+      fputs( "\n", stderr );
+
+      if(con_info->sec >= oyjlSECURITY_CHECK)
+      {
+        int size_stdout = 0, size_stderr = 0;
+        char * data_stdout = NULL, * data_stderr = NULL;
+        const char * html;
+        char * html_tmp = NULL,
+             * html_commented = NULL;
+        int data_format = 0;
+
+        int result = oyjlReadFunction( argc, (const char **)argv, context->callback, malloc, &size_stdout, &data_stdout, &size_stderr, &data_stderr );
+        int size = size_stdout?size_stdout:size_stderr;
+        html = size_stdout?data_stdout:data_stderr;
+        if(html) html_commented = oyjlStringCopy( html, 0 );
+        data_format = oyjlDataFormat(html);
+        if(result || (!size_stdout && !size_stderr) || context->debug)
+          fprintf(stderr, "returned: %d size_stdout: %d size_stderr: %d format: %s[%d]\n", result, size_stdout, size_stderr, oyjlDataFormatToString(data_format), data_format );
+
+        if(data_format == 8)
         {
-          int size_stdout = 0, size_stderr = 0;
-          char * data_stdout = NULL, * data_stderr = NULL;
-          const char * html;
-          char * html_tmp = NULL;
-          int data_format = 0;
-
-          int result = oyjlReadFunction( n+1, (const char **)argv, context->callback, malloc, &size_stdout, &data_stdout, &size_stderr, &data_stderr );
-          html = size_stdout?data_stdout:data_stderr;
-          data_format = oyjlDataFormat(html);
-          if(result || (!size_stdout && !size_stderr) || context->debug)
-            fprintf(stderr, "returned: %d size_stdout: %d size_stderr: %d format: %s[%d]\n", result, size_stdout, size_stderr, oyjlDataFormatToString(data_format), data_format );
-
-          if(data_format != 8)
+          int len = strlen(html);
+          if((len > 32 && memcmp( html, "<?xml version=\"1.0\"", 19 ) == 0 && strstr( html, "<svg" ) ) ||
+             (len > 32 && memcmp( html, "<svg", 4 ) == 0))
           {
-            oyjlStringAdd( &html_tmp, 0,0, "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /></head><body>%s</body></html>",
-                           oyjlTermColorToHtml( html, 0 ) );
+            char * css_toc_text = NULL;
+            oyjlStringAdd( &html_commented, 0,0, "<br />%s", con_info->command );
+            oyjlStringAdd( &html_tmp, 0,0, responsepage, OYJL_E(context->css,""), OYJL_E(context->css2,""), OYJL_E(css_toc_text,""),
+                           html_commented );
+            html = html_tmp;
+            format = OYJL_SVG;
+          }
+          else
+            format = OYJL_XML;
+        }
+        else
+        {
+          // test for PNG
+          if(size > 16 && (unsigned char)html[0] == 137 && (char)html[1] == 80 && (char)html[2] == 78 && (char)html[3] == 71 && (char)html[4] == 13 && (char)html[5] == 10 && (char)html[6] == 26 && (char)html[7] == 10)
+          {
+            format = OYJL_PNG;
+            fprintf(stderr,  "%s oyjlMhdSendPage: found png of size: %d\n", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN), size );
+          }
+          else if(data_format != 8)
+          {
+            char * css_toc_text = NULL;
+            oyjlStringAdd( &html_tmp, 0,0, responsepage, OYJL_E(context->css,""), OYJL_E(context->css2,""), OYJL_E(css_toc_text,""),
+                           oyjlTermColorToHtml( html_commented, 0 ) );
             html = html_tmp;
           }
-          con_info->answerstring = html;
-          con_info->answercode = MHD_HTTP_OK;
-          if(con_info->answerstring)
-          {
-            ret = oyjlMhdSendPage(connection, con_info->answerstring, con_info->answercode);
-            fprintf(stderr,  "oyjlMhdSendPage: %d\n", ret );
-          }
-          if(data_stdout) free(data_stdout);
-          if(data_stderr) free(data_stderr);
-          if(html_tmp) free(html_tmp);
         }
-        oyjlStringListRelease( &argv, n, free );
+        con_info->answerstring = html;
+        con_info->answercode = MHD_HTTP_OK;
+        if(con_info->answerstring)
+        {
+          ret = oyjlMhdSendPage( connection, con_info->answerstring, html_tmp?(int)strlen(con_info->answerstring):size,
+                                 format, con_info->answercode );
+          fprintf(stderr,  "%s oyjlMhdSendPage: %d\n", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN), ret );
+        }
+        if(data_stdout) free(data_stdout);
+        if(data_stderr) free(data_stderr);
+        if(html_commented) free(html_commented);
+        if(html_tmp) free(html_tmp);
       }
       else
         fprintf( stderr,  "no run\n" );
+
+      oyjlStringListRelease( &argv, argc, free );
 
       if(!con_info->answerstring)
       {
         char * answerstring = oyjlTreeToText( con_info->answernode, OYJL_JSON );
         con_info->answerstring = oyjlTermColorToHtml( answerstring, 0 );
         free(answerstring); answerstring = NULL;
-        ret = oyjlMhdSendPage(connection, con_info->answerstring, con_info->answercode);
-        fprintf(stderr,  "oyjlMhdSendPage: %d\n", ret );
+        ret = oyjlMhdSendPage( connection, con_info->answerstring, strlen(con_info->answerstring),
+                               format, con_info->answercode );
+        fprintf(stderr,  "%s oyjlMhdSendPage: %d\n", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN), ret );
       }
 
       oyjlTreeFree( con_info->answernode ); con_info->answernode = NULL;
@@ -473,13 +619,13 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
       
     } else
       return oyjlMhdSendPage(connection,
-                        con_info->answerstring,
+                        con_info->answerstring, strlen(con_info->answerstring), format,
                         con_info->answercode);
   }
 
   /* Note a GET or a POST, generate error */
   return oyjlMhdSendPage(connection,
-                    errorpage,
+                    errorpage, strlen(errorpage), format,
                     MHD_HTTP_BAD_REQUEST);
 }
 
@@ -533,7 +679,6 @@ const char srv_signed_cert_pem[] = "-----BEGIN CERTIFICATE-----\n"
                                    "4ToyOKPDmamiTuN5KzLN3cw7DQlvWMvqSOChPLnA3Q==\n"
                                    "-----END CERTIFICATE-----\n";
 
-#define OYJL_HTML                      0x100
 extern char * oyjl_term_color_html_;
 const char * oyjlStringColor         ( oyjlTEXTMARK_e      mark,
                                        int                 flags,
@@ -623,48 +768,14 @@ void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
   *t_ = t;
 }
 
-int oyjlSetHasOptionL_               ( char             ** set,
-                                       const char        * option )
-{
-  int found = 0;
-  char ** list;
-  int i, n;
-  if(set && *set && *set[0])
-  {
-    n = 0;
-    list = oyjlStringSplit2( *set, "|,", 0, &n, NULL, malloc );
-    if(!option)
-      found = n;
-    else
-    {
-      char * new_set = NULL;
-      for( i = 0; i  < n; ++i )
-      {
-        const char * opt = list[i];
-        if(strcmp(opt, option) == 0)
-        {
-          found = n;
-          if(*oyjl_debug)
-            fprintf( stderr, "%s found inside %s\n", option, *set );
-        } else
-          oyjlStringAdd( &new_set, 0,0, "%s%s", i&&new_set?",":"", opt );
-      }
-      free(*set); *set = new_set;
-    }
-    oyjlStringListRelease( &list, n, free );
-  }
-
-  return found;
-}
-
-
 
 void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
                                        int                 is_mandatory,
                                        char             ** t_,
                                        char             ** description,
                                        int                 gcount,
-                                       oyjlSECURITY_e      sec )
+                                       oyjlSECURITY_e      sec,
+                                       int                 flags )
 {
   const char * txt;
   char * t = *t_;
@@ -708,19 +819,29 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
   if(type && strcmp(type,"bool") == 0)
   {
     if(sec)
-      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label><input type=\"checkbox\" name=\"%s\" id=\"%s-%d\" value=\"true\" %s%s/><br />\n",
-       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", name /*i18n label*/, key /*name*/, key/* id */, gcount, default_var && strcmp(default_var,"1") == 0?"checked":"",is_mandatory?" class=\"mandatory\"":"" );
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label><input type=\"checkbox\" name=\"%s\" id=\"%s-%d\" value=\"%s\" %s%s/><br />\n",
+       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name) /*i18n label*/, key /*name*/, key/* id */, gcount, no_dash?"true_no_dash":"true", (default_var && strcmp(default_var,"1") == 0) || is_mandatory?"checked":"",is_mandatory?" class=\"mandatory\"":"" );
   }
   else if(type && strcmp(type,"double") == 0)
   {
-    double start, end;
+    double start, end, tick;
+#ifdef OYJL_HAVE_LOCALE_H
+    char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
+    setlocale(LC_NUMERIC, "C");
+#endif
     o = oyjlTreeGetValue(opt, 0, "start");
     start = OYJL_GET_DOUBLE(o);
     o = oyjlTreeGetValue(opt, 0, "end");
     end = OYJL_GET_DOUBLE(o);
+    o = oyjlTreeGetValue(opt, 0, "tick");
+    tick = OYJL_GET_DOUBLE(o);
     if(sec)
-      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label><input type=\"range\" name=\"%s\" id=\"%s-%d\" value=\"%s\" min=\"%g\" max=\"%g\"%s/><br />\n",
-       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", name /*i18n label*/, key /*name*/, key/* id */, gcount, default_var, start, end, is_mandatory?" class=\"mandatory\"":"" );
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s [≥%g ≤%g Δ%g]</label><input type=\"range\" name=\"%s\" id=\"%s-%d\" value=\"%s\" min=\"%g\" max=\"%g\" step=\"%g\"%s/><br />\n",
+       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name) /*i18n label*/, start, end, tick, key /*name*/, key/* id */, gcount, default_var, start, end, tick, is_mandatory?" class=\"mandatory\"":"" );
+#ifdef OYJL_HAVE_LOCALE_H
+    setlocale(LC_NUMERIC, save_locale);
+    if(save_locale) free( save_locale );
+#endif
   }
   else if(sec)
   {
@@ -731,21 +852,21 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
       {
         is_choice = 1;
         oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label>\n  <select id=\"%s-%d\" name=\"%s\">\n", key, gcount,
-            is_mandatory?" class=\"mandatory\"":"", name?name:"", key, gcount, key );
+            is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name):"", key, gcount, key );
       }
       else if(type && strcmp(type,"string") == 0)
       {
         is_choice = 2;
         oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label>\n  <input id=\"%s-%d\" list=\"%s-%d-states\" name=\"%s\" />\n\
-  <datalist id=\"%s-%d-states\">\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?name:"", key, gcount, key, gcount, key, key, gcount );
+  <datalist id=\"%s-%d-states\">\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name):"", key, gcount, key, gcount, key, key, gcount );
       }
     } else if(type && strcmp(type,"string") == 0)
     {
       is_choice = 2;
-      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label>\n  <input id=\"%s-%d\" name=\"%s\" /><br />\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?name:"", key, gcount, key );
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label>\n  <input id=\"%s-%d\" name=\"%s\" /><br />\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name):"", key, gcount, key );
     }
   }
-    
+ 
   if(kn && sec)
   {
     if(is_choice == 1)
@@ -841,11 +962,13 @@ void oyjlArgsWebGroupPrintNonDetail_ ( oyjl_val            root,
                                        int                 gcount,
                                        int                 sec,
                                        int                 debug,
-                                       const char        * set_orig )
+                                       const char        * set_orig,
+                                       const char        * ignore_ )
 {
   if(set && strlen(set))
   {
     int i, n = 0;
+    char * ignore = ignore_ ? oyjlStringCopy( ignore_, 0 ) : NULL;
     char ** list = oyjlStringSplit2( set, "|,", 0, &n, NULL, malloc );
     for( i = 0; i  < n; ++i )
     {
@@ -857,12 +980,19 @@ void oyjlArgsWebGroupPrintNonDetail_ ( oyjl_val            root,
         oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, OYJL_DBG_FORMAT "OyjlArgsWeb option not found: %s from set: %s/%s", OYJL_DBG_ARGS, opt_bold, set, set_orig );
       else
       {
+        int flags = 0;
+        oyjl_val o_key = oyjlTreeGetValue(o, 0, "key");
+        const char * key = OYJL_GET_STRING(o_key);
+        if(oyjlStringSplitFind_(&ignore, ",", key, 0))
+          flags = 1;
         if(debug)
           oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsWeb add option from group %d to form %s: %s", OYJL_DBG_ARGS, src_gcount-1, gname, opt_bold );
-        oyjlArgsWebOptionPrint_( o, 0/* is_mandatory */, t_, NULL /* add no repeating description */, gcount, sec );
+        if(!flags)
+          oyjlArgsWebOptionPrint_( o, 0/* is_mandatory */, t_, NULL /* add no repeating description */, gcount, sec, flags );
       }
       free(opt_bold);
     }
+    if(ignore) free(ignore);
     oyjlStringListRelease( &list, n, free );
   }
 }
@@ -874,12 +1004,14 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
                                        int                 gcount,
                                        oyjlSECURITY_e      sec,
                                        oyjl_val            root,
-                                       int                 debug )
+                                       int                 debug,
+                                       const char        * ignore_ )
 {
   oyjl_val v;
   const char * gname;
   char * mandatory = NULL, * optional = NULL, * mandatory_orig = NULL, * optional_orig = NULL;
   oyjl_val g = oyjlTreeGetValueF( groups, 0, "[%d]", i );
+  char * ignore = ignore_ ? oyjlStringCopy( ignore_, 0 ) : NULL;
 
   int j, count, mandatory_n = 0, mandatory_found = 0, optional_n = 0, optional_found = 0;
 
@@ -893,11 +1025,11 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
   v = oyjlTreeGetValue(g, 0, "mandatory");
   mandatory = oyjlStringCopy( OYJL_GET_STRING(v), 0 );
   mandatory_orig = oyjlStringCopy( mandatory, 0 );
-  mandatory_n = oyjlSetHasOptionL_(&mandatory, NULL);
+  mandatory_n = oyjlStringSplitFind_(&mandatory, "|,", NULL, OYJL_REMOVE);
   v = oyjlTreeGetValue(g, 0, "optional");
   optional = oyjlStringCopy( OYJL_GET_STRING(v), 0 );
   optional_orig = oyjlStringCopy( optional, 0 );
-  optional_n = oyjlSetHasOptionL_(&optional, NULL);
+  optional_n = oyjlStringSplitFind_(&optional, "|,", NULL, OYJL_REMOVE);
   v = oyjlTreeGetValue(g, 0, "options");
   count = oyjlValueCount( v );
   for(j = 0; j < count; ++j)
@@ -906,15 +1038,18 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
     oyjl_val opt = oyjlTreeGetValueF(v, 0, "[%d]", j);
     oyjl_val o = oyjlTreeGetValue(opt, 0, "key");
     const char * key = OYJL_GET_STRING(o);
-    if(oyjlSetHasOptionL_(&mandatory, key)) { is_mandatory = 1; ++mandatory_found; };
-    if(oyjlSetHasOptionL_(&optional, key)) { /*is_optional = 1;*/ ++optional_found; };
-    oyjlArgsWebOptionPrint_( opt, is_mandatory, t_, description, gcount, sec );
+    int flags = 0;
+    if(oyjlStringSplitFind_(&mandatory, "|,", key, OYJL_REMOVE)) { is_mandatory = 1; ++mandatory_found; };
+    if(oyjlStringSplitFind_(&optional, "|,", key, OYJL_REMOVE)) { /*is_optional = 1;*/ ++optional_found; };
+    if(oyjlStringSplitFind_(&ignore, ",", key, 0))
+      flags = 1;
+    oyjlArgsWebOptionPrint_( opt, is_mandatory, t_, description, gcount, sec, flags );
   }
 
   if(mandatory && strlen(mandatory))
-    oyjlArgsWebGroupPrintNonDetail_( root, mandatory, t_, gname, gcount, sec, debug, mandatory_orig );
+    oyjlArgsWebGroupPrintNonDetail_( root, mandatory, t_, gname, gcount, sec, debug, mandatory_orig, ignore );
   if(optional && strlen(optional))
-    oyjlArgsWebGroupPrintNonDetail_( root, optional, t_, gname, gcount, sec, debug, optional_orig );
+    oyjlArgsWebGroupPrintNonDetail_( root, optional, t_, gname, gcount, sec, debug, optional_orig, ignore );
 
   if(debug)
   {
@@ -927,6 +1062,70 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
   if(optional) free(optional);
   if(mandatory_orig) free(mandatory_orig);
   if(optional_orig) free(optional_orig);
+  if(ignore) free(ignore);
+}
+
+#include "oyjl_io_internal.h"
+
+const char * oyjl_args_web_file_name_security_feature = NULL;
+#define OYJL_FILE_NAME_POLICY(policy_, description) \
+{ \
+  const char * policy = policy_; \
+  policy += 3; \
+  if( !error && \
+      (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind_((char**)&oyjl_args_web_file_name_security_feature, ",", policy_, 0)) && \
+      strstr(fn, policy) ) { error = 1; error_msg = policy_ " - " description; } \
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      file policy: %s\n", "=\"" policy_ "\" - " description ); \
+}
+#define OYJL_USE_POLICY(policy_, description) \
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      file policy: %s\n", "=\"" policy_ "\" - " description ); \
+  if( !error && \
+      (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind_((char**)&oyjl_args_web_file_name_security_feature, ",", policy_, 0)) )
+
+int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
+                                       int                 write_size OYJL_UNUSED )
+{
+  const char * fn = *full_filename;
+  int error = 0;
+  const char * error_msg = NULL;
+
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "    security: with =\"checkXXX\" use all \"security\" file check policies or add on a as needed base from %s()\n", __func__ );
+  OYJL_FILE_NAME_POLICY( "no_/etc", "no system configuration" )
+  OYJL_FILE_NAME_POLICY( "no_/root", "no root files" )
+  OYJL_FILE_NAME_POLICY( "no_/proc", "no system state files" )
+  OYJL_FILE_NAME_POLICY( "no_..", "no file and directory above" )
+  OYJL_FILE_NAME_POLICY( "no_/.", "no hidden paths" )
+  OYJL_USE_POLICY("no_hidden", "no hidden file and directory")
+  if( fn[0] == '.' && strlen(fn) > 1 && fn[1] != OYJL_SLASH_C ) { error = 6; error_msg = ". - no hidden file and directory"; }
+  OYJL_USE_POLICY("no_above", "no file and directory above cwd")
+  if( fn[0] == OYJL_SLASH_C )
+  {
+    char * cd = oyjlGetCurrentDir_(), * msg;
+    int len = strlen(fn),
+        clen = strlen(cd);
+
+    error_msg = "- no file and directory above cwd";
+    msg = oyjlStringCopy(oyjlTermColor(oyjlRED,error_msg), 0);
+    if(!len || !clen || len < clen || memcmp( fn, cd, clen ) != 0)
+    {
+      error = 100;
+      oyjlMessage_p( oyjlMSG_SECURITY_ALERT, 0, OYJL_DBG_FORMAT "OyjlArgsWeb inhibits: fn:\"%s\" cwd:\"%s\" policy: %s", OYJL_DBG_ARGS, fn, cd, msg );
+      *full_filename = "";
+    }
+    free(cd);
+    free(msg);
+  }
+
+  if(0 < error && error < 100)
+  {
+    char * msg = oyjlStringCopy(oyjlTermColor(oyjlRED,error_msg), 0);
+    fprintf( stderr, "%s", oyjlBT(0) );
+    *full_filename = "";
+    oyjlMessage_p( oyjlMSG_SECURITY_ALERT, 0, OYJL_DBG_FORMAT "OyjlArgsWeb inhibits: \"%s\" file policy: %s", OYJL_DBG_ARGS, fn, msg );
+    free(msg);
+  }
+
+  return error;
 }
 
 int oyjlArgsWebStart__               ( int                 argc,
@@ -944,6 +1143,7 @@ int oyjlArgsWebStart__               ( int                 argc,
   int port = PORT;
   char * https_key = NULL,
        * https_cert = NULL,
+       * ignore = NULL,
        * css = NULL,
        * css2 = NULL,
        * help = NULL;
@@ -962,9 +1162,10 @@ int oyjlArgsWebStart__               ( int                 argc,
   oyjl_val root = NULL;
   char error_buffer[256] = {0};
   int r = 0;
+
   if( json && strlen( json ) )
   {
-    r = oyjlIsFile( json, "r", NULL, 0 );
+    r = oyjlIsFile( json, "r", OYJL_NO_CHECK, NULL, 0 );
     if(!r && oyjlDataFormat(json) == 7)
     {
       root = oyjlTreeParse( json, error_buffer, 256 );
@@ -1021,6 +1222,15 @@ int oyjlArgsWebStart__               ( int                 argc,
           if(strcasecmp(security,"interactive") == 0)
             sec = oyjlSECURITY_INTERACTIVE;
           else
+          if(strcasecmp(security,"check_read") == 0)
+            sec = oyjlSECURITY_CHECK_READ;
+          else
+          if(strcasecmp(security,"check_write") == 0)
+            sec = oyjlSECURITY_CHECK_WRITE;
+          else
+          if(strcasecmp(security,"check") == 0)
+            sec = oyjlSECURITY_CHECK;
+          else
           if(strcasecmp(security,"lazy") == 0)
             sec = oyjlSECURITY_LAZY;
         }
@@ -1029,9 +1239,28 @@ int oyjlArgsWebStart__               ( int                 argc,
         else
           OYJL_SUB_ARG_STRING( "css", 0, css )
         OYJL_SUB_ARG_STRING( "help", 0, help )
+        OYJL_SUB_ARG_STRING( "ignore", 0, ignore )
       }
     }
   }
+
+  if(oyjlSECURITY_CHECK <= sec && sec < oyjlSECURITY_LAZY)
+  {
+    if(sec == oyjlSECURITY_CHECK_READ)
+    {
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "set: oyjlArgsWebFileNameSecurity() for oyjlFileRead()", OYJL_DBG_ARGS );
+      oyjlFileNameCheckFuncSet( oyjlArgsWebFileNameSecurity, OYJL_IO_READ );
+    } else if(sec == oyjlSECURITY_CHECK_WRITE)
+    {
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "set: oyjlArgsWebFileNameSecurity() for oyjlFileWrite()", OYJL_DBG_ARGS );
+      oyjlFileNameCheckFuncSet( oyjlArgsWebFileNameSecurity, OYJL_IO_WRITE );
+    } else
+    {
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "set: oyjlArgsWebFileNameSecurity() for oyjlFileRead() and oyjlFileWrite()", OYJL_DBG_ARGS );
+      oyjlFileNameCheckFuncSet( oyjlArgsWebFileNameSecurity, OYJL_IO_READ | OYJL_IO_WRITE );
+    }
+  }
+
 
   if( (root && oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules")) || // use UI JSON
       (!root && json && strlen(json)) ) // assume JSON filename
@@ -1191,7 +1420,7 @@ int oyjlArgsWebStart__               ( int                 argc,
       {
         if(sec)
           oyjlStringAdd( &t, 0,0, "<form action=\"/result\" method=\"post\" enctype=\"multipart/form-data\">\n" );
-        oyjlArgsWebGroupPrint_(val, i, &t, &description, gcount, sec, root, debug);
+        oyjlArgsWebGroupPrint_(val, i, &t, &description, gcount, sec, root, debug, ignore);
         if(sec)
           oyjlStringAdd( &t, 0,0, "  <input type=\"submit\" value=\" %s \"></form>\n", _("Send") );
         if(description)
@@ -1210,7 +1439,7 @@ int oyjlArgsWebStart__               ( int                 argc,
           oyjlArgsWebGroupPrintSection_(g, &t, &css_toc_text, gcount, &description, 1, sec);
           if(sec)
             oyjlStringAdd( &t, 0,0, "<form action=\"/result\" method=\"post\" enctype=\"multipart/form-data\">\n" );
-          oyjlArgsWebGroupPrint_(val, i, &t, &description, gcount, sec, root, debug);
+          oyjlArgsWebGroupPrint_(val, i, &t, &description, gcount, sec, root, debug, ignore);
           if(sec)
             oyjlStringAdd( &t, 0,0, "<input type=\"submit\" value=\" %s \"></form>\n", _("Send") );
           if(description)
@@ -1230,18 +1459,17 @@ int oyjlArgsWebStart__               ( int                 argc,
     oyjlStringAdd( &t, 0,0, "</div>\n" );
 
 
-
     if(https_key && https_cert)
     {
       tls_flag = MHD_USE_TLS;
-      https_key_pem = oyjlReadFile( https_key, &size );
+      https_key_pem = oyjlReadFile( https_key, 0, &size );
       if(!https_key_pem)
       {
         https_key_pem = oyjlStringCopy(srv_signed_key_pem,0);
         fprintf(stderr,
                 "%s not found. Falling back to server side https_key\n", oyjlTermColor(oyjlRED, https_key));
       }
-      https_cert_pem = oyjlReadFile( https_cert, &size );
+      https_cert_pem = oyjlReadFile( https_cert, 0, &size );
       if(!https_cert_pem)
       {
         https_cert_pem = oyjlStringCopy(srv_signed_cert_pem,0);
@@ -1250,35 +1478,33 @@ int oyjlArgsWebStart__               ( int                 argc,
       }
     }
     if(css)
-      css_text = oyjlReadFile( css, &size );
+      css_text = oyjlReadFile( css, 0, &size );
     if(css2)
-      css2_text = oyjlReadFile( css2, &size );
-    oyjlStringAdd( &get_page, 0,0, "\
-<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n\
-<html xmlns=\"http://www.w3.org/1999/xhtml\">\n\
-<head>\n\
-  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n\
-  <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n\
-  <style type=\"text/css\">%s%s%scode{white-space: pre;}\n\
-  #h1intro:focus ~ div p#introdescription { display: block; }\n\
-  </style>\n\
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
-</head><body>\n\
-%s</body></html>", OYJL_E(css_text,""), OYJL_E(css2_text,""), OYJL_E(css_toc_text,""), t );
+      css2_text = oyjlReadFile( css2, 0, &size );
+    oyjlStringAdd( &get_page, 0,0, responsepage, OYJL_E(css_text,""), OYJL_E(css2_text,""), OYJL_E(css_toc_text,""), t );
     if(debug)
       oyjlWriteFile("oyjl_args_web-debug.html", get_page, strlen(get_page+1) );
-    struct oyjl_mhd_context_struct context = { get_page, sec, "/", callback, argv[0], debug };
+    struct oyjl_mhd_context_struct context = { get_page, sec, "/", callback, argv[0], debug, ignore, css_text, css2_text };
     if(help)
+    {
+      const char * arg = "oyjl-list";
       fprintf( stderr, "Help:\n  %s\n\
-    port: select the port for the host; defailt is 8888\n\
+    port: select the port for the host; default is 8888\n\
     https_key: adds a https key file; default is none, if no filename is provided it uses a self certified inbuild key\n\
     https_cert: adds a certificate for https; default is none, if no filename is provided it uses a self certified inbuild certificate\n\
     css: can by called two times to add CSS layout file(s), which will by embedded into the HTML code\n\
     security: specifies the security level used; default is readonly inactive web page generation\n\
       \"=readonly\": is passive and default\n\
       \"=interactive\": contains interactive forms element and returns the respond JSON\n\
+      \"=check_read\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileRead()\n\
+      \"=check_write\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileWrite()\n\
+      \"=check\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileRead() and oyjlFileWrite()\n\
       \"=lazy\": calls the specified callback from oyjlArgsRender(callback)\n\
-    help: show this help text\n", oyjlTermColor(oyjlBOLD,"--render=web:port=8888:https_key=filename.tls:https_cert=filename.tls:css=first.css:css=second.css:security=level") );
+    ignore: add comma separated list of skip options, which are marked in HTML and get not accepted, e.g. ignore=\"o,option,v,verbose\"\n\
+    help: show this help text\n",
+        oyjlTermColor(oyjlBOLD,"--render=web:port=8888:https_key=filename.tls:https_cert=filename.tls:css=first.css:css=second.css:security=level:ignore=o,option") );
+      oyjlArgsWebFileNameSecurity( &arg, 0 );
+    }
     daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | tls_flag,
                                port, NULL, NULL,
                                &oyjlMhdAnswerToConnection_cb, &context,
@@ -1294,14 +1520,16 @@ int oyjlArgsWebStart__               ( int                 argc,
                "Failed to start daemon, port:%s\n", oyjlTermColorF( oyjlRED, "%d", port));
       return 1;
     }
+    fprintf( stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
     fprintf( stderr, "port:%s%s%s%s%s %s ",
         oyjlTermColorF( oyjlGREEN, "%d", port ),
         https_key?" https_key:":"", https_key?https_key:"",
         https_cert?" https_cert:":"", https_cert?https_cert:"",
         tls_flag?"MHD_USE_TLS":https_key||https_cert?"noTLS:need both https_key and https_cert filenames":"" );
-    fprintf( stderr, "sec:%s ", oyjlTermColor(oyjlITALIC,sec == oyjlSECURITY_LAZY?"lazy":sec==oyjlSECURITY_INTERACTIVE?"interactive":"readonly" ) );
+    fprintf( stderr, "sec:%s ", oyjlTermColor(oyjlITALIC,sec == oyjlSECURITY_LAZY?"lazy":sec==oyjlSECURITY_INTERACTIVE?"interactive":sec==oyjlSECURITY_CHECK?"check":sec==oyjlSECURITY_CHECK_READ?"check_read":oyjlSECURITY_CHECK_WRITE?"check_write":"readonly" ) );
     fprintf( stderr, "css:%s ", OYJL_E(oyjlTermColor(css_text?oyjlITALIC:oyjlRED,css),"") );
     fprintf( stderr, "css2:%s ", OYJL_E(oyjlTermColor(css2_text?oyjlITALIC:oyjlRED,css2),"") );
+    fprintf( stderr, "ignore:%s ", OYJL_E(oyjlTermColor(oyjlITALIC,ignore),"") );
     fprintf( stderr, "connect to %s\n", oyjlTermColorF( oyjlBOLD, "%s//localhost:%d", tls_flag?"https":"http", port) );
 
     if(!help)
