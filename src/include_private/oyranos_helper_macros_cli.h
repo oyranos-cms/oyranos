@@ -49,11 +49,11 @@ extern "C" {
                         if(oy_debug) fprintf(stderr,arg "=%d\n",opt)
 #define OY_PARSE_FLOAT_ARG2( opt, arg, min, max, std ) \
                         if( pos + 1 < argc && argv[pos][i+strlen(arg)+1] == 0 ) \
-                        { oyjlStringToDouble(argv[pos+1], &opt); \
+                        { oyjlStringToDouble(argv[pos+1], &opt,0); \
                           ++pos; \
                           i = 1000; \
                         } else if(argv[pos][i+strlen(arg)+1] == '=') \
-                        { oyjlStringToDouble(&argv[pos][i+strlen(arg)+2], &opt); \
+                        { oyjlStringToDouble(&argv[pos][i+strlen(arg)+2], &opt,0); \
                           i = 1000; \
                         } else \
                         { char * t = 0; const char * slash = strlen(arg)==1?"-":"--"; \
