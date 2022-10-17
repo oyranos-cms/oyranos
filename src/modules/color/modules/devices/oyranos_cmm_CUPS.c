@@ -378,7 +378,7 @@ int          DeviceAttributes_       ( ppd_file_t        * ppd,
           /* open the PPD data */
           if(ppd_file_location)
           {
-            FILE * fp = fopen( ppd_file_location, "r" );
+            FILE * fp = oyjlFopen( ppd_file_location, "r" );
             size_t lsize = 0;
 
             /* Find the total size. */
@@ -1257,7 +1257,7 @@ int CUPSgetProfiles                  ( const char        * device_name,
             cupsGetFd( oyGetCUPSConnection(), uri, tempfd);             
 
             /* Open the file. */
-            old_file = fopen(temp_profile_location, "rb");
+            old_file = oyjlFopen(temp_profile_location, "rb");
                     
             /* Find the total size. */
             if(old_file)

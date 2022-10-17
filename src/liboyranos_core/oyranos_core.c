@@ -561,7 +561,7 @@ int                oyMessageFormat   ( char             ** message_text,
 #ifdef HAVE_POSIX
     pid = (int)getpid();
 #endif
-    fp = fopen( TMP_FILE, "w" );
+    fp = oyjlFopen( TMP_FILE, "w" );
 
     if(fp)
     {
@@ -786,7 +786,7 @@ int oyGuiMessageFunc( int code, const void * c, const char * format, ... )
 #ifdef HAVE_POSIX
     pid = (int)getpid();
 #endif
-    fp = fopen( TMP_FILE, "w" );
+    fp = oyjlFopen( TMP_FILE, "w" );
 
     if(fp)
     {

@@ -827,7 +827,7 @@ int myMain( int argc, const char ** argv )
       oyjl_val root = oyjlTreeNew("");
       char * json = NULL;
       if(strcmp( dump_openicc_json, "-" ) != 0)
-        fp = fopen( dump_openicc_json, "wb" );
+        fp = oyjlFopen( dump_openicc_json, "wb" );
       tag = oyProfile_GetTagById( p, icSigMetaDataTag );
       if(tag)
       {

@@ -130,7 +130,7 @@ int      oyraFilterPlug_ImageOutputPPMWrite (
     filename = oyOptions_FindString( node_opts, "filename", 0 );
 
   if(filename)
-    fp = fopen( filename, "wb" );
+    fp = oyjlFopen( filename, "wb" );
 
   if(fp)
   {
@@ -523,7 +523,7 @@ int      oyraFilterPlug_ImageInputPPMRun (
   }
 
   if(filename)
-    fp = fopen( filename, "rm" );
+    fp = oyjlFopen( filename, "rm" );
 
   if(!fp)
   {

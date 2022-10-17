@@ -514,9 +514,6 @@ int myMain( int argc, const char ** argv )
     }
   }
   oyjlUi_Release( &ui );
-  oyjlLibRelease();
-
-  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return error;
 }
@@ -550,6 +547,10 @@ int main( int argc_, char**argv_, char ** envv )
 #ifdef __ANDROID__
   free( argv );
 #endif
+
+  oyjlLibRelease();
+
+  oyFinish_( FINISH_IGNORE_I18N | FINISH_IGNORE_CACHES );
 
   return 0;
 }

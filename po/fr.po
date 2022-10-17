@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ICC Examin 0.41\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-10-15 10:21+0200\n"
+"POT-Creation-Date: 2022-10-17 09:33+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -2534,7 +2534,7 @@ msgstr "ICC Profils"
 msgid "ICC profile directory name"
 msgstr "Fichier"
 
-#: API_generated/oyProfile_s_.c:1130
+#: API_generated/oyProfile_s_.c:1132
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC Profils"
@@ -2896,7 +2896,7 @@ msgstr ""
 msgid "Intent"
 msgstr "Intention:"
 
-#: tools/oyranos_profiles.c:615
+#: tools/oyranos_profiles.c:616
 msgid "Internal Error"
 msgstr ""
 
@@ -3791,7 +3791,7 @@ msgstr ""
 msgid "No Action"
 msgstr "Options"
 
-#: API_generated/oyProfile_s_.c:1115
+#: API_generated/oyProfile_s_.c:1117
 #, fuzzy
 msgid "No ICC profile id detected"
 msgstr "ICC Profils"
@@ -4292,7 +4292,7 @@ msgstr ""
 msgid "Path"
 msgstr ""
 
-#: tools/oyranos_profiles.c:593
+#: tools/oyranos_profiles.c:594
 msgid "Path can not be written"
 msgstr ""
 
@@ -4540,7 +4540,7 @@ msgid "Profile Tags"
 msgstr "Fichier"
 
 #: API_generated/oyProfile_s.c:876 API_generated/oyProfile_s.c:882
-#: tools/oyranos_profiles.c:581
+#: tools/oyranos_profiles.c:582
 #, fuzzy
 msgid "Profile already installed"
 msgstr "Fichier"
@@ -4566,7 +4566,7 @@ msgstr "Description"
 msgid "Profile exists already"
 msgstr "Fichier"
 
-#: tools/oyranos_profiles.c:605
+#: tools/oyranos_profiles.c:606
 #, fuzzy
 msgid "Profile not useable"
 msgstr "Fichier"
@@ -6610,7 +6610,7 @@ msgstr "ICC Profils"
 msgid "Write to file"
 msgstr "Ouvrir Profil"
 
-#: API_generated/oyProfile_s_.c:1107
+#: API_generated/oyProfile_s_.c:1109
 #, fuzzy
 msgid "Wrong ICC profile id detected"
 msgstr "ICC Profils"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-10-15 10:21+0200\n"
+"POT-Creation-Date: 2022-10-17 09:33+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -2393,7 +2393,7 @@ msgstr "ICC-профиль"
 msgid "ICC profile directory name"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:1130
+#: API_generated/oyProfile_s_.c:1132
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC-профиль"
@@ -2728,7 +2728,7 @@ msgstr ""
 msgid "Intent"
 msgstr ""
 
-#: tools/oyranos_profiles.c:615
+#: tools/oyranos_profiles.c:616
 msgid "Internal Error"
 msgstr ""
 
@@ -3585,7 +3585,7 @@ msgstr ""
 msgid "No Action"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:1115
+#: API_generated/oyProfile_s_.c:1117
 msgid "No ICC profile id detected"
 msgstr ""
 
@@ -4059,7 +4059,7 @@ msgstr ""
 msgid "Path"
 msgstr ""
 
-#: tools/oyranos_profiles.c:593
+#: tools/oyranos_profiles.c:594
 msgid "Path can not be written"
 msgstr ""
 
@@ -4280,7 +4280,7 @@ msgid "Profile Tags"
 msgstr ""
 
 #: API_generated/oyProfile_s.c:876 API_generated/oyProfile_s.c:882
-#: tools/oyranos_profiles.c:581
+#: tools/oyranos_profiles.c:582
 msgid "Profile already installed"
 msgstr ""
 
@@ -4301,7 +4301,7 @@ msgstr ""
 msgid "Profile exists already"
 msgstr ""
 
-#: tools/oyranos_profiles.c:605
+#: tools/oyranos_profiles.c:606
 msgid "Profile not useable"
 msgstr ""
 
@@ -6273,7 +6273,7 @@ msgstr "ICC-профиль"
 msgid "Write to file"
 msgstr "ICC-профиль"
 
-#: API_generated/oyProfile_s_.c:1107
+#: API_generated/oyProfile_s_.c:1109
 msgid "Wrong ICC profile id detected"
 msgstr ""
 

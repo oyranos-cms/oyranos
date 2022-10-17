@@ -246,7 +246,7 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
   }
 
    /* Open the file */
-   fp = fopen(file_name, "wb");
+   fp = oyjlFopen(file_name, "wb");
    if (fp == NULL)
       return (1);
 
@@ -470,7 +470,7 @@ int      oPNGFilterPlug_ImageOutputPNGWrite (
   }
 
   if(filename)
-    fp = fopen( filename, "wb" );
+    fp = oyjlFopen( filename, "wb" );
 
   if(fp)
   {
@@ -784,7 +784,7 @@ oyImage_s *  oyImage_FromPNG         ( const char        * filename,
 
 
   if(filename)
-    fp = fopen( filename,
+    fp = oyjlFopen( filename,
 #ifdef _WIN32
                 "rb"
 #else

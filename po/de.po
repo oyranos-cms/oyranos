@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-10-15 10:21+0200\n"
+"POT-Creation-Date: 2022-10-17 09:33+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -2447,7 +2447,7 @@ msgstr "ICC Profil"
 msgid "ICC profile directory name"
 msgstr "ICC Profilpfad"
 
-#: API_generated/oyProfile_s_.c:1130
+#: API_generated/oyProfile_s_.c:1132
 msgid "ICC profile id written"
 msgstr "ICC Profil ID geschrieben"
 
@@ -2793,7 +2793,7 @@ msgstr "Zu wenige Daten"
 msgid "Intent"
 msgstr "Übertragung"
 
-#: tools/oyranos_profiles.c:615
+#: tools/oyranos_profiles.c:616
 msgid "Internal Error"
 msgstr "Interner Fehler"
 
@@ -3635,7 +3635,7 @@ msgstr "Nein"
 msgid "No Action"
 msgstr "Keine Ausführung"
 
-#: API_generated/oyProfile_s_.c:1115
+#: API_generated/oyProfile_s_.c:1117
 msgid "No ICC profile id detected"
 msgstr "kein ICC Profil ID gefunden"
 
@@ -4112,7 +4112,7 @@ msgstr "Passivmatrixmonitor"
 msgid "Path"
 msgstr "Pfad"
 
-#: tools/oyranos_profiles.c:593
+#: tools/oyranos_profiles.c:594
 msgid "Path can not be written"
 msgstr "Verzeichnis kann nicht beschrieben werden."
 
@@ -4334,7 +4334,7 @@ msgid "Profile Tags"
 msgstr "Profilbausteine"
 
 #: API_generated/oyProfile_s.c:876 API_generated/oyProfile_s.c:882
-#: tools/oyranos_profiles.c:581
+#: tools/oyranos_profiles.c:582
 msgid "Profile already installed"
 msgstr "Profil ist bereits installiert"
 
@@ -4355,7 +4355,7 @@ msgstr "Profilbeschreibung mehrsprachig"
 msgid "Profile exists already"
 msgstr "Profil ist bereits installiert"
 
-#: tools/oyranos_profiles.c:605
+#: tools/oyranos_profiles.c:606
 msgid "Profile not useable"
 msgstr "Profil nicht benutzbar"
 
@@ -6595,7 +6595,7 @@ msgstr "Schreibe ICC Profil:"
 msgid "Write to file"
 msgstr "Schreibe nach Datei"
 
-#: API_generated/oyProfile_s_.c:1107
+#: API_generated/oyProfile_s_.c:1109
 msgid "Wrong ICC profile id detected"
 msgstr "Fehler in ICC Profil ID gefunden!"
 

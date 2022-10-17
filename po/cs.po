@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-10-15 10:21+0200\n"
+"POT-Creation-Date: 2022-10-17 09:33+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -2543,7 +2543,7 @@ msgstr "profil ICC"
 msgid "ICC profile directory name"
 msgstr "jméno profilu"
 
-#: API_generated/oyProfile_s_.c:1130
+#: API_generated/oyProfile_s_.c:1132
 msgid "ICC profile id written"
 msgstr "ID profilu ICC zapsáno"
 
@@ -2924,7 +2924,7 @@ msgstr ""
 msgid "Intent"
 msgstr "Záměr"
 
-#: tools/oyranos_profiles.c:615
+#: tools/oyranos_profiles.c:616
 msgid "Internal Error"
 msgstr ""
 
@@ -3849,7 +3849,7 @@ msgstr "Ne"
 msgid "No Action"
 msgstr "ukázat volby politiky"
 
-#: API_generated/oyProfile_s_.c:1115
+#: API_generated/oyProfile_s_.c:1117
 msgid "No ICC profile id detected"
 msgstr "Nedetekován žádný profil ICC"
 
@@ -4363,7 +4363,7 @@ msgstr "Monitor s pasívní maticí"
 msgid "Path"
 msgstr "Cesta"
 
-#: tools/oyranos_profiles.c:593
+#: tools/oyranos_profiles.c:594
 #, fuzzy
 msgid "Path can not be written"
 msgstr "Profil neni ulozen."
@@ -4608,7 +4608,7 @@ msgid "Profile Tags"
 msgstr "jméno profilu"
 
 #: API_generated/oyProfile_s.c:876 API_generated/oyProfile_s.c:882
-#: tools/oyranos_profiles.c:581
+#: tools/oyranos_profiles.c:582
 msgid "Profile already installed"
 msgstr "Profil je již nainstalován"
 
@@ -4631,7 +4631,7 @@ msgstr "Popis profilu, vícejazyčný"
 msgid "Profile exists already"
 msgstr "Profil již existuje"
 
-#: tools/oyranos_profiles.c:605
+#: tools/oyranos_profiles.c:606
 #, fuzzy
 msgid "Profile not useable"
 msgstr "profil nenalezen:"
@@ -6920,7 +6920,7 @@ msgstr "Zapsat do profilu ICC:"
 msgid "Write to file"
 msgstr "zapsat do souboru"
 
-#: API_generated/oyProfile_s_.c:1107
+#: API_generated/oyProfile_s_.c:1109
 msgid "Wrong ICC profile id detected"
 msgstr "Zjištěno chybné ID profilu ICC"
 

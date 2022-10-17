@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-10-15 10:21+0200\n"
+"POT-Creation-Date: 2022-10-17 09:33+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -2558,7 +2558,7 @@ msgstr "Zein ICC profila?"
 msgid "ICC profile directory name"
 msgstr "Fitxategi-izena"
 
-#: API_generated/oyProfile_s_.c:1130
+#: API_generated/oyProfile_s_.c:1132
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC profilaren goiburua"
@@ -2912,7 +2912,7 @@ msgstr ""
 msgid "Intent"
 msgstr "Helburua:"
 
-#: tools/oyranos_profiles.c:615
+#: tools/oyranos_profiles.c:616
 msgid "Internal Error"
 msgstr ""
 
@@ -3813,7 +3813,7 @@ msgstr ""
 msgid "No Action"
 msgstr "Bereizketa"
 
-#: API_generated/oyProfile_s_.c:1115
+#: API_generated/oyProfile_s_.c:1117
 #, fuzzy
 msgid "No ICC profile id detected"
 msgstr "ICC profilaren goiburua"
@@ -4320,7 +4320,7 @@ msgstr "Matrize pasibozko monitorea"
 msgid "Path"
 msgstr "Pausarazi"
 
-#: tools/oyranos_profiles.c:593
+#: tools/oyranos_profiles.c:594
 #, fuzzy
 msgid "Path can not be written"
 msgstr "Profila ez da idatzi."
@@ -4571,7 +4571,7 @@ msgid "Profile Tags"
 msgstr "Fitxategi-izena"
 
 #: API_generated/oyProfile_s.c:876 API_generated/oyProfile_s.c:882
-#: tools/oyranos_profiles.c:581
+#: tools/oyranos_profiles.c:582
 #, fuzzy
 msgid "Profile already installed"
 msgstr "Profila kapsulatuta dago eta "
@@ -4596,7 +4596,7 @@ msgstr "Profilaren azalpena, hizkuntza anitzetan"
 msgid "Profile exists already"
 msgstr "Profila kapsulatuta dago eta "
 
-#: tools/oyranos_profiles.c:605
+#: tools/oyranos_profiles.c:606
 #, fuzzy
 msgid "Profile not useable"
 msgstr "Profila-kolorea"
@@ -6645,7 +6645,7 @@ msgstr "Zein ICC profila?"
 msgid "Write to file"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: API_generated/oyProfile_s_.c:1107
+#: API_generated/oyProfile_s_.c:1109
 #, fuzzy
 msgid "Wrong ICC profile id detected"
 msgstr "Errorea aurkitu da ICC profilako etiketan."

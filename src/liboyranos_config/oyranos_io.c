@@ -302,7 +302,7 @@ char *   oyFindProfile_              ( const char        * fileName,
 
     if(!path_name)
     {
-      FILE * fp = fopen( fileName, "rb" );
+      FILE * fp = oyjlFopen( fileName, "rb" );
       if(fp)
       {
         path_name = oyMakeFullFileDirName_(NULL);

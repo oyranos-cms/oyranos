@@ -1055,6 +1055,8 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
                              0,NULL );
         if(s)
           file_name = oyStringCopy( "inbuild-ISOcoated_v2_bas_ICC", oyAllocateFunc_ );
+        oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)s,
+                         OY_DBG_FORMAT_"using: \"%s\"", OY_DBG_ARGS_, oyNoEmptyString_m_(file_name) );
       }
       else if(name && name[0] && strcmp("ITULab.icc",name) == 0)
       {

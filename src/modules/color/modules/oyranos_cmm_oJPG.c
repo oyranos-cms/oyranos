@@ -477,7 +477,7 @@ oyImage_s *  oyImage_FromJPEG        ( const char        * filename,
 
   /* file tests */
   if(filename)
-    fp = fopen( filename, "rm" );
+    fp = oyjlFopen( filename, "rm" );
 
   if(!fp)
   {
@@ -1093,7 +1093,7 @@ int          oyImage_WriteJPEG       ( oyImage_s         * image,
    * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
    * requires it in order to write binary files.
    */
-  if ((outfile = fopen(filename, "wb")) == NULL)
+  if ((outfile = oyjlFopen(filename, "wb")) == NULL)
   {
     ojpg_msg( oyMSG_WARN, (oyStruct_s*)image,
              OY_DBG_FORMAT_ " could not open: %s",
@@ -1271,7 +1271,7 @@ int      ojpgFilter_CmmRunWrite      ( oyFilterPlug_s    * requestor_plug,
     filename = oyOptions_FindString( node_opts, "filename", 0 );
 
   if(filename)
-    fp = fopen( filename, "wb" );
+    fp = oyjlFopen( filename, "wb" );
 
   if(fp)
   {

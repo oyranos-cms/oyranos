@@ -1176,7 +1176,7 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
 
   if(filename)
   {
-    fp = fopen( filename, "wb" );
+    fp = oyjlFopen( filename, "wb" );
     oyFree_m_( filename );
   }
   else

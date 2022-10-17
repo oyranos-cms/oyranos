@@ -83,7 +83,7 @@ void oy_backtrace_()
 {
 #   define TMP_FILE "/tmp/oyranos_gdb_temp.txt"
     int pid = (int)OY_GETPID();
-    FILE * fp = fopen( TMP_FILE, "w" );
+    FILE * fp = oyjlFopen( TMP_FILE, "w" );
 
     if(fp)
     {

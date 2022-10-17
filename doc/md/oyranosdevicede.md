@@ -193,7 +193,7 @@ Das oyranos-device Program zeigt und ändert Einstellungen zu ICC Geräteprofile
   <table>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser. Unterstützte Unterargumente sind: port für Türnummer, https_key und https_cert für Verschlüsselungsdateinamen, security=readonly|interactive|lazy mit "readonly" für eine statische Seitenansicht, "interactive" zeigt interaktive Bestandteile an und "lazy" für die Ausführung des Werkzeuges. "css=Stil.css" erlaubt einn Gestaltungsstil mittels CSS.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser. Unterstützte Unterargumente sind: port für Türnummer, https_key und https_cert für Verschlüsselungsdateinamen, security=readonly|interactive|lazy mit "readonly" für eine statische Seitenansicht, "interactive" zeigt interaktive Bestandteile an und "lazy" für die Ausführung des Werkzeuges. "css=Stil.css" erlaubt einen Gestaltungsstil mittels CSS.</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>

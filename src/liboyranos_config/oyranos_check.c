@@ -103,7 +103,7 @@ int      oyCheckProfileMem_          ( const void        * mem,
 
   DBG_MEM_START
 
-  if (size >= 128) 
+  if (block && size >= 128) 
   {
     if (block[offset+0] == 'a' &&
         block[offset+1] == 'c' &&
