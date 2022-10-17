@@ -32,6 +32,8 @@ extern "C" {
 /* --- I/O helpers --- */
 /** \addtogroup oyjl_io OyjlCore File Input/Output
  *  @{ *//* oyjl_io */
+FILE *     oyjlFopen                 ( const char        * file_name,
+                                       const char        * mode );
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,
                                        int               * size );
 #define    OYJL_IO_STREAM              0x100
