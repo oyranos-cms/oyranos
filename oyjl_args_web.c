@@ -790,6 +790,7 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
 
   int k, kn = 0, is_choice = 0;
   const char * key, * name, * desc, * help, * value_name, * default_var, * type, * no_dash;
+  double default_dbl = 0.0;
   char * text = NULL;
   oyjl_val o = oyjlTreeGetValue(opt, 0, "option");
   oyjl_val choices;
@@ -809,6 +810,11 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
   if(value_name) text = oyjlStringCopy( oyjlStringColor( oyjlITALIC, OYJL_HTML, value_name), 0 );
   o = oyjlTreeGetValue(opt, 0, "default");
   default_var = OYJL_GET_STRING(o);
+  if(default_var)
+  {
+    oyjlStringToDouble( default_var, &default_dbl, NULL, OYJL_KEEP_LOCALE );
+    fprintf( stderr, "default_var: %s default_dbl: %g locale: %s\n", default_var, default_dbl, setlocale(LC_NUMERIC, 0 ) );
+  }
   o = oyjlTreeGetValue(opt, 0, "type");
   type = OYJL_GET_STRING(o);
   o = oyjlTreeGetValue(opt, 0, "no_dash");
@@ -844,8 +850,8 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
     o = oyjlTreeGetValue(opt, 0, "tick");
     tick = OYJL_GET_DOUBLE(o);
     if(sec)
-      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s [≥%g ≤%g Δ%g]</label><input type=\"range\" name=\"%s\" id=\"%s-%d\" value=\"%s\" min=\"%g\" max=\"%g\" step=\"%g\"%s/><br />\n",
-       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name) /*i18n label*/, start, end, tick, key /*name*/, key/* id */, gcount, default_var, start, end, tick, is_mandatory?" class=\"mandatory\"":"" );
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s [≥%g ≤%g Δ%g]</label><input type=\"range\" name=\"%s\" id=\"%s-%d\" value=\"%g\" min=\"%g\" max=\"%g\" step=\"%g\"%s/><br />\n",
+       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name) /*i18n label*/, start, end, tick, key /*name*/, key/* id */, gcount, default_dbl, start, end, tick, is_mandatory?" class=\"mandatory\"":"" );
 #ifdef OYJL_HAVE_LOCALE_H
     setlocale(LC_NUMERIC, save_locale);
     if(save_locale) free( save_locale );
@@ -887,6 +893,7 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
     oyjl_val c = oyjlTreeGetValueF(choices, 0, "[%d]", k);
     oyjl_val cv;
     const char * nick;
+    int selected = 0;
     cv = oyjlTreeGetValue(c, 0, "name");
     name = OYJL_GET_STRING(cv);
     cv = oyjlTreeGetValue(c, 0, "nick");
@@ -895,12 +902,15 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
     desc = OYJL_GET_STRING(cv);
     cv = oyjlTreeGetValue(c, 0, "help");
     help = OYJL_GET_STRING(cv);
+    if((default_var && name && strcasecmp(name, default_var) == 0) ||
+       (default_var && nick && strcasecmp(nick, default_var) == 0))
+      selected = 1;
     if(sec)
     {
       if(is_choice == 1)
-        oyjlStringAdd( &t, 0,0, "    <option value=\"%s\">%s</option>\n", nick, name?name:nick );
+        oyjlStringAdd( &t, 0,0, "    <option value=\"%s\"%s>%s</option>\n", nick, selected?" selected":"", name?name:nick );
       else if(is_choice == 2)
-        oyjlStringAdd( &t, 0,0, "      <option value=\"%s\">%s</option>\n", nick, name?name:nick );
+        oyjlStringAdd( &t, 0,0, "      <option value=\"%s\"%s>%s</option>\n", nick, selected?" selected":"", name?name:nick );
     }
     oyjlStringAdd( description, 0,0, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s%s%s%s%s%s%s%s%s%s<br />\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
       nick && key[0] != '@'?" ":"", nick?nick:"",
@@ -1248,7 +1258,7 @@ int oyjlArgsWebStart__               ( int                 argc,
                                        const char        * output OYJL_UNUSED,
                                        int                 debug,
                                        oyjlUi_s          * ui,
-                                       int               (*callback)(int argc, const char ** argv))
+                                       int               (*callback)(int argc, const char ** argv) )
 {
   char * input = NULL;
   char * t = NULL;
