@@ -152,6 +152,24 @@ int            oyjlFileNameCheckFuncSet (
   return 0;
 }
 
+/** @brief wrapper for fopen()
+ */
+FILE *     oyjlFopen                 ( const char        * file_name,
+                                       const char        * mode )
+{
+  int flag = 0;
+  if(strchr(mode,'r') && oyjlFileNameCheckRead_p(&file_name, 0) == 0)
+    flag = OYJL_IO_READ;
+  else if(oyjlFileNameCheckWrite_p(&file_name, 0) == 0)
+    flag = OYJL_IO_WRITE;
+
+  if(flag)
+    return fopen(file_name, mode);
+  else
+    return NULL;
+}
+
+
 /** @brief read local file into memory
  *
  *  uses malloc()
