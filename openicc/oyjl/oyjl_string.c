@@ -652,6 +652,7 @@ int      oyjlStringToLong            ( const char        * text,
  *  @param[in]     text                string
  *  @param[out]    value               resulting number
  *  @param[out]    end                 possibly part after number
+ *  @param[in]     flags               OYJL_KEEP_LOCALE; default is to switch actual LC_NUMERIC to "C"
  *  @return                            error
  *                                     - 0 : text input was completely read as number
  *                                     - -1 : text input was read as number with white space or other text after; can be seen in end argument
@@ -664,14 +665,16 @@ int      oyjlStringToLong            ( const char        * text,
  */
 int          oyjlStringToDouble      ( const char        * text,
                                        double            * value,
-                                       const char       ** end )
+                                       const char       ** end,
+                                       int                 flags )
 {
   char * end_ = NULL, * t = NULL;
   int len, pos = 0;
   int error = -1;
 #ifdef OYJL_HAVE_LOCALE_H
   char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
-  setlocale(LC_NUMERIC, "C");
+  if(!(flags & OYJL_KEEP_LOCALE))
+    setlocale(LC_NUMERIC, "C");
 #endif
 
   if(text && text[0])
@@ -717,7 +720,8 @@ int          oyjlStringToDouble      ( const char        * text,
 clean_oyjlStringToDouble:
 
 #ifdef OYJL_HAVE_LOCALE_H
-  setlocale(LC_NUMERIC, save_locale);
+  if(!(flags & OYJL_KEEP_LOCALE))
+    setlocale(LC_NUMERIC, save_locale);
   if(save_locale) free( save_locale );
 #endif
 
@@ -767,7 +771,7 @@ int          oyjlStringsToDoubles    ( const char        * text,
   for( i = 0; i < n; ++i )
   {
     val = list[i];
-    l_error = oyjlStringToDouble( val, &d, 0 );
+    l_error = oyjlStringToDouble( val, &d, 0,0 );
     (*value)[i] = d;
     if(!error || l_error > 0) error = l_error;
     if(l_error > 0) break;

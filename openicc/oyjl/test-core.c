@@ -482,7 +482,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   double d = 0.0;
-  error = oyjlStringToDouble( "0.2", &d, &end );
+  error = oyjlStringToDouble( "0.2", &d, &end, 0 );
   if( !error &&
       d == 0.2)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -493,7 +493,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   d = 0.0;
-  error = oyjlStringToDouble( "0.2#", &d, &end );
+  error = oyjlStringToDouble( "0.2#", &d, &end, 0 );
   if( error == -1 &&
       d == 0.2 && end[0] == '#' )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
@@ -504,7 +504,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   d = 0.0;
-  error = oyjlStringToDouble( "val_a", &d, &end );
+  error = oyjlStringToDouble( "val_a", &d, &end, 0 );
   if( error )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlStringToDouble(\"val_a\")   error = %d", error );

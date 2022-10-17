@@ -684,14 +684,14 @@ int    oyTextIccDictMatch            ( const char        * text,
       t = texts[i];
       DBG_MEM3_S( "%d: "OY_PRINT_POINTER" \"%s\"", i, (intptr_t)t, t );
       num_valid[0] = oyjlStringToLong(t,&num[0],&num_end[0]) <= 0 ? 1 : 0;
-      dbl_valid[0] = oyjlStringToDouble(t,&dbl[0],&dbl_end[0]) <= 0 ? 1 : 0;
+      dbl_valid[0] = oyjlStringToDouble(t,&dbl[0],&dbl_end[0],0) <= 0 ? 1 : 0;
       DBG_MEM
       for( j = 0; j < p_n; ++j )
       {
         p = patterns[j];
         DBG_MEM4_S( "%d %d: "OY_PRINT_POINTER" \"%s\"", i, j, (intptr_t)t, p );
         num_valid[1] = oyjlStringToLong(p,&num[1],&num_end[1]) <= 0 ? 1 : 0;
-        dbl_valid[1] = oyjlStringToDouble(p,&dbl[1],&dbl_end[1]) <= 0 ? 1 : 0;
+        dbl_valid[1] = oyjlStringToDouble(p,&dbl[1],&dbl_end[1],0) <= 0 ? 1 : 0;
         DBG_MEM
 
         if(strcmp( t, p ) == 0)

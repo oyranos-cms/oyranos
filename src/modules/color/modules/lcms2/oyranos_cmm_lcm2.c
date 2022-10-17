@@ -1276,7 +1276,7 @@ cmsHTRANSFORM  l2cmsCMMConversionContextCreate_ (
 
   o_txt = oyOptions_FindString  ( opts, "adaption_state", 0 );
   if(o_txt && oyStrlen_(o_txt))
-    oyjlStringToDouble( o_txt, &adaption_state, 0 );
+    oyjlStringToDouble( o_txt, &adaption_state, 0,0 );
 
   if(!error)
   {

@@ -187,7 +187,7 @@ double getDoubleFromDB               ( const char        * key,
 {
   double d = fallback, tmp = 0;
   char * value = oyGetPersistentString( key, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-  if(value && oyjlStringToDouble( value, &tmp, 0 ) == 0)
+  if(value && oyjlStringToDouble( value, &tmp, 0,0 ) == 0)
     d = tmp;
   if(value)
     oyDeAllocateFunc_( value );
@@ -1024,11 +1024,11 @@ int findLocation(oySCOPE_e scope, int dry, int verbose)
       int level = 0;
       v = oyjlTreeGetValueF( root, 0, "location/lat" );
       value = oyjlValueText( v, oyAllocateFunc_ );
-      if(oyjlStringToDouble( value, &lat, 0 ) > 0)
+      if(oyjlStringToDouble( value, &lat, 0,0 ) > 0)
         error = 1;
       v = oyjlTreeGetValueF( root, 0, "location/lng" );
       value = oyjlValueText( v, oyAllocateFunc_ );
-      if(oyjlStringToDouble( value, &lon, 0 ) > 0)
+      if(oyjlStringToDouble( value, &lon, 0,0 ) > 0)
         error = 1;
       oyFree_m_(value);
       oyjlTreeToJson( root, &level, &json );
@@ -1092,7 +1092,7 @@ int getLocation( double * lon, double * lat)
   char * value = NULL;
  
   value = oyGetPersistentString( OY_DISPLAY_STD "/latitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-  if(value && oyjlStringToDouble( value, lat, 0 ) > 0)
+  if(value && oyjlStringToDouble( value, lat, 0,0 ) > 0)
     fprintf(stderr, "lat = %g / %s\n", *lat, value);
   if(value)
   {
@@ -1100,7 +1100,7 @@ int getLocation( double * lon, double * lat)
   } else
     need_location = 1;
   value = oyGetPersistentString( OY_DISPLAY_STD "/longitude", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-  if(value && oyjlStringToDouble( value, lon, 0 ) > 0)
+  if(value && oyjlStringToDouble( value, lon, 0,0 ) > 0)
     fprintf(stderr, "lon = %g / %s\n", *lon, value);
   if(value)
   {
@@ -1155,7 +1155,7 @@ int getSunriseSunset( double * rise, double * set, int dry, const char * format,
 
   value =
       oyGetPersistentString(OY_DISPLAY_STD "/twilight", 0, oySCOPE_USER_SYS, oyAllocateFunc_);
-  if(value && oyjlStringToDouble( value, &twilight, 0 ) > 0)
+  if(value && oyjlStringToDouble( value, &twilight, 0,0 ) > 0)
   {
     if(verbose)
       fprintf(stderr, "twilight = %g / %s\n", isnan(twilight) ? 0 : twilight, value && value[0] ? value : "----");

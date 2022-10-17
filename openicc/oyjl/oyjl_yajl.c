@@ -719,7 +719,7 @@ void             oyjlParseXMLDoc_    ( xmlDocPtr           doc,
       int err = -1;
 
       if(flags & OYJL_NUMBER_DETECTION)
-        err = oyjlStringToDouble( val, &d, 0 );
+        err = oyjlStringToDouble( val, &d, 0,0 );
       if(err == 0)
       {
         root->type = oyjl_t_number;
@@ -889,7 +889,7 @@ static int oyjlYamlReadNode_( yaml_document_t * doc, yaml_node_t * node, int fla
       double d;
       int err = -1;
       if(flags & OYJL_NUMBER_DETECTION && is_key != 1)
-        err = oyjlStringToDouble( tmp, &d, 0 );
+        err = oyjlStringToDouble( tmp, &d, 0,0 );
       if(err == 0)
         oyjlStringAdd( json, 0,0, "%s", tmp );
       else

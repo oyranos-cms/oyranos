@@ -892,17 +892,17 @@ int      oyGetDisplayWhitePoint      ( int                 mode,
       if(!value)
         oyMessageFunc_p( oyMSG_ERROR,NULL, OY_DBG_FORMAT_
                          "Can not obtain white point! Try CLI command: oyranos-monitor-white-point -a 5000", OY_DBG_ARGS_ );
-      if(oyjlStringToDouble( value, &XYZ[0], 0 ) > 0)
+      if(oyjlStringToDouble( value, &XYZ[0], 0,0 ) > 0)
         return error;
       oyFree_m_( value );
       value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_Y, 0,
                                      oySCOPE_USER_SYS, oyAllocateFunc_ );
-      if(oyjlStringToDouble( value, &XYZ[1], 0 ) > 0)
+      if(oyjlStringToDouble( value, &XYZ[1], 0,0 ) > 0)
         return error;
       oyFree_m_( value );
       value = oyGetPersistentString( OY_DEFAULT_DISPLAY_WHITE_POINT_Z, 0,
                                      oySCOPE_USER_SYS, oyAllocateFunc_ );
-      if(oyjlStringToDouble( value, &XYZ[2], 0 ) > 0)
+      if(oyjlStringToDouble( value, &XYZ[2], 0,0 ) > 0)
         return error;
       oyFree_m_( value );
       error = 0;
