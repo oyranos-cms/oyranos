@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-10-15 10:12+0200\n"
+"POT-Creation-Date: 2022-10-17 12:05+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -205,7 +205,7 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_io.c:132 oyjl_io.c:184
+#: oyjl_io.c:132 oyjl_io.c:202
 msgid "Could not open: "
 msgstr ""
 
@@ -650,7 +650,7 @@ msgstr ""
 msgid "Mode9"
 msgstr ""
 
-#: oyjl_args_tree.c:450 oyjl_args_web.c:1370
+#: oyjl_args_tree.c:450 oyjl_args_web.c:1486
 msgid "Module"
 msgstr ""
 
@@ -910,7 +910,7 @@ msgstr ""
 msgid "Program Error:"
 msgstr ""
 
-#: oyjl_args.c:1408 oyjl_io.c:338
+#: oyjl_args.c:1408 oyjl_io.c:356
 msgid "Program not found"
 msgstr ""
 
@@ -977,7 +977,7 @@ msgid ""
 "a local Web Server, which listens on local port."
 msgstr ""
 
-#: oyjl_args_web.c:1425 oyjl_args_web.c:1444
+#: oyjl_args_web.c:1541 oyjl_args_web.c:1560
 msgid "Send"
 msgstr ""
 
@@ -1174,7 +1174,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr ""
 
-#: oyjl_args_tree.c:448 oyjl_args_web.c:1368
+#: oyjl_args_tree.c:448 oyjl_args_web.c:1484
 msgid "Tool"
 msgstr ""
 
