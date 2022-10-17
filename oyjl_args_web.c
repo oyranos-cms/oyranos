@@ -41,6 +41,14 @@
 
 int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
                                        int                 write_size );
+int oyjlStringStartsWith             ( const char        * text,
+                                       const char        * pattern );
+#define OYJL_CASE_COMPARE              0x01
+#define OYJL_LAZY                      0x02
+int oyjlStringListFind               ( char             ** list,
+                                       int                 list_n,
+                                       const char        * value,
+                                       int                 flags );
 
 #ifdef _MSC_VER
 #ifndef strcasecmp
@@ -272,7 +280,7 @@ static enum MHD_Result oyjlMhdIteratePost_cb(
     /* NOTE: This is technically a race with the 'fopen()' above,
        but there is no easy fix, short of moving to open(O_EXCL)
        instead of using fopen(). For the example, we do not care. */
-    con_info->fp = fopen (filename, "ab");
+    con_info->fp = oyjlFopen (filename, "ab");
     if(!con_info->fp)
     {
       con_info->answerstring = fileioerror;
@@ -353,13 +361,13 @@ int oyjlStringSplitFind_             ( char             ** set,
         if(strcmp(opt, option) == 0)
         {
           found = n;
-          if(*oyjl_debug)
-            fprintf( stderr, "%s found inside %s\n", option, *set );
-        } else if(!(flags & OYJL_REMOVE))
+          if(*oyjl_debug >= 2)
+            fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, option, *set );
+        } else if(flags & OYJL_REMOVE)
           oyjlStringAdd( &new_set, 0,0, "%s%s", i&&new_set?",":"", opt );
       }
 
-      if(!(flags & OYJL_REMOVE))
+      if(flags & OYJL_REMOVE)
       { free(*set); *set = new_set; }
     }
     oyjlStringListRelease( &list, n, free );
@@ -1067,6 +1075,49 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
 
 #include "oyjl_io_internal.h"
 
+int oyjlStringStartsWith             ( const char        * text,
+                                       const char        * pattern )
+{
+  int text_len = text ? strlen( text ) : 0,
+      pattern_len = pattern ? strlen( pattern ) : 0;
+
+  if(text_len && text_len >= pattern_len && memcmp(text, pattern, pattern_len) == 0)
+    return 1;
+  else
+    return 0;
+}
+
+int oyjlStringListFind               ( char             ** list,
+                                       int                 list_n,
+                                       const char        * value,
+                                       int                 flags )
+{
+  int i, pos = -1, found = 0;
+  for(i = 0; i < list_n; ++i)
+  {
+    const char * val = list[i];
+    if(flags & OYJL_CASE_COMPARE)
+    {
+      if(strcasecmp(val, value) == 0)
+        ++found;
+    } else if(flags & OYJL_LAZY)
+    {
+      if(strstr(val, value) != NULL)
+        ++found;
+    } else
+      if(strcmp(val, value) == 0)
+        ++found;
+
+    if(found)
+      pos = i;
+  }
+  return pos;
+}
+
+char ** oyjl_args_web_file_names_allowed = NULL;
+int     oyjl_args_web_file_names_allowed_n = 0;
+char ** oyjl_args_web_file_names_no = NULL;
+int     oyjl_args_web_file_names_no_n = 0;
 const char * oyjl_args_web_file_name_security_feature = NULL;
 #define OYJL_FILE_NAME_POLICY(policy_, description) \
 { \
@@ -1075,55 +1126,117 @@ const char * oyjl_args_web_file_name_security_feature = NULL;
   if( !error && \
       (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind_((char**)&oyjl_args_web_file_name_security_feature, ",", policy_, 0)) && \
       strstr(fn, policy) ) { error = 1; error_msg = policy_ " - " description; } \
-  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      file policy: %s\n", "=\"" policy_ "\" - " description ); \
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      %s\n", "=\"" policy_ "\" - " description ); \
 }
 #define OYJL_USE_POLICY(policy_, description) \
-  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      file policy: %s\n", "=\"" policy_ "\" - " description ); \
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      %s\n", "=\"" policy_ "\" - " description ); \
   if( !error && \
       (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind_((char**)&oyjl_args_web_file_name_security_feature, ",", policy_, 0)) )
-
+int oyjl_args_web_debug = 0;
 int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
                                        int                 write_size OYJL_UNUSED )
 {
   const char * fn = *full_filename;
-  int error = 0;
+  int error = 0,
+      hidden = 0,
+      above = 0,
+      except = 0;
   const char * error_msg = NULL;
+  char * cd = NULL;
 
-  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "    security: with =\"checkXXX\" use all \"security\" file check policies or add on a as needed base from %s()\n", __func__ );
+  if(!fn) return 1;
+
+  if(oyjlStringListFind( oyjl_args_web_file_names_allowed, oyjl_args_web_file_names_allowed_n, fn, 0 ) >= 0)
+    return 0;
+  if(oyjlStringListFind( oyjl_args_web_file_names_no, oyjl_args_web_file_names_no_n, fn, 0 ) >= 0)
+    return 1;
+
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      with =\"checkXXX\" use all \"security\" file check policies or add on a as needed base from %s()\n      Avalable file check policies are:\n", __func__ );
   OYJL_FILE_NAME_POLICY( "no_/etc", "no system configuration" )
   OYJL_FILE_NAME_POLICY( "no_/root", "no root files" )
   OYJL_FILE_NAME_POLICY( "no_/proc", "no system state files" )
-  OYJL_FILE_NAME_POLICY( "no_..", "no file and directory above" )
-  OYJL_FILE_NAME_POLICY( "no_/.", "no hidden paths" )
+  OYJL_FILE_NAME_POLICY( "no_..", "no file and directory relative above" )
+
   OYJL_USE_POLICY("no_hidden", "no hidden file and directory")
-  if( fn[0] == '.' && strlen(fn) > 1 && fn[1] != OYJL_SLASH_C ) { error = 6; error_msg = ". - no hidden file and directory"; }
+  if( (fn[0] == '.' && strlen(fn) > 1 && fn[1] != OYJL_SLASH_C) || strstr(fn, "/.") != NULL )
+    hidden = 1;
+
   OYJL_USE_POLICY("no_above", "no file and directory above cwd")
   if( fn[0] == OYJL_SLASH_C )
   {
-    char * cd = oyjlGetCurrentDir_(), * msg;
     int len = strlen(fn),
-        clen = strlen(cd);
+        clen;
 
-    error_msg = "- no file and directory above cwd";
-    msg = oyjlStringCopy(oyjlTermColor(oyjlRED,error_msg), 0);
+    cd = oyjlGetCurrentDir_();
+    clen = strlen(cd);
+
     if(!len || !clen || len < clen || memcmp( fn, cd, clen ) != 0)
-    {
-      error = 100;
-      oyjlMessage_p( oyjlMSG_SECURITY_ALERT, 0, OYJL_DBG_FORMAT "OyjlArgsWeb inhibits: fn:\"%s\" cwd:\"%s\" policy: %s", OYJL_DBG_ARGS, fn, cd, msg );
-      *full_filename = "";
-    }
-    free(cd);
-    free(msg);
+      above = 1;
   }
+
+  if(oyjl_args_web_file_name_security_feature && strstr(oyjl_args_web_file_name_security_feature,"allow_"))
+  {
+    int i, n = 0;
+    char ** list = oyjlStringSplit2( oyjl_args_web_file_name_security_feature, ",", 0, &n, NULL, malloc );
+    for(i = 0; i < n; ++i)
+    {
+      const char * arg = list[i];
+      const char * dynamic_policy = arg;
+      int allow = 0;
+      if(!oyjlStringStartsWith( arg, "allow_" )) continue;
+      dynamic_policy += 6;
+      allow = oyjlStringStartsWith( fn, dynamic_policy );
+
+      if(allow && hidden && (fn[0] == '.' || strstr(fn,"/.")))
+      { except = 1; hidden = 0;
+      }
+
+      if(allow && above)
+      { except = 2; above = 0; 
+      }
+
+      if(except)
+      {
+        char * msg = oyjlStringCopy(oyjlTermColor(oyjlGREEN,fn), 0);
+        if(*oyjl_debug >= 2)
+        {
+          if(*oyjl_debug >= 3) fprintf( stderr, "%s", oyjlBT(0) );
+          fprintf( stderr, OYJL_DBG_FORMAT "allow %s: %s\n", OYJL_DBG_ARGS, except == 1?"hidden":"above", msg );
+        }
+        free(msg);
+        break;
+      }
+    }
+  }
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      =\"allow_/my/path\" - allow custom /my/path exceptions, overriding no_above or no_hidden rules: e.g. =no_hidden,allow_/home/user/.local/share\n" );
+
+  if(hidden)
+  { error = 1; error_msg = ". - no hidden file and directory"; }
+  if(above)
+  { error = 1; error_msg = " - no file and directory above cwd"; }
 
   if(0 < error && error < 100)
   {
     char * msg = oyjlStringCopy(oyjlTermColor(oyjlRED,error_msg), 0);
-    fprintf( stderr, "%s", oyjlBT(0) );
+    if(*oyjl_debug >= 3) fprintf( stderr, "%s", oyjlBT(0) );
+    if(oyjl_args_web_debug || *oyjl_debug)
+    {
+      if(cd)
+        oyjlMessage_p( oyjlMSG_SECURITY_ALERT, 0, OYJL_DBG_FORMAT "OyjlArgsWeb inhibits: fn:\"%s\" cwd:\"%s\" policy: %s", OYJL_DBG_ARGS, fn, cd, msg );
+      else
+        oyjlMessage_p( oyjlMSG_SECURITY_ALERT, 0, OYJL_DBG_FORMAT "OyjlArgsWeb inhibits: \"%s\" file policy: %s", OYJL_DBG_ARGS, fn, msg );
+    }
     *full_filename = "";
-    oyjlMessage_p( oyjlMSG_SECURITY_ALERT, 0, OYJL_DBG_FORMAT "OyjlArgsWeb inhibits: \"%s\" file policy: %s", OYJL_DBG_ARGS, fn, msg );
     free(msg);
+    oyjlStringListPush( &oyjl_args_web_file_names_no, &oyjl_args_web_file_names_no_n, fn, 0,0 );
+  } else if(oyjl_args_web_debug || *oyjl_debug)
+  {
+    fprintf( stderr, OYJL_DBG_FORMAT, OYJL_DBG_ARGS );
+    fprintf( stderr, "%s%s\n", oyjlTermColor(oyjlGREEN,fn), !except ? "" : except == 1?" allow hidden":" allow above" );
+    oyjlStringListPush( &oyjl_args_web_file_names_allowed, &oyjl_args_web_file_names_allowed_n, fn, 0,0 );
   }
+
+  if(cd) free(cd);
 
   return error;
 }
@@ -1157,6 +1270,7 @@ int oyjlArgsWebStart__               ( int                 argc,
     for(i = 0; i < argc; ++i)
       fprintf( stderr, "%s ", argv[i] );
     fprintf( stderr, "\n" );
+    oyjl_args_web_debug = debug;
   }
 
   oyjl_val root = NULL;
@@ -1216,23 +1330,25 @@ int oyjlArgsWebStart__               ( int                 argc,
         OYJL_SUB_ARG_STRING( "security", 0, security )
         if(security)
         {
-          if(strcasecmp(security,"readonly") == 0)
+          if(oyjlStringSplitFind_(&security, ",", "readonly", 0))
             sec = oyjlSECURITY_READONLY;
           else
-          if(strcasecmp(security,"interactive") == 0)
+          if(oyjlStringSplitFind_(&security, ",", "interactive", 0))
             sec = oyjlSECURITY_INTERACTIVE;
           else
-          if(strcasecmp(security,"check_read") == 0)
+          if(oyjlStringSplitFind_(&security, ",", "check_read", 0))
             sec = oyjlSECURITY_CHECK_READ;
           else
-          if(strcasecmp(security,"check_write") == 0)
+          if(oyjlStringSplitFind_(&security, ",", "check_write", 0))
             sec = oyjlSECURITY_CHECK_WRITE;
           else
-          if(strcasecmp(security,"check") == 0)
+          if(oyjlStringSplitFind_(&security, ",", "check", 0))
             sec = oyjlSECURITY_CHECK;
           else
-          if(strcasecmp(security,"lazy") == 0)
+          if(oyjlStringSplitFind_(&security, ",", "lazy", 0))
             sec = oyjlSECURITY_LAZY;
+          if(strchr(security, ',')) /* contains policies */
+            oyjl_args_web_file_name_security_feature = security;
         }
         if(css)
           OYJL_SUB_ARG_STRING( "css", 0, css2 )
@@ -1493,15 +1609,15 @@ int oyjlArgsWebStart__               ( int                 argc,
     https_key: adds a https key file; default is none, if no filename is provided it uses a self certified inbuild key\n\
     https_cert: adds a certificate for https; default is none, if no filename is provided it uses a self certified inbuild certificate\n\
     css: can by called two times to add CSS layout file(s), which will by embedded into the HTML code\n\
+    ignore: add comma separated list of skip options, which are marked in HTML and get not accepted, e.g. ignore=\"o,option,v,verbose\"\n\
+    help: show this help text\n\
     security: specifies the security level used; default is readonly inactive web page generation\n\
       \"=readonly\": is passive and default\n\
       \"=interactive\": contains interactive forms element and returns the respond JSON\n\
       \"=check_read\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileRead()\n\
       \"=check_write\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileWrite()\n\
       \"=check\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileRead() and oyjlFileWrite()\n\
-      \"=lazy\": calls the specified callback from oyjlArgsRender(callback)\n\
-    ignore: add comma separated list of skip options, which are marked in HTML and get not accepted, e.g. ignore=\"o,option,v,verbose\"\n\
-    help: show this help text\n",
+      \"=lazy\": calls the specified callback from oyjlArgsRender(callback)\n",
         oyjlTermColor(oyjlBOLD,"--render=web:port=8888:https_key=filename.tls:https_cert=filename.tls:css=first.css:css=second.css:security=level:ignore=o,option") );
       oyjlArgsWebFileNameSecurity( &arg, 0 );
     }
@@ -1526,7 +1642,14 @@ int oyjlArgsWebStart__               ( int                 argc,
         https_key?" https_key:":"", https_key?https_key:"",
         https_cert?" https_cert:":"", https_cert?https_cert:"",
         tls_flag?"MHD_USE_TLS":https_key||https_cert?"noTLS:need both https_key and https_cert filenames":"" );
-    fprintf( stderr, "sec:%s ", oyjlTermColor(oyjlITALIC,sec == oyjlSECURITY_LAZY?"lazy":sec==oyjlSECURITY_INTERACTIVE?"interactive":sec==oyjlSECURITY_CHECK?"check":sec==oyjlSECURITY_CHECK_READ?"check_read":oyjlSECURITY_CHECK_WRITE?"check_write":"readonly" ) );
+    {
+      const char * sec_rules = NULL;
+      if(sec>=oyjlSECURITY_CHECK)
+        sec_rules = oyjl_args_web_file_name_security_feature;
+      if(!sec_rules)
+        sec_rules = sec == oyjlSECURITY_LAZY?"lazy":sec==oyjlSECURITY_INTERACTIVE?"interactive":sec==oyjlSECURITY_CHECK?"check":sec==oyjlSECURITY_CHECK_READ?"check_read":sec==oyjlSECURITY_CHECK_WRITE?"check_write":"readonly";
+      fprintf( stderr, "sec:%s ", oyjlTermColor(oyjlITALIC,sec_rules) );
+    }
     fprintf( stderr, "css:%s ", OYJL_E(oyjlTermColor(css_text?oyjlITALIC:oyjlRED,css),"") );
     fprintf( stderr, "css2:%s ", OYJL_E(oyjlTermColor(css2_text?oyjlITALIC:oyjlRED,css2),"") );
     fprintf( stderr, "ignore:%s ", OYJL_E(oyjlTermColor(oyjlITALIC,ignore),"") );

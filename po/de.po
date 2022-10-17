@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-10-15 10:12+0200\n"
+"POT-Creation-Date: 2022-10-17 12:05+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -207,7 +207,7 @@ msgstr "Kopiere übersetzte Schlüssel nach JSON. Lasse gettext aus."
 msgid "Copyright"
 msgstr "Kopierrecht"
 
-#: oyjl_io.c:132 oyjl_io.c:184
+#: oyjl_io.c:132 oyjl_io.c:202
 msgid "Could not open: "
 msgstr "Konnte nicht öffnen: "
 
@@ -654,7 +654,7 @@ msgstr "Modus8"
 msgid "Mode9"
 msgstr "Modus9"
 
-#: oyjl_args_tree.c:450 oyjl_args_web.c:1370
+#: oyjl_args_tree.c:450 oyjl_args_web.c:1486
 msgid "Module"
 msgstr "Modul"
 
@@ -917,7 +917,7 @@ msgstr "Zeige Typ"
 msgid "Program Error:"
 msgstr "Programmfehler:"
 
-#: oyjl_args.c:1408 oyjl_io.c:338
+#: oyjl_args.c:1408 oyjl_io.c:356
 msgid "Program not found"
 msgstr "Programm nicht gefunden"
 
@@ -991,7 +991,7 @@ msgstr ""
 "https_cert=TLS_CA_Zertifikat_Dateiname:css=Stil_Dateiname.css\" wird einen "
 "Web Service starten."
 
-#: oyjl_args_web.c:1425 oyjl_args_web.c:1444
+#: oyjl_args_web.c:1541 oyjl_args_web.c:1560
 msgid "Send"
 msgstr "Absenden"
 
@@ -1091,7 +1091,7 @@ msgstr ""
 "https_cert für Verschlüsselungsdateinamen, security=readonly|interactive|"
 "lazy mit \"readonly\" für eine statische Seitenansicht, \"interactive\" "
 "zeigt interaktive Bestandteile an und \"lazy\" für die Ausführung des "
-"Werkzeuges. \"css=Stil.css\" erlaubt einn Gestaltungsstil mittels CSS."
+"Werkzeuges. \"css=Stil.css\" erlaubt einen Gestaltungsstil mittels CSS."
 
 #: oyjl_args_tree.c:476
 msgid "Support"
@@ -1208,7 +1208,7 @@ msgstr "Die Erklärung zur Option."
 msgid "Too many input files for option"
 msgstr "Zu viele Eingangsdateien für diese Option"
 
-#: oyjl_args_tree.c:448 oyjl_args_web.c:1368
+#: oyjl_args_tree.c:448 oyjl_args_web.c:1484
 msgid "Tool"
 msgstr "Werkzeug"
 
