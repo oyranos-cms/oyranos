@@ -106,9 +106,11 @@ int        oyjlStringListAdd         ( char            *** list,
 int        oyjlStringToLong          ( const char        * text,
                                        long              * value,
                                        const char       ** end );
+#define    OYJL_KEEP_LOCALE            0x01
 int        oyjlStringToDouble        ( const char        * text,
                                        double            * value,
-                                       const char       ** end );
+                                       const char       ** end,
+                                       int                 flags );
 int        oyjlStringsToDoubles      ( const char        * text,
                                        const char        * delimiter,
                                        int               * count,

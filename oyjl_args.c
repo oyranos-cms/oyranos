@@ -128,6 +128,7 @@ int * oyjl_debug = &my_debug;
 #   define  OYJL_DBG_FORMAT "%s:%d "
 #   define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
 #  endif
+#  define    OYJL_KEEP_LOCALE            0x01
 # endif
 # ifndef OYJL_CREATE_VA_STRING
 # define OYJL_CREATE_VA_STRING(format_, text_, alloc_, error_action) \
@@ -813,14 +814,16 @@ int      oyjlStringToLong            ( const char        * text,
 }
 int          oyjlStringToDouble      ( const char        * text,
                                        double            * value,
-                                       const char       ** end )
+                                       const char       ** end,
+                                       int                 flags )
 {
   char * end_ = NULL, * t = NULL;
   int len, pos = 0;
   int error = -1;
 #ifdef OYJL_HAVE_LOCALE_H
   char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
-  setlocale(LC_NUMERIC, "C");
+  if(!(flags & OYJL_KEEP_LOCALE))
+    setlocale(LC_NUMERIC, "C");
 #endif
 
   if(text && text[0])
@@ -866,7 +869,8 @@ int          oyjlStringToDouble      ( const char        * text,
 clean_oyjlStringToDouble:
 
 #ifdef OYJL_HAVE_LOCALE_H
-  setlocale(LC_NUMERIC, save_locale);
+  if(!(flags & OYJL_KEEP_LOCALE))
+    setlocale(LC_NUMERIC, save_locale);
   if(save_locale) free( save_locale );
 #endif
 
@@ -2625,7 +2629,7 @@ int oyjlManArgIsNum_( const char * arg )
     is_num_arg = 2;
   while(t[i] && t[i] != '\000' && t[i] != '|') ++i;
   t[i] = '\000';
-  if(t[0] && oyjlStringToDouble( t, &dbl, 0 ) == 0)
+  if(t[0] && oyjlStringToDouble( t, &dbl, 0,0 ) == 0)
     is_num_arg = 1;
   free(t);
   return is_num_arg;
@@ -3047,7 +3051,7 @@ int oyjlOptions_HasValue_            ( oyjlOptions_s     * opts,
           {
             case oyjlNONE:   break;
             case oyjlSTRING: *o->variable.s = value; break;
-            case oyjlDOUBLE: oyjlStringToDouble( value, o->variable.d, NULL ); break;
+            case oyjlDOUBLE: oyjlStringToDouble( value, o->variable.d, NULL,0 ); break;
             case oyjlINT:    oyjlStringToLong( value, &l, NULL );
                              *o->variable.i = l; break;
           }
@@ -3696,7 +3700,7 @@ oyjlOPTIONSTATE_e oyjlOptions_GetResult (
 
   if(result_dbl)
   {
-    oyjlStringToDouble( t, result_dbl, 0 );
+    oyjlStringToDouble( t, result_dbl, 0,0 );
     if( o->value_type == oyjlOPTIONTYPE_DOUBLE &&
         ( o->values.dbl.start > *result_dbl ||
           o->values.dbl.end < *result_dbl) )
