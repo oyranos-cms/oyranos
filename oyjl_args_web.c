@@ -1126,10 +1126,10 @@ const char * oyjl_args_web_file_name_security_feature = NULL;
   if( !error && \
       (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind_((char**)&oyjl_args_web_file_name_security_feature, ",", policy_, 0)) && \
       strstr(fn, policy) ) { error = 1; error_msg = policy_ " - " description; } \
-  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      %s\n", "=\"" policy_ "\" - " description ); \
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        %s\n", "\"" policy_ "\" - " description ); \
 }
 #define OYJL_USE_POLICY(policy_, description) \
-  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      %s\n", "=\"" policy_ "\" - " description ); \
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        %s\n", "\"" policy_ "\" - " description ); \
   if( !error && \
       (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind_((char**)&oyjl_args_web_file_name_security_feature, ",", policy_, 0)) )
 int oyjl_args_web_debug = 0;
@@ -1151,7 +1151,7 @@ int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
   if(oyjlStringListFind( oyjl_args_web_file_names_no, oyjl_args_web_file_names_no_n, fn, 0 ) >= 0)
     return 1;
 
-  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      with =\"checkXXX\" use all \"security\" file check policies or add on a as needed base from %s()\n      Avalable file check policies are:\n", __func__ );
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        with =\"checkXXX\" use all \"security\" file check policies or add on a as needed base from %s()\n      Avalable file check policies are:\n", __func__ );
   OYJL_FILE_NAME_POLICY( "no_/etc", "no system configuration" )
   OYJL_FILE_NAME_POLICY( "no_/root", "no root files" )
   OYJL_FILE_NAME_POLICY( "no_/proc", "no system state files" )
@@ -1208,7 +1208,7 @@ int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
       }
     }
   }
-  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      =\"allow_/my/path\" - allow custom /my/path exceptions, overriding no_above or no_hidden rules: e.g. =no_hidden,allow_/home/user/.local/share\n" );
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        \"allow_/my/path\" - allow custom /my/path exceptions, overriding no_above or no_hidden rules: e.g. =check,no_hidden,allow_/home/user/.local/share\n" );
 
   if(hidden)
   { error = 1; error_msg = ". - no hidden file and directory"; }
@@ -1604,22 +1604,24 @@ int oyjlArgsWebStart__               ( int                 argc,
     if(help)
     {
       const char * arg = "oyjl-list";
-      fprintf( stderr, "Help:\n  %s\n\
-    port: select the port for the host; default is 8888\n\
-    https_key: adds a https key file; default is none, if no filename is provided it uses a self certified inbuild key\n\
-    https_cert: adds a certificate for https; default is none, if no filename is provided it uses a self certified inbuild certificate\n\
-    css: can by called two times to add CSS layout file(s), which will by embedded into the HTML code\n\
-    ignore: add comma separated list of skip options, which are marked in HTML and get not accepted, e.g. ignore=\"o,option,v,verbose\"\n\
-    help: show this help text\n\
-    security: specifies the security level used; default is readonly inactive web page generation\n\
-      \"=readonly\": is passive and default\n\
-      \"=interactive\": contains interactive forms element and returns the respond JSON\n\
-      \"=check_read\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileRead()\n\
-      \"=check_write\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileWrite()\n\
-      \"=check\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileRead() and oyjlFileWrite()\n\
-      \"=lazy\": calls the specified callback from oyjlArgsRender(callback)\n",
+      fprintf( stderr, "  %s:\n", oyjlTermColor(oyjlUNDERLINE,"Help") );
+      fprintf( stderr, "    %s\n\n\
+      port: select the port for the host; default is 8888\n\
+      https_key: adds a https key file; default is none, if no filename is provided it uses a self certified inbuild key\n\
+      https_cert: adds a certificate for https; default is none, if no filename is provided it uses a self certified inbuild certificate\n\
+      css: can by called two times to add CSS layout file(s), which will by embedded into the HTML code\n\
+      ignore: add comma separated list of skip options, which are marked in HTML and get not accepted, e.g. ignore=\"o,option,v,verbose\"\n\
+      help: show this help text\n\
+      security: specifies the security level used; default is readonly inactive web page generation\n\
+        =\"readonly\": is passive and default\n\
+        =\"interactive\": contains interactive forms element and returns the respond JSON\n\
+        =\"check_read\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileRead() and calls the specified callback from oyjlArgsRender(callback)\n\
+        =\"check_write\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileWrite()\n\
+        =\"check\": for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileRead() and oyjlFileWrite()\n\
+        =\"lazy\": calls the specified callback from oyjlArgsRender(callback) unchecked; use only for secured connection with verified login\n",
         oyjlTermColor(oyjlBOLD,"--render=web:port=8888:https_key=filename.tls:https_cert=filename.tls:css=first.css:css=second.css:security=level:ignore=o,option") );
       oyjlArgsWebFileNameSecurity( &arg, 0 );
+      fputs( "\n", stderr );
     }
     daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | tls_flag,
                                port, NULL, NULL,
