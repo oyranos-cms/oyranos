@@ -55,6 +55,10 @@
 /** \addtogroup oyjl_string
  *  @{ *//* oyjl_string */
 
+void       oyjlStr_SetCharAt         ( oyjl_str            str,
+                                       char                c,
+                                       int                 pos );
+
 /* return the beginning of the next word */
 static const char * oyjlStringGetNext_( const char        * text )
 {
@@ -792,16 +796,18 @@ int          oyjlStringsToDoubles    ( const char        * text,
  *
  *  @param         text                string to search in
  *  @param         regex               regular expression to try with text
+ *  @param         length              length of returned value
  *  @return                            result:
  *                                     - 0: no match
  *                                     - >0: first string adress in text
  *
  *  @version Oyjl: 1.0.0
- *  @date    2021/01/06
+ *  @date    2022/10/19
  *  @since   2020/07/28 (Oyjl: 1.0.0)
  */
 char *     oyjlRegExpFind            ( char              * text,
-                                       const char        * regex )
+                                       const char        * regex,
+                                       int               * length )
 {
   char * match = NULL;
   if( !text || !regex )
@@ -825,19 +831,27 @@ char *     oyjlRegExpFind            ( char              * text,
   status = regexec( &re, text, (size_t)1, &re_match, 0 );
   regfree( &re );
   if(status == 0 && re_match.rm_so != -1)
+  {
     match = &text[re_match.rm_so];
+    if(length)
+      *length = re_match.rm_eo - re_match.rm_so;
+  }
 #endif
 
   if(match == NULL)
+  {
     match = strstr(text, regex);
+    if(length)
+      *length = strlen(regex);
+  }
 
   return match;
 }
 
 const char * oyjlRegExpDelimiter ( const char * text, const char * delimiter, int * length )
 {
-  const char * pos = oyjlRegExpFind( (char*)text, delimiter ),
-             * pos2 = pos ? oyjlRegExpFind( (char*)pos+1, delimiter ) : NULL;
+  const char * pos = oyjlRegExpFind( (char*)text, delimiter, NULL ),
+             * pos2 = pos ? oyjlRegExpFind( (char*)pos+1, delimiter, NULL ) : NULL;
   if(pos)
   {
     if(length)
@@ -854,11 +868,11 @@ const char * oyjlRegExpDelimiter ( const char * text, const char * delimiter, in
  *
  *  @param         text                string to search in
  *  @param         regex               regular expression to try with text
- *  @param         replacement         substitute all matches of regex in text
+ *  @param         replacement         substitute all matches of regex in text; it may contain up to two occurences of %s regex matching placeholders, e.g. "%s=%s"
  *  @return                            count of replacements
  *
  *  @version Oyjl: 1.0.0
- *  @date    2021/09/29
+ *  @date    2022/10/21
  *  @since   2021/09/29 (Oyjl: 1.0.0)
  */
 int        oyjlRegExpReplace         ( char             ** text,
@@ -875,7 +889,6 @@ int        oyjlRegExpReplace         ( char             ** text,
   int n;
   regmatch_t re_match = {0,0};
   oyjl_str str;
-  const char * txt;
   int error = 0;
   if((error = regcomp(&re, regex, REG_EXTENDED)) != 0)
   {
@@ -888,28 +901,75 @@ int        oyjlRegExpReplace         ( char             ** text,
     return 0;
   }
 
-  str = oyjlStr_NewFrom(text, 0, malloc, free);
-  n = re.re_nsub;
-  txt = oyjlStr(str);
-  while((status = regexec( &re, txt, (size_t)1, &re_match, 0 )) == 0)
+  if(strstr(replacement,"%s"))
   {
-    int len = strlen(txt);
-    char * tail = NULL;
-    if(len > re_match.rm_eo)
-      tail = oyjlStringCopy( &txt[re_match.rm_eo], 0 );
-    n = oyjlStr_Replace( str, &txt[re_match.rm_so], replacement, 0, NULL );
-    if(len > re_match.rm_eo)
-    {
-      oyjlStr_Push( str, tail );
-      free(tail);
-    }
+    const char * txt;
+    int pos = 0,
+        replace_count = strstr(strstr(replacement,"%s"),"%s") ? 2 : 1,
+        replacement_len = strlen(replacement) - 2*replace_count;
+    str = oyjlStr_NewFrom(text, 0, malloc, free);
+    n = re.re_nsub;
     txt = oyjlStr(str);
-    ++count;
-    if(!n) break;
+    while((status = regexec( &re, txt, (size_t)1, &re_match, 0 )) == 0)
+    {
+      int len, found_len;
+      char * tail = NULL,
+           * found_string;
+      len = strlen(txt);
+      found_string = oyjlStringCopy( &txt[re_match.rm_so], NULL );
+      found_string[re_match.rm_eo - re_match.rm_so] = '\000';
+      found_len = strlen(found_string);
+      pos += re_match.rm_so;
+      if(len >= re_match.rm_eo || re_match.rm_so == 0)
+      {
+        tail = oyjlStringCopy( &txt[re_match.rm_eo], 0 );
+        oyjlStr_SetCharAt( str, '\000', pos );
+      }
+      if(replace_count == 1)
+        oyjlStr_Add( str, replacement, found_string );
+      else if(replace_count == 2)
+        oyjlStr_Add( str, replacement, found_string, found_string );
+      pos += found_len*replace_count + replacement_len;
+      free(found_string);
+      if(len > re_match.rm_eo)
+      {
+        oyjlStr_Push( str, tail );
+        free(tail);
+      }
+      txt = oyjlStr(str);
+      txt += pos;
+      ++count;
+    }
+    regfree( &re );
+    *text = oyjlStr_Pull( str );
+    oyjlStr_Release( &str );
   }
-  regfree( &re );
-  *text = oyjlStr_Pull( str );
-  oyjlStr_Release( &str );
+  else
+  {
+    const char * txt;
+    str = oyjlStr_NewFrom(text, 0, malloc, free);
+    n = re.re_nsub;
+    txt = oyjlStr(str);
+    while((status = regexec( &re, txt, (size_t)1, &re_match, 0 )) == 0)
+    {
+      int len = strlen(txt);
+      char * tail = NULL;
+      if(len > re_match.rm_eo)
+        tail = oyjlStringCopy( &txt[re_match.rm_eo], 0 );
+      n = oyjlStr_Replace( str, &txt[re_match.rm_so], replacement, 0, NULL );
+      if(len > re_match.rm_eo)
+      {
+        oyjlStr_Push( str, tail );
+        free(tail);
+      }
+      txt = oyjlStr(str);
+      ++count;
+      if(!n) break;
+    }
+    regfree( &re );
+    *text = oyjlStr_Pull( str );
+    oyjlStr_Release( &str );
+  }
 
 #else
 
@@ -1129,6 +1189,28 @@ oyjl_str   oyjlStr_NewFrom           ( char             ** text,
   string->alloc_count = 1;
 
   return (oyjl_str) string;
+}
+
+/** @brief   set the char at position
+ *
+ *  @param[in,out] str                 the object, which will be modified
+ *  @return                            
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2022/10/19
+ *  @since   2022/10/19 (Oyjl: 1.0.0)
+ */
+void       oyjlStr_SetCharAt         ( oyjl_str            str,
+                                       char                c,
+                                       int                 pos )
+{
+  struct oyjl_string_s * string = str;
+
+  if(!str) return;
+
+  string->s[pos] = c;
+  if(c == '\000')
+    string->len = pos;
 }
 
 /** @brief   fast append to the string end
