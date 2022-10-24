@@ -551,7 +551,7 @@ IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} AND NOT TARGET ${PACKAGE_NAME}-core-sta
 ENDIF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} AND NOT TARGET ${PACKAGE_NAME}-core-static)
 
 ADD_LIBRARY( ${PACKAGE_NAME}-extra-static STATIC ${SOURCES_EXTRA} ${CHEADERS_OYJL_PUBLIC} )
-TARGET_LINK_LIBRARIES( ${PACKAGE_NAME}-extra-static ${PACKAGE_NAME}-core-static ${EXTRA_LIBS} )
+TARGET_LINK_LIBRARIES( ${PACKAGE_NAME}-extra-static ${PACKAGE_NAME}-core-static ${EXTRA_CORE_LIBS} )
 
 IF(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
   SET( EXTRA_LIBS ${EXTRA_LIBS} PARENT_SCOPE )
@@ -699,22 +699,22 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
   UNSET( TOOL )
   SET( TOOL oyjl-args-ui-base )
   BUILD_TOOL( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args-ui-base.c"      ""                       ""                   FALSE FALSE FALSE )
-  TARGET_LINK_LIBRARIES( ${PACKAGE_NAME}-args-ui-base ${QT_RENDER_LIB} ${PACKAGE_NAME}-extra-static ${PACKAGE_NAME}-core-static ${EXTRA_LIBS} ${_LIBS} )
+  TARGET_LINK_LIBRARIES( ${TOOL} ${PACKAGE_NAME}-core-static )
   ADD_CUSTOM_TARGET( check-${TOOL}
         ${MEMCHECK} ./${TOOL} -h
-        DEPENDS ${TOOL} check-oyjl-args-ui
-        COMMENT "Check Generated Linked OyjlArgs Program" VERBATIM )
+        DEPENDS ${TOOL} check-oyjl-args-ui-lib
+        COMMENT "Check Generated Static Linked OyjlArgsBase Program" VERBATIM )
   SET( TOOL oyjl-args-ui-base-lib )
-  BUILD_TOOL( oyjl-args-ui-base-lib "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args-ui-base.c"  ""                       ""                   FALSE FALSE FALSE )
-  TARGET_LINK_LIBRARIES( ${PACKAGE_NAME}-args-ui-base-lib ${QT_RENDER_LIB} ${PROJECT_NAME}ArgsBase ${EXTRA_LIBS} ${_LIBS} )
+  BUILD_TOOL( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args-ui-base.c"      ""                       ""                   FALSE FALSE FALSE )
+  TARGET_LINK_LIBRARIES( ${TOOL} ${PROJECT_NAME}ArgsBase )
   ADD_CUSTOM_TARGET( check-${TOOL}
         ./${TOOL} -h
         DEPENDS ${TOOL} check-oyjl-args-ui-base
-        COMMENT "Check Generated Linked OyjlArgs Program" VERBATIM )
+        COMMENT "Check Generated Linked OyjlArgsBase Program" VERBATIM )
   SET( TOOL oyjl-args-ui-base-oyjl-h )
-  BUILD_TOOL( oyjl-args-ui-base-oyjl-h "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args-ui-base.c"      ""                       ""                   FALSE FALSE FALSE )
-  SET_TARGET_PROPERTIES( ${PACKAGE_NAME}-args-ui-base-oyjl-h PROPERTIES COMPILE_DEFINITIONS "USE_OYJL_H" )
-  TARGET_LINK_LIBRARIES( ${PACKAGE_NAME}-args-ui-base-oyjl-h ${QT_RENDER_LIB} ${PACKAGE_NAME}-extra-static ${OYJL_TARGET_LIB} ${EXTRA_LIBS} ${_LIBS} )
+  BUILD_TOOL( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args-ui-base.c"      ""                       ""                   FALSE FALSE FALSE )
+  SET_TARGET_PROPERTIES( ${TOOL} PROPERTIES COMPILE_DEFINITIONS "USE_OYJL_H" )
+  TARGET_LINK_LIBRARIES( ${TOOL} ${PROJECT_NAME}ArgsBase )
   ADD_CUSTOM_TARGET( check-${TOOL}
         ${MEMCHECK} ./${TOOL} -h
         DEPENDS ${TOOL} check-oyjl-args-ui-base-lib
