@@ -117,7 +117,8 @@ int        oyjlStringsToDoubles      ( const char        * text,
                                        void*            (* alloc)(size_t),
                                        double           ** value );
 char *     oyjlRegExpFind            ( char              * text,
-                                       const char        * regex );
+                                       const char        * regex,
+                                       int               * end_pos );
 const char*oyjlRegExpDelimiter       ( const char        * text,
                                        const char        * delimiter,
                                        int               * length );
