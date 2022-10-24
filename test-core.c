@@ -340,6 +340,20 @@ oyjlTESTRESULT_e testString ()
   }
   myDeAllocFunc(test_out);
 
+  test_out = oyjlStringCopy("some %s text",malloc);
+  n = oyjlStringReplace( &test_out, "\%", "\%\%", 0,0 );
+  if(verbose)
+    fprintf(zout, "test \"%s\"\n", test_out);
+  if( strlen(test_out) == 13 &&
+      n == 1 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringReplace(\%) == %d", (int)strlen(test_out) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringReplace(\%) == %s %d", test_out, (int)strlen(test_out) );
+  }
+  myDeAllocFunc(test_out);
+
   int list_n = 0;
   int *index = NULL;
   const char * text = "org/domain/eins.lib,org/domain/zwei.txt;org/domain/drei.lib?net/welt/vier.lib:net/welt/vier.txt$/net/welt/fuenf;/net/welt/fuenf";
@@ -731,7 +745,8 @@ oyjlTESTRESULT_e testString ()
   char * txt = oyjlStringCopy( "my_string_1_is_long", 0 );
   const char * regexp = "*string";
   const char * match;
-  if(oyjlRegExpFind(txt, regexp) == NULL)
+  len = 0;
+  if(oyjlRegExpFind(txt, regexp, &len) == NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "!oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   } else
@@ -739,7 +754,7 @@ oyjlTESTRESULT_e testString ()
     "!oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
   regexp = "_string_";
-  if((match = oyjlRegExpFind(txt, regexp)) != NULL)
+  if((match = oyjlRegExpFind(txt, regexp, &len)) != NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlRegExpFind( \"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), match );
   } else
@@ -748,7 +763,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   regexp = "NONE";
-  if((match = oyjlRegExpFind(txt, regexp)) == NULL)
+  if((match = oyjlRegExpFind(txt, regexp, &len)) == NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "!oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   } else
@@ -757,7 +772,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   regexp = "1";
-  if((match = oyjlRegExpFind(txt, regexp)) != NULL)
+  if((match = oyjlRegExpFind(txt, regexp, &len)) != NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlRegExpFind( \"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), match );
   } else
@@ -766,7 +781,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   regexp = "string.1";
-  if((match = oyjlRegExpFind(txt, regexp)) != NULL)
+  if((match = oyjlRegExpFind(txt, regexp, &len)) != NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlRegExpFind( \"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), match );
   } else
@@ -775,7 +790,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   regexp = "str.*lon";
-  if((match = oyjlRegExpFind(txt, regexp)) != NULL)
+  if((match = oyjlRegExpFind(txt, regexp, &len)) != NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlRegExpFind( \"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), match );
   } else
@@ -784,7 +799,7 @@ oyjlTESTRESULT_e testString ()
   }
 
   regexp = "st[.]*lo";
-  if(oyjlRegExpFind(txt, regexp) == NULL)
+  if(oyjlRegExpFind(txt, regexp, &len) == NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "!oyjlRegExpFind(\"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   } else
@@ -794,7 +809,7 @@ oyjlTESTRESULT_e testString ()
 
   regexp = "/de.*/The API's\\.";
   oyjlStringAdd( &txt, 0,0, "/de_DE.UTF8/The API's." );
-  if((match = oyjlRegExpFind(txt, regexp)) != NULL)
+  if((match = oyjlRegExpFind(txt, regexp, &len)) != NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlRegExpFind(\"%s\", \"%s\" ) %s", txt, oyjlNoEmpty(regexp), oyjlNoEmpty(match) );
   } else
@@ -805,13 +820,13 @@ oyjlTESTRESULT_e testString ()
 
   char * pattern = NULL;
 #define REGEX_ESCAPE( pre, regex_, escape ) \
-  { \
+  { int len;\
     t = oyjlRegExpEscape( escape ); \
     oyjlStringAdd( &compare, 0,0, "%s%s", pre, escape ); \
     oyjlStringAdd( &pattern, 0,0, "%s%s", regex_, t ); \
-    if(oyjlRegExpFind( compare, pattern ) != NULL) \
+    if(oyjlRegExpFind( compare, pattern, &len ) != NULL) \
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS, \
-      "oyjlRegExpEscape( \"%s\" )", escape ); \
+      "oyjlRegExpEscape( \"%s\" ) %d", escape, len ); \
     } else \
     { PRINT_SUB( oyjlTESTRESULT_FAIL, \
       "oyjlRegExpEscape( \"%s\" ) %s -> oyjlRegExpFind(\"%s\", \"%s\")", escape, t, compare, pattern ); \
@@ -851,7 +866,7 @@ oyjlTESTRESULT_e testString ()
 
   regexp = "tat";
   txt = "rotation";
-  if((match = oyjlRegExpFind( txt, regexp)) != NULL)
+  if((match = oyjlRegExpFind( txt, regexp, &len)) != NULL)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlRegExpFind( \"%s\", \"%s\" ) = %s", txt, oyjlNoEmpty(regexp), match );
   } else
@@ -859,21 +874,39 @@ oyjlTESTRESULT_e testString ()
     "oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
 #define REGEX_REPLACE( string_, regex_, replacement, check ) \
-  { t = oyjlStringCopy( string_, 0 ); \
-    char * escape = oyjlRegExpEscape( regex_ ); \
+  { char * print = NULL; \
+    t = oyjlStringCopy( string_, 0 ); \
     oyjlRegExpReplace( &t, regex_, replacement ); \
+    oyjlStringAdd( &print, 0,0, "oyjlRegExpReplace( \"%s\", \"%s\", \"%s\" ) = \"%s\"", string_, regex_, replacement, t ); \
+    n = oyjlStringReplace( &print, "\%s", "\%\%\%\%s", 0,0 ); \
+    if(verbose) \
+    { fputs( print, stderr ); fputs( "\n", stderr ); } \
     if(text && strcmp( t, check ) == 0) \
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS, \
-      "oyjlRegExpReplace( \"%s\", \"%s\", \"%s\" ) = \"%s\"", string_, escape, replacement, t ); \
+      print ); \
     } else \
     { PRINT_SUB( oyjlTESTRESULT_FAIL, \
-      "oyjlRegExpReplace( \"%s\", \"%s\", \"%s\" ) = \"%s\"", string_, regex_, replacement, t ); \
+      print ); \
     } \
-    free(escape); escape = NULL; \
+    free(print); print = NULL; \
   }
   REGEX_REPLACE( "rotation", "ot", "ehabilit", "rehabilitation" )
   if(t) { free(t); t = NULL; }
   REGEX_REPLACE( "\033[1mSomeText\033[0m \033[38;2;0;200;0mSomeMoreText\033[0m", "\033[[0-9;]*m", "", "SomeText SomeMoreText" )
+  if(t) { free(t); t = NULL; }
+  const char * rexexp = "([a-z]*://)?[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+(:[0-9]{1,5})?(/[a-zA-Z0-9+-.?=_*]*)?";
+  const char * replacement = "<a href=\"%s\">%s</a>";
+  REGEX_REPLACE( "start www.url.org:8888/path?x=2 end.", rexexp, replacement, "start <a href=\"www.url.org:8888/path?x=2\">www.url.org:8888/path?x=2</a> end.")
+  if(t) { free(t); t = NULL; }
+  REGEX_REPLACE( "start.of.adress http://www.url.org ending.adress.org", rexexp, replacement, "<a href=\"start.of.adress\">start.of.adress</a> <a href=\"http://www.url.org\">http://www.url.org</a> <a href=\"ending.adress.org\">ending.adress.org</a>")
+  if(t) { free(t); t = NULL; }
+  REGEX_REPLACE( "start www.url.org", rexexp, replacement, "start <a href=\"www.url.org\">www.url.org</a>")
+  if(t) { free(t); t = NULL; }
+  REGEX_REPLACE( "www.url.org", rexexp, replacement, "<a href=\"www.url.org\">www.url.org</a>")
+  if(t) { free(t); t = NULL; }
+  REGEX_REPLACE( "http://www.url.org", rexexp, replacement, "<a href=\"http://www.url.org\">http://www.url.org</a>")
+  if(t) { free(t); t = NULL; }
+  REGEX_REPLACE( "More information about our great little big thing here www.our-adress.xy", rexexp, replacement, "More information about our great little big thing here <a href=\"www.our-adress.xy\">www.our-adress.xy</a>")
   if(t) { free(t); t = NULL; }
 
   int length = 0;
@@ -1025,7 +1058,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
     "%s -X json                       %lu/%lu %d", prog, json_size, len, oyjlDataFormat(plain) );
   system("ls -l oyjl");
   }
-  OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
+  OYJL_TEST_WRITE_RESULT( t, size, prog, "json" )
   if(verbose && len)
     fprintf( zout, "%s\n", t );
   if(t) {free(t);}
@@ -1040,7 +1073,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   { PRINT_SUB_INT( fail, len,
     "%s -X json+command", prog );
   }
-  OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
+  OYJL_TEST_WRITE_RESULT( t, size, prog, "json" )
   if(verbose && len)
     fprintf( zout, "%s\n", t );
   if(t) {free(t);}
@@ -1055,7 +1088,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   { PRINT_SUB_INT( fail, len,
     "%s -X export", prog );
   }
-  OYJL_TEST_WRITE_RESULT( t, len, prog, "json" )
+  OYJL_TEST_WRITE_RESULT( t, size, prog, "json" )
   if(verbose && len)
     fprintf( zout, "%s\n", t );
   if(t) {free(t);}
@@ -1171,7 +1204,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
                            4065                      /*markdown_size*/,
                            7382                      /*json_size*/,
                            7409                      /*json_command_size*/,
-                           11928                     /*export_size*/,
+                           11673                     /*export_size*/,
                            3163                      /*bash_size*/,
                            result,
                            oyjlTESTRESULT_FAIL       /*fail*/ );
@@ -1267,7 +1300,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
                            2521                      /*markdown_size*/,
                            5119                      /*json_size*/,
                            5146                      /*json_command_size*/,
-                           11413                     /*export_size*/,
+                           11158                     /*export_size*/,
                            3030                      /*bash_size*/,
                            result,
                            oyjlTESTRESULT_FAIL       /*fail*/ );
