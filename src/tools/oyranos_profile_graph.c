@@ -3860,7 +3860,7 @@ void        oyTreeFilterColors( oyjl_val root, const char * pattern )
     v = oyjlTreeGetValueF( data, 0, "[%d]/name", index );
     name = OYJL_GET_STRING(v);
     if(!name) continue;
-    match = oyjlRegExpFind( name, pattern ) != NULL;
+    match = oyjlRegExpFind( name, pattern, NULL ) != NULL;
     if(pattern && !match )
     {
       sprintf( num, "[%d]", index );

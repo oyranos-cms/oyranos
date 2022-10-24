@@ -99,11 +99,6 @@ void oy_backtrace_()
       fprintf( stderr, "could not open "TMP_FILE "\n" );
 }
                 
-char *   oyBT                        ( int                 stack_limit )
-{
-  return oyjlBT(stack_limit);
-}
-
 time_t             oyTime            ( )
 {
   time_t time_;

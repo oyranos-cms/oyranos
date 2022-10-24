@@ -211,7 +211,7 @@ oyjlOptionChoice_s * ppmcieGetChoices           ( oyjlOption_s      * o OYJL_UNU
   OYJL_GET_RESULT_STRING( opts, "@", NULL, profile_name );
   if(verbose)
   {
-    char * t = oyBT(0);
+    char * t = oyjlBT(0);
     fprintf( stderr, "%slistPpmcie\n", t );
     free(t);
   }

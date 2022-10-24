@@ -185,7 +185,7 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
   <table>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> gui</td><td># Gui : Show UI - Display a interactive graphical User Interface.</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> cli</td><td># Cli : Show UI - Print on Command Line Interface.</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with. Supported subargs are: port for port number, https_key and https_cert for passing in encryption filenames, security=readonly|interactive|lazy with "readonly" showing a static page, "interactive" showing GUI elements and "lazy" executing the tool. The "css=layout.css" lets you style your output by CSS.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-R</strong> web</td><td># Web : Start Web Server - Start a local Web Service to connect a Webbrowser with. Use the -R=web:help sub option to see more information.</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-R</strong> -</td>
   </table>
   </td>
