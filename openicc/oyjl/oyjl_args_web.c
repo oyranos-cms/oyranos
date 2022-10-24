@@ -165,7 +165,9 @@ const char *responsepage =
   <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n\
   <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n\
   <style type=\"text/css\">%s%s%scode{white-space: pre;}\n\
-  #h1intro:focus ~ div p#introdescription { display: block; }\n\
+  details p { margin: 0; }\n\
+  details summary::marker { content: '►'; }\n\
+  details[open] summary::marker { content: '▼'; }\n\
   </style>\n\
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
 </head><body>\n\
@@ -376,6 +378,8 @@ int oyjlStringSplitFind_             ( char             ** set,
   return found;
 }
 
+const char * oyjl_args_web_rexexp = "([a-z]*://)?[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+(:[0-9]{1,5})?(/[a-zA-Z0-9+-.?=_*]*)?";
+const char * oyjl_args_web_replacement = "<a href=\"%s\">%s</a>";
 
 static enum MHD_Result oyjlMhdAnswerToConnection_cb (
                                        void *cls,
@@ -589,8 +593,13 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
           else if(data_format != 8)
           {
             char * css_toc_text = NULL;
+            char * t = oyjlStringCopy( oyjlTermColorToHtml( html_commented, 0 ), 0);
+            oyjlRegExpReplace( &t, oyjl_args_web_rexexp, oyjl_args_web_replacement );
+            oyjlStringReplace( &t, "<a href=\"www.", "<a href=\"http://www.", 0,0 );
+
             oyjlStringAdd( &html_tmp, 0,0, responsepage, OYJL_E(context->css,""), OYJL_E(context->css2,""), OYJL_E(css_toc_text,""),
-                           oyjlTermColorToHtml( html_commented, 0 ) );
+                           t );
+            free(t);
             html = html_tmp;
           }
         }
@@ -761,15 +770,24 @@ void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
   if(gname || gdesc || ghelp || synopsis)
   {
     if(gname)
-    {
-      oyjlStringAdd( css_toc_text, 0,0, "#h%did:focus ~ p#h%ddescription { display: block; }\n", gcount, gcount );
       oyjlStringAdd( &t, 0,0, "  <h3 id=\"h%did\" tabindex=\"0\">%s</h3>", gcount, gname );
-    }
-    oyjlStringAdd( description, 0,0, "  <p id=\"h%ddescription\"%s>", gcount, sec?" class=\"hide\"":"" );
+
+    if(sec)
+      oyjlStringAdd( description, 0,0, "  <details><summary></summary><p>\n" );
+    else
+      oyjlStringAdd( description, 0,0, "  <p>" );
+
     if(gdesc)
       oyjlStringAdd( description, 0,0, "%s%s", gdesc, ghelp?"<br />\n":synopsis?"<br />\n<br />\n":"" );
     if(ghelp)
+    {
+      char * t = oyjlStringCopy(ghelp,0);
+      oyjlRegExpReplace( &t, oyjl_args_web_rexexp, oyjl_args_web_replacement );
+      oyjlStringReplace( &t, "<a href=\"www.", "<a href=\"http://www.", 0,0 );
+      ghelp = t;
       oyjlStringAdd( description, 0,0, "%s%s", ghelp, synopsis?"<br />\n<br />\n":"" );
+      free(t);
+    }
     if(synopsis)
       oyjlStringAdd( description, 0,0, "%s<br />\n<br />\n", synopsis );
   }
@@ -789,7 +807,7 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
   char * t = *t_;
 
   int k, kn = 0, is_choice = 0;
-  const char * key, * name, * desc, * help, * value_name, * default_var, * type, * no_dash;
+  const char * key, * name, * desc, * help, * value_name, * default_var, * type, * no_dash, * repetition;
   double default_dbl = 0.0;
   char * text = NULL;
   oyjl_val o = oyjlTreeGetValue(opt, 0, "option");
@@ -810,10 +828,13 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
   if(value_name) text = oyjlStringCopy( oyjlStringColor( oyjlITALIC, OYJL_HTML, value_name), 0 );
   o = oyjlTreeGetValue(opt, 0, "default");
   default_var = OYJL_GET_STRING(o);
+  o = oyjlTreeGetValue(opt, 0, "repetition");
+  repetition = OYJL_GET_STRING(o);
   if(default_var)
   {
     oyjlStringToDouble( default_var, &default_dbl, NULL, OYJL_KEEP_LOCALE );
-    fprintf( stderr, "default_var: %s default_dbl: %g locale: %s\n", default_var, default_dbl, setlocale(LC_NUMERIC, 0 ) );
+    if(*oyjl_debug)
+      fprintf( stderr, "default_var: %s default_dbl: %g locale: %s\n", default_var, default_dbl, setlocale(LC_NUMERIC, 0 ) );
   }
   o = oyjlTreeGetValue(opt, 0, "type");
   type = OYJL_GET_STRING(o);
@@ -824,7 +845,7 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
 
   choices = oyjlTreeGetValue(opt, 0, "choices");
   oyjlStringAdd( description, 0,0, "%s%s[%s%s%s%s]%s%s%s%s<br />\n",
-      name?oyjlStringColor(oyjlBOLD, OYJL_HTML,name):"", name?"&nbsp;&nbsp;":"",
+      name?oyjlStringColor(oyjlBOLD, OYJL_HTML,"%s%s", name, repetition?" ...":""):"", name?"&nbsp;&nbsp;":"",
       no_dash?"":strlen(key) == 1?"-":"--", key[0] == '@'?"":key,
       value_name && key[0] != '@'?"=":"", value_name?text:"",
       desc?" : ":"", desc?desc:"",
@@ -850,8 +871,8 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
     o = oyjlTreeGetValue(opt, 0, "tick");
     tick = OYJL_GET_DOUBLE(o);
     if(sec)
-      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s [≥%g ≤%g Δ%g]</label><input type=\"range\" name=\"%s\" id=\"%s-%d\" value=\"%g\" min=\"%g\" max=\"%g\" step=\"%g\"%s/><br />\n",
-       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name) /*i18n label*/, start, end, tick, key /*name*/, key/* id */, gcount, default_dbl, start, end, tick, is_mandatory?" class=\"mandatory\"":"" );
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s [≥%g ≤%g Δ%g] <span id=span%s%d><font color=gray>%g</font></span><br /></label><input type=\"range\" name=\"%s\" id=\"%s-%d\" value=\"%g\" min=\"%g\" max=\"%g\" step=\"%g\"%s oninput=\"span%s%d.innerText = this.value\"/>\n",
+       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name) /*i18n label*/, start, end, tick, default_dbl, key/* span id */, gcount, key /*name*/, key/* id */, gcount, default_dbl, start, end, tick, is_mandatory?" class=\"mandatory\"":"", key/* span id */, gcount );
 #ifdef OYJL_HAVE_LOCALE_H
     setlocale(LC_NUMERIC, save_locale);
     if(save_locale) free( save_locale );
@@ -871,13 +892,13 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
       else if(type && strcmp(type,"string") == 0)
       {
         is_choice = 2;
-        oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label>\n  <input id=\"%s-%d\" list=\"%s-%d-states\" name=\"%s\" />\n\
-  <datalist id=\"%s-%d-states\">\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name):"", key, gcount, key, gcount, key, key, gcount );
+        oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s%s</label>\n  <input id=\"%s-%d\" list=\"%s-%d-states\" name=\"%s\" />\n\
+  <datalist id=\"%s-%d-states\">\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name):"", repetition?" ...":"", /* id */key, gcount, key, gcount, key, key, gcount );
       }
     } else if(type && strcmp(type,"string") == 0)
     {
       is_choice = 2;
-      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label>\n  <input id=\"%s-%d\" name=\"%s\" /><br />\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name):"", key, gcount, key );
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s%s</label>\n  <input id=\"%s-%d\" name=\"%s\" /><br />\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name):"", repetition?" ...":"", /* id */ key, gcount, /* name */ key );
     }
   }
  
@@ -908,9 +929,9 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
     if(sec)
     {
       if(is_choice == 1)
-        oyjlStringAdd( &t, 0,0, "    <option value=\"%s\"%s>%s</option>\n", nick, selected?" selected":"", name?name:nick );
+        oyjlStringAdd( &t, 0,0, "    <option value=\"%s\"%s>%s</option>\n", nick, selected?" selected":"", name&&name[0]?name:nick );
       else if(is_choice == 2)
-        oyjlStringAdd( &t, 0,0, "      <option value=\"%s\"%s>%s</option>\n", nick, selected?" selected":"", name?name:nick );
+        oyjlStringAdd( &t, 0,0, "      <option value=\"%s\"%s>%s</option>\n", nick, selected?" selected":"", name&&name[0]?name:nick );
     }
     oyjlStringAdd( description, 0,0, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s%s%s%s%s%s%s%s%s%s<br />\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
       nick && key[0] != '@'?" ":"", nick?nick:"",
@@ -1514,17 +1535,27 @@ int oyjlArgsWebStart__               ( int                 argc,
     oyjlStringAdd( &t, 0,0, "<h1 id=\"h1intro\" tabindex=\"0\">%s</h1>\n", OYJL_E(OYJL_E(name,OYJL_E(nick,type)),type) );
     if((name && nick) || version || desc || docu)
     {
-      oyjlStringAdd( &t, 0,0, "<div class=\"text\">\n\
-  <p%s id=\"introdescription\">\n", sec?" class=\"hide\"":"" );
-      oyjlStringAdd( &t, 0,0, "%s: ", type );
+      if(sec == oyjlSECURITY_READONLY)
+      {
+        oyjlStringAdd( &t, 0,0, "<div class=\"text\">\n" );
+        oyjlStringAdd( &t, 0,0, "%s: ", type );
+      }
+      else
+        oyjlStringAdd( &t, 0,0, "  <details><summary>%s %s</summary><p>", _("Description"), type );
       if(name && nick)
         oyjlStringAdd( &t, 0,0, "%s", oyjlStringColor(oyjlBOLD, OYJL_HTML, nick) );
       if(version)
         oyjlStringAdd( &t, 0,0, " v%s", oyjlStringColor(oyjlITALIC, OYJL_HTML, version) );
       if(docu)
         oyjlStringAdd( &t, 0,0, " %s", docu );
-      oyjlStringAdd( &t, 0,0, "\n  </p>\n" );
-      oyjlStringAdd( &t, 0,0, "</div>\n" );
+      oyjlStringAdd( &t, 0,0, "<br /><br />%s", _("Hints: Options with colord labels are mandatory. Options with italic labels are ignored. Multiple options '...' can be separated by semicolon ';' in the text field.") );
+      if(sec == oyjlSECURITY_READONLY)
+       oyjlStringAdd( &t, 0,0, "</div>\n" );
+      else
+      {
+        oyjlStringAdd( &t, 0,0, "\n  </p>\n" );
+        oyjlStringAdd( &t, 0,0, "</details>\n" );
+      }
     }
     oyjlStringAdd( &t, 0,0, "<div class=\"tiles\">\n" );
     val = oyjlTreeGetValue(v, 0, "groups");
@@ -1551,7 +1582,7 @@ int oyjlArgsWebStart__               ( int                 argc,
           oyjlStringAdd( &t, 0,0, "  <input type=\"submit\" value=\" %s \"></form>\n", _("Send") );
         if(description)
         {
-          oyjlStringAdd( &t, 0,0, "%s  </p>\n", description );
+          oyjlStringAdd( &t, 0,0, "%s  </p></details>\n", description );
           free(description);
           description = NULL;
         }
