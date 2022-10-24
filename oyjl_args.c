@@ -2927,7 +2927,7 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
       oyjl_R_choices_[1].help = _("Print on Command Line Interface.");
       oyjl_R_choices_[2].name = _("Web");
       oyjl_R_choices_[2].description = _("Start Web Server");
-      oyjl_R_choices_[2].help = _("Start a local Web Service to connect a Webbrowser with. Supported subargs are: port for port number, https_key and https_cert for passing in encryption filenames, security=readonly|interactive|lazy with \"readonly\" showing a static page, \"interactive\" showing GUI elements and \"lazy\" executing the tool. The \"css=layout.css\" lets you style your output by CSS.");
+      oyjl_R_choices_[2].help = _("Start a local Web Service to connect a Webbrowser with. Use the -R=web:help sub option to see more information.");
 #endif
       o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_R_choices_, sizeof(oyjl_R_choices_), malloc );
       if(o->value_name == NULL)
