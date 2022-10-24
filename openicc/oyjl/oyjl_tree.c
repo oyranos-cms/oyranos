@@ -2245,7 +2245,7 @@ char *         oyjlTranslate2_       ( const char        * loc,
       plain = oyjlJsonEscape( path, OYJL_REVERSE | OYJL_REGEXP | OYJL_KEY );
       if(flags & OYJL_OBSERVE)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\tpath[%d]: \"%s\" regex: \"%s\"", OYJL_DBG_ARGS, i, path, regex );
-      if(oyjlRegExpFind(plain, regex))
+      if(oyjlRegExpFind(plain, regex, NULL))
       {
         char * p = strrchr(plain, '/');
         if(p) ++p;
