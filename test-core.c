@@ -894,17 +894,21 @@ oyjlTESTRESULT_e testString ()
   if(t) { free(t); t = NULL; }
   REGEX_REPLACE( "\033[1mSomeText\033[0m \033[38;2;0;200;0mSomeMoreText\033[0m", "\033[[0-9;]*m", "", "SomeText SomeMoreText" )
   if(t) { free(t); t = NULL; }
-  const char * rexexp = "([a-z]*://)?[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+(:[0-9]{1,5})?(/[a-zA-Z0-9+-.?=_*]*)?";
+  const char * rexexp = "((([a-z]+://)?[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)|([a-z]+://)+[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)(:[0-9]{1,5})?([/a-zA-Z0-9+-.?=_*]*)?";
   const char * replacement = "<a href=\"%s\">%s</a>";
   REGEX_REPLACE( "start www.url.org:8888/path?x=2 end.", rexexp, replacement, "start <a href=\"www.url.org:8888/path?x=2\">www.url.org:8888/path?x=2</a> end.")
   if(t) { free(t); t = NULL; }
-  REGEX_REPLACE( "start.of.adress http://www.url.org ending.adress.org", rexexp, replacement, "<a href=\"start.of.adress\">start.of.adress</a> <a href=\"http://www.url.org\">http://www.url.org</a> <a href=\"ending.adress.org\">ending.adress.org</a>")
+  REGEX_REPLACE( "start.of.adress (http://www.url.org) just-a.dot ending.adress.org", rexexp, replacement, "<a href=\"start.of.adress\">start.of.adress</a> (<a href=\"http://www.url.org\">http://www.url.org</a>) just-a.dot <a href=\"ending.adress.org\">ending.adress.org</a>")
   if(t) { free(t); t = NULL; }
   REGEX_REPLACE( "start www.url.org", rexexp, replacement, "start <a href=\"www.url.org\">www.url.org</a>")
   if(t) { free(t); t = NULL; }
   REGEX_REPLACE( "www.url.org", rexexp, replacement, "<a href=\"www.url.org\">www.url.org</a>")
   if(t) { free(t); t = NULL; }
+  REGEX_REPLACE( "url.org", rexexp, replacement, "url.org")
+  if(t) { free(t); t = NULL; }
   REGEX_REPLACE( "http://www.url.org", rexexp, replacement, "<a href=\"http://www.url.org\">http://www.url.org</a>")
+  if(t) { free(t); t = NULL; }
+  REGEX_REPLACE( "http://url.org/one/two/three", rexexp, replacement, "<a href=\"http://url.org/one/two/three\">http://url.org/one/two/three</a>")
   if(t) { free(t); t = NULL; }
   REGEX_REPLACE( "More information about our great little big thing here www.our-adress.xy", rexexp, replacement, "More information about our great little big thing here <a href=\"www.our-adress.xy\">www.our-adress.xy</a>")
   if(t) { free(t); t = NULL; }
