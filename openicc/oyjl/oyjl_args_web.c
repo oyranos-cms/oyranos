@@ -72,6 +72,9 @@ enum ConnectionType
   };
 
 static unsigned int oyjl_nr_of_uploading_clients = 0;
+static const char * oyjl_args_web_rexexp = "((([a-z]+://)?[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)|([a-z]+://)+[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)(:[0-9]{1,5})?([/a-zA-Z0-9+-.?=_*]*)?";
+static const char * oyjl_args_web_replacement = "<a href=\"%s\">%s</a>";
+char * oyjlStringLinkify( const char * html );
 
 typedef enum {
   oyjlSECURITY_READONLY,
@@ -165,9 +168,6 @@ const char *responsepage =
   <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n\
   <meta http-equiv=\"Content-Style-Type\" content=\"text/css\" />\n\
   <style type=\"text/css\">%s%s%scode{white-space: pre;}\n\
-  details p { margin: 0; }\n\
-  details summary::marker { content: '►'; }\n\
-  details[open] summary::marker { content: '▼'; }\n\
   </style>\n\
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
 </head><body>\n\
@@ -378,8 +378,14 @@ int oyjlStringSplitFind_             ( char             ** set,
   return found;
 }
 
-const char * oyjl_args_web_rexexp = "([a-z]*://)?[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+(:[0-9]{1,5})?(/[a-zA-Z0-9+-.?=_*]*)?";
-const char * oyjl_args_web_replacement = "<a href=\"%s\">%s</a>";
+char * oyjlStringLinkify( const char * html )
+{
+  char * t = oyjlStringCopy( html, 0 );
+  oyjlRegExpReplace( &t, oyjl_args_web_rexexp, oyjl_args_web_replacement );
+  oyjlStringReplace( &t, "<a href=\"www.", "<a href=\"http://www.", 0,0 );
+  return t;
+}
+
 
 static enum MHD_Result oyjlMhdAnswerToConnection_cb (
                                        void *cls,
@@ -593,9 +599,7 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
           else if(data_format != 8)
           {
             char * css_toc_text = NULL;
-            char * t = oyjlStringCopy( oyjlTermColorToHtml( html_commented, 0 ), 0);
-            oyjlRegExpReplace( &t, oyjl_args_web_rexexp, oyjl_args_web_replacement );
-            oyjlStringReplace( &t, "<a href=\"www.", "<a href=\"http://www.", 0,0 );
+            char * t = oyjlStringLinkify( oyjlTermColorToHtml( html_commented, 0 ) );
 
             oyjlStringAdd( &html_tmp, 0,0, responsepage, OYJL_E(context->css,""), OYJL_E(context->css2,""), OYJL_E(css_toc_text,""),
                            t );
@@ -770,7 +774,7 @@ void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
   if(gname || gdesc || ghelp || synopsis)
   {
     if(gname)
-      oyjlStringAdd( &t, 0,0, "  <h3 id=\"h%did\" tabindex=\"0\">%s</h3>", gcount, gname );
+      oyjlStringAdd( &t, 0,0, "  <h3 id=\"h%did\">%s</h3>", gcount, gname );
 
     if(sec)
       oyjlStringAdd( description, 0,0, "  <details><summary></summary><p>\n" );
@@ -781,9 +785,7 @@ void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
       oyjlStringAdd( description, 0,0, "%s%s", gdesc, ghelp?"<br />\n":synopsis?"<br />\n<br />\n":"" );
     if(ghelp)
     {
-      char * t = oyjlStringCopy(ghelp,0);
-      oyjlRegExpReplace( &t, oyjl_args_web_rexexp, oyjl_args_web_replacement );
-      oyjlStringReplace( &t, "<a href=\"www.", "<a href=\"http://www.", 0,0 );
+      char * t = oyjlStringLinkify( ghelp );
       ghelp = t;
       oyjlStringAdd( description, 0,0, "%s%s", ghelp, synopsis?"<br />\n<br />\n":"" );
       free(t);
@@ -871,8 +873,8 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
     o = oyjlTreeGetValue(opt, 0, "tick");
     tick = OYJL_GET_DOUBLE(o);
     if(sec)
-      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s [≥%g ≤%g Δ%g] <span id=span%s%d><font color=gray>%g</font></span><br /></label><input type=\"range\" name=\"%s\" id=\"%s-%d\" value=\"%g\" min=\"%g\" max=\"%g\" step=\"%g\"%s oninput=\"span%s%d.innerText = this.value\"/>\n",
-       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name) /*i18n label*/, start, end, tick, default_dbl, key/* span id */, gcount, key /*name*/, key/* id */, gcount, default_dbl, start, end, tick, is_mandatory?" class=\"mandatory\"":"", key/* span id */, gcount );
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s <span id=span%s%d><font color=gray>%g</font></span> [≥%g ≤%g Δ%g]<br /></label><input type=\"range\" name=\"%s\" id=\"%s-%d\" value=\"%g\" min=\"%g\" max=\"%g\" step=\"%g\"%s oninput=\"span%s%d.innerText = this.value\"/>\n",
+       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name) /*i18n label*/, default_dbl, start, end, tick, key/* span id */, gcount, key /*name*/, key/* id */, gcount, default_dbl, start, end, tick, is_mandatory?" class=\"mandatory\"":"", key/* span id */, gcount );
 #ifdef OYJL_HAVE_LOCALE_H
     setlocale(LC_NUMERIC, save_locale);
     if(save_locale) free( save_locale );
@@ -914,6 +916,7 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
     oyjl_val c = oyjlTreeGetValueF(choices, 0, "[%d]", k);
     oyjl_val cv;
     const char * nick;
+    char * lnk, * lnk2, * lnk3;
     int selected = 0;
     cv = oyjlTreeGetValue(c, 0, "name");
     name = OYJL_GET_STRING(cv);
@@ -933,11 +936,17 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
       else if(is_choice == 2)
         oyjlStringAdd( &t, 0,0, "      <option value=\"%s\"%s>%s</option>\n", nick, selected?" selected":"", name&&name[0]?name:nick );
     }
+    lnk = oyjlStringLinkify( name );
+    lnk2 = oyjlStringLinkify( desc );
+    lnk3 = oyjlStringLinkify( help );
     oyjlStringAdd( description, 0,0, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s%s%s%s%s%s%s%s%s%s<br />\n", no_dash?"":strlen(key) == 1?"-":"--", key[0] != '@'?key:"",
       nick && key[0] != '@'?" ":"", nick?nick:"",
-      name&&name[0]?"    # ":"", name?name:"",
-      desc?" : ":"", desc&&desc[0]?desc:"",
-      help&&help[0]?" - ":"", help&&help[0]?help:"" );
+      name&&name[0]?"    # ":"", name?lnk:"",
+      desc?" : ":"", desc&&desc[0]?lnk2:"",
+      help&&help[0]?" - ":"", help&&help[0]?lnk3:"" );
+    if(lnk) free(lnk);
+    if(lnk2) free(lnk2);
+    if(lnk3) free(lnk3);
   }
   if(kn && sec)
   {
@@ -1187,6 +1196,10 @@ int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
   OYJL_FILE_NAME_POLICY( "no_/root", "no root files" )
   OYJL_FILE_NAME_POLICY( "no_/proc", "no system state files" )
   OYJL_FILE_NAME_POLICY( "no_..", "no file and directory relative above" )
+
+  OYJL_USE_POLICY( "no_stdin", "no input file stream" )
+  if( strcmp(fn, "-") == 0 || strcmp(fn, "stdin") == 0 )
+  { error = 1; error_msg = "no_stdin - no input file stream"; }
 
   OYJL_USE_POLICY("no_hidden", "no hidden file and directory")
   if( (fn[0] == '.' && strlen(fn) > 1 && fn[1] != OYJL_SLASH_C) || strstr(fn, "/.") != NULL )
@@ -1532,7 +1545,7 @@ int oyjlArgsWebStart__               ( int                 argc,
         docu = OYJL_GET_STRING(info);
       }
     }
-    oyjlStringAdd( &t, 0,0, "<h1 id=\"h1intro\" tabindex=\"0\">%s</h1>\n", OYJL_E(OYJL_E(name,OYJL_E(nick,type)),type) );
+    oyjlStringAdd( &t, 0,0, "<h1 id=\"h1intro\">%s</h1>\n", OYJL_E(OYJL_E(name,OYJL_E(nick,type)),type) );
     if((name && nick) || version || desc || docu)
     {
       if(sec == oyjlSECURITY_READONLY)
@@ -1548,14 +1561,43 @@ int oyjlArgsWebStart__               ( int                 argc,
         oyjlStringAdd( &t, 0,0, " v%s", oyjlStringColor(oyjlITALIC, OYJL_HTML, version) );
       if(docu)
         oyjlStringAdd( &t, 0,0, " %s", docu );
-      oyjlStringAdd( &t, 0,0, "<br /><br />%s", _("Hints: Options with colord labels are mandatory. Options with italic labels are ignored. Multiple options '...' can be separated by semicolon ';' in the text field.") );
-      if(sec == oyjlSECURITY_READONLY)
-       oyjlStringAdd( &t, 0,0, "</div>\n" );
-      else
+      oyjlStringAdd( &t, 0,0, "  </p><br />" );
+      for(i = 0; i < n; ++i)
       {
-        oyjlStringAdd( &t, 0,0, "\n  </p>\n" );
-        oyjlStringAdd( &t, 0,0, "</details>\n" );
+        oyjl_val info = oyjlTreeGetValueF(val, 0, "[%d]/type", i);
+        char * tmp;
+        txt = OYJL_GET_STRING(info);
+        if(i == 0)
+          oyjlStringAdd( &t, 0,0, " <details><summary>%s</summary><table>", _("Details") );
+        if(txt && strcmp(txt,"documentation") == 0) continue;
+        oyjlStringAdd( &t, 0,0, "   <tr>" );
+        info = oyjlTreeGetValueF(val, 0, "[%d]/label", i);
+        txt = OYJL_GET_STRING(info);
+        tmp = oyjlStringLinkify( txt );
+        oyjlStringAdd( &t, 0,0, "     <td>%s</td>", OYJL_E(tmp,"") );
+        free(tmp);
+        info = oyjlTreeGetValueF(val, 0, "[%d]/name", i);
+        txt = OYJL_GET_STRING(info);
+        tmp = oyjlStringLinkify( txt );
+        oyjlStringAdd( &t, 0,0, "     <td>%s</td>", OYJL_E(tmp,"") );
+        free(tmp);
+        info = oyjlTreeGetValueF(val, 0, "[%d]/description", i);
+        txt = OYJL_GET_STRING(info);
+        tmp = oyjlStringLinkify( txt );
+        oyjlStringAdd( &t, 0,0, "     <td>%s</td>", OYJL_E(tmp,"") );
+        free(tmp);
+        oyjlStringAdd( &t, 0,0, "   </tr>" );
       }
+      if(n)
+      {
+        oyjlStringAdd( &t, 0,0, " </table>" );
+        oyjlStringAdd( &t, 0,0, "</details><br />\n" );
+      }
+      oyjlStringAdd( &t, 0,0, "%s", _("Hints: Options with colord labels are mandatory. Options with italic labels are ignored. Multiple options '...' can be separated by semicolon ';' in the text field.") );
+      if(sec == oyjlSECURITY_READONLY)
+        oyjlStringAdd( &t, 0,0, "</div>\n" );
+      else
+        oyjlStringAdd( &t, 0,0, "</details>\n" );
     }
     oyjlStringAdd( &t, 0,0, "<div class=\"tiles\">\n" );
     val = oyjlTreeGetValue(v, 0, "groups");

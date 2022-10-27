@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-10-26 05:40+0200\n"
+"POT-Creation-Date: 2022-10-27 08:07+0200\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -258,10 +258,14 @@ msgid "Date"
 msgstr ""
 
 #: oyjl_args.c:4354 oyjl_args_cli.c:270 oyjl_args_tree.c:509
-#: oyjl_args_web.c:1560
+#: oyjl_args_web.c:1557
 #, fuzzy
 msgid "Description"
 msgstr "Description"
+
+#: oyjl_args_web.c:1571
+msgid "Details"
+msgstr ""
 
 #: oyjl_args_tree.c:479
 msgid "Development"
@@ -730,7 +734,7 @@ msgstr "Model:"
 msgid "Mode9"
 msgstr "Model:"
 
-#: oyjl_args_tree.c:450 oyjl_args_web.c:1533
+#: oyjl_args_tree.c:450 oyjl_args_web.c:1530
 #, fuzzy
 msgid "Module"
 msgstr "Options"
@@ -1110,7 +1114,7 @@ msgid ""
 "a local Web Server, which listens on local port."
 msgstr ""
 
-#: oyjl_args_web.c:1627 oyjl_args_web.c:1646
+#: oyjl_args_web.c:1624 oyjl_args_web.c:1643
 msgid "Send"
 msgstr ""
 
@@ -1398,7 +1402,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr ""
 
-#: oyjl_args_tree.c:448 oyjl_args_web.c:1531
+#: oyjl_args_tree.c:448 oyjl_args_web.c:1528
 msgid "Tool"
 msgstr ""
 
