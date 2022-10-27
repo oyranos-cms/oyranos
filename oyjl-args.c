@@ -52,6 +52,23 @@ int myMain( int argc, const char ** argv )
 
   oyjlOptionChoice_s S_choices[] = {{"oyjl(1) oyjl-translate(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
+  oyjlOptionChoice_s F_choices[] = {{_("Synopsis"),_("Tools follows syntax rules."),_("OyjlArgs checks and enforces rules. These rules are expresses in each synopsis line."), _("A tool can provide different modules with each using different rules, expressed in different synopsis lines.")},
+                                    {_("prog -o"),_("Simple tool with only one option."), _("The option consists of one single letter and thus starts with a single dash."),_("The command line tool is in the following examples called \"prog\" for simplicity.")},
+                                    {_("prog --option"),_("Simple tool with only one option."), _("The option consists of more than one letter starting with two dashs."),_("This is called a long option name. The same option can be triggered by the single letter name or the long option name. Inside the Synopsis line only one form is noticed.")},
+                                    {_("prog -o=ARG --name=one|two|..."),_("Simple tool with two options, which both accept arguments."), _("The argument can be representet by a big letter content hint, like FILE, NUMBER etc. Or it is a collection of pipe separated choices."),_("The later --name option names a few choices and shows with the immediately following three dots, that the choices are not exclusive and might be edited. OyjlArgs checks for args following the option name even without the equal sign '='.")},
+                                    {_("prog -o [-v]"),_("Tool with two differently required options."), _("By default all options are required like the -o one and is mandatory. The second option is enclosed in squared brackets is not required but might be used and thus is optional. "),""},
+                                    {_("prog -h[=synopsis|...] [--option[=NUMBER]]"),_("Tool options, which might be follwed by an argument."), "",""},
+                                    {_("prog -f=FILE ... [-i=FILE ...]"),_("Tool options with three dots after empty space ' ...' can occure multiple times."), _("Command line example: prog -f=file1.ext -f=file2.ext -f file3.ext"),""},
+                                    {_("prog | [-v]"),_("Tool without option requirement."), _("The tool can be called without any option. But one optional option might occure."),""},
+                                    {_("prog sub -o [-i] [-v]"),_("Tool with sub tool option syntax."), _("The tool has one long mandatory option name without leading dashes."),_("This style is used sometimes for one complex tool for multiple connected tasks. The sub tool sections help in separating the different tool areas.")},
+                                    {_("prog [-v] FILE ..."),_("Tool with default option free style arguments."), _("The @ option argument(s) are mentioned as last in order to not confuse with sub tool options or with option arguments."),""},
+                                    {_("Option syntax"),_("The options are described each individually in more detail."), _("One letter option name and long name forms are show separated by the pipe symbol '|'."),_("E.g. -o|--option")},
+                                    {_("-k|--kelvin=NUMBER        Lambert (NUMBER:0 [≥0 ≤25000 Δ100])"),_("Line for a number argument."), _("The single letter and long option names are noticed and followed by the number symbolic name. After that the short name of the option is printed. After the opening brace is the symbolic name repated, followed by the default value. In square brackets follow boundaries ≥ minimal value, ≤ maximal value and Δ the step or tick."), ""},
+                                    {_("Command line parser"),_("The OyjlArgs command line parser follows the above rules."), "",""},
+                                    {_("prog -hvi=file.ext"),_("Options can be concatenated on the command line."), _("The OyjlArgs parser takes each letter after a single dash as a separated option."),_("The last option can have a argument.")},
+                                    {_("prog -i=file-in.ext -o file-out.ext"),_("Arguments for options can be written with equal sign or with empty space."), "",""},
+                                    {_("prog -i=file1.ext -i file2.ext -i file3.ext"),_("Multiple arguments for one option need each one option in front."), "",""},
+                                    {NULL,NULL,NULL,NULL}};
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
@@ -72,6 +89,8 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,{}, NULL},
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,{}, NULL},
+    {"oiwi", 0,                          "F","man-format",  NULL,       _("Format"),NULL,                      NULL, NULL,
+        oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)F_choices, sizeof(F_choices), malloc )}, oyjlNONE,{}, NULL},
     /* The --render option can be hidden and used only internally. */
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "R", "render",  NULL, NULL,  NULL,         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render}, NULL},
     {"",0,0,0,0,0,0,0, NULL, oyjlOPTIONTYPE_END, {},0,{},NULL}

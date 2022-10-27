@@ -256,7 +256,7 @@
  *  declarations:
     @code
     // default options -h, -v and -V
-    {"oiwi", 0, "h", "help", NULL, _("help"), _("Help"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&help} },
+    {"oiwi", 0, "h", "help",    NULL, _("help"),    _("Help"),    NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&help} },
     {"oiwi", 0, "v", "verbose", NULL, _("verbose"), _("verbose"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose} },
     {"oiwi", 0, "V", "version", NULL, _("version"), _("Version"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version} },
     @endcode
@@ -268,7 +268,7 @@
  *  @subsection args_auto Automatic internal Options
  *  Some options need little declaration and are enriched automatically
  *  during options parsing. Those are:
- *  - *X* for exporting UI
+ *  - *X* for exporting UI, MAN pages and markdown
  *  - *R* for rendering
  *
  *  They are declared without choice list, which is filled automatically:

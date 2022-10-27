@@ -74,6 +74,109 @@ oyjl-args -X export | oyjl-args -i -
 oyjl(1) oyjl-translate(1) oyjl-args-qml(1)
 .br
 https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html
+.SH FORMAT
+.TP
+Übersicht
+.br
+Werkzeuge folgen Regeln.
+.br
+OyjlArgs prüft und verlangt Regeln. Diese Regeln werden in jeder Übersichtszeile ausgedrückt.
+.br
+Ein Werkzeug kann verschiedene Regeln festlegen, welche in einzelnen Übersichtszeilen sitzen.
+.TP
+prog -o
+.br
+Einfaches Werkzeug mit nur einer Option.
+.br
+Die Option besteht aus einem einzelnen Buchstaben und beginnt deshalb mit einem Strich.
+.br
+Das Kommandozeilenwerkzeug wird in den folgenden Beispielen einfach "prog" genannt.
+.TP
+prog --schalter
+.br
+Einfaches Werkzeug mit nur einer Option.
+.br
+Die Option besteht aus mehreren Buchstaben und beginnt mit zwei Strichen.
+.br
+Dies wird ein langer Optionsname genannt. Der gleichen Option kann ein Einbuchstabenname und langer Name zugeordnet sein. Innerhalb der Übersichtszeile wird nur eine Form benannt.
+.TP
+prog -o=ARG --name=eins|zwei|...
+.br
+Einfaches Werkzeug mit zwei Optionen, welche beide Argumente annehmen.
+.br
+Das Argument in Großbuchstaben kann einen Hinweis auf den Inhalt geben, wie DATEI, NUMMER usw. Oder es enthält eine Liste von Auswahlmöglichkeiten, welche durch senkrechten Strich '|' getrennt werden.
+.br
+Die spätere --name Option bezeichnet ein paar Auswahlmöglichkeiten und zeigt mit den unmittelbar folgenden drei Punkten '...', das die Auswahl nicht ausschließlich sind und editiert werden können. OyjlArgs prüft auf Argumente, welche dem Optionsnamen folgen, auch wenn das Istgleichzeichen nicht geschieben wird.
+.TP
+prog -o [-v]
+.br
+Werkzeug mit zwei unterschiedlichen verlangten Optionen.
+.br
+Üblicherweise werden alle Optionen benötigt. Die zweite Option steht in eckigen Klammern und kann benutzt werden. Sie wird optional genannt.
+.TP
+prog -h[=synopsis|...] [--option[=NUMMER]]
+.br
+Werkzeugoptionen, welchen ein Argument nachgestellt sein kann.
+.TP
+prog --schalter=auswahl ... [--schater2=auswahl2 ...]
+.br
+Werkzeugoptionen mit drei Punkten nach einem Leerzeichen ' ...' dürfen mehrfach eingesetzt werden.
+.br
+Kommandozeilenbeispiel: prog -f=datei1.end -f=datei2.end -f datei3.end
+.TP
+prog | [-v]
+.br
+Werkzeug ohne Option.
+.br
+Das Werkzeug kann ohne ein Argument aufgerufen werden. Aber eine Option wäre möglich.
+.TP
+prog modul -o [-i] [-v]
+.br
+Werkzeug mit einem Untermoduloption Muster.
+.br
+Das Werkzeug hat eine lange verpflichtende Option ohne führende Striche.
+.br
+Dieser Stil wird manchmal für komplexe Werkzeuge benutz, um verschiedene Funktionsbereiche zu beschreiben.
+.TP
+prog [-v] DATEI ...
+.br
+Werkzeug mit freien Argumenten zu einer namenlosen Option.
+.br
+Das namenlosse @ Optionsargument wird als letzes genannt, um es nicht mit Untermoduloptionen oder mit Optionsargumenten zu verwechseln.
+.TP
+Gramatik für Optionen
+.br
+Optionen werden einzeln detailierter beschrieben.
+.br
+Optionsnamen mit einem Buchstaben und lange Namen werden beide dargestellt und sind durch einen senkrechten Strich '|' getrennt.
+.br
+Z.B. -o|--option
+.TP
+-k|--kelvin=NUMMER        Lambert (NUMMER:0 [≥0 ≤25000 Δ100])
+.br
+Zeile für ein Nummernargument.
+.br
+Der Einzelbuchstabe und der Langname werden gefolgt von dem symbolischen Nummernnamen. Danach wird eine kurze Bezeichnung wird gedruckt. Auf eine Klammer folgt nochmal der symbolische Nummername mit dem vorgestellten Wert. In quadratischen Klammern folgen ≥ Mindestwert, ≤ Maximalwert und Δ Schrittweite.
+.TP
+Commandozeileninterpret
+.br
+Der OyjlArgs Kommandozeileninterpret folgt den obigen Regeln.
+.TP
+prog -hvi=datei.end
+.br
+Optionen können auf der Kommandozeile zusammengefügt werden.
+.br
+OyjlArgs interpretiert nach einem einzelnen Minuszeichen jeden Buchstaben als einzelne Option.
+.br
+Die letzte Option darf ein Argument erhalten.
+.TP
+prog -i=datei-rein.end -o datei-raus.end
+.br
+Argumente für Optionen können mit einem Gleichheitszeichen oder nach einem Leerzeichen angehangen werden.
+.TP
+prog -f=datei1.end -f datei2.end -f datei3.end
+.br
+Mehrfachargumente für eine Option benötigen jede den Optionsnamen davor.
 .SH AUTOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH KOPIERRECHT

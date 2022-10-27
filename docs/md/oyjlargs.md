@@ -1,6 +1,6 @@
 # oyjl\-args v1.0.0 {#oyjlargs}
 <a name="toc"></a>
-[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [EXAMPLES](#examples) [SEE ALSO](#seealso) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
+[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [EXAMPLES](#examples) [SEE ALSO](#seealso) [FORMAT](#format) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
 <strong>"oyjl-args"</strong> *1* <em>"June 26, 2019"</em> "User Commands"
 
@@ -77,6 +77,79 @@ Tool to convert UI JSON description from *-X export* into source code.
 &nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl-args-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
 
 &nbsp;&nbsp;<a href="https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html">https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html</a>
+
+<h2>FORMAT <a href="#toc" name="format">&uarr;</a></h2>
+
+#### Synopsis
+&nbsp;&nbsp;Tools follows syntax rules.
+  <br />
+&nbsp;&nbsp;OyjlArgs checks and enforces rules. These rules are expresses in each synopsis line.
+  <br />
+&nbsp;&nbsp;A tool can provide different modules with each using different rules, expressed in different synopsis lines.
+#### prog -o
+&nbsp;&nbsp;Simple tool with only one option.
+  <br />
+&nbsp;&nbsp;The option consists of one single letter and thus starts with a single dash.
+  <br />
+&nbsp;&nbsp;The command line tool is in the following examples called "prog" for simplicity.
+#### prog --option
+&nbsp;&nbsp;Simple tool with only one option.
+  <br />
+&nbsp;&nbsp;The option consists of more than one letter starting with two dashs.
+  <br />
+&nbsp;&nbsp;This is called a long option name. The same option can be triggered by the single letter name or the long option name. Inside the Synopsis line only one form is noticed.
+#### prog -o=ARG --name=one|two|...
+&nbsp;&nbsp;Simple tool with two options, which both accept arguments.
+  <br />
+&nbsp;&nbsp;The argument can be representet by a big letter content hint, like FILE, NUMBER etc. Or it is a collection of pipe separated choices.
+  <br />
+&nbsp;&nbsp;The later --name option names a few choices and shows with the immediately following three dots, that the choices are not exclusive and might be edited. OyjlArgs checks for args following the option name even without the equal sign '='.
+#### prog -o [-v]
+&nbsp;&nbsp;Tool with two differently required options.
+  <br />
+&nbsp;&nbsp;By default all options are required like the -o one and is mandatory. The second option is enclosed in squared brackets is not required but might be used and thus is optional. 
+#### prog -h[=synopsis|...] [--option[=NUMBER]]
+&nbsp;&nbsp;Tool options, which might be follwed by an argument.
+#### prog -f=FILE ... [-i=FILE ...]
+&nbsp;&nbsp;Tool options with three dots after empty space ' ...' can occure multiple times.
+  <br />
+&nbsp;&nbsp;Command line example: prog -f=file1.ext -f=file2.ext -f file3.ext
+#### prog | [-v]
+&nbsp;&nbsp;Tool without option requirement.
+  <br />
+&nbsp;&nbsp;The tool can be called without any option. But one optional option might occure.
+#### prog sub -o [-i] [-v]
+&nbsp;&nbsp;Tool with sub tool option syntax.
+  <br />
+&nbsp;&nbsp;The tool has one long mandatory option name without leading dashes.
+  <br />
+&nbsp;&nbsp;This style is used sometimes for one complex tool for multiple connected tasks. The sub tool sections help in separating the different tool areas.
+#### prog [-v] FILE ...
+&nbsp;&nbsp;Tool with default option free style arguments.
+  <br />
+&nbsp;&nbsp;The @ option argument(s) are mentioned as last in order to not confuse with sub tool options or with option arguments.
+#### Option syntax
+&nbsp;&nbsp;The options are described each individually in more detail.
+  <br />
+&nbsp;&nbsp;One letter option name and long name forms are show separated by the pipe symbol '|'.
+  <br />
+&nbsp;&nbsp;E.g. -o|--option
+#### -k|--kelvin=NUMBER        Lambert (NUMBER:0 [≥0 ≤25000 Δ100])
+&nbsp;&nbsp;Line for a number argument.
+  <br />
+&nbsp;&nbsp;The single letter and long option names are noticed and followed by the number symbolic name. After that the short name of the option is printed. After the opening brace is the symbolic name repated, followed by the default value. In square brackets follow boundaries ≥ minimal value, ≤ maximal value and Δ the step or tick.
+#### Command line parser
+&nbsp;&nbsp;The OyjlArgs command line parser follows the above rules.
+#### prog -hvi=file.ext
+&nbsp;&nbsp;Options can be concatenated on the command line.
+  <br />
+&nbsp;&nbsp;The OyjlArgs parser takes each letter after a single dash as a separated option.
+  <br />
+&nbsp;&nbsp;The last option can have a argument.
+#### prog -i=file-in.ext -o file-out.ext
+&nbsp;&nbsp;Arguments for options can be written with equal sign or with empty space.
+#### prog -i=file1.ext -i file2.ext -i file3.ext
+&nbsp;&nbsp;Multiple arguments for one option need each one option in front.
 
 <h2>AUTHOR <a href="#toc" name="author">&uarr;</a></h2>
 
