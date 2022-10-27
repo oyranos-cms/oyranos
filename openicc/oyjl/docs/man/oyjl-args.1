@@ -74,6 +74,109 @@ oyjl-args -X export | oyjl-args -i -
 oyjl(1) oyjl-translate(1) oyjl-args-qml(1)
 .br
 https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html
+.SH FORMAT
+.TP
+Synopsis
+.br
+Tools follows syntax rules.
+.br
+OyjlArgs checks and enforces rules. These rules are expresses in each synopsis line.
+.br
+A tool can provide different modules with each using different rules, expressed in different synopsis lines.
+.TP
+prog -o
+.br
+Simple tool with only one option.
+.br
+The option consists of one single letter and thus starts with a single dash.
+.br
+The command line tool is in the following examples called "prog" for simplicity.
+.TP
+prog --option
+.br
+Simple tool with only one option.
+.br
+The option consists of more than one letter starting with two dashs.
+.br
+This is called a long option name. The same option can be triggered by the single letter name or the long option name. Inside the Synopsis line only one form is noticed.
+.TP
+prog -o=ARG --name=one|two|...
+.br
+Simple tool with two options, which both accept arguments.
+.br
+The argument can be representet by a big letter content hint, like FILE, NUMBER etc. Or it is a collection of pipe separated choices.
+.br
+The later --name option names a few choices and shows with the immediately following three dots, that the choices are not exclusive and might be edited. OyjlArgs checks for args following the option name even without the equal sign '='.
+.TP
+prog -o [-v]
+.br
+Tool with two differently required options.
+.br
+By default all options are required like the -o one and is mandatory. The second option is enclosed in squared brackets is not required but might be used and thus is optional. 
+.TP
+prog -h[=synopsis|...] [--option[=NUMBER]]
+.br
+Tool options, which might be follwed by an argument.
+.TP
+prog -f=FILE ... [-i=FILE ...]
+.br
+Tool options with three dots after empty space ' ...' can occure multiple times.
+.br
+Command line example: prog -f=file1.ext -f=file2.ext -f file3.ext
+.TP
+prog | [-v]
+.br
+Tool without option requirement.
+.br
+The tool can be called without any option. But one optional option might occure.
+.TP
+prog sub -o [-i] [-v]
+.br
+Tool with sub tool option syntax.
+.br
+The tool has one long mandatory option name without leading dashes.
+.br
+This style is used sometimes for one complex tool for multiple connected tasks. The sub tool sections help in separating the different tool areas.
+.TP
+prog [-v] FILE ...
+.br
+Tool with default option free style arguments.
+.br
+The @ option argument(s) are mentioned as last in order to not confuse with sub tool options or with option arguments.
+.TP
+Option syntax
+.br
+The options are described each individually in more detail.
+.br
+One letter option name and long name forms are show separated by the pipe symbol '|'.
+.br
+E.g. -o|--option
+.TP
+-k|--kelvin=NUMBER        Lambert (NUMBER:0 [≥0 ≤25000 Δ100])
+.br
+Line for a number argument.
+.br
+The single letter and long option names are noticed and followed by the number symbolic name. After that the short name of the option is printed. After the opening brace is the symbolic name repated, followed by the default value. In square brackets follow boundaries ≥ minimal value, ≤ maximal value and Δ the step or tick.
+.TP
+Command line parser
+.br
+The OyjlArgs command line parser follows the above rules.
+.TP
+prog -hvi=file.ext
+.br
+Options can be concatenated on the command line.
+.br
+The OyjlArgs parser takes each letter after a single dash as a separated option.
+.br
+The last option can have a argument.
+.TP
+prog -i=file-in.ext -o file-out.ext
+.br
+Arguments for options can be written with equal sign or with empty space.
+.TP
+prog -i=file1.ext -i file2.ext -i file3.ext
+.br
+Multiple arguments for one option need each one option in front.
 .SH AUTHOR
 Kai-Uwe Behrmann http://www.oyranos.org
 .SH COPYRIGHT

@@ -1,6 +1,6 @@
 # oyjl\-args v1.0.0 {#oyjlargsde}
 <a name="toc"></a>
-[NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [BEISPIELE](#examples) [SIEHE AUCH](#seealso) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
+[NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [BEISPIELE](#examples) [SIEHE AUCH](#seealso) [FORMAT](#format) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
 
 <strong>"oyjl-args"</strong> *1* <em>"26. Juni 2019"</em> "User Commands"
 
@@ -77,6 +77,79 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 &nbsp;&nbsp;[oyjl](oyjl.html)<a href="oyjl.md">(1)</a>&nbsp;&nbsp;[oyjl-translate](oyjltranslate.html)<a href="oyjltranslate.md">(1)</a>&nbsp;&nbsp;[oyjl-args-qml](oyjlargsqml.html)<a href="oyjlargsqml.md">(1)</a>
 
 &nbsp;&nbsp;<a href="https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html">https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html</a>
+
+<h2>FORMAT <a href="#toc" name="format">&uarr;</a></h2>
+
+#### Übersicht
+&nbsp;&nbsp;Werkzeuge folgen Regeln.
+  <br />
+&nbsp;&nbsp;OyjlArgs prüft und verlangt Regeln. Diese Regeln werden in jeder Übersichtszeile ausgedrückt.
+  <br />
+&nbsp;&nbsp;Ein Werkzeug kann verschiedene Regeln festlegen, welche in einzelnen Übersichtszeilen sitzen.
+#### prog -o
+&nbsp;&nbsp;Einfaches Werkzeug mit nur einer Option.
+  <br />
+&nbsp;&nbsp;Die Option besteht aus einem einzelnen Buchstaben und beginnt deshalb mit einem Strich.
+  <br />
+&nbsp;&nbsp;Das Kommandozeilenwerkzeug wird in den folgenden Beispielen einfach "prog" genannt.
+#### prog --schalter
+&nbsp;&nbsp;Einfaches Werkzeug mit nur einer Option.
+  <br />
+&nbsp;&nbsp;Die Option besteht aus mehreren Buchstaben und beginnt mit zwei Strichen.
+  <br />
+&nbsp;&nbsp;Dies wird ein langer Optionsname genannt. Der gleichen Option kann ein Einbuchstabenname und langer Name zugeordnet sein. Innerhalb der Übersichtszeile wird nur eine Form benannt.
+#### prog -o=ARG --name=eins|zwei|...
+&nbsp;&nbsp;Einfaches Werkzeug mit zwei Optionen, welche beide Argumente annehmen.
+  <br />
+&nbsp;&nbsp;Das Argument in Großbuchstaben kann einen Hinweis auf den Inhalt geben, wie DATEI, NUMMER usw. Oder es enthält eine Liste von Auswahlmöglichkeiten, welche durch senkrechten Strich '|' getrennt werden.
+  <br />
+&nbsp;&nbsp;Die spätere --name Option bezeichnet ein paar Auswahlmöglichkeiten und zeigt mit den unmittelbar folgenden drei Punkten '...', das die Auswahl nicht ausschließlich sind und editiert werden können. OyjlArgs prüft auf Argumente, welche dem Optionsnamen folgen, auch wenn das Istgleichzeichen nicht geschieben wird.
+#### prog -o [-v]
+&nbsp;&nbsp;Werkzeug mit zwei unterschiedlichen verlangten Optionen.
+  <br />
+&nbsp;&nbsp;Üblicherweise werden alle Optionen benötigt. Die zweite Option steht in eckigen Klammern und kann benutzt werden. Sie wird optional genannt.
+#### prog -h[=synopsis|...] [--option[=NUMMER]]
+&nbsp;&nbsp;Werkzeugoptionen, welchen ein Argument nachgestellt sein kann.
+#### prog --schalter=auswahl ... [--schater2=auswahl2 ...]
+&nbsp;&nbsp;Werkzeugoptionen mit drei Punkten nach einem Leerzeichen ' ...' dürfen mehrfach eingesetzt werden.
+  <br />
+&nbsp;&nbsp;Kommandozeilenbeispiel: prog -f=datei1.end -f=datei2.end -f datei3.end
+#### prog | [-v]
+&nbsp;&nbsp;Werkzeug ohne Option.
+  <br />
+&nbsp;&nbsp;Das Werkzeug kann ohne ein Argument aufgerufen werden. Aber eine Option wäre möglich.
+#### prog modul -o [-i] [-v]
+&nbsp;&nbsp;Werkzeug mit einem Untermoduloption Muster.
+  <br />
+&nbsp;&nbsp;Das Werkzeug hat eine lange verpflichtende Option ohne führende Striche.
+  <br />
+&nbsp;&nbsp;Dieser Stil wird manchmal für komplexe Werkzeuge benutz, um verschiedene Funktionsbereiche zu beschreiben.
+#### prog [-v] DATEI ...
+&nbsp;&nbsp;Werkzeug mit freien Argumenten zu einer namenlosen Option.
+  <br />
+&nbsp;&nbsp;Das namenlosse @ Optionsargument wird als letzes genannt, um es nicht mit Untermoduloptionen oder mit Optionsargumenten zu verwechseln.
+#### Gramatik für Optionen
+&nbsp;&nbsp;Optionen werden einzeln detailierter beschrieben.
+  <br />
+&nbsp;&nbsp;Optionsnamen mit einem Buchstaben und lange Namen werden beide dargestellt und sind durch einen senkrechten Strich '|' getrennt.
+  <br />
+&nbsp;&nbsp;Z.B. -o|--option
+#### -k|--kelvin=NUMMER        Lambert (NUMMER:0 [≥0 ≤25000 Δ100])
+&nbsp;&nbsp;Zeile für ein Nummernargument.
+  <br />
+&nbsp;&nbsp;Der Einzelbuchstabe und der Langname werden gefolgt von dem symbolischen Nummernnamen. Danach wird eine kurze Bezeichnung wird gedruckt. Auf eine Klammer folgt nochmal der symbolische Nummername mit dem vorgestellten Wert. In quadratischen Klammern folgen ≥ Mindestwert, ≤ Maximalwert und Δ Schrittweite.
+#### Commandozeileninterpret
+&nbsp;&nbsp;Der OyjlArgs Kommandozeileninterpret folgt den obigen Regeln.
+#### prog -hvi=datei.end
+&nbsp;&nbsp;Optionen können auf der Kommandozeile zusammengefügt werden.
+  <br />
+&nbsp;&nbsp;OyjlArgs interpretiert nach einem einzelnen Minuszeichen jeden Buchstaben als einzelne Option.
+  <br />
+&nbsp;&nbsp;Die letzte Option darf ein Argument erhalten.
+#### prog -i=datei-rein.end -o datei-raus.end
+&nbsp;&nbsp;Argumente für Optionen können mit einem Gleichheitszeichen oder nach einem Leerzeichen angehangen werden.
+#### prog -f=datei1.end -f datei2.end -f datei3.end
+&nbsp;&nbsp;Mehrfachargumente für eine Option benötigen jede den Optionsnamen davor.
 
 <h2>AUTOR <a href="#toc" name="author">&uarr;</a></h2>
 
