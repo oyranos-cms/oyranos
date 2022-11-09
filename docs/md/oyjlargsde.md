@@ -83,9 +83,9 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 #### Übersicht
 &nbsp;&nbsp;Werkzeuge folgen Regeln.
   <br />
-&nbsp;&nbsp;OyjlArgs prüft und verlangt Regeln. Diese Regeln werden in jeder Übersichtszeile ausgedrückt.
+&nbsp;&nbsp;OyjlArgs verlangt, prüft und erzwingt Regeln. Diese Regeln werden in jeder Übersichtszeile ausgedrückt.
   <br />
-&nbsp;&nbsp;Ein Werkzeug kann verschiedene Regeln festlegen, welche in einzelnen Übersichtszeilen sitzen.
+&nbsp;&nbsp;Ein Werkzeug kann verschiedene Regelgruppen festlegen, welche in einzelnen Übersichtszeilen sitzen.
 #### prog -o
 &nbsp;&nbsp;Einfaches Werkzeug mit nur einer Option.
   <br />
@@ -138,7 +138,7 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 &nbsp;&nbsp;Zeile für ein Nummernargument.
   <br />
 &nbsp;&nbsp;Der Einzelbuchstabe und der Langname werden gefolgt von dem symbolischen Nummernnamen. Danach wird eine kurze Bezeichnung wird gedruckt. Auf eine Klammer folgt nochmal der symbolische Nummername mit dem vorgestellten Wert. In quadratischen Klammern folgen ≥ Mindestwert, ≤ Maximalwert und Δ Schrittweite.
-#### Commandozeileninterpret
+#### Kommandozeileninterpret
 &nbsp;&nbsp;Der OyjlArgs Kommandozeileninterpret folgt den obigen Regeln.
 #### prog -hvi=datei.end
 &nbsp;&nbsp;Optionen können auf der Kommandozeile zusammengefügt werden.

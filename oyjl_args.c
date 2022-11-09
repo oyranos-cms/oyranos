@@ -4275,214 +4275,6 @@ char * oyjlOptionChoice_Print_       ( oyjlOptionChoice_s* c,
 }
 
 
-/** @brief    Print help text to stderr
- *  @memberof oyjlOptions_s
- *
- *  @param   opts                      options to print
- *  @param   ui                        more info for e.g. from the documentation section for the description block; optional
- *  @param   verbose                   gives debug output
- *                                     - -1 : print help only for detected group
- *                                     - -2 : print only Synopsis 
- *                                     - -3 : print help only for detected group to stderr
- *  @param   out_file                  recommended output file
- *  @param   motto_format              prints a customised intoduction line
- *  @return                            help string for display on command line
- *
- *  @version Oyjl: 1.0.0
- *  @date    2022/07/02
- *  @since   2018/08/14 (OpenICC: 0.1.1)
- */
-char * oyjlOptions_PrintHelp         ( oyjlOptions_s     * opts,
-                                       oyjlUi_s          * ui,
-                                       int                 verbose,
-                                       FILE             ** out_file,
-                                       const char        * motto_format,
-                                                           ... )
-{
-  int i,ng;
-  char * text = NULL;
-  oyjlUiHeaderSection_s * section = NULL;
-  oyjlOptsPrivate_s * results = ui->opts->private_data;
-
-  if(oyjl_help_zout == stdout || oyjl_help_zout == stderr || oyjl_help_zout == NULL)
-    oyjl_help_zout = verbose >= -2 ? stdout : stderr;
-  if(out_file)
-    *out_file = oyjl_help_zout;
-
-  if(verbose >= 0)
-    oyjlStringPush( &text, "\n", 0,0 );
-  if(verbose > 0)
-  {
-    for(i = 0; i < opts->argc; ++i)
-      oyjlStringAdd( &text, 0,0, "\'%s\' ", oyjlTermColor( oyjlITALIC, opts->argv[i] ));
-    oyjlStringAdd( &text, 0,0, "\n");
-  }
-
-  if(!((verbose == -1 || verbose == -3) && results && results->group > -1) && verbose >= 0)
-  {
-    if(!motto_format)
-    {
-      oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
-                                                                 "version" );
-      const char * prog = opts->argv[0];
-      if(verbose == 0)
-        prog = strrchr(prog,'/') ? strrchr(prog,'/') + 1 : prog;
-      oyjlStringAdd( &text, 0,0, "%s v%s - %s", oyjlTermColor( oyjlBOLD, prog ),
-                              version && version->name ? version->name : "",
-                              ui->description ? ui->description : ui->name ? ui->name : "" );
-      if(version && version->name && version->description && *oyjl_debug)
-        oyjlStringAdd( &text, 0,0, "\n  %s", version->description );
-    }
-    else
-    {
-      char * t = NULL;
-      OYJL_CREATE_VA_STRING(motto_format, t, malloc, return text)
-      oyjlStringPush( &text, t, 0,0 );
-      free(t);
-    }
-    oyjlStringPush( &text, "\n", 0,0 );
-  }
-
-  ng = oyjlOptions_CountGroups(opts);
-  if(!ng) return text;
-
-  if( ui && (section = oyjlUi_GetHeaderSection(ui, "documentation")) != NULL &&
-      section->description &&
-      !((verbose == -1 || verbose == -3) && results && results->group > -1) &&
-      verbose >= 0
-    )
-    oyjlStringAdd( &text, 0,0, "\n%s:\n" OYJL_HELP_SUBSECTION "%s\n", oyjlTermColor(oyjlBOLD,_("Description")), section->description );
-
-  if(!(verbose == -1 || verbose == -3))
-  {
-    oyjlStringAdd( &text, 0,0, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Synopsis")) );
-    for(i = 0 ; i < ng; ++i)
-    {
-      oyjlOptionGroup_s * g = &opts->groups[i];
-      char * t = oyjlOptions_PrintHelpSynopsis_( opts, g, oyjlOPTIONSTYLE_ONELETTER );
-      oyjlStringAdd( &text, 0,0, OYJL_HELP_SUBSECTION "%s\n", t );
-      free(t);
-    }
-  }
-  if(verbose == -2)
-  {
-    oyjlStringPush( &text, "\n", 0,0 );
-    return text;
-  }
-
-  oyjlStringAdd( &text, 0,0, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Usage"))  );
-  for(i = ((verbose == -1 || verbose == -3) && results && results->group > -1) ? results->group : 0 ; i < ng; ++i)
-  {
-    oyjlOptionGroup_s * g = &opts->groups[i];
-    int d = 0,
-        j;
-    char ** d_list = oyjlStringSplit2( g->detail, "|,", 0, &d, NULL, malloc );
-    oyjlStringAdd( &text, 0,0, OYJL_HELP_SUBSECTION "%s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
-    if(g->mandatory && g->mandatory[0])
-    {
-      char * t = oyjlOptions_PrintHelpSynopsis_( opts, g, oyjlOPTIONSTYLE_ONELETTER );
-      oyjlStringAdd( &text, 0,0, OYJL_HELP_COMMAND "%s\n", t );
-      free(t);
-    }
-    if(g->help)
-    {
-      oyjlStringAdd( &text, 0,0, OYJL_HELP_COMMAND "%s\n", g->help );
-    }
-    oyjlStringPush( &text, "\n", 0,0 );
-    for(j = 0; j < d; ++j)
-    {
-      const char * option = d_list[j];
-      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
-      int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
-      int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING;
-      if(mandatory_index == 0)
-        style |= g->flags;
-      if(!o)
-      {
-        oyjlStringAdd( &text, 0,0, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", &g->detail[j]);
-        if(!getenv("OYJL_NO_EXIT")) exit(1);
-      }
-      switch(o->value_type)
-      {
-        case oyjlOPTIONTYPE_CHOICE:
-          {
-            int n = 0,l;
-            if(o->value_name)
-            {
-              char * t = oyjlOption_PrintArg_(o, style);
-              oyjlStringPush( &text, OYJL_HELP_OPTION, 0,0 );
-              oyjlStringAdd( &text, 0,0, "%s", t );
-              oyjlStringAdd( &text, 0,0, "\t%s\n", o->description ? o->description:"" );
-              if(o->help)
-                oyjlStringAdd( &text, 0,0,OYJL_HELP_HELP "%s\n", o->help );
-              free(t);
-            }
-            while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
-              ++n;
-            for(l = 0; l < n; ++l)
-            { char * t = oyjlOptionChoice_Print_( &o->values.choices.list[l], o, 0 ); oyjlStringPush( &text, t, 0,0 ); free(t); }
-          }
-          break;
-        case oyjlOPTIONTYPE_FUNCTION:
-          {
-            int n = 0,l;
-            oyjlOptionChoice_s * list;
-            if(o->value_name)
-            {
-              char * t = oyjlOption_PrintArg_(o, style);
-              oyjlStringPush( &text, OYJL_HELP_OPTION, 0,0 );
-              oyjlStringAdd( &text, 0,0, "%s", t );
-              oyjlStringAdd( &text, 0,0, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
-              free(t);
-            }
-            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
-              break;
-            list = oyjlOption_GetChoices_(o, NULL, opts );
-            if(list)
-              while(list[n].nick && list[n].nick[0] != '\000')
-                ++n;
-            for(l = 0; l < n; ++l)
-            { char * t = oyjlOptionChoice_Print_( &list[l], o, 0 ); oyjlStringPush( &text, t, 0,0 ); free(t); }
-            /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
-          }
-          break;
-        case oyjlOPTIONTYPE_DOUBLE:
-          {
-            char * t = oyjlOption_PrintArg_(o, style);
-            
-            oyjlStringPush( &text, OYJL_HELP_OPTION, 0,0 );
-            oyjlStringAdd( &text, 0,0, "%s", t );
-            { char * desc = oyjlOption_PrintArg_Double_( o, oyjlDESCRIPTION | oyjlHELP ); oyjlStringAdd( &text, 0,0, "\t%s\n", desc ); free(desc); }
-            free(t);
-          }
-          break;
-        case oyjlOPTIONTYPE_NONE:
-          {
-            char * t = oyjlOption_PrintArg_(o, style);
-            oyjlStringPush( &text, OYJL_HELP_OPTION, 0,0 );
-            oyjlStringAdd( &text, 0,0, "%s", t?t:"" );
-            oyjlStringAdd( &text, 0,0, "\t%s\n", o->description ? o->description:"" );
-            if(o->help)
-              oyjlStringAdd( &text, 0,0,OYJL_HELP_HELP "%s\n", o->help );
-            free(t);
-          }
-        break;
-        case oyjlOPTIONTYPE_START: break;
-        case oyjlOPTIONTYPE_END: break;
-      }
-    }
-    oyjlStringListRelease( &d_list, d, free );
-    if(d) oyjlStringPush( &text, "\n", 0,0 );
-    if((verbose == -1 || verbose == -3) && results && results->group > -1) break;
-  }
-  oyjlStringPush( &text, "\n", 0,0 );
-  if(oyjl_help_zout != stdout && oyjl_help_zout != stderr && oyjl_help_zout != NULL && !out_file)
-  {
-    fputs( text, oyjl_help_zout );
-    free(text); text = NULL;
-  }
-  return text;
-}
 #endif /* OYJL_ARGS_BASE */
 
 /** @brief    Allocate a new options structure
@@ -5650,20 +5442,20 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
         char * up = oyjlStringToUpper_( &opt_name[4] );
         oyjlStringReplace( &up, "_", " ", malloc, free );
         const char * section = up;
-        if(strcmp(section,"EXAMPLES") == 0)
-          section = _("EXAMPLES");
-        else if(strcmp(section,"EXIT-STATE") == 0)
-          section = _("EXIT-STATE");
-        else if(strcmp(section,"ENVIRONMENT VARIABLES") == 0)
-          section = _("ENVIRONMENT VARIABLES");
-        else if(strcmp(section,"HISTORY") == 0)
-          section = _("HISTORY");
-        else if(strcmp(section,"FILES") == 0)
-          section = _("FILES");
-        else if(strcmp(section,"SEE AS WELL") == 0)
-          section = _("SEE AS WELL");
-        else if(strcmp(section,"SEE ALSO") == 0)
-          section = _("SEE ALSO");
+        if(strcasecmp(section,"EXAMPLES") == 0)
+          section = (flags & oyjlOPTIONSTYLE_MARKDOWN || flags & oyjlOPTIONSTYLE_MAN)?_("EXAMPLES"):_("Examples");
+        else if(strcasecmp(section,"EXIT-STATE") == 0)
+          section = (flags & oyjlOPTIONSTYLE_MARKDOWN || flags & oyjlOPTIONSTYLE_MAN)?_("EXIT-STATE"):_("Exit State");
+        else if(strcasecmp(section,"ENVIRONMENT VARIABLES") == 0)
+          section = (flags & oyjlOPTIONSTYLE_MARKDOWN || flags & oyjlOPTIONSTYLE_MAN)?_("ENVIRONMENT VARIABLES"):_("Environment Variables");
+        else if(strcasecmp(section,"HISTORY") == 0)
+          section = (flags & oyjlOPTIONSTYLE_MARKDOWN || flags & oyjlOPTIONSTYLE_MAN)?_("HISTORY"):_("History");
+        else if(strcasecmp(section,"FILES") == 0)
+          section = (flags & oyjlOPTIONSTYLE_MARKDOWN || flags & oyjlOPTIONSTYLE_MAN)?_("FILES"):_("Files");
+        else if(strcasecmp(section,"SEE AS WELL") == 0)
+          section = (flags & oyjlOPTIONSTYLE_MARKDOWN || flags & oyjlOPTIONSTYLE_MAN)?_("SEE AS WELL"):_("See As Well");
+        else if(strcasecmp(section,"SEE ALSO") == 0)
+          section = (flags & oyjlOPTIONSTYLE_MARKDOWN || flags & oyjlOPTIONSTYLE_MAN)?_("SEE ALSO"):_("See Also");
         if(flags & oyjlOPTIONSTYLE_MARKDOWN)
         {
           char * low = oyjlStringToLower_( &opt_name[4] );
@@ -5671,8 +5463,10 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
           ADD_SECTION( _(section), low, "", "" )
           free(low);
         }
-        else
+        else if(flags & oyjlOPTIONSTYLE_MAN)
           oyjlStringAdd( &text, malloc, free, ".SH %s\n", _(section) );
+        else
+          oyjlStringAdd( &text, malloc, free, "\n%s:", oyjlTermColor( oyjlBOLD,_(o->name&&o->name[0]?o->name:section) ) );
         for(l = 0; l < n; ++l)
         {
           if(flags & oyjlOPTIONSTYLE_MARKDOWN)
@@ -5724,7 +5518,7 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
             if(list[l].help && list[l].help[0])
             oyjlStringAdd( &text, malloc, free, "  <br />\n&nbsp;&nbsp;%s\n", list[l].help );
           }
-          else
+          else if(flags & oyjlOPTIONSTYLE_MAN)
           {
             oyjlStringPush( &text, ".TP\n", malloc, free );
             if(list[l].nick && list[l].nick[0])
@@ -5735,6 +5529,18 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
             oyjlStringAdd( &text, malloc, free, ".br\n%s\n", list[l].description );
             if(list[l].help && list[l].help[0])
             oyjlStringAdd( &text, malloc, free, ".br\n%s\n", list[l].help );
+          }
+          else
+          {
+            oyjlStringPush( &text, "\n", malloc, free );
+            if(list[l].nick && list[l].nick[0])
+            oyjlStringAdd( &text, malloc, free, "  %s\n", list[l].nick );
+            if(list[l].name && list[l].name[0])
+            oyjlStringAdd( &text, malloc, free, "    %s\n", list[l].name );
+            if(list[l].description && list[l].description[0])
+            oyjlStringAdd( &text, malloc, free, "    %s\n", list[l].description );
+            if(list[l].help && list[l].help[0])
+            oyjlStringAdd( &text, malloc, free, "    %s\n", list[l].help );
           }
         }
         free(up);
@@ -5989,6 +5795,253 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
   else if(bugs_url)
     oyjlStringAdd( &text, malloc, free, ".SH %s\n%s\n", _("BUGS"), bugs_url );
 
+  return text;
+}
+
+/** @brief    Print help text to stderr
+ *  @memberof oyjlOptions_s
+ *
+ *  @param   opts                      options to print
+ *  @param   ui                        more info for e.g. from the documentation section for the description block; optional
+ *  @param   verbose                   gives debug output
+ *                                     - -1 : print help only for detected group
+ *                                     - -2 : print only Synopsis 
+ *                                     - -3 : print help only for detected group to stderr
+ *  @param   out_file                  recommended output file
+ *  @param   motto_format              prints a customised intoduction line
+ *  @return                            help string for display on command line
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2022/07/02
+ *  @since   2018/08/14 (OpenICC: 0.1.1)
+ */
+char * oyjlOptions_PrintHelp         ( oyjlOptions_s     * opts,
+                                       oyjlUi_s          * ui,
+                                       int                 verbose,
+                                       FILE             ** out_file,
+                                       const char        * motto_format,
+                                                           ... )
+{
+  int i,ng;
+  char * text = NULL;
+  oyjlUiHeaderSection_s * section = NULL;
+  oyjlOptsPrivate_s * results = ui->opts->private_data;
+
+  if(oyjl_help_zout == stdout || oyjl_help_zout == stderr || oyjl_help_zout == NULL)
+    oyjl_help_zout = verbose >= -2 ? stdout : stderr;
+  if(out_file)
+    *out_file = oyjl_help_zout;
+
+  if(verbose >= 0)
+    oyjlStringPush( &text, "\n", 0,0 );
+  if(verbose > 0)
+  {
+    for(i = 0; i < opts->argc; ++i)
+      oyjlStringAdd( &text, 0,0, "\'%s\' ", oyjlTermColor( oyjlITALIC, opts->argv[i] ));
+    oyjlStringAdd( &text, 0,0, "\n");
+  }
+
+  if(!((verbose == -1 || verbose == -3) && results && results->group > -1) && verbose >= 0)
+  {
+    if(!motto_format)
+    {
+      oyjlUiHeaderSection_s * version = oyjlUi_GetHeaderSection( ui,
+                                                                 "version" );
+      const char * prog = opts->argv[0];
+      if(verbose == 0)
+        prog = strrchr(prog,'/') ? strrchr(prog,'/') + 1 : prog;
+      oyjlStringAdd( &text, 0,0, "%s v%s - %s", oyjlTermColor( oyjlBOLD, prog ),
+                              version && version->name ? version->name : "",
+                              ui->description ? ui->description : ui->name ? ui->name : "" );
+      if(version && version->name && version->description && *oyjl_debug)
+        oyjlStringAdd( &text, 0,0, "\n  %s", version->description );
+    }
+    else
+    {
+      char * t = NULL;
+      OYJL_CREATE_VA_STRING(motto_format, t, malloc, return text)
+      oyjlStringPush( &text, t, 0,0 );
+      free(t);
+    }
+    oyjlStringPush( &text, "\n", 0,0 );
+  }
+
+  ng = oyjlOptions_CountGroups(opts);
+  if(!ng) return text;
+
+  if( ui && (section = oyjlUi_GetHeaderSection(ui, "documentation")) != NULL &&
+      section->description &&
+      !((verbose == -1 || verbose == -3) && results && results->group > -1) &&
+      verbose >= 0
+    )
+    oyjlStringAdd( &text, 0,0, "\n%s:\n" OYJL_HELP_SUBSECTION "%s\n", oyjlTermColor(oyjlBOLD,_("Description")), section->description );
+
+  if(!(verbose == -1 || verbose == -3))
+  {
+    oyjlStringAdd( &text, 0,0, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Synopsis")) );
+    for(i = 0 ; i < ng; ++i)
+    {
+      oyjlOptionGroup_s * g = &opts->groups[i];
+      char * t = oyjlOptions_PrintHelpSynopsis_( opts, g, oyjlOPTIONSTYLE_ONELETTER );
+      oyjlStringAdd( &text, 0,0, OYJL_HELP_SUBSECTION "%s\n", t );
+      free(t);
+    }
+  }
+  if(verbose == -2)
+  {
+    oyjlStringPush( &text, "\n", 0,0 );
+    return text;
+  }
+
+  oyjlStringAdd( &text, 0,0, "\n%s:\n", oyjlTermColor(oyjlBOLD,_("Usage"))  );
+  for(i = ((verbose == -1 || verbose == -3) && results && results->group > -1) ? results->group : 0 ; i < ng; ++i)
+  {
+    oyjlOptionGroup_s * g = &opts->groups[i];
+    int d = 0,
+        j;
+    char ** d_list = oyjlStringSplit2( g->detail, "|,", 0, &d, NULL, malloc );
+    oyjlStringAdd( &text, 0,0, OYJL_HELP_SUBSECTION "%s\n", g->description?oyjlTermColor(oyjlUNDERLINE,g->description):"" );
+    if(g->mandatory && g->mandatory[0])
+    {
+      char * t = oyjlOptions_PrintHelpSynopsis_( opts, g, oyjlOPTIONSTYLE_ONELETTER );
+      oyjlStringAdd( &text, 0,0, OYJL_HELP_COMMAND "%s\n", t );
+      free(t);
+    }
+    if(g->help)
+    {
+      oyjlStringAdd( &text, 0,0, OYJL_HELP_COMMAND "%s\n", g->help );
+    }
+    oyjlStringPush( &text, "\n", 0,0 );
+    for(j = 0; j < d; ++j)
+    {
+      const char * option = d_list[j];
+      oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
+      int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
+      int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING;
+      if(mandatory_index == 0)
+        style |= g->flags;
+      if(!o)
+      {
+        oyjlStringAdd( &text, 0,0, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", &g->detail[j]);
+        if(!getenv("OYJL_NO_EXIT")) exit(1);
+      }
+      switch(o->value_type)
+      {
+        case oyjlOPTIONTYPE_CHOICE:
+          {
+            int n = 0,l;
+            if(o->value_name)
+            {
+              char * t = oyjlOption_PrintArg_(o, style);
+              oyjlStringPush( &text, OYJL_HELP_OPTION, 0,0 );
+              oyjlStringAdd( &text, 0,0, "%s", t );
+              oyjlStringAdd( &text, 0,0, "\t%s\n", o->description ? o->description:"" );
+              if(o->help)
+                oyjlStringAdd( &text, 0,0,OYJL_HELP_HELP "%s\n", o->help );
+              free(t);
+            }
+            while(o->values.choices.list && o->values.choices.list[n].nick && o->values.choices.list[n].nick[0] != '\000')
+              ++n;
+            for(l = 0; l < n; ++l)
+            { char * t = oyjlOptionChoice_Print_( &o->values.choices.list[l], o, 0 ); oyjlStringPush( &text, t, 0,0 ); free(t); }
+          }
+          break;
+        case oyjlOPTIONTYPE_FUNCTION:
+          {
+            int n = 0,l;
+            oyjlOptionChoice_s * list;
+            if(o->value_name)
+            {
+              char * t = oyjlOption_PrintArg_(o, style);
+              oyjlStringPush( &text, OYJL_HELP_OPTION, 0,0 );
+              oyjlStringAdd( &text, 0,0, "%s", t );
+              oyjlStringAdd( &text, 0,0, "\t%s%s%s\n", o->description ? o->description:"", o->help?": ":"", o->help?o->help :"" );
+              free(t);
+            }
+            if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
+              break;
+            list = oyjlOption_GetChoices_(o, NULL, opts );
+            if(list)
+              while(list[n].nick && list[n].nick[0] != '\000')
+                ++n;
+            for(l = 0; l < n; ++l)
+            { char * t = oyjlOptionChoice_Print_( &list[l], o, 0 ); oyjlStringPush( &text, t, 0,0 ); free(t); }
+            /* not possible, as the result of oyjlOption_GetChoices_() is cached - oyjlOptionChoice_Release( &list ); */
+          }
+          break;
+        case oyjlOPTIONTYPE_DOUBLE:
+          {
+            char * t = oyjlOption_PrintArg_(o, style);
+            
+            oyjlStringPush( &text, OYJL_HELP_OPTION, 0,0 );
+            oyjlStringAdd( &text, 0,0, "%s", t );
+            { char * desc = oyjlOption_PrintArg_Double_( o, oyjlDESCRIPTION | oyjlHELP ); oyjlStringAdd( &text, 0,0, "\t%s\n", desc ); free(desc); }
+            free(t);
+          }
+          break;
+        case oyjlOPTIONTYPE_NONE:
+          {
+            char * t = oyjlOption_PrintArg_(o, style);
+            oyjlStringPush( &text, OYJL_HELP_OPTION, 0,0 );
+            oyjlStringAdd( &text, 0,0, "%s", t?t:"" );
+            oyjlStringAdd( &text, 0,0, "\t%s\n", o->description ? o->description:"" );
+            if(o->help)
+              oyjlStringAdd( &text, 0,0,OYJL_HELP_HELP "%s\n", o->help );
+            free(t);
+          }
+        break;
+        case oyjlOPTIONTYPE_START: break;
+        case oyjlOPTIONTYPE_END: break;
+      }
+    }
+    oyjlStringListRelease( &d_list, d, free );
+    if(d) oyjlStringPush( &text, "\n", 0,0 );
+    if((verbose == -1 || verbose == -3) && results && results->group > -1) break;
+  }
+  oyjlStringPush( &text, "\n", 0,0 );
+
+  if(verbose > 0)
+  {
+    const char * mnft = NULL, * mnft_url = NULL,
+             * copy = NULL, * lice = NULL, * lice_url = NULL,
+             * bugs = NULL, * bugs_url = NULL;
+    oyjlUiHeaderSection_s * s;
+    char * tmp = oyjlExtraManSections_( opts, 0, NULL, NULL );
+    if(tmp)
+    {
+      oyjlStringPush( &text, tmp, malloc, free );
+      free(tmp);
+    }
+
+    s = oyjlUi_GetHeaderSection( ui, "manufacturer" );
+    if(s) { mnft = s->name; mnft_url = s->description?s->description:""; }
+    s = oyjlUi_GetHeaderSection( ui, "copyright" );
+    if(s) copy = s->name;
+    s = oyjlUi_GetHeaderSection( ui, "license" );
+    if(s) { lice = s->name; lice_url = s->description; }
+    s = oyjlUi_GetHeaderSection( ui, "support" );
+    if(s) { bugs = s->name; bugs_url = s->description; }
+    if(mnft)
+      oyjlStringAdd( &text, malloc, free, "\n%s:\n  %s %s\n", oyjlTermColor(oyjlBOLD,_("Author")), mnft, mnft_url?mnft_url:"" );
+
+    if(lice || copy)
+    {
+      oyjlStringAdd( &text, malloc, free, "\n%s:\n  %s\n", oyjlTermColor(oyjlBOLD,_("Copyright")), copy?copy:"" );
+      if(lice)
+        oyjlStringAdd( &text, malloc, free, "\n    %s:\n      %s %s\n", oyjlTermColor(oyjlUNDERLINE,_("License")), lice?lice:"", lice_url?lice_url:"" );
+    }
+
+    if(bugs)
+      oyjlStringAdd( &text, malloc, free, "\n%s:\n  %s %s\n", oyjlTermColor(oyjlBOLD,_("Bugs")), bugs, bugs_url?bugs_url:"" );
+    else if(bugs_url)
+      oyjlStringAdd( &text, malloc, free, "\n%s:\n  %s\n", oyjlTermColor(oyjlBOLD,_("Bugs")), bugs_url );
+  }
+
+  if(oyjl_help_zout != stdout && oyjl_help_zout != stderr && oyjl_help_zout != NULL && !out_file)
+  {
+    fputs( text, oyjl_help_zout );
+    free(text); text = NULL;
+  }
   return text;
 }
 

@@ -52,7 +52,7 @@ int myMain( int argc, const char ** argv )
 
   oyjlOptionChoice_s S_choices[] = {{"oyjl(1) oyjl-translate(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
-  oyjlOptionChoice_s F_choices[] = {{_("Synopsis"),_("Tools follows syntax rules."),_("OyjlArgs checks and enforces rules. These rules are expresses in each synopsis line."), _("A tool can provide different modules with each using different rules, expressed in different synopsis lines.")},
+  oyjlOptionChoice_s F_choices[] = {{_("Synopsis"),_("Tools follows syntax rules."),_("OyjlArgs requires, checks and enforces rules. These rules are expressed in each synopsis line."), _("A tool can provide different rule sets, expressed in different synopsis lines.")},
                                     {_("prog -o"),_("Simple tool with only one option."), _("The option consists of one single letter and thus starts with a single dash."),_("The command line tool is in the following examples called \"prog\" for simplicity.")},
                                     {_("prog --option"),_("Simple tool with only one option."), _("The option consists of more than one letter starting with two dashs."),_("This is called a long option name. The same option can be triggered by the single letter name or the long option name. Inside the Synopsis line only one form is noticed.")},
                                     {_("prog -o=ARG --name=one|two|..."),_("Simple tool with two options, which both accept arguments."), _("The argument can be representet by a big letter content hint, like FILE, NUMBER etc. Or it is a collection of pipe separated choices."),_("The later --name option names a few choices and shows with the immediately following three dots, that the choices are not exclusive and might be edited. OyjlArgs checks for args following the option name even without the equal sign '='.")},
@@ -85,9 +85,9 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), _("verbose"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &verbose}, NULL },
     {"oiwi", 0,     "V", "version", NULL, _("version"), _("Version"),        NULL, NULL,          oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &version}, NULL },
     {"oiwi", 0,     "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export}, NULL },
-    {"oiwi", 0,                          "A","man-examples",  NULL,     _("EXAMPLES"), NULL,                         NULL, NULL,               
+    {"oiwi", 0,                          "A","man-examples",  NULL,     _("Examples"), NULL,                         NULL, NULL,               
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,{}, NULL},
-    {"oiwi", 0,                          "S","man-see_also",  NULL,     _("SEE ALSO"),NULL,                      NULL, NULL,
+    {"oiwi", 0,                          "S","man-see_also",  NULL,     _("See Also"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc )}, oyjlNONE,{}, NULL},
     {"oiwi", 0,                          "F","man-format",  NULL,       _("Format"),NULL,                      NULL, NULL,
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)F_choices, sizeof(F_choices), malloc )}, oyjlNONE,{}, NULL},
