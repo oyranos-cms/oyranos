@@ -1,6 +1,6 @@
 # oyranos-profile v0.9.7 {#oyranosprofilecs}
 <a name="toc"></a>
-[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [GENERAL OPTIONS](#general_options) [ENVIRONMENT](#environment) [EXAMPLES](#examples) [SEE ALSO](#seealso) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
+[NAME](#name) [SYNOPSIS](#synopsis) [DESCRIPTION](#description) [OPTIONS](#options) [GENERAL OPTIONS](#general_options) [ENVIRONMENT VARIABLES](#environmentvariables) [EXAMPLES](#examples) [SEE ALSO](#seealso) [AUTHOR](#author) [COPYRIGHT](#copyright) [BUGS](#bugs) 
 
 <strong>"oyranos-profile"</strong> *1* <em>"March 06, 2015"</em> "User Commands"
 
@@ -147,7 +147,7 @@ The oyranos-profile programm shows informations about a ICC profile and allows s
 </table>
 
 
-<h2>ENVIRONMENT <a href="#toc" name="environment">&uarr;</a></h2>
+<h2>ENVIRONMENT VARIABLES <a href="#toc" name="environmentvariables">&uarr;</a></h2>
 
 #### OY_DEBUG
 &nbsp;&nbsp;set the Oyranos debug level. Alternatively the -v option can be used.

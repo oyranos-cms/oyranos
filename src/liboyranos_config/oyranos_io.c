@@ -344,6 +344,9 @@ char *   oyFindProfile_              ( const char        * fileName,
       fullFileName = oyStringCopy_( fileName, oyAllocateFunc_ );
     } else
       fullFileName = oyMakeFullFileDirName_ (fileName);
+
+    if(fullFileName && !oyjlIsFile(fullFileName, "r", 0, NULL, 0))
+    { free(fullFileName); fullFileName = NULL; }
   }
 
   if(path_name)

@@ -83,9 +83,9 @@ Tool to convert UI JSON description from *-X export* into source code.
 #### Synopsis
 &nbsp;&nbsp;Tools follows syntax rules.
   <br />
-&nbsp;&nbsp;OyjlArgs checks and enforces rules. These rules are expresses in each synopsis line.
+&nbsp;&nbsp;OyjlArgs requires, checks and enforces rules. These rules are expressed in each synopsis line.
   <br />
-&nbsp;&nbsp;A tool can provide different modules with each using different rules, expressed in different synopsis lines.
+&nbsp;&nbsp;A tool can provide different rule sets, expressed in different synopsis lines.
 #### prog -o
 &nbsp;&nbsp;Simple tool with only one option.
   <br />
