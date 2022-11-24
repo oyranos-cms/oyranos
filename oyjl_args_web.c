@@ -72,7 +72,7 @@ enum ConnectionType
   };
 
 static unsigned int oyjl_nr_of_uploading_clients = 0;
-static const char * oyjl_args_web_rexexp = "((([a-z]+://)?[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)|([a-z]+://)+[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)(:[0-9]{1,5})?([/a-zA-Z0-9+-.?=_*]*)?";
+static const char * oyjl_args_web_rexexp = "((([a-z]+://)?[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)|([a-z]+://)+[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)(:[0-9]{1,5})?([/a-zA-Z0-9+-.?=%_*]*)?";
 static const char * oyjl_args_web_replacement = "<a href=\"%s\">%s</a>";
 char * oyjlStringLinkify( const char * html );
 
@@ -599,10 +599,16 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
           else if(data_format != 8)
           {
             char * css_toc_text = NULL;
-            char * t = oyjlStringLinkify( oyjlTermColorToHtml( html_commented, 0 ) );
+            int is_rich = size && (html_commented[0] == '<' ||
+                                   strstr(html_commented, "\033[") != NULL);
+            char * t = oyjlStringLinkify( is_rich ? oyjlTermColorToHtml( html_commented, 0 ) : html_commented ),
+                 * tmp = NULL;
+            if(!is_rich)
+              oyjlStringAdd( &tmp, 0,0, "<code>%s</code>", t );
 
             oyjlStringAdd( &html_tmp, 0,0, responsepage, OYJL_E(context->css,""), OYJL_E(context->css2,""), OYJL_E(css_toc_text,""),
-                           t );
+                           tmp?tmp:t );
+            if(tmp) free(tmp);
             free(t);
             html = html_tmp;
           }
@@ -857,7 +863,7 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
   {
     if(sec)
       oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s</label><input type=\"checkbox\" name=\"%s\" id=\"%s-%d\" value=\"%s\" %s%s/><br />\n",
-       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name) /*i18n label*/, key /*name*/, key/* id */, gcount, no_dash?"true_no_dash":"true", (default_var && strcmp(default_var,"1") == 0) || is_mandatory?"checked":"",is_mandatory?" class=\"mandatory\"":"" );
+       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, OYJL_E(name,"")) /*i18n label*/, key /*name*/, key/* id */, gcount, no_dash?"true_no_dash":"true", (default_var && strcmp(default_var,"1") == 0) || is_mandatory?"checked":"",is_mandatory?" class=\"mandatory\"":"" );
   }
   else if(type && strcmp(type,"double") == 0)
   {
@@ -874,7 +880,7 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
     tick = OYJL_GET_DOUBLE(o);
     if(sec)
       oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s <span id=span%s%d><font color=gray>%g</font></span> [≥%g ≤%g Δ%g]<br /></label><input type=\"range\" name=\"%s\" id=\"%s-%d\" value=\"%g\" min=\"%g\" max=\"%g\" step=\"%g\"%s oninput=\"span%s%d.innerText = this.value\"/>\n",
-       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name) /*i18n label*/, default_dbl, start, end, tick, key/* span id */, gcount, key /*name*/, key/* id */, gcount, default_dbl, start, end, tick, is_mandatory?" class=\"mandatory\"":"", key/* span id */, gcount );
+       /*label for id*/key, gcount, is_mandatory?" class=\"mandatory\"":"", oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, OYJL_E(name,"")) /*i18n label*/, default_dbl, start, end, tick, key/* span id */, gcount, key /*name*/, key/* id */, gcount, default_dbl, start, end, tick, is_mandatory?" class=\"mandatory\"":"", key/* span id */, gcount );
 #ifdef OYJL_HAVE_LOCALE_H
     setlocale(LC_NUMERIC, save_locale);
     if(save_locale) free( save_locale );
@@ -895,12 +901,12 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
       {
         is_choice = 2;
         oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s%s</label>\n  <input id=\"%s-%d\" list=\"%s-%d-states\" name=\"%s\" />\n\
-  <datalist id=\"%s-%d-states\">\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name):"", repetition?" ...":"", /* id */key, gcount, key, gcount, key, key, gcount );
+  <datalist id=\"%s-%d-states\">\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, OYJL_E(name,"")):"", repetition?" ...":"", /* id */key, gcount, key, gcount, key, key, gcount );
       }
     } else if(type && strcmp(type,"string") == 0)
     {
       is_choice = 2;
-      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s%s</label>\n  <input id=\"%s-%d\" name=\"%s\" /><br />\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, name):"", repetition?" ...":"", /* id */ key, gcount, /* name */ key );
+      oyjlStringAdd( &t, 0,0, "  <label for=\"%s-%d\"%s>%s%s</label>\n  <input id=\"%s-%d\" name=\"%s\" /><br />\n", key, gcount, is_mandatory?" class=\"mandatory\"":"", name?oyjlStringColor(flags?oyjlITALIC:oyjlNO_MARK, OYJL_HTML, OYJL_E(name,"")):"", repetition?" ...":"", /* id */ key, gcount, /* name */ key );
     }
   }
  

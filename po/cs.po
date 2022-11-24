@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-11-08 12:21+0100\n"
+"POT-Creation-Date: 2022-11-13 06:07+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -63,7 +63,7 @@ msgid ""
 "lines."
 msgstr ""
 
-#: oyjl_args.c:5784 oyjl_args.c:6305 oyjl_args_tree.c:513
+#: oyjl_args.c:5788 oyjl_args.c:6309 oyjl_args_tree.c:513
 msgid "AUTHOR"
 msgstr ""
 
@@ -109,16 +109,16 @@ msgid ""
 "Arguments for options can be written with equal sign or with empty space."
 msgstr ""
 
-#: oyjl_args.c:5063 oyjl_args.c:6025
+#: oyjl_args.c:5063 oyjl_args.c:6029
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:5794 oyjl_args.c:5796 oyjl_args.c:6319 oyjl_args.c:6321
+#: oyjl_args.c:5798 oyjl_args.c:5800 oyjl_args.c:6323 oyjl_args.c:6325
 #: oyjl_args_tree.c:516
 msgid "BUGS"
 msgstr ""
 
-#: oyjl_args.c:6035 oyjl_args.c:6037
+#: oyjl_args.c:6039 oyjl_args.c:6041
 msgid "Bugs"
 msgstr ""
 
@@ -137,7 +137,7 @@ msgstr ""
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:5788 oyjl_args.c:6309 oyjl_args_tree.c:514
+#: oyjl_args.c:5792 oyjl_args.c:6313 oyjl_args_tree.c:514
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -240,7 +240,7 @@ msgstr ""
 msgid "Copy translated keys to JSON. Skip gettext."
 msgstr ""
 
-#: oyjl_args.c:6029 oyjl_args_tree.c:473
+#: oyjl_args.c:6033 oyjl_args_tree.c:473
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -252,7 +252,7 @@ msgstr "Nelze otevřít:"
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:5662 oyjl_args.c:6173 oyjl_args_tree.c:510
+#: oyjl_args.c:5666 oyjl_args.c:6177 oyjl_args_tree.c:510
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -260,13 +260,13 @@ msgstr ""
 msgid "Date"
 msgstr "Datum"
 
-#: oyjl_args.c:5877 oyjl_args_cli.c:270 oyjl_args_tree.c:509
-#: oyjl_args_web.c:1557
+#: oyjl_args.c:5881 oyjl_args_cli.c:270 oyjl_args_tree.c:509
+#: oyjl_args_web.c:1563
 #, fuzzy
 msgid "Description"
 msgstr "popis"
 
-#: oyjl_args_web.c:1571
+#: oyjl_args_web.c:1577
 msgid "Details"
 msgstr ""
 
@@ -438,7 +438,7 @@ msgstr "Dokumentace"
 msgid "Function Out"
 msgstr "Dokumentace"
 
-#: oyjl_args.c:5673 oyjl_args.c:6185
+#: oyjl_args.c:5677 oyjl_args.c:6189
 msgid "GENERAL OPTIONS"
 msgstr ""
 
@@ -518,7 +518,7 @@ msgstr ""
 msgid "Help"
 msgstr "Nápověda"
 
-#: oyjl_args_web.c:1596
+#: oyjl_args_web.c:1602
 msgid ""
 "Hints: Options with colord labels are mandatory. Options with italic labels "
 "are ignored. Multiple options '...' can be separated by semicolon ';' in the "
@@ -605,7 +605,7 @@ msgstr "Mé jméno"
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:5062 oyjl_args.c:5790 oyjl_args.c:6031 oyjl_args.c:6311
+#: oyjl_args.c:5062 oyjl_args.c:5794 oyjl_args.c:6035 oyjl_args.c:6315
 #: oyjl_args_tree.c:474 oyjl_args_tree.c:515
 msgid "License"
 msgstr "Licence"
@@ -766,7 +766,7 @@ msgstr "Model:"
 msgid "Mode9"
 msgstr "Model:"
 
-#: oyjl_args_tree.c:450 oyjl_args_web.c:1530
+#: oyjl_args_tree.c:450 oyjl_args_web.c:1536
 #, fuzzy
 msgid "Module"
 msgstr "Volby modulu:"
@@ -775,7 +775,7 @@ msgstr "Volby modulu:"
 msgid "Multiple arguments for one option need each one option in front."
 msgstr ""
 
-#: oyjl.c:229 oyjl_args.c:5647 oyjl_args.c:6158 oyjl_args_tree.c:506
+#: oyjl.c:229 oyjl_args.c:5651 oyjl_args.c:6162 oyjl_args_tree.c:506
 #: oyjl_translate.c:242 oyjl_translate.c:244
 msgid "NAME"
 msgstr ""
@@ -816,7 +816,7 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: oyjl_args.c:5665 oyjl_args.c:6176 oyjl_args_tree.c:512
+#: oyjl_args.c:5669 oyjl_args.c:6180 oyjl_args_tree.c:512
 msgid "OPTIONS"
 msgstr ""
 
@@ -1132,7 +1132,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:5650 oyjl_args.c:6161 oyjl_args_tree.c:508
+#: oyjl_args.c:5654 oyjl_args.c:6165 oyjl_args_tree.c:508
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -1161,7 +1161,7 @@ msgid ""
 "a local Web Server, which listens on local port."
 msgstr ""
 
-#: oyjl_args_web.c:1624 oyjl_args_web.c:1643
+#: oyjl_args_web.c:1630 oyjl_args_web.c:1649
 msgid "Send"
 msgstr ""
 
@@ -1278,7 +1278,7 @@ msgid ""
 msgstr ""
 
 #: oyjl-args.c:55 oyjl_args.c:2845 oyjl_args.c:4065 oyjl_args.c:4970
-#: oyjl_args.c:5881 oyjl_args_tree.c:507
+#: oyjl_args.c:5885 oyjl_args_tree.c:507
 msgid "Synopsis"
 msgstr ""
 
@@ -1452,7 +1452,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr ""
 
-#: oyjl_args_tree.c:448 oyjl_args_web.c:1528
+#: oyjl_args_tree.c:448 oyjl_args_web.c:1534
 msgid "Tool"
 msgstr ""
 
@@ -1535,7 +1535,7 @@ msgstr "Unix a deriváty"
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:5896 oyjl_args_cli.c:275 oyjl_args_tree.c:511
+#: oyjl_args.c:5900 oyjl_args_cli.c:275 oyjl_args_tree.c:511
 #: oyjl_translate.c:308
 msgid "Usage"
 msgstr "Použití"

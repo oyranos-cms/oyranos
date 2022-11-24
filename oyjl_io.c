@@ -543,7 +543,7 @@ int   oyjlIsFile                     ( const char        * fullname,
                                        int                 info_len )
 {
   struct stat status;
-  int r;
+  int r = 0;
   memset(&status,0,sizeof(struct stat));
   double mod_time = 0.0;
 
