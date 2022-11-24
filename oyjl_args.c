@@ -5532,11 +5532,15 @@ static char * oyjlExtraManSection_   ( oyjlOptions_s     * opts,
           }
           else
           {
+            oyjlTEXTMARK_e mark = oyjlBOLD;
+            if( strcmp(up,"SEE AS WELL") == 0 ||
+                strcmp(up,"SEE ALSO") == 0 )
+              mark = oyjlNO_MARK;
             oyjlStringPush( &text, "\n", malloc, free );
             if(list[l].nick && list[l].nick[0])
-            oyjlStringAdd( &text, malloc, free, "  %s\n", list[l].nick );
+            oyjlStringAdd( &text, malloc, free, "  %s\n", oyjlTermColor( mark,list[l].nick ) );
             if(list[l].name && list[l].name[0])
-            oyjlStringAdd( &text, malloc, free, "    %s\n", list[l].name );
+            oyjlStringAdd( &text, malloc, free, "    %s\n", !(list[l].nick && list[l].nick[0]) ? oyjlTermColor( mark,list[l].name) : list[l].name );
             if(list[l].description && list[l].description[0])
             oyjlStringAdd( &text, malloc, free, "    %s\n", list[l].description );
             if(list[l].help && list[l].help[0])
