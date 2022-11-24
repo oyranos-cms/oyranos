@@ -156,6 +156,8 @@ int      oyraFilterPlug_ImageWriteRun (
       i = 0;
       while(file_ext && file_ext[i]) { file_ext[i]=tolower(file_ext[i]); ++i; }
     }
+    else
+      file_ext = oyjlStringCopy( "png", 0 );
 
     apis = oyCMMsGetFilterApis_( "//" OY_TYPE_STD "/file_write", 
                                  oyOBJECT_CMM_API7_S,
