@@ -2,7 +2,7 @@
 .SH NAME
 oyranos-profiles v0.9.7 \- Oyranos Profile
 .SH ÜBERSICHT
-\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR \fIPFAD_WORT_TEIL\fR] [\fB\-T\fR \fISCHLÜSSEL;WERT\fR] [\fB\-v\fR]
+\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR \fIPFAD_WORT_TEIL\fR] [\fB\-T\fR \fISCHLÜSSEL:WERT\fR] [\fB\-v\fR]
 .br
 \fBoyranos-profiles\fR \fB\-p\fR [\fB\-u\fR|\fB\-s\fR|\fB\-y\fR|\fB\-m\fR] [\fB\-v\fR]
 .br
@@ -14,7 +14,7 @@ Das Werkzeug kann installierte Profile und Suchpfade anzeigen. Es kann ein Profi
 .SH OPTIONEN
 .SS
 Liste der verfügbaren ICC Farbprofile
-\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR \fIPFAD_WORT_TEIL\fR] [\fB\-T\fR \fISCHLÜSSEL;WERT\fR] [\fB\-v\fR]
+\fBoyranos-profiles\fR \fB\-l\fR [\fB\-f\fR] [\fB\-e\fR] [\fB\-a\fR] [\fB\-c\fR] [\fB\-d\fR] [\fB\-k\fR] [\fB\-n\fR] [\fB\-o\fR] [\fB\-i\fR] [\fB\-2\fR] [\fB\-4\fR] [\fB\-P\fR \fIPFAD_WORT_TEIL\fR] [\fB\-T\fR \fISCHLÜSSEL:WERT\fR] [\fB\-v\fR]
 .br
 \fB\-l\fR|\fB\-\-list-profiles\fR	Liste Profile
 .br
@@ -58,11 +58,13 @@ Der Text kommt vom 'desc' Profilelement.
 .br
 	\fB\-P\fR xorg
 .br
-\fB\-T\fR|\fB\-\-meta\fR \fISCHLÜSSEL;WERT\fR	Suche nach Schlüssel/Werte Paar in Meta Element
+\fB\-T\fR|\fB\-\-meta\fR \fISCHLÜSSEL:WERT\fR	Suche nach Schlüssel/Werte Paar in Meta Element
 .RS
 Zeige Profile welche ein bestimmtes Schlüssel/Werte Paar im meta Tag enthalten. WERT kann '*' enthalten für das Filtern von Wortteilen.
 .RE
-	\fB\-T\fR EFFECT_class;sepia
+	\fB\-T\fR EFFECT_class:sepia
+.br
+	\fB\-T\fR EFFECT_class:bw
 .br
 \fB\-D\fR|\fB\-\-duplicates\fR	Zeige identische mehrfach installierte Profile an
 .br

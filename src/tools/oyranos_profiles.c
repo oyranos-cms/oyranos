@@ -102,7 +102,7 @@ int myMain( int argc, const char ** argv )
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s path_choices[]={{"basICColor","","",""}, {"colord","","",""}, {"edid","","",""}, {"OpenICC","","",""}, {"oyra","","",""}, {"xorg","","",""},
                                     {NULL,NULL,NULL,NULL}};
-  oyjlOptionChoice_s effect_meta[]={{"EFFECT_class;sepia","","",""},{NULL,NULL,NULL,NULL}};
+  oyjlOptionChoice_s effect_meta[]={{"EFFECT_class:sepia","","",""},{"EFFECT_class:bw","","",""},{NULL,NULL,NULL,NULL}};
   /* declare options - the core information; use previously declared choices */
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
@@ -127,7 +127,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0, "s", "system", NULL, _("System"), _("System path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&system_path},NULL},
     {"oiwi", 0, "m", "machine", NULL, _("Machine"), _("Machine path"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&machine_path},NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "path", NULL, _("Path filter"), _("Show profiles containing a string as part of their full name"), NULL, _("PATH_SUB_STRING"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)path_choices, sizeof(path_choices), 0 )}, oyjlSTRING, {.s=&path},NULL},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "T", "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY;VALUE"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)effect_meta, sizeof(effect_meta), 0 )}, oyjlSTRING, {.s=&meta},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "T", "meta", NULL, _("Meta"), _("Filter for meta tag key/value pair"), _("Show profiles containing a certain key/value pair of their meta tag. VALUE can contain '*' to allow for substring matching."), _("KEY:VALUE"), oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)effect_meta, sizeof(effect_meta), 0 )}, oyjlSTRING, {.s=&meta},NULL},
     {"oiwi", 0, "r", "no-repair", NULL, _("No repair"), _("No Profile repair of ICC profile ID"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&no_repair},NULL},
     {"oiwi", 0, "D", "duplicates", NULL, _("Duplicates"), _("Show identical multiple installed profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&duplicates},NULL},
     {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE, NULL,"test", NULL, _("Test"), _("No Action"), NULL, NULL, oyjlOPTIONTYPE_NONE, {}, oyjlINT, {.i=&test},NULL},
@@ -221,7 +221,7 @@ int myMain( int argc, const char ** argv )
     json_commands[strlen(json_commands)-1] = '\000';
     oyjlStringAdd( &json_commands, malloc, free, "%s", &json[1] );
     puts( json_commands );
-    exit(0);
+    return 0;
   }
 
 
@@ -298,8 +298,11 @@ int myMain( int argc, const char ** argv )
         if(meta)
         {
           oyProfile_s * pattern;
-          char * t = NULL;
-          oyStringAddPrintf( &t, oyAllocateFunc_,oyDeAllocateFunc_, "meta:%s", meta );
+          char * t = NULL,
+               * tmp = oyjlStringCopy( meta, 0 );
+          oyjlStringReplace( &tmp, ":", ";", 0,0 );
+          oyStringAddPrintf( &t, oyAllocateFunc_,oyDeAllocateFunc_, "meta:%s", tmp );
+          free(tmp);
           pattern = oyProfile_FromFile( t, OY_NO_LOAD, NULL );
           if(!pattern)
           {
@@ -307,7 +310,7 @@ int myMain( int argc, const char ** argv )
             FILE * f = NULL;
             char * t = oyjlOptions_PrintHelp( ui->opts, ui, verbose, &f, NULL );
             fputs( t, f ); free(t);
-            exit(1);
+            if(!getenv("OYJL_NO_EXIT")) exit(1);
           }
           patterns = oyProfiles_New(0);
           oyProfiles_MoveIn( patterns, &pattern, -1 );

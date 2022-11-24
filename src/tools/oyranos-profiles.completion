@@ -21,7 +21,7 @@ _oyranos_profiles()
             ;;
         --meta) # long option with static args
             local IFS=$'\n'
-            local WORD_LIST=('EFFECT_class;sepia')
+            local WORD_LIST=('EFFECT_class:sepia' 'EFFECT_class:bw')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
@@ -52,7 +52,7 @@ _oyranos_profiles()
             ;;
         -T=*) # single letter option with static args
             local IFS=$'\n'
-            local WORD_LIST=('EFFECT_class;sepia')
+            local WORD_LIST=('EFFECT_class:sepia' 'EFFECT_class:bw')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
