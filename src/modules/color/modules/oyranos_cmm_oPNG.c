@@ -323,6 +323,17 @@ int  oyImage_WritePNG                ( oyImage_s         * image,
 
   png_set_iCCP( png_ptr, info_ptr, (char*)colorspacename, 0,
                 pmem, psize);
+  if(!png_ptr || png_jumpbuf_set(png_ptr))
+  {
+    /* Free all of the memory associated with the png_ptr and info_ptr */
+    if(png_ptr)
+      png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+    oPNG_msg( oyMSG_WARN, image,
+             OY_DBG_FORMAT_ "not readable %s",
+             OY_DBG_ARGS_, file_name );
+    if(fp) fclose(fp);
+    return (1);
+  }
   if(pmem) {oyDeAllocateFunc_( pmem );} pmem = 0;
 
   /* set time stamp */
