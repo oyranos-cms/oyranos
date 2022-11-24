@@ -235,15 +235,15 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)l_choices, sizeof(l_choices), malloc ), 0}}, oyjlINT,       {.i=&levels}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("Select format"),           NULL, _("FORMAT"),
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)f_choices, sizeof(f_choices), malloc ), 0}}, oyjlSTRING,    {.s=&format}, NULL},
-    {"oiwi", 0,                          NULL,"uint8",         NULL,     NULL,          _("select unsigned integer 8-bit precision data format"),NULL, NULL,
+    {"oiwi", 0,                          NULL,"uint8",         NULL,     "uint8",       _("select unsigned integer 8-bit precision data format"),NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {.i=&uint8_var}, NULL},
-    {"oiwi", 0,                          NULL,"uint16",        NULL,     NULL,          _("select unsigned integer 16-bit precision data format"),NULL, NULL,
+    {"oiwi", 0,                          NULL,"uint16",        NULL,     "uint16",      _("select unsigned integer 16-bit precision data format"),NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {.i=&uint16_var}, NULL},
-    {"oiwi", 0,                          NULL,"half",          NULL,     NULL,          _("select floating point 16-bit precision data format"),NULL, NULL,
+    {"oiwi", 0,                          NULL,"half",          NULL,     "half",        _("select floating point 16-bit precision data format"),NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {.i=&half_var}, NULL},
-    {"oiwi", 0,                          NULL,"float",         NULL,     NULL,          _("select floating point 32-bit precision data format"),NULL, NULL,
+    {"oiwi", 0,                          NULL,"float",         NULL,     "float",       _("select floating point 32-bit precision data format"),NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {.i=&float_var}, NULL},
-    {"oiwi", 0,                          NULL,"double",        NULL,     NULL,          _("select floating point 64-bit precision data format"),NULL, NULL,
+    {"oiwi", 0,                          NULL,"double",        NULL,     "double",      _("select floating point 64-bit precision data format"),NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {.i=&double_var}, NULL},
     {"oiwi", 0,                          "d","icc-defaults-simple",NULL,     _("ICC Defaults Simple"),_("enable simple defaults"),  NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&icc_defaults_simple}, NULL},
@@ -942,7 +942,6 @@ int myMain( int argc, const char ** argv )
     }
   }
   oyjlUi_Release( &ui );
-  oyjlLibRelease();
 
   return error;
 }
