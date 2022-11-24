@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-11-08 12:28+0100\n"
+"POT-Creation-Date: 2022-11-13 11:27+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -1095,7 +1095,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1219
+#: liboyranos_config/oyranos_xml.c:1220
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -1117,7 +1117,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1234
+#: liboyranos_config/oyranos_xml.c:1235
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -1333,7 +1333,7 @@ msgstr ""
 msgid "Could not open meta module API"
 msgstr ""
 
-#: tools/oyranos_profiles.c:486
+#: tools/oyranos_profiles.c:489
 msgid "Could not open or invalid data: "
 msgstr ""
 
@@ -1342,7 +1342,7 @@ msgstr ""
 msgid "Could not open profile"
 msgstr ""
 
-#: tools/oyranos_profiles.c:447
+#: tools/oyranos_profiles.c:450
 msgid "Could not open: "
 msgstr ""
 
@@ -2393,12 +2393,12 @@ msgstr "ICC-профиль"
 msgid "ICC profile directory name"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:1132
+#: API_generated/oyProfile_s_.c:1138
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC-профиль"
 
-#: tools/oyranos_profiles.c:416
+#: tools/oyranos_profiles.c:419
 #, fuzzy
 msgid "ICC profile search paths"
 msgstr "ICC-профили"
@@ -2728,7 +2728,7 @@ msgstr ""
 msgid "Intent"
 msgstr ""
 
-#: tools/oyranos_profiles.c:616
+#: tools/oyranos_profiles.c:619
 msgid "Internal Error"
 msgstr ""
 
@@ -2740,15 +2740,15 @@ msgstr ""
 msgid "Internal stored Size"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1186
-msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+#: liboyranos_config/oyranos_xml.c:1187
+msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br />"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1198
+#: liboyranos_config/oyranos_xml.c:1199
 msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1196
+#: liboyranos_config/oyranos_xml.c:1197
 msgid "Introduction"
 msgstr ""
 
@@ -2764,7 +2764,7 @@ msgid "KELVIN"
 msgstr ""
 
 #: tools/oyranos_profiles.c:130
-msgid "KEY;VALUE"
+msgid "KEY:VALUE"
 msgstr ""
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/information/[8]/name
@@ -3582,7 +3582,7 @@ msgstr ""
 msgid "No Action"
 msgstr ""
 
-#: API_generated/oyProfile_s_.c:1117
+#: API_generated/oyProfile_s_.c:1123
 msgid "No ICC profile id detected"
 msgstr ""
 
@@ -3889,7 +3889,7 @@ msgstr ""
 msgid "Oyranos Threads default Handling"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:895
+#: liboyranos_config/oyranos_xml.c:896
 msgid "Oyranos User Manual"
 msgstr ""
 
@@ -3899,7 +3899,7 @@ msgid "Oyranos Version"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1244
+#: liboyranos_config/oyranos_xml.c:1245
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -3922,7 +3922,7 @@ msgid "Oyranos display filter"
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1206
+#: liboyranos_config/oyranos_xml.c:1207
 #, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
@@ -4056,7 +4056,7 @@ msgstr ""
 msgid "Path"
 msgstr ""
 
-#: tools/oyranos_profiles.c:594
+#: tools/oyranos_profiles.c:597
 msgid "Path can not be written"
 msgstr ""
 
@@ -4277,7 +4277,7 @@ msgid "Profile Tags"
 msgstr ""
 
 #: API_generated/oyProfile_s.c:876 API_generated/oyProfile_s.c:882
-#: tools/oyranos_profiles.c:582
+#: tools/oyranos_profiles.c:585
 msgid "Profile already installed"
 msgstr ""
 
@@ -4298,7 +4298,7 @@ msgstr ""
 msgid "Profile exists already"
 msgstr ""
 
-#: tools/oyranos_profiles.c:606
+#: tools/oyranos_profiles.c:609
 msgid "Profile not useable"
 msgstr ""
 
@@ -6004,7 +6004,7 @@ msgid "This example module \"my_handler\" lets you print a option."
 msgstr ""
 
 #. Hint for i18n: do not translate the &title; token.
-#: liboyranos_config/oyranos_xml.c:898
+#: liboyranos_config/oyranos_xml.c:899
 msgid ""
 "This is the documentation for the &title; that configures the Oyranos Color "
 "Management System."
@@ -6270,7 +6270,7 @@ msgstr "ICC-профиль"
 msgid "Write to file"
 msgstr "ICC-профиль"
 
-#: API_generated/oyProfile_s_.c:1109
+#: API_generated/oyProfile_s_.c:1115
 msgid "Wrong ICC profile id detected"
 msgstr ""
 
@@ -7204,7 +7204,7 @@ msgid "write to specified file"
 msgstr ""
 
 #: API_generated/oyOptions_s.c:1618 examples/libraw/oyranos_file.cpp:236
-#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:306
+#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:309
 msgid "wrong argument to option:"
 msgstr ""
 

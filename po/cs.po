@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-11-08 12:28+0100\n"
+"POT-Creation-Date: 2022-11-13 11:27+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1152,7 +1152,7 @@ msgstr ""
 "uživatelé varováni - pokud si to přejí - a mohou situaci vyřešit ručně."
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1219
+#: liboyranos_config/oyranos_xml.c:1220
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -1181,7 +1181,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1234
+#: liboyranos_config/oyranos_xml.c:1235
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -1409,7 +1409,7 @@ msgstr "Nelze otevřít zařízení"
 msgid "Could not open meta module API"
 msgstr "Nelze otevřít meta modul API"
 
-#: tools/oyranos_profiles.c:486
+#: tools/oyranos_profiles.c:489
 #, fuzzy
 msgid "Could not open or invalid data: "
 msgstr "Nelze otevřít profil"
@@ -1419,7 +1419,7 @@ msgstr "Nelze otevřít profil"
 msgid "Could not open profile"
 msgstr "Nelze otevřít profil"
 
-#: tools/oyranos_profiles.c:447
+#: tools/oyranos_profiles.c:450
 msgid "Could not open: "
 msgstr "Nelze otevřít:"
 
@@ -2543,11 +2543,11 @@ msgstr "profil ICC"
 msgid "ICC profile directory name"
 msgstr "jméno profilu"
 
-#: API_generated/oyProfile_s_.c:1132
+#: API_generated/oyProfile_s_.c:1138
 msgid "ICC profile id written"
 msgstr "ID profilu ICC zapsáno"
 
-#: tools/oyranos_profiles.c:416
+#: tools/oyranos_profiles.c:419
 msgid "ICC profile search paths"
 msgstr "prohledávaná cesta pro profily ICC"
 
@@ -2924,7 +2924,7 @@ msgstr ""
 msgid "Intent"
 msgstr "Záměr"
 
-#: tools/oyranos_profiles.c:616
+#: tools/oyranos_profiles.c:619
 msgid "Internal Error"
 msgstr ""
 
@@ -2937,16 +2937,17 @@ msgstr "interní jméno"
 msgid "Internal stored Size"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1186
-msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+#: liboyranos_config/oyranos_xml.c:1187
+#, fuzzy
+msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br />"
 msgstr "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 
-#: liboyranos_config/oyranos_xml.c:1198
+#: liboyranos_config/oyranos_xml.c:1199
 #, fuzzy
 msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
 
-#: liboyranos_config/oyranos_xml.c:1196
+#: liboyranos_config/oyranos_xml.c:1197
 #, fuzzy
 msgid "Introduction"
 msgstr "Úvod k filtrům."
@@ -2964,7 +2965,7 @@ msgid "KELVIN"
 msgstr ""
 
 #: tools/oyranos_profiles.c:130
-msgid "KEY;VALUE"
+msgid "KEY:VALUE"
 msgstr ""
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/information/[8]/name
@@ -3846,7 +3847,7 @@ msgstr "Ne"
 msgid "No Action"
 msgstr "ukázat volby politiky"
 
-#: API_generated/oyProfile_s_.c:1117
+#: API_generated/oyProfile_s_.c:1123
 msgid "No ICC profile id detected"
 msgstr "Nedetekován žádný profil ICC"
 
@@ -4165,7 +4166,7 @@ msgstr "Oyranos X11"
 msgid "Oyranos Threads default Handling"
 msgstr "Oyranos X11"
 
-#: liboyranos_config/oyranos_xml.c:895
+#: liboyranos_config/oyranos_xml.c:896
 #, fuzzy
 msgid "Oyranos User Manual"
 msgstr "Verze Oyranosu"
@@ -4176,7 +4177,7 @@ msgid "Oyranos Version"
 msgstr "Verze Oyranosu"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1244
+#: liboyranos_config/oyranos_xml.c:1245
 #, fuzzy
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
@@ -4205,7 +4206,7 @@ msgid "Oyranos display filter"
 msgstr "Filter Oyranosu pro displej"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1206
+#: liboyranos_config/oyranos_xml.c:1207
 #, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
@@ -4360,7 +4361,7 @@ msgstr "Monitor s pasívní maticí"
 msgid "Path"
 msgstr "Cesta"
 
-#: tools/oyranos_profiles.c:594
+#: tools/oyranos_profiles.c:597
 #, fuzzy
 msgid "Path can not be written"
 msgstr "Profil neni ulozen."
@@ -4605,7 +4606,7 @@ msgid "Profile Tags"
 msgstr "jméno profilu"
 
 #: API_generated/oyProfile_s.c:876 API_generated/oyProfile_s.c:882
-#: tools/oyranos_profiles.c:582
+#: tools/oyranos_profiles.c:585
 msgid "Profile already installed"
 msgstr "Profil je již nainstalován"
 
@@ -4628,7 +4629,7 @@ msgstr "Popis profilu, vícejazyčný"
 msgid "Profile exists already"
 msgstr "Profil již existuje"
 
-#: tools/oyranos_profiles.c:606
+#: tools/oyranos_profiles.c:609
 #, fuzzy
 msgid "Profile not useable"
 msgstr "profil nenalezen:"
@@ -6639,7 +6640,7 @@ msgid "This example module \"my_handler\" lets you print a option."
 msgstr "Tento testovací modul \"my_handler\" umožní vytisknout volbu."
 
 #. Hint for i18n: do not translate the &title; token.
-#: liboyranos_config/oyranos_xml.c:898
+#: liboyranos_config/oyranos_xml.c:899
 msgid ""
 "This is the documentation for the &title; that configures the Oyranos Color "
 "Management System."
@@ -6919,7 +6920,7 @@ msgstr "Zapsat do profilu ICC:"
 msgid "Write to file"
 msgstr "zapsat do souboru"
 
-#: API_generated/oyProfile_s_.c:1109
+#: API_generated/oyProfile_s_.c:1115
 msgid "Wrong ICC profile id detected"
 msgstr "Zjištěno chybné ID profilu ICC"
 
@@ -7901,7 +7902,7 @@ msgid "write to specified file"
 msgstr "zapsat do souboru"
 
 #: API_generated/oyOptions_s.c:1618 examples/libraw/oyranos_file.cpp:236
-#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:306
+#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:309
 msgid "wrong argument to option:"
 msgstr "chybný argument pro volbu:"
 

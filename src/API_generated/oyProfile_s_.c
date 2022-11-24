@@ -983,14 +983,20 @@ oyProfile_s_ *  oyProfile_FromFile_  ( const char        * name,
       if(!(flags & OY_SKIP_MTIME_CHECK))
       {
         char * info = NULL;
+        int accept = 0;
         oyFree_m_( hash );
         hash = NULL;
         oyjlAllocHelper_m( info, char, 128, malloc, return NULL );
 
         file_name = oyFindProfile_( name, flags );
-        oyjlIsFile( file_name, "r", 0, info, 128 );
-        oyjlStringAdd( &hash, 0,0, "%s:%s", name, info );
-        oyFree_m_( info );
+        accept = oyjlIsFile( file_name, "r", 0, info, 128 );
+        if(accept)
+        {
+          oyjlStringAdd( &hash, 0,0, "%s:%s", name, info );
+          oyFree_m_( info );
+        }
+        else
+          return NULL;
       }
       entry = (oyHash_s_*)oyCacheListGetEntry_ ( (oyStructList_s*)oy_profile_s_file_cache_, 0, hash );
 

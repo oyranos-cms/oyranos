@@ -345,7 +345,7 @@ OYAPI oyProfiles_s * OYEXPORT
 #endif
   uint32_t names_n = 0, i = 0, j = 0, n = 0,
            patterns_n = oyProfiles_Count(patterns);
-  int sorts = 0;
+  int sorts = 0, count = 0;
   const char ** sort = NULL;
 
   error = !s;
@@ -364,11 +364,13 @@ OYAPI oyProfiles_s * OYEXPORT
       sort = oyAllocateFunc_(sorts*sizeof(const char*)*2);
       for(i = 0; i < names_n; ++i)
       {
-        if(names[i])
+        const char * name = names[i];
+        if(name)
         {
-          if(oyStrcmp_(names[i], OY_PROFILE_NONE) != 0)
+          if(oyStrcmp_(name, OY_PROFILE_NONE) != 0)
           {
-            tmp = oyProfile_FromFile( names[i], OY_NO_CACHE_WRITE | flags, 0 );
+            tmp = oyProfile_FromFile( name, OY_NO_CACHE_WRITE | flags, 0 );
+            if(!tmp) continue;
 #if !defined(HAVE_POSIX)
             t = 0;
             oyStringAdd_(&t, oyProfile_GetText(tmp, oyNAME_DESCRIPTION), oyAllocateFunc_, 0);
@@ -378,15 +380,17 @@ OYAPI oyProfiles_s * OYEXPORT
             for(j = 0; j < n; ++j)
               if(isalpha(t[j]))
                 t[j] = tolower(t[j]);
-            sort[i*2] = t;
+            sort[count*2] = t;
 #else
-            sort[i*2] = oyProfile_GetText(tmp, oyNAME_DESCRIPTION);
+            sort[count*2] = oyProfile_GetText(tmp, oyNAME_DESCRIPTION);
 #endif
-            sort[i*2+1] = names[i];
+            sort[count*2+1] = name;
             oyProfiles_MoveIn( l, &tmp, -1 );
+            ++count;
           }
         }
       }
+      sorts = count;
       qsort( sort, sorts, sizeof(char**)*2, oyLowerStrcmpWrap_ );
       for(i = 0; (int)i < sorts; ++i)
       {

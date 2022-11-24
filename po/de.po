@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-11-08 12:28+0100\n"
+"POT-Creation-Date: 2022-11-13 11:27+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1121,7 +1121,7 @@ msgstr ""
 "wünschen, und händisch eingreifen."
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1219
+#: liboyranos_config/oyranos_xml.c:1220
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -1153,7 +1153,7 @@ msgstr ""
 "dem web Farbprofil enthalten sind."
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1234
+#: liboyranos_config/oyranos_xml.c:1235
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -1376,7 +1376,7 @@ msgstr "Konnte Gerät nicht öffnen"
 msgid "Could not open meta module API"
 msgstr "Konnte Meta Schnittstelle nicht öffnen"
 
-#: tools/oyranos_profiles.c:486
+#: tools/oyranos_profiles.c:489
 msgid "Could not open or invalid data: "
 msgstr "Konnte nicht öffnen oder ungültige Daten: "
 
@@ -1385,7 +1385,7 @@ msgstr "Konnte nicht öffnen oder ungültige Daten: "
 msgid "Could not open profile"
 msgstr "Konnte Profil nicht laden"
 
-#: tools/oyranos_profiles.c:447
+#: tools/oyranos_profiles.c:450
 msgid "Could not open: "
 msgstr "Konnte nicht öffnen: "
 
@@ -2447,11 +2447,11 @@ msgstr "ICC Profil"
 msgid "ICC profile directory name"
 msgstr "ICC Profilpfad"
 
-#: API_generated/oyProfile_s_.c:1132
+#: API_generated/oyProfile_s_.c:1138
 msgid "ICC profile id written"
 msgstr "ICC Profil ID geschrieben"
 
-#: tools/oyranos_profiles.c:416
+#: tools/oyranos_profiles.c:419
 msgid "ICC profile search paths"
 msgstr "ICC Profilesuchpfade"
 
@@ -2793,7 +2793,7 @@ msgstr "Zu wenige Daten"
 msgid "Intent"
 msgstr "Übertragung"
 
-#: tools/oyranos_profiles.c:616
+#: tools/oyranos_profiles.c:619
 msgid "Internal Error"
 msgstr "Interner Fehler"
 
@@ -2805,16 +2805,16 @@ msgstr "Interner Name"
 msgid "Internal stored Size"
 msgstr "Interne Größe"
 
-#: liboyranos_config/oyranos_xml.c:1186
-msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
-msgstr "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+#: liboyranos_config/oyranos_xml.c:1187
+msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br />"
+msgstr "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br />"
 
-#: liboyranos_config/oyranos_xml.c:1198
+#: liboyranos_config/oyranos_xml.c:1199
 msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr ""
 "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 
-#: liboyranos_config/oyranos_xml.c:1196
+#: liboyranos_config/oyranos_xml.c:1197
 msgid "Introduction"
 msgstr "Einführung"
 
@@ -2830,8 +2830,8 @@ msgid "KELVIN"
 msgstr "KELVIN"
 
 #: tools/oyranos_profiles.c:130
-msgid "KEY;VALUE"
-msgstr "SCHLÜSSEL;WERT"
+msgid "KEY:VALUE"
+msgstr "SCHLÜSSEL:WERT"
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/information/[8]/name
 #. oyranos_cmm_lcms.json:org/freedesktop/oyjl/modules/[0]/information/[8]/name
@@ -3632,7 +3632,7 @@ msgstr "Nein"
 msgid "No Action"
 msgstr "Keine Ausführung"
 
-#: API_generated/oyProfile_s_.c:1117
+#: API_generated/oyProfile_s_.c:1123
 msgid "No ICC profile id detected"
 msgstr "kein ICC Profil ID gefunden"
 
@@ -3928,7 +3928,7 @@ msgstr "Oyranos Programmfäden"
 msgid "Oyranos Threads default Handling"
 msgstr "Oyranos standard Unterstützung für Programmfäden"
 
-#: liboyranos_config/oyranos_xml.c:895
+#: liboyranos_config/oyranos_xml.c:896
 msgid "Oyranos User Manual"
 msgstr "Oyranos Benutzerhandbuch"
 
@@ -3938,7 +3938,7 @@ msgid "Oyranos Version"
 msgstr "Oyranos Version"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1244
+#: liboyranos_config/oyranos_xml.c:1245
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -3964,7 +3964,7 @@ msgid "Oyranos display filter"
 msgstr "Oyranos Monitor Modul"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1206
+#: liboyranos_config/oyranos_xml.c:1207
 #, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
@@ -4109,7 +4109,7 @@ msgstr "Passivmatrixmonitor"
 msgid "Path"
 msgstr "Pfad"
 
-#: tools/oyranos_profiles.c:594
+#: tools/oyranos_profiles.c:597
 msgid "Path can not be written"
 msgstr "Verzeichnis kann nicht beschrieben werden."
 
@@ -4331,7 +4331,7 @@ msgid "Profile Tags"
 msgstr "Profilbausteine"
 
 #: API_generated/oyProfile_s.c:876 API_generated/oyProfile_s.c:882
-#: tools/oyranos_profiles.c:582
+#: tools/oyranos_profiles.c:585
 msgid "Profile already installed"
 msgstr "Profil ist bereits installiert"
 
@@ -4352,7 +4352,7 @@ msgstr "Profilbeschreibung mehrsprachig"
 msgid "Profile exists already"
 msgstr "Profil ist bereits installiert"
 
-#: tools/oyranos_profiles.c:606
+#: tools/oyranos_profiles.c:609
 msgid "Profile not useable"
 msgstr "Profil nicht benutzbar"
 
@@ -6330,7 +6330,7 @@ msgid "This example module \"my_handler\" lets you print a option."
 msgstr ""
 
 #. Hint for i18n: do not translate the &title; token.
-#: liboyranos_config/oyranos_xml.c:898
+#: liboyranos_config/oyranos_xml.c:899
 msgid ""
 "This is the documentation for the &title; that configures the Oyranos Color "
 "Management System."
@@ -6594,7 +6594,7 @@ msgstr "Schreibe ICC Profil:"
 msgid "Write to file"
 msgstr "Schreibe nach Datei"
 
-#: API_generated/oyProfile_s_.c:1109
+#: API_generated/oyProfile_s_.c:1115
 msgid "Wrong ICC profile id detected"
 msgstr "Fehler in ICC Profil ID gefunden!"
 
@@ -7553,7 +7553,7 @@ msgid "write to specified file"
 msgstr "schreibe nach Datei"
 
 #: API_generated/oyOptions_s.c:1618 examples/libraw/oyranos_file.cpp:236
-#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:306
+#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:309
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
 

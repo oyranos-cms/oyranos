@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cinepaint_icc-examin_eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-11-08 12:28+0100\n"
+"POT-Creation-Date: 2022-11-13 11:27+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1162,7 +1162,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1219
+#: liboyranos_config/oyranos_xml.c:1220
 msgid ""
 "Color matching between different devices is possible, provided that the "
 "color characteristics of the involved devices are known. The quality of a "
@@ -1184,7 +1184,7 @@ msgid ""
 msgstr ""
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1234
+#: liboyranos_config/oyranos_xml.c:1235
 msgid ""
 "Color profiles are often available from manufacturers of imaging devices as "
 "digital cameras, monitors and printers. In Oyranos, ICC profiles are "
@@ -1418,7 +1418,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not open meta module API"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: tools/oyranos_profiles.c:486
+#: tools/oyranos_profiles.c:489
 #, fuzzy
 msgid "Could not open or invalid data: "
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -1429,7 +1429,7 @@ msgstr "Ezin izan da letra-tipoa ireki:"
 msgid "Could not open profile"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: tools/oyranos_profiles.c:447
+#: tools/oyranos_profiles.c:450
 #, fuzzy
 msgid "Could not open: "
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -2558,12 +2558,12 @@ msgstr "Zein ICC profila?"
 msgid "ICC profile directory name"
 msgstr "Fitxategi-izena"
 
-#: API_generated/oyProfile_s_.c:1132
+#: API_generated/oyProfile_s_.c:1138
 #, fuzzy
 msgid "ICC profile id written"
 msgstr "ICC profilaren goiburua"
 
-#: tools/oyranos_profiles.c:416
+#: tools/oyranos_profiles.c:419
 #, fuzzy
 msgid "ICC profile search paths"
 msgstr "ICC profilaren goiburua"
@@ -2912,7 +2912,7 @@ msgstr ""
 msgid "Intent"
 msgstr "Helburua:"
 
-#: tools/oyranos_profiles.c:616
+#: tools/oyranos_profiles.c:619
 msgid "Internal Error"
 msgstr ""
 
@@ -2925,15 +2925,15 @@ msgstr "Barneko errorea"
 msgid "Internal stored Size"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1186
-msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br>"
+#: liboyranos_config/oyranos_xml.c:1187
+msgid "Internet: <a href=\"http://www.oyranos.org\">www.oyranos.org</a><br />"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1198
+#: liboyranos_config/oyranos_xml.c:1199
 msgid "Internet: <ulink url=\"http://www.oyranos.org\">www.oyranos.org</ulink>"
 msgstr ""
 
-#: liboyranos_config/oyranos_xml.c:1196
+#: liboyranos_config/oyranos_xml.c:1197
 #, fuzzy
 msgid "Introduction"
 msgstr "Informazioa:"
@@ -2951,7 +2951,7 @@ msgid "KELVIN"
 msgstr ""
 
 #: tools/oyranos_profiles.c:130
-msgid "KEY;VALUE"
+msgid "KEY:VALUE"
 msgstr ""
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/information/[8]/name
@@ -3810,7 +3810,7 @@ msgstr ""
 msgid "No Action"
 msgstr "Bereizketa"
 
-#: API_generated/oyProfile_s_.c:1117
+#: API_generated/oyProfile_s_.c:1123
 #, fuzzy
 msgid "No ICC profile id detected"
 msgstr "ICC profilaren goiburua"
@@ -4137,7 +4137,7 @@ msgstr "Oyranos-en ezarpenak"
 msgid "Oyranos Threads default Handling"
 msgstr "Oyranos-en ezarpenak"
 
-#: liboyranos_config/oyranos_xml.c:895
+#: liboyranos_config/oyranos_xml.c:896
 #, fuzzy
 msgid "Oyranos User Manual"
 msgstr "Oyranos-en ezarpenak"
@@ -4149,7 +4149,7 @@ msgid "Oyranos Version"
 msgstr "Oyranos-en ezarpenak"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1244
+#: liboyranos_config/oyranos_xml.c:1245
 msgid ""
 "Oyranos allowes detailed settings like preferred editing color spaces and "
 "the behaviour of color conversions or simulation. Oyranos reduces the work "
@@ -4173,7 +4173,7 @@ msgid "Oyranos display filter"
 msgstr "huts egin du X pantaila irekitzean"
 
 #. HTML
-#: liboyranos_config/oyranos_xml.c:1206
+#: liboyranos_config/oyranos_xml.c:1207
 #, c-format
 msgid ""
 "Oyranos is a Color Management System (CMS), which relies one the ICC file "
@@ -4317,7 +4317,7 @@ msgstr "Matrize pasibozko monitorea"
 msgid "Path"
 msgstr "Pausarazi"
 
-#: tools/oyranos_profiles.c:594
+#: tools/oyranos_profiles.c:597
 #, fuzzy
 msgid "Path can not be written"
 msgstr "Profila ez da idatzi."
@@ -4568,7 +4568,7 @@ msgid "Profile Tags"
 msgstr "Fitxategi-izena"
 
 #: API_generated/oyProfile_s.c:876 API_generated/oyProfile_s.c:882
-#: tools/oyranos_profiles.c:582
+#: tools/oyranos_profiles.c:585
 #, fuzzy
 msgid "Profile already installed"
 msgstr "Profila kapsulatuta dago eta "
@@ -4593,7 +4593,7 @@ msgstr "Profilaren azalpena, hizkuntza anitzetan"
 msgid "Profile exists already"
 msgstr "Profila kapsulatuta dago eta "
 
-#: tools/oyranos_profiles.c:606
+#: tools/oyranos_profiles.c:609
 #, fuzzy
 msgid "Profile not useable"
 msgstr "Profila-kolorea"
@@ -6366,7 +6366,7 @@ msgid "This example module \"my_handler\" lets you print a option."
 msgstr ""
 
 #. Hint for i18n: do not translate the &title; token.
-#: liboyranos_config/oyranos_xml.c:898
+#: liboyranos_config/oyranos_xml.c:899
 msgid ""
 "This is the documentation for the &title; that configures the Oyranos Color "
 "Management System."
@@ -6642,7 +6642,7 @@ msgstr "Zein ICC profila?"
 msgid "Write to file"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
-#: API_generated/oyProfile_s_.c:1109
+#: API_generated/oyProfile_s_.c:1115
 #, fuzzy
 msgid "Wrong ICC profile id detected"
 msgstr "Errorea aurkitu da ICC profilako etiketan."
@@ -7635,7 +7635,7 @@ msgid "write to specified file"
 msgstr "Ezin izan da letra-tipoa ireki:"
 
 #: API_generated/oyOptions_s.c:1618 examples/libraw/oyranos_file.cpp:236
-#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:306
+#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:309
 msgid "wrong argument to option:"
 msgstr ""
 

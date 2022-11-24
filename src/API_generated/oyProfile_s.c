@@ -545,11 +545,11 @@ oyProfile_FromFile            ( const char      * name,
 
   s = oyProfile_FromFile_( name, flags, object );
 
-  if(flags & OY_COMPUTE)
+  if(s && flags & OY_COMPUTE)
   /* gives a warning message in case of error */
   { int r OY_UNUSED = oyProfile_GetHash_( s, flags ); }
 
-  oyProfile_GetID( (oyProfile_s*)s );
+  if(s) oyProfile_GetID( (oyProfile_s*)s );
 
   return (oyProfile_s*)s;
 }
