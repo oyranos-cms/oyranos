@@ -53,6 +53,7 @@ device specific Informations (ICC profiles) und system wide settings.
 * [SANE](http://www.sane-project.org/) - only with Oyranos SANE\_CAP\_COLOUR patch
 * [Cairo](http://www.cairographics.org/) - for a tool and a example
 * [gettext](https://www.gnu.org/software/gettext/) - i18n
+* [microhttpd](https://www.gnu.org/software/libmicrohttpd/) - oyjlArgsWeb renderer
 
 #### Debian/Ubuntu:
     sudo apt-get install locales build-essential git autoconf cmake ruby libxml2-dev libyajl-dev libdbus-1-dev gettext libfltk1.3-dev libjpeg-dev libpng-dev libcairo2-dev x11proto-xf86vidmode-dev x11proto-xext-dev libxxf86vm-dev libxrandr-dev libxinerama-dev libxmu-dev libxpm-dev libxfixes-dev libxft-dev fluid ftgl-dev liblcms-dev libexiv2-dev libcups2-dev cmake
