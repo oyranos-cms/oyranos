@@ -138,7 +138,7 @@ char *     oyjlReadFileP             ( FILE              * fp,
   return text;
 }
 
-int oyjlFileNameCheckNotDummy_( const char       ** OYJL_UNUSED, int OYJL_UNUSED ) { return 0; }
+int oyjlFileNameCheckNotDummy_( const char       ** full_filename OYJL_UNUSED, int write_size OYJL_UNUSED ) { return 0; }
 oyjlFileNameCheck_f oyjlFileNameCheckRead_p = oyjlFileNameCheckNotDummy_;
 oyjlFileNameCheck_f oyjlFileNameCheckWrite_p = oyjlFileNameCheckNotDummy_;
 int            oyjlFileNameCheckFuncSet (
