@@ -175,6 +175,9 @@ IF( HAVE_QT)
                   )
       SET( COMPILE_DEFINITIONS_STATIC "COMPILE_STATIC=1" )
       SET_TARGET_PROPERTIES( ${PROJECT_LIB_STATIC} PROPERTIES COMPILE_DEFINITIONS "${COMPILE_DEFINITIONS_STATIC}" )
+      IF(OYJL_HAVE_MHD)
+        SET( OYJL_ARGS_WEB_LIB_STATIC oyjl-args-web-static-client )
+      ENDIF(OYJL_HAVE_MHD)
       TARGET_LINK_LIBRARIES( ${PROJECT_LIB_STATIC}
                 Qt5::Widgets
                 Qt5::Qml
@@ -183,7 +186,7 @@ IF( HAVE_QT)
                 ${QT5_ANDROIDEXTRAS_LIB}
                 ${OPENICC_LIBRARY_STATIC}
                 oyjl-args-cli-static
-                oyjl-args-web-static-client
+                ${OYJL_ARGS_WEB_LIB_STATIC}
                 ${OYJL_TARGET_LIB_STATIC}
                 ${OYJL_CORE_LIB_STATIC}
                 ${EXTRA_LIBS}
