@@ -297,7 +297,7 @@ int myMain( int argc, const char ** argv )
       puts("  }");
       puts("}");
     } else
-    if(strcmp(test,"export") == 9)
+    if(strcmp(test,"export") == 0)
     {
     }
   } else
