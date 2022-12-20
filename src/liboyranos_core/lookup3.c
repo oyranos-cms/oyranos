@@ -723,7 +723,6 @@ uint32_t oy_hashbig( const void *key, size_t length, uint32_t initval)
     case 2 : a+=((uint32_t)k8[1])<<16; OY_FALLTHROUGH  /* fall through */
     case 1 : a+=((uint32_t)k8[0])<<24; break;
     case 0 : return c;
-    default:
     }
 
 #endif /* !VALGRIND */
@@ -768,7 +767,6 @@ uint32_t oy_hashbig( const void *key, size_t length, uint32_t initval)
     case 1 : a+=((uint32_t)k[0])<<24;
              break;
     case 0 : return c;
-    default:
     }
   }
 

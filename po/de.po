@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2022-11-13 11:27+0100\n"
+"POT-Creation-Date: 2022-12-20 12:06+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -87,8 +87,8 @@ msgstr "-|DATEI"
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4802
 #: modules/color/modules/oyranos_cmm_lcms.c:2786
 #: modules/color/modules/oyranos_cmm_lcms.c:2789
-#: modules/color/modules/oyranos_cmm_oPNG.c:584
-#: modules/color/modules/oyranos_cmm_oPNG.c:1211
+#: modules/color/modules/oyranos_cmm_oPNG.c:595
+#: modules/color/modules/oyranos_cmm_oPNG.c:1222
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:269
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1173
 msgid "/"
@@ -511,7 +511,7 @@ msgstr "Details zu ICC Profilen in Ihrem System"
 msgid "Apple CMM"
 msgstr "Apple CMM"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1189
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1191
 msgid "Apply regions of interesst in form of simple rectangles."
 msgstr "Wende Regionen an in Form von einfachen Rechtecken."
 
@@ -2078,8 +2078,8 @@ msgstr "Datei:           "
 #. The following strings must match the categories for a menu entry.
 #: modules/color/modules/oyranos_cmm_oJPG.c:780
 #: modules/color/modules/oyranos_cmm_oJPG.c:1323
-#: modules/color/modules/oyranos_cmm_oPNG.c:583
-#: modules/color/modules/oyranos_cmm_oPNG.c:1210
+#: modules/color/modules/oyranos_cmm_oPNG.c:594
+#: modules/color/modules/oyranos_cmm_oPNG.c:1221
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:268
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:1172
 msgid "Files"
@@ -2603,12 +2603,12 @@ msgstr "Beleuchtung:     "
 #: liboyranos/oyranos_cmm.c:355 liboyranos/oyranos_cmm.c:379
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2929
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2934
-#: modules/color/modules/oyranos_cmm_oPNG.c:1144
+#: modules/color/modules/oyranos_cmm_oPNG.c:1155
 #: modules/color/modules/oyranos_cmm_oydi.c:932
 msgid "Image"
 msgstr "Bild"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1146
+#: modules/color/modules/oyranos_cmm_oPNG.c:1157
 msgid "Image PNG Socket"
 msgstr "PNG Bilddose"
 
@@ -2646,7 +2646,7 @@ msgstr "Bild[Kanal]"
 msgid "Image[expose]"
 msgstr "Bild[Belichtung]"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1202
+#: modules/color/modules/oyranos_cmm_oPNG.c:1213
 msgid "Image[input_png]"
 msgstr "Bild[input_png]"
 
@@ -2662,7 +2662,7 @@ msgstr "Bild[lraw]"
 msgid "Image[my_filter]"
 msgstr "Bild[my_filter]"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1633
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1635
 msgid "Image[out]"
 msgstr "Bild[Ausgang]"
 
@@ -2670,7 +2670,7 @@ msgstr "Bild[Ausgang]"
 msgid "Image[scale]"
 msgstr "Bild[Skalierung]"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:575
+#: modules/color/modules/oyranos_cmm_oPNG.c:586
 msgid "Image[write_png]"
 msgstr "Bild[write_png]"
 
@@ -2679,7 +2679,7 @@ msgid "Image[write_ppm]"
 msgstr "Bild[write_ppm]"
 
 #: liboyranos/oyranos_cmm.c:353 liboyranos/oyranos_cmm.c:377
-#: modules/color/modules/oyranos_cmm_oPNG.c:1142
+#: modules/color/modules/oyranos_cmm_oPNG.c:1153
 msgid "Img"
 msgstr "Bild"
 
@@ -2743,7 +2743,7 @@ msgstr "Eingabe"
 msgid "Input Class"
 msgstr "Eingabeklasse"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1204
+#: modules/color/modules/oyranos_cmm_oPNG.c:1215
 msgid "Input PNG Image Filter Object"
 msgstr "Filterobjekt eines zu lesendes PNG Bildes"
 
@@ -3138,14 +3138,14 @@ msgid ""
 "extremely liberal open source license."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:788
+#: modules/color/modules/oyranos_cmm_oyra_image.c:790
 msgid "Load"
 msgstr "Lade"
 
 #: modules/color/modules/oyranos_cmm_oJPG.c:765
 #: modules/color/modules/oyranos_cmm_oJPG.c:1308
-#: modules/color/modules/oyranos_cmm_oyra_image.c:363
-#: modules/color/modules/oyranos_cmm_oyra_image.c:790
+#: modules/color/modules/oyranos_cmm_oyra_image.c:365
+#: modules/color/modules/oyranos_cmm_oyra_image.c:792
 msgid "Load Image File Object"
 msgstr "Lade Bilddateiobjekt"
 
@@ -3770,12 +3770,12 @@ msgstr "Optimierung"
 msgid "Option"
 msgstr "Option"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:599
+#: modules/color/modules/oyranos_cmm_oPNG.c:610
 #: modules/color/modules/oyranos_cmm_oyra_image_ppm.c:284
 msgid "Option \"filename\", a valid filename"
 msgstr "Option \"filename\", ein gültiger Dateiname"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1226
+#: modules/color/modules/oyranos_cmm_oPNG.c:1237
 msgid "Option \"filename\", a valid filename of a existing PNG image"
 msgstr ""
 "Option \"filename\", ein gültiger Dateiname eines existierenden PNG Bildes"
@@ -3813,7 +3813,7 @@ msgstr "Ausgabeklasse"
 msgid "Output Color Space"
 msgstr "Ausgabefarbraum"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1635
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1637
 msgid "Output Image Filter Object"
 msgstr "Filterobjekt eines Ausgangsbildes"
 
@@ -4444,7 +4444,7 @@ msgstr "Kamerarohdaten"
 msgid "Read"
 msgstr "Lese"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1212
+#: modules/color/modules/oyranos_cmm_oPNG.c:1223
 msgid "Read PNG"
 msgstr "Lese PNG"
 
@@ -4468,11 +4468,11 @@ msgstr "Lese von"
 msgid "Read from file"
 msgstr "Lese von Datei"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1181
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1183
 msgid "Rectangles"
 msgstr "Rechtecke"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1183
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1185
 msgid "Rectangles Splitter Object"
 msgstr "Rechteck Regionen Objekt"
 
@@ -4570,11 +4570,11 @@ msgstr "Übertragungsart für Farbtransformationen."
 msgid "Rgb"
 msgstr "Rgb"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1431
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1433
 msgid "Root Image"
 msgstr "Quellbild"
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1433
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1435
 msgid "Root Image Filter Object"
 msgstr "FilterObjekt eines Quellbildes"
 
@@ -5417,7 +5417,7 @@ msgstr ""
 "Bildes enthalten. Falls die Datei nicht existiert wird ein Fehler gemeldet.\n"
 "Das oyEDITING_RGB ICC Farbprofil wird angehangen."
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:1228
+#: modules/color/modules/oyranos_cmm_oPNG.c:1239
 msgid ""
 "The Option \"filename\" should contain a valid filename to read the png data "
 "from. If the file does not exist, a error will occure.\n"
@@ -5441,7 +5441,7 @@ msgstr ""
 "Bildes enthalten. Falls die Datei nicht existiert wird ein Fehler gemeldet.\n"
 "Das oyEDITING_RGB ICC Farbprofil wird angehangen."
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:601
+#: modules/color/modules/oyranos_cmm_oPNG.c:612
 msgid ""
 "The Option \"filename\" should contain a valid filename to write the png "
 "data into. A existing file will be overwritten without notice."
@@ -5570,7 +5570,7 @@ msgstr "Das Beispielmodul für Oyranos"
 msgid "The filter adapts pixel brightness."
 msgstr "Der Filter ändert die Bildhelligkeit."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1643
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1645
 msgid ""
 "The filter can query pixels from its successors in a graph. The results are "
 "stored in the internal buffer."
@@ -5578,7 +5578,7 @@ msgstr ""
 "Der Filter erfragt Rasterbildpunkte von seinem Vorgänger im Graphen. Das "
 "Ergebnis wird in internen Datenfeldern gespeichert."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1191
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1193
 msgid ""
 "The filter expects \"//\" OY_TYPE_STD \"/rectangles/rectangle/[#]\" options "
 "containing each a oyRectangle_s object and will create, fill and process a "
@@ -5609,7 +5609,7 @@ msgid ""
 "\"filename\"=string."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1641
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1643
 msgid "The filter is a possible pixel target in a graph."
 msgstr "Der Filter ist ein mögliches Rasterbildziel in einem Graphen."
 
@@ -5671,7 +5671,7 @@ msgstr ""
 "Der Filter bietet einen voreingestellen Mechanismus für asynchrone "
 "Ausführung an."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1439
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1441
 msgid "The filter provides a generic image source."
 msgstr "Der Filter bietet eine allgemeine Bildquelle."
 
@@ -6200,7 +6200,7 @@ msgstr ""
 msgid "The raw image backend of Oyranos."
 msgstr "Das KameraRAW Bild Modul für Oyranos."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:1441
+#: modules/color/modules/oyranos_cmm_oyra_image.c:1443
 msgid "The root image filter can hold pixel data for processing in a graph."
 msgstr ""
 "Der Quellbildfilter kann Rasterdaten zur Bearbeitung in einen Graphen "
@@ -6558,15 +6558,15 @@ msgstr "Breite"
 msgid "Will only work on command line."
 msgstr "Arbeitet nur auf der Kommandozeile."
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:361
+#: modules/color/modules/oyranos_cmm_oyra_image.c:363
 msgid "Write"
 msgstr "Schreibe"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:585
+#: modules/color/modules/oyranos_cmm_oPNG.c:596
 msgid "Write PNG"
 msgstr "Schreibe PNG"
 
-#: modules/color/modules/oyranos_cmm_oPNG.c:577
+#: modules/color/modules/oyranos_cmm_oPNG.c:588
 msgid "Write PNG Image Filter Object"
 msgstr "Filterobjekt zum Schreiben eines PNG Bildes"
 
@@ -6843,7 +6843,7 @@ msgstr "daneben!"
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:742
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4508
 #: modules/color/modules/oyranos_cmm_lcms.c:2453
-#: modules/color/modules/oyranos_cmm_oPNG.c:988
+#: modules/color/modules/oyranos_cmm_oPNG.c:999
 #: modules/color/modules/oyranos_cmm_oyra_image_expose.c:141
 #: modules/color/modules/oyranos_cmm_oyra_image_scale.c:104
 #: tools/oyranos_gamma.c:704 tools/oyranos_gamma.c:877
@@ -7463,10 +7463,10 @@ msgstr ""
 msgid "the imaging factory CMM"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_oyra_image.c:369
 #: modules/color/modules/oyranos_cmm_oyra_image.c:371
-#: modules/color/modules/oyranos_cmm_oyra_image.c:796
+#: modules/color/modules/oyranos_cmm_oyra_image.c:373
 #: modules/color/modules/oyranos_cmm_oyra_image.c:798
+#: modules/color/modules/oyranos_cmm_oyra_image.c:800
 msgid "unfinished"
 msgstr "unvollendet"
 
