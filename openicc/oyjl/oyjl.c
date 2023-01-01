@@ -36,6 +36,7 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
                                        const char        * try_format,
                                        int                 paths,
                                        const char        * error_name,
+                                       oyjlOptions_s     * opts,
                                        int                 flags,
                                        int                 verbose )
 {
@@ -52,6 +53,16 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
   if(text && try_format && strcasecmp(try_format, "CSV-semicolon") == 0)
     delimiter = OYJL_DELIMITER_SEMICOLON;
 
+  if(try_format && strcasecmp(try_format, "JSON") != 0 && strcasecmp(try_format, "CSV") != 0 && strcasecmp(try_format, "CSV-semicolon") != 0)
+  {
+    oyjlOption_s * o = oyjlOptions_GetOptionL( opts, "try-format", 0/* flags */ );
+    char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_OPTION_ONLY);
+    fprintf(stderr, "%s\tparsing \"%s\":\n", oyjlTermColor(oyjlRED,_("Usage Error:")), error_name );
+    oyjlOptions_Print_( opts, -1 );
+    fprintf(stderr, "%s %s=%s\n", _("wrong argument to option:"), t, oyjlTermColor(oyjlITALIC,_(try_format)));
+    fprintf(stderr, "%s\n", _("... try with --help|-h option for usage text. give up") );
+    free(t);
+  }
 
   if(text)
   {
@@ -414,7 +425,7 @@ int myMain( int argc, const char ** argv )
             error = 1;
             goto clean_main;
           }
-          value = oyjlTreeParse2_( text, size, xpath, key || set ? &first_path : NULL, !paths ? &root : NULL, root_union ? &path_list : NULL, try_format, paths, filename, flags, verbose );
+          value = oyjlTreeParse2_( text, size, xpath, key || set ? &first_path : NULL, !paths ? &root : NULL, root_union ? &path_list : NULL, try_format, paths, filename, ui->opts, flags, verbose );
           while(path_list && path_list[path_list_n]) ++path_list_n;
 
           if(root_union)
