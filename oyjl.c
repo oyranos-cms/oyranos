@@ -36,14 +36,22 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
                                        const char        * try_format,
                                        int                 paths,
                                        const char        * error_name,
+                                       int                 flags,
                                        int                 verbose )
 {
   oyjl_val value = NULL, root_ = NULL;
   const char * text = input;
   char * text_tmp = NULL;
+  int delimiter = 0;
 
   if(text && try_format && strcasecmp(try_format, "JSON") == 0 && text[0] != '{' && strstr(text, "\n{"))
     text = strstr(text, "\n{") + 1;
+
+  if(text && try_format && strcasecmp(try_format, "CSV") == 0)
+    delimiter = OYJL_DELIMITER_COMMA;
+  if(text && try_format && strcasecmp(try_format, "CSV-semicolon") == 0)
+    delimiter = OYJL_DELIMITER_SEMICOLON;
+
 
   if(text)
   {
@@ -56,7 +64,7 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
       fprintf(stderr, "file read:\t\"%s\" %d\n", error_name, size);
 
     /* convert exported C declarated string into plain text using cc compiler */
-    if(text && strlen(text) > 8 && memcmp(text, "#define ", 8) == 0)
+    if(text && strlen(text) > 8 && memcmp(text, "#define ", 8) == 0 && !delimiter)
     {
       int size = 0;
       char * t = oyjlStringCopy( text, 0 ), * name;
@@ -79,7 +87,7 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
     }
 
     int status = 0;
-    root_ = oyjlTreeParse2( text, 0, __func__, &status );
+    root_ = oyjlTreeParse2( text, delimiter | flags, __func__, &status );
     if(status)
       fprintf(stderr, "%s\t\"%s\"\n", oyjlTermColor(oyjlRED,_("Usage Error:")), oyjlPARSE_STATE_eToString(status));
     else if(!root_)
@@ -87,7 +95,8 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
     if(verbose)
       fprintf(stderr, "file parsed:\t\"%s\"\n", error_name);
 
-    path_list_ = oyjlTreeToPaths( root_, 1000000, xpath, 0, &count );
+    if(paths || xpath || path_list)
+      path_list_ = oyjlTreeToPaths( root_, 1000000, xpath, 0, &count );
 
     if(paths)
       for(i = 0; i < count; ++i)
@@ -152,6 +161,8 @@ int myMain( int argc, const char ** argv )
   int json = 0;
   int yaml = 0;
   int xml = 0;
+  int csv = 0;
+  int csv_semicolon = 0;
   int paths = 0;
   int key = 0;
   int count = 0;
@@ -161,6 +172,7 @@ int myMain( int argc, const char ** argv )
   const char * xpath = NULL;
   int format = 0;
   int plain = 0;
+  const char * detect = 0;
   const char * try_format = NULL,
              * wrap = NULL,
              * wrap_name = "wrap";
@@ -175,9 +187,12 @@ int myMain( int argc, const char ** argv )
                                                  "2017-11-12T12:00:00", _("November 12, 2017") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */
+  oyjlOptionChoice_s d_choices[] = {{",",           _("Comma"),         _("Decimal Separator"),       NULL},
+                                    {".",           _("Dot"),           _("Decimal Separator"),       NULL},
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s r_choices[] = {{"JSON",        "JSON",             NULL,                         NULL},
-                                    /*{"XML",         "XML",              NULL,                         NULL},
-                                    {"YAML",        "YAML",             NULL,                         NULL},*/
+                                    {"CSV",         "CSV",              NULL,                         NULL},
+                                    {"CSV-semicolon","CSV-semicolon",   NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s w_choices[] = {{"C",           _("C static char"), NULL,                         NULL},
 /*                                    {"oiJS",        _("Oyjl static JSON"), NULL,                         NULL},*/
@@ -204,6 +219,10 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&yaml}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "m","xml",           NULL,     _("XML"),      _("Print XML to stdout"),NULL,NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&xml}, NULL},
+    {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   NULL,"csv",          NULL,     _("CSV"),      _("Print CSV to stdout"),NULL,NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&csv}, NULL},
+    {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   NULL,"csv-semicolon",NULL,     _("CSV-semicolon"),_("Print CSV with semicolon to stdout"),NULL,NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&csv_semicolon}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "c","count",         NULL,     _("Count"),    _("Print count of leafs in node"),NULL,NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&count}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "k","key",           NULL,     _("Key Name"), _("Print key name of node"), NULL,NULL,
@@ -224,6 +243,8 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&plain}, NULL},
     {"oiwi", 0,                          "r","try-format",    NULL,     _("Try Format"),_("Try to find data format, even with offset."), NULL, _("FORMAT"),
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), malloc )}, oyjlSTRING,    {.s=&try_format}, NULL},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"d","detect-numbers",NULL,  _("Detect"),    _("Try to detect numbers from non typesafe formats."),  _("Uses by default dot '.' as decimal separator."), _("SEPARATOR"),
+        oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)d_choices, sizeof(d_choices), malloc )}, oyjlSTRING,    {.s=&detect}, NULL},
     {"oiwi", 0,                          "w","wrap",          NULL,     _("Wrap Type"),_("language specific wrap"),  NULL, _("TYPE"),          
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)w_choices, sizeof(w_choices), malloc ), 0}}, oyjlSTRING,    {.s=&wrap}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "W","wrap-name",     NULL,     _("Wrap Name"),_("A name for the symbol to be defined."), _("Use only letters from alphabet [A-Z,a-z] including optional underscore '_'."), _("NAME"),          
@@ -247,10 +268,12 @@ int myMain( int argc, const char ** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s,p,r,w,W", NULL},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s,r,p,w,W", "j", NULL},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s,r,p,w,W", "y", NULL},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s,r,p,w,W", "m", NULL},
+    {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s,p,r,d,w,W", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s,r,p,d,w,W", "j", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s,r,p,d,w,W", "y", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s,r,p,d,w,W", "m", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print CSV"),  _("Print CSV to stdout"), NULL,  "csv",         "i,x,s,r,p,d,w,W", "csv", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print CSV-semicolon"),  _("Print CSV-semicolon to stdout"), NULL,"csv-semicolon","i,x,s,r,p,d,w,W", "csv-semicolon", NULL},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Count"),      _("Print node count"),    NULL,  "c",           "i,x,r",       "c", NULL},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Key Name"),   _("Print key name"),      NULL,  "k",           "i,x,r",       "k", NULL},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Type"),       _("Print type"),          NULL,  "t",           "i,x,r",       "t", NULL},
@@ -328,7 +351,7 @@ int myMain( int argc, const char ** argv )
       yaml = 1;
     if(strstr(argv[0],"jsontoxml") && xml == 0)
       xml = 1;
-    if(!json && !yaml && !xml && !paths && !key && !count && !type && !format)
+    if(!json && !yaml && !xml && !csv && !csv_semicolon && !paths && !key && !count && !type && !format)
       json = 1;
 
     if(i_filename)
@@ -339,7 +362,7 @@ int myMain( int argc, const char ** argv )
       for(i = 0; i < i_files_n; ++i)
         fprintf(stderr, "going to union: %s\n", i_files[i] );
 
-      if(i_files_n > 1 && (!(json || xml || yaml || paths || help || version) || set))
+      if(i_files_n > 1 && (!(json || xml || yaml || csv || csv_semicolon || paths || help || version) || set))
       {
         char * t = oyjlStringCopy(oyjlTermColor(oyjlBOLD, set?"--set":argv[1]), 0);
         oyjlOption_s * o = oyjlOptions_GetOptionL( ui->opts, "input", 0/* flags */ );
@@ -362,11 +385,14 @@ int myMain( int argc, const char ** argv )
         return 1;
       }
 
-      if(json || xml || yaml || count || key || type || paths)
+      if(json || xml || yaml || csv || csv_semicolon || count || key || type || paths)
       {
         const char * filename;
         char * first_path = NULL;
+        int flags = detect ? OYJL_NUMBER_DETECTION : 0;
         oyjl_val root_union = i_files_n > 1 && !paths ? oyjlTreeNew("") : NULL;
+        if(detect && strcmp(detect, ",") == 0)
+          flags |= OYJL_DECIMAL_SEPARATOR_COMMA;
         for(i = 0; i < i_files_n; ++i)
         {
           int path_list_n = 0, j;
@@ -388,7 +414,7 @@ int myMain( int argc, const char ** argv )
             error = 1;
             goto clean_main;
           }
-          value = oyjlTreeParse2_( text, size, xpath, key || set ? &first_path : NULL, !paths ? &root : NULL, root_union ? &path_list : NULL, try_format, paths, filename, verbose );
+          value = oyjlTreeParse2_( text, size, xpath, key || set ? &first_path : NULL, !paths ? &root : NULL, root_union ? &path_list : NULL, try_format, paths, filename, flags, verbose );
           while(path_list && path_list[path_list_n]) ++path_list_n;
 
           if(root_union)
@@ -427,7 +453,7 @@ int myMain( int argc, const char ** argv )
           fprintf(stdout,"%s\n", first_path);
 
         if(text) { free(text); text = NULL; }
-        int flags = plain?OYJL_NO_MARKUP:0;
+        flags = plain?OYJL_NO_MARKUP:0;
 
         if(json)
           text = oyjlTreeToText( set ? root : value, OYJL_JSON | flags );
@@ -445,7 +471,10 @@ int myMain( int argc, const char ** argv )
           }
           else
             oyjlStringAdd( &text, 0,0, "\n" );
-        }
+        } else if(csv)
+          text = oyjlTreeToText( set ? root : value, OYJL_CSV | flags );
+        else if(csv_semicolon)
+          text = oyjlTreeToText( set ? root : value, OYJL_CSV_SEMICOLON | flags );
         if(text)
         {
           if(wrap)

@@ -1701,6 +1701,27 @@ org:\n\
 #endif
   myDeAllocFunc(text); text = NULL;
 
+  const char * csv = "\
+header;B;C;D;E;F\n\
+A1;B1;C1;D1;E1;F1\n\
+2;B2;1234;true;false;12.34";
+  root = oyjlTreeParseCsv( csv, OYJL_DELIMITER_SEMICOLON | OYJL_NUMBER_DETECTION, error_buffer, 128 );
+  text = oyjlTreeToText( root, OYJL_CSV | OYJL_DELIMITER_SEMICOLON );
+  int size_to_csv = strlen( oyjlTermColorToPlain( csv, 0 ) );
+  int size_from_csv = strlen( oyjlTermColorToPlain( text, 0 ) );
+  if(root && size_to_csv == size_from_csv)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeParseCsv() <-> oyjlTreeToCsv()" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeParseCsv() <-> oyjlTreeToCsv() %d/%d", size_to_csv, size_from_csv );
+    fprintf( zout, "%s\n", csv );
+    fprintf( zout, "%s\n", text );
+  }
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeToCsv", "txt" )
+  oyjlTreeFree( root ); root = NULL;
+  myDeAllocFunc(text); text = NULL;
+
   return result;
 }
 

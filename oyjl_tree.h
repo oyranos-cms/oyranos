@@ -209,6 +209,7 @@ OYJL_API oyjl_val oyjlTreeGet ( oyjl_val parent, const char ** path, oyjl_type t
 #undef Florian_Forster_SOURCE_GUARD
 
 #define OYJL_NUMBER_DETECTION 0x01     /**< @brief try to parse values as number */
+#define OYJL_DECIMAL_SEPARATOR_COMMA 0x02 /**< @brief use comma ',' as decimal separator */
 #define OYJL_ALLOW_STATIC     0x10     /**< @brief allow to read static format */
 typedef enum {
   oyjlPARSE_STATE_NONE,                /**< @brief nothing to report */
@@ -234,6 +235,12 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
                                        char              * error_buffer,
                                        size_t              error_buffer_size);
 #endif
+#define OYJL_DELIMITER_COMMA      0x20 /**< @brief ',' comma */
+#define OYJL_DELIMITER_SEMICOLON  0x40 /**< @brief ';' semicolon */
+oyjl_val   oyjlTreeParseCsv          ( const char        * csv,
+                                       int                 flags,
+                                       char              * error_buffer,
+                                       size_t              error_buffer_size);
 
 oyjl_val   oyjlTreeNew               ( const char        * path );
 void       oyjlTreeClearValue        ( oyjl_val            root,
@@ -241,7 +248,9 @@ void       oyjlTreeClearValue        ( oyjl_val            root,
 #define    OYJL_JSON                   0x0    /**< @brief  JSON format; default */
 #define    OYJL_YAML                   0x01   /**< @brief  YAML format */
 #define    OYJL_XML                    0x08   /**< @brief  XML format */
-#define    OYJL_NO_MARKUP              0x100  /**< @brief  expect plain text */
+#define    OYJL_CSV                    0x20   /**< @brief  CSV format - needs 2D array */
+#define    OYJL_CSV_SEMICOLON          0x40   /**< @brief  CSV format - needs 2D array */
+#define    OYJL_NO_MARKUP              0x10000/**< @brief  expect plain text */
 char *     oyjlTreeToText            ( oyjl_val            v,
                                        int                 flags );
 void       oyjlTreeToJson            ( oyjl_val            v,
@@ -253,6 +262,9 @@ void       oyjlTreeToYaml            ( oyjl_val            v,
 void       oyjlTreeToXml             ( oyjl_val            v,
                                        int               * level,
                                        char             ** xml );
+void       oyjlTreeToCsv             ( oyjl_val            table,
+                                       int                 flags,
+                                       char             ** csv);
 #define    OYJL_PATH                   0x08   /**< @brief  flag to obtain only path */
 #define    OYJL_KEY                    0x10   /**< @brief  flat to obtain only keys */
 #define    OYJL_NO_ALLOC               0x800  /**< @brief  avoid malloc for oyjlOBJECT_JSON */

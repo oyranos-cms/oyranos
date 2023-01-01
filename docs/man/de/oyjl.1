@@ -2,11 +2,15 @@
 .SH NAME
 oyjl v1.0.0 \- Oyjl Json Bearbeitung
 .SH ÜBERSICHT
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBoyjl\fR \fBcsv\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBoyjl\fR \fBcsv-semicolon\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
@@ -41,6 +45,18 @@ Der Pfad besteht aus Namen, welche durch Schrägstrich '/' getrennt sind. Jeder 
 .br
 	\fB\-r\fR JSON		# JSON
 .br
+	\fB\-r\fR CSV		# CSV
+.br
+	\fB\-r\fR CSV-semicolon		# CSV-semicolon
+.br
+\fB\-d\fR|\fB\-\-detect-numbers\fR\fI[=TRENNER]\fR	Versuche Zahlen in nicht typensicheren Formaten zu erkennen.
+.RS
+Uses by default dot '.' as decimal separator.
+.RE
+	\fB\-d\fR ,		# Komma : Ganzzahlentrenner
+.br
+	\fB\-d\fR .		# Punkt : Ganzzahlentrenner
+.br
 \fB\-w\fR|\fB\-\-wrap\fR \fITYP\fR	sprachspezifische Formatierung
 .br
 	\fB\-w\fR C		# C statischer Text
@@ -53,21 +69,33 @@ Benutze nur Buchstaben aus den Alphabet [A-Z,a-z] einschließlich möglichem Und
 .br
 .SS
 Zeige JSON auf stdout
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBjson\fR	Zeige JSON auf stdout
 .br
 .SS
 Zeige YAML auf stdout
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fByaml\fR	Zeige YAML auf stdout
 .br
 .SS
 Zeige XML auf stdout
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBxml\fR	Zeige XML auf stdout
+.br
+.SS
+Zeige CSV auf stdout
+\fBoyjl\fR \fBcsv\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBcsv\fR	Zeige CSV auf stdout
+.br
+.SS
+Zeige CSV-Semikolon auf stdout
+\fBoyjl\fR \fBcsv-semicolon\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBcsv-semicolon\fR	Zeige CSV mit Semikolon auf stdout
 .br
 .SS
 Zeige Knotenanzahl
@@ -118,6 +146,10 @@ Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
 	\fB\-h\fR Zeige YAML		# Zeige YAML auf stdout
 .br
 	\fB\-h\fR Zeige XML		# Zeige XML auf stdout
+.br
+	\fB\-h\fR Zeige CSV		# Zeige CSV auf stdout
+.br
+	\fB\-h\fR Zeige CSV-Semikolon		# Zeige CSV-Semikolon auf stdout
 .br
 	\fB\-h\fR Anzahl		# Zeige Knotenanzahl
 .br

@@ -1012,6 +1012,129 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
 }
 #endif
 
+int oyjlIsNumber( const char c )
+{
+  if(((int)'0' <= (int)c &&
+        (int)c <= (int)'9') ||
+       c == '.' ||
+       c == '-' ||
+       c == 'e' ||
+       c == 'E' ||
+       c == ' '
+      )
+    return 1;
+  return 0;
+}
+
+/** @brief read a CSV text string into a C data structure (libOyjl)
+ *
+ *  Expected is a 2D table on input.
+ *
+ *  @see oyjlTreeToCsv()
+ *
+ *  @param[in]     text                the CSV text
+ *  @param[in]     flags               for processing
+ *                                     - ::OYJL_NUMBER_DETECTION for parsing
+ *                                       of values as possibly numbers
+ *                                     - ::OYJL_DELIMITER_COMMA: default
+ *                                     - ::OYJL_DELIMITER_SEMICOLON: ';'
+ *  @param[out]    error_buffer        place a error message
+ *  @param[out]    error_buffer_size   size of error_buffer
+ *  @return                            object tree on success,
+ *                                     else check error_buffer
+ */
+oyjl_val   oyjlTreeParseCsv          ( const char        * text,
+                                       int                 flags,
+                                       char              * error_buffer,
+                                       size_t              error_buffer_size)
+{
+  oyjl_val jroot = NULL;
+  int rows_n = 0, /* lines */
+      cols_n = 0, len;
+  double d;
+  char delimiter = ',';
+  char ** rows, ** cols, * row;
+  if(!text) return jroot;
+  if(flags & OYJL_DELIMITER_SEMICOLON)
+    delimiter = ';';
+  if(*oyjl_debug)
+    fprintf( stderr, "lines: %d\n", rows_n );
+
+  rows = oyjlStringSplit( text, '\n', &rows_n, malloc );
+  cols = oyjlStringSplit( rows[0], delimiter, &cols_n, malloc );
+  oyjlStringListRelease( &cols, cols_n, free );
+
+  if(cols_n >= 1)
+  {
+    int i,index;
+    jroot = oyjlTreeNew( "" );
+
+    for(i = 0; i < rows_n; ++i)
+    {
+      row = rows[i];
+      len = strlen(row);
+      if(row[len-1] == '\r')
+        row[len-1] = '\000'; /* clean DOS linebreak '\r\n' */
+      cols = oyjlStringSplit( row, delimiter, &cols_n, malloc );
+      for(index = 0; index < cols_n; ++index)
+      {
+        int err = -1;
+        oyjl_val node = oyjlTreeGetValueF( jroot, OYJL_CREATE_NEW, "[%d]/[%d]", i, index );
+        double d = -1;
+        const char * val = cols[index];
+
+        if(flags & OYJL_NUMBER_DETECTION)
+        {
+          char * number = oyjlStringCopy( val, 0 );
+          if(flags & OYJL_DECIMAL_SEPARATOR_COMMA)
+          {
+            char * t = strrchr( number, ',' );
+            if(t) t[0] = '.';
+          }
+          err = oyjlStringToDouble( number, &d, 0,0 );
+          if(err == 0)
+            oyjlValueSetDouble( node, d );
+          if(err == 0)
+          {
+            free(node->u.number.r);
+            node->u.number.r = number;
+            val = cols[index] = NULL;
+          }
+          else if(err != 0)
+          {
+            len = strlen(val);
+            if(len >= 4 && memcmp(val,"true",4) == 0)
+            {
+              err = 0;
+              node->type = oyjl_t_true;
+            } else if(len >= 5 && memcmp(val,"false",5) == 0)
+            {
+              err = 0;
+              node->type = oyjl_t_false;
+            }
+          }
+        }
+
+        if(err != 0)
+          oyjlValueSetString( node, val );
+      }
+
+      if(text)
+      {
+        text = strchr( text, '\n' );
+        if(text) ++text;
+
+        if(*oyjl_debug > 1) fprintf( stderr, "\n" );
+      }
+      oyjlStringListRelease( &cols, cols_n, free );
+    }
+  }
+  oyjlStringListRelease( &rows, rows_n, free );
+
+  return jroot;
+}
+
+
 const char*oyjlPARSE_STATE_eToString ( int                 state )
 {
   switch(state)
@@ -1099,6 +1222,8 @@ oyjl_val   oyjlTreeParse2            ( const char        * text,
 #else
     state = oyjlPARSE_STATE_NOT_COMPILED;
 #endif
+  else if(flags & OYJL_DELIMITER_COMMA || flags & OYJL_DELIMITER_SEMICOLON)
+    root = oyjlTreeParseCsv( text, flags, oyjl_error_buffer_, oyjl_error_buffer_size_ );
   else
     state = oyjlPARSE_STATE_FORMAT_ERROR;
 

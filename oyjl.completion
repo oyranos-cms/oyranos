@@ -30,7 +30,14 @@ _oyjl()
             ;;
         --try-format) # long option with static args
             local IFS=$'\n'
-            local WORD_LIST=('JSON')
+            local WORD_LIST=('JSON' 'CSV' 'CSV-semicolon')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --detect-numbers) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=(',' '.')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
@@ -100,7 +107,14 @@ _oyjl()
             ;;
         -r=*) # single letter option with static args
             local IFS=$'\n'
-            local WORD_LIST=('JSON')
+            local WORD_LIST=('JSON' 'CSV' 'CSV-semicolon')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -d=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=(',' '.')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
@@ -154,13 +168,13 @@ _oyjl()
 
     : "autocomplete options "$cur""
     case "$cur" in
-        -s|-i|-x|-r|-w|-W|-h|-R|-X)
+        -s|-i|-x|-r|-d|-w|-W|-h|-R|-X)
             : "finish short options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
             return
             ;;
-        --set|--input|--xpath|--try-format|--wrap|--wrap-name|--help|--render|--export)
+        --set|--input|--xpath|--try-format|--detect-numbers|--wrap|--wrap-name|--help|--render|--export)
             : "finish long options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
@@ -172,7 +186,7 @@ _oyjl()
             set +x +v
             return
             ;;
-        --json|--yaml|--xml|--count|--key|--paths|--type|--format|--plain|--synopsis|--verbose|--version)
+        --json|--yaml|--xml|--csv|--csv-semicolon|--count|--key|--paths|--type|--format|--plain|--synopsis|--verbose|--version)
             : "finish long options without choices"
             COMPREPLY=("$cur ")
             set +x +v
@@ -195,17 +209,27 @@ _oyjl()
     if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
       case "${COMP_WORDS[1]}" in
         -j|json)
-          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -w= --wrap= -W= --wrap-name=' -- "$cur"))
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -d= --detect-numbers= -w= --wrap= -W= --wrap-name=' -- "$cur"))
             set +x +v
             return
             ;;
         -y|yaml)
-          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -w= --wrap= -W= --wrap-name=' -- "$cur"))
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -d= --detect-numbers= -w= --wrap= -W= --wrap-name=' -- "$cur"))
             set +x +v
             return
             ;;
         -m|xml)
-          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -w= --wrap= -W= --wrap-name=' -- "$cur"))
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -d= --detect-numbers= -w= --wrap= -W= --wrap-name=' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        csv)
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -d= --detect-numbers= -w= --wrap= -W= --wrap-name=' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        csv-semicolon)
+          COMPREPLY=($(compgen -W '-i= --input= -x= --xpath= -s= --set= -r= --try-format= -p --plain -d= --detect-numbers= -w= --wrap= -W= --wrap-name=' -- "$cur"))
             set +x +v
             return
             ;;
@@ -245,7 +269,7 @@ _oyjl()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       local WORD_LIST=()
-      WORD_LIST=("${WORD_LIST[@]}" -j json -y yaml -m xml -c count -k key -t type paths -f format -h= --help= -X= --export= -V --version)
+      WORD_LIST=("${WORD_LIST[@]}" -j json -y yaml -m xml csv csv-semicolon -c count -k key -t type paths -f format -h= --help= -X= --export= -V --version)
       COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return

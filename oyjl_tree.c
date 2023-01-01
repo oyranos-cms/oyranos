@@ -552,6 +552,8 @@ char *     oyjlJsonEscape            ( const char        * in,
  *                                     - ::OYJL_JSON for JSON
  *                                     - ::OYJL_XML for Xml
  *                                     - ::OYJL_YAML for Yaml
+ *                                     - ::OYJL_CSV for CSV
+ *                                     - ::OYJL_CSV_SEMICOLON for CSV-semicolon
  *                                     - ::OYJL_NO_MARKUP remove term color codes;
  *                                       activates oyjlTermColorToPlain( flags )
  *                                     - ::OYJL_REGEXP for oyjlTermColorToPlain()
@@ -573,6 +575,8 @@ char *     oyjlTreeToText            ( oyjl_val            v,
     oyjlTreeToYaml( v, &level, &text );
   else if(flags & OYJL_XML)
     oyjlTreeToXml( v, &level, &text );
+  else if(flags & OYJL_CSV || flags & OYJL_CSV_SEMICOLON)
+    oyjlTreeToCsv( v, flags, & text);
   else
     oyjlTreeToJson( v, &level, &text );
 
@@ -1157,6 +1161,79 @@ void               oyjlTreeToXml     ( oyjl_val            v,
   }
   return;
 }
+
+/** @brief convert a C 2D table into a CSV string
+ *
+ *  The function uses some assumptions for mapping features of JSON to CSV.
+ *
+ *  The root object is assumed to be a array of arrays of plain values.
+ *  Further levels of nesting are ignored.
+ *
+ *  @see oyjlTreeParseCsv()
+ *
+ *  @param         table               node of 2D array [[],[]]
+ *  @param         flags               ::OYJL_DELIMITER_COMMA, ::OYJL_DELIMITER_SEMICOLON
+ *  @param         text                the resulting string
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2022/12/31
+ *  @since   2022/12/31 (Oyjl: 1.0)
+ */
+void               oyjlTreeToCsv     ( oyjl_val            table,
+                                       int                 flags,
+                                       char             ** text)
+{
+  oyjl_str string = oyjlStr_New(10, 0,0);
+
+  int rows_n, cols_n, i, index;
+  oyjl_val row;
+  char delimiter = ',';
+  if(flags & OYJL_DELIMITER_SEMICOLON)
+    delimiter = ';';
+
+  rows_n = oyjlValueCount( table );
+  for(i = 0; i < rows_n; ++i)
+  {
+    row = oyjlTreeGetValueF( table, 0, "[%d]", i );
+    cols_n = oyjlValueCount( row );
+    if(i) oyjlStr_AppendN (string, "\n", 1);
+    for(index = 0; index < cols_n; ++index)
+    {
+      oyjl_val v = oyjlTreeGetValueF( row, 0, "[%d]", index );
+      const char dt[4] = {index?delimiter:0, 0,0,0};
+      if(v)
+        switch(v->type)
+        {
+          case oyjl_t_null:
+               break;
+          case oyjl_t_number:
+               oyjlStr_Add (string, "%s%s", dt, oyjlTermColor(oyjlBLUE,v->u.number.r));
+               break;
+          case oyjl_t_true:
+               oyjlStr_Add (string, "%s%s", dt, oyjlTermColor(oyjlGREEN,"true")); break;
+          case oyjl_t_false:
+               oyjlStr_Add (string, "%s%s", dt, oyjlTermColor(oyjlRED,"false")); break;
+          case oyjl_t_string:
+               {
+                const char * t = v->u.string;
+                char * tmp = oyjlStringCopy(t,malloc);
+                oyjlStringReplace( &tmp, "\"", "\\\"", 0, 0);
+                oyjlStringReplace( &tmp, ": ", ":\\ ", 0, 0);
+                oyjlStr_Add (string, "%s%s", dt, oyjlTermColor(oyjlBOLD,tmp));
+                if(tmp) free(tmp);
+               }
+               break;
+          default:
+        }
+    }
+  }
+  if(oyjlStr(string))
+    *text = oyjlStr_Pull(string);
+  else
+    *text = NULL;
+  oyjlStr_Release( &string );
+}
+
 
 /** @brief return the number of members if any at the node level
  *

@@ -2,11 +2,15 @@
 .SH NAME
 oyjl v1.0.0 \- Oyjl Json Manipulation
 .SH SYNOPSIS
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=SEPARATOR]\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=SEPARATOR]\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=SEPARATOR]\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBoyjl\fR \fBcsv\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=SEPARATOR]\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBoyjl\fR \fBcsv-semicolon\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=SEPARATOR]\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-r\fR \fIFORMAT\fR]
 .br
@@ -41,6 +45,18 @@ The path consists of slash '/' separated terms. Each term can be a key name or a
 .br
 	\fB\-r\fR JSON		# JSON
 .br
+	\fB\-r\fR CSV		# CSV
+.br
+	\fB\-r\fR CSV-semicolon		# CSV-semicolon
+.br
+\fB\-d\fR|\fB\-\-detect-numbers\fR\fI[=SEPARATOR]\fR	Try to detect numbers from non typesafe formats.
+.RS
+Uses by default dot '.' as decimal separator.
+.RE
+	\fB\-d\fR ,		# Comma : Decimal Separator
+.br
+	\fB\-d\fR .		# Dot : Decimal Separator
+.br
 \fB\-w\fR|\fB\-\-wrap\fR \fITYPE\fR	language specific wrap
 .br
 	\fB\-w\fR C		# C static char
@@ -53,21 +69,33 @@ Use only letters from alphabet [A-Z,a-z] including optional underscore '_'.
 .br
 .SS
 Print JSON to stdout
-\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=SEPARATOR]\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBjson\fR	Print JSON to stdout
 .br
 .SS
 Print YAML to stdout
-\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=SEPARATOR]\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fByaml\fR	Print YAML to stdout
 .br
 .SS
 Print XML to stdout
-\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=SEPARATOR]\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
 .br
 \fBxml\fR	Print XML to stdout
+.br
+.SS
+Print CSV to stdout
+\fBoyjl\fR \fBcsv\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=SEPARATOR]\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBcsv\fR	Print CSV to stdout
+.br
+.SS
+Print CSV-semicolon to stdout
+\fBoyjl\fR \fBcsv-semicolon\fR [\fB\-i\fR \fIFILENAME\fR ...] [\fB\-x\fR \fIPATH\fR] [\fB\-s\fR \fISTRING\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=SEPARATOR]\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBcsv-semicolon\fR	Print CSV with semicolon to stdout
 .br
 .SS
 Print node count
@@ -118,6 +146,10 @@ Show usage information and hints for the tool.
 	\fB\-h\fR Print YAML		# Print YAML to stdout
 .br
 	\fB\-h\fR Print XML		# Print XML to stdout
+.br
+	\fB\-h\fR Print CSV		# Print CSV to stdout
+.br
+	\fB\-h\fR Print CSV-semicolon		# Print CSV-semicolon to stdout
 .br
 	\fB\-h\fR Count		# Print node count
 .br
