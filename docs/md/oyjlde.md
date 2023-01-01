@@ -56,7 +56,7 @@ Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl un
   </table>
   </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--detect-numbers</strong><em>[=TRENNER]</em></td> <td>Versuche Zahlen in nicht typensicheren Formaten zu erkennen.<br />Uses by default dot '.' as decimal separator.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--detect-numbers</strong><em>[=TRENNER]</em></td> <td>Versuche Zahlen in nicht typensicheren Formaten zu erkennen.<br />Voreingestellt ist der Punkt '.' als Ganzzahlentrenner.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> ,</td><td># Komma : Ganzzahlentrenner</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> .</td><td># Punkt : Ganzzahlentrenner</td></tr>
