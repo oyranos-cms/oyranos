@@ -10,11 +10,15 @@ oyjl v1.0.0 - Oyjl Json Manipulation
 
 <h2>SYNOPSIS <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyjl</strong> <a href="#json"><strong>json</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+<strong>oyjl</strong> <a href="#json"><strong>json</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
 <br />
-<strong>oyjl</strong> <a href="#yaml"><strong>yaml</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+<strong>oyjl</strong> <a href="#yaml"><strong>yaml</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
 <br />
-<strong>oyjl</strong> <a href="#xml"><strong>xml</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+<strong>oyjl</strong> <a href="#xml"><strong>xml</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+<br />
+<strong>oyjl</strong> <a href="#csv"><strong>csv</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+<br />
+<strong>oyjl</strong> <a href="#csv-semicolon"><strong>csv-semicolon</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
 <br />
 <strong>oyjl</strong> <a href="#count"><strong>count</strong></a> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-r</strong>=<em>FORMAT</em>]
 <br />
@@ -47,6 +51,15 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--try-format</strong>=<em>FORMAT</em></td> <td>Try to find data format, even with offset.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-r</strong> JSON</td><td># JSON</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> CSV</td><td># CSV</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> CSV-semicolon</td><td># CSV-semicolon</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--detect-numbers</strong><em>[=SEPARATOR]</em></td> <td>Try to detect numbers from non typesafe formats.<br />Uses by default dot '.' as decimal separator.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> ,</td><td># Comma : Decimal Separator</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> .</td><td># Dot : Decimal Separator</td></tr>
   </table>
   </td>
  </tr>
@@ -66,7 +79,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="json">Print JSON to stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>json</strong></td> <td>Print JSON to stdout</td> </tr>
@@ -74,7 +87,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="yaml">Print YAML to stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>yaml</strong></td> <td>Print YAML to stdout</td> </tr>
@@ -82,10 +95,26 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 <h3 id="xml">Print XML to stdout</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>xml</strong></td> <td>Print XML to stdout</td> </tr>
+</table>
+
+<h3 id="csv">Print CSV to stdout</h3>
+
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>csv</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+
+<table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>csv</strong></td> <td>Print CSV to stdout</td> </tr>
+</table>
+
+<h3 id="csv-semicolon">Print CSV-semicolon to stdout</h3>
+
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>csv-semicolon</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+
+<table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>csv-semicolon</strong></td> <td>Print CSV with semicolon to stdout</td> </tr>
 </table>
 
 <h3 id="count">Print node count</h3>
@@ -141,6 +170,8 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Print JSON</td><td># Print JSON to stdout</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Print YAML</td><td># Print YAML to stdout</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Print XML</td><td># Print XML to stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print CSV</td><td># Print CSV to stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print CSV-semicolon</td><td># Print CSV-semicolon to stdout</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Count</td><td># Print node count</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Key Name</td><td># Print key name</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Type</td><td># Print type</td></tr>
