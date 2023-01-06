@@ -1228,7 +1228,7 @@ int        oyjlStr_AppendN           ( oyjl_str            string,
   int error = 0;
   if(append && append_len)
   {
-    if((append_len + str->len) >= str->alloc_len - 1)
+    if(str->alloc_len == 0 || (append_len + str->len) >= str->alloc_len - 1)
     {
       int len = (append_len + str->len) * 2;
       char * edit = str->s;
