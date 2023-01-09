@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2004-2022  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2023  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -652,16 +652,16 @@ oyjlTESTRESULT_e testString ()
   for(i = 0; i < n; ++i)
     oyjlStringAdd( &t, 0,0, "/%s/%s", "more", "and" );
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjlStringAdd()\t%dx9  %d               \t\%s\n", n, (int)strlen(t),
-                 oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "oyjlStringAdd()            %dx9        %d", n, (int)strlen(t)) );
   if(t) { free(t); t = NULL; }
 
   clck = oyjlClock();
   for(i = 0; i < n; ++i)
     oyjlStringAddN( &t, "/more/and", 9, malloc,free );
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjlStringAddN()\t%dx9  %d       \t\%s\n", n, (int)strlen(t),
-                 oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "oyjlStringAddN()           %dx9        %d", n, (int)strlen(t)) );
 
   n = 1000;
   clck = oyjlClock();
@@ -669,8 +669,8 @@ oyjlTESTRESULT_e testString ()
   for(i = 0; i < n; ++i)
     len = strlen( t );
   clck = oyjlClock() - clck;
-  fprintf( zout, "strlen()\t%dx  %d             \t\%s\n", n, (int)strlen(t),
-                 oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "strlen()                   %dx          %d", n, (int)strlen(t)) );
 
   if(t) { free(t); t = NULL; }
 
@@ -680,8 +680,8 @@ oyjlTESTRESULT_e testString ()
   for(i = 0; i < n; ++i)
     memcpy( &t[9*i], "/more/and", 9 );
   clck = oyjlClock() - clck;
-  fprintf( zout, "memcpy()\t%dx9  %d           \t\%s\n", n, (int)strlen(t),
-                 oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "memcpy()                   %dx9    %d", n, (int)strlen(t)) );
   if(t) { free(t); t = NULL; }
 
   oyjl_str string = oyjlStr_New(10, 0,0);
@@ -690,8 +690,17 @@ oyjlTESTRESULT_e testString ()
   for(i = 0; i < n; ++i)
     oyjlStr_AppendN( string, "/more/and", 9 );
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjlStr_AppendN() memcpy()\t%dx9  %d    \t\%s\n", n, (int)strlen(oyjlStr(string)),
-                 oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "oyjlStr_AppendN() memcpy() %dx9    %d", n, (int)strlen(oyjlStr(string))) );
+  oyjlStr_Clear( string );
+
+  clck = oyjlClock();
+  n = 1000000;
+  for(i = 0; i < n; ++i)
+    oyjlStr_Push( string, "/more/and" );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "oyjlStr_Push() memcpy()    %dx9    %d", n, (int)strlen(oyjlStr(string))) );
   oyjlStr_Clear( string );
 
   clck = oyjlClock();
@@ -699,15 +708,96 @@ oyjlTESTRESULT_e testString ()
   for(i = 0; i < n; ++i)
     oyjlStr_Append( string, "/more/and" );
   clck = oyjlClock() - clck;
-  fprintf( zout, "oyjlStr_Append() strcpy()\t%dx9  %d    \t\%s\n", n, (int)strlen(oyjlStr(string)),
-                 oyjlProfilingToString(n,clck/(double)CLOCKS_PER_SEC,"ops"));
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "oyjlStr_Append() strcpy()  %dx9        %d", n, (int)strlen(oyjlStr(string))) );
   oyjlStr_Clear( string );
   oyjlStr_Release( &string );
 
   int inside = 0;
   string = oyjlStr_New(10, 0,0);
+  n = 10000;
+  const char * more = "more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/more/and/";
+  len = strlen(more);
+  clck = oyjlClock();
+  for(i = 0; i < n; ++i)
+  {
+    oyjlStr_Append( string, more );
+    oyjlStr_Append( string, "  " );
+  }
+  clck = oyjlClock() - clck;
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "oyjlStr_Append() strcpy()  %dx250+2  %d", 2*n, (int)strlen(oyjlStr(string))) );
+  n = 1;
+  clck = oyjlClock();
+  oyjlStr_Replace( string, "  ", "&nbsp;&nbsp;", NULL, &inside );
+  clck = oyjlClock() - clck;
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "oyjlStr_Replace(\"  \",\"&nbsp;&nbsp;\")   %dx     %d", n, (int)strlen(oyjlStr(string))) );
+  oyjlStr_Clear( string );
+  oyjlStr_Release( &string );
+
+  string = oyjlStr_New(10, 0,0);
+  oyjl_str tstr = oyjlStr_New(10, 0,0);
+  n = 10000;
+  for(i = 0; i < n; ++i)
+  {
+    oyjlStr_Append( string, more );
+    oyjlStr_Append( string, "  " );
+  }
+  const char * start, * search = "  ", * replacement = "&nbsp;&nbsp;";
+  {
+    const char * end, * last;
+    start = end = oyjlStr(string);
+    int s_len = strlen( search );
+    last = end + strlen(start);
+    n = 0;
+    clck = oyjlClock();
+    while((end = strstr(start,search)) != 0)
+    {
+      oyjlStr_AppendN( tstr, start, end-start );
+      oyjlStr_Push( tstr, replacement );
+      if(end + (size_t)s_len < last)
+        start = end + s_len;
+      else
+      {
+        if(strstr(start,search) != 0)
+          oyjlStr_Push( tstr, replacement );
+        start = end = end + s_len;
+        break;
+      }
+      ++n;
+    }
+    clck = oyjlClock() - clck;
+  }
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, 2*n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "oyjlStr_Replace() strcpy() %dx(250+2)/%d  %d", 2*n, len, (int)strlen(oyjlStr(string))) );
+
+  start = oyjlStr(string);
+  n = 1000000;
+  clck = oyjlClock();
+  for(i = 0; i < n; ++i)
+    strstr(start, search);
+  clck = oyjlClock() - clck;
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "strstr() %dx(250+2)/%d  %d %g", n, len, (int)strlen(oyjlStr(string)), clck) );
+
+  n = 100;
+  clck = oyjlClock();
+  for(i = 0; i < n; ++i)
+    len = strlen(start);
+  clck = oyjlClock() - clck;
+  fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
+    "strlen() %dx%d  %d %g", n, len, (int)strlen(oyjlStr(string)), clck) );
+  oyjlStr_Clear( string );
+  oyjlStr_Release( &string );
+  oyjlStr_Clear( tstr );
+  oyjlStr_Release( &tstr );
+
+
+  string = oyjlStr_New(10, 0,0);
   for(i = 0; i < 10; ++i)
     oyjlStr_Append( string, "/more/and" );
+  inside = 0;
   oyjlStr_Replace( string, "/", "\\/", replaceCb, &inside );
   const char * tmp = oyjlStr(string);
   if(strstr(tmp, "/more\\/nd/more"))
@@ -895,7 +985,7 @@ oyjlTESTRESULT_e testString ()
   REGEX_REPLACE( "\033[1mSomeText\033[0m \033[38;2;0;200;0mSomeMoreText\033[0m", "\033[[0-9;]*m", "", "SomeText SomeMoreText" )
   if(t) { free(t); t = NULL; }
   const char * rexexp = "((([a-z]+://)?[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)|([a-z]+://)+[a-zA-Z0-9-]+\\.[a-zA-Z0-9-]+)(:[0-9]{1,5})?([/a-zA-Z0-9+-.?=_*]*)?";
-  const char * replacement = "<a href=\"%s\">%s</a>";
+  replacement = "<a href=\"%s\">%s</a>";
   REGEX_REPLACE( "start www.url.org:8888/path?x=2 end.", rexexp, replacement, "start <a href=\"www.url.org:8888/path?x=2\">www.url.org:8888/path?x=2</a> end.")
   if(t) { free(t); t = NULL; }
   REGEX_REPLACE( "start.of.adress (http://www.url.org) just-a.dot ending.adress.org", rexexp, replacement, "<a href=\"start.of.adress\">start.of.adress</a> (<a href=\"http://www.url.org\">http://www.url.org</a>) just-a.dot <a href=\"ending.adress.org\">ending.adress.org</a>")
@@ -2035,17 +2125,27 @@ oyjlTESTRESULT_e testFunction ()
 
 
   ansi = "\033[1mbold\033[0m \033[3mitalic\033[0m \033[4munderline\033[0m \033[0;31mred\033[0m \033[0;32mgreen\033[0m \033[0;34mblue\033[0m";
-  html = oyjlTermColorToHtml( ansi, 0 );
+  oyjl_str string = oyjlStr_New(10, 0,0);
+  int n = 1000000, i;
+  for(i = 0; i < n; ++i)
+    oyjlStr_AppendN( string, ansi, 9 );
+  const char * str = oyjlStr(string);
+  int len = strlen(str);
+  double clck = oyjlClock();
+  html = oyjlTermColorToHtml( str, 0 );
+  clck = oyjlClock() - clck;
   char * text = malloc(20);
   snprintf( text, 20, "%s", html );
-  if(html && strlen(ansi) != strlen(html))
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlTermColorToHtml(%s) = %s ...", ansi, text );
+  if(html && len != (int)strlen(html))
+  { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,1,clck/(double)CLOCKS_PER_SEC,"ops",
+    "oyjlTermColorToHtml(%s) len: %d...", ansi, len );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlTermColorToHtml() %d / %d", strlen(ansi), strlen(html) );
   }
   free(text);
+  oyjlStr_Clear( string );
+  oyjlStr_Release( &string );
 
   int          oyjlTermColor256GetIndex( const char        * term_color );
   const char * ansi_256_color = "\033[38;5;28mcolor\033[0m\033[38;5;284mnope\033[0m\033[1;38;5;217mred\033[0m";
