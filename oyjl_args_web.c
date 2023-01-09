@@ -3,7 +3,7 @@
  *  Oyjl Args Web is a http server renderer of UI files.
  *
  *  @par Copyright:
- *            2021-2022 (C) Kai-Uwe Behrmann
+ *            2021-2023 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -1406,6 +1406,19 @@ int oyjlArgsWebStart__               ( int                 argc,
           OYJL_SUB_ARG_STRING( "css", 0, css )
         OYJL_SUB_ARG_STRING( "help", 0, help )
         OYJL_SUB_ARG_STRING( "ignore", 0, ignore )
+      }
+      if(ignore)
+      {
+        int n = 0;
+        char ** list = oyjlStringSplit(ignore, ',', &n, 0);
+        for(i = 0; i < n; ++i)
+        {
+          const char * o = list[i];
+          oyjlOption_s * opt = oyjlOptions_GetOptionL( ui->opts, o, 0 );
+          if(!opt)
+            fprintf (stderr,
+               "Failed to get option: %s from ignore:%s\n", oyjlTermColor( oyjlRED, o), ignore);
+        }
       }
     }
   }
