@@ -745,9 +745,9 @@ const char * oyjlPrintSubProfiling   ( int                 space,
   if(vlen-1 < space)
   {
     const char * mark = ".";
-    int odd = 1;
+    int odd = 1, re = (len<space?space:len) + space + 20;
     even = !even;
-    tmp = (char*) realloc( text, (len<space?space:len) + space - len + 20 );
+    tmp = (char*) realloc( text, re );
     text = tmp;
     for( i = vlen - 1; i < space; ++i ) sprintf( &text[strlen(text)], i < space - 16&&i>vlen+5 ? even?((odd = !odd) == 0)?mark:" ":mark : " " );
   }
