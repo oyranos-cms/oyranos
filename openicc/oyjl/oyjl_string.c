@@ -3,14 +3,14 @@
  *  oyjl - string helpers
  *
  *  @par Copyright:
- *            2016-2022 (C) Kai-Uwe Behrmann
+ *            2016-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl core functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- * Copyright (c) 2004-2022  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ * Copyright (c) 2004-2023  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1350,7 +1350,7 @@ int        oyjlStr_Replace           ( oyjl_str            text,
 {
   struct oyjl_string_s * str = text;
   oyjl_str t = NULL;
-  const char * start, * end;
+  const char * start, * end, * last;
   int n = 0;
 
   if(!text)
@@ -1361,6 +1361,7 @@ int        oyjlStr_Replace           ( oyjl_str            text,
   if(start && search && replacement)
   {
     int s_len = strlen(search);
+    last = start + strlen(start);
     while((end = strstr(start,search)) != 0)
     {
       if(!t) t = oyjlStr_New(10,0,0);
@@ -1368,7 +1369,7 @@ int        oyjlStr_Replace           ( oyjl_str            text,
       if(modifyReplacement) modifyReplacement( oyjlStr(text), start, end, search, &replacement, &s_len, user_data );
       oyjlStr_Push( t, replacement );
       ++n;
-      if(strlen(end) >= (size_t)s_len)
+      if((end + s_len) <= last)
         start = end + s_len;
       else
       {
