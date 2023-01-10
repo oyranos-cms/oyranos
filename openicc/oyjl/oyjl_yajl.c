@@ -1073,7 +1073,7 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
     {
       row = rows[i];
       len = strlen(row);
-      if(row[len-1] == '\r')
+      if(len > 1 && row[len-1] == '\r')
         row[len-1] = '\000'; /* clean DOS linebreak '\r\n' */
       cols = oyjlStringSplit( row, delimiter, &cols_n, malloc );
       for(index = 0; index < cols_n; ++index)
