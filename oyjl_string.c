@@ -427,6 +427,44 @@ int        oyjlStringReplace         ( char             ** text,
   return n;
 }
 
+extern char * oyjl_term_color_html_;
+const char * oyjlStringColor         ( oyjlTEXTMARK_e      mark,
+                                       int                 flags,
+                                       const char        * format,
+                                                           ... )
+{
+  char * tmp = NULL;
+  const char * t = NULL,
+             * text = format;
+
+  if(strchr(format, '%'))
+  { OYJL_CREATE_VA_STRING(format, tmp, malloc, return NULL)
+    text = tmp;
+  }
+
+  if(flags & OYJL_HTML)
+  {
+    if(oyjl_term_color_html_) free(oyjl_term_color_html_);
+    oyjl_term_color_html_ = NULL;
+    switch(mark)
+    {
+      case oyjlNO_MARK: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "%s", text ); break;
+      case oyjlRED: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<font color=red>%s</font>", text ); break;
+      case oyjlGREEN: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<font color=green>%s</font>", text ); break;
+      case oyjlBLUE: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<font color=blue>%s</font>", text ); break;
+      case oyjlBOLD: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<strong>%s</strong>", text ); break;
+      case oyjlITALIC: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<em>%s</em>", text ); break;
+      case oyjlUNDERLINE: oyjlStringAdd( &oyjl_term_color_html_, 0,0, "<u>%s</u>", text ); break;
+    }
+    t = oyjl_term_color_html_;
+  }
+  else
+    t = oyjlTermColor( mark, text );
+
+  if(tmp) free(tmp);
+  return t;
+}
+
 
 /** @brief append a string list to an other string list */
 char **    oyjlStringListCatList     ( const char       ** list,

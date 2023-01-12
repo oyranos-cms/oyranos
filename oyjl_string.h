@@ -3,7 +3,7 @@
  *  oyjl - Basic string C API's
  *
  *  @par Copyright:
- *            2010-2022 (C) Kai-Uwe Behrmann
+ *            2010-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    OyjlCore API provides a platformindependent C interface for string helpers.
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -74,6 +74,10 @@ int        oyjlStringReplace         ( char             ** text,
                                        const char        * replacement,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
+const char * oyjlStringColor         ( oyjlTEXTMARK_e      mark,
+                                       int                 flags,
+                                       const char        * format,
+                                                           ... );
 void       oyjlStringListRelease     ( char            *** l,
                                        int                 size,
                                        void             (* deAlloc)(void*) );
