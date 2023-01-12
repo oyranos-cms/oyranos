@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2022 (C) Kai-Uwe Behrmann
+ *            2016-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl tree functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -1172,11 +1172,11 @@ void               oyjlTreeToXml     ( oyjl_val            v,
  *  @see oyjlTreeParseCsv()
  *
  *  @param         table               node of 2D array [[],[]]
- *  @param         flags               ::OYJL_DELIMITER_COMMA, ::OYJL_DELIMITER_SEMICOLON
+ *  @param         flags               ::OYJL_DELIMITER_COMMA, ::OYJL_DELIMITER_SEMICOLON, ::OYJL_HTML for HTML markup
  *  @param         text                the resulting string
  *
  *  @version Oyjl: 1.0.0
- *  @date    2022/12/31
+ *  @date    2023/01/09
  *  @since   2022/12/31 (Oyjl: 1.0)
  */
 void               oyjlTreeToCsv     ( oyjl_val            table,
@@ -1207,23 +1207,23 @@ void               oyjlTreeToCsv     ( oyjl_val            table,
           case oyjl_t_null:
                break;
           case oyjl_t_number:
-               oyjlStr_Add (string, "%s%s", dt, oyjlTermColor(oyjlBLUE,v->u.number.r));
+               oyjlStr_Add (string, "%s%s", dt, oyjlStringColor(oyjlBLUE,flags,"%s",v->u.number.r ));
                break;
           case oyjl_t_true:
-               oyjlStr_Add (string, "%s%s", dt, oyjlTermColor(oyjlGREEN,"true")); break;
+               oyjlStr_Add (string, "%s%s", dt, oyjlStringColor(oyjlGREEN,flags,"true")); break;
           case oyjl_t_false:
-               oyjlStr_Add (string, "%s%s", dt, oyjlTermColor(oyjlRED,"false")); break;
+               oyjlStr_Add (string, "%s%s", dt, oyjlStringColor(oyjlRED,flags,"false")); break;
           case oyjl_t_string:
                {
                 const char * t = v->u.string;
                 char * tmp = oyjlStringCopy(t,malloc);
                 oyjlStringReplace( &tmp, "\"", "\\\"", 0, 0);
                 oyjlStringReplace( &tmp, ": ", ":\\ ", 0, 0);
-                oyjlStr_Add (string, "%s%s", dt, oyjlTermColor(oyjlBOLD,tmp));
+                oyjlStr_Add (string, "%s%s", dt, oyjlStringColor(tmp[0]?oyjlBOLD:oyjlNO_MARK,flags,"%s",tmp));
                 if(tmp) free(tmp);
                }
                break;
-          default:
+          default: break; /* ok */
         }
     }
   }
