@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2023-01-07 09:40+0100\n"
+"POT-Creation-Date: 2023-01-11 21:58+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -281,11 +281,11 @@ msgid "Decimal Separator"
 msgstr "Ganzzahlentrenner"
 
 #: oyjl_args.c:5881 oyjl_args_cli.c:270 oyjl_args_tree.c:509
-#: oyjl_args_web.c:1576
+#: oyjl_args_web.c:1538
 msgid "Description"
 msgstr "Beschreibung"
 
-#: oyjl_args_web.c:1590
+#: oyjl_args_web.c:1552
 msgid "Details"
 msgstr "Details"
 
@@ -533,7 +533,7 @@ msgstr "GESCHICHTE"
 msgid "Help"
 msgstr "Hilfe"
 
-#: oyjl_args_web.c:1615
+#: oyjl_args_web.c:1577
 msgid ""
 "Hints: Options with colord labels are mandatory. Options with italic labels "
 "are ignored. Multiple options '...' can be separated by semicolon ';' in the "
@@ -761,7 +761,7 @@ msgstr "Modus8"
 msgid "Mode9"
 msgstr "Modus9"
 
-#: oyjl_args_tree.c:450 oyjl_args_web.c:1549
+#: oyjl_args_tree.c:450 oyjl_args_web.c:1511
 msgid "Module"
 msgstr "Modul"
 
@@ -1159,7 +1159,7 @@ msgstr ""
 "https_cert=TLS_CA_Zertifikat_Dateiname:css=Stil_Dateiname.css\" wird einen "
 "Web Service starten."
 
-#: oyjl_args_web.c:1643 oyjl_args_web.c:1662
+#: oyjl_args_web.c:1605 oyjl_args_web.c:1624
 msgid "Send"
 msgstr "Absenden"
 
@@ -1492,7 +1492,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr "Zu viele Eingangsdateien für diese Option"
 
-#: oyjl_args_tree.c:448 oyjl_args_web.c:1547
+#: oyjl_args_tree.c:448 oyjl_args_web.c:1509
 msgid "Tool"
 msgstr "Werkzeug"
 
@@ -1590,7 +1590,7 @@ msgstr "Url"
 msgid "Usage"
 msgstr "Benutzung"
 
-#: oyjl.c:60 oyjl.c:103 oyjl.c:105 oyjl.c:382 oyjl.c:536 oyjl_args.c:416
+#: oyjl.c:60 oyjl.c:103 oyjl.c:105 oyjl.c:382 oyjl.c:542 oyjl_args.c:416
 #: oyjl_args.c:3163 oyjl_args.c:3179 oyjl_args.c:3328 oyjl_args.c:3358
 #: oyjl_args.c:3384 oyjl_args.c:3402 oyjl_args.c:3428 oyjl_args.c:3455
 #: oyjl_args.c:3477 oyjl_args.c:3505 oyjl_args.c:3541 oyjl_args.c:3573
