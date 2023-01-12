@@ -3,7 +3,7 @@
  *  oyjl - tree C API's
  *
  *  @par Copyright:
- *            2010-2022 (C) Kai-Uwe Behrmann
+ *            2010-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
  *            XML + YAML.
@@ -208,8 +208,8 @@ OYJL_API oyjl_val oyjlTreeGet ( oyjl_val parent, const char ** path, oyjl_type t
 
 #undef Florian_Forster_SOURCE_GUARD
 
-#define OYJL_NUMBER_DETECTION 0x01     /**< @brief try to parse values as number */
-#define OYJL_DECIMAL_SEPARATOR_COMMA 0x02 /**< @brief use comma ',' as decimal separator */
+#define OYJL_NUMBER_DETECTION 0x1000     /**< @brief try to parse values as number */
+#define OYJL_DECIMAL_SEPARATOR_COMMA 0x2000 /**< @brief use comma ',' as decimal separator */
 #define OYJL_ALLOW_STATIC     0x10     /**< @brief allow to read static format */
 typedef enum {
   oyjlPARSE_STATE_NONE,                /**< @brief nothing to report */
@@ -250,6 +250,7 @@ void       oyjlTreeClearValue        ( oyjl_val            root,
 #define    OYJL_XML                    0x08   /**< @brief  XML format */
 #define    OYJL_CSV                    0x20   /**< @brief  CSV format - needs 2D array */
 #define    OYJL_CSV_SEMICOLON          0x40   /**< @brief  CSV format - needs 2D array */
+#define    OYJL_HTML                   0x100  /**< @brief  Formatting flag for markup on output */
 #define    OYJL_NO_MARKUP              0x10000/**< @brief  expect plain text */
 char *     oyjlTreeToText            ( oyjl_val            v,
                                        int                 flags );
