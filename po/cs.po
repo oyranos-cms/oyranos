@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2023-01-07 09:40+0100\n"
+"POT-Creation-Date: 2023-01-11 21:58+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -278,12 +278,12 @@ msgid "Decimal Separator"
 msgstr ""
 
 #: oyjl_args.c:5881 oyjl_args_cli.c:270 oyjl_args_tree.c:509
-#: oyjl_args_web.c:1576
+#: oyjl_args_web.c:1538
 #, fuzzy
 msgid "Description"
 msgstr "popis"
 
-#: oyjl_args_web.c:1590
+#: oyjl_args_web.c:1552
 msgid "Details"
 msgstr ""
 
@@ -543,7 +543,7 @@ msgstr ""
 msgid "Help"
 msgstr "Nápověda"
 
-#: oyjl_args_web.c:1615
+#: oyjl_args_web.c:1577
 msgid ""
 "Hints: Options with colord labels are mandatory. Options with italic labels "
 "are ignored. Multiple options '...' can be separated by semicolon ';' in the "
@@ -791,7 +791,7 @@ msgstr "Model:"
 msgid "Mode9"
 msgstr "Model:"
 
-#: oyjl_args_tree.c:450 oyjl_args_web.c:1549
+#: oyjl_args_tree.c:450 oyjl_args_web.c:1511
 #, fuzzy
 msgid "Module"
 msgstr "Volby modulu:"
@@ -1215,7 +1215,7 @@ msgid ""
 "a local Web Server, which listens on local port."
 msgstr ""
 
-#: oyjl_args_web.c:1643 oyjl_args_web.c:1662
+#: oyjl_args_web.c:1605 oyjl_args_web.c:1624
 msgid "Send"
 msgstr ""
 
@@ -1506,7 +1506,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr ""
 
-#: oyjl_args_tree.c:448 oyjl_args_web.c:1547
+#: oyjl_args_tree.c:448 oyjl_args_web.c:1509
 msgid "Tool"
 msgstr ""
 
@@ -1598,7 +1598,7 @@ msgstr ""
 msgid "Usage"
 msgstr "Použití"
 
-#: oyjl.c:60 oyjl.c:103 oyjl.c:105 oyjl.c:382 oyjl.c:536 oyjl_args.c:416
+#: oyjl.c:60 oyjl.c:103 oyjl.c:105 oyjl.c:382 oyjl.c:542 oyjl_args.c:416
 #: oyjl_args.c:3163 oyjl_args.c:3179 oyjl_args.c:3328 oyjl_args.c:3358
 #: oyjl_args.c:3384 oyjl_args.c:3402 oyjl_args.c:3428 oyjl_args.c:3455
 #: oyjl_args.c:3477 oyjl_args.c:3505 oyjl_args.c:3541 oyjl_args.c:3573

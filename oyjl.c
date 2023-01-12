@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2022 (C) Kai-Uwe Behrmann
+ *            2016-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl command line
  *  @internal
@@ -182,7 +182,7 @@ int myMain( int argc, const char ** argv )
   const char * i_filename = NULL;
   const char * xpath = NULL;
   int format = 0;
-  int plain = 0;
+  const char * plain = 0;
   const char * detect = 0;
   const char * try_format = NULL,
              * wrap = NULL,
@@ -250,8 +250,8 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&xpath}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "f","format",        NULL,     _("Format"),   _("Print Data Format"),       NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&format}, NULL},
-    {"oiwi", 0,                          "p","plain",         NULL,     _("Plain"),    _("No Markup"),               NULL, NULL,
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&plain}, NULL},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"p","plain",      NULL,     _("Plain"),    _("No Markup"),               NULL, NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlSTRING,    {.s=&plain}, NULL},
     {"oiwi", 0,                          "r","try-format",    NULL,     _("Try Format"),_("Try to find data format, even with offset."), NULL, _("FORMAT"),
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), malloc )}, oyjlSTRING,    {.s=&try_format}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"d","detect-numbers",NULL,  _("Detect"),    _("Try to detect numbers from non typesafe formats."),  _("Uses by default dot '.' as decimal separator."), _("SEPARATOR"),
@@ -464,7 +464,13 @@ int myMain( int argc, const char ** argv )
           fprintf(stdout,"%s\n", first_path);
 
         if(text) { free(text); text = NULL; }
-        flags = plain?OYJL_NO_MARKUP:0;
+        if(plain)
+        {
+          if(strcasecmp( plain, "html" ) == 0)
+            flags |= OYJL_HTML;
+          else
+            flags |= OYJL_NO_MARKUP;
+        }
 
         if(json)
           text = oyjlTreeToText( set ? root : value, OYJL_JSON | flags );
