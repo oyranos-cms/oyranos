@@ -1060,6 +1060,12 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
   if(*oyjl_debug)
     fprintf( stderr, "lines: %d\n", rows_n );
 
+#ifdef OYJL_HAVE_LOCALE_H
+  char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
+  if(flags & OYJL_NUMBER_DETECTION)
+    setlocale(LC_NUMERIC, "C");
+#endif
+
   rows = oyjlStringSplit( text, '\n', &rows_n, malloc );
   cols = oyjlStringSplit( rows[0], delimiter, &cols_n, malloc );
   oyjlStringListRelease( &cols, cols_n, free );
@@ -1071,17 +1077,33 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
 
     for(i = 0; i < rows_n; ++i)
     {
+      oyjl_val row_node, node;
       row = rows[i];
       len = strlen(row);
       if(len > 1 && row[len-1] == '\r')
         row[len-1] = '\000'; /* clean DOS linebreak '\r\n' */
       cols = oyjlStringSplit( row, delimiter, &cols_n, malloc );
+
+      row_node = oyjlTreeGetValueF( jroot, OYJL_CREATE_NEW, "[%d]", i );
+      row_node->type = oyjl_t_array;
+      oyjlAllocHelper_m( row_node->u.array.values, oyjl_val, cols_n + 1, malloc,  goto clean_parse_csv );
+      row_node->u.array.len = cols_n + 1;
+      for(index = 0; index < cols_n; ++index)
+      {
+        node = NULL;
+        node = calloc( 1, sizeof(*node) );
+        if(!node) goto clean_parse_csv;
+        node->type = oyjl_t_null;
+        row_node->u.array.values[index] = node;
+      }
+
       for(index = 0; index < cols_n; ++index)
       {
         int err = -1;
-        oyjl_val node = oyjlTreeGetValueF( jroot, OYJL_CREATE_NEW, "[%d]/[%d]", i, index );
         double d = -1;
         const char * val = cols[index];
+
+        node = row_node->u.array.values[index];
 
         if(flags & OYJL_NUMBER_DETECTION)
         {
@@ -1091,7 +1113,7 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
             char * t = strrchr( number, ',' );
             if(t) t[0] = '.';
           }
-          err = oyjlStringToDouble( number, &d, 0,0 );
+          err = oyjlStringToDouble( number, &d, 0, OYJL_KEEP_LOCALE );
           if(err == 0)
             oyjlValueSetDouble( node, d );
           if(err == 0)
@@ -1130,6 +1152,13 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
     }
   }
   oyjlStringListRelease( &rows, rows_n, free );
+
+clean_parse_csv:
+#ifdef OYJL_HAVE_LOCALE_H
+  if(flags & OYJL_NUMBER_DETECTION)
+    setlocale(LC_NUMERIC, save_locale);
+  if(save_locale) free( save_locale );
+#endif
 
   return jroot;
 }
