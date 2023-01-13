@@ -379,7 +379,7 @@ oyjlTESTRESULT_e testArgs()
   int verbose_ = 0;
   int state = 0;
   int argc = 1;
-  const char * argv[] = {"test-args","-vvv","--input","file-name.json", "-z"};
+  const char * argv[] = {"test-args","-bbb","--input","file-name.json", "-z"};
 
   /* handle options */
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
@@ -424,7 +424,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlOptionGroup_s groups_no_args[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
     {"oiwg", 0,     _("Mode1"),_("Simple mode"),     NULL, "#",       "o,v",    "o", NULL }, /* accepted even if none of the mandatory options is set */
-    {"oiwg", 0,     _("Mode2"),_("Simple mode"),     NULL, "#",       "o,v",    "#,o", NULL }, /* accepted even if none of the mandatory options is set */
+    {"oiwg", 0,     _("Mode2"),_("Simple mode"),     NULL, "#",       "o,b,v",  "#,o", NULL }, /* accepted even if none of the mandatory options is set */
     {"oiwg", 0,     _("Mode3"),_("Simple mode"),     NULL, "#",       "",       "#", NULL }, /* accepted even if none of the mandatory options is set */
     {"oiwg", 0,     _("Mode4"),_("Simple mode"),     NULL, "#",       "",       "", NULL }, /* accepted even if none of the mandatory options is set */
     {"oiwg", 0,     _("Mode5"),_("Any arg mode"),    NULL, "@",       "o,v",    "@,o", NULL},/* accepted if anonymous arguments are set */
@@ -450,7 +450,7 @@ oyjlTESTRESULT_e testArgs()
   int size = 0;
   char * text;
   text = oyjlReadFile( fn , &size );
-  if(ui && text && strlen(oyjlTermColorToPlain(text,0)) == 2490)
+  if(ui && text && strlen(oyjlTermColorToPlain(text,0)) == 2500)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "ui created - no args %d %d", size, strlen(oyjlTermColorToPlain(text,0)) );
   } else
@@ -476,7 +476,7 @@ oyjlTESTRESULT_e testArgs()
   free(syn);
 
   syn = ui ? oyjlOptions_PrintHelpSynopsis_( ui->opts, &ui->opts->groups[1], oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_MARKDOWN ) : NULL;
-  if(syn && strcmp(syn,"<strong>test-args</strong> | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-v</strong>]") == 0)
+  if(syn && strcmp(syn,"<strong>test-args</strong> | [<strong>-o</strong>=<em>0|1|2</em>] [<strong>-b</strong>] [<strong>-v</strong>]") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "SynopsisMode2  #       o,v    #,o" );
   } else
@@ -609,7 +609,7 @@ oyjlTESTRESULT_e testArgs()
   oyjlUi_ReleaseArgs( &ui);
 
 
-  const char * argv_anonymous[] = {"test","-v","file-name.json","file-name2.json", "--candle", "--degree=200"};
+  const char * argv_anonymous[] = {"test","-b","file-name.json","file-name2.json", "--candle", "--degree=200"};
   int argc_anonymous = 6;
   ui = oyjlUi_Create( argc_anonymous, argv_anonymous, /* argc+argv are required for parsing the command line options */
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
@@ -642,7 +642,7 @@ oyjlTESTRESULT_e testArgs()
   count = 0;
   char ** text_array = oyjlOptions_ResultsToList( ui->opts, NULL, &count );
   if( text_array && count == 5 &&
-      strcmp(text_array[0], "-v") == 0 &&
+      strcmp(text_array[0], "-b") == 0 &&
       strcmp(text_array[1], "-@=file-name.json") == 0 &&
       strcmp(text_array[2], "-@=file-name2.json") == 0 &&
       strcmp(text_array[3], "--candle") == 0 &&
@@ -662,11 +662,11 @@ oyjlTESTRESULT_e testArgs()
   }
   if(oy_test_last_result == oyjlTESTRESULT_SUCCESS)
   {
-    oyjlOption_s * v = oyjlOptions_GetOptionL( ui->opts, text_array[0], 0/* flags */ ), /* "-v" single letter opt */
+    oyjlOption_s * v = oyjlOptions_GetOptionL( ui->opts, text_array[0], 0/* flags */ ), /* "-b" single letter opt */
                  * at = oyjlOptions_GetOptionL( ui->opts, text_array[1], 0/* flags */ ), /* "-@=file-name.json" non cli opt with arg */
                  * candle = oyjlOptions_GetOptionL( ui->opts, text_array[3], 0/* flags */ ), /* "--candle" long opt */
                  * degree = oyjlOptions_GetOptionL( ui->opts, text_array[4], 0/* flags */ ); /* "--degree=200" long opt */
-    if(v && strcmp(v->o,"v") == 0)
+    if(v && strcmp(v->o,"b") == 0)
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
       "oyjlOptions_GetOptionL(\"%s\")", text_array[0] );
     } else
@@ -874,13 +874,13 @@ oyjlTESTRESULT_e testArgs()
                                        sections, oarray, groups_no_args, NULL );
 
   text = oyjlUi_ToMan( ui, 0 );
-  if( text && strlen(text) == 3355 &&
+  if( text && strlen(text) == 3379 &&
       strstr(text, "\n\\fB\\-\\-candle\\fR\tCandle"))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMan() %lu", strlen(text) );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToMan() 3355 == %lu", text ? strlen(text) : 0 );
+    "oyjlUi_ToMan() 3379 == %lu", text ? strlen(text) : 0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMan", "txt" )
   if(verbose && text)
@@ -888,7 +888,7 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   text = oyjlUi_ToMarkdown( ui, 0 );
-  if( text && strlen(text) == 8828 &&
+  if( text && strlen(text) == 8872 &&
       strstr(text, "><strong>--candle</strong><") )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlUi_ToMarkdown() %lu", strlen(text) );
@@ -915,7 +915,7 @@ oyjlTESTRESULT_e testArgs()
   if(text) {free(text);} text = NULL;
 
   count = 0;
-  text_array = oyjlOptions_ResultsToList( ui->opts, "v", &count );
+  text_array = oyjlOptions_ResultsToList( ui->opts, "b", &count );
   if(text_array && count == 3)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "oyjlOptions_ResultsToList(\"v\") %d", count );
