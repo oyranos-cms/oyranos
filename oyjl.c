@@ -72,7 +72,7 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
     const char * xpath_full = NULL;
 
     if(verbose)
-      fprintf(stderr, "file read:\t\"%s\" %d\n", error_name, size);
+      fprintf(stderr, "%s file read:\t\"%s\" %d\n", oyjlPrintTime(OYJL_BRACKETS, oyjlNO_MARK), error_name, size);
 
     /* convert exported C declarated string into plain text using cc compiler */
     if(text && strlen(text) > 8 && memcmp(text, "#define ", 8) == 0 && !delimiter)
@@ -104,7 +104,7 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
     else if(!root_)
       fprintf(stderr, "%s\tparsing \"%s\":\n%s", oyjlTermColor(oyjlRED,_("Usage Error:")), error_name, text);
     if(verbose)
-      fprintf(stderr, "file parsed:\t\"%s\"\n", error_name);
+      fprintf(stderr, "%s file parsed:\t\"%s\"\n", oyjlPrintTime(OYJL_BRACKETS, oyjlNO_MARK), error_name);
 
     if(paths || xpath || path_list)
       path_list_ = oyjlTreeToPaths( root_, 1000000, xpath, 0, &count );
@@ -371,7 +371,7 @@ int myMain( int argc, const char ** argv )
       i_files = oyjlOptions_ResultsToList( ui->opts, "i", &i_files_n );
       if(verbose)
       for(i = 0; i < i_files_n; ++i)
-        fprintf(stderr, "going to union: %s\n", i_files[i] );
+        fprintf(stderr, "%s going to union:\t\"%s\"\n", oyjlPrintTime(OYJL_BRACKETS, oyjlNO_MARK), i_files[i] );
 
       if(i_files_n > 1 && (!(json || xml || yaml || csv || csv_semicolon || paths || help || version) || set))
       {
@@ -492,6 +492,8 @@ int myMain( int argc, const char ** argv )
           text = oyjlTreeToText( set ? root : value, OYJL_CSV | flags );
         else if(csv_semicolon)
           text = oyjlTreeToText( set ? root : value, OYJL_CSV_SEMICOLON | flags );
+        if(verbose)
+          fprintf(stderr, "%s file to text:\t\"%s\" %d\n", oyjlPrintTime(OYJL_BRACKETS, oyjlNO_MARK), i_filename, text?(int)strlen(text):0);
         if(text)
         {
           if(wrap)
@@ -554,10 +556,13 @@ int myMain( int argc, const char ** argv )
           if(text)
           {
             fwrite( text, sizeof(char), strlen(text), stdout );
+            fflush(stdout);
             free(text);
             text = NULL;
           }
         }
+        if(verbose)
+          fprintf(stderr, "\n%s file to stdout:\t\"%s\"\n", oyjlPrintTime(OYJL_BRACKETS, oyjlNO_MARK), i_filename);
       }
     }
 
