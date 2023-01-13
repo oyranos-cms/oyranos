@@ -1208,7 +1208,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   int version = 0;
   int state = 0;
   int argc = 1;
-  const char * argv[] = {"test","-vvvvvv","--input","file-name.json", "-z"};
+  const char * argv[] = {"test","-o=0","--input","file-name.json", "-z"};
 
   /* handle options */
   /* Select from *version*, *manufacturer*, *copyright*, *license*, *url*,
@@ -1306,7 +1306,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlTreeFree( json ); json = NULL;
 
 
-  const char * argv_anonymous[] = {"test","-v","file-name.json","file-name2.json"};
+  const char * argv_anonymous[] = {"test","-o=0","file-name.json","file-name2.json"};
   int argc_anonymous = 4;
   ui = oyjlUi_Create( argc_anonymous, argv_anonymous, /* argc+argv are required for parsing the command line options */
                                        "oiCR", "oyjl-config-read", _("Short example tool using libOyjl"), "logo",
@@ -1422,12 +1422,12 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   text = oyjlUi_ToJson( ui, 0 );
   const char * plain = oyjlTermColorToPlain(text, 0);
   int len = strlen(plain);
-  if(text && len == 5325)
+  if(text && len == 5312)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "oyjlUi_ToJson()" );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL, 
-    "oyjlUi_ToJson() 5325 == %lu", len );
+    "oyjlUi_ToJson() 5312 == %lu", len );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToJson", "txt" )
   if(verbose && text)
@@ -1451,7 +1451,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   text = oyjlOptions_ResultsToJson( ui->opts, OYJL_JSON );
   plain = oyjlTermColorToPlain(text, 0);
   len = strlen(plain);
-  if(text && len == 63)
+  if(text && len == 43)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "oyjlOptions_ResultsToJson()" );
   } else
@@ -1466,7 +1466,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
 
   text = oyjlOptions_ResultsToText( ui->opts );
   len = strlen(text);
-  if(text && len == 41)
+  if(text && len == 21)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "oyjlOptions_ResultsToText()" );
   } else
