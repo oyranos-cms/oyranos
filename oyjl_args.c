@@ -3001,11 +3001,13 @@ oyjlOption_s * oyjlOptions_GetOption ( oyjlOptions_s     * opts,
   return o;
 }
 
-int oyjlOptions_IsOn_         ( oyjlOptions_s     * opts,
+int oyjlOptions_IsOn_                ( oyjlOptions_s     * opts,
                                        const char        * opt )
 {
   int found = 0;
-  oyjlOption_s * o = oyjlOptions_GetOptionL( opts, opt, 0 );
+  oyjlOption_s * o;
+  if(!opts || !opt) return found;
+  o = oyjlOptions_GetOptionL( opts, opt, 0 );
   if(o && o->variable_type == oyjlINT && o->variable.i)
     found = *o->variable.i;
   if(o && o->variable_type == oyjlSTRING && o->variable.s)
@@ -3083,7 +3085,7 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
 
   memset(ol, 0, 8);
 
-  if(!(ostring && ostring[0]))
+  if(!opts || !(ostring && ostring[0]))
     return o;
 
   if(ostring[0] == '-') ++ostring; /** Interprete "-o". */
