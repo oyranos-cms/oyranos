@@ -81,6 +81,8 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
 
+&nbsp;&nbsp;JSON - JavaScript Object Notation
+
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>json</strong></td> <td>Print JSON to stdout</td> </tr>
 </table>
@@ -88,6 +90,8 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 <h3 id="yaml">Print YAML to stdout</h3>
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+
+&nbsp;&nbsp;YAML - Yet Another Markup Language
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>yaml</strong></td> <td>Print YAML to stdout</td> </tr>
@@ -97,6 +101,8 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
 
+&nbsp;&nbsp;XML - eXtended Markup Language
+
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>xml</strong></td> <td>Print XML to stdout</td> </tr>
 </table>
@@ -105,6 +111,8 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>csv</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
 
+&nbsp;&nbsp;CSV - Comma Separated Values
+
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>csv</strong></td> <td>Print CSV to stdout</td> </tr>
 </table>
@@ -112,6 +120,8 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
 <h3 id="csv-semicolon">Print CSV-semicolon to stdout</h3>
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>csv-semicolon</strong> [<strong>-i</strong>=<em>FILENAME</em> ...] [<strong>-x</strong>=<em>PATH</em>] [<strong>-s</strong>=<em>STRING</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=SEPARATOR]</em>] [<strong>-w</strong>=<em>TYPE</em>] [<strong>-W</strong>=<em>NAME</em>]
+
+&nbsp;&nbsp;CSV - Comma Separated Values
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>csv-semicolon</strong></td> <td>Print CSV with semicolon to stdout</td> </tr>
@@ -167,11 +177,11 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
    <tr><td style='padding-left:0.5em'><strong>-h</strong> 1</td><td># Full Help : Print help for all groups</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> synopsis</td><td># Synopsis : List groups - Show all groups including syntax</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Input</td><td># Set input file and path</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print JSON</td><td># Print JSON to stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print YAML</td><td># Print YAML to stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print XML</td><td># Print XML to stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print CSV</td><td># Print CSV to stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print CSV-semicolon</td><td># Print CSV-semicolon to stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print JSON</td><td># Print JSON to stdout : JSON - JavaScript Object Notation</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print YAML</td><td># Print YAML to stdout : YAML - Yet Another Markup Language</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print XML</td><td># Print XML to stdout : XML - eXtended Markup Language</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print CSV</td><td># Print CSV to stdout : CSV - Comma Separated Values</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Print CSV-semicolon</td><td># Print CSV-semicolon to stdout : CSV - Comma Separated Values</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Count</td><td># Print node count</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Key Name</td><td># Print key name</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Type</td><td># Print type</td></tr>

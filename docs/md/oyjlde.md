@@ -81,6 +81,8 @@ Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl un
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>json</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=TRENNER]</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 
+&nbsp;&nbsp;JSON - JavaScript Object Notation
+
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>json</strong></td> <td>Zeige JSON auf stdout</td> </tr>
 </table>
@@ -88,6 +90,8 @@ Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl un
 <h3 id="yaml">Zeige YAML auf stdout</h3>
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>yaml</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=TRENNER]</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
+
+&nbsp;&nbsp;YAML - Yet Another Markup Language
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>yaml</strong></td> <td>Zeige YAML auf stdout</td> </tr>
@@ -97,6 +101,8 @@ Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl un
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>xml</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=TRENNER]</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 
+&nbsp;&nbsp;XML - eXtended Markup Language
+
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>xml</strong></td> <td>Zeige XML auf stdout</td> </tr>
 </table>
@@ -105,6 +111,8 @@ Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl un
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>csv</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=TRENNER]</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
 
+&nbsp;&nbsp;CSV - Comma Separated Values
+
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>csv</strong></td> <td>Zeige CSV auf stdout</td> </tr>
 </table>
@@ -112,6 +120,8 @@ Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl un
 <h3 id="csv-semicolon">Zeige CSV-Semikolon auf stdout</h3>
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl</strong></a> <strong>csv-semicolon</strong> [<strong>-i</strong>=<em>DATEINAME</em> ...] [<strong>-x</strong>=<em>PFAD</em>] [<strong>-s</strong>=<em>TEXT</em>] [<strong>-r</strong>=<em>FORMAT</em>] [<strong>-p</strong>] [<strong>-d</strong><em>[=TRENNER]</em>] [<strong>-w</strong>=<em>TYP</em>] [<strong>-W</strong>=<em>NAME</em>]
+
+&nbsp;&nbsp;CSV - Comma Separated Values
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>csv-semicolon</strong></td> <td>Zeige CSV mit Semikolon auf stdout</td> </tr>
@@ -167,11 +177,11 @@ Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl un
    <tr><td style='padding-left:0.5em'><strong>-h</strong> 1</td><td># Vollständige Hilfe : Zeige Hilfe für alle Gruppen</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> synopsis</td><td># Übersicht : Liste Gruppen - Zeige alle Gruppen mit Syntax</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Eingabe</td><td># Setze Eingangsdateiname und Pfad</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige JSON</td><td># Zeige JSON auf stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige YAML</td><td># Zeige YAML auf stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige XML</td><td># Zeige XML auf stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige CSV</td><td># Zeige CSV auf stdout</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige CSV-Semikolon</td><td># Zeige CSV-Semikolon auf stdout</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige JSON</td><td># Zeige JSON auf stdout : JSON - JavaScript Object Notation</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige YAML</td><td># Zeige YAML auf stdout : YAML - Yet Another Markup Language</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige XML</td><td># Zeige XML auf stdout : XML - eXtended Markup Language</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige CSV</td><td># Zeige CSV auf stdout : CSV - Comma Separated Values</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-h</strong> Zeige CSV-Semikolon</td><td># Zeige CSV-Semikolon auf stdout : CSV - Comma Separated Values</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Anzahl</td><td># Zeige Knotenanzahl</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Schlüsselname</td><td># Zeige Schlüsselname</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> Typ</td><td># Zeige Typ</td></tr>

@@ -280,11 +280,11 @@ int myMain( int argc, const char ** argv )
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
     {"oiwg", 0,     _("Input"),         _("Set input file and path"), NULL,               "",            "",            "i,x,s,p,r,d,w,W", NULL},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),NULL,  "j",           "i,x,s,r,p,d,w,W", "j", NULL},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),NULL,  "y",           "i,x,s,r,p,d,w,W", "y", NULL},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), NULL,  "m",           "i,x,s,r,p,d,w,W", "m", NULL},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print CSV"),  _("Print CSV to stdout"), NULL,  "csv",         "i,x,s,r,p,d,w,W", "csv", NULL},
-    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print CSV-semicolon"),  _("Print CSV-semicolon to stdout"), NULL,"csv-semicolon","i,x,s,r,p,d,w,W", "csv-semicolon", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print JSON"), _("Print JSON to stdout"),"JSON - JavaScript Object Notation",  "j",           "i,x,s,r,p,d,w,W", "j", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print YAML"), _("Print YAML to stdout"),"YAML - Yet Another Markup Language",  "y",           "i,x,s,r,p,d,w,W", "y", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print XML"),  _("Print XML to stdout"), "XML - eXtended Markup Language",  "m",           "i,x,s,r,p,d,w,W", "m", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print CSV"),  _("Print CSV to stdout"), "CSV - Comma Separated Values",  "csv",         "i,x,s,r,p,d,w,W", "csv", NULL},
+    {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Print CSV-semicolon"),  _("Print CSV-semicolon to stdout"), "CSV - Comma Separated Values","csv-semicolon","i,x,s,r,p,d,w,W", "csv-semicolon", NULL},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Count"),      _("Print node count"),    NULL,  "c",           "i,x,r",       "c", NULL},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Key Name"),   _("Print key name"),      NULL,  "k",           "i,x,r",       "k", NULL},
     {"oiwg", OYJL_GROUP_FLAG_SUBCOMMAND,_("Type"),       _("Print type"),          NULL,  "t",           "i,x,r",       "t", NULL},
@@ -489,9 +489,15 @@ int myMain( int argc, const char ** argv )
           else
             oyjlStringAdd( &text, 0,0, "\n" );
         } else if(csv)
+        {
           text = oyjlTreeToText( set ? root : value, OYJL_CSV | flags );
+          if(!text || !text[0]) fprintf(stderr, "%s contains no table:\t\"%s\"\n", oyjlTermColor(oyjlRED,"Usage Error:"), i_filename);
+        }
         else if(csv_semicolon)
+        {
           text = oyjlTreeToText( set ? root : value, OYJL_CSV_SEMICOLON | flags );
+          if(!text || !text[0]) fprintf(stderr, "%s contains no table:\t\"%s\"\n", oyjlTermColor(oyjlRED,"Usage Error:"), i_filename);
+        }
         if(verbose)
           fprintf(stderr, "%s file to text:\t\"%s\" %d\n", oyjlPrintTime(OYJL_BRACKETS, oyjlNO_MARK), i_filename, text?(int)strlen(text):0);
         if(text)
