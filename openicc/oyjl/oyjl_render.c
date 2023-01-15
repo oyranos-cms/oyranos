@@ -112,8 +112,10 @@ static int oyjlArgsRendererLoad_( const char * render_lib )
   int error = -1;
 
 #ifdef HAVE_DL
+#if 0 // keep nested calls alive
   if(oyjl_args_render_lib_)
     dlclose( oyjl_args_render_lib_ );
+#endif
   oyjl_args_render_lib_ = NULL;
   oyjlArgsRender_p = NULL;
   oyjl_args_render_lib_ = dlopen(fn, RTLD_LAZY);
