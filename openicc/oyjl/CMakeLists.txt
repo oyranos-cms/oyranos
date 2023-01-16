@@ -317,11 +317,29 @@ SET( CFILES_OYJL_ARGS_BASE_PUBLIC
 SET( CFILES_OYJL_YAJL_PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_yajl.c
    )
- SET( CFILES_OYJL_ARGS_WEB
+MACRO( CONVERT_TEXT_FILE_TO_HEADER ESCAPE )
+  # Generate define without dot '.'
+  STRING(REPLACE "." "_" ESCAPE_DEF ${ESCAPE})
+  # Replace file name extension by regex
+  STRING(REGEX REPLACE "\\.[^.]*$" ".h" ESCAPE_H ${ESCAPE})
+  # Escape quote '"' and put a line break inside string and in code to keep text readable on output
+  ADD_CUSTOM_COMMAND(
+    OUTPUT  ${ESCAPE_H}
+    COMMAND echo "/* Automatically generated from ${ESCAPE} . Will be overwritten on next build. */" > ${ESCAPE_H}
+    COMMAND echo "#define ${ESCAPE_DEF} \"\\n\\" >> ${ESCAPE_H}
+    COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/${ESCAPE} | sed s/$/\\\\n\\\\/ | sed s/\\\"/\\\\\"/g >> ${ESCAPE_H}
+    COMMAND echo "\"" >> ${ESCAPE_H}
+    COMMENT "Convert ${ESCAPE} to C header ${ESCAPE_H}" VERBATIM )
+ENDMACRO( CONVERT_TEXT_FILE_TO_HEADER )
+CONVERT_TEXT_FILE_TO_HEADER( "${PROJECT_DOWN_NAME}_args_web_layout.css" )
+CONVERT_TEXT_FILE_TO_HEADER( "${PROJECT_DOWN_NAME}_args_web_normalize.css" )
+SET( CFILES_OYJL_ARGS_WEB
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_DOWN_NAME}_args_web_layout.h
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_DOWN_NAME}_args_web_normalize.h
 	${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_args_web.c
 	${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}_io_share.c
    )
- SET( CFILES_OYJL_EXTRA
+SET( CFILES_OYJL_EXTRA
 	${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_DOWN_NAME}-args-share.c
    )
 SET( CHEADERS_OYJL_PUBLIC

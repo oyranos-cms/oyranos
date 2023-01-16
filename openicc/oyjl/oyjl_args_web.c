@@ -704,7 +704,8 @@ const char srv_signed_cert_pem[] = "-----BEGIN CERTIFICATE-----\n"
                                    "Bb01PCthGXiq/4A2RLAFosadzRa8SBpoSjPPfZ0b2w4MJpReHqKbR5+T2t6hzml6\n"
                                    "4ToyOKPDmamiTuN5KzLN3cw7DQlvWMvqSOChPLnA3Q==\n"
                                    "-----END CERTIFICATE-----\n";
-
+#include "oyjl_args_web_layout.h"
+#include "oyjl_args_web_normalize.h"
 
 int  oyjlArgsWebGroupIsMan_          ( oyjl_val            g )
 {
@@ -1661,9 +1662,27 @@ int oyjlArgsWebStart__               ( int                 argc,
       }
     }
     if(css)
+    {
       css_text = oyjlReadFile( css, 0, &size );
+      if(!css_text)
+      {
+        css_text = oyjlStringCopy(oyjl_args_web_normalize_css,0);
+        fprintf(stderr,
+                "%s not found. Falling back to inbuild default oyjl_args_web_normalize_css\n", oyjlTermColor(oyjlRED, css));
+        css = "oyjl_args_web_normalize_css";
+      }
+    }
     if(css2)
+    {
       css2_text = oyjlReadFile( css2, 0, &size );
+      if(!css2_text)
+      {
+        css2_text = oyjlStringCopy(oyjl_args_web_layout_css,0);
+        fprintf(stderr,
+                "%s not found. Falling back to inbuild default oyjl_args_web_layout_css\n", oyjlTermColor(oyjlRED, css2));
+        css2 = "oyjl_args_web_layout_css";
+      }
+    }
     oyjlStringAdd( &get_page, 0,0, responsepage, OYJL_E(css_text,""), OYJL_E(css2_text,""), OYJL_E(css_toc_text,""), t );
     if(debug)
       oyjlWriteFile("oyjl_args_web-debug.html", get_page, strlen(get_page+1) );
@@ -1679,7 +1698,7 @@ int oyjlArgsWebStart__               ( int                 argc,
       OYJL_WEB_OPT_HELP( "port", "select the port for the host; default is 8888" );
       OYJL_WEB_OPT_HELP( "https_key", "adds a https key file; default is none, if no filename is provided it uses a self certified inbuild key" );
       OYJL_WEB_OPT_HELP( "https_cert", "adds a certificate for https; default is none, if no filename is provided it uses a self certified inbuild certificate" );
-      OYJL_WEB_OPT_HELP( "css", "can by called two times to add CSS layout file(s), which will by embedded into the HTML code" );
+      OYJL_WEB_OPT_HELP( "css", "can by called two times to add CSS layout file(s), which will by embedded into the HTML code, if it has no arg, it uses a default" );
       OYJL_WEB_OPT_HELP( "ignore", "add comma separated list of skip options, which are marked in HTML and get not accepted, e.g. ignore=\"o,option,v,verbose" );
       OYJL_WEB_OPT_HELP( "help", "show this help text" );
       OYJL_WEB_OPT_HELP( "security", "specifies the security level used; default is readonly inactive web page generation" );
