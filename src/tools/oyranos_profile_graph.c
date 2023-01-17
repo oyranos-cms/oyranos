@@ -138,12 +138,14 @@ typedef enum {
   COLOR_GRAY,
   COLOR_SPECTRAL
 } COLOR_MODE;
+#define OY_DRAW_ID 0x01
 void drawIlluminant ( cairo_t * cr,
                       oyImage_s * spec, int column,
                       float xO, float yO, float width, float height,
                       float min_x, float max_x, float min_y, float max_y,
                       COLOR_MODE mode, double color[4],
-                      uint32_t icc_profile_flags, const char * id );
+                      uint32_t icc_profile_flags, const char * id, int flags,
+                      int frame, double thickness );
 void drawTextTopLeft( cairo_t * cr,
                       double background_lightness, int frame,
                       double xO, double yO, double width, double height,
@@ -373,7 +375,7 @@ int myMain( int argc, const char ** argv )
   int lower_text_border = 0;
 
   float xO,yO,width,height,height_;
-  double rgba[4] = {.5,.5,.5,.7};
+  double rgba[4] = {.45,.45,.45,.7};
   double bg_rgba[4] = {.7,.7,.7,.5};
 
   /* value range */
@@ -1822,6 +1824,7 @@ int myMain( int argc, const char ** argv )
       cairo_line_to(cr, xToImage(i), yToImage(max_y-((i<=((kelvin > 0.0||illuminant)?340:400))?0.03:0.0025)));
     }
     cairo_stroke(cr);
+    fprintf( stderr, "raster %f %f %f\n", rgba[0], rgba[1], rgba[2] );
 
     /* 100 nm */
     char utf8[32];
@@ -1864,7 +1867,7 @@ int myMain( int argc, const char ** argv )
                       xO, yO, width, height, \
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max, \
                       no_color ? COLOR_GRAY : COLOR_COLOR, rgba, \
-                      pflags, id ); \
+                      pflags, id, 0,0,0 ); \
     }
   cairo_set_line_width (cr, 3.*thickness);
   if(standardobs)
@@ -1914,7 +1917,7 @@ int myMain( int argc, const char ** argv )
                       xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      pflags, "kelvin" );
+                      pflags, "kelvin", 0,0,0 );
     oyImage_Release( &a );
 
     drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%d K", (int) kelvin );
@@ -1934,7 +1937,7 @@ int myMain( int argc, const char ** argv )
       drawIlluminant( cr, a, 0, xO, yO, width, height, \
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max, \
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba, \
-                      pflags, "D" #DXX ); \
+                      pflags, "D" #DXX, 0,0,0 ); \
       oyImage_Release( &a ); \
     } else
   if(illuminant != 0)
@@ -1951,7 +1954,7 @@ int myMain( int argc, const char ** argv )
                       xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      pflags, "A" );
+                      pflags, "A", 0,0,0 );
       oyImage_Release( &a );
     } else
     if(oyStringCaseCmp_(illuminant,"D65T") == 0)
@@ -1965,7 +1968,7 @@ int myMain( int argc, const char ** argv )
                       xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      pflags, "A" );
+                      pflags, "A", 0,0,0 );
       oyImage_Release( &a );
     } else
     if(oyStringCaseCmp_(illuminant,"SPD") == 0)
@@ -1977,15 +1980,15 @@ int myMain( int argc, const char ** argv )
       drawIlluminant( cr, a, 0, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      pflags, "S1" );
+                      pflags, "S1", OY_DRAW_ID,frame,thickness );
       drawIlluminant( cr, a, 1, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      pflags, "S2" );
+                      pflags, "S2", OY_DRAW_ID,frame,thickness );
       drawIlluminant( cr, a, 2, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      pflags, "S3" );
+                      pflags, "S3", OY_DRAW_ID,frame,thickness );
       oyImage_Release( &a );
     } else
     ILLUMINANT( 50 )
@@ -2017,7 +2020,7 @@ int myMain( int argc, const char ** argv )
       drawIlluminant( cr, a, 0, xO, yO, width, height,
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max,
                       no_color ? COLOR_GRAY : COLOR_SPECTRAL, rgba,
-                      pflags, "D50" );
+                      pflags, "D50", 0,0,0 );
       oyImage_Release( &a );
       if(spd_5) free(spd_5);
     }
@@ -2029,13 +2032,17 @@ int myMain( int argc, const char ** argv )
     for(j = 0; j < spectral_count; ++j)
     {
       double rgb[4] = { spectra_XYZ[j].f[0]/white.f[0]/CIE_Y_max, spectra_XYZ[j].f[1]/white.f[0]/CIE_Y_max, spectra_XYZ[j].f[2]/white.f[0]/CIE_Y_max, 1.0 };
+      const char * name = NULL;
+      oyjl_val val = oyjlTreeGetValueF( specT, 0, "collection/[0]/colors/[%d]/name", j );
+      if(val)
+        name = OYJL_GET_STRING(val);
       oyXYZ2sRGB( rgb );
       drawIlluminant( cr,
                       spectra, j,
                       xO, yO, width, height,
                       min_x, max_x, min_y < 0 ? min_y : 0.0, max_y,
                       no_color ? COLOR_GRAY : spectral_count == 1 ? COLOR_SPECTRAL : COLOR_COLOR, rgb,
-                      pflags, input );
+                      pflags, name, spectral_count < 10 ? OY_DRAW_ID : 0, frame, thickness );
     }
     oyImage_Release( &spectra );
     drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s    %s", OYJL_E(input,""), OYJL_E(pattern,"") );
@@ -2577,17 +2584,19 @@ int oyXYZ2sRGB ( double * rgb )
   return error;
 }
 
-void drawIlluminant( cairo_t * cr,
+void drawIlluminant ( cairo_t * cr,
                       oyImage_s * spec, int index,
                       float xO, float yO, float width, float height,
                       float min_x, float max_x, float min_y, float max_y,
                       COLOR_MODE mode, double color[4],
-                      uint32_t icc_profile_flags, const char * id )
+                      uint32_t icc_profile_flags, const char * id, int flags,
+                      int frame, double thickness )
 {
   int channels = oySpectrumGetParam( spec, oySPECTRUM_CHANNELS );
   int start = oySpectrumGetParam( spec, oySPECTRUM_START ),
       end = oySpectrumGetParam( spec, oySPECTRUM_END );
   float max = -1000000.0;
+  int max_pos = -1;
 
   int lambda = (end - start) / (channels - 1);
   /*  draw spectral power distribution
@@ -2645,8 +2654,8 @@ void drawIlluminant( cairo_t * cr,
       continue;
     }
 
-    if(y0 > max) max = y0;
-    if(y1 > max) max = y1;
+    if(y0 > max) { max = y0; max_pos = i; }
+    if(y1 > max) { max = y1; max_pos = i+1; }
 
     if(mode != COLOR_SPECTRAL)
     {
@@ -2700,6 +2709,19 @@ void drawIlluminant( cairo_t * cr,
 
   if(mode != COLOR_SPECTRAL)
     cairo_stroke(cr);
+
+  if(id && flags & OY_DRAW_ID)
+  {
+    double x = oySpectrumGet(spec, -1, max_pos ),
+           y = oySpectrumGet(spec, index, max_pos),
+           x_pos = xToImage(x);
+    cairo_set_font_size (cr, frame);
+    cairo_move_to (cr, x_pos > width ? width - width / 8.0 : x_pos,
+                       yToImage(y + 0.003 * thickness));
+    cairo_show_text (cr, id);
+    if(verbose > 1)
+      fprintf( stderr, "draw[%f %f %f %f] id: %s\n", x, y, x_pos, width, id );
+  }
 
   if(verbose && index < 10)
   fprintf( stderr, " (%f) %d %s\n", max, channels, id );
