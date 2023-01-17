@@ -146,10 +146,12 @@ void drawIlluminant ( cairo_t * cr,
                       COLOR_MODE mode, double color[4],
                       uint32_t icc_profile_flags, const char * id, int flags,
                       int frame, double thickness );
+#define OY_NO_DRAW 0x1
 void drawTextTopLeft( cairo_t * cr,
                       double background_lightness, int frame,
                       double xO, double yO, double width, double height,
                       double min_x, double max_x, double min_y, double max_y,
+                      int flags, double * text_width,
                       char * format, ... );
 
 int         oyjlCopyNode             ( oyjl_val            src,
@@ -377,6 +379,7 @@ int myMain( int argc, const char ** argv )
   float xO,yO,width,height,height_;
   double rgba[4] = {.45,.45,.45,.7};
   double bg_rgba[4] = {.7,.7,.7,.5};
+  char * top_left_text = NULL;
 
   /* value range */
   min_x=min_y=0.0;
@@ -1697,7 +1700,7 @@ int myMain( int argc, const char ** argv )
       int j;
       for( j = 0; j < profile_count; ++j)
         oyjlStringAdd( &utf8, 0,0, " %s", profile_names[j] );
-      drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s %s %s", OYJL_E(input,""), OYJL_E(pattern,""), OYJL_E(utf8,""));
+      drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, 0,0, "%s %s %s", OYJL_E(input,""), OYJL_E(pattern,""), OYJL_E(utf8,""));
       if(utf8) { free(utf8); utf8 = NULL; }
     }
 
@@ -1810,21 +1813,43 @@ int myMain( int argc, const char ** argv )
     max_x = endNM;
   }
 
+  if(standardobs)
+    oyjlStringAdd( &top_left_text, 0,0, "%s", "StdObs 31" );
+  else if(observer64)
+    oyjlStringAdd( &top_left_text, 0,0, "%s", "StdObs 64" );
+  if(kelvin > 0.0)
+    oyjlStringAdd( &top_left_text, 0,0, "%d K", (int) kelvin );
+  else if(illuminant != NULL)
+    oyjlStringAdd( &top_left_text, 0,0, "%s", illuminant );
+  if(spectra)
+    oyjlStringAdd( &top_left_text, 0,0, "%s    %s", OYJL_E(input,""), OYJL_E(pattern,"") );
+
   if(raster &&
      ( standardobs || observer64 || illuminant || kelvin > 0.0 || spectra ) )
   {
+    double text_width = 0;
+    if(top_left_text)
+      drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, OY_NO_DRAW, &text_width, top_left_text );
+
     /* draw some coordinate system hints */
     cairo_set_line_width (cr, 0.35*thickness);
     cairo_set_source_rgba( cr, rgba[0], rgba[1], rgba[2], 1.0 );
+
     /* 25 nm */
     for(i = 300; i < max_x; i += 25)
     {
+      double x = xToImage(i),
+             w = xToImage(min_x) - frame * 0.8 + text_width;
+      double y = max_y - 0.0025;
       if(i < min_x) continue;
+      if(text_width > 0 && x <= w)
+        y = max_y - 0.03;
       cairo_move_to(cr, xToImage(i), yToImage(min_y));
-      cairo_line_to(cr, xToImage(i), yToImage(max_y-((i<=((kelvin > 0.0||illuminant)?340:400))?0.03:0.0025)));
+      cairo_line_to(cr, xToImage(i), yToImage(y));
     }
     cairo_stroke(cr);
-    fprintf( stderr, "raster %f %f %f\n", rgba[0], rgba[1], rgba[2] );
+    if(verbose)
+      fprintf( stderr, "raster color: %f %f %f\n", rgba[0], rgba[1], rgba[2] );
 
     /* 100 nm */
     char utf8[32];
@@ -1835,9 +1860,14 @@ int myMain( int argc, const char ** argv )
     cairo_set_line_width (cr, 0.7*thickness);
     for(i = 300; i < max_x; i += 100)
     {
+      double x = xToImage(i),
+             w = xToImage(min_x) - frame * 0.8 + text_width;
+      double y = max_y - 0.0025;
       if(i < min_x) continue;
+      if(text_width > 0 && x <= w)
+        y = max_y - 0.03;
       cairo_move_to(cr, xToImage(i), yToImage(min_y));
-      cairo_line_to(cr, xToImage(i), yToImage(max_y-((i<=((kelvin > 0.0||illuminant)?340:400))?0.03:0.0025)));
+      cairo_line_to(cr, xToImage(i), yToImage(y));
       sprintf( utf8, "%d", i );
       cairo_move_to (cr, xToImage(i) - frame * 0.8,
                          yToImage(max_y + 0.0025));
@@ -1867,12 +1897,12 @@ int myMain( int argc, const char ** argv )
                       xO, yO, width, height, \
                       min_x, max_x,  min_y < 0 ? min_y : 0.0, max, \
                       no_color ? COLOR_GRAY : COLOR_COLOR, rgba, \
-                      pflags, id, 0,0,0 ); \
+                      pflags, top_left_text, 0,0,0 ); \
     }
   cairo_set_line_width (cr, 3.*thickness);
+
   if(standardobs)
   {
-    const char * id = "StdObs 31";
     oyImage_s * a = oySpectrumCreateEmpty ( 360, 830, 1, 3 );
     float max = oySpectrumFillFromArrayF3 ( a, cieXYZ_31_2 );
     oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
@@ -1882,13 +1912,12 @@ int myMain( int argc, const char ** argv )
     drawSpectralCurve(cieXYZ_31_2, 2, .0,.0,1.,1.)
     cairo_stroke(cr);
     oyImage_Release( &a );
-    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s", id );
+    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, 0,0, top_left_text );
   }
   if(observer64)
   {
     oyImage_s * a = oySpectrumCreateEmpty ( 360, 830, 1, 3 );
     float max = oySpectrumFillFromArrayF3 ( a, cieXYZ_64_10 );
-    const char * id = "StdObs 64";
     oySpectrumNormalise ( a, 1.0/max ); max = 1.0;
     /* draw spectral sensitivity curves from 1964 standard observer */
     drawSpectralCurve(cieXYZ_64_10, 0, 1.0, .0, .0, 1.)
@@ -1896,7 +1925,7 @@ int myMain( int argc, const char ** argv )
     drawSpectralCurve(cieXYZ_64_10, 2, .0, .0, 1.0, 1.)
     cairo_stroke(cr);
     oyImage_Release( &a );
-    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s", id );
+    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, 0,0, top_left_text );
   }
 #undef drawSpectralCurve
   if(kelvin > 0.0)
@@ -1920,7 +1949,7 @@ int myMain( int argc, const char ** argv )
                       pflags, "kelvin", 0,0,0 );
     oyImage_Release( &a );
 
-    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%d K", (int) kelvin );
+    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, 0,0, top_left_text );
   }
 #define ILLUMINANT( DXX ) \
     if(oyStringCaseCmp_(illuminant, "D" #DXX) == 0) \
@@ -1942,7 +1971,7 @@ int myMain( int argc, const char ** argv )
     } else
   if(illuminant != 0)
   {
-    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s", illuminant );
+    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, 0,0, top_left_text );
     if(oyStringCaseCmp_(illuminant,"A") == 0)
     {
       oyImage_s * a = oySpectrumCreateEmpty ( 300, 830, 5, 1 );
@@ -2045,7 +2074,7 @@ int myMain( int argc, const char ** argv )
                       pflags, name, spectral_count < 10 ? OY_DRAW_ID : 0, frame, thickness );
     }
     oyImage_Release( &spectra );
-    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, "%s    %s", OYJL_E(input,""), OYJL_E(pattern,"") );
+    drawTextTopLeft( cr, background_lightness, frame, xO, yO, width, height, min_x, max_x, min_y, max_y, 0,0, top_left_text );
 
     min_x=min_y=0.0;
     max_x=max_y=1.0;
@@ -2715,8 +2744,10 @@ void drawIlluminant ( cairo_t * cr,
     double x = oySpectrumGet(spec, -1, max_pos ),
            y = oySpectrumGet(spec, index, max_pos),
            x_pos = xToImage(x);
+    cairo_text_extents_t e;
     cairo_set_font_size (cr, frame);
-    cairo_move_to (cr, x_pos > width ? width - width / 8.0 : x_pos,
+    cairo_text_extents (cr, id, &e);
+    cairo_move_to (cr, x_pos > width - e.width + e.x_bearing ? width - e.width + e.x_bearing : x_pos,
                        yToImage(y + 0.003 * thickness));
     cairo_show_text (cr, id);
     if(verbose > 1)
@@ -2737,6 +2768,7 @@ void drawTextTopLeft( cairo_t * cr,
                       double background_lightness, int frame,
                       double xO, double yO, double width, double height,
                       double min_x, double max_x, double min_y, double max_y,
+                      int flags, double * text_width,
                       char * format, ... )
 {
   char * tmp = NULL;
@@ -2757,6 +2789,15 @@ void drawTextTopLeft( cairo_t * cr,
   cairo_set_font_size (cr, frame);
   cairo_move_to (cr, xToImage(min_x) - frame * 0.8,
                      yToImage(max_y - 0.025));
+
+  if(text_width)
+  {
+    cairo_text_extents_t e;
+    cairo_text_extents (cr, text, &e);
+    *text_width = e.width;
+  }
+
+  if(!(flags & OY_NO_DRAW))
   cairo_show_text (cr, text);
 
   if(tmp) { free(tmp); tmp = NULL; }
