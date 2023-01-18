@@ -1258,8 +1258,10 @@ oyjl_val   oyjlTreeParse2            ( const char        * text,
 
   if(oyjl_error_buffer_[0] != '\000')
   {
+    char * e = oyjlStringCopy(oyjlTermColor(oyjlRED,_("Usage Error:")), 0);
     oyjlMessage_p( msg_type, 0, OYJL_DBG_FORMAT "%s %s\t\"%s\"\n", OYJL_DBG_ARGS,
-                   oyjlTermColor(oyjlRED,_("Usage Error:")), error_name?error_name:"", oyjl_error_buffer_ );
+                   e, error_name?error_name:"", oyjl_error_buffer_ );
+    free(e);
     state = oyjlPARSE_STATE_PARSER_ERROR;
   } else if( ( state == oyjlPARSE_STATE_FORMAT_ERROR ||
                state == oyjlPARSE_STATE_NOT_COMPILED ) &&
