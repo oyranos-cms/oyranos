@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2023-01-15 16:42+0100\n"
+"POT-Creation-Date: 2023-01-18 11:31+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -1595,7 +1595,7 @@ msgstr "Benutzung"
 #: oyjl_args.c:3386 oyjl_args.c:3404 oyjl_args.c:3430 oyjl_args.c:3457
 #: oyjl_args.c:3479 oyjl_args.c:3507 oyjl_args.c:3543 oyjl_args.c:3575
 #: oyjl_args.c:3714 oyjl_args.c:4970 oyjl_args.c:5002 oyjl_message.c:75
-#: oyjl_translate.c:137 oyjl_translate.c:563 oyjl_yajl.c:1262
+#: oyjl_translate.c:137 oyjl_translate.c:563 oyjl_yajl.c:1261
 msgid "Usage Error:"
 msgstr "Benutzerfehler:"
 
