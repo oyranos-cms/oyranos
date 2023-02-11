@@ -43,10 +43,9 @@
 #include "oyjl_tree_internal.h"
 
 /* --- Render_Section --- */
-#if !defined(COMPILE_STATIC) || !defined(HAVE_QT)
 #warning "compile dynamic section"
 #ifdef COMPILE_STATIC
-#warning "COMPILE_STATIC defined"
+#warning "COMPILE_STATIC defined and compile oyjlArgsRender()"
 #endif
 #ifdef HAVE_QT
 #warning "HAVE_QT defined"
@@ -285,7 +284,6 @@ int oyjlArgsRender                   ( int                 argc,
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
-#endif /* !COMPILE_STATIC || !HAVE_QT */
 
 
 /* --- Render_Section --- */
