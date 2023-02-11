@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Oyranos 0.9\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2023-01-18 09:51+0100\n"
+"POT-Creation-Date: 2023-01-31 18:29+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -207,7 +207,7 @@ msgstr ""
 msgid "16"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:785
+#: modules/color/modules/oyranos_cmm_lraw.cpp:793
 msgid "16-bit"
 msgstr ""
 
@@ -287,7 +287,7 @@ msgstr ""
 msgid "8"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:779
+#: modules/color/modules/oyranos_cmm_lraw.cpp:787
 msgid "8-bit"
 msgstr ""
 
@@ -441,7 +441,7 @@ msgstr ""
 
 #: examples/oyranos_cmm_dDev.c:853 examples/oyranos_cmm_dFil.c:185
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:977
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1169
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1176
 msgid "All the small details for using this module."
 msgstr ""
 
@@ -686,7 +686,7 @@ msgid ""
 "trivial setup, but allows for side-by-side comparisons."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:770
+#: modules/color/modules/oyranos_cmm_lraw.cpp:778
 msgid "Bits per Sample"
 msgstr ""
 
@@ -877,7 +877,7 @@ msgstr ""
 msgid "Camera"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1048
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1055
 msgid "CameraRaw"
 msgstr ""
 
@@ -1011,7 +1011,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:901
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:856
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1366
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1048
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1055
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4798
 #: modules/color/modules/oyranos_cmm_lcms.c:2785
 msgid "Color"
@@ -1255,7 +1255,7 @@ msgstr ""
 
 #: examples/oyranos_cmm_dDev.c:843
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:968
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1160
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1167
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
@@ -1598,7 +1598,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:904
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:857
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1369
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1048
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1055
 #, fuzzy
 msgid "Device"
 msgstr "приме́р"
@@ -2590,7 +2590,7 @@ msgstr ""
 msgid "Image[input_ppm]"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:847
+#: modules/color/modules/oyranos_cmm_lraw.cpp:855
 msgid "Image[lraw]"
 msgstr ""
 
@@ -2684,7 +2684,7 @@ msgstr ""
 msgid "Input PPM Image Filter Object"
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:849
+#: modules/color/modules/oyranos_cmm_lraw.cpp:857
 msgid "Input libraw Image Filter Object"
 msgstr ""
 
@@ -3228,7 +3228,7 @@ msgstr ""
 #: examples/oyranos_cmm_dDev.c:845
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:1019
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:970
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1162
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1169
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4923
 #: modules/color/modules/oyranos_cmm_lcms.c:2899
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
@@ -3386,7 +3386,7 @@ msgstr ""
 msgid "Modify Profile:"
 msgstr "ICC-профили"
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:765
+#: modules/color/modules/oyranos_cmm_lraw.cpp:773
 msgid "Module Options"
 msgstr ""
 
@@ -3409,7 +3409,7 @@ msgid ""
 "system."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:773
+#: modules/color/modules/oyranos_cmm_lraw.cpp:781
 msgid "More bits mean more precission for processing and more size."
 msgstr ""
 
@@ -3446,7 +3446,7 @@ msgstr ""
 
 #: examples/oyranos_cmm_dDev.c:851 examples/oyranos_cmm_dFil.c:183
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:975
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1167
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1174
 msgid "My filter introduction."
 msgstr ""
 
@@ -3864,7 +3864,7 @@ msgstr "ICC-профили"
 msgid "Oyranos Profiles"
 msgstr "ICC-профили"
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1144
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1151
 msgid "Oyranos RAW Image"
 msgstr ""
 
@@ -3957,7 +3957,7 @@ msgstr "О программе Oyranos"
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:1010
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:963
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1504
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1155
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1162
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
 #: modules/color/modules/oyranos_cmm_oicc.c:1220
 #: modules/color/modules/oyranos_cmm_oydi.c:1366
@@ -4371,13 +4371,13 @@ msgstr ""
 msgid "Raster"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1037
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1044
 msgid ""
 "Raw camera data, which are in file containing raw sensor data from a camera "
 "still picture."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1035
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1042
 msgid "RawCamera"
 msgstr ""
 
@@ -5482,7 +5482,7 @@ msgid ""
 "accordingly."
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:857
+#: modules/color/modules/oyranos_cmm_lraw.cpp:865
 msgid ""
 "The filter is a libraw image reader. The option \"device\" with value \"1\" "
 "requestests a oyConfig_s object containing typical device informations about "
@@ -5523,7 +5523,7 @@ msgid ""
 "allocated output image. "
 msgstr ""
 
-#: modules/color/modules/oyranos_cmm_lraw.cpp:855
+#: modules/color/modules/oyranos_cmm_lraw.cpp:863
 msgid "The filter obtains a image from libraw."
 msgstr ""
 
@@ -5890,7 +5890,7 @@ msgid ""
 "resource overhead."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1146
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1153
 msgid "The raw image backend of Oyranos."
 msgstr ""
 
@@ -6509,9 +6509,9 @@ msgid "failed!"
 msgstr ""
 
 #: API_generated/oyranos_devices.c:2539 API_generated/oyranos_devices.c:2551
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:724
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:730
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:742
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:725
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:731
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:743
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4508
 #: modules/color/modules/oyranos_cmm_lcms.c:2453
 #: modules/color/modules/oyranos_cmm_oPNG.c:999
