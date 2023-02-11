@@ -4,6 +4,7 @@
  *
  *  @par Copyright:
  *            2009 (C) Yiannis Belias
+ *            2010-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyranos "RAW image & EXIF data" device backend for Oyranos
  *  @author   Yiannis Belias <orion@linux.gr>
@@ -825,7 +826,13 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 
             if(!context_opt_dev && device_name)
             {
-              error = rip.open_file( device_name );
+              int size = 0;
+              char * mem = oyjlReadFile( device_name, 0, &size );
+              if(size > 0)
+              {
+                error = rip.open_buffer( mem, (size_t)size );
+                free(mem);
+              }
               device_context = rip.output_params_ptr();
             } else
               device_context = *(libraw_output_params_t**)oyOption_GetData(context_opt, NULL, allocateFunc);
@@ -1270,7 +1277,7 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
    DFC_OPT_ADD_INT_ARR(greybox,1) //4
    DFC_OPT_ADD_INT_ARR(greybox,2) //4
    DFC_OPT_ADD_INT_ARR(greybox,3) //4
-   DFC_OPT_ADD_INT(shot_select)
+   //DFC_OPT_ADD_INT(shot_select)
 
    return error;
 }
