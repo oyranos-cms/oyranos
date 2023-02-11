@@ -39,7 +39,7 @@ ELSE()
     ENDIF(NOT ENABLE_INSTALL_${PROJECT_UP_NAME})
   ENDIF()
   SET(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME} ON)
-  SET(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME} OFF)
+  #SET(ENABLE_SHARED_LIBS_${PROJECT_UP_NAME} OFF) // build OyjlArgsXxx modules
   SET(ENABLE_TESTS_${PROJECT_UP_NAME} OFF)
   SET(ENABLE_DOCU_${PROJECT_UP_NAME} OFF)
   MESSAGE( "-- ENABLE_STATIC_LIBS_${PROJECT_UP_NAME}: ${ENABLE_STATIC_LIBS_${PROJECT_UP_NAME}}" )
@@ -158,6 +158,29 @@ ENDIF(LIBXML2_FOUND)
 
 INCLUDE(CheckLibraryExists)
 INCLUDE(CheckIncludeFile)
+MESSAGE( "-- CMAKE_INSTALL_PREFIX/CMAKE_INSTALL_INCLUDEDIR: ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}" )
+CHECK_INCLUDE_FILE( microhttpd.h OYJL_HAVE_MHD_H )
+IF( NOT OYJL_HAVE_MHD_H )
+  CHECK_INCLUDE_FILE( ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/microhttpd.h OYJL_HAVE_MHD_H_SPECIFIC )
+  IF(OYJL_HAVE_MHD_H_SPECIFIC)
+    SET( OYJL_HAVE_MHD_H 1 )
+    IF(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
+      SET( CMAKE_REQUIRED_FLAGS -I${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR} )
+      SET( CMAKE_REQUIRED_LINK_OPTIONS -L${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR} )
+      INCLUDE_DIRECTORIES( ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR} )
+      LINK_DIRECTORIES( ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR} )
+    ENDIF()
+  ENDIF()
+ENDIF( NOT OYJL_HAVE_MHD_H )
+MESSAGE( "-- microhttpd.h: " ${OYJL_HAVE_MHD_H} )
+CHECK_LIBRARY_EXISTS( microhttpd MHD_start_daemon "microhttpd.h" OYJL_HAVE_MHD OUTPUT )
+IF(OYJL_HAVE_MHD)
+  FIND_LIBRARY( MHD_LIBRARIES NAMES microhttpd )
+  MESSAGE( "-- microhttpd: ${MHD_LIBRARIES}" )
+ELSE(OYJL_HAVE_MHD)
+  MESSAGE( "-- microhttpd: microhttpd not found: ${OUTPUT}" )
+ENDIF(OYJL_HAVE_MHD)
+
 CHECK_LIBRARY_EXISTS( yaml yaml_document_get_node "yaml.h" OYJL_HAVE_YAML )
 IF( OYJL_HAVE_YAML )
     FIND_LIBRARY(YAML_LIBRARIES NAMES yaml libyaml yaml-static PATH)
@@ -201,13 +224,6 @@ ELSE(HAVE_DL)
 ENDIF(HAVE_DL)
 
 CHECK_LIBRARY_EXISTS( c backtrace "execinfo.h" OYJL_HAVE_BACKTRACE )
-CHECK_LIBRARY_EXISTS( microhttpd MHD_start_daemon "microhttpd.h" OYJL_HAVE_MHD )
-IF(OYJL_HAVE_MHD)
-  FIND_LIBRARY( MHD_LIBRARIES NAMES microhttpd )
-  MESSAGE( "-- microhttpd: ${MHD_LIBRARIES}" )
-ELSE(OYJL_HAVE_MHD)
-  MESSAGE( "-- microhttpd: microhttpd not found" )
-ENDIF(OYJL_HAVE_MHD)
 
 FIND_PATH(LTDL_INCLUDE_DIR ltdl.h)
 IF(LTDL_INCLUDE_DIR)
@@ -615,9 +631,9 @@ INCLUDE( "${CMAKE_CURRENT_BINARY_DIR}/cmake/OyjlConfig.cmake" ) # OYJL_DOCUMENT_
 
 IF(ENABLE_TOOLS_${PROJECT_UP_NAME})
 
-  BUILD_TOOL( ${PACKAGE_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                     ""                       ""                   TRUE  TRUE  TRUE )
   BUILD_TOOL( ${PACKAGE_NAME}-args "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args.c"           ""                       ""                   TRUE  TRUE  FALSE )
   TARGET_LINK_LIBRARIES( ${PACKAGE_NAME}-args ${QT_RENDER_LIB} ${PACKAGE_NAME}-extra-static ${OYJL_TARGET_LIB} ${EXTRA_LIBS} ${_LIBS} )
+  BUILD_TOOL( ${PACKAGE_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl.c"                     ""                       ""                   TRUE  TRUE  TRUE )
   BUILD_TOOL( ${PACKAGE_NAME}-translate "${CMAKE_CURRENT_SOURCE_DIR}/oyjl_translate.c" "${TGMO_${PROJECT_UP_NAME}}" ""               TRUE  TRUE  TRUE )
   IF(ENABLE_STATIC_LIBS_${PROJECT_UP_NAME})
     IF(HAVE_QT)
@@ -672,13 +688,13 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         COMMENT "Test standalone Args API in oyjl-test-args" VERBATIM )
   ADD_CUSTOM_COMMAND(
         OUTPUT  oyjl-args-ui-lib.c
-        COMMAND LANG=C ./oyjl-args -X export | ./oyjl-args -i - > oyjl-args-ui-lib.c
+        COMMAND LANG=C ./oyjl-args-bootstrap -X export | ./oyjl-args -i - > oyjl-args-ui-lib.c
         DEPENDS oyjl-args
         COMMENT "Export UI and generate lib C code" VERBATIM
         )
   ADD_CUSTOM_COMMAND(
         OUTPUT  oyjl-args-ui.c
-        COMMAND LANG=C ./oyjl-args -X export | ./oyjl-args -i - --c-stand-alone > oyjl-args-ui.c
+        COMMAND LANG=C ./oyjl-args-bootstrap -X export | ./oyjl-args -i - --c-stand-alone > oyjl-args-ui.c
         DEPENDS oyjl-args
         COMMENT "Export UI and generate stand alone C code" VERBATIM
         )
