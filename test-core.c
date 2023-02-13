@@ -1066,7 +1066,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   if(!(t && t[0]))
     fprintf( zout, "Compiling without OpenICC\n" );
   if(lib_a_size)
-    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -loyjl-args-cli-static -loyjl-args-web-static-client -lmicrohttpd -loyjl-static -loyjl-core-static %s %s -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, t&&t[0]?t:"", t&&t[0]?"-lopenicc-static":"", prog );
+    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -L %s -loyjl-args-cli-static -loyjl-args-web-static-client -lmicrohttpd -loyjl-static -loyjl-core-static %s %s -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, OYJL_INSTALL_LIBDIR, t&&t[0]?t:"", t&&t[0]?"-lopenicc-static":"", prog );
   else if(lib_so_size)
     oyjlStringAdd( &command, 0,0, "cc %s -g -O0 -I %s -I %s %s -L %s -lOyjl -lOyjlCore -o %s", verbose?"-Wall -Wextra":"", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, prog );
   if(t) { free(t); t = NULL; }

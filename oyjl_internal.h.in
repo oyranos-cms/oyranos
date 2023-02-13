@@ -1,4 +1,4 @@
-/** @file  oyjl_version.h
+/** @file  oyjl_internal.h
  *  @brief automatic generated variables
  */
 #ifndef OYJL_INTERNAL_H
@@ -6,6 +6,7 @@
 
 #define OYJL_SOURCEDIR "@CMAKE_SOURCE_DIR@"
 #define OYJL_BUILDDIR  "@CMAKE_BINARY_DIR@"
+#define OYJL_INSTALL_LIBDIR  "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@"
 
 #endif /*OYJL_INTERNAL_H*/
 
