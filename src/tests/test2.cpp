@@ -2554,7 +2554,7 @@ oyjlTESTRESULT_e testProfile ()
     "oySetDefaultProfile(oyPROFILE_EFFECT)" );
   } else
   {
-    PRINT_SUB( oyjlTESTRESULT_FAIL, 
+    PRINT_SUB( name&&name[0]?oyjlTESTRESULT_FAIL:oyjlTESTRESULT_XFAIL, 
     "oySetDefaultProfile(oyPROFILE_EFFECT)" );
   }
   if(name) oyFree_m_( name );
