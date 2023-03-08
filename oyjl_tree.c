@@ -580,7 +580,7 @@ char *     oyjlTreeToText            ( oyjl_val            v,
   else
     oyjlTreeToJson( v, &level, &text );
 
-  if(text && flags & OYJL_NO_MARKUP)
+  if(text && flags & OYJL_NO_MARKUP && !(flags & OYJL_CSV || flags & OYJL_CSV_SEMICOLON))
   {
     const char * t = NULL;
     t = oyjlTermColorToPlain( text, flags );
@@ -1176,7 +1176,7 @@ void               oyjlTreeToXml     ( oyjl_val            v,
  *  @param         text                the resulting string
  *
  *  @version Oyjl: 1.0.0
- *  @date    2023/01/09
+ *  @date    2023/02/21
  *  @since   2022/12/31 (Oyjl: 1.0)
  */
 void               oyjlTreeToCsv     ( oyjl_val            table,
@@ -1194,12 +1194,12 @@ void               oyjlTreeToCsv     ( oyjl_val            table,
   rows_n = oyjlValueCount( table );
   for(i = 0; i < rows_n; ++i)
   {
-    row = oyjlTreeGetValueF( table, 0, "[%d]", i );
+    row = table->type == oyjl_t_array ? table->u.array.values[i] : table->type == oyjl_t_object ? table->u.object.values[i] : NULL;
     cols_n = oyjlValueCount( row );
     if(i) oyjlStr_AppendN (string, "\n", 1);
     for(index = 0; index < cols_n; ++index)
     {
-      oyjl_val v = oyjlTreeGetValueF( row, 0, "[%d]", index );
+      oyjl_val v = row->type == oyjl_t_array ? row->u.array.values[index] : row->type == oyjl_t_object ? row->u.object.values[index] : NULL;
       const char dt[4] = {index?delimiter:0, 0,0,0};
       if(v)
         switch(v->type)
@@ -1207,19 +1207,19 @@ void               oyjlTreeToCsv     ( oyjl_val            table,
           case oyjl_t_null:
                break;
           case oyjl_t_number:
-               oyjlStr_Add (string, "%s%s", dt, oyjlStringColor(oyjlBLUE,flags,"%s",v->u.number.r ));
+               oyjlStr_Add (string, "%s%s", dt, flags&OYJL_NO_MARKUP?v->u.number.r:oyjlStringColor(oyjlBLUE,flags,"%s",v->u.number.r ));
                break;
           case oyjl_t_true:
-               oyjlStr_Add (string, "%s%s", dt, oyjlStringColor(oyjlGREEN,flags,"true")); break;
+               oyjlStr_Add (string, "%s%s", dt, flags&OYJL_NO_MARKUP?"true":oyjlStringColor(oyjlGREEN,flags,"true")); break;
           case oyjl_t_false:
-               oyjlStr_Add (string, "%s%s", dt, oyjlStringColor(oyjlRED,flags,"false")); break;
+               oyjlStr_Add (string, "%s%s", dt, flags&OYJL_NO_MARKUP?"false":oyjlStringColor(oyjlRED,flags,"false")); break;
           case oyjl_t_string:
                {
                 const char * t = v->u.string;
                 char * tmp = oyjlStringCopy(t,malloc);
                 oyjlStringReplace( &tmp, "\"", "\\\"", 0, 0);
                 oyjlStringReplace( &tmp, ": ", ":\\ ", 0, 0);
-                oyjlStr_Add (string, "%s%s", dt, oyjlStringColor(tmp[0]?oyjlBOLD:oyjlNO_MARK,flags,"%s",tmp));
+                oyjlStr_Add (string, "%s%s", dt, flags&OYJL_NO_MARKUP?tmp:oyjlStringColor(tmp[0]?oyjlBOLD:oyjlNO_MARK,flags,"%s",tmp));
                 if(tmp) free(tmp);
                }
                break;
