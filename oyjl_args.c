@@ -4235,8 +4235,8 @@ char * oyjlOptionChoice_Print_       ( oyjlOptionChoice_s* c,
   switch(style)
   {
     case 0:
-      oyjlStringAdd( &text, 0,0, OYJL_HELP_ARG "  %s %s%s%s%s%s%s%s\n",
-      t,
+      oyjlStringAdd( &text, 0,0, OYJL_HELP_ARG "  %s%s%s%s%s%s%s%s%s\n",
+      t?t:"", t?" ":"",
       c->nick,
       has_comment?"\t\t# ":"",
       c->name && c->nick[0] ? c->name :
@@ -4247,8 +4247,8 @@ char * oyjlOptionChoice_Print_       ( oyjlOptionChoice_s* c,
       c->help?c->help:"" );
     break;
     case oyjlOPTIONSTYLE_MAN:
-      oyjlStringAdd( &text, malloc,free, "\t%s %s%s%s%s%s%s%s\n.br\n",
-      t,
+      oyjlStringAdd( &text, malloc,free, "\t%s%s%s%s%s%s%s%s%s\n.br\n",
+      t?t:"", t?" ":"",
       c->nick,
       has_comment?"\t\t# ":"",
       c->name && c->nick[0] ? c->name :
@@ -4259,8 +4259,8 @@ char * oyjlOptionChoice_Print_       ( oyjlOptionChoice_s* c,
       c->help?c->help:"" );
     break;
     case oyjlOPTIONSTYLE_MARKDOWN:
-      oyjlStringAdd( &text, malloc,free, "   <tr><td style='padding-left:0.5em'>%s %s</td>%s%s%s%s%s%s%s\n",
-      t,
+      oyjlStringAdd( &text, malloc,free, "   <tr><td style='padding-left:0.5em'>%s%s%s</td>%s%s%s%s%s%s%s\n",
+      t?t:"", t?" ":"",
       c->nick,
       has_comment?"<td># ":"",
       c->name && c->nick[0] ? c->name :
