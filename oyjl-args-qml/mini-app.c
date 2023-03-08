@@ -2,7 +2,7 @@
  *
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
- *  Copyright 2018-2022 (C) Kai-Uwe Behrmann
+ *  Copyright 2018-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl Args + Qml example
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -180,7 +180,7 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0/*OYJL_OPTION_FLAG_EDITABLE*/,     "i", "input",  NULL, _("input"),   _("Set Input"), _("File"), _("FILENAME"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = getFileChoices}, oyjlSTRING, {.s=&file}, NULL},
     {"oiwi", 0,     "o", "output",  NULL, _("output"),  _("Control Output"), NULL, "0|1|2",       oyjlOPTIONTYPE_CHOICE, {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)o_choices, sizeof(o_choices), malloc )}, oyjlINT, {.i = &output}, NULL},
     /* The --render option can be hidden and used only internally. */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "R", "render", NULL, _("render"),  _("Render"),         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render}, NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE | OYJL_OPTION_FLAG_MAINTENANCE,     "R", "render", NULL, _("render"),  _("Render"),         NULL, NULL,          oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &render}, NULL},
     {"oiwi", 0,     "h", "help",    NULL, _("help"),    _("Help"),           _("Print help for command line style interface"), NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &help}, NULL},
     {"oiwi", 0,     "v", "verbose", NULL, _("verbose"), NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &verbose}, NULL},
     {"oiwi", 0,     "e", "error",   NULL, _("error"),   NULL,                NULL, NULL,          oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i = &error}, NULL},
