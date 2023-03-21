@@ -1,8 +1,8 @@
-.TH "oyjl-args" 1 "June 26, 2019" "User Commands"
+.TH "oyjl-args" 1 "March 10, 2023" "User Commands"
 .SH NAME
 oyjl-args v1.0.0 \- Ui to source code
 .SH SYNOPSIS
-\fBoyjl-args\fR \fB\-i\fR \fIFILENAME\fR [\fB\-\-c-stand-alone\fR] [\fB\-\-completion-bash\fR] [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-i\fR \fIFILENAME\fR [\fB\-\-c-stand-alone\fR\fI[=base]\fR] [\fB\-\-completion-bash\fR] [\fB\-v\fR]
 .br
 \fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-R\fR \fIgui|cli|web|...\fR \fB\-V\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-v\fR]
 .SH DESCRIPTION
@@ -10,16 +10,18 @@ Tool to convert UI JSON description from *-X export* into source code.
 .SH OPTIONS
 .SS
 Generate source code
-\fBoyjl-args\fR \fB\-i\fR \fIFILENAME\fR [\fB\-\-c-stand-alone\fR] [\fB\-\-completion-bash\fR] [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-i\fR \fIFILENAME\fR [\fB\-\-c-stand-alone\fR\fI[=base]\fR] [\fB\-\-completion-bash\fR] [\fB\-v\fR]
 .br
 \fB\-i\fR|\fB\-\-input\fR \fIFILENAME\fR	Set Input
 .RS
 For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON.
 .RE
-\fB\-\-c-stand-alone\fR	Generate C code for oyjl_args.c inclusion.
+\fB\-\-c-stand-alone\fR\fI[=base]\fR	Generate C code for oyjl_args.c inclusion.
 .RS
 Omit libOyjlCore reference.
 .RE
+	\fB\-\-c-stand-alone\fR base		# Base : Use OAJL_ARGS_BASE API only.
+.br
 \fB\-\-completion-bash\fR	Generate bash completion code
 .br
 .SS

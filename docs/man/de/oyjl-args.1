@@ -1,8 +1,8 @@
-.TH "oyjl-args" 1 "26. Juni 2019" "User Commands"
+.TH "oyjl-args" 1 "March 10, 2023" "User Commands"
 .SH NAME
 oyjl-args v1.0.0 \- Benutzerschnittstellen nach Quelltext
 .SH ÜBERSICHT
-\fBoyjl-args\fR \fB\-i\fR \fIDATEINAME\fR [\fB\-\-c-stand-alone\fR] [\fB\-\-completion-bash\fR] [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-i\fR \fIDATEINAME\fR [\fB\-\-c-stand-alone\fR\fI[=base]\fR] [\fB\-\-completion-bash\fR] [\fB\-v\fR]
 .br
 \fBoyjl-args\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-R\fR \fIgui|cli|web|...\fR \fB\-V\fR [\fB\-i\fR \fIDATEINAME\fR] [\fB\-v\fR]
 .SH BESCHREIBUNG
@@ -10,16 +10,18 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 .SH OPTIONEN
 .SS
 Erzeuge Quelltext
-\fBoyjl-args\fR \fB\-i\fR \fIDATEINAME\fR [\fB\-\-c-stand-alone\fR] [\fB\-\-completion-bash\fR] [\fB\-v\fR]
+\fBoyjl-args\fR \fB\-i\fR \fIDATEINAME\fR [\fB\-\-c-stand-alone\fR\fI[=base]\fR] [\fB\-\-completion-bash\fR] [\fB\-v\fR]
 .br
 \fB\-i\fR|\fB\-\-input\fR \fIDATEINAME\fR	Setze Eingabe
 .RS
 Für C Quelltext Ausgabe(voreingestellt) und --completion-bash Ausgabe nutze -X=export JSON. Für --render=XXX nutze -X=json JSON.
 .RE
-\fB\-\-c-stand-alone\fR	Erzeuge C Quelltext für oyjl_args.c Referenz.
+\fB\-\-c-stand-alone\fR\fI[=base]\fR	Erzeuge C Quelltext für oyjl_args.c Referenz.
 .RS
 Lasse libOyjlCore Referenz weg.
 .RE
+	\fB\-\-c-stand-alone\fR base		# Base : Use OAJL_ARGS_BASE API only.
+.br
 \fB\-\-completion-bash\fR	Erzeuge Bash Vervollständigungsskript
 .br
 .SS
