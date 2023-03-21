@@ -77,6 +77,7 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
   static int oyjl_init_has_addr2line_ = 0;
   static int oyjl_has_addr2line_ = 0;
   static int oyjl_has_eu_addr2line_ = 0;
+  static int oyjl_has_c__filt_ = 0;
 
           int j, nptrs;
           void *buffer[BT_BUF_SIZE];
@@ -107,10 +108,13 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
               ++oyjl_init_has_addr2line_;
               oyjl_has_addr2line_ = 0;
               oyjl_has_eu_addr2line_ = 0;
+              oyjl_has_c__filt_ = 0;
               if(oyjlHasApplication( "eu-addr2line" ))
                 ++oyjl_has_eu_addr2line_;
               if(oyjlHasApplication( "addr2line" ))
                 ++oyjl_has_addr2line_;
+              if(oyjlHasApplication( "c++filt" ))
+                ++oyjl_has_c__filt_;
             }
 
             for(j = start; j >= (*oyjl_debug?0:1); j--)
@@ -206,7 +210,11 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
                     if(txt) txt[-1] = '\000';
                   }
                 }
-                if(func_name) t = oyjlStringCopy( func_name, NULL );
+                if(func_name && oyjl_has_c__filt_) /* demangle C++ */
+                {
+                  t = oyjlReadCommandF( &size, "r", NULL, "c++filt %s", func_name );
+                  oyjlStringReplace( &t, "\n", "", NULL,NULL );
+                }
                 else
                 {
                   if(tmp)
