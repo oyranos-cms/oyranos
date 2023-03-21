@@ -336,7 +336,12 @@ enum {
 #define oyjlUi_ToText oyjlUi_ToTextArgsBase
 void       oyjlArgsBaseLoadCore      ( );
 #else  /* OYJL_ARGS_BASE */
-#define    oyjlArgsBaseLoadCore()
+# if defined( OYJL_INTERNAL)
+#  define    oyjlArgsBaseLoadCore()
+# else
+#  define oyjlUi_ToText oyjlUi_ToTextArgsBase
+void       oyjlArgsBaseLoadCore      ( );
+# endif
 #endif /* OYJL_ARGS_BASE */
 oyjlOPTIONSTATE_e oyjlOptions_GetResult (
                                        oyjlOptions_s     * opts,
@@ -390,12 +395,55 @@ const char *   oyjlTermColor_       ( oyjlTEXTMARK_e rgb OYJL_UNUSED, const char
 const char * (*oyjlTermColorArgsBase)(oyjlTEXTMARK_e rgb, const char * text) = oyjlTermColor_;
 #define oyjlTermColor oyjlTermColorArgsBase
 #endif /* OYJL_ARGS_BASE */
+#if !defined (OYJL_INTERNAL) || defined (OYJL_ARGS_BASE)
+extern int          (*oyjlArgsRenderBase)   ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv) );
+int            oyjlArgsRender_       ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv) )
+{
+  int result = -1;
+  oyjlArgsBaseLoadCore();
+  if(oyjlArgsRender_ != oyjlArgsRenderBase)
+    result = oyjlArgsRenderBase(argc, argv, json, commands, output, debug, ui, callback);
+  return result;
+}
+int          (*oyjlArgsRenderBase)   ( int                 argc,
+                                       const char       ** argv,
+                                       const char        * json,
+                                       const char        * commands,
+                                       const char        * output,
+                                       int                 debug,
+                                       oyjlUi_s          * ui,
+                                       int               (*callback)(int argc, const char ** argv) ) = oyjlArgsRender_;
+#define oyjlArgsRender oyjlArgsRenderBase
+#endif /* !OYJL_INTERNAL || OYJL_ARGS_BASE */
 
-char *   oyjlBTArgsBase              ( int                 stack_limit OYJL_UNUSED )
+#if !defined (OYJL_ARGS_BASE)
+# if defined (OYJL_INTERNAL)
+char *   oyjlBT                      ( int                 stack_limit OYJL_UNUSED );
+# else
+char *   oyjlBT                      ( int                 stack_limit OYJL_UNUSED ) { return strdup(""); }
+# endif
+#else /* OYJL_ARGS_BASE */
+char *   oyjlBT_                     ( int                 stack_limit OYJL_UNUSED )
 { oyjlArgsBaseLoadCore();
   return strdup("");
 }
-char * (*oyjlBT)                     ( int                 stack_limit ) = oyjlBTArgsBase;
+char * (*oyjlBTArgsBase)             ( int                 stack_limit ) = oyjlBT_;
+#define oyjlBT oyjlBTArgsBase
+#endif /* OYJL_ARGS_BASE */
 extern oyjlMessage_f oyjlMessage_p;
 int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context_object OYJL_UNUSED,
@@ -2878,7 +2926,6 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
       oyjl_X_choices_[1].name = _("Markdown");
       oyjl_X_choices_[1].description = _("Formated text");
       oyjl_X_choices_[1].help = _("Get formated text");
-#if defined(OYJL_INTERNAL)
       oyjl_X_choices_[2].name = _("Json");
       oyjl_X_choices_[2].description = _("GUI");
       oyjl_X_choices_[2].help = _("Get a Oyjl Json UI declaration");
@@ -2888,19 +2935,10 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
       oyjl_X_choices_[4].name = _("Export");
       oyjl_X_choices_[4].description = _("All available data");
       oyjl_X_choices_[4].help = _("Get UI data for developers");
-#else
-      oyjl_X_choices_[2].nick = "";
-      oyjl_X_choices_[3].nick = "";
-      oyjl_X_choices_[4].nick = "";
-#endif
       o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_X_choices_, sizeof(oyjl_X_choices_), malloc );
       if(o->value_name == NULL)
       {
-#if defined(OYJL_INTERNAL)
         o->value_name = "json|json+command|man|markdown";
-#else
-        o->value_name = "man|markdown";
-#endif
         if(o->name == NULL)
         {
           o->name = _("export");
@@ -2918,7 +2956,6 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
   {
     if(o->value_type == oyjlOPTIONTYPE_CHOICE && o->values.choices.list == NULL)
     {
-#if defined(OYJL_INTERNAL)
       oyjl_R_choices_[0].name = _("Gui");
       oyjl_R_choices_[0].description = _("Show UI");
       oyjl_R_choices_[0].help = _("Display a interactive graphical User Interface.");
@@ -2928,13 +2965,10 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
       oyjl_R_choices_[2].name = _("Web");
       oyjl_R_choices_[2].description = _("Start Web Server");
       oyjl_R_choices_[2].help = _("Start a local Web Service to connect a Webbrowser with. Use the -R=web:help sub option to see more information.");
-#endif
       o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_R_choices_, sizeof(oyjl_R_choices_), malloc );
       if(o->value_name == NULL)
       {
-#if defined(OYJL_INTERNAL)
         o->value_name = "gui|cli|web|";
-#endif
         if(o->name == NULL)
         {
           o->name = _("render");
@@ -4791,7 +4825,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   X = oyjlOptions_GetOption( ui->opts, "X" );
   if(X && X->variable_type == oyjlSTRING && X->variable.s)
     export = *X->variable.s;
-  /* Give "json+command" and "json" proiority over e.g. "man" and others */
+  /* Give "json+command" and "json" priority over e.g. "man" and others */
   if(export)
   {
     if(oyjlOptions_HasValue_( ui->opts, "X", "json+command", OYJL_CASE_COMPARE | OYJL_SET ))
@@ -5076,7 +5110,6 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   {
     if(status)
       *status |= oyjlUI_STATE_EXPORT;
-#if defined(OYJL_INTERNAL)
     if(strcmp(export, "json") == 0)
     {
       t = oyjlUi_ToText( ui, oyjlARGS_EXPORT_JSON, flags );
@@ -5089,7 +5122,6 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     {
       return ui;
     }
-#endif
     if(strcmp(export, "man") == 0)
     {
       t = oyjlUi_ToText( ui, oyjlARGS_EXPORT_MAN, flags );
@@ -5106,7 +5138,6 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         oyjlUi_ReleaseArgs( &ui);
       return NULL;
     }
-#if defined(OYJL_INTERNAL)
     if(strcmp(export, "export") == 0)
     {
       t = oyjlUi_ToText( ui, oyjlARGS_EXPORT_EXPORT, flags );
@@ -5115,7 +5146,6 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         oyjlUi_ReleaseArgs( &ui);
       return NULL;
     }
-#endif
   }
 
   if( help &&
@@ -6357,7 +6387,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
 
   return text;
 }
-#else /* OYJL_ARGS_BASE */
+#endif /* OYJL_ARGS_BASE */
+#if defined (OYJL_ARGS_BASE) ||  !defined(OYJL_INTERNAL)
 static const char * oyjlLibNameCreate_()
 {
   static char * fn = NULL;
@@ -6368,7 +6399,8 @@ static const char * oyjlLibNameCreate_()
 #elif defined(_WIN32)
     oyjlStringPush( &fn, "OyjlCore.lib", 0,0 );
 #else
-    oyjlStringPush( &fn, "libOyjlCore.so.", 0,0 );
+    oyjlStringPush( &fn, "libOyjlCore.so.X", 0,0 );
+    fn[strlen(fn)-1] = '\000';
     sprintf( &fn[strlen(fn)], "%d", OYJL_VERSION_A );
 #endif
   return fn;
@@ -6378,10 +6410,10 @@ void * oyjl_core_lib_ArgsBase = NULL;
 # include <dlfcn.h>   /* dlopen() dlclose() */
 #endif
 #undef oyjlUi_ToText
-#undef oyjlTermColor
+//#undef oyjlTermColor
 #endif /* OYJL_ARGS_BASE */
 
-#if !defined (OYJL_ARGS_BASE)
+#if !defined (OYJL_ARGS_BASE) && defined (OYJL_INTERNAL)
 char *             oyjlUi_ToText
 #else /* OYJL_ARGS_BASE */
 char *           (*oyjlUi_ToTextArgsBase_)
@@ -6404,6 +6436,17 @@ char *             oyjlUi_ToTextArgsBase
 #if defined(OYJL_INTERNAL)
     case oyjlARGS_EXPORT_JSON: text = oyjlUi_ToJson( ui, flags ); break;
     case oyjlARGS_EXPORT_EXPORT: text = oyjlUi_ExportToJson( ui, flags ); break;
+#else /* OYJL_INTERNAL */
+    case oyjlARGS_EXPORT_JSON:
+    case oyjlARGS_EXPORT_EXPORT:
+          oyjlArgsBaseLoadCore();
+          if(oyjlUi_ToTextArgsBase_)
+            text = oyjlUi_ToTextArgsBase_( ui, type, flags );
+          else
+            fprintf( stderr, OYJL_DBG_FORMAT "option -h and -X need load of %s but failed\n", OYJL_DBG_ARGS, oyjlLibNameCreate_() );
+          if(!text)
+            text = oyjlStringCopy( "{ \"error\": \"export JSON not supported\" }", 0);
+          break;
 #endif /* OYJL_INTERNAL */
   }
 #else /* OYJL_ARGS_BASE */
@@ -6416,8 +6459,12 @@ char *             oyjlUi_ToTextArgsBase
   return text;
 }
 
-#if defined (OYJL_ARGS_BASE)
+#if defined (OYJL_ARGS_BASE) || !defined (OYJL_INTERNAL)
 int oyjlArgsBaseLoadCore_once_ = 0;
+#if !defined (OYJL_INTERNAL) || defined (OYJL_ARGS_BASE)
+# define oyjlTermColorArgsBase oyjlTermColor
+# define oyjlBTArgsBase oyjlBT
+#endif
 void       oyjlArgsBaseLoadCore      ( )
 {
   int verbose = 0;
@@ -6441,10 +6488,13 @@ void       oyjlArgsBaseLoadCore      ( )
     fprintf( stderr, OYJL_DBG_FORMAT "loaded %s\n", OYJL_DBG_ARGS, libname );
   if(!oyjlUi_ToTextArgsBase_)
     oyjlUi_ToTextArgsBase_ = (void*)dlsym( oyjl_core_lib_ArgsBase, "oyjlUi_ToText" );
+#if defined (OYJL_INTERNAL) || defined (OYJL_ARGS_BASE)
   if(oyjlMessage_p == oyjlMessageFunc)
     oyjlMessage_p = (void*)dlsym( oyjl_core_lib_ArgsBase, "oyjlMessageFunc" );
   oyjlTermColorArgsBase = (void*)dlsym( oyjl_core_lib_ArgsBase, "oyjlTermColor" );
-  oyjlBT = (void*)dlsym( oyjl_core_lib_ArgsBase, "oyjlBT" );
+  oyjlBTArgsBase = (void*)dlsym( oyjl_core_lib_ArgsBase, "oyjlBT" );
+#endif
+  oyjlArgsRenderBase = (void*)dlsym( oyjl_core_lib_ArgsBase, "oyjlArgsRender" );
   if(verbose)
     fprintf( stderr, OYJL_DBG_FORMAT "functions %s\n", OYJL_DBG_ARGS, oyjlTermColorArgsBase(oyjlGREEN, "loaded") );
 #else /* HAVE_DL */
