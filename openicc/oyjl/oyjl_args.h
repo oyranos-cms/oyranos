@@ -109,9 +109,10 @@ oyjlUi_s *         oyjlUi_ImportFromJson(
                                        oyjl_val            root,
                                        int                 flags );
 #define OYJL_SOURCE_CODE_C             0x01 /**< @brief C programming language source code */
-#define OYJL_WITH_OYJL_ARGS_C          0x02 /**< @brief Include oyjl_args.c . Skip libOyjlCode. */
+#define OYJL_WITH_OYJL_ARGS_C          0x02 /**< @brief Include oyjl_args.c . Skip libOyjlCore code. */
 #define OYJL_NO_DEFAULT_OPTIONS        0x04 /**< @brief omit automatic options generation for --help, --X export or --verbose */
 #define OYJL_SUGGEST_VARIABLE_NAMES    0x08 /**< @brief automatic suggestion of variable names for missing oyjlOption_s::o and oyjlOption_s::option members */
+#define OYJL_WITH_OYJL_ARGS_BASE_API   0x10 /**< @brief Restrict to oyjl_args_base.h API's. */
 #define OYJL_COMPLETION_BASH           0x100 /**< @brief bash completion source code */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
