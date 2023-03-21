@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2019-2022  Kai-Uwe Behrmann
+ *  Copyright (C) 2019-2023  Kai-Uwe Behrmann
  *
  *  @brief    Oyjl Args Tool
  *  @internal
@@ -30,7 +30,7 @@ int myMain( int argc, const char ** argv )
 {
 
   const char * file = NULL;
-  int oyjl_args = 0;
+  const char * oyjl_args = NULL;
   int completion_bash = 0;
   const char * test = 0;
   double d = 0;
@@ -44,9 +44,11 @@ int myMain( int argc, const char ** argv )
 
   /* handle options */
   oyjlUiHeaderSection_s * sections = oyjlUiInfo_( _("Tool to convert UI JSON description from *-X export* into source code."),
-                                                 "2019-6-26T12:00:00", _("June 26, 2019") );
+                                                 "2023-3-10T12:00:00", _("March 10, 2023") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */
+  oyjlOptionChoice_s c_choices[] = {{"base",        _("Base"),         _("Use OAJL_ARGS_BASE API only."),NULL},
+                                    {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s A_choices[] = {{_("Convert eXported developer JSON to C source"),_("oyjl-args -X export | oyjl-args -i -"),NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
 
@@ -73,7 +75,7 @@ int myMain( int argc, const char ** argv )
   oyjlOption_s oarray[] = {
   /* type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable */
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,     "i", "input", NULL, _("input"), _("Set Input"), _("For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON."), _("FILENAME"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s = &file}, NULL },
-    {"oiwi", 0,    NULL, "c-stand-alone",NULL, _("C Stand Alone"),_("Generate C code for oyjl_args.c inclusion."), _("Omit libOyjlCore reference."), NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &oyjl_args}, NULL },
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, NULL, "c-stand-alone",NULL, _("C Stand Alone"),_("Generate C code for oyjl_args.c inclusion."), _("Omit libOyjlCore reference."), "base", oyjlOPTIONTYPE_CHOICE, {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)c_choices, sizeof(c_choices), malloc ), 0}},oyjlSTRING, {.s = &oyjl_args}, NULL },
     {"oiwi", 0,    NULL, "completion-bash",NULL, _("Completion Bash"),_("Generate bash completion code"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0},oyjlINT, {.i = &completion_bash}, NULL },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_ACCEPT_NO_ARG,  NULL,"test",    NULL, _("Test"),    _("Generate test Args Export"), NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {.s = &test}, NULL },
     {"oiwi", OYJL_OPTION_FLAG_MAINTENANCE|OYJL_OPTION_FLAG_EDITABLE,  "o",NULL,    NULL, "O",    NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0},oyjlSTRING, {0}, NULL },
@@ -335,8 +337,22 @@ int myMain( int argc, const char ** argv )
     } else
     {
       oyjl_val json = oyjlTreeParse2( text, 0, __func__, NULL );
-      char * sources = oyjlUiJsonToCode( json, completion_bash ? OYJL_COMPLETION_BASH : oyjl_args ? OYJL_SOURCE_CODE_C | OYJL_WITH_OYJL_ARGS_C : OYJL_SOURCE_CODE_C );
-      fprintf( stderr, "wrote %d to stdout\n", sources&&strlen(sources)?(int)strlen(sources):0 );
+      int flags = 0;
+      char * sources;
+      if(completion_bash)
+        flags = OYJL_COMPLETION_BASH;
+      else
+      {
+        flags = OYJL_SOURCE_CODE_C;
+        if(oyjl_args)
+        {
+          flags |= OYJL_WITH_OYJL_ARGS_C;
+          if(strcasecmp(oyjl_args, "base") == 0)
+            flags |= OYJL_WITH_OYJL_ARGS_BASE_API;
+        }
+      }
+      sources = oyjlUiJsonToCode( json, flags );
+      fprintf( stderr, "wrote[flags=%d] %d to stdout\n", flags, sources&&strlen(sources)?(int)strlen(sources):0 );
       if(sources)
       {
         puts( sources );

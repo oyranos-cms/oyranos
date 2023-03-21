@@ -2,7 +2,7 @@
 <a name="toc"></a>
 [NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [BEISPIELE](#examples) [SIEHE AUCH](#seealso) [FORMAT](#format) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
 
-<strong>"oyjl-args"</strong> *1* <em>"26. Juni 2019"</em> "User Commands"
+<strong>"oyjl-args"</strong> *1* <em>"March 10, 2023"</em> "User Commands"
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 
@@ -10,7 +10,7 @@ oyjl-args v1.0.0 - Benutzerschnittstellen nach Quelltext
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyjl-args</strong> <a href="#input"><strong>-i</strong>=<em>DATEINAME</em></a> [<strong>--c-stand-alone</strong>] [<strong>--completion-bash</strong>] [<strong>-v</strong>]
+<strong>oyjl-args</strong> <a href="#input"><strong>-i</strong>=<em>DATEINAME</em></a> [<strong>--c-stand-alone</strong><em>[=base]</em>] [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 <br />
 <strong>oyjl-args</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-R</strong>=<em>gui|cli|web|...</em> <strong>-V</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-v</strong>]
 
@@ -22,12 +22,17 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 
 <h3 id="input">Erzeuge Quelltext</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>DATEINAME</em> [<strong>--c-stand-alone</strong>] [<strong>--completion-bash</strong>] [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>DATEINAME</em> [<strong>--c-stand-alone</strong><em>[=base]</em>] [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>DATEINAME</em></td> <td>Setze Eingabe<br />Für C Quelltext Ausgabe(voreingestellt) und --completion-bash Ausgabe nutze -X=export JSON. Für --render=XXX nutze -X=json JSON.  </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--c-stand-alone</strong></td> <td>Erzeuge C Quelltext für oyjl_args.c Referenz.<br />Lasse libOyjlCore Referenz weg.</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--c-stand-alone</strong><em>[=base]</em></td> <td>Erzeuge C Quelltext für oyjl_args.c Referenz.<br />Lasse libOyjlCore Referenz weg.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>--c-stand-alone</strong> base</td><td># Base : Use OAJL_ARGS_BASE API only.</td></tr>
+  </table>
+  </td>
+ </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--completion-bash</strong></td> <td>Erzeuge Bash Vervollständigungsskript</td> </tr>
 </table>
 

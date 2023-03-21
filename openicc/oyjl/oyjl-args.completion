@@ -12,6 +12,13 @@ _oyjl_args()
 
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
+        --c-stand-alone) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('base')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --help) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('-' 'synopsis')
@@ -68,7 +75,7 @@ _oyjl_args()
             set +x +v
             return
             ;;
-        --input|--test|--format|--help|--export|--render)
+        --input|--c-stand-alone|--test|--format|--help|--export|--render)
             : "finish long options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
@@ -80,7 +87,7 @@ _oyjl_args()
             set +x +v
             return
             ;;
-        --c-stand-alone|--completion-bash|--option|--synopsis|--verbose|--version)
+        --completion-bash|--option|--synopsis|--verbose|--version)
             : "finish long options without choices"
             COMPREPLY=("$cur ")
             set +x +v
@@ -103,7 +110,7 @@ _oyjl_args()
     if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
       case "${COMP_WORDS[1]}" in
         -i|--input)
-          COMPREPLY=($(compgen -W '--c-stand-alone --completion-bash -v --verbose' -- "$cur"))
+          COMPREPLY=($(compgen -W '--c-stand-alone= --completion-bash -v --verbose' -- "$cur"))
             set +x +v
             return
             ;;

@@ -690,13 +690,19 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         OUTPUT  oyjl-args-ui-lib.c
         COMMAND LANG=C ./oyjl-args-bootstrap -X export | ./oyjl-args -i - > oyjl-args-ui-lib.c
         DEPENDS oyjl-args
-        COMMENT "Export UI and generate lib C code" VERBATIM
+        COMMENT "Export UI and generate OyjlArgs lib C code" VERBATIM
         )
   ADD_CUSTOM_COMMAND(
         OUTPUT  oyjl-args-ui.c
         COMMAND LANG=C ./oyjl-args-bootstrap -X export | ./oyjl-args -i - --c-stand-alone > oyjl-args-ui.c
         DEPENDS oyjl-args
-        COMMENT "Export UI and generate stand alone C code" VERBATIM
+        COMMENT "Export UI and generate OyjlArgs stand alone C code" VERBATIM
+        )
+  ADD_CUSTOM_COMMAND(
+        OUTPUT  oyjl-args-ui-base.c
+        COMMAND LANG=C ./oyjl-args-bootstrap -X export | ./oyjl-args -i - --c-stand-alone=base > oyjl-args-ui-base.c
+        DEPENDS oyjl-args
+        COMMENT "Export UI and generate OyjlArgsBase stand alone C code" VERBATIM
         )
   INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
   SET( TOOL oyjl-args-ui )
@@ -711,6 +717,9 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
   IF(OYJL_HAVE_LIBINTL_H)
     SET( ${TOOL}_COMPILE_DEFINITIONS ${${TOOL}_COMPILE_DEFINITIONS};OYJL_HAVE_LIBINTL_H )
   ENDIF()
+  IF(HAVE_DL)
+    SET( ${TOOL}_COMPILE_DEFINITIONS ${${TOOL}_COMPILE_DEFINITIONS};HAVE_DL )
+  ENDIF()
   IF(OYJL_USE_GETTEXT)
     SET( ${TOOL}_COMPILE_DEFINITIONS ${${TOOL}_COMPILE_DEFINITIONS};OYJL_USE_GETTEXT )
     SET_SOURCE_FILES_PROPERTIES( "${TOOL}.c" PROPERTIES COMPILE_DEFINITIONS "OYJL_USE_GETTEXT=1" )
@@ -723,6 +732,18 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         DEPENDS ${TOOL} check-args
         COMMENT "Check Generated Stand Alone OyjlArgs Program" VERBATIM )
   UNSET( TOOL )
+  SET( TOOL oyjl-args-ui-base )
+  SET( TOOLS ${TOOLS} ${TOOL} )
+  IF(HAVE_DL)
+    SET( ${TOOL}_COMPILE_DEFINITIONS ${${TOOL}_COMPILE_DEFINITIONS};HAVE_DL )
+  ENDIF()
+  SET_SOURCE_FILES_PROPERTIES( "${TOOL}.c" PROPERTIES COMPILE_DEFINITIONS "${${TOOL}_COMPILE_DEFINITIONS}" )
+  ADD_EXECUTABLE( ${TOOL} oyjl-args-ui-base.c )
+  ADD_CUSTOM_TARGET( check-${TOOL}
+        ${MEMCHECK} ./${TOOL} -h
+        DEPENDS ${TOOL} check-oyjl-args-ui
+        COMMENT "Check Generated Stand Alone OyjlArgs Base Program" VERBATIM )
+  UNSET( TOOL )
   SET( TOOL oyjl-args-ui-lib )
   SET( TOOLS ${TOOLS} ${TOOL} )
   SET( TOOL_SRC ${TOOL}.c )
@@ -730,25 +751,25 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
   TARGET_LINK_LIBRARIES( ${TOOL} ${OYJL_TARGET_LIB} ${EXTRA_LIBS} )
   ADD_CUSTOM_TARGET( check-${TOOL}
         ${MEMCHECK} ./${TOOL} -h
-        DEPENDS ${TOOL} check-oyjl-args-ui
+        DEPENDS ${TOOL} check-oyjl-args-ui-base
         COMMENT "Check Generated Linked OyjlArgs Program" VERBATIM )
   UNSET( TOOL )
-  SET( TOOL oyjl-args-ui-base )
-  BUILD_TOOL( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args-ui-base.c"      ""                       ""                   FALSE FALSE FALSE )
+  SET( TOOL oyjl-args-ui-core )
+  BUILD_TOOL( ${TOOL} "${CMAKE_CURRENT_BINARY_DIR}/oyjl-args-ui-base.c"      ""                       ""                   FALSE FALSE FALSE )
   TARGET_LINK_LIBRARIES( ${TOOL} ${PACKAGE_NAME}-core-static )
   ADD_CUSTOM_TARGET( check-${TOOL}
         ${MEMCHECK} ./${TOOL} -h
         DEPENDS ${TOOL} check-oyjl-args-ui-lib
         COMMENT "Check Generated Static Linked OyjlArgsBase Program" VERBATIM )
   SET( TOOL oyjl-args-ui-base-lib )
-  BUILD_TOOL( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args-ui-base.c"      ""                       ""                   FALSE FALSE FALSE )
+  BUILD_TOOL( ${TOOL} "${CMAKE_CURRENT_BINARY_DIR}/oyjl-args-ui-base.c"      ""                       ""                   FALSE FALSE FALSE )
   TARGET_LINK_LIBRARIES( ${TOOL} ${PROJECT_NAME}ArgsBase )
   ADD_CUSTOM_TARGET( check-${TOOL}
         ./${TOOL} -h
-        DEPENDS ${TOOL} check-oyjl-args-ui-base
+        DEPENDS ${TOOL} check-oyjl-args-ui-core
         COMMENT "Check Generated Linked OyjlArgsBase Program" VERBATIM )
   SET( TOOL oyjl-args-ui-base-oyjl-h )
-  BUILD_TOOL( ${TOOL} "${CMAKE_CURRENT_SOURCE_DIR}/oyjl-args-ui-base.c"      ""                       ""                   FALSE FALSE FALSE )
+  BUILD_TOOL( ${TOOL} "${CMAKE_CURRENT_BINARY_DIR}/oyjl-args-ui-base.c"      ""                       ""                   FALSE FALSE FALSE )
   SET_TARGET_PROPERTIES( ${TOOL} PROPERTIES COMPILE_DEFINITIONS "USE_OYJL_H" )
   TARGET_LINK_LIBRARIES( ${TOOL} ${PROJECT_NAME}ArgsBase )
   ADD_CUSTOM_TARGET( check-${TOOL}
