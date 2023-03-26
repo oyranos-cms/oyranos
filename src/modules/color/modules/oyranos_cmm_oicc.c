@@ -536,10 +536,7 @@ int  oiccGetDefaultColorIccOptionsUI ( oyCMMapiFilter_s  * module OY_UNUSED,
   }
 
   if(aflags & oyNAME_JSON)
-  {
-    int level = 0;
-    oyjlTreeToJson( root, &level, &tmp );
-  }
+    tmp = oyjlTreeToText( root, OYJL_JSON | OYJL_NO_MARKUP );
 
   if(root) { oyjlTreeFree( root ); root = NULL; }
 

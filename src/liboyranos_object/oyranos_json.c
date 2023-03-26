@@ -103,8 +103,7 @@ char *       oyJsonFromModelAndUi    ( const char        * data,
     if(value) oyFree_m_( value );
   }
 
-  i = 0;
-  oyjlTreeToJson( uiroot, &i, &text );
+  text = oyjlTreeToText( uiroot, OYJL_JSON | OYJL_NO_MARKUP );
 
   oyjlTreeFree( uiroot );
   oyjlTreeFree( droot );

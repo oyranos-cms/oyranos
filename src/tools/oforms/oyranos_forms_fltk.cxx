@@ -527,9 +527,6 @@ oyUiHandler_s oy_ui_fltk_handler_json_headline_ =
    (char**)oy_ui_fltk_handler_json_headline_element_searches_ /**< element_searches */
   };
 
-char * oyjp(oyjl_val v)
-{ char * t = NULL; int l = 0; oyjlTreeToJson(v,&l,&t); return t; }
-
 /** @internal
  *  Function oyJSON2XFORMsFLTKSelect1Handler
  *  @brief   build a UI for a xf:select1 XFORMS sequence

@@ -1563,7 +1563,7 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
       oyjl_val root = oyjlTreeNew(""), val;
       const char * name = oyProfile_GetText( profile, oyNAME_DESCRIPTION );
       const char * id = oyProfile_GetFileName( profile, -1 );
-      char * json = NULL; int i = 0;
+      char * json = NULL;
       uint32_t * h = (uint32_t*)s->oy_->hash_ptr_;
 
       if(id)
@@ -1587,7 +1587,7 @@ OYAPI const oyChar* OYEXPORT oyProfile_GetText (
         oyjlValueSetString( val, hash );
         free(hash);
       }
-      oyjlTreeToJson( root, &i, &json );
+      json = oyjlTreeToText( root, OYJL_JSON | OYJL_NO_MARKUP );
       if(json && strlen(json) < 1024)
       {
         strcpy(temp, json);

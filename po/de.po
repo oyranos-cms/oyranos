@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2023-01-31 18:29+0100\n"
+"POT-Creation-Date: 2023-03-26 07:36+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: tools/oyranos-device.c:702 tools/oyranos-device.c:716
 #: tools/oyranos-device.c:743 tools/oyranos-device.c:784
 #: tools/oyranos-device.c:1165 tools/oyranos-device.c:1285
-#: tools/oyranos-device.c:1512 tools/oyranos-monitor-white-point.c:946
+#: tools/oyranos-device.c:1510 tools/oyranos-monitor-white-point.c:946
 #: tools/qcmsevents/qcmsevents.cpp:338
 #, c-format
 msgid "!!! ERROR"
@@ -1285,7 +1285,7 @@ msgstr "Copyright (c) 2005-2010 Kai-Uwe Behrmann; newBSD"
 msgid "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2014 Kai-Uwe Behrmann; newBSD"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1226
+#: modules/color/modules/oyranos_cmm_oicc.c:1223
 msgid "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 msgstr "Copyright (c) 2005-2016 Kai-Uwe Behrmann; newBSD"
 
@@ -2427,11 +2427,11 @@ msgstr "ICC Version 4"
 msgid "ICC color conversion tool"
 msgstr "ICC Farbumwandlungswerkzeug"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:577
+#: modules/color/modules/oyranos_cmm_oicc.c:574
 msgid "ICC color profile for color transformations"
 msgstr "ICC Farbprofil zur Farbraumtransformation."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:618
+#: modules/color/modules/oyranos_cmm_oicc.c:615
 msgid "ICC color profiles for color transformations"
 msgstr "ICC Farbprofile zur Farbraumumwandlung"
 
@@ -2439,7 +2439,7 @@ msgstr "ICC Farbprofile zur Farbraumumwandlung"
 msgid "ICC header Attributes"
 msgstr "ICC Dateiattribute"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:575
+#: modules/color/modules/oyranos_cmm_oicc.c:572
 msgid "ICC profile"
 msgstr "ICC Profil"
 
@@ -2455,7 +2455,7 @@ msgstr "ICC Profil ID geschrieben"
 msgid "ICC profile search paths"
 msgstr "ICC Profilesuchpfade"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:616 tools/oyranos_profiles.c:278
+#: modules/color/modules/oyranos_cmm_oicc.c:613 tools/oyranos_profiles.c:278
 msgid "ICC profiles"
 msgstr "ICC Profile"
 
@@ -3869,11 +3869,11 @@ msgstr "Oyranos Beispiel"
 msgid "Oyranos Help"
 msgstr "Oyranos Hilfe"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1210
+#: modules/color/modules/oyranos_cmm_oicc.c:1207
 msgid "Oyranos ICC policy"
 msgstr "Oyranos ICC Richtlinie"
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1212
+#: modules/color/modules/oyranos_cmm_oicc.c:1209
 msgid "Oyranos ICC policy module"
 msgstr "Oyranos ICC Richtlinien Modul"
 
@@ -4005,7 +4005,7 @@ msgstr "Oyranospfad"
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1504
 #: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1162
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
-#: modules/color/modules/oyranos_cmm_oicc.c:1220
+#: modules/color/modules/oyranos_cmm_oicc.c:1217
 #: modules/color/modules/oyranos_cmm_oydi.c:1366
 #: modules/color/modules/oyranos_cmm_oyra.c:151
 #: modules/color/modules/oyranos_cmm_trds.c:822
@@ -5675,7 +5675,7 @@ msgstr ""
 msgid "The filter provides a generic image source."
 msgstr "Der Filter bietet eine allgemeine Bildquelle."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1234
+#: modules/color/modules/oyranos_cmm_oicc.c:1231
 msgid ""
 "The filter provides policy settings. These settings can be applied to a "
 "graph through the user function oyConversion_Correct()."
@@ -6038,7 +6038,7 @@ msgstr ""
 "sind rendering_bpc, cmyk_cmyk_black_preservation, precalculation_curves, "
 "adaption_state, no_white_on_white_fixup."
 
-#: modules/color/modules/oyranos_cmm_oicc.c:1236
+#: modules/color/modules/oyranos_cmm_oicc.c:1233
 msgid ""
 "The module is responsible for many settings in the Oyranos color management "
 "settings panel. If applied the module care about rendering intents, "
@@ -7076,7 +7076,7 @@ msgstr "Neue BSD Lizenz: http://www.opensource.org/licenses/BSD-3-Clause"
 #: modules/color/modules/oyranos_cmm_elDB.c:1106
 #: modules/color/modules/oyranos_cmm_lraw.cpp:238
 #: modules/color/modules/oyranos_cmm_oiDB.c:522
-#: modules/color/modules/oyranos_cmm_oicc.c:1228
+#: modules/color/modules/oyranos_cmm_oicc.c:1225
 #: modules/color/modules/oyranos_cmm_oydi.c:1374
 #: modules/color/modules/oyranos_cmm_oyra.c:159
 #: modules/color/modules/oyranos_cmm_trds.c:830
@@ -7552,7 +7552,7 @@ msgstr "schreibe Profil mit korrekter ID"
 msgid "write to specified file"
 msgstr "schreibe nach Datei"
 
-#: API_generated/oyOptions_s.c:1618 examples/libraw/oyranos_file.cpp:236
+#: API_generated/oyOptions_s.c:1617 examples/libraw/oyranos_file.cpp:236
 #: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:309
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"

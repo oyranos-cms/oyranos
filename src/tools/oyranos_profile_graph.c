@@ -1202,8 +1202,7 @@ int myMain( int argc, const char ** argv )
     {
       if(specT)
       {
-        int level = 0;
-        oyjlTreeToJson( specT, &level, &string );
+        string = oyjlTreeToText( specT, OYJL_JSON | OYJL_NO_MARKUP );
         if(!output || strcmp(output,"-") == 0)
           fwrite( string, sizeof(char), strlen(string), stdout );
         else

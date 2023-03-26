@@ -1061,8 +1061,7 @@ const char *   oyOptions_GetText     ( oyOptions_s       * options,
     if((int)type == oyNAME_JSON && n)
     {
       oyFree_m_(text);
-      i = 0;
-      oyjlTreeToJson( root, &i, &text );
+      text = oyjlTreeToText( root, OYJL_JSON | OYJL_NO_MARKUP );
       oyjlStringReplace( &text, "\n", "", oyStruct_GetAllocator((oyStruct_s*)options), oyStruct_GetDeAllocator((oyStruct_s*)options) );
       error = oyObject_SetName( options->oy_, text, type );
       if(text) { free(text); text = NULL; }

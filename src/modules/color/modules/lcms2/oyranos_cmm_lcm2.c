@@ -2636,7 +2636,7 @@ char * l2cmsFilterNode_GetText       ( oyFilterNode_s    * node,
     unsigned char hash[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     uint32_t * h = (uint32_t*)&hash;
 
-    temp = oyJsonPrint( root );
+    temp = oyjlTreeToText( root, OYJL_JSON | OYJL_NO_MARKUP );
     oyMiscBlobGetMD5_(temp, strlen(temp), hash);
     oySprintf_( hash_text, "%08x%08x%08x%08x\n", h[0], h[1], h[2], h[3] );
     hashTextAdd_m( temp );

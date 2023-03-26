@@ -1375,6 +1375,7 @@ int myMain( int argc, const char ** argv )
             char ** keys;
 
             oyDeAllocFunc( json ); json = 0;
+            json = oyjlTreeToText( rank_map, OYJL_JSON | OYJL_NO_MARKUP );
             oyjlTreeToJson( rank_map, &level, &json );
             rank_map = oyJsonParse( json, 0 );
             if(json){ free(json); json = 0; }
