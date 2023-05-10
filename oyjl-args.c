@@ -22,6 +22,17 @@ extern char **environ;
 
 #include "oyjl_tree_internal.h"
 
+int oyjlArgsToSystem( int argc, const char ** argv )
+{
+  int i, r;
+  char * command = NULL;
+  for(i = 0; i < argc; ++i)
+    oyjlStringAdd( &command, 0,0, "%s ", argv[i] );
+  r = system( command );
+  free(command);
+  return r;
+}
+
 /* This function is called the
  * * first time for GUI generation and then
  * * for executing the tool.
@@ -313,6 +324,7 @@ int myMain( int argc, const char ** argv )
     FILE * fp;
     int size = 0;
     char * text = NULL;
+    oyjl_val json;
    
     if(strcmp(file,"-") == 0)
       fp = stdin;
@@ -325,18 +337,22 @@ int myMain( int argc, const char ** argv )
       if(fp != stdin) fclose( fp );
     }
 
+    json = oyjlTreeParse2( text, 0, __func__, NULL );
     if(render)
     {    
 #if !defined(NO_OYJL_ARGS_RENDER)
       int debug = verbose;
+      oyjl_val v = oyjlTreeGetValue(json, 0, "command_set");
+      const char * cli = OYJL_GET_STRING(v);
+      if(cli) argv[0] = cli;
+      setenv("FORCE_COLORTERM", "1", 0); /* show rich text format on non GNU color extension environment */
       oyjlTermColorInit( OYJL_RESET_COLORTERM | OYJL_FORCE_COLORTERM );
-      oyjlArgsRender( argc, argv, text, NULL,NULL, debug, ui, NULL );
+      oyjlArgsRender( argc, argv, text, cli,NULL, debug, ui, oyjlArgsToSystem );
 #else
       fprintf( stderr, "No render support compiled in. Use a GUI use -X json and load into oyjl-args-qml viewer." );
 #endif
     } else
     {
-      oyjl_val json = oyjlTreeParse2( text, 0, __func__, NULL );
       int flags = 0;
       char * sources;
       if(completion_bash)
