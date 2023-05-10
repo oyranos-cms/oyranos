@@ -183,10 +183,11 @@ int oyjlArgsQmlStart__               ( int                 argc,
       r = oyjlIsFile( json, "r", OYJL_NO_CHECK, NULL, 0 );
       if(!r && oyjlDataFormat(json) == 7)
       {
-        root = oyjlTreeParse( json, error_buffer, 256 );
-        if(error_buffer[0] != '\000')
+        int state = 0;
+        root = oyjlTreeParse2( json, 0, __func__, &state );
+        if(state)
         {
-          fprintf(stderr, "ERROR:\t\"%s\"\n", error_buffer);
+          fprintf(stderr, "ERROR:\t\"%s\"\n", oyjlPARSE_STATE_eToString(state));
           char * error = NULL;
           oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", json );
           json = error;
