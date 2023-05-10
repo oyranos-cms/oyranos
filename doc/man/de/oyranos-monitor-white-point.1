@@ -10,7 +10,7 @@ oyranos-monitor-white-point v0.9.7 \- Nacht Manager
 .br
 \fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIWINKEL_IN_GRAD\fR \fB\-o\fR \fIWINKEL_IN_GRAD\fR [\fB\-t\fR \fIWINKEL_IN_GRAD\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-d\fR\fI[=0|1|2]\fR [\fB\-v\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR\fI[=FORMAT]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
@@ -58,7 +58,7 @@ Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe.
 .RE
 \fB\-\-night-color-scheme\fR \fIWORT\fR	Setze zur Nacht ein typischerweise dunkles Farbschema
 .RS
-Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen.
+Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen. plasma-apply-colorscheme --list-schemes
 .RE
 	\fB\-\-night-color-scheme\fR -		# [kein]
 .br
@@ -122,7 +122,7 @@ Ein ICC Farbprofil der Klasse Abstrakter Farbraum. Günstig wäre ein Effektprof
 .br
 \fB\-\-sunlight-color-scheme\fR \fIWORT\fR	Setze für Tageslight ein typischerweise helleres Farbschema
 .RS
-Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen.
+Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen. plasma-apply-colorscheme --list-schemes
 .RE
 	\fB\-\-sunlight-color-scheme\fR -		# [kein]
 .br
@@ -146,9 +146,9 @@ Ort und Dämmerung
 .RE
 .SS
 Setze Sonnenuntergangsdienst
-\fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-d\fR\fI[=0|1|2]\fR [\fB\-v\fR]
 .br
-\fB\-d\fR|\fB\-\-daemon\fR \fI0|1|2\fR	Setze Sonnenuntergangsdienst
+\fB\-d\fR|\fB\-\-daemon\fR\fI[=0|1|2]\fR	Setze Sonnenuntergangsdienst
 .br
 	\fB\-d\fR 0		#  : Deaktiviere
 .br

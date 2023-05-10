@@ -12,7 +12,7 @@ oyranos-config v0.9.7 - Config
 
 <strong>oyranos-config</strong> <a href="#get"><strong>-g</strong>=<em>XPATH</em></a> | <strong>-s</strong>=<em>XPATH:VALUE</em> | <strong>-l</strong> | <strong>--dump-db</strong> | <strong>-p</strong> [<strong>-v</strong>] [<strong>-z</strong>]
 <br />
-<strong>oyranos-config</strong> <a href="#daemon"><strong>-d</strong>=<em>0|1</em></a> [<strong>-v</strong>]
+<strong>oyranos-config</strong> <a href="#daemon"><strong>-d</strong><em>[=0|1]</em></a> [<strong>-v</strong>]
 <br />
 <strong>oyranos-config</strong> <a href="#syscolordir"><strong>--syscolordir</strong></a> | <strong>--usercolordir</strong> | <strong>--iccdirname</strong> | <strong>--settingsdirname</strong> | <strong>--cmmdir</strong> | <strong>--metadir</strong> [<strong>-v</strong>] [<strong>-z</strong>]
 <br />
@@ -44,12 +44,12 @@ The tool can read and set OpenICC DB options, and display paths and static infor
 
 <h3 id="daemon">Observe config changes</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>-d</strong>=<em>0|1</em> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>-d</strong><em>[=0|1]</em> [<strong>-v</strong>]
 
 &nbsp;&nbsp;Will only work on command line.
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong>=<em>0|1</em></td> <td>Watch DB changes
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong><em>[=0|1]</em></td> <td>Watch DB changes
   <table>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td># Deactivate : Deactivate</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 1</td><td># Activate : Activate</td></tr>

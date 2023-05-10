@@ -18,7 +18,7 @@ oyranos-monitor-white-point v0.9.7 - Nacht Manager
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#location"><strong>-l</strong></a> | <strong>-i</strong>=<em>WINKEL_IN_GRAD</em> <strong>-o</strong>=<em>WINKEL_IN_GRAD</em> [<strong>-t</strong>=<em>WINKEL_IN_GRAD</em>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 <br />
-<strong>oyranos-monitor-white-point</strong> <a href="#daemon"><strong>-d</strong>=<em>0|1|2</em></a> [<strong>-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#daemon"><strong>-d</strong><em>[=0|1|2]</em></a> [<strong>-v</strong>]
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#modes"><strong>-m</strong></a> | <strong>-r</strong><em>[=FORMAT]</em> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
@@ -56,7 +56,7 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--night-backlight</strong>=<em>PROZENT</em></td> <td>Setze Nächtiches Monitorlicht: Die Einstellung benötigt xbacklight für das Abdunkeln der Bildschirmlampe. (PROZENT:4 [≥0 ≤100 Δ1])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--night-color-scheme</strong>=<em>WORT</em></td> <td>Setze zur Nacht ein typischerweise dunkles Farbschema<br />Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--night-color-scheme</strong>=<em>WORT</em></td> <td>Setze zur Nacht ein typischerweise dunkles Farbschema<br />Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen. plasma-apply-colorscheme --list-schemes
   <table>
    <tr><td style='padding-left:0.5em'><strong>--night-color-scheme</strong> -</td><td># [kein]</td></tr>
    <tr><td style='padding-left:0.5em'><strong>--night-color-scheme</strong> Breeze</td><td># Breeze : Detected Color Scheme</td></tr>
@@ -112,7 +112,7 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
   </table>
   </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--sunlight-color-scheme</strong>=<em>WORT</em></td> <td>Setze für Tageslight ein typischerweise helleres Farbschema<br />Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--sunlight-color-scheme</strong>=<em>WORT</em></td> <td>Setze für Tageslight ein typischerweise helleres Farbschema<br />Benutze dies um das Farbschema abhängig von Tag und Nacht umzustellen. plasma-apply-colorscheme --list-schemes
   <table>
    <tr><td style='padding-left:0.5em'><strong>--sunlight-color-scheme</strong> -</td><td># [kein]</td></tr>
    <tr><td style='padding-left:0.5em'><strong>--sunlight-color-scheme</strong> Breeze</td><td># Breeze : Detected Color Scheme</td></tr>
@@ -135,10 +135,10 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
 
 <h3 id="daemon">Setze Sonnenuntergangsdienst</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-d</strong>=<em>0|1|2</em> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-d</strong><em>[=0|1|2]</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong>=<em>0|1|2</em></td> <td>Setze Sonnenuntergangsdienst
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong><em>[=0|1|2]</em></td> <td>Setze Sonnenuntergangsdienst
   <table>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td>#  : Deaktiviere</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 1</td><td># Automatischer Start : Automatischer Start</td></tr>

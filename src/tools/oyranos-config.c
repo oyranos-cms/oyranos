@@ -273,7 +273,7 @@ int myMain( int argc , const char** argv )
         oyjlOPTIONTYPE_FUNCTION, {.getChoices=listVals}, oyjlSTRING,{.s=&set},NULL},
     {"oiwi", 0,                          NULL,"dump-db",      NULL,     _("Dump DB"),  _("Dump OpenICC DB"),         NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&dump_db},NULL},
-    {"oiwi", 0,                          "d","daemon",        NULL,     _("Daemon"),   _("Watch DB changes"),        NULL, _("0|1"),           
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "d","daemon",    NULL,     _("Daemon"),   _("Watch DB changes"),        NULL, _("0|1"),           
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)d_choices, sizeof(d_choices), malloc ), 0}}, oyjlINT,       {.i=&daemon},NULL},
     {"oiwi", 0,                          "z","system-wide",   NULL,     _("System Wide"),_("System wide DB setting"),  NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&system_wide},NULL},

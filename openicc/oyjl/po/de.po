@@ -126,7 +126,7 @@ msgstr "FEHLER"
 #. declare the option choices  *   nick,          name,               description,                  help
 #: oyjl-args.c:61
 msgid "Base"
-msgstr ""
+msgstr "Basis"
 
 #: oyjl_args.c:6077 oyjl_args.c:6079
 msgid "Bugs"
@@ -685,9 +685,8 @@ msgid "March 05, 2020"
 msgstr "5. März 2020"
 
 #: oyjl-args.c:58
-#, fuzzy
 msgid "March 10, 2023"
-msgstr "5. März 2020"
+msgstr "10. März 2023"
 
 #: oyjl_args.c:2932
 msgid "Markdown"
@@ -1606,7 +1605,7 @@ msgstr "Benutzerfehler:"
 
 #: oyjl-args.c:61
 msgid "Use OAJL_ARGS_BASE API only."
-msgstr ""
+msgstr "Benutze nur OAJL_ARGS_BASE API."
 
 #: test.c:347
 msgid "Use [A-Z,a-z] underscore '_'."

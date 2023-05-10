@@ -18,7 +18,7 @@ oyranos-monitor-white-point v0.9.7 - Night Manager
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#location"><strong>-l</strong></a> | <strong>-i</strong>=<em>ANGLE_IN_DEGREE</em> <strong>-o</strong>=<em>ANGLE_IN_DEGREE</em> [<strong>-t</strong>=<em>ANGLE_IN_DEGREE</em>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 <br />
-<strong>oyranos-monitor-white-point</strong> <a href="#daemon"><strong>-d</strong>=<em>0|1|2</em></a> [<strong>-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#daemon"><strong>-d</strong><em>[=0|1|2]</em></a> [<strong>-v</strong>]
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#modes"><strong>-m</strong></a> | <strong>-r</strong><em>[=FORMAT]</em> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
@@ -56,7 +56,7 @@ The tool can set the actual white point or set it by local day and night time. A
   </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--night-backlight</strong>=<em>PERCENT</em></td> <td>Set Nightly Backlight: The option needs xbacklight installed and supporting your device for dimming the monitor lamp. (PERCENT:4 [≥0 ≤100 Δ1])</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--night-color-scheme</strong>=<em>STRING</em></td> <td>Set nightly typical darker color scheme<br />Use this to switch color scheme day/night dependent.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--night-color-scheme</strong>=<em>STRING</em></td> <td>Set nightly typical darker color scheme<br />Use this to switch color scheme day/night dependent. plasma-apply-colorscheme --list-schemes
   <table>
    <tr><td style='padding-left:0.5em'><strong>--night-color-scheme</strong> -</td><td># [none]</td></tr>
    <tr><td style='padding-left:0.5em'><strong>--night-color-scheme</strong> Breeze</td><td># Breeze : Detected Color Scheme</td></tr>
@@ -112,7 +112,7 @@ The tool can set the actual white point or set it by local day and night time. A
   </table>
   </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--sunlight-color-scheme</strong>=<em>STRING</em></td> <td>Set day time typical brighter color scheme<br />Use this to switch color scheme day/night dependent.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--sunlight-color-scheme</strong>=<em>STRING</em></td> <td>Set day time typical brighter color scheme<br />Use this to switch color scheme day/night dependent. plasma-apply-colorscheme --list-schemes
   <table>
    <tr><td style='padding-left:0.5em'><strong>--sunlight-color-scheme</strong> -</td><td># [none]</td></tr>
    <tr><td style='padding-left:0.5em'><strong>--sunlight-color-scheme</strong> Breeze</td><td># Breeze : Detected Color Scheme</td></tr>
@@ -135,10 +135,10 @@ The tool can set the actual white point or set it by local day and night time. A
 
 <h3 id="daemon">Run sunset daemon</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-d</strong>=<em>0|1|2</em> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-d</strong><em>[=0|1|2]</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong>=<em>0|1|2</em></td> <td>Control user daemon
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong><em>[=0|1|2]</em></td> <td>Control user daemon
   <table>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td>#  : Deactivate</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 1</td><td># Autostart : Autostart</td></tr>

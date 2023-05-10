@@ -10,7 +10,7 @@ oyranos-monitor-white-point v0.9.7 \- Night Manager
 .br
 \fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIANGLE_IN_DEGREE\fR \fB\-o\fR \fIANGLE_IN_DEGREE\fR [\fB\-t\fR \fIANGLE_IN_DEGREE\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-d\fR\fI[=0|1|2]\fR [\fB\-v\fR]
 .br
 \fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR\fI[=FORMAT]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH DESCRIPTION
@@ -58,7 +58,7 @@ The option needs xbacklight installed and supporting your device for dimming the
 .RE
 \fB\-\-night-color-scheme\fR \fISTRING\fR	Set nightly typical darker color scheme
 .RS
-Use this to switch color scheme day/night dependent.
+Use this to switch color scheme day/night dependent. plasma-apply-colorscheme --list-schemes
 .RE
 	\fB\-\-night-color-scheme\fR -		# [none]
 .br
@@ -122,7 +122,7 @@ A ICC profile of class abstract. Ideally the effect profile works on 1D RGB curv
 .br
 \fB\-\-sunlight-color-scheme\fR \fISTRING\fR	Set day time typical brighter color scheme
 .RS
-Use this to switch color scheme day/night dependent.
+Use this to switch color scheme day/night dependent. plasma-apply-colorscheme --list-schemes
 .RE
 	\fB\-\-sunlight-color-scheme\fR -		# [none]
 .br
@@ -146,9 +146,9 @@ Location and Twilight
 .RE
 .SS
 Run sunset daemon
-\fBoyranos-monitor-white-point\fR \fB\-d\fR \fI0|1|2\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-d\fR\fI[=0|1|2]\fR [\fB\-v\fR]
 .br
-\fB\-d\fR|\fB\-\-daemon\fR \fI0|1|2\fR	Control user daemon
+\fB\-d\fR|\fB\-\-daemon\fR\fI[=0|1|2]\fR	Control user daemon
 .br
 	\fB\-d\fR 0		#  : Deactivate
 .br
