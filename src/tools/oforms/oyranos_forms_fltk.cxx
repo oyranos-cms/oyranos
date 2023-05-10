@@ -420,23 +420,7 @@ oyUiHandler_s oy_ui_fltk_handler_html_headline_ =
    (char**)oy_ui_fltk_handler_html_headline_element_searches_ /**< element_searches */
   };
 
-
-/** @internal
- *  Function oyJSON2XFORMsFltkHtmlHeadlineHandler
- *  @brief   build a UI from a 'groups' Json array
- *
- *  This function is a handler for a OpenICC style JSON ui.
- *
- *  @param[in]     cur                 json node
- *  @param[in]     collected_elements  parsed and requested elements
- *  @param[in]     user_data           toolkit context
- *  @return                            error
- *
- *  @version Oyranos: 0.9.7
- *  @date    2018/01/02
- *  @since   2009/08/29 (Oyranos: 0.1.10)
- */
-int        oyJSON2XFORMsFltkHtmlHeadlineHandler (
+int        oyJSON2XFORMsFltkHtmlHeadlineHandler2 (
                                        oyjl_val            value,
                                        oyOptions_s       * collected_elements OY_UNUSED,
                                        oyPointer           user_data )
@@ -446,10 +430,6 @@ int        oyJSON2XFORMsFltkHtmlHeadlineHandler (
              * help = NULL,
              * properties = NULL;
   oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
-  int print = forms_args ? forms_args->print : 1;
-
-  if(!print || !value)
-    return 0;
 
   oyjl_val v;
   v = oyjlTreeGetValue( value, 0, "name" );
@@ -513,9 +493,49 @@ int        oyJSON2XFORMsFltkHtmlHeadlineHandler (
   return 0;
 }
 
+/** @internal
+ *  Function oyJSON2XFORMsFltkHtmlHeadlineHandler
+ *  @brief   build a UI from a 'groups' Json array
+ *
+ *  This function is a handler for a OpenICC style JSON ui.
+ *
+ *  @param[in]     cur                 json node
+ *  @param[in]     collected_elements  parsed and requested elements
+ *  @param[in]     user_data           toolkit context
+ *  @return                            error
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2018/01/02
+ *  @since   2009/08/29 (Oyranos: 0.1.10)
+ */
+int        oyJSON2XFORMsFltkHtmlHeadlineHandler (
+                                       oyjl_val            value,
+                                       oyOptions_s       * collected_elements,
+                                       oyPointer           user_data )
+{
+  const char * name = NULL,
+             * desc = NULL,
+             * help = NULL,
+             * properties = NULL;
+  oyFormsArgs_s * forms_args = (oyFormsArgs_s *)user_data;
+  int print = forms_args ? forms_args->print : 1;
+
+  if(!print || !value)
+    return 0;
+
+  int count = oyjlValueCount( value );
+  for(int i = 0; i < count; ++i)
+  {
+    oyjl_val group = oyjlTreeGetValueF( value, 0, "[%d]", i );
+    oyJSON2XFORMsFltkHtmlHeadlineHandler2( group, collected_elements, user_data );
+  }
+
+  return 0;
+}
+
 
 const char * oy_ui_fltk_handler_json_headline_element_searches_[] = {
- "groups/",
+ "groups",
  0
 };
 oyUiHandler_s oy_ui_fltk_handler_json_headline_ =
