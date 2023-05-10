@@ -1220,7 +1220,11 @@ oyjl_val   oyjlTreeParse2            ( const char        * text,
 
 
   if(!(flags & OYJL_NO_MARKUP) && text && strstr(text, "\033[0") != NULL)
+  {
     text = oyjlTermColorToPlain(text, flags);
+    if(*oyjl_debug)
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "removing markup", OYJL_DBG_ARGS );
+  }
 
   if(text && strlen(text) > 4 && memcmp(text, "oiJS", 4) == 0)
     /* static OYJL JSON */

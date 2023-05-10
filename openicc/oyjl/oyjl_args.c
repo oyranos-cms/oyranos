@@ -1952,7 +1952,7 @@ void oyjlOptsPrivate_Release         ( oyjlOptsPrivate_s** results_ )
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-static int oyjlTermColorCheck_( )
+static int oyjlTermColorCheck_       ( int                 flags )
 {
   struct stat sout, serr;
   int color_term = 0;
@@ -1960,7 +1960,7 @@ static int oyjlTermColorCheck_( )
   if( fstat( fileno(stdout), &sout ) == -1 )
     return 0;
 
-  if(*oyjl_debug)
+  if(flags & OYJL_OBSERVE)
   switch( sout.st_mode & S_IFMT )
   {
     case S_IFBLK:  fprintf(stderr, "block device\n");            break;
@@ -1976,7 +1976,7 @@ static int oyjlTermColorCheck_( )
   if( fstat( fileno(stderr), &serr ) == -1 )
     return color_term;
 
-  if(*oyjl_debug)
+  if(flags & OYJL_OBSERVE)
   switch( serr.st_mode & S_IFMT )
   {
     case S_IFBLK:  fprintf(stderr, "block device\n");            break;
@@ -1993,7 +1993,7 @@ static int oyjlTermColorCheck_( )
         S_ISCHR( serr.st_mode ) ) ||
       S_ISFIFO( sout.st_mode ) )
     color_term = 1;
-  if(*oyjl_debug)
+  if(flags & OYJL_OBSERVE)
     fprintf(stderr, "color_term: %d\n", color_term );
 
   return color_term;
@@ -2026,16 +2026,22 @@ int          oyjlTermColorInit       ( int                 flags )
   {
     colorterm_init = 1;
     oyjl_colorterm = getenv("COLORTERM");
+    if(flags & OYJL_OBSERVE)
+      fprintf(stderr, "%s COLORTERM\n", getenv("COLORTERM")?"has":"no" );
     color = oyjl_colorterm != NULL ? 1 : 0;
     if(!oyjl_colorterm) oyjl_colorterm = getenv("TERM");
     truecolor = oyjl_colorterm && strcmp(oyjl_colorterm,"truecolor") == 0;
-    if(!oyjlTermColorCheck_())
+    if(!oyjlTermColorCheck_(flags))
       truecolor = color = 0;
     if( getenv("FORCE_COLORTERM") || flags & OYJL_FORCE_COLORTERM )
       truecolor = color = 1;
+    if(flags & OYJL_OBSERVE)
+      fprintf(stderr, "%s FORCE_COLORTERM  %s flags & OYJL_FORCE_COLORTERM\n", getenv("FORCE_COLORTERM")?"has":"no", flags & OYJL_FORCE_COLORTERM ? "use":"no" );
     if( getenv("FORCE_NO_COLORTERM") || flags & OYJL_FORCE_NO_COLORTERM )
       truecolor = color = 0;
     if(flags & OYJL_OBSERVE)
+      fprintf(stderr, "%s FORCE_NO_COLORTERM  %s flags & OYJL_FORCE_NO_COLORTERM\n", getenv("FORCE_NO_COLORTERM")?"has":"no", flags & OYJL_FORCE_NO_COLORTERM ? "use":"no" );
+    if(*oyjl_debug || flags & OYJL_OBSERVE)
       fprintf(stderr, "color: %d truecolor: %d oyjl_colorterm: %s\n", color, truecolor, oyjl_colorterm );
   }
   color_env = (color ? 0x01 : 0x00) | (truecolor ? 0x02 : 0x00);
