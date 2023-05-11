@@ -443,7 +443,9 @@ int        oyJSON2XFORMsFltkHtmlHeadlineHandler2 (
 
   OyFl_Box_c * box = 0;
 
-  if(name)
+  if( (name || desc) &&
+      (oyjlTreeGetValue( value, 0, "options" ) || oyjlTreeGetValue( value, 0, "groups" ))
+    )
   {
     Fl_Group *parent = Fl_Group::current(); // parent tab
 
@@ -461,7 +463,7 @@ int        oyJSON2XFORMsFltkHtmlHeadlineHandler2 (
         w = parent->w();
     box = new OyFl_Box_c( x,y,w,BUTTON_HEIGHT );
     char * label = NULL;
-    oyjlStringAdd( &label, malloc, free, "%s %s", name, desc?desc:"" );
+    oyjlStringAdd( &label, malloc, free, "%s", desc?desc:name );
     if(label)
     {
       box->copy_label( (const char *)label );
@@ -531,6 +533,7 @@ int        oyJSON2XFORMsFltkHtmlHeadlineHandler (
 
 const char * oy_ui_fltk_handler_json_headline_element_searches_[] = {
  "org/freedesktop/oyjl/modules/[]/groups/[]",
+ "org/freedesktop/oyjl/modules/[]/groups/[]/groups/[]",
  0
 };
 oyUiHandler_s oy_ui_fltk_handler_json_headline_ =
@@ -566,6 +569,7 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
       is_default, default_pos = -1;
   const char * default_value = NULL,
              * label,
+             * option,
              * value,
              * xpath = 0;
   char * default_string = 0;
@@ -584,8 +588,11 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
 
   oyjl_val v = oyjlTreeGetValue( ov, 0, "name" );
   if( OYJL_IS_STRING( v ) )         label = v->u.string;
+  v = oyjlTreeGetValue( ov, 0, "option" );
+  if( OYJL_IS_STRING( v ) )         option = v->u.string;
+  int len = option?strlen(option):0;
 
-  if(!label) return 1;
+  if(!label || (len > 4 && memcmp(option,"man-",4) == 0)) return 1;
 
   int x = parent->x(),
       y = parent->y(),
@@ -704,6 +711,7 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
 
 const char * oy_ui_fltk_handler_json_select1_element_searches_[] = {
  "org/freedesktop/oyjl/modules/[]/groups/[]/options/[]",
+ "org/freedesktop/oyjl/modules/[]/groups/[]/groups/[]/options/[]",
  0
 };
 
