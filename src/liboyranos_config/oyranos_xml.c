@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2006-2012 (C) Kai-Uwe Behrmann
+ *            2006-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    xml handling
  *  @internal
@@ -1803,7 +1803,7 @@ void               oyParseJsonDoc_   ( oyjl_val            root,
       {
         const char * pattern = ui_handlers[pos]->element_searches[pos2];
 
-        if(oyjlPathMatch( path, pattern, OYJL_PATH_MATCH_LAST_ITEMS ))
+        if(oyjlPathMatch( path, pattern, OYJL_PATH_MATCH_LEN ))
         {
           oyjl_val v = oyjlTreeGetValue( root, 0, path );
 

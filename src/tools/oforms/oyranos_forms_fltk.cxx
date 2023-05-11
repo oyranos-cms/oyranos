@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2009-2018 (C) Kai-Uwe Behrmann
+ *            2009-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    forms handling for the FLTK toolkit
  *  @internal
@@ -523,19 +523,14 @@ int        oyJSON2XFORMsFltkHtmlHeadlineHandler (
   if(!print || !value)
     return 0;
 
-  int count = oyjlValueCount( value );
-  for(int i = 0; i < count; ++i)
-  {
-    oyjl_val group = oyjlTreeGetValueF( value, 0, "[%d]", i );
-    oyJSON2XFORMsFltkHtmlHeadlineHandler2( group, collected_elements, user_data );
-  }
+  oyJSON2XFORMsFltkHtmlHeadlineHandler2( value, collected_elements, user_data );
 
   return 0;
 }
 
 
 const char * oy_ui_fltk_handler_json_headline_element_searches_[] = {
- "groups",
+ "org/freedesktop/oyjl/modules/[]/groups/[]",
  0
 };
 oyUiHandler_s oy_ui_fltk_handler_json_headline_ =
@@ -581,8 +576,16 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
 
   Fl_Group *parent = Fl_Group::current();
 
-  if(!parent)
+  if(!parent || !ov)
     return 1;
+
+
+  label = NULL;
+
+  oyjl_val v = oyjlTreeGetValue( ov, 0, "name" );
+  if( OYJL_IS_STRING( v ) )         label = v->u.string;
+
+  if(!label) return 1;
 
   int x = parent->x(),
       y = parent->y(),
@@ -598,12 +601,7 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
 
   formsFltkChoice * c = new formsFltkChoice( w-BOX_WIDTH-H_SPACING,0,BOX_WIDTH,BUTTON_HEIGHT );
 
-  if(ov)
   {
-    oyjl_val v;
-
-    label = 0;
-
     v = oyjlTreeGetValue( ov, 0, "default" );
     if( OYJL_IS_STRING( v ) )         default_value = v->u.string;
     if(oy_debug && default_value && print)
@@ -612,13 +610,10 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
     v = oyjlTreeGetValue( ov, 0, "key" );
     if( OYJL_IS_STRING( v ) )         xpath = v->u.string;
 
-    v = oyjlTreeGetValue( ov, 0, "name" );
-    if( OYJL_IS_STRING( v ) )         label = v->u.string;
-      
-    if(label && print)
+    if(print)
       box->copy_label( (const char *)label );
 
-    const char * t;
+    const char * t = NULL;
     v = oyjlTreeGetValue( ov, 0, "help" );
     if( OYJL_IS_STRING( v ) ) t = v->u.string;
     if(t)
@@ -708,7 +703,7 @@ int        oyJSON2XFORMsFLTKSelect1Handler (
 }
 
 const char * oy_ui_fltk_handler_json_select1_element_searches_[] = {
- "options/",
+ "org/freedesktop/oyjl/modules/[]/groups/[]/options/[]",
  0
 };
 
