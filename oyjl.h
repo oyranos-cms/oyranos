@@ -3,7 +3,7 @@
  *  oyjl - Basic helper C API's
  *
  *  @par Copyright:
- *            2010-2022 (C) Kai-Uwe Behrmann
+ *            2010-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl API provides a platformindependent C interface for JSON I/O, conversion to and from
  *            XML + YAML, string helpers, file reading, testing and argument handling.
@@ -48,7 +48,8 @@ extern "C" {
  *  @{ */
 /** @} */
 
-int        oyjlVersion               ( int                 type );
+int            oyjlVersion           ( int                 type );
+const char *   oyjlVersionName       ( int                 type );
 
 
 int            oyjlInitLanguageDebug ( const char        * project_name,

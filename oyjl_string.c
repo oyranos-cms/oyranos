@@ -972,8 +972,8 @@ int        oyjlRegExpReplace         ( char             ** text,
       if(len > re_match.rm_eo)
       {
         oyjlStr_Push( str, tail );
-        free(tail);
       }
+      if(tail) { free(tail); tail = NULL; }
       txt = oyjlStr(str);
       txt += pos;
       ++count;

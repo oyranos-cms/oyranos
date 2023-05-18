@@ -3,7 +3,7 @@
  *  oyjl - string, file i/o and other basic helpers
  *
  *  @par Copyright:
- *            2016-2022 (C) Kai-Uwe Behrmann
+ *            2016-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl core functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -125,6 +125,21 @@
 
 /* --- Misc_Section --- */
 #include "oyjl_version.h"
+#include "oyjl_git_version.h"
+/** @brief  give the compiled in library version
+ *
+ *  @param[in]  vtype          request API type
+ *                             - 0 - Oyjl version string
+ *                             - 1 - GIT version string
+ *  @return                    OYJL_VERSION_NAME at library compile time
+ */
+const char *   oyjlVersionName       ( int                 vtype )
+{
+  if(vtype == 1)
+    return OYJL_GIT_VERSION;
+
+  return OYJL_VERSION_NAME;
+}
 #include <yajl/yajl_parse.h>
 #include <yajl/yajl_version.h>
 /** @brief  give the compiled in library version

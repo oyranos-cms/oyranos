@@ -2,7 +2,7 @@
 <a name="toc"></a>
 [NAME](#name) [ÜBERSICHT](#synopsis) [BESCHREIBUNG](#description) [OPTIONEN](#options) [BEISPIELE](#examples) [SIEHE AUCH](#seealso) [FORMAT](#format) [AUTOR](#author) [KOPIERRECHT](#copyright) [FEHLER](#bugs) 
 
-<strong>"oyjl-args"</strong> *1* <em>"March 10, 2023"</em> "User Commands"
+<strong>"oyjl-args"</strong> *1* <em>"10. März 2023"</em> "User Commands"
 
 <h2>NAME <a href="#toc" name="name">&uarr;</a></h2>
 
@@ -29,7 +29,7 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--c-stand-alone</strong><em>[=base]</em></td> <td>Erzeuge C Quelltext für oyjl_args.c Referenz.<br />Lasse libOyjlCore Referenz weg.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>--c-stand-alone</strong> base</td><td># Base : Use OAJL_ARGS_BASE API only.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>--c-stand-alone</strong> base</td><td># Basis : Benutze nur OAJL_ARGS_BASE API.</td></tr>
   </table>
   </td>
  </tr>

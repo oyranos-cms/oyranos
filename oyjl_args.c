@@ -3,7 +3,7 @@
  *  oyjl - UI helpers
  *
  *  @par Copyright:
- *            2018-2022 (C) Kai-Uwe Behrmann
+ *            2018-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl argument handling
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -59,6 +59,7 @@ int oyjl_internal = 1;
 #include "oyjl.h"
 #include "oyjl_macros.h"
 #include "oyjl_version.h"
+#include "oyjl_git_version.h"
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif
@@ -82,6 +83,7 @@ extern int * oyjl_debug;
 #ifndef OYJL_VERSION
 #define OYJL_VERSION 100
 #define OYJL_VERSION_NAME "1.0.0"
+#define OYJL_GIT_VERSION  ""
 #define OYJL_VERSION_A 1	/**< version variable */
 #define OYJL_DOMAIN  "oyjl"
 #endif
@@ -863,7 +865,7 @@ int      oyjlStringToLong            ( const char        * text,
 int          oyjlStringToDouble      ( const char        * text,
                                        double            * value,
                                        const char       ** end,
-                                       int                 flags )
+                                       int                 flags OYJL_UNUSED )
 {
   char * end_ = NULL, * t = NULL;
   int len, pos = 0;
@@ -1258,6 +1260,13 @@ int            oyjlVersion           ( int                 type OYJL_UNUSED )
 {
   return OYJL_VERSION;
 }
+
+const char *   oyjlVersionName       ( int                 type )
+{
+  if(type == 1) return OYJL_GIT_VERSION;
+  return OYJL_VERSION_NAME;
+}
+
 #define WARNc_S(...) oyjlMessage_p( oyjlMSG_ERROR, 0, __VA_ARGS__ )
 char *     oyjlReadFileStreamToMem   ( FILE              * fp,
                                        int               * size )
@@ -5096,9 +5105,9 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       prog = oyjlStringCopy( oyjlTermColor( oyjlBOLD, ui->opts->argv[0] ), NULL );
     fprintf( stdout, "%s v%s%s%s%s - %s\n%s\n%s%s%s\n%s%s%s\n\n", prog,
                                       v ? v : "",
-                                      version && version->description ? "(" : "",
-                                      version && version->description ? version->description : "",
-                                      version && version->description ? ")" : "",
+                                      version && version->description && verbose ? "(" : "",
+                                      version && version->description && verbose ? version->description : "",
+                                      version && version->description && verbose ? ")" : "",
                                       ui->description ? ui->description : ui->name ? ui->name : "",
                                       copyright && copyright->name ? copyright->name : "",
                                       license ? _("License"):"", license?":\t":"", license && license->name ? license->name : "",
