@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2022 (C) Kai-Uwe Behrmann
+ *            2018-2023 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -24,6 +24,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <oyjl_version.h>
+#include <oyjl_git_version.h>
 #include <oyjl.h>
 #if defined(Q_OS_ANDROID)
 # include <QtAndroidExtras/QtAndroid>
@@ -241,11 +242,13 @@ QString AppData::findLogo(QString pattern)
  *                                     - 1 : lib name
  *                                     - 2 : lib name
  *                                     - 3 : run time version
+ *                                     - 4 : git version
  *  @return                            information string
  */
 QString AppData::getLibDescription(int type)
 {
     QString v(OYJL_VERSION_NAME);
+    QString vg(OYJL_GIT_VERSION);
     QString p("libOyjl");
     if(p[0].isLower())
         p[0] = p[0].toUpper();
@@ -257,14 +260,11 @@ QString AppData::getLibDescription(int type)
     case 1:
         return QString(tr("%1 Version")).arg(p);
     case 2:
-        return QString(tr("%1 Version")).arg(p);
+        return QString(p);
     case 3:
         return QString::number(oyjlVersion(0));
     case 4:
-    {
-        QString qv(tr("NONE"));
-        return qv;
-    }
+        return QString(vg);
     }
     return QString("no description found for type ") + QString::number(type);
 }

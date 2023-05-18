@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2019-2022  Kai-Uwe Behrmann
+ *  Copyright (C) 2019-2023  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @internal
@@ -27,6 +27,7 @@
 
 //#include "oyjl.h"
 #include "oyjl_version.h"
+#include "oyjl_git_version.h"
 #ifdef OYJL_HAVE_LOCALE_H
 #include <locale.h>
 #endif

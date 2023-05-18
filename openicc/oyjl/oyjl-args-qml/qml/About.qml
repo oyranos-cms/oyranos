@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2021 (C) Kai-Uwe Behrmann
+ *            2018-2023 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -63,7 +63,7 @@ Rectangle {
             text: "<html><head></head><body> <p align=\"center\">" +
                           "Version " + ApplicationVersion + "<br \>" +
                           qsTr("Oyjl Options Renderer") +
-                          "<br \>Copyright © 2018-2021 Kai-Uwe Behrmann<br \>" +
+                          "<br \>Copyright © 2018-2023 Kai-Uwe Behrmann<br \>" +
                           qsTr("All Rights reserved.") +
                           "<br \><a href=\"http://www.oyranos.org\">www.oyranos.org</a></p>" +
                           "<hr /><p align=\"center\">" +
@@ -76,8 +76,10 @@ Rectangle {
                               "<td>" + QtRuntimeVersion + " (" + QtCompileVersion + ")</td></tr>" +
                           "<tr><td align=\"right\" style=\"padding-right:10;\">" + appData.getLibDescription(1) + "</td>" +
                               "<td>" + appData.getLibDescription(0) + "</td></tr>" +
-                          "<tr><td align=\"right\" style=\"padding-right:10;\">" + appData.getLibDescription(2) + "</td>" +
-                              "<td>" + appData.getLibDescription(3) + " ("+ appData.getLibDescription(3) + ")" + "</td></tr>" +
+                          "<tr><td align=\"right\" style=\"padding-right:10;\">" + appData.getLibDescription(1) + "</td>" +
+                              "<td>" + appData.getLibDescription(3) + "</td></tr>" +
+                          "<tr><td align=\"right\" style=\"padding-right:10;\">" + appData.getLibDescription(2) + " git</td>" +
+                              "<td>" + appData.getLibDescription(4) + "</td></tr>" +
                           "</table></p>" +
                           "</body></html>"
             onLinkActivated: {

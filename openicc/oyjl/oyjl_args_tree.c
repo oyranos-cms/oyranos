@@ -3,7 +3,7 @@
  *  oyjl - UI helpers
  *
  *  @par Copyright:
- *            2018-2022 (C) Kai-Uwe Behrmann
+ *            2018-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl argument handling with libOyjlCore
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -1061,7 +1061,7 @@ oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char          * documentation,
 {
   oyjlUiHeaderSection_s s[] = {
     /* type,  nick,      label,name,                 description */
-    { "oihs", "version", NULL, OYJL_VERSION_NAME, NULL },
+    { "oihs", "version", NULL, OYJL_VERSION_NAME, oyjlVersionName(1) },
     { "oihs", "manufacturer", NULL, "Kai-Uwe Behrmann", "http://www.oyranos.org" },
     { "oihs", "copyright", NULL, "Copyright © 2017-2022 Kai-Uwe Behrmann", NULL },
     { "oihs", "license", NULL, "newBSD", "http://www.oyranos.org" },

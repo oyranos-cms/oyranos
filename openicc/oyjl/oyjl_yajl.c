@@ -1074,6 +1074,7 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
   {
     int i,index;
     jroot = oyjlTreeNew( "" );
+    cols_n = 0;
 
     for(i = 0; i < rows_n; ++i)
     {
@@ -1120,6 +1121,7 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
           {
             free(node->u.number.r);
             node->u.number.r = number;
+            free(val);
             val = cols[index] = NULL;
           }
           else if(err != 0)
@@ -1134,6 +1136,7 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
               err = 0;
               node->type = oyjl_t_false;
             }
+            if(number) { free(number); number = NULL; }
           }
         }
 
@@ -1148,7 +1151,7 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
 
         if(*oyjl_debug > 1) fprintf( stderr, "\n" );
       }
-      oyjlStringListRelease( &cols, cols_n, free );
+      oyjlStringListRelease( &cols, cols_n, free ); cols_n = 0;
     }
   }
   oyjlStringListRelease( &rows, rows_n, free );
@@ -1158,6 +1161,7 @@ clean_parse_csv:
   if(flags & OYJL_NUMBER_DETECTION)
     setlocale(LC_NUMERIC, save_locale);
   if(save_locale) free( save_locale );
+  oyjlStringListRelease( &cols, cols_n, free );
 #endif
 
   return jroot;
