@@ -2949,7 +2949,7 @@ static void oyjlOptions_EnrichInbuild_( oyjlOption_s * o )
       oyjl_X_choices_[3].help = _("Get Oyjl Json UI declaration incuding command");
       oyjl_X_choices_[4].name = _("Export");
       oyjl_X_choices_[4].description = _("All available data");
-      oyjl_X_choices_[4].help = _("Get UI data for developers");
+      oyjl_X_choices_[4].help = _("Get UI data for developers. The format can be converted by the oyjl-args tool.");
       o->values.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)oyjl_X_choices_, sizeof(oyjl_X_choices_), malloc );
       if(o->value_name == NULL)
       {
