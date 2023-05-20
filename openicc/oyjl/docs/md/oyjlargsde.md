@@ -25,8 +25,7 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>DATEINAME</em> [<strong>--c-stand-alone</strong><em>[=base]</em>] [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>DATEINAME</em></td> <td>Setze Eingabe<br />Für C Quelltext Ausgabe(voreingestellt) und --completion-bash Ausgabe nutze -X=export JSON. Für --render=XXX nutze -X=json JSON.  </td>
- </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>DATEINAME</em></td> <td>Setze Eingabe<br />Für C Quelltext Ausgabe(voreingestellt) und --completion-bash Ausgabe nutze -X=export JSON. Für --render=XXX nutze -X=json JSON. </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--c-stand-alone</strong><em>[=base]</em></td> <td>Erzeuge C Quelltext für oyjl_args.c Referenz.<br />Lasse libOyjlCore Referenz weg.
   <table>
    <tr><td style='padding-left:0.5em'><strong>--c-stand-alone</strong> base</td><td># Basis : Benutze nur OAJL_ARGS_BASE API.</td></tr>
@@ -54,7 +53,7 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
    <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formatierter Text - Hole formatierten Text</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Hole Oyjl Json Benutzerschnittstelle</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : Alle verfügbaren Daten - Get UI data for developers. The format can be converted by the oyjl-args tool.</td></tr>
   </table>
   </td>
  </tr>

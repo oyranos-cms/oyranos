@@ -12,6 +12,17 @@ _oyjl_args()
 
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
+        --input) # long option with dynamic args
+            local OYJL_TEXTS=$(ls 2>/dev/null)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --c-stand-alone) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('base')
@@ -43,6 +54,17 @@ _oyjl_args()
     esac
     : "autocomplete options with choices for single letter options "$cur""
     case "$cur" in
+        -i=*) # single letter option with dynamic args
+            local OYJL_TEXTS=$(ls 2>/dev/null)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
         -h=*) # single letter option with static args
             local IFS=$'\n'
             local WORD_LIST=('-' 'synopsis')
