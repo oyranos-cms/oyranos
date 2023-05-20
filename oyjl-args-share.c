@@ -902,13 +902,14 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       {
         int count = oyjlValueCount( v ), j;
         char ** keys = oyjlTreeToPaths( v, OYJL_KEY, NULL, 0, &count );
-        fprintf( stderr, "found %d properties\n", count );
+        oyjlMessage_p( oyjlMSG_INFO, 0, "%s found %d properties", o?o:key, count );
         for(j = 0; j < count; ++j)
         {
           char * key = keys[j];
           oyjl_val val = oyjlTreeGetValue( v, 0, key );
           const char * value = OYJL_GET_STRING( val );
-          oyjlStringAdd( &properties, 0,0, "%s%s=%s", j?"\n":"", key, value ); 
+          if(value)
+            oyjlStringAdd( &properties, 0,0, "%s%s=%s", properties?"\n":"", key, value ); 
         }
       }
       oyjlStr_Push( s, "    {\"oiwi\", ");
@@ -1067,12 +1068,14 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       {
         int count = oyjlValueCount( v ), j;
         char ** keys = oyjlTreeToPaths( v, OYJL_KEY, NULL, 0, &count );
+        oyjlMessage_p( oyjlMSG_INFO, 0, "%i %s found properties: %d", i, name, count );
         for(j = 0; j < count; ++j)
         {
           char * key = keys[j];
           oyjl_val val = oyjlTreeGetValue( v, 0, key );
           const char * value = OYJL_GET_STRING( val );
-          oyjlStringAdd( &properties, 0,0, "%s%s=%s", j?"\n":"", key, value ); 
+          if(value)
+            oyjlStringAdd( &properties, 0,0, "%s%s=%s", properties?"\n":"", key, value ); 
         }
       }
       oyjlStr_Push( s, "    {\"oiwg\", ");
