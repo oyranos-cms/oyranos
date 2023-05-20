@@ -25,8 +25,7 @@ Tool to convert UI JSON description from *-X export* into source code.
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-i</strong>=<em>FILENAME</em> [<strong>--c-stand-alone</strong><em>[=base]</em>] [<strong>--completion-bash</strong>] [<strong>-v</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>FILENAME</em></td> <td>Set Input<br />For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON.  </td>
- </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>FILENAME</em></td> <td>Set Input<br />For C code output (default) and --completion-bash output use -X=export JSON. For --render=XXX use -X=json JSON. </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--c-stand-alone</strong><em>[=base]</em></td> <td>Generate C code for oyjl_args.c inclusion.<br />Omit libOyjlCore reference.
   <table>
    <tr><td style='padding-left:0.5em'><strong>--c-stand-alone</strong> base</td><td># Base : Use OAJL_ARGS_BASE API only.</td></tr>
@@ -54,7 +53,7 @@ Tool to convert UI JSON description from *-X export* into source code.
    <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formated text - Get formated text</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Get a Oyjl Json UI declaration</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : All available data - Get UI data for developers</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : All available data - Get UI data for developers. The format can be converted by the oyjl-args tool.</td></tr>
   </table>
   </td>
  </tr>
