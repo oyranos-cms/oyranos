@@ -166,6 +166,49 @@ static const char * oyjlVARIABLE_eToString_( oyjlVARIABLE_e e )
   return NULL;
 }
 
+#define OYJL_PARENT_OIWI 0x01
+#define OYJL_PARENT_OIWG 0x02
+void oyjlUi_ExportToJson_SetProperties_(oyjl_val           parent,
+                                       const char        * properties,
+                                       int                 flags )
+{
+  if(properties && properties[0])
+  {
+    int n = 0, plen = 0;
+    char ** list = oyjlStringSplit( properties, '\n', &n, malloc );
+    const char * parent_id = NULL;
+    if(flags & OYJL_PARENT_OIWI) parent_id = "oiwi/";
+    if(flags & OYJL_PARENT_OIWG) parent_id = "oiwg/";
+    if(parent) plen = strlen(parent_id) ;
+    if(!list)
+      oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "found issue with properties: %s", OYJL_DBG_ARGS,
+                     properties );
+    else
+    {
+      char * key, * value, * t;
+      int j;
+      for(j = 0; j < n; ++j)
+      {
+        key = list[j];
+        t = strchr(key, '=');
+        if(!t)
+          oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "found issue with properties: %s", OYJL_DBG_ARGS,
+                         key );
+        else
+        {
+          int len = strlen(key);
+          value = strchr(key, '=') + 1;
+          t[0] = '\000';
+          oyjlTreeSetStringF( parent, OYJL_CREATE_NEW, value, "properties/%s", key );
+          if(len > plen && memcmp(key, parent_id, plen) == 0)
+            oyjlTreeSetStringF( parent, OYJL_CREATE_NEW, value, key+plen );
+        }
+      }
+      oyjlStringListRelease( &list, n, free );
+    }
+  }
+}
+
 #define OYJL_REG "org/freedesktop/oyjl"
 #define OYJL_IS_NOT_O( x ) (!o->o || strcmp(o->o,x) != 0)
 #define OYJL_IS_O( x ) (o->o && strcmp(o->o,x) == 0)
@@ -297,34 +340,7 @@ oyjl_val       oyjlUi_ExportToJson_  ( oyjlUi_s          * ui,
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, oyjlVARIABLE_eToString_(o->variable_type), OYJL_REG "/ui/options/array/[%d]/%s", i, "variable_type" );
     if(o->variable_type != oyjlNONE)
       oyjlTreeSetStringF( root, OYJL_CREATE_NEW, NULL, OYJL_REG "/ui/options/array/[%d]/%s", i, "variable_name" );
-    if(o->properties && o->properties[0])
-    {
-      n = 0;
-      char ** list = oyjlStringSplit( o->properties, '\n', &n, malloc );
-      if(!list)
-        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "found issue with properties: %s", OYJL_DBG_ARGS,
-                       o->properties );
-      else
-      {
-        char * key, * value, * t;
-        int j;
-        for(j = 0; j < n; ++j)
-        {
-          key = list[j];
-          t = strchr(key, '=');
-          if(!t)
-            oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "found issue with properties: %s", OYJL_DBG_ARGS,
-                           key );
-          else
-          {
-            value = strchr(key, '=') + 1;
-            t[0] = '\000';
-            oyjlTreeSetStringF( root, OYJL_CREATE_NEW, value, OYJL_REG "/ui/options/array/[%d]/properties/%s", i, key );
-          }
-        }
-        oyjlStringListRelease( &list, n, free );
-      }
-    }
+    oyjlUi_ExportToJson_SetProperties_( oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/ui/options/array/[%d]", i ), o->properties, OYJL_PARENT_OIWI );
   }
 
   ng = oyjlOptions_CountGroups( ui->opts );
@@ -345,6 +361,8 @@ oyjl_val       oyjlUi_ExportToJson_  ( oyjlUi_s          * ui,
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->optional, OYJL_REG "/ui/options/groups/[%d]/%s", i, "optional" );
     if(g->detail)
     oyjlTreeSetStringF( root, OYJL_CREATE_NEW, g->detail, OYJL_REG "/ui/options/groups/[%d]/%s", i, "detail" );
+    if(g->properties)
+      oyjlUi_ExportToJson_SetProperties_( oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/ui/options/groups/[%d]", i ), g->properties, OYJL_PARENT_OIWG );
   }
 
   /** Merge in the JSON strings and numbers from oyjlOptions_SetAttributes(). */
@@ -906,6 +924,35 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     }
     oyjlStringListRelease( &aresults, arn, free );
     oyjlStringListRelease( &d_list, d, free );
+
+    if(g->properties && g->properties[0])
+    {
+      n = 0;
+      char ** list = oyjlStringSplit( g->properties, '\n', &n, malloc );
+      if(!list)
+        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "found issue with properties: %s", OYJL_DBG_ARGS,
+                       g->properties );
+      else
+      {
+        char * key, * value, * t;
+        int k;
+        for(k = 0; k < n; ++k)
+        {
+          key = list[k];
+          t = strchr(key, '=');
+          if(!t)
+            oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "found issue with properties: %s", OYJL_DBG_ARGS,
+                           key );
+          else
+          {
+            value = strchr(key, '=') + 1;
+            t[0] = '\000';
+            oyjlTreeSetStringF( root, OYJL_CREATE_NEW, value, OYJL_REG "/modules/[0]/groups/[%d]/properties/%s", i, key );
+          }
+        }
+        oyjlStringListRelease( &list, n, free );
+      }
+    }
   }
 
   j = 0;
