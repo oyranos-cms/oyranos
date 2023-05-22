@@ -75,7 +75,7 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
       fprintf(stderr, "%s file read:\t\"%s\" %d\n", oyjlPrintTime(OYJL_BRACKETS, oyjlNO_MARK), error_name, size);
 
     /* convert exported C declarated string into plain text using cc compiler */
-    if(text && strlen(text) > 8 && memcmp(text, "#define ", 8) == 0 && !delimiter)
+    if(oyjlStringStartsWith(text, "#define ") && !delimiter)
     {
       int size = 0;
       char * t = oyjlStringCopy( text, 0 ), * name;

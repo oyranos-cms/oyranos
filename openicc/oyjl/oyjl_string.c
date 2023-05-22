@@ -1082,6 +1082,29 @@ char *     oyjlRegExpEscape          ( const char        * text )
   return out;
 }
 
+/** @brief   simple and fast test
+ *
+ *  @param         text                string to be searched in
+ *  @param         pattern             string to search in text
+ *  @return                            result is match
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2023/05/21
+ *  @since   2023/05/21 (Oyjl: 1.0.0)
+ */
+int oyjlStringStartsWith             ( const char        * text,
+                                       const char        * pattern )
+{
+  int text_len = text ? strlen( text ) : 0,
+      pattern_len = pattern ? strlen( pattern ) : 0;
+
+  if(text_len && text_len >= pattern_len && memcmp(text, pattern, pattern_len) == 0)
+    return 1;
+  else
+    return 0;
+}
+
+
 /*
 * Index into the table below with the first byte of a UTF-8 sequence to
 * get the number of trailing bytes that are supposed to follow it.

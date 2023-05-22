@@ -1045,13 +1045,12 @@ int oyjlIsNumber( const char c )
  */
 oyjl_val   oyjlTreeParseCsv          ( const char        * text,
                                        int                 flags,
-                                       char              * error_buffer,
-                                       size_t              error_buffer_size)
+                                       char              * error_buffer OYJL_UNUSED,
+                                       size_t              error_buffer_size OYJL_UNUSED)
 {
   oyjl_val jroot = NULL;
   int rows_n = 0, /* lines */
       cols_n = 0, len;
-  double d;
   char delimiter = ',';
   char ** rows, ** cols, * row;
   if(!text) return jroot;
@@ -1127,11 +1126,11 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
           else if(err != 0)
           {
             len = strlen(val);
-            if(len >= 4 && memcmp(val,"true",4) == 0)
+            if(oyjlStringStartsWith(val,"true"))
             {
               err = 0;
               node->type = oyjl_t_true;
-            } else if(len >= 5 && memcmp(val,"false",5) == 0)
+            } else if(oyjlStringStartsWith(val,"false"))
             {
               err = 0;
               node->type = oyjl_t_false;
@@ -1230,7 +1229,7 @@ oyjl_val   oyjlTreeParse2            ( const char        * text,
       oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "removing markup", OYJL_DBG_ARGS );
   }
 
-  if(text && strlen(text) > 4 && memcmp(text, "oiJS", 4) == 0)
+  if(oyjlStringStartsWith(text, "oiJS"))
     /* static OYJL JSON */
   {
     if(flags & OYJL_ALLOW_STATIC)
