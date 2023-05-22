@@ -66,7 +66,7 @@ void oyjlArgsCliGroupPrint_          ( oyjl_val            g )
     oyjl_val o = oyjlTreeGetValue(opt, 0, "option");
     oyjl_val choices;
     txt = OYJL_GET_STRING(o);
-    if(txt && strlen(txt) > 4 && memcmp( txt, "man-", 4 ) == 0)
+    if(oyjlStringStartsWith( txt, "man-" ))
       continue;
     o = oyjlTreeGetValue(opt, 0, "key");
     key = OYJL_GET_STRING(o);
@@ -362,16 +362,16 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
       char * low = oyjlStringToLower( arg );
       if(low)
       {
-        if(strlen(low) >= strlen("gui") && memcmp("gui",low,strlen("gui")) == 0)
+        if(oyjlStringStartsWith(low,"gui"))
           name = "OyjlArgsQml";
         else
-        if(strlen(low) >= strlen("qml") && memcmp("qml",low,strlen("qml")) == 0)
+        if(oyjlStringStartsWith(low,"qml"))
           name = "OyjlArgsQml";
         else
-        if(strlen(low) >= strlen("cli") && memcmp("cli",low,strlen("cli")) == 0)
+        if(oyjlStringStartsWith(low,"cli"))
           name = "OyjlArgsCli";
         else
-        if(strlen(low) >= strlen("web") && memcmp("web",low,strlen("web")) == 0)
+        if(oyjlStringStartsWith(low,"web"))
           name = "OyjlArgsWeb";
         if(!name)
         {

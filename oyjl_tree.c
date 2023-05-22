@@ -69,13 +69,13 @@ int          oyjlDataFormat          ( const char        * text )
   /* first simple check */
   while( (c = text[i]) != 0 && (c == ' ' || c == '\t' || c == '\n' || c == '\r' ))
     i++;
-  if(strlen(&text[i]) > 5 &&
-      ( memcmp( &text[i], "<?xml", 5 ) == 0 ||
+  if( strlen(&text[i]) > 5 &&
+      ( oyjlStringStartsWith( &text[i], "<?xml" ) ||
         ( text[i] == '<' && text[i+1] != '<' ) ) )
     return 8;
   if(c == '[' || c == '{')
     return 7;
-  if((i == 0 || text[i-1] == '\n') && strlen(&text[i]) > 4 && memcmp( &text[i], "---\n", 4 ) == 0)
+  if((i == 0 || text[i-1] == '\n') && oyjlStringStartsWith( &text[i], "---\n" ))
     return 9;
   if(strstr(text, "#define ") || strstr(text, "#include ") || strstr(text, "int ") || strstr(text, "char *"))
     return 10;

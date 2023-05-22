@@ -130,6 +130,8 @@ char *     oyjlRegExpEscape          ( const char        * text );
 int        oyjlRegExpReplace         ( char             ** text,
                                        const char        * regex,
                                        const char        * replacement );
+int        oyjlStringStartsWith      ( const char        * text,
+                                       const char        * pattern );
 typedef struct oyjl_string_s * oyjl_str;
 oyjl_str   oyjlStr_New               ( size_t              length,
                                        void*            (* alloc)(size_t),

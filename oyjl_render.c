@@ -181,16 +181,16 @@ static int oyjlArgsRendererSelect_  (  oyjlUi_s          * ui )
       char * low = oyjlStringToLower_( arg );
       if(low)
       {
-        if(strlen(low) >= strlen("gui") && memcmp("gui",low,strlen("gui")) == 0)
+        if(oyjlStringStartsWith(low,"gui"))
           name = "OyjlArgsQml";
         else
-        if(strlen(low) >= strlen("qml") && memcmp("qml",low,strlen("qml")) == 0)
+        if(oyjlStringStartsWith(low,"qml"))
           name = "OyjlArgsQml";
         else
-        if(strlen(low) >= strlen("cli") && memcmp("cli",low,strlen("cli")) == 0)
+        if(oyjlStringStartsWith(low,"cli"))
           name = "OyjlArgsCli";
         else
-        if(strlen(low) >= strlen("web") && memcmp("web",low,strlen("web")) == 0)
+        if(oyjlStringStartsWith(low,"web"))
           name = "OyjlArgsWeb";
         if(!name)
         {

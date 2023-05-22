@@ -680,7 +680,7 @@ oyjlTESTRESULT_e testI18N()
   //flags = verbose ? OYJL_OBSERVE : 0;
   catalog = oyjlTreeParse2( json, OYJL_NO_MARKUP, __func__, NULL );
   oyjl_val static_catalog = oyjlTreeSerialise( catalog, flags, &size );
-  if(size == 944 && memcmp( static_catalog, "oiJS", 4 ) == 0)
+  if(size == 944 && oyjlStringStartsWith( (const char*)static_catalog, "oiJS" ))
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, size,
     "oyjlTreeSerialise() oiJS" );
   } else
@@ -1351,7 +1351,7 @@ oyjlTESTRESULT_e testJson ()
       flags = verbose ? OYJL_OBSERVE : 0;
   value = oyjlTreeSerialise( root, flags, &size );
   oyjlTreeFree( root );
-  if(size > 10 && memcmp( value, "oiJS", 4 ) == 0)
+  if(size > 10 && oyjlStringStartsWith( (const char*)value, "oiJS" ))
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, size,
     "oyjlTreeSerialise() oiJS" );
   } else
