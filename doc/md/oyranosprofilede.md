@@ -10,19 +10,19 @@ oyranos-profile v0.9.7 - Oyranos Profil
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos-profile</strong> [<strong>--path</strong>] [<strong>--short</strong>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> [<strong>--path</strong>] [<strong>--short</strong>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 <br />
-<strong>oyranos-profile</strong> <a href="#list-tags"><strong>-l</strong></a> [<strong>-p</strong>=<em>NUMMER</em>] [<strong>-n</strong>=<em>NAME</em>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> <a href="#list-tags"><strong>-l</strong></a> [<strong>-p</strong>=<em>NUMMER</em>] [<strong>-n</strong>=<em>NAME</em>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 <br />
-<strong>oyranos-profile</strong> <a href="#remove-tag"><strong>-r</strong>=<em>NUMMER</em></a> l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> <a href="#remove-tag"><strong>-r</strong>=<em>NUMMER</em></a> l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 <br />
-<strong>oyranos-profile</strong> <a href="#list-hash"><strong>-m</strong></a> [<strong>-w</strong>=<em>ICC_DATEINAME</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> <a href="#list-hash"><strong>-m</strong></a> [<strong>-w</strong>=<em>ICC_DATEINAME</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 <br />
-<strong>oyranos-profile</strong> <a href="#ppmcie"><strong>--ppmcie</strong><em>[=FORMAT]</em></a> [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> <a href="#ppmcie"><strong>--ppmcie</strong><em>[=FORMAT]</em></a> [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 <br />
-<strong>oyranos-profile</strong> <a href="#output"><strong>-o</strong>=<em>DATEINAME</em></a> [<strong>-c</strong>=<em>KLASSE</em>] [<strong>-f</strong>=<em>xml...</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> <a href="#output"><strong>-o</strong>=<em>DATEINAME</em></a> [<strong>-c</strong>=<em>KLASSE</em>] [<strong>-f</strong>=<em>xml...</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 <br />
-<strong>oyranos-profile</strong> <a href="#profile-name"><strong>-w</strong>=<em>ICC_DATEINAME</em></a> [<strong>-j</strong>=<em>DATEINAME</em>|<strong>-m</strong>] [<strong>-s</strong>=<em>NAME</em>] [<strong>-2</strong>] [<strong>-4</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+<strong>oyranos-profile</strong> <a href="#profile-name"><strong>-w</strong>=<em>ICC_DATEINAME</em></a> [<strong>-j</strong>=<em>DATEINAME</em>|<strong>-m</strong>] [<strong>-s</strong>=<em>NAME</em>] [<strong>-2</strong>] [<strong>-4</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 <br />
 <strong>oyranos-profile</strong> <a href="#help"><strong>-h</strong><em>[=synopsis|...]</em></a> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
@@ -34,17 +34,17 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 
 <h3>Zeige ICC Profil</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> [<strong>--path</strong>] [<strong>--short</strong>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> [<strong>--path</strong>] [<strong>--short</strong>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE</em></td> <td>ICC Profil<br />kann ein Dateiname, interner Name, ICC Profil ID oder ein Namenkürzel sein "rgb", "cmyk", "gray", "lab", "xyz", "web", "rgbi", "cmyki", "grayi", "labi", "xyzi". Kürzel endend auf "i" sind vermutete Profile. "web" ist ein sRGB Profile. Die anderen Kürzel sind Editierprofile. </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><em>l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI</em></td> <td>ICC Profil<br />kann ein Dateiname, interner Name, ICC Profil ID oder ein Namenkürzel sein "rgb", "cmyk", "gray", "lab", "xyz", "web", "rgbi", "cmyki", "grayi", "labi", "xyzi". Kürzel endend auf "i" sind vermutete Profile. "web" ist ein sRGB Profile. Die anderen Kürzel sind Editierprofile. </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--path</strong></td> <td>kompletter Pfad- und Dateiname</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--short</strong></td> <td>Zeige nur den Profilnamen</td> </tr>
 </table>
 
 <h3 id="list-tags">Liste der enthaltenen ICC Elemente</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-l</strong> [<strong>-p</strong>=<em>NUMMER</em>] [<strong>-n</strong>=<em>NAME</em>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-l</strong> [<strong>-p</strong>=<em>NUMMER</em>] [<strong>-n</strong>=<em>NAME</em>] [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list-tags</strong></td> <td>Liste die enthaltenen Elemente zusätzlich zur Übersicht und Dateikopf.</td> </tr>
@@ -54,7 +54,7 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 
 <h3 id="remove-tag">Lösche enthaltenes ICC Element</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-r</strong>=<em>NUMMER</em> l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-r</strong>=<em>NUMMER</em> l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--remove-tag</strong>=<em>NUMMER</em></td> <td><br />lösche nummeriertes Element  </td>
@@ -63,7 +63,7 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 
 <h3 id="list-hash">Zeige Profil ID</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-m</strong> [<strong>-w</strong>=<em>ICC_DATEINAME</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-m</strong> [<strong>-w</strong>=<em>ICC_DATEINAME</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--list-hash</strong></td> <td>Zeige internen Hashwert</td> </tr>
@@ -73,7 +73,7 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 
 <h3 id="ppmcie">Zeige CIE*xy Primärfarben</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>--ppmcie</strong><em>[=FORMAT]</em> [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>--ppmcie</strong><em>[=FORMAT]</em> [<strong>-v</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--ppmcie</strong><em>[=FORMAT]</em></td> <td>zeige CIE*xy Farbwerte, falls vorhanden. Zur Benutzung mit ppmcie.
@@ -87,7 +87,7 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 
 <h3 id="output">Schreibe Geräteinformationen nach OpenICC JSON</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-o</strong>=<em>DATEINAME</em> [<strong>-c</strong>=<em>KLASSE</em>] [<strong>-f</strong>=<em>xml...</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-o</strong>=<em>DATEINAME</em> [<strong>-c</strong>=<em>KLASSE</em>] [<strong>-f</strong>=<em>xml...</em>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong>=<em>DATEINAME</em></td> <td><br />Schreibe Geräteinformationen nach OpenICC JSON.  </td>
@@ -100,7 +100,7 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 
 <h3 id="profile-name">Schreibe ICC Profil</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-w</strong>=<em>ICC_DATEINAME</em> [<strong>-j</strong>=<em>DATEINAME</em>|<strong>-m</strong>] [<strong>-s</strong>=<em>NAME</em>] [<strong>-2</strong>] [<strong>-4</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile</strong></a> <strong>-w</strong>=<em>ICC_DATEINAME</em> [<strong>-j</strong>=<em>DATEINAME</em>|<strong>-m</strong>] [<strong>-s</strong>=<em>NAME</em>] [<strong>-2</strong>] [<strong>-4</strong>] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-w</strong>|<strong>--profile-name</strong>=<em>ICC_DATEINAME</em></td> <td>schreibe Profil mit korrekter ID<br />Die -w Option gibt den inneren und äußeren Profilename an.PROFILNAME gibt das Quellprofile an.  </td>
@@ -129,7 +129,7 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
    <tr><td style='padding-left:0.5em'><strong>-X</strong> markdown</td><td># Markdown : Formatierter Text - Hole formatierten Text</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-X</strong> json</td><td># Json : GUI - Hole Oyjl Json Benutzerschnittstelle</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-X</strong> json+command</td><td># Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-X</strong> export</td><td># Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler. Das Format kann mit dem oyjl-args Werkzeug umgewandelt werden.</td></tr>
   </table>
   </td>
  </tr>

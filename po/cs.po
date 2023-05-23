@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2023-05-09 06:08+0200\n"
+"POT-Creation-Date: 2023-05-19 20:44+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: tools/oyranos-device.c:702 tools/oyranos-device.c:716
 #: tools/oyranos-device.c:743 tools/oyranos-device.c:784
 #: tools/oyranos-device.c:1165 tools/oyranos-device.c:1285
-#: tools/oyranos-device.c:1513 tools/oyranos-monitor-white-point.c:947
+#: tools/oyranos-device.c:1513 tools/oyranos-monitor-white-point.c:946
 #: tools/qcmsevents/qcmsevents.cpp:338
 #, c-format
 msgid "!!! ERROR"
@@ -375,7 +375,7 @@ msgstr "Abstraktní"
 msgid "Abstract Class"
 msgstr "třída abstrakce"
 
-#: tools/oyranos-monitor-white-point.c:1053
+#: tools/oyranos-monitor-white-point.c:1052
 msgid "Accuracy"
 msgstr ""
 
@@ -406,7 +406,7 @@ msgstr "Monitor s aktivní maticí"
 msgid "Actual mode"
 msgstr "ukázat volby politiky"
 
-#: tools/oyranos-monitor-white-point.c:1315
+#: tools/oyranos-monitor-white-point.c:1314
 #, fuzzy
 msgid "Actual white point mode"
 msgstr "Bílý bod média"
@@ -625,7 +625,7 @@ msgstr "Atributy:        "
 msgid "Automatic"
 msgstr "Automaticky konvertovat"
 
-#: tools/oyranos-monitor-white-point.c:693
+#: tools/oyranos-monitor-white-point.c:692
 #, fuzzy
 msgid "Automatic white point"
 msgstr "Bílý bod média"
@@ -970,7 +970,7 @@ msgstr "Kanály:"
 msgid "Check if this module can handle a certain command."
 msgstr "Ověřit, zda tento modul zvládne určitý příkaz."
 
-#: tools/oyranos-monitor-white-point.c:720
+#: tools/oyranos-monitor-white-point.c:719
 msgid "Choices:"
 msgstr ""
 
@@ -1956,8 +1956,8 @@ msgid "Editing XYZ"
 msgstr "Editace XYZ"
 
 #: liboyranos_config/oyranos_texts.c:256 liboyranos_config/oyranos_texts.c:527
-#: tools/oyranos-monitor-white-point.c:1316
-#: tools/oyranos-monitor-white-point.c:1408
+#: tools/oyranos-monitor-white-point.c:1315
+#: tools/oyranos-monitor-white-point.c:1407
 msgid "Effect"
 msgstr ""
 
@@ -2290,7 +2290,7 @@ msgstr "Dokumentace"
 msgid "Generate a 3D LUT"
 msgstr "Vytvořit 3D CLUT"
 
-#: tools/oyranos-monitor-white-point.c:1221
+#: tools/oyranos-monitor-white-point.c:1220
 msgid "Geographical Position"
 msgstr ""
 
@@ -2981,7 +2981,7 @@ msgid "Kai-Uwe Behrmann (ku.b (at) gmx.de)"
 msgstr "Kai-Uwe Behrmann"
 
 #: tools/oyranos-monitor-white-point.c:241
-#: tools/oyranos-monitor-white-point.c:735 tools/oyranos_profile_graph.c:462
+#: tools/oyranos-monitor-white-point.c:734 tools/oyranos_profile_graph.c:462
 msgid "Kelvin"
 msgstr ""
 
@@ -3061,8 +3061,8 @@ msgid "Lab2XYZ"
 msgstr ""
 
 #: tools/oyranos-monitor-white-point.c:531
-#: tools/oyranos-monitor-white-point.c:1051
-#: tools/oyranos-monitor-white-point.c:1216
+#: tools/oyranos-monitor-white-point.c:1050
+#: tools/oyranos-monitor-white-point.c:1215
 #, fuzzy
 msgid "Latitude"
 msgstr "ukázat volby politiky"
@@ -3331,7 +3331,7 @@ msgstr "Načíst"
 msgid "Load Image File Object"
 msgstr "Načíst objekt obrázkového souboru"
 
-#: tools/oyranos-monitor-white-point.c:1200
+#: tools/oyranos-monitor-white-point.c:1199
 msgid "Local Time"
 msgstr ""
 
@@ -3355,8 +3355,8 @@ msgid "Long Help"
 msgstr "Ukázat model:"
 
 #: tools/oyranos-monitor-white-point.c:533
-#: tools/oyranos-monitor-white-point.c:1052
-#: tools/oyranos-monitor-white-point.c:1216
+#: tools/oyranos-monitor-white-point.c:1051
+#: tools/oyranos-monitor-white-point.c:1215
 #, fuzzy
 msgid "Longitude"
 msgstr "ukázat volby politiky"
@@ -3785,14 +3785,14 @@ msgstr "Takže něco s volbami."
 msgid "New Profile Name"
 msgstr "jméno profilu"
 
-#: tools/oyranos-monitor-white-point.c:1436
+#: tools/oyranos-monitor-white-point.c:1435
 #, fuzzy
 msgid "New color scheme"
 msgstr "Bílý bod média"
 
-#: tools/oyranos-monitor-white-point.c:944
-#: tools/oyranos-monitor-white-point.c:947
-#: tools/oyranos-monitor-white-point.c:1407
+#: tools/oyranos-monitor-white-point.c:943
+#: tools/oyranos-monitor-white-point.c:946
+#: tools/oyranos-monitor-white-point.c:1406
 #, fuzzy
 msgid "New white point mode"
 msgstr "Bílý bod média"
@@ -3912,7 +3912,7 @@ msgstr ""
 msgid "Observe config changes"
 msgstr "Pocet vstupnich kanálu"
 
-#: tools/oyranos-monitor-white-point.c:1019
+#: tools/oyranos-monitor-white-point.c:1018
 msgid ""
 "Obtained no geo location information. Is your device connected to the "
 "internet?"
@@ -5558,8 +5558,8 @@ msgstr "Začátek"
 msgid "StdObs2°"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1216
-#: tools/oyranos-monitor-white-point.c:1221
+#: tools/oyranos-monitor-white-point.c:1215
+#: tools/oyranos-monitor-white-point.c:1220
 #, fuzzy
 msgid "Sun Elevation"
 msgstr "Saturační"
@@ -5580,13 +5580,13 @@ msgid "Sun light effect"
 msgstr "Bílý bod média"
 
 #: tools/oyranos-monitor-white-point.c:535
-#: tools/oyranos-monitor-white-point.c:1216
-#: tools/oyranos-monitor-white-point.c:1221
+#: tools/oyranos-monitor-white-point.c:1215
+#: tools/oyranos-monitor-white-point.c:1220
 #, fuzzy
 msgid "Sunrise"
 msgstr "Získat profil ICC"
 
-#: tools/oyranos-monitor-white-point.c:1235
+#: tools/oyranos-monitor-white-point.c:1234
 msgid "Sunset"
 msgstr ""
 
@@ -6656,8 +6656,8 @@ msgstr ""
 "profil ICC."
 
 #: tools/oyranos-monitor-white-point.c:536
-#: tools/oyranos-monitor-white-point.c:1216
-#: tools/oyranos-monitor-white-point.c:1221
+#: tools/oyranos-monitor-white-point.c:1215
+#: tools/oyranos-monitor-white-point.c:1220
 msgid "Twilight"
 msgstr ""
 
@@ -7462,7 +7462,7 @@ msgstr "nenalezeno:"
 msgid "ok"
 msgstr ""
 
-#: tools/oyranos-monitor-white-point.c:1437
+#: tools/oyranos-monitor-white-point.c:1436
 msgid "old/new"
 msgstr ""
 

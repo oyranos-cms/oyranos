@@ -2,19 +2,19 @@
 .SH NAME
 oyranos-profile v0.9.7 \- Oyranos Profil
 .SH ÜBERSICHT
-\fBoyranos-profile\fR [\fB\-\-path\fR] [\fB\-\-short\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR [\fB\-\-path\fR] [\fB\-\-short\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
-\fBoyranos-profile\fR \fB\-l\fR [\fB\-p\fR \fINUMMER\fR] [\fB\-n\fR \fINAME\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-l\fR [\fB\-p\fR \fINUMMER\fR] [\fB\-n\fR \fINAME\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
-\fBoyranos-profile\fR \fB\-r\fR \fINUMMER\fR l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-r\fR \fINUMMER\fR l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
-\fBoyranos-profile\fR \fB\-m\fR [\fB\-w\fR \fIICC_DATEINAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-m\fR [\fB\-w\fR \fIICC_DATEINAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
-\fBoyranos-profile\fR \fB\-\-ppmcie\fR\fI[=FORMAT]\fR [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-\-ppmcie\fR\fI[=FORMAT]\fR [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
-\fBoyranos-profile\fR \fB\-o\fR \fIDATEINAME\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-f\fR \fIxml...\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-o\fR \fIDATEINAME\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-f\fR \fIxml...\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
-\fBoyranos-profile\fR \fB\-w\fR \fIICC_DATEINAME\fR [\fB\-j\fR \fIDATEINAME\fR|\fB\-m\fR] [\fB\-s\fR \fINAME\fR] [\fB\-2\fR] [\fB\-4\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-w\fR \fIICC_DATEINAME\fR [\fB\-j\fR \fIDATEINAME\fR|\fB\-m\fR] [\fB\-s\fR \fINAME\fR] [\fB\-2\fR] [\fB\-4\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
 \fBoyranos-profile\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
@@ -22,9 +22,9 @@ Das oyranos-profile Program zeigt die Informationen eines ICC Profiles an und er
 .SH OPTIONEN
 .SS
 Zeige ICC Profil
-\fBoyranos-profile\fR [\fB\-\-path\fR] [\fB\-\-short\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR [\fB\-\-path\fR] [\fB\-\-short\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
-\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE\fR	ICC Profil
+\fIl|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI\fR	ICC Profil
 .RS
 kann ein Dateiname, interner Name, ICC Profil ID oder ein Namenkürzel sein "rgb", "cmyk", "gray", "lab", "xyz", "web", "rgbi", "cmyki", "grayi", "labi", "xyzi". Kürzel endend auf "i" sind vermutete Profile. "web" ist ein sRGB Profile. Die anderen Kürzel sind Editierprofile.
 .RE
@@ -34,7 +34,7 @@ kann ein Dateiname, interner Name, ICC Profil ID oder ein Namenkürzel sein "rgb
 .br
 .SS
 Liste der enthaltenen ICC Elemente
-\fBoyranos-profile\fR \fB\-l\fR [\fB\-p\fR \fINUMMER\fR] [\fB\-n\fR \fINAME\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-l\fR [\fB\-p\fR \fINUMMER\fR] [\fB\-n\fR \fINAME\fR] [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
 \fB\-l\fR|\fB\-\-list-tags\fR	Liste die enthaltenen Elemente zusätzlich zur Übersicht und Dateikopf.
 .br
@@ -44,7 +44,7 @@ Liste der enthaltenen ICC Elemente
 .br
 .SS
 Lösche enthaltenes ICC Element
-\fBoyranos-profile\fR \fB\-r\fR \fINUMMER\fR l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-r\fR \fINUMMER\fR l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
 \fB\-r\fR|\fB\-\-remove-tag\fR \fINUMMER\fR	Lösche Element	
 .RS
@@ -52,7 +52,7 @@ lösche nummeriertes Element
 .RE
 .SS
 Zeige Profil ID
-\fBoyranos-profile\fR \fB\-m\fR [\fB\-w\fR \fIICC_DATEINAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-m\fR [\fB\-w\fR \fIICC_DATEINAME\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
 \fB\-m\fR|\fB\-\-list-hash\fR	Zeige internen Hashwert
 .br
@@ -62,7 +62,7 @@ Die -w Option gibt den inneren und äußeren Profilename an.PROFILNAME gibt das 
 .RE
 .SS
 Zeige CIE*xy Primärfarben
-\fBoyranos-profile\fR \fB\-\-ppmcie\fR\fI[=FORMAT]\fR [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-\-ppmcie\fR\fI[=FORMAT]\fR [\fB\-v\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
 \fB\-\-ppmcie\fR\fI[=FORMAT]\fR	zeige CIE*xy Farbwerte, falls vorhanden. Zur Benutzung mit ppmcie.
 .br
@@ -72,7 +72,7 @@ Zeige CIE*xy Primärfarben
 .br
 .SS
 Schreibe Geräteinformationen nach OpenICC JSON
-\fBoyranos-profile\fR \fB\-o\fR \fIDATEINAME\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-f\fR \fIxml...\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-o\fR \fIDATEINAME\fR [\fB\-c\fR \fIKLASSE\fR] [\fB\-f\fR \fIxml...\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
 \fB\-o\fR|\fB\-\-output\fR \fIDATEINAME\fR	Ausgabe von OpenICC Json	
 .RS
@@ -84,7 +84,7 @@ Schreibe Geräteinformationen nach OpenICC JSON.
 .br
 .SS
 Schreibe ICC Profil
-\fBoyranos-profile\fR \fB\-w\fR \fIICC_DATEINAME\fR [\fB\-j\fR \fIDATEINAME\fR|\fB\-m\fR] [\fB\-s\fR \fINAME\fR] [\fB\-2\fR] [\fB\-4\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE
+\fBoyranos-profile\fR \fB\-w\fR \fIICC_DATEINAME\fR [\fB\-j\fR \fIDATEINAME\fR|\fB\-m\fR] [\fB\-s\fR \fINAME\fR] [\fB\-2\fR] [\fB\-4\fR] l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI
 .br
 \fB\-w\fR|\fB\-\-profile-name\fR \fIICC_DATEINAME\fR	schreibe Profil mit korrekter ID
 .RS
@@ -121,7 +121,7 @@ Hole Benutzerschnittstelle als Text
 .br
 	\fB\-X\fR json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
 .br
-	\fB\-X\fR export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler
+	\fB\-X\fR export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler. Das Format kann mit dem oyjl-args Werkzeug umgewandelt werden.
 .br
 \fB\-V\fR|\fB\-\-version\fR	Version
 .br

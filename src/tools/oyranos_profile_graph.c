@@ -439,7 +439,7 @@ int myMain( int argc, const char ** argv )
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */
     {"oiwi", 0,                         "2", "icc-version-2", NULL, _("ICC Version 2"), _("Select ICC v2 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&v2},NULL},
     {"oiwi", 0,                         "4", "icc-version-4", NULL, _("ICC Version 4"), _("Select ICC v4 Profiles"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&v4},NULL},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_REPETITION, "@", NULL,            NULL, _("Input"),         _("ICC Profile"),            NULL, "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE", oyjlOPTIONTYPE_FUNCTION, {.getChoices = listProfiles}, oyjlINT, {.i=&profile_count},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_REPETITION, "@", NULL,            NULL, _("Input"),         _("ICC Profile"),            NULL, "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE", oyjlOPTIONTYPE_FUNCTION, {.getChoices = listProfiles}, oyjlINT, {.i=&profile_count},"oiwi/values/getChoicesCompletionBash=oyranos-profiles -l 2>/dev/null\noiwi/comment=This is a JSON injection with the special oiwi identifier for positioning inside the properties parent, which is the widget."},
     {"oiwi", 0, "b", "no-border",     NULL, _("Omit border"),   _("Omit border in graph"),   NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&no_border},NULL},
     {"oiwi", 0, "c", "no-blackbody",  NULL, _("No black body"), _("Omit white line of lambert light emitters"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&no_blackbody},NULL},
     {"oiwi", 0, "d", "change-thickness",NULL,_("Thickness increase"),_("Specify increase of the thickness of the graph lines"), NULL, _("NUMBER"), oyjlOPTIONTYPE_DOUBLE,
@@ -500,7 +500,7 @@ int myMain( int argc, const char ** argv )
 
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name, description, help, mandatory, optional, detail */
-    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "t,b,l,g,w,o,f,c,x,d,n,2,4,r,v", "@,d,x,c,n,2,4,r",NULL},
+    {"oiwg", 0, _("Saturation"), _("2D Graph from profiles"), _("Create a 2D Graph containing the saturation line from a ICC Profile."), "@", "t,b,l,g,w,o,f,c,x,d,n,2,4,r,v", "@,d,x,c,n,2,4,r", "oyjl_args/web=w=600:f=svg:m=svg:p=svg:k=5500\noyjl_args/gui=w=512\ncomment=transport global properties, here for the OyjlArgs:Web render backend"},
     {"oiwg", 0, _("HLC"), _("HLC Color Atlas Pages"), _("Create a 2D Graph containing the possible color patches inside the ICC Profile gamut. More information about HLC Color Atlas can be found on www.freiefarbe.de"), "H", "L,C,@,t,b,l,g,w,m,o,p,2,4,r,v", "H,L,C,@,m",NULL},
     {"oiwg", 0, _("StdObs2°"), _("Standard Observer 1931 2° Graph"), NULL, "S", "t,b,l,g,w,T,o,f,v", "S",NULL},
     {"oiwg", 0, _("Obs10°"), _("1964 10° Observer Graph"), NULL, "O", "t,b,l,g,w,T,o,f,v", "O",NULL},
