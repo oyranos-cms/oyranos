@@ -41,8 +41,6 @@
 
 int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
                                        int                 write_size );
-int oyjlStringStartsWith             ( const char        * text,
-                                       const char        * pattern );
 #define OYJL_CASE_COMPARE              0x01
 #define OYJL_LAZY                      0x02
 int oyjlStringListFind               ( char             ** list,
@@ -579,8 +577,8 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
         if(data_format == 8)
         {
           int len = strlen(html);
-          if((len > 32 && memcmp( html, "<?xml version=\"1.0\"", 19 ) == 0 && strstr( html, "<svg" ) ) ||
-             (len > 32 && memcmp( html, "<svg", 4 ) == 0))
+          if((len > 32 && oyjlStringStartsWith( html, "<?xml version=\"1.0\"" ) && strstr( html, "<svg" ) ) ||
+             (len > 32 && oyjlStringStartsWith( html, "<svg") == 1))
           {
             char * css_toc_text = NULL;
             oyjlStringAdd( &html_commented, 0,0, "<br />%s", con_info->command );
@@ -716,14 +714,14 @@ int  oyjlArgsWebGroupIsMan_          ( oyjl_val            g )
 {
   oyjl_val first_o = oyjlTreeGetValue(g, 0, "options/[0]/option");
   const char * txt = OYJL_GET_STRING(first_o);
-  if(txt && strlen(txt) > 4 && memcmp( txt, "man-", 4 ) == 0)
+  if(oyjlStringStartsWith( txt, "man-"))
     return 1;
   return 0;
 }
 
 void oyjlArgsWebGroupPrintSection_   ( oyjl_val            g,
                                        char             ** t_,
-                                       char             ** css_toc_text,
+                                       char             ** css_toc_text OYJL_UNUSED,
                                        int                 gcount,
                                        char             ** description,
                                        int                 level OYJL_UNUSED,
@@ -789,7 +787,7 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
   oyjl_val o = oyjlTreeGetValue(opt, 0, "option");
   oyjl_val choices;
   txt = OYJL_GET_STRING(o);
-  if(txt && strlen(txt) > 4 && memcmp( txt, "man-", 4 ) == 0)
+  if(oyjlStringStartsWith( txt, "man-" ))
     return;
   o = oyjlTreeGetValue(opt, 0, "key");
   key = OYJL_GET_STRING(o);
@@ -1088,18 +1086,6 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
 }
 
 #include "oyjl_io_internal.h"
-
-int oyjlStringStartsWith             ( const char        * text,
-                                       const char        * pattern )
-{
-  int text_len = text ? strlen( text ) : 0,
-      pattern_len = pattern ? strlen( pattern ) : 0;
-
-  if(text_len && text_len >= pattern_len && memcmp(text, pattern, pattern_len) == 0)
-    return 1;
-  else
-    return 0;
-}
 
 int oyjlStringListFind               ( char             ** list,
                                        int                 list_n,
@@ -1591,6 +1577,15 @@ int oyjlArgsWebStart__               ( int                 argc,
         oyjlStringAdd( &t, 0,0, "</details>\n" );
     }
     oyjlStringAdd( &t, 0,0, "<div class=\"tiles\">\n" );
+
+    val = oyjlTreeGetValue(v, 0, "groups/[0]/properties/oyjl_args/web");
+    {
+      const char * oyjl_args_properties = OYJL_GET_STRING(val);
+      oyjl_val defaults = oyjlOptionStringToJson( oyjl_args_properties );
+      oyjlUiJsonSetDefaults( root, defaults );
+      oyjlTreeFree( defaults ); defaults = NULL;
+    }
+
     val = oyjlTreeGetValue(v, 0, "groups");
     n = oyjlValueCount( val );
     for(i = 0; i < n; ++i)
@@ -1840,16 +1835,16 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
       char * low = oyjlStringToLower_( arg );
       if(low)
       {
-        if(strlen(low) >= strlen("gui") && memcmp("gui",low,strlen("gui")) == 0)
+        if(oyjlStringStartsWith(low,"gui"))
           name = "OyjlArgsQml";
         else
-        if(strlen(low) >= strlen("qml") && memcmp("qml",low,strlen("qml")) == 0)
+        if(oyjlStringStartsWith(low,"qml"))
           name = "OyjlArgsQml";
         else
-        if(strlen(low) >= strlen("cli") && memcmp("cli",low,strlen("cli")) == 0)
+        if(oyjlStringStartsWith(low,"cli"))
           name = "OyjlArgsCli";
         else
-        if(strlen(low) >= strlen("web") && memcmp("web",low,strlen("web")) == 0)
+        if(oyjlStringStartsWith(low,"web"))
           name = "OyjlArgsWeb";
         if(!name)
         {

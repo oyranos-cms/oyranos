@@ -176,47 +176,51 @@ int oyjlArgsQmlStart__               ( int                 argc,
       ui = qml_lib_ui;
 
     oyjl_val root = NULL;
-    char error_buffer[256] = {0};
     int r = 0;
     if( json && strlen( json ) )
     {
+      int state = 0;
       r = oyjlIsFile( json, "r", OYJL_NO_CHECK, NULL, 0 );
       if(!r && oyjlDataFormat(json) == 7)
-      {
-        int state = 0;
         root = oyjlTreeParse2( json, 0, __func__, &state );
-        if(state)
+      else
+      {
+        int size = 0;
+        char * t = oyjlReadFile(json, 0, &size);
+        if(t)
+          LOG( QString("Found file name: ") + json );
+        else
         {
-          fprintf(stderr, "ERROR:\t\"%s\"\n", oyjlPARSE_STATE_eToString(state));
-          char * error = NULL;
-          oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", json );
-          json = error;
-          r = -1;
+          t = oyjlReadFile(json, OYJL_IO_STREAM, &size);
+          if(t)
+            LOG( QString("Found stream: ") + json );
         }
+        root = oyjlTreeParse2( t, 0, __func__, &state );
+        if(t) free(t);
+      }
+      if(state)
+      {
+        fprintf(stderr, "ERROR:\t\"%s\"\n", oyjlPARSE_STATE_eToString(state));
+        char * error = NULL;
+        oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", json );
+        json = error;
+        r = -1;
       }
     }
 
-    if( (root && oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules")) || // use UI JSON
-        (!root && json && strlen(json)) ) // assume JSON filename
+    if( root && oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules") ) 
     {
-      if(!root && json && strlen(json))
-      {
-        if(r)
-          LOG( QString("Found file name: ") + json );
-        else
-          LOG( QString("Assume file name or stream: ") + json );
-      } else
-        LOG( QString("Found Json org/freedesktop/oyjl/modules: ") + QString::number(strlen(json)) );
-      mgr.setUri( QString(json) );
+      LOG( QString("Found Json org/freedesktop/oyjl/modules: ") + QString::number(strlen(json)) );
     }
     else
     {
-      json = oyjlUi_ToJson( ui, 0 ); // generate JSON from ui data struct
-      char * merged = NULL;
+      char * json = oyjlUi_ToJson( ui, 0 ); // generate JSON from ui data struct
       LOG( QString("oyjlUi_ToJson(): ") + QString::number(json?strlen(json):0) );
-      if(root && json)
+      int state = 0;
+      oyjl_val module = oyjlTreeParse2( json, 0, __func__, &state );
+      if(json) { free(json); json = NULL; }
+      if(root && module)
       {
-        oyjl_val module = oyjlTreeParse( json, error_buffer, 256 );
         oyjl_val rv = oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/translations");
         oyjl_val mv = oyjlTreeGetValue(module, OYJL_CREATE_NEW, "org/freedesktop/oyjl/translations");
         if(rv && mv) // merge in translations
@@ -224,28 +228,39 @@ int oyjlArgsQmlStart__               ( int                 argc,
           size_t size = sizeof(*rv);
           memcpy( mv, rv, size );
           memset( rv, 0, size );
-          merged = oyjlTreeToText( module, 0 );
           LOG( QString("merge UI JSON with translation") );
         } else
           LOG( QString("expected translation is missing") );
-        oyjlTreeFree( module );
       }
-      if(!merged && json)
-      {
-        merged = oyjlStringCopy( json, NULL );
+      if(root) { oyjlTreeFree( root ); root = NULL; }
+      if(module)
         LOG( QString("use generated UI JSON") );
-      }
-      oyjlTreeFree( root );
-      mgr.setUri( QString(merged) );
-      if(merged)
-        free(merged);
+      root = module;
+    }
+
+    // get our defaults
+    oyjl_val val = oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules/[0]/groups/[0]/properties/oyjl_args/gui");
+    if(!val)
+      LOG( QString("no gui properties") );
+    {
+      const char * oyjl_args_properties = OYJL_GET_STRING(val);
+      oyjl_val defaults = oyjlOptionStringToJson( oyjl_args_properties );
+      oyjlUiJsonSetDefaults( root, defaults );
+      oyjlTreeFree( defaults ); defaults = NULL;
+    }
+
+    char * t = oyjlTreeToText( root, 0 );
+    if(t)
+    {
+      mgr.setUri( QString(t) );
+      free(t); t = NULL;
     }
 
     if( commands )
       mgr.setCommands( commands );
     else
     {
-      char * t = NULL; oyjlStringAdd( &t, 0,0, "{\"command_set\": \"%s\"}", ui->nick );
+      t = NULL; oyjlStringAdd( &t, 0,0, "{\"command_set\": \"%s\"}", ui->nick );
       mgr.setCommands(t);
       free(t);
     }

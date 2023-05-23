@@ -1101,7 +1101,7 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
       {
         int err = -1;
         double d = -1;
-        const char * val = cols[index];
+        char * val = cols[index];
 
         node = row_node->u.array.values[index];
 

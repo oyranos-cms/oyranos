@@ -1182,6 +1182,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
 }
 #endif
 
+
 oyjlTESTRESULT_e progNAME(testArgs)()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -1492,6 +1493,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
     fprintf( zout, "%s\n", text );
   if(text) { free(text); text = NULL; }
 
+  oyjl_val root = oyjlUi_ToJson_( ui );
   oyjlUi_Release( &ui);
   char * wrong = "test";
   fprintf(stdout, "oyjlUi_Release(&\"test\") - should give a warning message:\n" );
@@ -1500,6 +1502,36 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   free(oarray[2].values.choices.list);
   free(oarray[3].values.choices.list);
   free(oarray[7].values.choices.list);
+
+
+  const char * option_string = "v:i=2:o=string";
+  oyjl_val defaults = oyjlOptionStringToJson( option_string );
+  plain = oyjlTreeToText( defaults, OYJL_NO_MARKUP );
+  len = strlen(plain);
+  if( len == 50 )
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "oyjlOptionStringToJson(\"%s\")", option_string );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, len,
+    "oyjlOptionStringToJson(\"%s\")", option_string );
+  }
+  if(verbose && plain)
+    fprintf(zout, "%s\n", plain );
+  OYJL_TEST_WRITE_RESULT( plain, strlen(plain), "oyjlOptionStringToJson", "txt" )
+
+  oyjlUiJsonSetDefaults( root, defaults );
+  plain = oyjlTreeToText( root, OYJL_NO_MARKUP );
+  len = strlen(plain);
+  if( len == 5304 )
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
+    "oyjlUiJsonSetDefaults(\"%s\")", option_string );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, len,
+    "oyjlUiJsonSetDefaults(\"%s\")", option_string );
+  }
+  if((verbose || result != oyjlTESTRESULT_SUCCESS) && plain)
+    fprintf(zout, "%s\n", plain );
+  OYJL_TEST_WRITE_RESULT( plain, strlen(plain), "oyjlOptionStringToJson", "txt" )
 
   return result;
 }
