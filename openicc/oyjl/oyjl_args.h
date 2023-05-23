@@ -53,6 +53,7 @@ oyjlOPTIONSTATE_e  oyjlOptions_GetResult (
                                        const char       ** result_string,
                                        double            * result_dbl,
                                        int               * result_int );
+oyjl_val oyjlOptionStringToJson      ( const char        * opts );
 char *   oyjlOptions_ResultsToJson   ( oyjlOptions_s     * opts,
                                        int                 flags );
 char *   oyjlOptions_ResultsToText   ( oyjlOptions_s     * opts );
@@ -116,6 +117,8 @@ oyjlUi_s *         oyjlUi_ImportFromJson(
 #define OYJL_COMPLETION_BASH           0x100 /**< @brief bash completion source code */
 char *             oyjlUiJsonToCode  ( oyjl_val            root,
                                        int                 flags );
+void             oyjlUiJsonSetDefaults(oyjl_val            root,
+                                       oyjl_val            defaults );
 void               oyjlUi_Translate  ( oyjlUi_s          * ui,
                                        oyjlTr_s          * context );
 

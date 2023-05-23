@@ -115,6 +115,97 @@ void     oyjlOptions_SetAttributes   ( oyjlOptions_s     * opts,
   }
 }
 
+/** \addtogroup oyjl_args
+ *  @{ */
+
+/** @brief    Convert separated string to result JSON
+ *
+ *  @param         opts                separate by colon ':' and omit leading dash '-' or '--'
+ *  @result                            result JSON @see oyjlOptions_ResultsToJson()
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2023/05/22
+ *  @since   2023/05/21 (Oyjl: 1.0.0)
+ */
+oyjl_val oyjlOptionStringToJson      ( const char        * opts )
+{
+  oyjl_val root, val;
+  int i, n = 0;
+  char ** list = oyjlStringSplit( opts, ':', &n, malloc );
+
+  root = oyjlTreeNew( "" );
+  for(i = 0; i < n; ++i)
+  {
+    char * key = oyjlStringCopy( list[i], 0 ), * value;
+    if(!key) continue;
+    value = strchr( key, '=' );
+    if(value && value[0] != '\000')
+    {
+      value[0] = '\000';
+      ++value;
+    }
+    oyjl_val v = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s", key );
+    int count = oyjlValueCount( v );
+    val = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, "%s/[%d]", key, count );
+    oyjlValueSetString( val, value );
+    free(key);
+  }
+
+  return root;
+}
+
+/** @brief    Change Defaults
+ *
+ *  @param         root                --export=json output
+ *  @param         defaults            parsed oyjlOptionStringToJson() JSON
+ *
+ *  @see oyjlOptions_ResultsToJson()
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2023/05/21
+ *  @since   2023/05/21 (Oyjl: 1.0.0)
+ */
+void             oyjlUiJsonSetDefaults(oyjl_val            root,
+                                       oyjl_val            defaults )
+{
+  oyjl_val module = oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules/[0]"); // use UI JSON
+  oyjl_val groups = oyjlTreeGetValue(module, 0, "groups");
+  int groups_n = oyjlValueCount(groups), count = 0, i,j,k;
+  char ** defaults_list = oyjlTreeToPaths( defaults, OYJL_KEY, NULL, 0, &count );
+  if(count)
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "found groups: %d defaults: %d", OYJL_DBG_ARGS, groups_n, count );
+  for(i = 0; i < groups_n; ++i)
+  {
+    oyjl_val opts = oyjlTreeGetValueF(groups, 0, "[%d]/options", i), v;
+    int opts_n = oyjlValueCount( opts );
+    for(j = 0; j < opts_n; ++j)
+    {
+      oyjl_val o = oyjlTreeGetValueF( opts, 0, "[%d]", j );
+      const char * key;
+      v = oyjlTreeGetValue( o, 0, "key" );
+      key = OYJL_GET_STRING(v);
+      for(k = 0; k < count; ++k)
+      {
+        const char * dpath = defaults_list[k],
+                   * dkey = strrchr(dpath,'/') ? strrchr(dpath,'/')+1 : dpath;
+        if(strcmp(key, dkey) == 0)
+        {
+          oyjl_val d = oyjlTreeGetValueF(defaults, 0, "%s", dkey);
+          int x = oyjlValueCount( d );
+          const char * value;
+          if(x == 0) { fprintf( stderr, " noValue:k=%d ", k ); continue; }
+          v = oyjlTreeGetValueF( d, 0, "[%d]", x-1 ); /* take the last */
+          value = OYJL_GET_STRING(v);
+          v = oyjlTreeGetValueF( o, 0, "default" );
+          oyjlValueSetString( v, value );
+          fprintf( stderr, "\"%s\":default=\"%s\"\n", key, OYJL_E(value,"---") );
+        }
+      }
+    }
+  }
+}
+/** @} *//* oyjl_args */
+
 /** @brief    Release "oiui" completely
  *  @memberof oyjlUi_s
  *
@@ -196,11 +287,10 @@ void oyjlUi_ExportToJson_SetProperties_(oyjl_val           parent,
                          key );
         else
         {
-          int len = strlen(key);
           value = strchr(key, '=') + 1;
           t[0] = '\000';
           oyjlTreeSetStringF( parent, OYJL_CREATE_NEW, value, "properties/%s", key );
-          if(len > plen && memcmp(key, parent_id, plen) == 0)
+          if(oyjlStringStartsWith(key, parent_id))
             oyjlTreeSetStringF( parent, OYJL_CREATE_NEW, value, key+plen );
         }
       }
@@ -436,26 +526,14 @@ char *       oyjlUi_ExportToJson     ( oyjlUi_s          * ui,
   return t;
 }
 
-
-/** @brief    Return a JSON representation from options
- *  @memberof oyjlUi_s
- *
- *  The JSON data shall be useable with oyjl-args-qml options renderer and
- *  the -R option.
- *
- *  @version Oyjl: 1.0.0
- *  @date    2022/05/01
- *  @since   2018/08/14 (OpenICC: 0.1.1)
- */
-char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
-                                       int                 flags )
+oyjl_val     oyjlUi_ToJson_          ( oyjlUi_s          * ui )
 {
   char * t = NULL, num[64];
-  oyjl_val root, key;
+  oyjl_val root = NULL, key;
   int i,j,k,n,ng,nopts;
   oyjlOptions_s * opts;
 
-  if(!ui) return t;
+  if(!ui) return root;
 
   root = oyjlTreeNew( "" );
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "1", OYJL_REG "/modules/[0]/oyjl_module_api_version" );
@@ -757,10 +835,10 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
             } else
               if(!(o->flags & OYJL_OPTION_FLAG_EDITABLE))
               {
-                oyjlTreeFree( root );
+                oyjlTreeFree( root ); root = NULL;
                 if(t) { free(t); t = NULL; }
                 oyjlStringAdd( &t, malloc, free, "Option '%s' has no choices but is not editable (flag&OYJL_OPTION_FLAG_EDITABLE)", o->o?o->o:o->option );
-                return t;
+                return root;
               }
             key = oyjlTreeGetValueF( root, OYJL_CREATE_NEW, OYJL_REG "/modules/[0]/groups/[%d]/options/[%d]/%s", i,j, "type" );
             if(o->flags & OYJL_OPTION_FLAG_EDITABLE)
@@ -1009,7 +1087,24 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
     }
   }
 
-  t = oyjlTreeToText( root, flags );
+  return root;
+}
+
+/** @brief    Return a JSON representation from options
+ *  @memberof oyjlUi_s
+ *
+ *  The JSON data shall be useable with oyjl-args-qml options renderer and
+ *  the -R option.
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2023/05/22
+ *  @since   2018/08/14 (OpenICC: 0.1.1)
+ */
+char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
+                                       int                 flags )
+{
+  oyjl_val root = oyjlUi_ToJson_( ui );
+  char * t = oyjlTreeToText( root, flags );
   oyjlTreeFree( root );
 
   return t;
