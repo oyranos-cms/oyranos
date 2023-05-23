@@ -5,7 +5,7 @@
  *  oyjl - convinient tree JSON APIs
  *
  *  @par Copyright:
- *            2011-2022 (C) Kai-Uwe Behrmann
+ *            2011-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    tree based JSON API
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -79,6 +79,7 @@ oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char        * documentation,
                                        const char        * date_description );
 oyjl_val     oyjlUi_ExportToJson_    ( oyjlUi_s          * ui,
                                        int                 flags OYJL_UNUSED );
+oyjl_val     oyjlUi_ToJson_          ( oyjlUi_s          * ui );
 int oyjlOptionMandatoryIndex_        ( oyjlOption_s      * opt,
                                        oyjlOptionGroup_s * g );
 char *         oyjlOptionGetKey_     ( const char        * ostring );
