@@ -16,7 +16,7 @@ build:
   # install the necessary build tools when needed
   before_script:
     - apt-get update -qq
-    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev
 
   script:
     - cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYRANOS:BOOL=OFF
@@ -41,7 +41,7 @@ Coverity:
       - coverity_scan
   before_script:
     - apt-get update -qq
-    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev curl tar
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev curl tar
   script:
   - echo run on $COVERITY_SCAN_PROJECT_NAME
   - wget https://scan.coverity.com/download/linux64 --post-data "token=$COVERITY_SCAN_TOKEN&project=oyranos-cms%2Foyranos" -O coverity_tool.tgz
@@ -61,6 +61,6 @@ test:
   stage: test
   before_script:
     - apt-get update -qq
-    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev
   script:
     - src/tests/test_oyranos-static

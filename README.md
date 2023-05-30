@@ -56,7 +56,7 @@ device specific Informations (ICC profiles) und system wide settings.
 * [microhttpd](https://www.gnu.org/software/libmicrohttpd/) - oyjlArgsWeb renderer
 
 #### Debian/Ubuntu:
-    sudo apt-get install locales build-essential git autoconf cmake ruby libxml2-dev libyajl-dev libdbus-1-dev gettext libfltk1.3-dev libjpeg-dev libpng-dev libcairo2-dev x11proto-xf86vidmode-dev x11proto-xext-dev libxxf86vm-dev libxrandr-dev libxinerama-dev libxmu-dev libxpm-dev libxfixes-dev libxft-dev fluid ftgl-dev liblcms-dev libexiv2-dev libcups2-dev cmake
+    sudo apt-get install locales build-essential git autoconf cmake ruby libxml2-dev libyajl-dev libdbus-1-dev gettext libfltk1.3-dev libjpeg-dev libpng-dev libcairo2-dev x11proto-xf86vidmode-dev x11proto-xext-dev libxxf86vm-dev libxrandr-dev libxinerama-dev libxpm-dev libxfixes-dev libxft-dev fluid ftgl-dev liblcms-dev libexiv2-dev libcups2-dev cmake
     # oyranos-0.9.7 can now be installed successfully.
     sudo apt-get install libqt4-dev                        # Synnefo
     sudo apt-get install kdelibs5-dev                      # KolorManager
@@ -97,7 +97,6 @@ device specific Informations (ICC profiles) und system wide settings.
     graphviz
 ##### Optional
     cairo-devel
-    libXmu-devel
     qt-devel
     netpbm-progs
     exiv2-devel
@@ -131,7 +130,7 @@ device specific Informations (ICC profiles) und system wide settings.
   (b) replace the branch name in line 44.
 
 #### openSUSE Leap 15.4
-    zypper install cmake color-filesystem gcc-c++ git autoconf libtool make patch pkgconfig desktop-file-utils xdg-utils update-desktop-files ghostscript-fonts-std Mesa-devel libltdl-devel cups-devel elektra libxml2-devel libyajl-devel liblcms-devel liblcms2-devel libjpeg-devel libpng-devel libtiff-devel libraw-devel libexiv2-devel libxcm-devel libXcm0 xorg-x11-libXfixes-devel xorg-x11-libXmu-devel xorg-x11-libXpm-devel libXinerama-devel libXrandr-devel sane-backends-devel fltk-devel libXft-devel ftgl-devel gettext gettext-tools cairo-devel netpbm
+    zypper install cmake color-filesystem gcc-c++ git autoconf libtool make patch pkgconfig desktop-file-utils xdg-utils update-desktop-files ghostscript-fonts-std Mesa-devel libltdl-devel cups-devel elektra libxml2-devel libyajl-devel liblcms-devel liblcms2-devel libjpeg-devel libpng-devel libtiff-devel libraw-devel libexiv2-devel libxcm-devel libXcm0 xorg-x11-libXfixes-devel xorg-x11-libXpm-devel libXinerama-devel libXrandr-devel sane-backends-devel fltk-devel libXft-devel ftgl-devel gettext gettext-tools cairo-devel netpbm
     # oyranos-0.9.7 can now be installed successfully.
     zypper install libqt4-devel libqt5-qtbase-common-devel          # Synnefo
     zypper install patterns-openSUSE-devel_kde_frameworks           # KolorManager

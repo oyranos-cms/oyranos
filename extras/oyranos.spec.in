@@ -97,8 +97,6 @@ BuildRequires:  xorg-x11-libXext
 BuildRequires:  xorg-x11-libXext-devel
 BuildRequires:  xorg-x11-libXfixes
 BuildRequires:  xorg-x11-libXfixes-devel
-BuildRequires:  xorg-x11-libXmu
-BuildRequires:  xorg-x11-libXmu-devel
 BuildRequires:  xorg-x11-libXp
 BuildRequires:  xorg-x11-libXp-devel
 BuildRequires:  xorg-x11-libXpm-devel
@@ -184,7 +182,6 @@ BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  graphviz
 BuildRequires:  libXcm-devel >= 0.5.1
-BuildRequires:  libXmu-devel
 BuildRequires:  libXxf86vm-devel
 BuildRequires:  libjpeg
 BuildRequires:  libjpeg-devel
@@ -215,7 +212,6 @@ BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  graphviz
 BuildRequires:  libXcm-devel >= 0.5.1
-BuildRequires:  libXmu-devel
 BuildRequires:  libXxf86vm-devel
 BuildRequires:  libjpeg
 BuildRequires:  libjpeg-devel
@@ -245,7 +241,6 @@ BuildRequires:  doxygen
 BuildRequires:  gcc-c++
 BuildRequires:  gettext
 BuildRequires:  libXcm-devel >= 0.5.1
-BuildRequires:  libXmu-devel
 BuildRequires:  libXxf86vm-devel
 BuildRequires:  libjpeg
 BuildRequires:  libjpeg-devel

@@ -8,7 +8,7 @@ before_install:
   # on the coverity_scan branch take only the first job, which is gcc
   - test $TRAVIS_BRANCH != coverity_scan -o ${TRAVIS_JOB_NUMBER##*.} = 1 || exit 0
   - sudo apt-get update -qq
-  - sudo apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev libxmu-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev
+  - sudo apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind icc-profiles-free lcov pkg-config libxfixes-dev x11proto-xext-dev libxinerama-dev libxrandr-dev libxxf86vm-dev x11proto-xf86vidmode-dev liblcms2-dev libraw-dev libexiv2-dev libcups2-dev
   - if [[ $TRAVIS_BRANCH == coverity_scan ]] && [[ "$CC" == "gcc" ]]; then
       echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-;
     fi

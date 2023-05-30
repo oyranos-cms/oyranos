@@ -29,7 +29,7 @@ extern "C" {
 #include <stdarg.h>
 
 #include <X11/extensions/Xfixes.h>
-#include <X11/Xmu/Error.h> /* XmuSimpleErrorHandler */
+#include <X11/Xproto.h>
 #ifdef __cplusplus
 }
 #endif
@@ -622,6 +622,30 @@ XcmeContext_s * XcmeContext_Create   ( const char        * display_name )
   return c;
 }
 
+int XcmeErrorHandler(Display * display, XErrorEvent * e)
+{
+  switch (e->request_code)
+  {
+    case X_QueryTree:
+    case X_GetWindowAttributes:
+        if (e->error_code == BadWindow) return 0;
+        break;
+    case X_GetGeometry:
+        if (e->error_code == BadDrawable) return 0;
+        break;
+    default:
+    {
+        static int length = 256;
+        char * buffer_return = malloc(length);
+        if(!buffer_return) return 0;
+        XGetErrorText(display, e->error_code, buffer_return, length);
+        DERR("Xcme: %s", buffer_return);
+        free(buffer_return);
+    }
+  }
+  return 0;
+}
+
 /** Function XcmeContext_Setup2
  *  @brief   allocate and initialise a event observer context structure
  *
@@ -653,7 +677,7 @@ int      XcmeContext_Setup2          ( XcmeContext_s     * c,
   unsigned long left, n;
   unsigned char * data;
 
-  XSetErrorHandler( XmuSimpleErrorHandler );
+  XSetErrorHandler( XcmeErrorHandler );
 
   if(c->display)
     has_display = 1;

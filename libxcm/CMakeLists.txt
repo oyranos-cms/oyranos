@@ -1,6 +1,8 @@
 OPTION(ENABLE_SHARED_LIBS "Build shared libs" ON)
 OPTION(ENABLE_STATIC_LIBS "Build static libs" ON)
 IF(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+  CMAKE_MINIMUM_REQUIRED (VERSION 2.8.12)
+  PROJECT (libXcm)
   OPTION(ENABLE_INSTALL_XCM     "Install files" ON)
 ELSE()
   MESSAGE( "-- libxcm: compile as subproject - skip install (ENABLE_INSTALL_XCM=OFF)" )

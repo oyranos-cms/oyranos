@@ -57,7 +57,7 @@ ifdef QT
 # Qt needs somehow -O2 (Why???)
 QT_CFLAGS := $(shell (pkg-config --cflags QtGui xcm)) -O2 -std=c++0x
 INCL    := $(shell (pkg-config --cflags-only-I QtGui))
-TARGET8_LDFLAGS := $(LDFLAGS)  -L./xcmsevents $(shell (pkg-config --libs QtGui x11 xmu xfixes xinerama xrandr xxf86vm oyranos xcm)) -lQtXml -lQtCore
+TARGET8_LDFLAGS := $(LDFLAGS)  -L./xcmsevents $(shell (pkg-config --libs QtGui x11 xfixes xinerama xrandr xxf86vm oyranos xcm)) -lQtXml -lQtCore
 TARGET8_SOURCES = $(TARGET8).cpp
 TARGET8_GENERATED_SOURCES = \
 	xcmsevents/moc_qcmsevents.cpp \
@@ -106,7 +106,7 @@ $(TARGET2):	$(SRCDIR)$(TARGET2).c
 	echo Compiling $@ ...
 	-$(CC) $(CFLAGS_) $< $(TARGET2_FLAGS) $(LDFLAGS) $(OY_LDFLAGS) \
 	$(PKG_CONFIG_CFLAGS) $(PKG_CONFIG_LIBS) \
-	 $(XCM_LDFLAGS) -lXmu -lXinerama -lXrandr -lXxf86vm -lm \
+	 $(XCM_LDFLAGS) -lXinerama -lXrandr -lXxf86vm -lm \
 	-DTARGET=\"xcmsevents\" -o $@
 
 $(TARGET4):	$(SRCDIR)$(TARGET4).c
