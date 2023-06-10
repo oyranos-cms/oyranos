@@ -29,12 +29,12 @@
         <translation>Qt Version</translation>
     </message>
     <message>
-        <location filename="../qml/About.qml" line="86"/>
+        <location filename="../qml/About.qml" line="88"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/About.qml" line="97"/>
+        <location filename="../qml/About.qml" line="99"/>
         <source>OK</source>
         <translation>Ja</translation>
     </message>
@@ -42,25 +42,23 @@
 <context>
     <name>AppData</name>
     <message>
-        <location filename="../src/app_data.cpp" line="81"/>
+        <location filename="../src/app_data.cpp" line="82"/>
         <source>Json is invalid</source>
         <translation>Json is ungültig</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="109"/>
+        <location filename="../src/app_data.cpp" line="110"/>
         <source>finished loading</source>
         <translation>Laden beendet</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="258"/>
-        <location filename="../src/app_data.cpp" line="260"/>
+        <location filename="../src/app_data.cpp" line="261"/>
         <source>%1 Version</source>
         <translation>%1 Version</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="265"/>
         <source>NONE</source>
-        <translation>NICHTS</translation>
+        <translation type="vanished">NICHTS</translation>
     </message>
     <message>
         <location filename="../src/app_data.cpp" line="381"/>

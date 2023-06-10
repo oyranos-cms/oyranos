@@ -3,7 +3,7 @@
  *  libOyjl - JSON helper tool
  *
  *  @par Copyright:
- *            2018-2022 (C) Kai-Uwe Behrmann
+ *            2018-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl JSON translation helper
  *  @internal
@@ -267,7 +267,7 @@ int myMain( int argc, const char ** argv )
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
     {"oiwg", 0,     _("Common Options"),_("Set basic parameters"),    NULL,               "",            "",            "i,o", NULL},
-    {"oiwg", 0,     _("Extract"),       _("Convert JSON/C to gettext ready C strings"), _("Two input modes are supported. Read Oyjl UI -X=export JSON. Or parse C sources to --function-name defined strings and replace them in --output by --function-name-out. The later is useful for oyjlTr_s, Qt style or other translations."),
+    {"oiwg", 0,     _("Extract"),       _("Convert JSON/C to gettext ready C strings"), _("Two input modes are supported. Read Oyjl UI -X=export JSON. Or parse C sources to --function-name defined strings and replace them in --output by --function-name-out. The later is useful for oyjlTranslation_s, Qt style or other translations."),
                                                                                           "e,k",         "i,o,f,v,function-name,function-name-out",     "e,f,k,function-name,function-name-out", NULL},
     {"oiwg", 0,     _("Add"),           _("Add gettext translated keys to JSON"), NULL,   "a,d,k",       "i,o,l,p,w,t,n,v",            "a,d,l,p,k,w,t,n", NULL},
     {"oiwg", 0,     _("Copy"),          _("Copy keys to JSON"),       _("Import translations from other formats without gettext. Supported --input=Qt-xml-format.tr"),"c,locale",           "i,o,n,v",     "c,locale,n", NULL},
@@ -782,7 +782,7 @@ int main( int argc_, char**argv_, char ** envv )
 {
   int argc = argc_;
   char ** argv = argv_;
-  oyjlTr_s * trc = NULL;
+  oyjlTranslation_s * trc = NULL;
   char * loc = NULL;
 
 #ifdef __ANDROID__
@@ -810,9 +810,9 @@ int main( int argc_, char**argv_, char ** envv )
     fprintf( stderr, " Environment variable possibly not correct. Translations might fail - LANG=%s\n", oyjlTermColor(oyjlBOLD,loc) );
   }
   if(loc)
-    trc = oyjlTr_New( loc, 0,0,0,0,0,0 );
+    trc = oyjlTranslation_New( loc, 0,0,0,0,0,0 );
   oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, NULL );
-  oyjlTr_Release( &trc );
+  oyjlTranslation_Release( &trc );
 
   myMain(argc, (const char **)argv);
 

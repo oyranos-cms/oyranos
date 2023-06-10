@@ -58,7 +58,7 @@ int            oyjlInitLanguageDebug ( const char        * project_name,
                                        int                 use_gettext,
                                        const char        * env_var_locdir,
                                        const char        * default_locdir,
-                                       oyjlTr_s         ** context,
+                                       oyjlTranslation_s** context,
                                        oyjlMessage_f       msg );
 
 void       oyjlLibRelease            ( );
@@ -75,7 +75,7 @@ typedef enum {
   oyjlOBJECT_OPTIONS = 1937205615,     /**< @brief oyjlOptions_s */
   oyjlOBJECT_UI_HEADER_SECTION = 1936222575, /**< @brief oyjlUiHeaderSection_s */
   oyjlOBJECT_UI = 1769302383,          /**< @brief oyjlUi_s */
-  oyjlOBJECT_TR = 1920231791,          /**< @brief oyjlTr_s */
+  oyjlOBJECT_TR = 1920231791,          /**< @brief oyjlTranslation_s */
   oyjlOBJECT_JSON = 1397385583         /**< @brief oyjlNodes_s */
 } oyjlOBJECT_e;
 

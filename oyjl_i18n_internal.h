@@ -5,7 +5,7 @@
  *  oyjl - convinient tree JSON APIs
  *
  *  @par Copyright:
- *            2019-2021 (C) Kai-Uwe Behrmann
+ *            2019-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    translations
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -22,8 +22,8 @@
 # include <libintl.h> /* bindtextdomain() */
 #endif
 #ifndef OYJL_SKIP_TRANSLATE
-extern oyjlTr_s**oyjl_tr_context_;
-# define _(text) oyjlTranslate( oyjlTr_Get( OYJL_DOMAIN ), text )
+extern oyjlTranslation_s**oyjl_translation_context_;
+# define _(text) oyjlTranslate( oyjlTranslation_Get( OYJL_DOMAIN ), text )
 #else
 # define _(text) text
 #endif
@@ -44,8 +44,8 @@ char **          oyjlCatalogGetLangs_( char             ** paths,
                                        int                 count,
                                        int               * langs_n,
                                        int              ** lang_positions_start );
-int          oyjlTr_GetStart_        ( oyjlTr_s          * context );
-int          oyjlTr_GetEnd_          ( oyjlTr_s          * context );
+int      oyjlTranslation_GetStart_   ( oyjlTranslation_s * context );
+int      oyjlTranslation_GetEnd_     ( oyjlTranslation_s * context );
 
 #ifdef __cplusplus
 }

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2023-05-22 07:38+0200\n"
+"POT-Creation-Date: 2023-06-03 08:51+0200\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1571,8 +1571,8 @@ msgstr ""
 msgid ""
 "Two input modes are supported. Read Oyjl UI -X=export JSON. Or parse C "
 "sources to --function-name defined strings and replace them in --output by --"
-"function-name-out. The later is useful for oyjlTr_s, Qt style or other "
-"translations."
+"function-name-out. The later is useful for oyjlTranslation_s, Qt style or "
+"other translations."
 msgstr ""
 
 #: oyjl.c:245 oyjl.c:290
@@ -1609,7 +1609,7 @@ msgstr "Použití"
 #: oyjl_args.c:3435 oyjl_args.c:3453 oyjl_args.c:3479 oyjl_args.c:3506
 #: oyjl_args.c:3528 oyjl_args.c:3556 oyjl_args.c:3592 oyjl_args.c:3624
 #: oyjl_args.c:3763 oyjl_args.c:5019 oyjl_args.c:5051 oyjl_message.c:75
-#: oyjl_translate.c:137 oyjl_translate.c:563 oyjl_yajl.c:1268
+#: oyjl_translate.c:137 oyjl_translate.c:563 oyjl_yajl.c:1256
 msgid "Usage Error:"
 msgstr ""
 

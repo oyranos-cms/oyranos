@@ -3,14 +3,14 @@
  *  oyjl - basic helpers
  *
  *  @par Copyright:
- *            2016-2022 (C) Kai-Uwe Behrmann
+ *            2016-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl core functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- * Copyright (c) 2004-2022  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ * Copyright (c) 2004-2023  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -71,16 +71,16 @@ void oyjlLibRelease() {
     dlclose(oyjl_args_render_lib_); oyjl_args_render_lib_ = NULL; oyjl_args_render_init_ = 0;
   }
 #endif
-  if(oyjl_tr_context_)
+  if(oyjl_translation_context_)
   {
     i = 0;
-    while(oyjl_tr_context_[i])
+    while(oyjl_translation_context_[i])
     {
-      oyjlTr_Release( &oyjl_tr_context_[i] );
+      oyjlTranslation_Release( &oyjl_translation_context_[i] );
       ++i;
     }
-    free(oyjl_tr_context_);
-    oyjl_tr_context_ = NULL;
+    free(oyjl_translation_context_);
+    oyjl_translation_context_ = NULL;
   }
   if(oyjl_debug_node_path_)
   {
@@ -186,7 +186,7 @@ void   oyjlInitI18n_                 ( const char        * loc )
 {
 #ifndef OYJL_SKIP_TRANSLATE
   oyjl_val oyjl_catalog = NULL;
-  oyjlTr_s * trc = NULL;
+  oyjlTranslation_s * trc = NULL;
   int use_gettext = 0;
 #ifdef OYJL_USE_GETTEXT
   use_gettext = 1;
@@ -198,9 +198,9 @@ void   oyjlInitI18n_                 ( const char        * loc )
     oyjlMessage_p( oyjlMSG_INFO, 0,OYJL_DBG_FORMAT "loc: \"%s\" domain: \"%s\" catalog-size: %d", OYJL_DBG_ARGS, loc, OYJL_DOMAIN, size );
 #endif
   oyjlGettextSetup_( use_gettext, OYJL_DOMAIN, "OYJL_LOCALEDIR", OYJL_LOCALEDIR );
-  trc = oyjlTr_New( loc, OYJL_DOMAIN, &oyjl_catalog, 0,0,0, *oyjl_debug > 1?OYJL_OBSERVE:0 );
-  oyjlTr_SetFlags( trc, 0 );
-  oyjlTr_Set( &trc );
+  trc = oyjlTranslation_New( loc, OYJL_DOMAIN, &oyjl_catalog, 0,0,0, *oyjl_debug > 1?OYJL_OBSERVE:0 );
+  oyjlTranslation_SetFlags( trc, 0 );
+  oyjlTranslation_Set( &trc );
 #endif
 }
 
@@ -221,7 +221,7 @@ void   oyjlInitI18n_                 ( const char        * loc )
  *                                     e.g. "MP_LOCALEDIR"
  *  @param         default_locdir      default locale path C string;
  *                                     e.g. "/usr/local/share/locale"
- *  @param         context             locale, domain and possibly more information; use oyjlTr_New()
+ *  @param         context             locale, domain and possibly more information; use oyjlTranslation_New()
  *                                     - domain: po and mo files; e.g. "myproject"
  *  @param         msg                 your message function of type oyjlMessage_f; optional - default is Oyjl message function
  *  @return                            error
@@ -239,13 +239,13 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
                                        int                 use_gettext OYJL_UNUSED,
                                        const char        * env_var_locdir OYJL_UNUSED,
                                        const char        * default_locdir OYJL_UNUSED,
-                                       oyjlTr_s         ** context,
+                                       oyjlTranslation_s** context,
                                        oyjlMessage_f       msg )
 {
   int error = -1;
-  oyjlTr_s * trc = context?*context:NULL;
-  const char * loc = oyjlTr_GetLang( trc );
-  const char * loc_domain = oyjlTr_GetDomain( trc );
+  oyjlTranslation_s * trc = context?*context:NULL;
+  const char * loc = oyjlTranslation_GetLang( trc );
+  const char * loc_domain = oyjlTranslation_GetDomain( trc );
 
   if(!msg) msg = oyjlMessage_p;
 
@@ -272,9 +272,9 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
   if(loc_domain)
   {
     oyjlGettextSetup_( use_gettext, loc_domain, env_var_locdir, default_locdir );
-    int state = oyjlTr_Set( context ); /* just pass domain in */
+    int state = oyjlTranslation_Set( context ); /* just pass domain in */
     if(*oyjl_debug)
-      msg( oyjlMSG_INFO, 0, "use_gettext: %d loc_domain: %s env_var_locdir: %s default_locdir: %s oyjlTr_Set: %d", use_gettext, loc_domain, env_var_locdir, default_locdir, state );
+      msg( oyjlMSG_INFO, 0, "use_gettext: %d loc_domain: %s env_var_locdir: %s default_locdir: %s oyjlTranslation_Set: %d", use_gettext, loc_domain, env_var_locdir, default_locdir, state );
   }
 
   return error;

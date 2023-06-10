@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2021 (C) Kai-Uwe Behrmann
+ *            2018-2023 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -19,7 +19,7 @@
 extern int * oyjl_debug;
 int initLanguage( )
 {
-  oyjlTr_s * trc = NULL;
+  oyjlTranslation_s * trc = NULL;
   char * loc = NULL;
   char * lang = getenv("LANG");
   /* language needs to be initialised before setup of data structures */
@@ -38,9 +38,9 @@ int initLanguage( )
   if(lang)
     loc = lang;
   if(loc)
-    trc = oyjlTr_New( loc, 0,0,0,0,0,0 );
+    trc = oyjlTranslation_New( loc, 0,0,0,0,0,0 );
   oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, NULL );
-  oyjlTr_Release( &trc );
+  oyjlTranslation_Release( &trc );
 
   return 0;
 }

@@ -1112,7 +1112,7 @@ int oyjlStringStartsWith             ( const char        * text,
 * left as-is for anyone who may want to do such conversion, which was
 * allowed in earlier algorithms.
 */
-static const char trailingBytesForUTF8[256] = {
+static const char oyjlTrailingBytesForUTF8_[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1146,7 +1146,7 @@ int        oyjlStringSplitUTF8       ( const char        * text,
   {
     const char * ctext = &text[pos];
     int c = (unsigned char)ctext[0];
-    int trailing_bytes = trailingBytesForUTF8[c];
+    int trailing_bytes = oyjlTrailingBytesForUTF8_[c];
     if(trailing_bytes > 3)
       break;
     if(mbchars)

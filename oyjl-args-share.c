@@ -10,7 +10,7 @@
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- *  Copyright (c) 2018-2022  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ *  Copyright (c) 2018-2023  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -588,7 +588,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStr_Push( s, "# include <locale.h>\n" );
       oyjlStr_Push( s, "#endif\n" );
       oyjlStr_Push( s, "#define MY_DOMAIN \"oyjl\"\n" );
-      oyjlStr_Push( s, "oyjlTr_s * trc = NULL;\n" );
+      oyjlStr_Push( s, "oyjlTranslation_s * trc = NULL;\n" );
       oyjlStr_Push( s, "# ifdef _\n" );
       oyjlStr_Push( s, "# undef _\n" );
       oyjlStr_Push( s, "# endif\n" );
@@ -902,7 +902,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       {
         int count = oyjlValueCount( v ), j;
         char ** keys = oyjlTreeToPaths( v, OYJL_KEY, NULL, 0, &count );
-        oyjlMessage_p( oyjlMSG_INFO, 0, "%s found %d properties", o?o:key, count );
+        if(*oyjl_debug)
+          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s found %d properties", OYJL_DBG_ARGS, o?o:key, count );
         for(j = 0; j < count; ++j)
         {
           char * key = keys[j];
@@ -1068,7 +1069,8 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       {
         int count = oyjlValueCount( v ), j;
         char ** keys = oyjlTreeToPaths( v, OYJL_KEY, NULL, 0, &count );
-        oyjlMessage_p( oyjlMSG_INFO, 0, "%i %s found properties: %d", i, name, count );
+        if(*oyjl_debug)
+          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%i %s found properties: %d", OYJL_DBG_ARGS, i, name, count );
         for(j = 0; j < count; ++j)
         {
           char * key = keys[j];
@@ -1225,7 +1227,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     oyjlStr_Push( s, "  char ** argv = argv_;\n" );
     if(!(flags & OYJL_WITH_OYJL_ARGS_BASE_API))
     {
-      oyjlStr_Push( s, "  oyjlTr_s * trc_ = NULL;\n" );
+      oyjlStr_Push( s, "  oyjlTranslation_s * trc_ = NULL;\n" );
       oyjlStr_Push( s, "  const char * loc = NULL;\n" );
       oyjlStr_Push( s, "  const char * lang = getenv(\"LANG\");\n" );
     }
@@ -1262,18 +1264,18 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStr_Push( s, "    const char * my_domain = MY_DOMAIN;\n" );
       oyjlStr_Push( s, "    if(my_domain && strcmp(my_domain,\"oyjl\") == 0)\n" );
       oyjlStr_Push( s, "      my_domain = NULL;\n" );
-      oyjlStr_Push( s, "    trc = trc_ = oyjlTr_New( loc, my_domain, 0,0,0,0,0 );\n" );
+      oyjlStr_Push( s, "    trc = trc_ = oyjlTranslation_New( loc, my_domain, 0,0,0,0,0 );\n" );
       oyjlStr_Push( s, "  }\n" );
       oyjlStr_Push( s, "  oyjlInitLanguageDebug( \"Oyjl\", \"OYJL_DEBUG\", oyjl_debug, use_gettext, \"OYJL_LOCALEDIR\", OYJL_LOCALEDIR, &trc_, NULL );\n" );
       oyjlStr_Push( s, "  if(MY_DOMAIN && strcmp(MY_DOMAIN,\"oyjl\") == 0)\n" );
-      oyjlStr_Push( s, "    trc = oyjlTr_Get( MY_DOMAIN );\n" );
+      oyjlStr_Push( s, "    trc = oyjlTranslation_Get( MY_DOMAIN );\n" );
     }
     oyjlStr_Push( s, "\n" );
     oyjlStr_Push( s, "  myMain(argc, (const char **)argv);\n" );
     oyjlStr_Push( s, "\n" );
     if(!(flags & OYJL_WITH_OYJL_ARGS_BASE_API))
     {
-      oyjlStr_Push( s, "  oyjlTr_Release( &trc_ );\n" );
+      oyjlStr_Push( s, "  oyjlTranslation_Release( &trc_ );\n" );
       oyjlStr_Push( s, "  oyjlLibRelease();\n" );
     }
     oyjlStr_Push( s, "\n" );
@@ -1338,7 +1340,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         {
           use_getChoicesCompletionBash = 1;
           if(*oyjl_debug)
-            oyjlMessage_p( oyjlMSG_INFO, 0, "found getChoicesCompletionBash: `%s` for --%s", getChoices, oyjlTermColor( oyjlITALIC, option ) );
+            oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "found getChoicesCompletionBash: `%s` for --%s", OYJL_DBG_ARGS, getChoices, oyjlTermColor( oyjlITALIC, option ) );
         } else
         {
           v = oyjlTreeGetValue( val, 0, "values/getChoices" ); getChoices = OYJL_GET_STRING(v);

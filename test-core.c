@@ -130,7 +130,7 @@ oyjlTESTRESULT_e progNAME(testI18N) ()
   }
   if(country) free(country);
 
-  oyjlTr_s * trc = NULL;
+  oyjlTranslation_s * trc = NULL;
   const char * loc = NULL;
   const char * lang = getenv("LANG");
   int use_gettext = 0;
@@ -152,10 +152,10 @@ oyjlTESTRESULT_e progNAME(testI18N) ()
     oyjl_val oyjl_catalog = (oyjl_val) oyjlStringAppendN( NULL, (const char*) liboyjl_i18n_oiJS, size, malloc );
     if(*oyjl_debug)
       oyjlMessage_p( oyjlMSG_INFO, 0, "loc: \"%s\" domain: \"%s\" catalog-size: %d", loc, OYJL_DOMAIN, size );
-    trc = oyjlTr_New( loc, OYJL_DOMAIN, &oyjl_catalog, 0,0,0,0 );
+    trc = oyjlTranslation_New( loc, OYJL_DOMAIN, &oyjl_catalog, 0,0,0,0 );
   }
   oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", &my_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, oyjlMessageFunc );
-  oyjlTr_Release( &trc );
+  oyjlTranslation_Release( &trc );
 
   lang = setlocale(LC_ALL, NULL);
   if(lang && (strcmp(lang, "C") != 0))
@@ -1284,7 +1284,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9926                      /*code_size*/,
+                           9971                      /*code_size*/,
                            1081                      /*help_size*/,
                            2068                      /*man_size*/,
                            4065                      /*markdown_size*/,
@@ -1380,7 +1380,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9642                      /*code_size*/,
+                           9687                      /*code_size*/,
                             614                      /*help_size*/,
                            1552                      /*man_size*/,
                            2521                      /*markdown_size*/,

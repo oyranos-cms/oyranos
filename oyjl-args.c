@@ -402,7 +402,7 @@ int main( int argc_, char**argv_, char ** envv )
 {
   int argc = argc_;
   char ** argv = argv_;
-  oyjlTr_s * trc = NULL;
+  oyjlTranslation_s * trc = NULL;
   char * loc = NULL;
   char * lang = getenv("LANG");
 
@@ -431,9 +431,9 @@ int main( int argc_, char**argv_, char ** envv )
   if(lang)
     loc = lang;
   if(loc)
-    trc = oyjlTr_New( loc, 0,0,0,0,0,0 );
+    trc = oyjlTranslation_New( loc, 0,0,0,0,0,0 );
   oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, NULL );
-  oyjlTr_Release( &trc );
+  oyjlTranslation_Release( &trc );
 
   myMain(argc, (const char **)argv);
 
