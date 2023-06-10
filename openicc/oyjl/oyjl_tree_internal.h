@@ -49,6 +49,7 @@ void       oyjlValueDebug_           ( oyjl_val            v,
 int oyjlIsDirFull_ (const char* name);
 int oyjlMakeDir_ (const char* path);
 
+oyjl_val   oyjlValueAlloc_           ( oyjl_type           type );
 int        oyjlTreePathsGetIndex_    ( const char        * term,
                                        int               * index );
 char *     oyjlTreePrint             ( oyjl_val            v );

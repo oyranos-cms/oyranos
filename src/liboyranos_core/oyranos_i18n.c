@@ -62,7 +62,7 @@ int oy_i18n_init_ = 0;
 void oyI18NInit_()
 {
   int use_gettext = 0;
-  oyjlTr_s * trc = NULL;
+  oyjlTranslation_s * trc = NULL;
   char * loc = NULL;
   DBG_PROG_START
 
@@ -87,9 +87,9 @@ void oyI18NInit_()
       const char * t = (const char*) liboyranos_i18n_oiJS;
       int size = sizeof(liboyranos_i18n_oiJS);
       oyjl_val catalog = (oyjl_val) oyjlStringAppendN( NULL, t, size, 0 );
-      trc = oyjlTr_New( oy_lang_, OY_TEXTDOMAIN, &catalog, 0,0,0,0 );
+      trc = oyjlTranslation_New( oy_lang_, OY_TEXTDOMAIN, &catalog, 0,0,0,0 );
 #else
-      trc = oyjlTr_New( oy_lang_, OY_TEXTDOMAIN, 0, 0,0,0,0 );
+      trc = oyjlTranslation_New( oy_lang_, OY_TEXTDOMAIN, 0, 0,0,0,0 );
 #endif
       if(oyStrchr_(oy_lang_,'_'))
       {

@@ -1117,7 +1117,7 @@ char **        oyjlStringSplit2      ( const char        * text,
 * left as-is for anyone who may want to do such conversion, which was
 * allowed in earlier algorithms.
 */
-static const char trailingBytesForUTF8[256] = {
+static const char oyjl_trailingBytesForUTF8_[256] = {
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1139,7 +1139,7 @@ int        oyjlStringSplitUTF8       ( const char        * text,
   {
     const char * ctext = &text[pos];
     int c = (unsigned char)ctext[0];
-    int trailing_bytes = trailingBytesForUTF8[c];
+    int trailing_bytes = oyjl_trailingBytesForUTF8_[c];
     if(trailing_bytes > 3)
       break;
     if(mbchars)
@@ -1502,11 +1502,11 @@ char *     oyjlReadCommandF          ( int               * size,
 }
 
 typedef struct oyjl_val_s * oyjl_val;
-typedef struct oyjlTr_s oyjlTr_s; /* from oyjl.h */
-typedef char*(*oyjlTranslate_f)      ( oyjlTr_s          * context,
+typedef struct oyjlTranslation_s oyjlTranslation_s; /* from oyjl.h */
+typedef char*(*oyjlTranslate_f)      ( oyjlTranslation_s * context,
                                        const char        * string );
-void           oyjlTr_Release        ( oyjlTr_s         ** context_ );
-struct oyjlTr_s
+void           oyjlTranslation_Release(oyjlTranslation_s** context_ );
+struct oyjlTranslation_s
 {
   char type [8];                       /**< @brief must be 'oitr' */
   const char * loc;                    /**< @brief original provided locale */
@@ -1520,7 +1520,7 @@ struct oyjlTr_s
   void (*deAlloc)(void*);              /**< @brief custom deallocator; optional */
   int flags;                           /**< @brief flags for translator; optional */
 };
-oyjlTr_s *     oyjlTr_New            ( const char        * loc,
+oyjlTranslation_s* oyjlTranslation_New(const char        * loc,
                                        const char        * domain,
                                        oyjl_val          * catalog,
                                        oyjlTranslate_f     translator,
@@ -1528,10 +1528,10 @@ oyjlTr_s *     oyjlTr_New            ( const char        * loc,
                                        void             (* deAlloc)(void*),
                                        int                 flags )
 {
-  oyjlTr_s * context = NULL;
+  oyjlTranslation_s * context = NULL;
   char * lang = NULL;
 
-  oyjlAllocHelper_m( context, struct oyjlTr_s, 1, malloc, return NULL );
+  oyjlAllocHelper_m( context, struct oyjlTranslation_s, 1, malloc, return NULL );
   memcpy( context->type, "oitr", 4 );
   context->loc = loc;
   context->domain = domain;
@@ -1553,7 +1553,7 @@ oyjlTr_s *     oyjlTr_New            ( const char        * loc,
 
   return context;
 }
-int oyjlTr_Check_                    ( oyjlTr_s          * context )
+int oyjlTranslation_Check_           ( oyjlTranslation_s * context )
 {
   int success = 1;
   if( context && *(oyjlOBJECT_e*)context != oyjlOBJECT_TR)
@@ -1561,37 +1561,37 @@ int oyjlTr_Check_                    ( oyjlTr_s          * context )
     char * a = (char*)context;
     char type[5] = {a[0],a[1],a[2],a[3],0};
     char * t = oyjlBT(0);
-    fprintf(stderr, "%sUnexpected object: \"%s\"(expected: \"oyjlTr_s\")\n", t, type );
+    fprintf(stderr, "%sUnexpected object: \"%s\"(expected: \"oyjlTranslation_s\")\n", t, type );
     free(t);
     success = 0;
     return success;
   }
   return success;
 }
-const char *   oyjlTr_GetDomain      ( oyjlTr_s          * context )
+const char * oyjlTranslation_GetDomain(oyjlTranslation_s * context )
 {
-  return context && oyjlTr_Check_(context) ? context->domain : NULL;
+  return context && oyjlTranslation_Check_(context) ? context->domain : NULL;
 }
-const char * oyjlTr_GetLang          ( oyjlTr_s          * context )
+const char * oyjlTranslation_GetLang ( oyjlTranslation_s * context )
 {
-  return !context || !oyjlTr_Check_(context) ? "" : context->lang ? context->lang : context->loc;
+  return !context || !oyjlTranslation_Check_(context) ? "" : context->lang ? context->lang : context->loc;
 }
-void           oyjlTr_SetFlags       ( oyjlTr_s          * context,
+void         oyjlTranslation_SetFlags( oyjlTranslation_s * context,
                                        int                 flags )
 {
-  if(context && oyjlTr_Check_(context))
+  if(context && oyjlTranslation_Check_(context))
     context->flags = flags;
 }
-oyjlTr_s ** oyjl_tr_context_ = NULL;
-int         oyjl_tr_context_reserve_ = 0;
-int            oyjlTr_Set            ( const char        * domain,
-                                       oyjlTr_s         ** context )
+oyjlTranslation_s ** oyjl_translation_context_ = NULL;
+int         oyjl_translation_context_reserve_ = 0;
+int          oyjlTranslation_Set     ( const char        * domain,
+                                       oyjlTranslation_s** context )
 {
   int i = 0, pos = -1;
-  oyjlTr_s * oyjl_tr_context = NULL;
+  oyjlTranslation_s * oyjl_tr_context = NULL;
   int state = -1;
 
-  if(context && *context && !oyjlTr_Check_(*context))
+  if(context && *context && !oyjlTranslation_Check_(*context))
     return -2;
 
   if(!domain)
@@ -1601,9 +1601,9 @@ int            oyjlTr_Set            ( const char        * domain,
   }
   state = 0;
 
-  while(oyjl_tr_context_ && oyjl_tr_context_[i])
+  while(oyjl_translation_context_ && oyjl_translation_context_[i])
   {
-    oyjlTr_s * context = oyjl_tr_context_[i];
+    oyjlTranslation_s * context = oyjl_translation_context_[i];
     if(context->domain && domain && strcmp(context->domain, domain) == 0)
     {
       pos = i;
@@ -1613,7 +1613,7 @@ int            oyjlTr_Set            ( const char        * domain,
   }
   if(pos >= 0)
   {
-    oyjl_tr_context = oyjl_tr_context_[pos];
+    oyjl_tr_context = oyjl_translation_context_[pos];
     state |= 1;
     if(*oyjl_debug)
     {
@@ -1631,43 +1631,43 @@ int            oyjlTr_Set            ( const char        * domain,
 
   if(context && oyjl_tr_context && oyjl_tr_context != *context)
   {
-    oyjlTr_Release(&oyjl_tr_context_[pos]);
+    oyjlTranslation_Release(&oyjl_translation_context_[pos]);
     state |= 2;
   }
 
   if(context && *context)
   {
-    if(!oyjl_tr_context_)
+    if(!oyjl_translation_context_)
     {
-      oyjlAllocHelper_m( oyjl_tr_context_, oyjlTr_s*, 10, malloc, return -2 );
-      oyjl_tr_context_reserve_ = 10;
+      oyjlAllocHelper_m( oyjl_translation_context_, oyjlTranslation_s*, 10, malloc, return -2 );
+      oyjl_translation_context_reserve_ = 10;
     }
-    if(i == oyjl_tr_context_reserve_)
+    if(i == oyjl_translation_context_reserve_)
     {
-      oyjl_tr_context_ = realloc( oyjl_tr_context_, sizeof(oyjlTr_s*) * oyjl_tr_context_reserve_ * 2 );
-      if(!oyjl_tr_context_)
+      oyjl_translation_context_ = realloc( oyjl_translation_context_, sizeof(oyjlTranslation_s*) * oyjl_translation_context_reserve_ * 2 );
+      if(!oyjl_translation_context_)
       {
         oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "domain: \"%s\" alloc failed: %d", OYJL_DBG_ARGS, domain, i );
         return -2;
       } else
-        oyjl_tr_context_reserve_ *= 2;
+        oyjl_translation_context_reserve_ *= 2;
     }
-    oyjl_tr_context_[i] = *context;
+    oyjl_translation_context_[i] = *context;
     *context = NULL;
   }
 
   return state;
 }
-oyjlTr_s *     oyjlTr_Get            ( const char        * domain )
+oyjlTranslation_s* oyjlTranslation_Get(const char        * domain )
 {
-  oyjlTr_s * context = NULL;
+  oyjlTranslation_s * context = NULL;
 
-  if(oyjl_tr_context_ && domain)
+  if(oyjl_translation_context_ && domain)
   {
     int i = 0;
-    while(oyjl_tr_context_[i])
+    while(oyjl_translation_context_[i])
     {
-      context = oyjl_tr_context_[i];
+      context = oyjl_translation_context_[i];
       if(context->domain && domain && strcmp(context->domain, domain) == 0)
         break;
       else
@@ -1684,17 +1684,17 @@ extern char * oyjl_term_color_html_;
 extern char * oyjl_term_color_plain_;
 void oyjlLibRelease() {
   if(oyjl_nls_path_) { putenv("NLSPATH=C"); free(oyjl_nls_path_); oyjl_nls_path_ = NULL; }
-  if(oyjl_tr_context_)
+  if(oyjl_translation_context_)
   {
     int i = 0;
-    while(oyjl_tr_context_[i])
+    while(oyjl_translation_context_[i])
     {
-      oyjlTr_Release( &oyjl_tr_context_[i] );
+      oyjlTranslation_Release( &oyjl_translation_context_[i] );
       ++i;
     }
-    free(oyjl_tr_context_);
-    oyjl_tr_context_ = NULL;
-    oyjl_tr_context_reserve_ = 0;
+    free(oyjl_translation_context_);
+    oyjl_translation_context_ = NULL;
+    oyjl_translation_context_reserve_ = 0;
   }
   if(oyjl_term_color_) { free(oyjl_term_color_); oyjl_term_color_ = NULL; }
   if(oyjl_term_color_html_) { free(oyjl_term_color_html_); oyjl_term_color_html_ = NULL; }
@@ -1709,10 +1709,10 @@ void oyjlTreeFree (oyjl_val v)
 
     free(v);
 }
-void           oyjlTr_Release        ( oyjlTr_s         ** context_ )
+void           oyjlTranslation_Release(oyjlTranslation_s** context_ )
 {
-  oyjlTr_s * context;
-  if(!(context_ && *context_ && oyjlTr_Check_(*context_)))
+  oyjlTranslation_s * context;
+  if(!(context_ && *context_ && oyjlTranslation_Check_(*context_)))
     return;
 
   context = *context_;
@@ -1817,7 +1817,7 @@ void   oyjlInitI18n_                 ( const char        * loc OYJL_UNUSED )
 {
 #ifndef OYJL_SKIP_TRANSLATE
   oyjl_val oyjl_catalog = NULL;
-  oyjlTr_s * trc = NULL;
+  oyjlTranslation_s * trc = NULL;
   int use_gettext = 0;
 #ifdef OYJL_HAVE_LIBINTL_H
   use_gettext = 1;
@@ -1831,9 +1831,9 @@ void   oyjlInitI18n_                 ( const char        * loc OYJL_UNUSED )
 # endif
 #endif
   oyjlGettextSetup_( use_gettext, OYJL_DOMAIN, "OYJL_LOCALEDIR", OYJL_LOCALEDIR );
-  trc = oyjlTr_New( loc, OYJL_DOMAIN, &oyjl_catalog, 0,0,0, *oyjl_debug > 1?OYJL_OBSERVE:0 );
-  oyjlTr_SetFlags( trc, 0 );
-  oyjlTr_Set( OYJL_DOMAIN, &trc );
+  trc = oyjlTranslation_New( loc, OYJL_DOMAIN, &oyjl_catalog, 0,0,0, *oyjl_debug > 1?OYJL_OBSERVE:0 );
+  oyjlTranslation_SetFlags( trc, 0 );
+  oyjlTranslation_Set( OYJL_DOMAIN, &trc );
 #endif
 }
 
@@ -1843,13 +1843,13 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
                                        int                 use_gettext OYJL_UNUSED,
                                        const char        * env_var_locdir OYJL_UNUSED,
                                        const char        * default_locdir OYJL_UNUSED,
-                                       oyjlTr_s         ** context OYJL_UNUSED,
+                                       oyjlTranslation_s         ** context OYJL_UNUSED,
                                        oyjlMessage_f       msg )
 {
   int error = -1;
-  oyjlTr_s * trc = context?*context:NULL;
-  const char * loc = oyjlTr_GetLang( trc );
-  const char * loc_domain = oyjlTr_GetDomain( trc );
+  oyjlTranslation_s * trc = context?*context:NULL;
+  const char * loc = oyjlTranslation_GetLang( trc );
+  const char * loc_domain = oyjlTranslation_GetDomain( trc );
 
   if(!msg) msg = oyjlMessage_p;
 
@@ -1877,9 +1877,9 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
   if(loc_domain)
   {
     oyjlGettextSetup_( use_gettext, loc_domain, env_var_locdir, default_locdir );
-    int state = oyjlTr_Set( loc_domain, context ); /* just pass domain in */
+    int state = oyjlTranslation_Set( loc_domain, context ); /* just pass domain in */
     if(*oyjl_debug)
-      msg( oyjlMSG_INFO, 0, "use_gettext: %d loc_domain: %s env_var_locdir: %s default_locdir: %s oyjlTr_Set: %d", use_gettext, loc_domain, env_var_locdir, default_locdir, state );
+      msg( oyjlMSG_INFO, 0, "use_gettext: %d loc_domain: %s env_var_locdir: %s default_locdir: %s oyjlTranslation_Set: %d", use_gettext, loc_domain, env_var_locdir, default_locdir, state );
   }
 
   return error;
@@ -2027,33 +2027,33 @@ static int oyjlTermColorCheck_       ( int                 flags )
 int          oyjlTermColorInit       ( int                 flags )
 {
   int color_env = 0;
-  static int colorterm_init = 0;
-  static const char * oyjl_colorterm = NULL;
-  static int truecolor = 0,
-             color = 0;
-  if(!colorterm_init || flags & OYJL_RESET_COLORTERM)
+  static int oyjl_colorterm_init_ = 0;
+  static const char * oyjl_colorterm_ = NULL;
+  static int oyjl_truecolor_ = 0,
+             oyjl_color_ = 0;
+  if(!oyjl_colorterm_init_ || flags & OYJL_RESET_COLORTERM)
   {
-    colorterm_init = 1;
-    oyjl_colorterm = getenv("COLORTERM");
+    oyjl_colorterm_init_ = 1;
+    oyjl_colorterm_ = getenv("COLORTERM");
     if(flags & OYJL_OBSERVE)
       fprintf(stderr, "%s COLORTERM\n", getenv("COLORTERM")?"has":"no" );
-    color = oyjl_colorterm != NULL ? 1 : 0;
-    if(!oyjl_colorterm) oyjl_colorterm = getenv("TERM");
-    truecolor = oyjl_colorterm && strcmp(oyjl_colorterm,"truecolor") == 0;
+    oyjl_color_ = oyjl_colorterm_ != NULL ? 1 : 0;
+    if(!oyjl_colorterm_) oyjl_colorterm_ = getenv("TERM");
+    oyjl_truecolor_ = oyjl_colorterm_ && strcmp(oyjl_colorterm_,"truecolor") == 0;
     if(!oyjlTermColorCheck_(flags))
-      truecolor = color = 0;
+      oyjl_truecolor_ = oyjl_color_ = 0;
     if( getenv("FORCE_COLORTERM") || flags & OYJL_FORCE_COLORTERM )
-      truecolor = color = 1;
+      oyjl_truecolor_ = oyjl_color_ = 1;
     if(flags & OYJL_OBSERVE)
       fprintf(stderr, "%s FORCE_COLORTERM  %s flags & OYJL_FORCE_COLORTERM\n", getenv("FORCE_COLORTERM")?"has":"no", flags & OYJL_FORCE_COLORTERM ? "use":"no" );
     if( getenv("FORCE_NO_COLORTERM") || flags & OYJL_FORCE_NO_COLORTERM )
-      truecolor = color = 0;
+      oyjl_truecolor_ = oyjl_color_ = 0;
     if(flags & OYJL_OBSERVE)
       fprintf(stderr, "%s FORCE_NO_COLORTERM  %s flags & OYJL_FORCE_NO_COLORTERM\n", getenv("FORCE_NO_COLORTERM")?"has":"no", flags & OYJL_FORCE_NO_COLORTERM ? "use":"no" );
     if(*oyjl_debug || flags & OYJL_OBSERVE)
-      fprintf(stderr, "color: %d truecolor: %d oyjl_colorterm: %s\n", color, truecolor, oyjl_colorterm );
+      fprintf(stderr, "color: %d truecolor: %d oyjl_colorterm_: %s\n", oyjl_color_, oyjl_truecolor_, oyjl_colorterm_ );
   }
-  color_env = (color ? 0x01 : 0x00) | (truecolor ? 0x02 : 0x00);
+  color_env = (oyjl_color_ ? 0x01 : 0x00) | (oyjl_truecolor_ ? 0x02 : 0x00);
   return color_env;
 }
 
@@ -2449,7 +2449,7 @@ int          oyjlTermColor256GetIndex( const char        * term_color )
   return (int)index;
 }
 
-static void convertXterm256ToHex_(const char * text OYJL_UNUSED, const char * start OYJL_UNUSED, const char * end, const char * search, const char ** replace, int * r_len, void * data)
+static void oyjlConvertXterm256ToHex_(const char * text OYJL_UNUSED, const char * start OYJL_UNUSED, const char * end, const char * search, const char ** replace, int * r_len, void * data)
 {
   int index = oyjlTermColor256GetIndex(end);
   char ** txt = data, * t = *txt;
@@ -2514,9 +2514,9 @@ const char * oyjlTermColorToHtml     ( const char        * text,
   oyjlStr_Replace( tmp, "\033[00;34m", "<font color=blue>", 0,NULL );
   oyjlStr_Replace( tmp, "\033[00;35m", "<font color=magenta>", 0,NULL );
   oyjlStr_Replace( tmp, "\033[00;39m", "", 0,NULL ); /* used as default foreground color */
-  oyjlStr_Replace( tmp, OYJL_X11_CLUT_256_BASE, "", convertXterm256ToHex_,&txt );
-  oyjlStr_Replace( tmp, "\033[1;38;5;", "", convertXterm256ToHex_,&txt ); /* bold xterm256 color */
-  oyjlStr_Replace( tmp, "\033[3;38;5;", "", convertXterm256ToHex_,&txt ); /* italic xterm256 color */
+  oyjlStr_Replace( tmp, OYJL_X11_CLUT_256_BASE, "", oyjlConvertXterm256ToHex_,&txt );
+  oyjlStr_Replace( tmp, "\033[1;38;5;", "", oyjlConvertXterm256ToHex_,&txt ); /* bold xterm256 color */
+  oyjlStr_Replace( tmp, "\033[3;38;5;", "", oyjlConvertXterm256ToHex_,&txt ); /* italic xterm256 color */
   if(txt) { free(txt); txt = NULL; }
   oyjlStr_Replace( tmp, OYJL_CTEND, "</u></strong></em></font>", 0,NULL );
 #define OYJL_CTENDM "\033[m"
@@ -6096,7 +6096,7 @@ char * oyjlOptions_PrintHelp         ( oyjlOptions_s     * opts,
   return text;
 }
 
-static void replaceOutsideHTML_(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, int * r_len OYJL_UNUSED, void * data)
+static void oyjlReplaceOutsideHTML_(const char * text OYJL_UNUSED, const char * start, const char * end, const char * search, const char ** replace, int * r_len OYJL_UNUSED, void * data)
 {
   if(start < end)
   {
@@ -6388,9 +6388,9 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     int insideXML[3] = {0,0,0};
     oyjl_str tmp = oyjlStr_New(10,0,0);
     oyjlStr_Push( tmp, text );
-    oyjlStr_Replace( tmp, "`", "\\`", replaceOutsideHTML_, insideXML );
-    oyjlStr_Replace( tmp, "-", "\\-", replaceOutsideHTML_, insideXML );
-    oyjlStr_Replace( tmp, "_", "\\_", replaceOutsideHTML_, insideXML );
+    oyjlStr_Replace( tmp, "`", "\\`", oyjlReplaceOutsideHTML_, insideXML );
+    oyjlStr_Replace( tmp, "-", "\\-", oyjlReplaceOutsideHTML_, insideXML );
+    oyjlStr_Replace( tmp, "_", "\\_", oyjlReplaceOutsideHTML_, insideXML );
     t = oyjlStr(tmp);
     text[0] = 0;
     oyjlStringPush( &text, t, malloc,free );

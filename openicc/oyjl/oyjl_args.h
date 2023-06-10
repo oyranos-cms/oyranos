@@ -120,7 +120,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
 void             oyjlUiJsonSetDefaults(oyjl_val            root,
                                        oyjl_val            defaults );
 void               oyjlUi_Translate  ( oyjlUi_s          * ui,
-                                       oyjlTr_s          * context );
+                                       oyjlTranslation_s * context );
 
 /** link with libOyjlArgsWeb and use microhttps WWW renderer as library \n
  *  link with libOyjlArgsQml and use Qt's QML to render in a GUI

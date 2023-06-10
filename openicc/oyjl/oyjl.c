@@ -638,7 +638,7 @@ int main( int argc_, char**argv_, char ** envv )
   char ** argv = argv_;
   int use_gettext = 0;
   const char * locale = NULL, * loc = NULL, * lang = NULL;
-  oyjlTr_s * trc = NULL;
+  oyjlTranslation_s * trc = NULL;
 
 #ifdef __ANDROID__
   argv = calloc( argc + 2, sizeof(char*) );
@@ -678,9 +678,9 @@ int main( int argc_, char**argv_, char ** envv )
       fprintf(stderr,OYJL_DBG_FORMAT "lang: %s loc: %s locale: %s\n", OYJL_DBG_ARGS, lang, loc, locale );
 
   if(locale)
-    trc = oyjlTr_New( locale, 0, 0,0,0,0, *oyjl_debug > 1?OYJL_OBSERVE:0 );
+    trc = oyjlTranslation_New( locale, 0, 0,0,0,0, *oyjl_debug > 1?OYJL_OBSERVE:0 );
   oyjlInitLanguageDebug( "Oyjl", "OYJL_DEBUG", oyjl_debug, use_gettext, "OYJL_LOCALEDIR", OYJL_LOCALEDIR, &trc, NULL );
-  oyjlTr_Release( &trc );
+  oyjlTranslation_Release( &trc );
   if(*oyjl_debug > 1)
     fprintf(stderr,OYJL_DBG_FORMAT "oyjlLang: %s use_gettext: %d LANG:%s\n", OYJL_DBG_ARGS, oyjlLang(""), use_gettext, lang);
 

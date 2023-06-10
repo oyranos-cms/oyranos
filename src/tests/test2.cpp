@@ -206,7 +206,7 @@ oyjlTESTRESULT_e testI18N()
   use_gettext = 1;
 #endif
   static int debug = 0; /* needs to be in global scope */
-  oyjlTr_s * trc = oyjlTr_New( loc, 0, 0,0,0,0,0 );
+  oyjlTranslation_s * trc = oyjlTranslation_New( loc, 0, 0,0,0,0,0 );
   oyjlInitLanguageDebug( "Oyranos", "OY_DEBUG", &debug, use_gettext, "OY_LOCALEDIR", OY_LOCALEDIR, &trc, oyMessageFunc_p );
 
   lang = setlocale(LC_ALL, NULL);

@@ -1118,7 +1118,7 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
  *  to later language change. This function helps to replace
  *  the previous language with loc set to "back" in the context.
  *
- *  @see oyjlTr_New()
+ *  @see oyjlTranslation_New()
  *
  *  @param[in,out] ui                 the structure to translate strings inside
  *  @param[in]     context            the translation context; optional, without will use gettext
@@ -1128,12 +1128,12 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
  *  @since   2020/07/30 (Oyjl: 1.0.0)
  */
 void               oyjlUi_Translate  ( oyjlUi_s          * ui,
-                                       oyjlTr_s          * context )
+                                       oyjlTranslation_s * context )
 {
   int i,j,n,ng;
   oyjlTranslate_f translator = NULL;
 
-  translator = oyjlTr_GetTranslator( context );
+  translator = oyjlTranslation_GetTranslator( context );
 
   if(!ui) return;
 

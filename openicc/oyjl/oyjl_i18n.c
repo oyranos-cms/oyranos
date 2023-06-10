@@ -10,7 +10,7 @@
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- * Copyright (c) 2004-2022  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ * Copyright (c) 2004-2023  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -50,14 +50,14 @@
 /** \addtogroup oyjl_i18n OyjlCore Internationalisation
  *  @brief Language support and Translations for UI's
  *
- *  The oyjlTr_s object is created by oyjlTr_New() and holds the context for
+ *  The oyjlTranslation_s object is created by oyjlTranslation_New() and holds the context for
  *  translations including a possibly own translation function and user
  *  provided data. It is needed for any translation call, like oyjlTranslate()
  *  or oyjlTranslateJson(). A CLI exist in the @ref oyjltranslate tool.
  *  A typical single language catalog is usually set by the
  *  oyjlInitLanguageDebug() call during application setup.
- *  Multiple catalogs can be internally stored by oyjlTr_Set() and obtained by
- *  oyjlTr_Get() for advanced use.
+ *  Multiple catalogs can be internally stored by oyjlTranslation_Set() and obtained by
+ *  oyjlTranslation_Get() for advanced use.
  *  oyjlTreeSerialise() turnes a oyjl_val tree into
  *  a memory block, which could be written to file and later used as
  *  translation catalog. This memory block needs no JSON parser. The

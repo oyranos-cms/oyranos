@@ -497,7 +497,6 @@ int myMain( int argc , const char** argv )
     if(v)
     {
       size_t size = 0;
-      int count = 0;
       char * db;
       oyjl_val root;
 

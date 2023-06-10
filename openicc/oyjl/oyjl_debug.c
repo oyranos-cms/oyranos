@@ -53,7 +53,9 @@ int * oyjl_debug = &oyjl_debug_local_;
 void       oyjlDebugVariableSet      ( int               * debug )
 { oyjl_debug = debug; }
 
+#ifdef OYJL_HAVE_BACKTRACE
 #include <execinfo.h>
+#endif
 #define BT_BUF_SIZE 100
 #define oyjlFree_m_(x) { free(x); x = NULL; }
 char * oyjlFindApplication_(const char * app_name);

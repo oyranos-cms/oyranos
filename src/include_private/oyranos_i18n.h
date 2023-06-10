@@ -4,7 +4,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2006-2009 (C) Kai-Uwe Behrmann
+ *            2006-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    string translation
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -32,7 +32,7 @@ extern "C" {
 #endif
 #include "oyjl.h"
 #define OY_TEXTDOMAIN "oyranos"
-#define _(text) (char*)oyjlTranslate( oyjlTr_Get(OY_TEXTDOMAIN), text )
+#define _(text) (char*)oyjlTranslate( oyjlTranslation_Get(OY_TEXTDOMAIN), text )
 extern const char *oy_domain;
 extern const char *oy_domain_path;
 

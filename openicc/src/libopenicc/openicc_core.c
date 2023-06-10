@@ -3,7 +3,7 @@
  *  libOpenICC - OpenICC Colour Management Configuration
  *
  *  @par Copyright:
- *            2011-2016 (C) Kai-Uwe Behrmann
+ *            2011-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    OpenICC Colour Management configuration helpers
  *  @internal
@@ -279,15 +279,15 @@ int            openiccInit           ( const char        * loc )
   int use_gettext = 0;
   if(!openicc_i18n_init)
   {
-    oyjlTr_s * trc = NULL;
+    oyjlTranslation_s * trc = NULL;
     if(loc)
-      trc = oyjlTr_New( loc, "openicc", 0,0,0,0,0 );
+      trc = oyjlTranslation_New( loc, "openicc", 0,0,0,0,0 );
 #ifdef USE_GETTEXT
     use_gettext = 1;
 #endif
     ++openicc_i18n_init;
     oyjlInitLanguageDebug( "OpenICC", OI_DEBUG, openicc_debug, use_gettext, "OI_LOCALEDIR", OPENICC_LOCALEDIR, &trc, openiccMessage_p );
-    oyjlTr_Release( &trc );
+    oyjlTranslation_Release( &trc );
   }
 
   if(getenv(OI_DEBUG))
