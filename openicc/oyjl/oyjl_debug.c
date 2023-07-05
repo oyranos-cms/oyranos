@@ -214,8 +214,12 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
                 }
                 if(func_name && oyjl_has_c__filt_) /* demangle C++ */
                 {
-                  t = oyjlReadCommandF( &size, "r", NULL, "c++filt %s", func_name );
+                  char * symbol_name = oyjlStringCopy( func_name, 0 );
+                  t = strchr( symbol_name, '(' );
+                  if(t) t[0] = '\000';
+                  t = oyjlReadCommandF( &size, "r", NULL, "c++filt %s", symbol_name );
                   oyjlStringReplace( &t, "\n", "", NULL,NULL );
+                  free(symbol_name);
                 }
                 else
                 {
