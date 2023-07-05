@@ -125,7 +125,7 @@ oyjl_val oyjlTreeParseXXX            ( const char        * text,
         {
           const char * fn = "oyjl-translate-temp.ts";
           oyjlWriteFile( fn, json, strlen(json) );
-          fprintf( stderr, "wrote: %s %lu\n", fn, strlen(json) );
+          fprintf( stderr, "wrote: %s %lu\n", fn, (long)strlen(json) );
         }
         root = oyjlTreeParseXXX( json, input, verbose );
       }

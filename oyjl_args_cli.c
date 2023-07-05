@@ -173,7 +173,7 @@ int oyjlArgsCliStart__               ( int                 argc,
         fprintf( stderr, "Assume file name or stream: %s\n", json );
     } else
       if(debug)
-        fprintf( stderr, "Found Json org/freedesktop/oyjl/modules: %lu\n", strlen(json) );
+        fprintf( stderr, "Found Json org/freedesktop/oyjl/modules: %lu\n", (long)strlen(json) );
     //mgr.setUri( QString(json) );
     input = oyjlStringCopy( json, 0 );
   }
@@ -182,7 +182,7 @@ int oyjlArgsCliStart__               ( int                 argc,
     json = oyjlUi_ToJson( ui, 0 ); // generate JSON from ui data struct
     char * merged = NULL;
     if(debug)
-      fprintf( stderr, "oyjlUi_ToJson(): %lu\n", json?strlen(json):0);
+      fprintf( stderr, "oyjlUi_ToJson(): %lu\n", json?(long)strlen(json):0);
     if(root && json)
     {
       oyjl_val module = oyjlTreeParse( json, error_buffer, 256 );
