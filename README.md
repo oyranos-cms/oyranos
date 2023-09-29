@@ -129,11 +129,11 @@ device specific Informations (ICC profiles) und system wide settings.
   (a) replace '_gitroot' variable,
   (b) replace the branch name in line 44.
 
-#### openSUSE Leap 15.4
-    zypper install cmake color-filesystem gcc-c++ git autoconf libtool make patch pkgconfig desktop-file-utils xdg-utils update-desktop-files ghostscript-fonts-std Mesa-devel libltdl-devel cups-devel elektra libxml2-devel libyajl-devel liblcms-devel liblcms2-devel libjpeg-devel libpng-devel libtiff-devel libraw-devel libexiv2-devel libxcm-devel libXcm0 xorg-x11-libXfixes-devel xorg-x11-libXpm-devel libXinerama-devel libXrandr-devel sane-backends-devel fltk-devel libXft-devel ftgl-devel gettext gettext-tools cairo-devel netpbm
+#### openSUSE Leap 15.5
+    zypper install cmake color-filesystem gcc-c++ git autoconf libtool make patch pkgconfig desktop-file-utils xdg-utils update-desktop-files ghostscript-fonts-std Mesa-devel libltdl-devel cups-devel elektra libxml2-devel libyajl-devel libyaml-devel libmicrohttpd-devel liblcms-devel liblcms2-devel libjpeg-devel libpng-devel libtiff-devel libraw-devel libexiv2-devel libxcm-devel libXcm0 xorg-x11-libXfixes-devel xorg-x11-libXpm-devel libXinerama-devel libXrandr-devel libXxf86vm-devel xbacklight sane-backends-devel fltk-devel libXft-devel ftgl-devel gettext gettext-tools cairo-devel netpbm
     # oyranos-0.9.7 can now be installed successfully.
     zypper install libqt4-devel libqt5-qtbase-common-devel          # Synnefo
-    zypper install patterns-openSUSE-devel_kde_frameworks           # KolorManager
+    zypper install patterns-kde-devel_kde_frameworks                # KolorManager
     zypper install gtk2-devel libopenexr-devel gutenprint-devel     # CinePaint
     zypper install doxygen graphviz                                 # for documentation
 
