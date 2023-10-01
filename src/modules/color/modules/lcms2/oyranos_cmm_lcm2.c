@@ -46,6 +46,8 @@
 #ifdef _OPENMP
 #define USE_OPENMP 1
 #include <omp.h>
+#else
+#warning "no openmp optimisation"
 #endif
 
 extern oyCMMapi4_s_   l2cms_api4_cmm;
