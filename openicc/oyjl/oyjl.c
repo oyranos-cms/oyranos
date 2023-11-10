@@ -47,13 +47,15 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
 
   if(text && try_format && strcasecmp(try_format, "JSON") == 0 && text[0] != '{' && strstr(text, "\n{"))
     text = strstr(text, "\n{") + 1;
+  else if(text && try_format && strcasecmp(try_format, "XML") == 0 && text[0] != '<' && strstr(text, "\n<"))
+    text = strstr(text, "\n<") + 1;
 
   if(text && try_format && strcasecmp(try_format, "CSV") == 0)
     delimiter = OYJL_DELIMITER_COMMA;
   if(text && try_format && strcasecmp(try_format, "CSV-semicolon") == 0)
     delimiter = OYJL_DELIMITER_SEMICOLON;
 
-  if(try_format && strcasecmp(try_format, "JSON") != 0 && strcasecmp(try_format, "CSV") != 0 && strcasecmp(try_format, "CSV-semicolon") != 0)
+  if(try_format && strcasecmp(try_format, "JSON") != 0 && strcasecmp(try_format, "XML") != 0 && strcasecmp(try_format, "CSV") != 0 && strcasecmp(try_format, "CSV-semicolon") != 0)
   {
     oyjlOption_s * o = oyjlOptions_GetOptionL( opts, "try-format", 0/* flags */ );
     char * t = oyjlOption_PrintArg_(o, oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_OPTION_ONLY);
@@ -202,6 +204,7 @@ int myMain( int argc, const char ** argv )
                                     {".",           _("Dot"),           _("Decimal Separator"),       NULL},
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s r_choices[] = {{"JSON",        "JSON",             NULL,                         NULL},
+                                    {"XML",         "XML",              NULL,                         NULL},
                                     {"CSV",         "CSV",              NULL,                         NULL},
                                     {"CSV-semicolon","CSV-semicolon",   NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
