@@ -51,6 +51,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--try-format</strong>=<em>FORMAT</em></td> <td>Try to find data format, even with offset.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-r</strong> JSON</td><td># JSON</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> XML</td><td># XML</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-r</strong> CSV</td><td># CSV</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-r</strong> CSV-semicolon</td><td># CSV-semicolon</td></tr>
   </table>
