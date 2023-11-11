@@ -204,6 +204,9 @@ int myMain( int argc, const char ** argv )
                                     {_("View MAN page"),_("oyjl-translate -X man | groff -T utf8 -man -"), NULL,NULL},
                                     {NULL,NULL,NULL,NULL}};
 
+  oyjlOptionChoice_s E_choices[] = {{"OUTPUT_CHARSET", _("Set the GNU gettext output encoding."),_("Alternatively use the -l=de_DE.UTF-8 option."),_("Typical value is UTF-8.")},
+                                    {NULL,NULL,NULL,NULL}};
+
   oyjlOptionChoice_s S_choices[] = {{"oyjl(1) oyjl-args(1) oyjl-args-qml(1)","https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html",               NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
 
@@ -245,6 +248,8 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)f_choices, sizeof(f_choices), malloc ), 0}}, oyjlSTRING,    {.s=&function_name_out}, NULL},
     {"oiwi", 0,                          "A","man-examples",  NULL,     _("Examples"), NULL,                         NULL, NULL,               
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {}, NULL},
+    {"oiwi", 0,                          "E","man-environment_variables",NULL,_("Environment Variables"),NULL,       NULL, NULL,               
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)E_choices, sizeof(E_choices), malloc ), 0}}, oyjlNONE,      {}, NULL},
     {"oiwi", 0,                          "S","man-see_also",  NULL,     _("See Also"), NULL,                         NULL, NULL,               
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)S_choices, sizeof(S_choices), malloc ), 0}}, oyjlNONE,      {}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "h","help",      NULL,     NULL,          NULL,                         NULL, NULL,               
@@ -467,15 +472,22 @@ int myMain( int argc, const char ** argv )
 
         for(i = 0; i < ln; ++i)
         {
-          char * lang = langs[i];
+          char * lang = langs[i], * language = NULL;
           int j, k;
 
           const char * checklocale = setlocale( LC_MESSAGES, lang );
           if(*oyjl_debug || checklocale == NULL || verbose)
-            fprintf(stderr, "setlocale(%s) == %s\n", lang, checklocale );
+            fprintf(stderr, "setlocale(%s) == %s\n", oyjlTermColor(oyjlGREEN,lang), checklocale );
 
           if(!checklocale)
             continue;
+
+
+          oyjlStringAdd( &language, 0,0, "LANGUAGE=%s", lang );
+          if(*oyjl_debug || verbose)
+            fprintf(stderr, "putenv(%s)\n", oyjlTermColor(oyjlGREEN,language) );
+          putenv(language); /* GNU */
+          free(language);
 
           for(k = 0; k < domains_n; ++k)
           {
@@ -487,17 +499,17 @@ int myMain( int argc, const char ** argv )
             if(verbose)
             {
               char * t = NULL;
-              char * language = oyjlLanguage( lang );
+              language = oyjlLanguage( lang );
               oyjlStringAdd( &t, 0,0, "%s/%s/LC_MESSAGES/%s.mo", oyjl_domain_path, language, domain );
               if(oyjlIsFile(t, "r", OYJL_NO_CHECK, NULL, 0))
-                fprintf(stderr, "Found translation file: %s\n", t);
+                fprintf(stderr, "Found translation file: %s\n", oyjlTermColor(oyjlGREEN,t));
               free(t);
               free(language);
             }
 #endif
 
             if(*oyjl_debug || verbose)
-              fprintf( stderr, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjl_domain_path, domain, var );
+              fprintf( stderr, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjlTermColor(oyjlGREEN,oyjl_domain_path), domain, var );
 
             for(j = 0; j < count; ++j)
             {
@@ -521,8 +533,8 @@ int myMain( int argc, const char ** argv )
 #else
                     tr = t;
 #endif
-                  if(verbose)
-                    fprintf(stderr, "found:\t key: %s value[%s]: \"%s\"\n", path, domain, tr?tr:"----" );
+                  if(verbose && t && t[0])
+                    fprintf(stderr, "found:\t key: %s value[%s](%s): \"%s\"\n", path, domain, t, tr?(t == tr?oyjlTermColor(oyjlITALIC,tr):oyjlTermColor(oyjlBOLD,tr)):oyjlTermColor(oyjlBLUE,"----") );
                   if(t != tr || list_empty)
                   {
                     char * new_path = NULL, * new_key = oyjlStringCopy( t, NULL ), * tmp;
