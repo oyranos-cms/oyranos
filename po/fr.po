@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2023-09-18 06:52+0200\n"
+"POT-Creation-Date: 2023-11-10 13:46+0100\n"
 "PO-Revision-Date: 2006-06-29 19:31+0200\n"
 "Last-Translator: Pascal LACROIX <lacroixpascal at vfemail.net>\n"
 "Language-Team: <fr@li.org>\n"
@@ -30,15 +30,15 @@ msgstr ""
 msgid "2. Color"
 msgstr "Couleur"
 
-#: oyjl.c:250 oyjl_translate.c:214
+#: oyjl.c:250 oyjl_translate.c:217
 msgid "A JSON file name or a input stream like \"stdin\"."
 msgstr ""
 
-#: oyjl_translate.c:216
+#: oyjl_translate.c:219
 msgid "A JSON file name or a output stream like \"stdout\"."
 msgstr ""
 
-#: oyjl_translate.c:242
+#: oyjl_translate.c:245
 msgid "A input function name string. e.g.: \"i18n(\\\"\""
 msgstr ""
 
@@ -50,11 +50,11 @@ msgstr ""
 msgid "A name for the symbol to be defined."
 msgstr ""
 
-#: oyjl_translate.c:218
+#: oyjl_translate.c:221
 msgid "A output format string."
 msgstr ""
 
-#: oyjl_translate.c:244
+#: oyjl_translate.c:247
 msgid "A output funtion name string. e.g.: \"_\""
 msgstr ""
 
@@ -74,15 +74,15 @@ msgstr ""
 msgid "Actual mode"
 msgstr ""
 
-#: oyjl_translate.c:220 oyjl_translate.c:272
+#: oyjl_translate.c:223 oyjl_translate.c:277
 msgid "Add"
 msgstr ""
 
-#: oyjl_translate.c:220
+#: oyjl_translate.c:223
 msgid "Add Translation"
 msgstr ""
 
-#: oyjl_translate.c:202 oyjl_translate.c:220 oyjl_translate.c:272
+#: oyjl_translate.c:202 oyjl_translate.c:223 oyjl_translate.c:277
 msgid "Add gettext translated keys to JSON"
 msgstr ""
 
@@ -97,6 +97,10 @@ msgstr ""
 
 #: test-args.c:433
 msgid "Alternate"
+msgstr ""
+
+#: oyjl_translate.c:207
+msgid "Alternatively use the -l=de_DE.UTF-8 option."
 msgstr ""
 
 #: test-args.c:431 test-core.c:1250 test.c:1999 test.c:2136
@@ -190,7 +194,7 @@ msgid "Command line parser"
 msgstr ""
 
 #. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
-#: oyjl_translate.c:269
+#: oyjl_translate.c:274
 #, fuzzy
 msgid "Common Options"
 msgstr "Options"
@@ -212,11 +216,11 @@ msgstr "Sortie"
 msgid "Convert"
 msgstr "ICC Examin Version"
 
-#: oyjl_translate.c:201 oyjl_translate.c:238
+#: oyjl_translate.c:201 oyjl_translate.c:241
 msgid "Convert JSON to gettext ready C strings"
 msgstr ""
 
-#: oyjl_translate.c:270
+#: oyjl_translate.c:275
 msgid "Convert JSON/C to gettext ready C strings"
 msgstr ""
 
@@ -239,21 +243,21 @@ msgstr ""
 msgid "Convert eXported developer JSON to C source"
 msgstr ""
 
-#: oyjl_translate.c:222 oyjl_translate.c:273
+#: oyjl_translate.c:225 oyjl_translate.c:278
 #, fuzzy
 msgid "Copy"
 msgstr "Copyright"
 
-#: oyjl_translate.c:222
+#: oyjl_translate.c:225
 #, fuzzy
 msgid "Copy Translations"
 msgstr "Oyranos Préférences"
 
-#: oyjl_translate.c:273
+#: oyjl_translate.c:278
 msgid "Copy keys to JSON"
 msgstr ""
 
-#: oyjl_translate.c:203 oyjl_translate.c:222
+#: oyjl_translate.c:203 oyjl_translate.c:225
 msgid "Copy translated keys to JSON. Skip gettext."
 msgstr ""
 
@@ -300,7 +304,7 @@ msgstr ""
 msgid "Development"
 msgstr ""
 
-#: oyjl_translate.c:234
+#: oyjl_translate.c:237
 msgid "Directory"
 msgstr ""
 
@@ -312,7 +316,7 @@ msgstr ""
 msgid "Documentation"
 msgstr ""
 
-#: oyjl_translate.c:224
+#: oyjl_translate.c:227
 msgid "Domains"
 msgstr ""
 
@@ -350,7 +354,7 @@ msgstr ""
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:5497
+#: oyjl_args.c:5497 oyjl_translate.c:251
 msgid "Environment Variables"
 msgstr ""
 
@@ -363,7 +367,7 @@ msgstr ""
 msgid "Example2"
 msgstr ""
 
-#: oyjl-args.c:101 oyjl.c:266 oyjl_args.c:5493 oyjl_translate.c:246
+#: oyjl-args.c:101 oyjl.c:266 oyjl_args.c:5493 oyjl_translate.c:249
 msgid "Examples"
 msgstr ""
 
@@ -379,16 +383,16 @@ msgstr ""
 msgid "Export formated text"
 msgstr ""
 
-#: oyjl_translate.c:238 oyjl_translate.c:270
+#: oyjl_translate.c:241 oyjl_translate.c:275
 #, fuzzy
 msgid "Extract"
 msgstr "Soustraction"
 
-#: oyjl_translate.c:238
+#: oyjl_translate.c:241
 msgid "Extract translatable Messages"
 msgstr ""
 
-#: oyjl-args.c:88 oyjl.c:250 oyjl_translate.c:214 oyjl_translate.c:216
+#: oyjl-args.c:88 oyjl.c:250 oyjl_translate.c:217 oyjl_translate.c:219
 #: test-args.c:413 test-args.c:414 test-args.c:975 test-args.c:1090
 #: test-core.c:1234 test-core.c:1235 test.c:1985 test.c:1986 test.c:2124
 #: test.c:2125 oyjl-args-qml/mini-app.c:179 oyjl-args-qml/mini-app.c:180
@@ -399,7 +403,7 @@ msgstr ""
 msgid "FILES"
 msgstr ""
 
-#: oyjl.c:258 oyjl_translate.c:218
+#: oyjl.c:258 oyjl_translate.c:221
 msgid "FORMAT"
 msgstr ""
 
@@ -412,7 +416,7 @@ msgstr ""
 msgid "File"
 msgstr "Fichier"
 
-#: oyjl.c:250 oyjl_translate.c:214 oyjl_translate.c:216
+#: oyjl.c:250 oyjl_translate.c:217 oyjl_translate.c:219
 #, fuzzy
 msgid "File or Stream"
 msgstr "Fichier"
@@ -428,16 +432,16 @@ msgid ""
 "For --render=XXX use -X=json JSON."
 msgstr ""
 
-#: oyjl-args.c:132 oyjl.c:316 oyjl_translate.c:292 oyjl_web.c:107
+#: oyjl-args.c:132 oyjl.c:316 oyjl_translate.c:297 oyjl_web.c:107
 #: oyjl-args-qml/main.cpp:118
 msgid "For more information read the man page:"
 msgstr ""
 
-#: oyjl-args.c:105 oyjl.c:254 oyjl.c:295 oyjl_translate.c:218
+#: oyjl-args.c:105 oyjl.c:254 oyjl.c:295 oyjl_translate.c:221
 msgid "Format"
 msgstr ""
 
-#: oyjl_translate.c:218
+#: oyjl_translate.c:221
 msgid "Format string"
 msgstr ""
 
@@ -449,16 +453,16 @@ msgstr ""
 msgid "Full Help"
 msgstr ""
 
-#: oyjl_translate.c:242 test.c:1988
+#: oyjl_translate.c:245 test.c:1988
 msgid "Function"
 msgstr ""
 
-#: oyjl_translate.c:242 oyjl_translate.c:244
+#: oyjl_translate.c:245 oyjl_translate.c:247
 #, fuzzy
 msgid "Function Name"
 msgstr "Fichier"
 
-#: oyjl_translate.c:244
+#: oyjl_translate.c:247
 #, fuzzy
 msgid "Function Out"
 msgstr "Fichier"
@@ -476,7 +480,7 @@ msgstr ""
 msgid "GUI + Command"
 msgstr ""
 
-#: oyjl-args.c:116 oyjl.c:296 oyjl_translate.c:274 oyjl_web.c:94
+#: oyjl-args.c:116 oyjl.c:296 oyjl_translate.c:279 oyjl_web.c:94
 #: test-args.c:436 test-args.c:800 test-args.c:986 test-args.c:1101
 #: test-core.c:1252 test-core.c:1336 test.c:2001 test.c:2138
 #: oyjl-args-qml/mini-app.c:196 oyjl-args-qml/main.cpp:105
@@ -555,7 +559,7 @@ msgstr ""
 msgid "History"
 msgstr ""
 
-#: oyjl_translate.c:273
+#: oyjl_translate.c:278
 msgid ""
 "Import translations from other formats without gettext. Supported --input=Qt-"
 "xml-format.tr"
@@ -570,7 +574,7 @@ msgstr "Description"
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: oyjl.c:250 oyjl.c:285 oyjl_translate.c:214 oyjl-args-qml/main.cpp:83
+#: oyjl.c:250 oyjl.c:285 oyjl_translate.c:217 oyjl-args-qml/main.cpp:83
 #, fuzzy
 msgid "Input"
 msgstr "Entrée"
@@ -612,17 +616,17 @@ msgstr ""
 msgid "Key Name"
 msgstr "Nom"
 
-#: oyjl_translate.c:226
+#: oyjl_translate.c:229
 #, fuzzy
 msgid "Key Name List"
 msgstr "Nom"
 
-#: oyjl_translate.c:226
+#: oyjl_translate.c:229
 #, fuzzy
 msgid "Key Names"
 msgstr "Nom"
 
-#: oyjl_translate.c:234
+#: oyjl_translate.c:237
 msgid "LOCALEDIR"
 msgstr ""
 
@@ -639,7 +643,7 @@ msgstr ""
 msgid "Line for a number argument."
 msgstr ""
 
-#: oyjl_translate.c:232
+#: oyjl_translate.c:235
 msgid "List empty"
 msgstr ""
 
@@ -648,7 +652,7 @@ msgstr ""
 msgid "List groups"
 msgstr "Oyranos Préférences"
 
-#: oyjl_translate.c:232
+#: oyjl_translate.c:235
 #, fuzzy
 msgid "List not translated"
 msgstr "Oyranos Préférences"
@@ -663,19 +667,19 @@ msgstr ""
 msgid "Load a UI JSON declaration from tool"
 msgstr "Oyranos Préférences"
 
-#: oyjl_translate.c:228
+#: oyjl_translate.c:231
 msgid "Locale"
 msgstr ""
 
-#: oyjl_translate.c:234
+#: oyjl_translate.c:237
 msgid "Locale Directory"
 msgstr ""
 
-#: oyjl_translate.c:230
+#: oyjl_translate.c:233
 msgid "Locales"
 msgstr ""
 
-#: oyjl_translate.c:230
+#: oyjl_translate.c:233
 msgid "Locales List"
 msgstr ""
 
@@ -706,7 +710,7 @@ msgid "Markdown"
 msgstr ""
 
 #. parsed and checked with -i option
-#: oyjl-args.c:116 oyjl.c:296 oyjl_translate.c:274 oyjl_web.c:94
+#: oyjl-args.c:116 oyjl.c:296 oyjl_translate.c:279 oyjl_web.c:94
 #: test-args.c:436 test-args.c:800 test-args.c:986 test-args.c:1101
 #: test-core.c:1252 test-core.c:1336 test.c:2001 test.c:2138
 #: oyjl-args-qml/mini-app.c:196 oyjl-args-qml/main.cpp:105
@@ -799,7 +803,7 @@ msgid "Multiple arguments for one option need each one option in front."
 msgstr ""
 
 #: oyjl.c:264 oyjl_args.c:5698 oyjl_args.c:6209 oyjl_args_tree.c:602
-#: oyjl_translate.c:242 oyjl_translate.c:244
+#: oyjl_translate.c:245 oyjl_translate.c:247
 msgid "NAME"
 msgstr ""
 
@@ -857,7 +861,7 @@ msgid ""
 "symbol '|'."
 msgstr ""
 
-#: oyjl_translate.c:236
+#: oyjl_translate.c:239
 #, fuzzy
 msgid "Only Translations"
 msgstr "Oyranos Préférences"
@@ -915,7 +919,7 @@ msgid ""
 "has no leading '--'. It is a mandatory option of a option group."
 msgstr ""
 
-#: oyjl_translate.c:216 oyjl-args-qml/main.cpp:85
+#: oyjl_translate.c:219 oyjl-args-qml/main.cpp:85
 #, fuzzy
 msgid "Output"
 msgstr "Sortie"
@@ -943,12 +947,12 @@ msgid "Oyjl Module Author"
 msgstr "Oyranos Préférences"
 
 #. argc+argv are required for parsing the command line options
-#: oyjl_translate.c:279
+#: oyjl_translate.c:284
 #, fuzzy
 msgid "Oyjl Translation"
 msgstr "Oyranos Préférences"
 
-#: oyjl_translate.c:279
+#: oyjl_translate.c:284
 #, fuzzy
 msgid "Oyjl UI JSON Translation tool"
 msgstr "Oyranos Préférences"
@@ -1149,7 +1153,7 @@ msgstr "Oyranos Préférences"
 msgid "Render UI"
 msgstr "Oyranos Préférences"
 
-#: oyjl_translate.c:427
+#: oyjl_translate.c:432
 #, fuzzy
 msgid "Rendering Intent"
 msgstr "Oyranos Préférences"
@@ -1185,7 +1189,7 @@ msgstr ""
 msgid "Security Alert:"
 msgstr ""
 
-#: oyjl-args.c:103 oyjl.c:268 oyjl_args.c:5505 oyjl_translate.c:248
+#: oyjl-args.c:103 oyjl.c:268 oyjl_args.c:5505 oyjl_translate.c:253
 msgid "See Also"
 msgstr ""
 
@@ -1227,12 +1231,16 @@ msgstr "Valeur"
 msgid "Set a key name to a value"
 msgstr ""
 
-#: oyjl_translate.c:269
+#: oyjl_translate.c:274
 msgid "Set basic parameters"
 msgstr ""
 
 #: oyjl.c:285
 msgid "Set input file and path"
+msgstr ""
+
+#: oyjl_translate.c:207
+msgid "Set the GNU gettext output encoding."
 msgstr ""
 
 #. tell about the tool
@@ -1281,7 +1289,7 @@ msgstr ""
 msgid "Simple tool with two options, which both accept arguments."
 msgstr ""
 
-#: oyjl_translate.c:228
+#: oyjl_translate.c:231
 msgid "Single Locale"
 msgstr ""
 
@@ -1324,11 +1332,11 @@ msgstr ""
 msgid "Synopsis"
 msgstr ""
 
-#: oyjl_translate.c:224
+#: oyjl_translate.c:227
 msgid "TEXTDOMAIN1,TEXTDOMAIN2"
 msgstr ""
 
-#: oyjl.c:262 oyjl_translate.c:240
+#: oyjl.c:262 oyjl_translate.c:243
 msgid "TYPE"
 msgstr ""
 
@@ -1336,7 +1344,7 @@ msgstr ""
 msgid "Test"
 msgstr ""
 
-#: oyjl_translate.c:224
+#: oyjl_translate.c:227
 msgid "Text Domain List"
 msgstr ""
 
@@ -1533,7 +1541,7 @@ msgstr ""
 msgid "Tools follows syntax rules."
 msgstr ""
 
-#: oyjl_translate.c:236
+#: oyjl_translate.c:239
 msgid "Translations only"
 msgstr ""
 
@@ -1549,7 +1557,7 @@ msgstr ""
 msgid "Try to find data format, even with offset."
 msgstr ""
 
-#: oyjl_translate.c:270
+#: oyjl_translate.c:275
 msgid ""
 "Two input modes are supported. Read Oyjl UI -X=export JSON. Or parse C "
 "sources to --function-name defined strings and replace them in --output by --"
@@ -1560,6 +1568,10 @@ msgstr ""
 #: oyjl.c:248 oyjl.c:293
 msgid "Type"
 msgstr "Type"
+
+#: oyjl_translate.c:207
+msgid "Typical value is UTF-8."
+msgstr ""
 
 #. tell about the tool
 #. argc+argv are required for parsing the command line options
@@ -1580,7 +1592,7 @@ msgid "Url"
 msgstr ""
 
 #: oyjl_args.c:5947 oyjl_args_cli.c:276 oyjl_args_tree.c:607
-#: oyjl_translate.c:308
+#: oyjl_translate.c:313
 msgid "Usage"
 msgstr ""
 
@@ -1589,7 +1601,7 @@ msgstr ""
 #: oyjl_args.c:3435 oyjl_args.c:3453 oyjl_args.c:3479 oyjl_args.c:3506
 #: oyjl_args.c:3528 oyjl_args.c:3556 oyjl_args.c:3592 oyjl_args.c:3624
 #: oyjl_args.c:3763 oyjl_args.c:5019 oyjl_args.c:5051 oyjl_message.c:75
-#: oyjl_translate.c:137 oyjl_translate.c:563 oyjl_yajl.c:1256
+#: oyjl_translate.c:137 oyjl_translate.c:575 oyjl_yajl.c:1256
 msgid "Usage Error:"
 msgstr ""
 
@@ -1610,11 +1622,11 @@ msgstr ""
 msgid "Uses by default dot '.' as decimal separator."
 msgstr ""
 
-#: oyjl.c:273 oyjl_translate.c:254 oyjl-args-qml/main.cpp:88
+#: oyjl.c:273 oyjl_translate.c:259 oyjl-args-qml/main.cpp:88
 msgid "Verbose"
 msgstr ""
 
-#: oyjl-args.c:99 oyjl.c:276 oyjl_args_tree.c:579 oyjl_translate.c:256
+#: oyjl-args.c:99 oyjl.c:276 oyjl_args_tree.c:579 oyjl_translate.c:261
 #: test-core.c:1240 oyjl-args-qml/main.cpp:90
 #, fuzzy
 msgid "Version"
@@ -1633,7 +1645,7 @@ msgstr ""
 msgid "Wrap Name"
 msgstr "Type"
 
-#: oyjl.c:262 oyjl_translate.c:240
+#: oyjl.c:262 oyjl_translate.c:243
 #, fuzzy
 msgid "Wrap Type"
 msgstr "Type"
@@ -1654,11 +1666,11 @@ msgstr ""
 msgid "Yes"
 msgstr "Oui"
 
-#: oyjl_translate.c:228
+#: oyjl_translate.c:231
 msgid "de_DE"
 msgstr ""
 
-#: oyjl_translate.c:230
+#: oyjl_translate.c:233
 msgid "de_DE,es_ES"
 msgstr ""
 
@@ -1686,7 +1698,7 @@ msgstr ""
 msgid "help"
 msgstr "Aide"
 
-#: oyjl.c:273 oyjl_translate.c:254
+#: oyjl.c:273 oyjl_translate.c:259
 msgid "increase verbosity"
 msgstr ""
 
@@ -1700,7 +1712,7 @@ msgstr ""
 msgid "input"
 msgstr "Entrée"
 
-#: oyjl.c:262 oyjl_translate.c:240
+#: oyjl.c:262 oyjl_translate.c:243
 msgid "language specific wrap"
 msgstr ""
 
@@ -1708,18 +1720,18 @@ msgstr ""
 msgid "lines found."
 msgstr ""
 
-#: oyjl_translate.c:232
+#: oyjl_translate.c:235
 #, fuzzy
 msgid "list empty translations too"
 msgstr "Oyranos Préférences"
 
-#: oyjl_translate.c:234
+#: oyjl_translate.c:237
 msgid ""
 "locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo "
 "gettext translations"
 msgstr ""
 
-#: oyjl_translate.c:230
+#: oyjl_translate.c:233
 msgid "locales in a comma separated list"
 msgstr ""
 
@@ -1729,7 +1741,7 @@ msgstr ""
 msgid "mini OyjlArgsQml example"
 msgstr ""
 
-#: oyjl_translate.c:226
+#: oyjl_translate.c:229
 #, fuzzy
 msgid "name,description,help"
 msgstr "Description"
@@ -1752,7 +1764,7 @@ msgstr ""
 msgid "output"
 msgstr "Sortie"
 
-#: oyjl_translate.c:236
+#: oyjl_translate.c:239
 #, fuzzy
 msgid "output only translations"
 msgstr "Oyranos Préférences"
@@ -1902,11 +1914,11 @@ msgstr ""
 msgid "status"
 msgstr ""
 
-#: oyjl_translate.c:224
+#: oyjl_translate.c:227
 msgid "text domain list of your project"
 msgstr ""
 
-#: oyjl_translate.c:226
+#: oyjl_translate.c:229
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
@@ -1916,7 +1928,7 @@ msgstr ""
 msgid "verbose"
 msgstr ""
 
-#: oyjl-args.c:99 oyjl.c:276 oyjl_translate.c:256 oyjl_web.c:80
+#: oyjl-args.c:99 oyjl.c:276 oyjl_translate.c:261 oyjl_web.c:80
 #: test-core.c:1240 oyjl-args-qml/main.cpp:90
 #, fuzzy
 msgid "version"

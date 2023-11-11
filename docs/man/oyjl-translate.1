@@ -1,0 +1,189 @@
+.TH "oyjl-translate" 1 "January 2, 2020" "User Commands"
+.SH NAME
+oyjl-translate v1.0.0 \- Oyjl Translation
+.SH SYNOPSIS
+\fBoyjl-translate\fR \fB\-e\fR \fB\-k\fR \fIname,description,help...\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-o\fR \fIFILENAME\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR] [\fB\-\-function-name\fR \fINAME\fR] [\fB\-\-function-name-out\fR \fINAME\fR]
+.br
+\fBoyjl-translate\fR \fB\-a\fR \fB\-d\fR \fITEXTDOMAIN1,TEXTDOMAIN2\fR \fB\-k\fR \fIname,description,help...\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-o\fR \fIFILENAME\fR] [\fB\-l\fR \fIde_DE,es_ES\fR] [\fB\-p\fR \fILOCALEDIR\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-t\fR] [\fB\-n\fR] [\fB\-v\fR]
+.br
+\fBoyjl-translate\fR \fB\-c\fR \fB\-\-locale\fR \fIde_DE\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-o\fR \fIFILENAME\fR] [\fB\-n\fR] [\fB\-v\fR]
+.br
+\fBoyjl-translate\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
+.SH DESCRIPTION
+Convert Oyjl UI JSON to C translatable strings for use with gettext tools and translate a tools UI using the programs own text domain. The resulting Oyjl UI JSON can be used for translated rendering.
+.SH OPTIONS
+.SS
+Set basic parameters
+.br
+\fB\-i\fR|\fB\-\-input\fR \fIFILENAME\fR	File or Stream
+.RS
+A JSON file name or a input stream like "stdin".
+.RE
+\fB\-o\fR|\fB\-\-output\fR \fIFILENAME\fR	File or Stream
+.RS
+A JSON file name or a output stream like "stdout".
+.RE
+.SS
+Convert JSON/C to gettext ready C strings
+\fBoyjl-translate\fR \fB\-e\fR \fB\-k\fR \fIname,description,help...\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-o\fR \fIFILENAME\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-v\fR] [\fB\-\-function-name\fR \fINAME\fR] [\fB\-\-function-name-out\fR \fINAME\fR]
+.br
+Two input modes are supported. Read Oyjl UI -X=export JSON. Or parse C sources to --function-name defined strings and replace them in --output by --function-name-out. The later is useful for oyjlTranslation_s, Qt style or other translations.
+.br
+.sp
+.br
+\fB\-e\fR|\fB\-\-extract\fR	Extract translatable Messages
+.RS
+Convert JSON to gettext ready C strings
+.RE
+\fB\-f\fR|\fB\-\-format\fR \fIFORMAT\fR	Format string
+.RS
+A output format string.
+.RE
+\fB\-k\fR|\fB\-\-key-list\fR \fIname,description,help...\fR	Key Name List
+.RS
+to be used key names in a comma separated list
+.RE
+\fB\-\-function-name\fR \fINAME\fR	Function Name
+.RS
+A input function name string. e.g.: "i18n(\""
+.RE
+	\fB\-\-function-name\fR _(\"
+.br
+	\fB\-\-function-name\fR i18n(\"
+.br
+	\fB\-\-function-name\fR QObject::tr(\"
+.br
+\fB\-\-function-name-out\fR \fINAME\fR	Function Name
+.RS
+A output funtion name string. e.g.: "_"
+.RE
+	\fB\-\-function-name-out\fR _(\"
+.br
+	\fB\-\-function-name-out\fR i18n(\"
+.br
+	\fB\-\-function-name-out\fR QObject::tr(\"
+.br
+.SS
+Add gettext translated keys to JSON
+\fBoyjl-translate\fR \fB\-a\fR \fB\-d\fR \fITEXTDOMAIN1,TEXTDOMAIN2\fR \fB\-k\fR \fIname,description,help...\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-o\fR \fIFILENAME\fR] [\fB\-l\fR \fIde_DE,es_ES\fR] [\fB\-p\fR \fILOCALEDIR\fR] [\fB\-w\fR \fITYPE\fR] [\fB\-t\fR] [\fB\-n\fR] [\fB\-v\fR]
+.br
+\fB\-a\fR|\fB\-\-add\fR	Add Translation
+.RS
+Add gettext translated keys to JSON
+.RE
+\fB\-d\fR|\fB\-\-domain\fR \fITEXTDOMAIN1,TEXTDOMAIN2\fR	Text Domain List
+.RS
+text domain list of your project
+.RE
+\fB\-l\fR|\fB\-\-locales\fR \fIde_DE,es_ES\fR	Locales List
+.RS
+locales in a comma separated list
+.RE
+\fB\-p\fR|\fB\-\-localedir\fR \fILOCALEDIR\fR	Locale Directory
+.RS
+locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo gettext translations
+.RE
+\fB\-k\fR|\fB\-\-key-list\fR \fIname,description,help...\fR	Key Name List
+.RS
+to be used key names in a comma separated list
+.RE
+\fB\-w\fR|\fB\-\-wrap\fR \fITYPE\fR	language specific wrap
+.br
+	\fB\-w\fR C		# C static char
+.br
+\fB\-t\fR|\fB\-\-translations-only\fR	Only Translations
+.RS
+output only translations
+.RE
+\fB\-n\fR|\fB\-\-list-empty\fR	List not translated
+.RS
+list empty translations too
+.RE
+.SS
+Copy keys to JSON
+\fBoyjl-translate\fR \fB\-c\fR \fB\-\-locale\fR \fIde_DE\fR [\fB\-i\fR \fIFILENAME\fR] [\fB\-o\fR \fIFILENAME\fR] [\fB\-n\fR] [\fB\-v\fR]
+.br
+Import translations from other formats without gettext. Supported --input=Qt-xml-format.tr
+.br
+.sp
+.br
+\fB\-c\fR|\fB\-\-copy\fR	Copy Translations
+.RS
+Copy translated keys to JSON. Skip gettext.
+.RE
+\fB\-\-locale\fR \fIde_DE\fR	Single Locale
+.br
+\fB\-n\fR|\fB\-\-list-empty\fR	List not translated
+.RS
+list empty translations too
+.RE
+.SS
+General options
+\fBoyjl-translate\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-V\fR [\fB\-v\fR]
+.br
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Print help text
+.RS
+Show usage information and hints for the tool.
+.RE
+	\fB\-h\fR -		# Full Help : Print help for all groups
+.br
+	\fB\-h\fR synopsis		# Synopsis : List groups - Show all groups including syntax
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
+.RS
+Get UI converted into text formats
+.RE
+	\fB\-X\fR man		# Man : Unix Man page - Get a unix man page
+.br
+	\fB\-X\fR markdown		# Markdown : Formated text - Get formated text
+.br
+	\fB\-X\fR json		# Json : GUI - Get a Oyjl Json UI declaration
+.br
+	\fB\-X\fR json+command		# Json + Command : GUI + Command - Get Oyjl Json UI declaration incuding command
+.br
+	\fB\-X\fR export		# Export : All available data - Get UI data for developers. The format can be converted by the oyjl-args tool.
+.br
+\fB\-V\fR|\fB\-\-version\fR	Version
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	increase verbosity
+.br
+.SH EXAMPLES
+.TP
+Convert JSON to gettext ready C strings
+.br
+oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_("%s"); ' -k name,description,help
+.TP
+Add gettext translated keys to JSON
+.br
+oyjl-translate -a -i oyjl-ui.json -o result.json -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES
+.TP
+Copy translated keys to JSON. Skip gettext.
+.br
+oyjl-translate -c -i lang.tr -o result.json --locale de_DE
+.TP
+View MAN page
+.br
+oyjl-translate -X man | groff -T utf8 -man -
+.SH ENVIRONMENT VARIABLES
+.TP
+OUTPUT_CHARSET
+.br
+Set the GNU gettext output encoding.
+.br
+Alternatively use the -l=de_DE.UTF-8 option.
+.br
+Typical value is UTF-8.
+.SH SEE ALSO
+.TP
+oyjl(1) oyjl-args(1) oyjl-args-qml(1)
+.br
+https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html
+.SH AUTHOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH COPYRIGHT
+Copyright © 2017-2022 Kai-Uwe Behrmann
+.br
+License: newBSD http://www.oyranos.org
+.SH BUGS
+https://www.gitlab.com/oyranos/oyranos/issues 
+
