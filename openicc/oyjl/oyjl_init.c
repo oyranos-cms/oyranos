@@ -253,9 +253,6 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
     oyjlDebugVariableSet( debug_variable );
   oyjlMessageFuncSet(msg);
 
-  if(debug_variable && *debug_variable)
-    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s loc_domain: %s", OYJL_DBG_ARGS, loc, loc_domain );
-
   if(debug_variable && getenv(env_var_debug))
   {
     *debug_variable = atoi(getenv(env_var_debug));
@@ -266,6 +263,9 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
         msg( oyjlMSG_INFO, 0, "%s (Oyjl compile v: %s runtime v: %d)", project_name, OYJL_VERSION_NAME, v );
     }
   }
+
+  if(*oyjl_debug)
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s loc_domain: %s", OYJL_DBG_ARGS, loc, loc_domain );
 
   oyjlInitI18n_( loc );
 
