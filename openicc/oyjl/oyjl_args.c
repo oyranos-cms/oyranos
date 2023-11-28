@@ -1858,7 +1858,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
   if(msg)
     oyjlMessage_p = msg;
 
-  if(*debug_variable)
+  if(*oyjl_debug)
     oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s loc_domain: %s", OYJL_DBG_ARGS, loc, loc_domain );
 
   if(getenv(env_var_debug))
@@ -1883,6 +1883,67 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
   }
 
   return error;
+}
+char *         oyjlLanguage          ( const char        * loc )
+{
+  char * t = NULL;
+
+  if(loc[0] == 'C')
+    t = strdup("");
+  else
+    if(strchr(loc,'_') != NULL)
+  {
+    t = strdup(loc);
+    char * tmp = strchr(t,'_');
+    tmp[0] = '\000';
+  } else
+    t = strdup(loc);
+
+  if(*oyjl_debug) fprintf(stderr, OYJL_DBG_FORMAT "loc=\"%s\" -> \"%s\"\n", OYJL_DBG_ARGS, loc, t );
+  return t;
+}
+void       oyjlTranslation_SetLocale ( oyjlTranslation_s * context,
+                                       const char        * loc )
+{
+  if(context && oyjlTranslation_Check_(context) && loc && loc[0])
+  {
+    context->loc = loc;
+    context->start = 0;
+    context->end = 0;
+    if(context->lang)
+      free(context->lang);
+    /*context->lang  = oyjlLangForCatalog_( loc, context->catalog,
+                                          &context->start, &context->end,
+                                          context->flags );*/
+  }
+}
+const char *   oyjlLang              ( const char        * loc )
+{
+  const char * lang = NULL;
+
+  if(oyjl_translation_context_)
+  {
+    int i = 0;
+    while(oyjl_translation_context_[i])
+    {
+      oyjlTranslation_s * context = oyjl_translation_context_[i];
+      const char * domain = oyjlTranslation_GetDomain(context);
+      if(*oyjl_debug >= 1)
+      {
+        char * t = oyjlBT(0);
+        oyjlMessage_p( oyjlMSG_INFO, 0, "%s", t );
+        free(t);
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s context[%d]->loc: %s lang: %s domain: %s", OYJL_DBG_ARGS, loc, i, context->loc, lang, domain );
+      }
+      oyjlTranslation_SetLocale( context, loc );
+      lang = context->lang?context->lang:context->loc;
+      if(*oyjl_debug >= 1)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s context[%d]->loc: %s lang: %s", OYJL_DBG_ARGS, loc, i, context->loc, lang );
+      ++i;
+    }
+  }
+
+  return lang;
 }
 #endif /* OYJL_ARGS_BASE */
 
@@ -2074,6 +2135,27 @@ int          oyjlTermColorInit       ( int                 flags )
 /* 256 CLUT */
 #define OYJL_X11_CLUT_256_BASE "\033[38;5;"
 #endif
+const char * oyjlTermColorPtr( oyjlTEXTMARK_e rgb, char ** color_text, const char * text)
+{
+  int color_env = oyjlTermColorInit( *oyjl_debug > 1?OYJL_OBSERVE:0 ),
+      color = color_env & 0x01,
+      truecolor = color_env & 0x02;
+
+  if(*color_text) free(*color_text);
+  *color_text = NULL;
+
+  switch(rgb)
+  {
+    case oyjlNO_MARK:   oyjlStringAdd( color_text, 0,0, "%s", text ); break;
+    case oyjlRED:       oyjlStringAdd( color_text, 0,0, "%s%s%s", truecolor          ? OYJL_RED_TC   : color ? OYJL_RED_B   : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    case oyjlGREEN:     oyjlStringAdd( color_text, 0,0, "%s%s%s", truecolor          ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    case oyjlBLUE:      oyjlStringAdd( color_text, 0,0, "%s%s%s", truecolor          ? OYJL_BLUE_TC  : color ? OYJL_BLUE_B  : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    case oyjlBOLD:      oyjlStringAdd( color_text, 0,0, "%s%s%s", truecolor || color ? OYJL_BOLD                            : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    case oyjlITALIC:    oyjlStringAdd( color_text, 0,0, "%s%s%s", truecolor || color ? OYJL_ITALIC                          : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+    case oyjlUNDERLINE: oyjlStringAdd( color_text, 0,0, "%s%s%s", truecolor || color ? OYJL_UNDERLINE                       : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
+  }
+  return *color_text;
+}
 char * oyjl_term_color_ = NULL;
 /** @brief text formating for terminals
  *
@@ -2086,26 +2168,13 @@ char * oyjl_term_color_ = NULL;
  */
 const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text)
 {
-  int color_env = oyjlTermColorInit( *oyjl_debug > 1?OYJL_OBSERVE:0 ),
-      color = color_env & 0x01,
-      truecolor = color_env & 0x02;
   if(!text)
     return "---";
 
-  if(oyjl_term_color_) free(oyjl_term_color_);
-  oyjl_term_color_ = NULL;
-  switch(rgb)
-  {
-    case oyjlNO_MARK:   oyjlStringAdd( &oyjl_term_color_, 0,0, "%s", text ); break;
-    case oyjlRED:       oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor          ? OYJL_RED_TC   : color ? OYJL_RED_B   : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-    case oyjlGREEN:     oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor          ? OYJL_GREEN_TC : color ? OYJL_GREEN_B : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-    case oyjlBLUE:      oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor          ? OYJL_BLUE_TC  : color ? OYJL_BLUE_B  : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-    case oyjlBOLD:      oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor || color ? OYJL_BOLD                            : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-    case oyjlITALIC:    oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor || color ? OYJL_ITALIC                          : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-    case oyjlUNDERLINE: oyjlStringAdd( &oyjl_term_color_, 0,0, "%s%s%s", truecolor || color ? OYJL_UNDERLINE                       : "", text, truecolor || color ? OYJL_CTEND : "" ); break;
-  }
+  oyjlTermColorPtr( rgb, &oyjl_term_color_, text );
   return oyjl_term_color_;
 }
+char * oyjl_term_color_f_ = NULL;
 /** @brief variable text formating for terminals
  *
  *  @see oyjlTermColor()
@@ -2117,19 +2186,42 @@ const char * oyjlTermColor( oyjlTEXTMARK_e rgb, const char * text)
 const char * oyjlTermColorF( oyjlTEXTMARK_e rgb, const char * format, ...)
 {
   char * tmp = NULL;
-  const char * t = NULL,
-             * text = format;
+  const char * text = format;
 
   if(strchr(format, '%'))
   { OYJL_CREATE_VA_STRING(format, tmp, malloc, return NULL)
     text = tmp;
   }
 
-  t = oyjlTermColor( rgb, text );
+  oyjlTermColorPtr( rgb, &oyjl_term_color_f_, text );
 
   if(tmp) free(tmp);
-  return t;
+  return oyjl_term_color_f_;
 }
+/** @brief variable text formating for terminals
+ *
+ *  @see oyjlTermColorF()
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2023/11/25
+ *  @since   2023/11/26 (Oyjl: 1.0.0)
+ */
+const char * oyjlTermColorFPtr( oyjlTEXTMARK_e rgb, char ** color_text, const char * format, ...)
+{
+  char * tmp = NULL;
+  const char * text = format;
+
+  if(strchr(format, '%'))
+  { OYJL_CREATE_VA_STRING(format, tmp, malloc, return NULL)
+    text = tmp;
+  }
+
+  oyjlTermColorPtr( rgb, color_text, text );
+
+  if(tmp) free(tmp);
+  return *color_text;
+}
+
 
 
 char * oyjl_term_color_html_ = NULL;
@@ -3188,6 +3280,7 @@ oyjlOption_s * oyjlOptions_GetOptionL( oyjlOptions_s     * opts,
       o = NULL;
   }
   if( !(flags & OYJL_QUIET) &&
+      strcmp(ostring,"h") != 0 &&
       !oyjlOptions_IsOn_( opts, "h" ) )
   {
     fprintf( stderr, "%s%s: %s %d\n", *oyjl_debug?oyjlBT(0):"", _("Option not found"), oyjlTermColor(oyjlBOLD,str), flags );
@@ -3961,6 +4054,7 @@ char * oyjlOptions_PrintHelpSynopsis_( oyjlOptions_s  *    opts,
   int on = oyjlStringDelimiterCount_(g->optional, ",|");
   int opt_group = 0;
   int gstyle = style | g->flags;
+  char next_delimiter, at_delimiter = '\000';
   const char * prog = opts->argv[0];
   char * text = oyjlStringCopy( "", malloc );
   if(prog && strchr(prog,'/'))
@@ -3991,12 +4085,22 @@ char * oyjlOptions_PrintHelpSynopsis_( oyjlOptions_s  *    opts,
   {
     char * option = m_list[i];
     oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
-    char next_delimiter = g->mandatory[m_index[i]];
+    next_delimiter = g->mandatory[m_index[i]];
     if(!o)
     {
       fprintf(stdout, "%s %s: option not declared: \"%s\" \"%s\"\n", oyjlBT(0), g->name?oyjlTermColor(oyjlBOLD,g->name):"---", option, g->mandatory);
       if(!getenv("OYJL_NO_EXIT")) exit(1); else return text;
     }
+
+    if(option[0] == '@')
+      at_delimiter = next_delimiter;
+    else
+    if(at_delimiter == '|' && at_delimiter != next_delimiter)
+      at_delimiter = '\000';
+    else
+    if(at_delimiter == '|' && at_delimiter == next_delimiter)
+      continue;
+    else
     if(option[0] != '@' && !(option[0] == '#' && m+on == 1))
     {
       int s = style;
@@ -4009,7 +4113,8 @@ char * oyjlOptions_PrintHelpSynopsis_( oyjlOptions_s  *    opts,
         oyjlStringAdd( &text, malloc, free, " %s", t );
       free(t);
     }
-    if(next_delimiter == '|' && !(option[0] == '#'))
+
+    if(next_delimiter == '|' && !(option[0] == '#') && !(option[0] == '@'))
       oyjlStringPush( &text, " |", malloc, free );
   }
 
@@ -4019,7 +4124,7 @@ char * oyjlOptions_PrintHelpSynopsis_( oyjlOptions_s  *    opts,
   {
     char * option = on_list[i];
     oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
-    char next_delimiter = g->optional[on_index[i]];
+    next_delimiter = g->optional[on_index[i]];
     gstyle = style | oyjlOPTIONSTYLE_OPTIONAL;
     if(i < on - 1 && next_delimiter == '|')
     {
@@ -4053,16 +4158,29 @@ char * oyjlOptions_PrintHelpSynopsis_( oyjlOptions_s  *    opts,
   {
     char * option = m_list[i];
     oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
-    char next_delimiter = g->mandatory[m_index[i]];
+    next_delimiter = g->mandatory[m_index[i]];
     if(next_delimiter != '|' && !o)
     {
       fprintf(stdout, "%s %s: option not declared: %s\n", oyjlBT(0), g->name?g->name:"---", option);
       if(!getenv("OYJL_NO_EXIT")) exit(1);
     }
     if(strcmp(option, "@") == 0)
+    {
       oyjlStringAdd( &text, malloc, free, " %s%s",
           o->value_name?o->value_name:"...",
           o->value_name && o->flags & OYJL_OPTION_FLAG_REPETITION ? " ..." : "" );
+      at_delimiter = next_delimiter;
+    }
+    else
+    if(at_delimiter == '|')
+    {
+      char * t = oyjlOption_PrintArg_(o, style);
+      oyjlStringAdd( &text, malloc, free, " %c %s", at_delimiter, t );
+      free(t);
+    }
+    else
+    if(at_delimiter == '|' && at_delimiter != next_delimiter)
+      at_delimiter = '\000';
   }
   oyjlStringListRelease( &m_list, m, free );
   oyjlStringListRelease( &on_list, on, free );
@@ -4958,9 +5076,15 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
         int n = oyjlOptionChoice_Count( choices );
         for(k = 0; k < n; ++k)
           fprintf( stdout, "%s\n", choices[k].nick );
-        oyjlOptionChoice_Release( &choices );
+        //oyjlOptionChoice_Release( &choices );
+        free(rank_list);
+        free(choices);
         if(!(flags&oyjlUI_STATE_NO_RELEASE))
+        {
+          if(verbose)
+            oyjlOptions_Print_( ui->opts, 0 );
           oyjlUi_ReleaseArgs( &ui);
+        }
         if(status)
           *status |= oyjlUI_STATE_EXPORT;
         return NULL;
@@ -5113,7 +5237,11 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
                                       license ? _("License"):"", license?":\t":"", license && license->name ? license->name : "",
                                       author ? _("Author"):"", author?": \t":"", author && author->name ? author->name : "" );
     if(!(flags&oyjlUI_STATE_NO_RELEASE))
+    {
+      if(verbose)
+        oyjlOptions_Print_( ui->opts, 0 );
       oyjlUi_ReleaseArgs( &ui);
+    }
     free(prog);
     if(v) free(v);
     if(status)
@@ -5130,7 +5258,11 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       t = oyjlUi_ToText( ui, oyjlARGS_EXPORT_JSON, flags );
       if(t) { puts( t ); free(t); }
       if(!(flags&oyjlUI_STATE_NO_RELEASE))
+      {
+        if(verbose)
+          oyjlOptions_Print_( ui->opts, 0 );
         oyjlUi_ReleaseArgs( &ui);
+      }
       return NULL;
     }
     if(strcmp(export, "json+command") == 0)
@@ -5142,7 +5274,11 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       t = oyjlUi_ToText( ui, oyjlARGS_EXPORT_MAN, flags );
       if(t) { puts( t ); free(t); }
       if(!(flags&oyjlUI_STATE_NO_RELEASE))
+      {
+        if(verbose)
+          oyjlOptions_Print_( ui->opts, 0 );
         oyjlUi_ReleaseArgs( &ui);
+      }
       return NULL;
     }
     if(strcmp(export, "markdown") == 0)
@@ -5150,7 +5286,11 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       t = oyjlUi_ToText( ui, oyjlARGS_EXPORT_MARKDOWN, flags );
       if(t) { puts( t ); free(t); }
       if(!(flags&oyjlUI_STATE_NO_RELEASE))
+      {
+        if(verbose)
+          oyjlOptions_Print_( ui->opts, 0 );
         oyjlUi_ReleaseArgs( &ui);
+      }
       return NULL;
     }
     if(strcmp(export, "export") == 0)
@@ -5158,7 +5298,11 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       t = oyjlUi_ToText( ui, oyjlARGS_EXPORT_EXPORT, flags );
       if(t) { puts( t ); free(t); }
       if(!(flags&oyjlUI_STATE_NO_RELEASE))
+      {
+        if(verbose)
+          oyjlOptions_Print_( ui->opts, 0 );
         oyjlUi_ReleaseArgs( &ui);
+      }
       return NULL;
     }
   }
@@ -5174,7 +5318,11 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
     char * t = oyjlUi_ToText( ui, oyjlARGS_EXPORT_HELP, (results && results->group >= 0) ? -1 : (results && results->count >= 1 && strcasecmp(results->values[0],"synopsis") == 0 && synopsis) ? -2 : verbose );
     if(t) { puts( t ); free(t); t = NULL; }
     if(!(flags&oyjlUI_STATE_NO_RELEASE))
+    {
+      if(verbose)
+        oyjlOptions_Print_( ui->opts, 0 );
       oyjlUi_ReleaseArgs( &ui);
+    }
     if(status)
       *status |= oyjlUI_STATE_HELP;
     return NULL;
@@ -5206,7 +5354,11 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       if(status)
         *status |= oyjlUI_STATE_EXPORT;
       if(!(flags&oyjlUI_STATE_NO_RELEASE))
+      {
+        if(verbose)
+          oyjlOptions_Print_( ui->opts, 0 );
         oyjlUi_ReleaseArgs( &ui);
+      }
       return NULL;
     }
     if( value &&
@@ -5225,7 +5377,11 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
       if(status)
         *status |= oyjlUI_STATE_EXPORT;
       if(!(flags&oyjlUI_STATE_NO_RELEASE))
+      {
+        if(verbose)
+          oyjlOptions_Print_( ui->opts, 0 );
         oyjlUi_ReleaseArgs( &ui);
+      }
       return NULL;
     }
   }
@@ -6159,8 +6315,8 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
              * mnft = NULL, * mnft_url = NULL,
              * copy = NULL, * lice = NULL, * lice_url = NULL,
              * bugs = NULL, * bugs_url = NULL,
-             * vers = NULL,
-             * country = NULL;
+             * vers = NULL, * t;
+  char * country = NULL;
   int i,n,ng;
   oyjlOptions_s * opts;
   char ** sections_ = NULL, *** sections = &sections_;
@@ -6191,13 +6347,22 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   if(!ng && !(flags & oyjlUI_STATE_NO_CHECKS)) return NULL;
 
 #if defined(OYJL_HAVE_LANGINFO_H) && !defined(__ANDROID__)
-  country = nl_langinfo( _NL_ADDRESS_LANG_AB );
+  t = oyjlLang("");
+  if(t && t[0])
+    country = oyjlLanguage(t);
+  if(!country)
+  {
+    t = nl_langinfo( _NL_ADDRESS_LANG_AB ); /* appears to depend on LANG environment variable */
+    if(t)
+      country = oyjlStringCopy(t,0);
+  }
 #endif
-  if(flags & oyjlUI_STATE_VERBOSE)
-    fprintf(stderr, "country: %s\n", country?country:"");
+  if(flags & oyjlUI_STATE_VERBOSE || *oyjl_debug)
+    fprintf(stderr, "country: \"%s\" (LANG=%s)\n", country?country:"", getenv("LANG"));
 
   oyjlStringAdd( &doxy_link, malloc, free, "{#%s%s}", ui->nick, country?country:"" );
   oyjlStringReplace( &doxy_link, "-", "", malloc, free );
+  if(country) { free(country); country = NULL; }
 
   if(ui->app_type && ui->app_type[0])
   {
@@ -6515,6 +6680,35 @@ void       oyjlArgsBaseLoadCore      ( )
 #else /* HAVE_DL */
 #warning "HAVE_DL not defined (possibly dlfcn.h not found?): dynamic loading of libOyjlCore will not be possible"
 #endif /* HAVE_DL */
+}
+
+const char *   oyjlSetLocale         ( int                 category,
+                                       const char        * loc )
+{
+  const char * lang = getenv("LANG"),
+             * language = getenv("LANGUAGE"),
+             * dbg = getenv("OYJL_DEBUG"),
+             * setloc = NULL;
+  int debug = dbg?atoi(dbg):0;
+  if((lang && lang[0] && language && language[0] && strcmp(lang,language) != 0) ||
+     (!(lang && lang[0]) && language && language[0]))
+  {
+    setenv("LANG", language, 1);
+    if(debug) fprintf(stderr, OYJL_DBG_FORMAT "LANG=%s (LANGUAGE=%s) ", OYJL_DBG_ARGS, getenv("LANG"), getenv("LANGUAGE") );
+  } else {
+    if(!(language && language[0]) && lang && lang[0])
+    {
+      setenv("LANGUAGE", lang, 1);
+      if(debug) fprintf(stderr, OYJL_DBG_FORMAT "LANGUAGE=%s (LANG=%s) ", OYJL_DBG_ARGS, getenv("LANGUAGE"), getenv("LANG") );
+    }
+  }
+#ifdef OYJL_HAVE_LOCALE_H
+  setloc = setlocale( category, loc );
+#else
+  setloc = loc;
+#endif
+  if(debug) fprintf(stderr, OYJL_DBG_FORMAT "setlocale(loc: %s) = %s\n", OYJL_DBG_ARGS, loc, setloc );
+  return setloc;
 }
 #endif /* OYJL_ARGS_BASE */
 
