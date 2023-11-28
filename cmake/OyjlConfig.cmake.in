@@ -140,13 +140,13 @@ MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
         SET( MY_LOCCOPY echo use USE_I18N path without gettext )
       ENDIF( GETTEXT_FOUND )
       FOREACH( _lang ${_langs} )
-        SET( _lang "de_DE.UTF8" )
+        #SET( _lang "de_DE.UTF-8" )
         STRING(SUBSTRING ${_lang} 0 2 short_lang)
         MESSAGE( "add \"${_tool}\": \"" ${short_lang} "\" from ${_lang} / \"${_langs}\"" )
         ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/man/${short_lang}/${_tool}.1
             COMMAND mkdir -p "${_doc_path}/man/${short_lang}/"
             COMMAND ${MY_LOCCOPY}
-            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH ${MY_LOCPATH} LANG=${_lang} DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${short_lang}/${_tool}.1
+            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH ${MY_LOCPATH} LANGUAGE=${_lang} DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${short_lang}/${_tool}.1
             DEPENDS ${_tool} ${_tool_src}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
@@ -156,7 +156,7 @@ MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
         )
 
         ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/md/${_tool_md}${short_lang}.md
-            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH ${MY_LOCPATH} LANG=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}${short_lang}.md
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH ${MY_LOCPATH} LANGUAGE=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}${short_lang}.md
             DEPENDS ${_tool} ${_tool_src}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
