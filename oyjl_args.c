@@ -637,6 +637,17 @@ int        oyjlStringReplace         ( char             ** text,
 
   return n;
 }
+int oyjlStringStartsWith             ( const char        * text,
+                                       const char        * pattern )
+{
+  int text_len = text ? strlen( text ) : 0,
+      pattern_len = pattern ? strlen( pattern ) : 0;
+
+  if(text_len && text_len >= pattern_len && memcmp(text, pattern, pattern_len) == 0)
+    return 1;
+  else
+    return 0;
+}
 
 
 #if !defined (OYJL_ARGS_BASE)
@@ -6682,7 +6693,7 @@ void       oyjlArgsBaseLoadCore      ( )
 #endif /* HAVE_DL */
 }
 
-const char *   oyjlSetLocale         ( int                 category,
+const char *   oyjlSetLocale         ( int                 category OYJL_UNUSED,
                                        const char        * loc )
 {
   const char * lang = getenv("LANG"),
@@ -6690,7 +6701,7 @@ const char *   oyjlSetLocale         ( int                 category,
              * dbg = getenv("OYJL_DEBUG"),
              * setloc = NULL;
   int debug = dbg?atoi(dbg):0;
-  if((lang && lang[0] && language && language[0] && strcmp(lang,language) != 0) ||
+  if((lang && lang[0] && language && language[0] && strcmp(lang,language) != 0 && !oyjlStringStartsWith(lang,language) && !oyjlStringStartsWith(lang,"C")) ||
      (!(lang && lang[0]) && language && language[0]))
   {
     setenv("LANG", language, 1);

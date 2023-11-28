@@ -795,7 +795,7 @@ int main( int argc_, char**argv_, char ** envv )
   int argc = argc_;
   char ** argv = argv_;
   oyjlTranslation_s * trc = NULL;
-  char * loc = NULL;
+  const char * loc = NULL;
 
 #ifdef __ANDROID__
   argv = calloc( argc + 2, sizeof(char*) );
@@ -812,7 +812,7 @@ int main( int argc_, char**argv_, char ** envv )
   use_gettext = 1;
 #endif
 #ifdef OYJL_HAVE_LOCALE_H
-  loc = setlocale(LC_ALL,"");
+  loc = oyjlSetLocale(LC_ALL,"");
 #endif
   if(!loc)
   {

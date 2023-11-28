@@ -80,14 +80,21 @@
  */
 char *         oyjlLanguage          ( const char        * loc )
 {
-  if(strchr(loc,'_') != NULL)
+  char * t = NULL;
+
+  if(loc[0] == 'C')
+    t = strdup("");
+  else
+    if(strchr(loc,'_') != NULL)
   {
-    char * t = strdup(loc);
+    t = strdup(loc);
     char * tmp = strchr(t,'_');
     tmp[0] = '\000';
-    return t;
   } else
-    return strdup(loc);
+    t = strdup(loc);
+
+  if(*oyjl_debug) fprintf(stderr, OYJL_DBG_FORMAT "loc=\"%s\" -> \"%s\"\n", OYJL_DBG_ARGS, loc, t );
+  return t;
 }
 
 /** @brief   obtain country part of i18n locale code
@@ -113,6 +120,36 @@ char *         oyjlCountry           ( const char        * loc )
   }
   else
     return NULL;
+}
+
+const char *   oyjlSetLocale         ( int                 category OYJL_UNUSED,
+                                       const char        * loc )
+{
+  const char * lang = getenv("LANG"),
+             * language = getenv("LANGUAGE"),
+             * dbg = getenv("OYJL_DEBUG"),
+             * setloc = NULL;
+  int debug = dbg?atoi(dbg):0;
+  if((lang && lang[0] && language && language[0] && strcmp(lang,language) != 0 && !oyjlStringStartsWith(lang,language) && !oyjlStringStartsWith(lang,"C")) ||
+     (!(lang && lang[0]) && language && language[0]))
+  {
+    if(debug && lang) fprintf(stderr, OYJL_DBG_FORMAT "old LANG=%s ", OYJL_DBG_ARGS, getenv("LANG") );
+    setenv("LANG", language, 1);
+    if(debug) fprintf(stderr, OYJL_DBG_FORMAT "LANG=%s (LANGUAGE=%s) ", OYJL_DBG_ARGS, getenv("LANG"), getenv("LANGUAGE") );
+  } else {
+    if(!(language && language[0]) && lang && lang[0])
+    {
+      setenv("LANGUAGE", lang, 1);
+      if(debug) fprintf(stderr, OYJL_DBG_FORMAT "LANGUAGE=%s (LANG=%s) ", OYJL_DBG_ARGS, getenv("LANGUAGE"), getenv("LANG") );
+    }
+  }
+#ifdef OYJL_HAVE_LOCALE_H
+  setloc = setlocale( category, loc );
+#else
+  setloc = loc;
+#endif
+  if(debug) fprintf(stderr, OYJL_DBG_FORMAT "setlocale(loc: %s) = %s\n", OYJL_DBG_ARGS, loc, setloc );
+  return setloc;
 }
 
 /** @} *//* oyjl_i18n */

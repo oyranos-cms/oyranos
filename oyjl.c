@@ -657,7 +657,7 @@ int main( int argc_, char**argv_, char ** envv )
   use_gettext = 1;
 #endif
 #ifdef OYJL_HAVE_LOCALE_H
-  locale = loc = setlocale(LC_ALL,"");
+  locale = loc = oyjlSetLocale(LC_ALL,"");
 #endif
   if(*oyjl_debug > 1)
     fprintf(stderr,OYJL_DBG_FORMAT "loc: %s locale: %s\n", OYJL_DBG_ARGS, loc, locale );
@@ -667,7 +667,7 @@ int main( int argc_, char**argv_, char ** envv )
   {
     locale = lang;
 #ifdef OYJL_HAVE_LOCALE_H
-    locale = setlocale(LC_ALL, locale);
+    locale = oyjlSetLocale(LC_ALL, locale);
 #endif
   }
   if(!loc && lang)
