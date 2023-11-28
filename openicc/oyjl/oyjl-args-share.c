@@ -1229,7 +1229,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     {
       oyjlStr_Push( s, "  oyjlTranslation_s * trc_ = NULL;\n" );
       oyjlStr_Push( s, "  const char * loc = NULL;\n" );
-      oyjlStr_Push( s, "  const char * lang = getenv(\"LANG\");\n" );
+      oyjlStr_Push( s, "  const char * lang;\n" );
     }
     oyjlStr_Push( s, "\n" );
     oyjlStr_Push( s, "#ifdef __ANDROID__\n" );
@@ -1249,8 +1249,9 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
       oyjlStr_Push( s, "  use_gettext = 1;\n" );
       oyjlStr_Push( s, "#endif\n" );
       oyjlStr_Push( s, "#ifdef OYJL_HAVE_LOCALE_H\n" );
-      oyjlStr_Push( s, "  loc = setlocale(LC_ALL,\"\");\n" );
+      oyjlStr_Push( s, "  loc = oyjlSetLocale(LC_ALL,\"\");\n" );
       oyjlStr_Push( s, "#endif\n" );
+      oyjlStr_Push( s, "  lang = getenv(\"LANG\");\n" );
       oyjlStr_Push( s, "  if(!loc)\n" );
       oyjlStr_Push( s, "  {\n" );
       oyjlStr_Push( s, "    loc = lang;\n" );

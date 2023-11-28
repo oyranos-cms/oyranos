@@ -36,6 +36,8 @@ typedef struct oyjlTranslation_s oyjlTranslation_s;
 char *         oyjlLanguage          ( const char        * loc );
 char *         oyjlCountry           ( const char        * loc );
 const char *   oyjlLang              ( const char        * loc );
+const char *   oyjlSetLocale         ( int                 category,
+                                       const char        * loc );
 char *         oyjlTranslate         ( oyjlTranslation_s * context,
                                        const char        * string );
 /** @brief custom translator, for switching the translation engine */

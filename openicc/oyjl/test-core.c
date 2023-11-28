@@ -776,8 +776,9 @@ oyjlTESTRESULT_e testString ()
   n = 1000000;
   clck = oyjlClock();
   for(i = 0; i < n; ++i)
-    strstr(start, search);
+    t = strstr(start, search);
   clck = oyjlClock() - clck;
+  if(!t) len = 0;
   fprintf( zout, "%s\n", oyjlPrintSubProfiling( -1, n, clck/(double)CLOCKS_PER_SEC,"ops",
     "strstr() %dx(250+2)/%d  %d %g", n, len, (int)strlen(oyjlStr(string)), clck) );
 
@@ -1284,7 +1285,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9971                      /*code_size*/,
+                           9983                      /*code_size*/,
                            1081                      /*help_size*/,
                            2082                      /*man_size*/,
                            4065                      /*markdown_size*/,
@@ -1380,7 +1381,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   oyjlUi_Release( &ui);
 
   result = testCode( json, "oiCR"                    /*prog*/,
-                           9687                      /*code_size*/,
+                           9699                      /*code_size*/,
                             614                      /*help_size*/,
                            1566                      /*man_size*/,
                            2521                      /*markdown_size*/,
