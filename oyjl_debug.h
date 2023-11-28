@@ -49,7 +49,14 @@ typedef enum {
 } oyjlTEXTMARK_e;
 const char * oyjlTermColor           ( oyjlTEXTMARK_e      mark,
                                        const char        * text );
+const char * oyjlTermColorPtr        ( oyjlTEXTMARK_e      mark,
+                                       char             ** color_text,
+                                       const char        * text );
 const char * oyjlTermColorF          ( oyjlTEXTMARK_e      mark,
+                                       const char        * format,
+                                       ... );
+const char * oyjlTermColorFPtr       ( oyjlTEXTMARK_e      mark,
+                                       char             ** color_text,
                                        const char        * format,
                                        ... );
 const char * oyjlTermColorFromHtml   ( const char        * text,
