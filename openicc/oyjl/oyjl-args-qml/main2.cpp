@@ -45,6 +45,7 @@ AppManager mgr;
 AppManager * m = &mgr;
 int app_init = 0;
 int app_debug = 0;
+oyjlUi_s          * oyjl_ui_qml = NULL;
 
 void printObjectClassNames( QObject * o )
 {
@@ -92,7 +93,7 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/images/logo-sw.svg"));
 
     QCommandLineParser parser;
-    parser.setApplicationDescription(QCoreApplication::translate("main", "QML Renderer for JSON Options"));
+    parser.setApplicationDescription(QCoreApplication::translate("main", "QML Options Renderer"));
     QCommandLineOption ho = parser.addHelpOption();
 
     QCommandLineOption inputOption(QStringList() << "i" << "input",
@@ -111,7 +112,7 @@ int main(int argc, char *argv[])
               QCoreApplication::translate("main", "Verbose mode. Prints out more information."));
     parser.addOption(verboseOption);
     QCommandLineOption aboutOption("verbose",
-              QCoreApplication::translate("main", "Prints basic information."));
+              QCoreApplication::translate("main", "Verbose mode. Prints out more information."));
     parser.addOption(aboutOption);
 
     parser.parse(QApplication::arguments());
