@@ -42,17 +42,22 @@
 <context>
     <name>AppData</name>
     <message>
-        <location filename="../src/app_data.cpp" line="82"/>
+        <location filename="../src/app_data.cpp" line="84"/>
         <source>Json is invalid</source>
         <translation>Json is ungültig</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="110"/>
+        <location filename="../src/app_data.cpp" line="144"/>
         <source>finished loading</source>
         <translation>Laden beendet</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="261"/>
+        <location filename="../src/app_data.cpp" line="144"/>
+        <source>size</source>
+        <translation>Größe</translation>
+    </message>
+    <message>
+        <location filename="../src/app_data.cpp" line="297"/>
         <source>%1 Version</source>
         <translation>%1 Version</translation>
     </message>
@@ -61,7 +66,7 @@
         <translation type="vanished">NICHTS</translation>
     </message>
     <message>
-        <location filename="../src/app_data.cpp" line="381"/>
+        <location filename="../src/app_data.cpp" line="675"/>
         <source>Permission not granted: </source>
         <translation>Berechtigung nicht gewährt: </translation>
     </message>
@@ -127,27 +132,27 @@
 <context>
     <name>OptionsList</name>
     <message>
-        <location filename="../qml/OptionsList.qml" line="130"/>
-        <location filename="../qml/OptionsList.qml" line="176"/>
-        <location filename="../qml/OptionsList.qml" line="219"/>
-        <location filename="../qml/OptionsList.qml" line="240"/>
+        <location filename="../qml/OptionsList.qml" line="140"/>
+        <location filename="../qml/OptionsList.qml" line="193"/>
+        <location filename="../qml/OptionsList.qml" line="237"/>
+        <location filename="../qml/OptionsList.qml" line="259"/>
         <source>selected</source>
         <translation>ausgewählt</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="130"/>
-        <location filename="../qml/OptionsList.qml" line="176"/>
-        <location filename="../qml/OptionsList.qml" line="219"/>
+        <location filename="../qml/OptionsList.qml" line="140"/>
+        <location filename="../qml/OptionsList.qml" line="193"/>
+        <location filename="../qml/OptionsList.qml" line="237"/>
         <source>new/old</source>
-        <translation>alt/neu</translation>
+        <translation>neu/alt</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="396"/>
+        <location filename="../qml/OptionsList.qml" line="422"/>
         <source>Multiple Options Hint</source>
         <translation>Hinweis für Mehrfachoptionen</translation>
     </message>
     <message>
-        <location filename="../qml/OptionsList.qml" line="398"/>
+        <location filename="../qml/OptionsList.qml" line="424"/>
         <source>Enter first value, append &apos;;&apos; and confirm. The final &apos;;&apos; is not executed. Then select next value. Repeat as needed. A final confirm without ending &apos;;&apos; can execute.</source>
         <translation>Zunächst einen Wert eingeben, dann ein Semikolon &apos;;&apos; anhängen und bestätigen. Anschließend den nächsten Wert wählen. Das Auswählen bei Bedarf wiederholen. Ein Bestätigen ohne Semikolon  &apos;;&apos; am Ende kann den Befehl ausführen.</translation>
     </message>
@@ -165,71 +170,130 @@
         <translation>Kommandos an</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="346"/>
+        <location filename="../qml/main.qml" line="347"/>
         <source>Group</source>
         <translation>Gruppe</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="785"/>
-        <location filename="../qml/main.qml" line="836"/>
-        <location filename="../qml/main.qml" line="869"/>
+        <location filename="../qml/main.qml" line="788"/>
+        <location filename="../qml/main.qml" line="839"/>
+        <location filename="../qml/main.qml" line="872"/>
         <source>Launched app for </source>
         <translation>Starte Programm für </translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="933"/>
+        <location filename="../qml/main.qml" line="936"/>
         <source>Show Log</source>
         <translation>Zeige Meldungen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="933"/>
+        <location filename="../qml/main.qml" line="936"/>
         <source>Show JSON</source>
         <translation>Zeige JSON</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1133"/>
+        <location filename="../qml/main.qml" line="1136"/>
         <source>Load failed</source>
         <translation>Laden daneben</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1185"/>
+        <location filename="../qml/main.qml" line="1188"/>
         <source>granted</source>
         <translation>gewährt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1185"/>
+        <location filename="../qml/main.qml" line="1188"/>
         <source>denied</source>
         <translation>abgelehnt</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1187"/>
+        <location filename="../qml/main.qml" line="1190"/>
         <source>Never ask again</source>
         <translation>Nicht mehr fragen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1289"/>
+        <location filename="../qml/main.qml" line="1298"/>
         <source>Options</source>
         <translation>Optionen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1290"/>
+        <location filename="../qml/main.qml" line="1299"/>
         <source>Select or Edit Options</source>
         <translation>Wähle oder Ändere Optionen</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1291"/>
+        <location filename="../qml/main.qml" line="1300"/>
         <source>The Syntax is a JSON array with each element representing one command line argument.</source>
         <translation>Die Syntax ist ein JSON Feld mit jedem Element ein Kommandozeilenargument representierend.</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1297"/>
+        <location filename="../qml/main.qml" line="1306"/>
         <source>History</source>
         <translation>Geschichte</translation>
     </message>
     <message>
-        <location filename="../qml/main.qml" line="1297"/>
+        <location filename="../qml/main.qml" line="1306"/>
         <source>Select here previous commands for modification or repetition.</source>
         <translation>Wähle hier vorherige Kommandos zum Ändern oder Wiederholen.</translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="100"/>
+        <source>specify input JSON file; &apos;-&apos; stands for stdin stream</source>
+        <translation>gebe eine JSON Eingangsdatei an; &apos;-&apos; steht für stdin Datenstrom</translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="96"/>
+        <source>QML Options Renderer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="101"/>
+        <location filename="../main2.cpp" line="105"/>
+        <source>path/to/options.json</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="104"/>
+        <source>specify output JSON file; &apos;-&apos; stands for stdout stream</source>
+        <translation>gebe eine JSON Ausgangsdatei an; &apos;-&apos; steht für stdout Datenstrom</translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="108"/>
+        <source>specify commands JSON file; &apos;-&apos; stands for stdin stream; &apos;+&apos; stands for read from -i file</source>
+        <translation>gebe eine JSON Kommandodatei an; &apos;-&apos; steht für stdin Datenstrom; &apos;+&apos; steht für -i Datei</translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="109"/>
+        <source>path/to/commands.json</source>
+        <translation>pfad/zo/kommando.json</translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="112"/>
+        <location filename="../main2.cpp" line="115"/>
+        <source>Verbose mode. Prints out more information.</source>
+        <translation>Plaudernd. Zeigt mehr Informationen.</translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="133"/>
+        <source>Example</source>
+        <translation>Beispiel</translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="134"/>
+        <source>Open JSON from stdin and give result JSON to stdout:
+		cat options.json | %1 -i - -o - | xargs echo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="135"/>
+        <source>Open JSON from stdin and specify commands:
+		cat options.json | %1 -i - -c commands.json</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main2.cpp" line="143"/>
+        <source>is a QML renderer for Oyjl JSON options.</source>
+        <translation>ist ein Betrachter für Oyjl JSON Optionen.</translation>
     </message>
 </context>
 </TS>

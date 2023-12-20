@@ -45,6 +45,7 @@ AppManager * m = &mgr;
 int app_init = 0;
 int app_debug = 0;
 extern int (*processCallback_p)(int argc, const char ** argv);
+oyjlUi_s          * oyjl_ui_qml = NULL;
 
 void printObjectClassNames( QObject * o )
 {
@@ -57,7 +58,6 @@ void printObjectClassNames( QObject * o )
   }
 }
 
-oyjlUi_s          * qml_lib_ui = NULL;
 int oyjlArgsQmlStart__               ( int                 argc,
                                        const char       ** argv,
                                        const char        * json,
@@ -69,7 +69,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
 {
     if(app_init)
     {
-      qml_lib_ui = ui;
+      oyjl_ui_qml = ui;
       return 0;
     }
 
@@ -172,8 +172,8 @@ int oyjlArgsQmlStart__               ( int                 argc,
       callback(argc, argv);
 #endif
 
-    if(qml_lib_ui)
-      ui = qml_lib_ui;
+    if(oyjl_ui_qml)
+      ui = oyjl_ui_qml;
 
     oyjl_val root = NULL;
     int r = 0;
@@ -208,11 +208,36 @@ int oyjlArgsQmlStart__               ( int                 argc,
       }
     }
 
-    if( root && oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules") ) 
+    int found = 0;
+    if( root && oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules") ) /* json */
     {
+      found = 1;
       LOG( QString("Found Json org/freedesktop/oyjl/modules: ") + QString::number(strlen(json)) );
     }
     else
+    if( root && oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/ui") ) /* -X=export */
+    {
+      oyjlUi_s * u = oyjlUi_ImportFromJson( root,0 );
+      char * t = oyjlUi_ToText( u, oyjlARGS_EXPORT_JSON, 0 );
+      int state = 0;
+      oyjlTreeFree(root);
+      root = oyjlTreeParse2( t, 0, __func__, &state );
+      if(t) free(t);
+      if(state)
+      {
+        fprintf(stderr, "ERROR:\t\"%s\"\n", oyjlPARSE_STATE_eToString(state));
+        char * error = NULL;
+        oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", json );
+        json = error;
+        r = -1;
+        if(!ui)
+          ui = u;
+      } else
+        found = 1;
+      LOG( QString("Found Export org/freedesktop/oyjl/ui: ") + QString::number(strlen(json)) );
+    }
+
+    if(found == 0)
     {
       char * json = oyjlUi_ToJson( ui, 0 ); // generate JSON from ui data struct
       LOG( QString("oyjlUi_ToJson(): ") + QString::number(json?strlen(json):0) );
