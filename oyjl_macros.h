@@ -75,8 +75,10 @@
 
 #ifndef OYJL_DBG_FORMAT
 # if defined(__GNUC__)
-#  define  OYJL_DBG_FORMAT "%s(%s:%d) "
-#  define  OYJL_DBG_ARGS   oyjlTermColor(oyjlBOLD, __func__), strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+#  define  OYJL_DBG_FORMAT "%s "
+#  define  OYJL_DBG_ARGS   oyjlFunctionPrint( __func__, strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__ )
+//#  define  OYJL_DBG_FORMAT "%s(%s:%d) "
+//#  define  OYJL_DBG_ARGS   oyjlTermColor(oyjlBOLD, __func__), strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
 # else
 #  define  OYJL_DBG_FORMAT "%s:%d "
 #  define  OYJL_DBG_ARGS   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
@@ -103,7 +105,7 @@ if(format_ && strchr(format_,'%') != NULL) { \
   va_end  ( list ); \
 \
   { \
-    text_ = allocate_( sizeof(char) * len + 2 ); \
+    text_ = (char*)allocate_( sizeof(char) * len + 2 ); \
     if(!text_) \
     { \
       oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "could not allocate memory", OYJL_DBG_ARGS ); \
