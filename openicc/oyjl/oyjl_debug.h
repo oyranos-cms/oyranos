@@ -78,6 +78,9 @@ int          oyjlTermColorInit       ( int                 flags );
 #define OYJL_BRACKETS       0x20
 const char * oyjlPrintTime           ( int                 flags,
                                        oyjlTEXTMARK_e      mark );
+const char * oyjlFunctionPrint       ( const char        * func,
+                                       const char        * line,
+                                       int                 line_number );
 /** @brief message type */
 typedef enum {
   oyjlMSG_INFO = 400,                  /**< @brief informational, for debugging */

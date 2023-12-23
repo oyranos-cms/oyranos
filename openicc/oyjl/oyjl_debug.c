@@ -264,6 +264,18 @@ char *   oyjlBT                      ( int                 stack_limit OYJL_UNUS
 #endif
 }
 
+extern char * oyjl_term_color_;
+const char * oyjlFunctionPrint( const char * func, const char * line, int line_number )
+{
+  char * text = NULL, *t = NULL;
+  oyjlStringAdd( &text, 0,0, "%s(%s)", oyjlTermColor(oyjlBOLD, func), oyjlTermColorFPtr(oyjlITALIC, &t, "%s:%d", line, line_number ) );
+  if(oyjl_term_color_)
+    free(oyjl_term_color_);
+  oyjl_term_color_ = text;
+  free(t);
+  return oyjl_term_color_;
+}
+
 #if defined(_WIN32) && !defined(__GNU__)
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
