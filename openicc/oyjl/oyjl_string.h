@@ -43,6 +43,19 @@ char **    oyjlStringSplit2          ( const char        * text,
                                        int               * count,
                                        int              ** index,
                                        void*            (* alloc)(size_t));
+#define OYJL_COMPARE_CASE              0x01
+#define OYJL_COMPARE_LAZY              0x02
+#define OYJL_COMPARE_STARTS_WITH       0x04
+#define OYJL_REMOVE                    0x08
+#define OYJL_TO_JSON                   0x10
+#define OYJL_TO_TEXT                   0x20
+int        oyjlStringSplitFind       ( const char        * set,
+                                       const char        * delimiters,
+                                       const char        * pattern,
+                                       int                 flags,
+                                       char             ** result,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) );
 const char * oyjlStringDelimiter     ( const char        * text,
                                        const char        * delimiter,
                                        int               * length );
@@ -131,7 +144,8 @@ int        oyjlRegExpReplace         ( char             ** text,
                                        const char        * regex,
                                        const char        * replacement );
 int        oyjlStringStartsWith      ( const char        * text,
-                                       const char        * pattern );
+                                       const char        * pattern,
+                                       int                 flags );
 typedef struct oyjl_string_s * oyjl_str;
 oyjl_str   oyjlStr_New               ( size_t              length,
                                        void*            (* alloc)(size_t),

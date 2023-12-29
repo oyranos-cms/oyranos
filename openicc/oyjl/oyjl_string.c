@@ -1086,6 +1086,7 @@ char *     oyjlRegExpEscape          ( const char        * text )
  *
  *  @param         text                string to be searched in
  *  @param         pattern             string to search in text
+ *  @param         flags               ::OYJL_COMPARE_CASE
  *  @return                            result is match
  *
  *  @version Oyjl: 1.0.0
@@ -1093,15 +1094,32 @@ char *     oyjlRegExpEscape          ( const char        * text )
  *  @since   2023/05/21 (Oyjl: 1.0.0)
  */
 int oyjlStringStartsWith             ( const char        * text,
-                                       const char        * pattern )
+                                       const char        * pattern,
+                                       int                 flags )
 {
   int text_len = text ? strlen( text ) : 0,
       pattern_len = pattern ? strlen( pattern ) : 0;
 
-  if(text_len && text_len >= pattern_len && memcmp(text, pattern, pattern_len) == 0)
-    return 1;
-  else
-    return 0;
+  if(text_len && text_len >= pattern_len)
+  {
+    if(flags & OYJL_COMPARE_CASE)
+    {
+      char * t = oyjlStringCopy( text, 0 );
+      int match = 0;
+      if(t)
+      {
+        t[pattern_len] = '\000';
+        match = strcasecmp(t,pattern) == 0;
+        free(t);
+      }
+      return match;
+    }
+    else
+      if(memcmp(text, pattern, pattern_len) == 0)
+        return 1;
+  }
+
+  return 0;
 }
 
 
