@@ -271,7 +271,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 
   if(loc_domain)
   {
-    oyjlGettextSetup_( use_gettext, loc_domain, env_var_locdir, default_locdir );
+    oyjlGettextSetup_( use_gettext, loc_domain, env_var_locdir?env_var_locdir:"OYJL_LOCALEDIR", default_locdir?default_locdir:OYJL_LOCALEDIR );
     int state = oyjlTranslation_Set( context ); /* just pass domain in */
     if(*oyjl_debug)
       msg( oyjlMSG_INFO, 0, "use_gettext: %d loc_domain: %s env_var_locdir: %s default_locdir: %s oyjlTranslation_Set: %d", use_gettext, loc_domain, env_var_locdir, default_locdir, state );
