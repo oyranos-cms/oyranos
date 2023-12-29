@@ -164,6 +164,7 @@ int myMain( int argc, const char ** argv )
   const char * output = NULL,
              * input = NULL,
              * format = NULL,
+             * plain = NULL,
              * wrap = NULL,
              * function_name = NULL,
              * function_name_out = NULL,
@@ -192,13 +193,17 @@ int myMain( int argc, const char ** argv )
                                                  "2020-01-02T12:00:00", _("January 2, 2020") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */
-  oyjlOptionChoice_s f_choices[] = {{"_(\\\"",        NULL,               NULL,                         NULL},
-                                    {"i18n(\\\"",     "",                 NULL,                         NULL},
-                                    {"QObject::tr(\\\"", NULL,            NULL,                         NULL},
+  oyjlOptionChoice_s f_choices[] = {{"json",        _("I18N JSON"),     _("Create translation Json with -af=json."), _("This option is useful only for smaller projects as a initial start.")},
+                                    {"i18n(\\\"%s\\\");",NULL,          NULL,                         NULL},
+                                    {NULL,NULL,NULL,NULL}};
+  oyjlOptionChoice_s F_choices[] = {{"_(\\\"",      NULL,               NULL,                         NULL},
+                                    {"i18n(\\\"",   "",                 NULL,                         NULL},
+                                    {"QObject::tr(\\\"", NULL,          NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s w_choices[] = {{"C",           _("C static char"), NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s A_choices[] = {{_("Convert JSON to gettext ready C strings"),_("oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_(\"%s\"); ' -k name,description,help"),NULL,                         NULL},
+                                    {_("Convert C source to I18N JSON"),_("oyjl-translate -e -f=json -i oyjl-ui.c -o result.json"),NULL,                         NULL},
                                     {_("Add gettext translated keys to JSON"),_("oyjl-translate -a -i oyjl-ui.json -o result.json -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES"),NULL,                         NULL},
                                     {_("Copy translated keys to JSON. Skip gettext."),_("oyjl-translate -c -i lang.tr -o result.json --locale de_DE"),NULL,                         NULL},
                                     {_("View MAN page"),_("oyjl-translate -X man | groff -T utf8 -man -"), NULL,NULL},
@@ -218,8 +223,10 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&input}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Output"),   _("File or Stream"),          _("A JSON file name or a output stream like \"stdout\"."),_("FILENAME"),      
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&output}, NULL},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("Format string"),           _("A output format string."),_("FORMAT"), 
-        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&format}, NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("Format string"),           _("A output format string containing a %s for replacement."),_("FORMAT"), 
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)f_choices, sizeof(f_choices), malloc ), 0}}, oyjlSTRING,    {.s=&format}, NULL},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG|OYJL_OPTION_FLAG_IMMEDIATE,"P","plain",      NULL,     _("Plain"),    _("No Markup"),               NULL, NULL,
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlSTRING,    {.s=&plain}, NULL},
     {"oiwi", 0,                          "a","add",           NULL,     _("Add"),      _("Add Translation"),         _("Add gettext translated keys to JSON"),NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&add}, NULL},
     {"oiwi", 0,                          "c","copy",          NULL,     _("Copy"),     _("Copy Translations"),       _("Copy translated keys to JSON. Skip gettext."),NULL,               
@@ -243,9 +250,9 @@ int myMain( int argc, const char ** argv )
     {"oiwi", 0,                          "w","wrap",          NULL,     _("Wrap Type"),_("language specific wrap"),  NULL, _("TYPE"),          
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)w_choices, sizeof(w_choices), malloc ), 0}}, oyjlSTRING,    {.s=&wrap}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_NO_OPTIMISE,  NULL,"function-name",NULL,     _("Function"), _("Function Name"),           _("A input function name string. e.g.: \"i18n(\\\"\""),_("NAME"), 
-        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)f_choices, sizeof(f_choices), malloc ), 0}}, oyjlSTRING,    {.s=&function_name}, NULL},
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)F_choices, sizeof(F_choices), malloc ), 0}}, oyjlSTRING,    {.s=&function_name}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_NO_OPTIMISE,  NULL,"function-name-out",NULL, _("Function Out"), _("Function Name"),           _("A output funtion name string. e.g.: \"_\""),_("NAME"), 
-        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)f_choices, sizeof(f_choices), malloc ), 0}}, oyjlSTRING,    {.s=&function_name_out}, NULL},
+        oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)F_choices, sizeof(F_choices), malloc ), 0}}, oyjlSTRING,    {.s=&function_name_out}, NULL},
     {"oiwi", 0,                          "A","man-examples",  NULL,     _("Examples"), NULL,                         NULL, NULL,               
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)A_choices, sizeof(A_choices), malloc ), 0}}, oyjlNONE,      {}, NULL},
     {"oiwi", 0,                          "E","man-environment_variables",NULL,_("Environment Variables"),NULL,       NULL, NULL,               
@@ -709,7 +716,9 @@ int myMain( int argc, const char ** argv )
     {
       int f = oyjlDataFormat(json);
       char * txt = json;
-      int n = 0;
+      int n = 0, to_i18n_json = 0;
+      if(format && strcasecmp(format, "json") == 0)
+        to_i18n_json = 1;
       if(!function_name)
         function_name = "_(\"";
       if(!function_name_out)
@@ -717,7 +726,13 @@ int myMain( int argc, const char ** argv )
       if(verbose)
         fprintf(stderr,"found input: %d format: %s\n", f, oyjlDataFormatToString(f) );
       if(verbose)
-        fprintf(stderr, "search function_name: %s for replacement: %s\n", function_name, function_name_out);
+        fprintf(stderr, "search function_name: %s for replacement: %s\n", function_name, to_i18n_json?"i18n_json":function_name_out);
+
+      if(to_i18n_json)
+      {
+        format = "            \"%s\":\"\",\n";
+        oyjlStringAdd( &text, 0,0, "{\n  \"org\": {\n    \"freedesktop\": {\n      \"oyjl\": {\n        \"translations\": {\n          \"cs\": {\n" );
+      }
 
       while((txt = strstr(txt, function_name)) != NULL)
       {
@@ -761,6 +776,34 @@ int myMain( int argc, const char ** argv )
           fprintf(stderr, " \"%s\"\n", t?t:"---");
         txt += pos;
         ++n;
+      }
+      if(to_i18n_json)
+      {
+        char ** paths;
+        int count = 0, i, flags = OYJL_JSON;
+
+        text[strlen(text)-2] = '\000';
+        oyjlStringAdd( &text, 0,0, "\n          }\n        }\n      }\n    }\n  }\n}\n" );
+        root = oyjlTreeParse2( text, 0, "Internal ERROR", 0 );
+        free(text);
+
+        paths = oyjlTreeToPaths( root, 0, NULL, 0, &count );
+        qsort( paths, count, sizeof(char*), oyjlStrcmpWrap_ );
+        oyjlStringListFreeDoubles( paths, &count, free );
+        oyjlTreeFree( root );
+
+        root = oyjlTreeNew("org/freedesktop/oyjl/translations");
+        for(i = 0; i < count; ++i)
+        {
+          const char * path = paths[i];
+          oyjlTreeSetStringF( root, OYJL_CREATE_NEW | OYJL_NO_INDEX, "", "%s", path );
+        }
+        if(plain) flags |= OYJL_NO_MARKUP;
+        text = oyjlTreeToText( root, flags );
+
+        n = count;
+        oyjlStringListRelease( &paths, count, free );
+        oyjlTreeFree( root ); root = NULL;
       }
       if(verbose)
         fprintf(stderr, "found: %d\n", n);

@@ -37,8 +37,12 @@ Wandle JSON in gettext lesbare C Texte
 .RE
 \fB\-f\fR|\fB\-\-format\fR \fIFORMAT\fR	Formatierungstext
 .RS
-Ausgabeformat
+A output format string containing a %s for replacement.
 .RE
+	\fB\-f\fR json		# I18N JSON : Create translation Json with -af=json. - This option is useful only for smaller projects as a initial start.
+.br
+	\fB\-f\fR i18n(\"%s\");
+.br
 \fB\-k\fR|\fB\-\-key-list\fR \fIname,description,help...\fR	Schlüsselnamenliste
 .RS
 zu benutzende Schlüsselwörter in einer kommagetrennten Liste
@@ -152,6 +156,10 @@ Hole Benutzerschnittstelle als Text
 Wandle JSON in gettext lesbare C Texte
 .br
 oyjl-translate -e [-v] -i oyjl-ui.json -o ergebnis.json -f '_("%s"); ' -k name,description,help
+.TP
+Wandle C Quelltext nach ÜbersetzungsJSON
+.br
+oyjl-translate -e -f=json -i oyjl-ui.c -o result.json
 .TP
 Füge mit gettext übersetzte Schlüssel zu JSON hinzu
 .br

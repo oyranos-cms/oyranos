@@ -42,7 +42,12 @@ Convert Oyjl UI JSON to C translatable strings for use with gettext tools and tr
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-e</strong>|<strong>--extract</strong></td> <td>Extract translatable Messages<br />Convert JSON to gettext ready C strings</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong>=<em>FORMAT</em></td> <td>Format string<br />A output format string.  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong>=<em>FORMAT</em></td> <td>Format string<br />A output format string containing a %s for replacement.
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> json</td><td># I18N JSON : Create translation Json with -af=json. - This option is useful only for smaller projects as a initial start.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> i18n(\"%s\");</td>
+  </table>
+  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--key-list</strong>=<em>name,description,help...</em></td> <td>Key Name List<br />to be used key names in a comma separated list  </td>
  </tr>
@@ -132,6 +137,8 @@ Convert Oyjl UI JSON to C translatable strings for use with gettext tools and tr
 
 #### Convert JSON to gettext ready C strings
 &nbsp;&nbsp;oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_("%s"); ' -k name,description,help
+#### Convert C source to I18N JSON
+&nbsp;&nbsp;oyjl-translate -e -f=json -i oyjl-ui.c -o result.json
 #### Add gettext translated keys to JSON
 &nbsp;&nbsp;oyjl-translate -a -i oyjl-ui.json -o result.json -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES
 #### Copy translated keys to JSON. Skip gettext.
