@@ -115,10 +115,16 @@ oyjlUi_s *         oyjlUi_ImportFromJson(
 #define OYJL_SUGGEST_VARIABLE_NAMES    0x08 /**< @brief automatic suggestion of variable names for missing oyjlOption_s::o and oyjlOption_s::option members */
 #define OYJL_WITH_OYJL_ARGS_BASE_API   0x10 /**< @brief Restrict to oyjl_args_base.h API's. */
 #define OYJL_COMPLETION_BASH           0x100 /**< @brief bash completion source code */
-char *             oyjlUiJsonToCode  ( oyjl_val            root,
+char *             oyjlUiExportToCode (oyjl_val            root,
                                        int                 flags );
 void             oyjlUiJsonSetDefaults(oyjl_val            root,
                                        oyjl_val            defaults );
+oyjl_val         oyjlUiJsonSetOption ( oyjl_val            root,
+                                       oyjl_val            results,
+                                       const char        * key,
+                                       const char        * value,
+                                       int                 current_group_id,
+                                       int                 flags );
 void               oyjlUi_Translate  ( oyjlUi_s          * ui,
                                        oyjlTranslation_s * context );
 
