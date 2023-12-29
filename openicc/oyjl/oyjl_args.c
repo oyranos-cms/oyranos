@@ -379,7 +379,7 @@ typedef int (* oyjlMessage_f)        ( int/*oyjlMSG_e*/    error_code,
                                        const char        * format,
                                        ... );
 typedef enum {
-  oyjlNO_MARK,
+  oyjlNO_MARK = 1,
   oyjlRED,
   oyjlGREEN,
   oyjlBLUE,
@@ -1531,6 +1531,25 @@ struct oyjlTranslation_s
   void (*deAlloc)(void*);              /**< @brief custom deallocator; optional */
   int flags;                           /**< @brief flags for translator; optional */
 };
+
+char *         oyjlLanguage          ( const char        * loc )
+{
+  char * t = NULL;
+
+  if(loc[0] == 'C')
+    t = strdup("");
+  else
+    if(strchr(loc,'_') != NULL)
+  {
+    t = strdup(loc);
+    char * tmp = strchr(t,'_');
+    tmp[0] = '\000';
+  } else
+    t = strdup(loc);
+
+  if(*oyjl_debug) fprintf(stderr, OYJL_DBG_FORMAT "loc=\"%s\" -> \"%s\"\n", OYJL_DBG_ARGS, loc, t );
+  return t;
+}
 oyjlTranslation_s* oyjlTranslation_New(const char        * loc,
                                        const char        * domain,
                                        oyjl_val          * catalog,
@@ -1854,7 +1873,7 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
                                        int                 use_gettext OYJL_UNUSED,
                                        const char        * env_var_locdir OYJL_UNUSED,
                                        const char        * default_locdir OYJL_UNUSED,
-                                       oyjlTranslation_s         ** context OYJL_UNUSED,
+                                       oyjlTranslation_s** context OYJL_UNUSED,
                                        oyjlMessage_f       msg )
 {
   int error = -1;
@@ -1866,13 +1885,9 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
 
   if(debug_variable)
     oyjl_debug = debug_variable;
-  if(msg)
-    oyjlMessage_p = msg;
+  oyjlMessage_p = msg;
 
-  if(*oyjl_debug)
-    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s loc_domain: %s", OYJL_DBG_ARGS, loc, loc_domain );
-
-  if(getenv(env_var_debug))
+  if(debug_variable && getenv(env_var_debug))
   {
     *debug_variable = atoi(getenv(env_var_debug));
     if(*debug_variable)
@@ -1883,35 +1898,20 @@ int oyjlInitLanguageDebug            ( const char        * project_name,
     }
   }
 
+  if(*oyjl_debug)
+    oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "loc: %s loc_domain: %s", OYJL_DBG_ARGS, loc, loc_domain );
+
   oyjlInitI18n_( loc );
 
   if(loc_domain)
   {
-    oyjlGettextSetup_( use_gettext, loc_domain, env_var_locdir, default_locdir );
+    oyjlGettextSetup_( use_gettext, loc_domain, env_var_locdir?env_var_locdir:"OYJL_LOCALEDIR", default_locdir?default_locdir:OYJL_LOCALEDIR );
     int state = oyjlTranslation_Set( loc_domain, context ); /* just pass domain in */
     if(*oyjl_debug)
       msg( oyjlMSG_INFO, 0, "use_gettext: %d loc_domain: %s env_var_locdir: %s default_locdir: %s oyjlTranslation_Set: %d", use_gettext, loc_domain, env_var_locdir, default_locdir, state );
   }
 
   return error;
-}
-char *         oyjlLanguage          ( const char        * loc )
-{
-  char * t = NULL;
-
-  if(loc[0] == 'C')
-    t = strdup("");
-  else
-    if(strchr(loc,'_') != NULL)
-  {
-    t = strdup(loc);
-    char * tmp = strchr(t,'_');
-    tmp[0] = '\000';
-  } else
-    t = strdup(loc);
-
-  if(*oyjl_debug) fprintf(stderr, OYJL_DBG_FORMAT "loc=\"%s\" -> \"%s\"\n", OYJL_DBG_ARGS, loc, t );
-  return t;
 }
 void       oyjlTranslation_SetLocale ( oyjlTranslation_s * context,
                                        const char        * loc )
@@ -4205,7 +4205,7 @@ char * oyjlOptions_PrintHelpSynopsis_( oyjlOptions_s  *    opts,
  * - >= 0 - if found
  * - -1 - if not found
  */
-int oyjlOptionMandatoryIndex_        ( oyjlOption_s      * opt,
+int oyjlOption_MandatoryIndex_       ( oyjlOption_s      * opt,
                                        oyjlOptionGroup_s * g )
 {
   int found = -1;
@@ -5345,7 +5345,7 @@ oyjlUi_s *         oyjlUi_FromOptions( const char        * nick,
   {
     const char * value = NULL;
     oyjlOption_s * o = &ui->opts->array[i];
-    oyjlOptions_GetResult( opts, o->o, &value, 0, 0 );
+    oyjlOptions_GetResult( opts, o->o?o->o:o->option, &value, 0, 0 );
     if( value &&
         strcmp(value, "oyjl-list") == 0 &&
         o->value_type == oyjlOPTIONTYPE_FUNCTION &&
@@ -5912,7 +5912,7 @@ char *       oyjlUi_ToMan            ( oyjlUi_s          * ui,
       const char * option = d_list[j];
       char * t;
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
-      int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
+      int mandatory_index = oyjlOption_MandatoryIndex_( o, g );
       int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MAN;
       if(mandatory_index == 0)
         style |= g->flags;
@@ -6134,7 +6134,7 @@ char * oyjlOptions_PrintHelp         ( oyjlOptions_s     * opts,
     {
       const char * option = d_list[j];
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
-      int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
+      int mandatory_index = oyjlOption_MandatoryIndex_( o, g );
       int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING;
       if(mandatory_index == 0)
         style |= g->flags;
@@ -6436,7 +6436,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
     {
       const char * option = d_list[j];
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
-      int mandatory_index = oyjlOptionMandatoryIndex_( o, g );
+      int mandatory_index = oyjlOption_MandatoryIndex_( o, g );
       int style = oyjlOPTIONSTYLE_ONELETTER | oyjlOPTIONSTYLE_STRING | oyjlOPTIONSTYLE_MARKDOWN;
       if(mandatory_index == 0)
         style |= g->flags;
