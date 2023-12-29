@@ -12,6 +12,13 @@ _oyjl_translate()
 
     : "autocomplete options with choices for long options "$prev""
     case "$prev" in
+        --format) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('json' 'i18n(\"%s\");')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --wrap) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('C')
@@ -57,6 +64,13 @@ _oyjl_translate()
     esac
     : "autocomplete options with choices for single letter options "$cur""
     case "$cur" in
+        -f=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('json' 'i18n(\"%s\");')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
         -w=*) # single letter option with static args
             local IFS=$'\n'
             local WORD_LIST=('C')
@@ -102,13 +116,13 @@ _oyjl_translate()
             set +x +v
             return
             ;;
-        -a|-c|-n|-t|-e|-v|-V)
+        -P|-a|-c|-n|-t|-e|-v|-V)
             : "finish short options without choices"
             COMPREPLY=("$cur ")
             set +x +v
             return
             ;;
-        --add|--copy|--list-empty|--translations-only|--extract|--synopsis|--verbose|--version)
+        --plain|--add|--copy|--list-empty|--translations-only|--extract|--synopsis|--verbose|--version)
             : "finish long options without choices"
             COMPREPLY=("$cur ")
             set +x +v
