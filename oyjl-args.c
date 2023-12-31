@@ -367,7 +367,7 @@ int myMain( int argc, const char ** argv )
             flags |= OYJL_WITH_OYJL_ARGS_BASE_API;
         }
       }
-      sources = oyjlUiJsonToCode( json, flags );
+      sources = oyjlUiExportToCode( json, flags );
       fprintf( stderr, "wrote[flags=%d] %d to stdout\n", flags, sources&&strlen(sources)?(int)strlen(sources):0 );
       if(sources)
       {
