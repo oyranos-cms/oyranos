@@ -10,7 +10,7 @@
  *  @par License:
  *            MIT <http://www.opensource.org/licenses/mit-license.php>
  *
- *  Copyright (c) 2018-2022  Kai-Uwe Behrmann  <ku.b@gmx.de>
+ *  Copyright (c) 2018-2023  Kai-Uwe Behrmann  <ku.b@gmx.de>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -290,7 +290,7 @@ void oyjlUi_ExportToJson_SetProperties_(oyjl_val           parent,
           value = strchr(key, '=') + 1;
           t[0] = '\000';
           oyjlTreeSetStringF( parent, OYJL_CREATE_NEW, value, "properties/%s", key );
-          if(oyjlStringStartsWith(key, parent_id))
+          if(oyjlStringStartsWith(key, parent_id, 0))
             oyjlTreeSetStringF( parent, OYJL_CREATE_NEW, value, key+plen );
         }
       }
@@ -714,7 +714,7 @@ oyjl_val     oyjlUi_ToJson_          ( oyjlUi_s          * ui )
       oyjlOption_s * o = oyjlOptions_GetOptionL( opts, option, 0 );
       int mandatory_index;
       if(!o) continue;
-      mandatory_index = oyjlOptionMandatoryIndex_( o, g );
+      mandatory_index = oyjlOption_MandatoryIndex_( o, g );
       num[0] = '\000';
       if(!o->key)
         sprintf(num, "%s", OYJL_E(option,""));
@@ -1108,6 +1108,225 @@ char *       oyjlUi_ToJson           ( oyjlUi_s          * ui,
   oyjlTreeFree( root );
 
   return t;
+}
+
+/** @brief    Return a oyjlUi_s from JSON Import (libOyjlExtra)
+ *  @memberof oyjlUi_s
+ *
+ *  The returned oyjlUi_s is a reverse of oyjlUi_ExportToJson().
+ *  Static strings inside oyjlUi_s depend on root structure.
+ *  The required JSON data need to match the -X export option as
+ *  returned by the oyjlUi_ExportToJson() function.
+ *
+ *  @see oyjlUi_ExportToJson()
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2020/10/04
+ *  @since   2020/10/04 (Oyjl: 1.0.0)
+ */
+oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
+                                       int                 flags OYJL_UNUSED )
+{
+  oyjlUi_s * ui = NULL;
+  oyjlAllocHelper_m( ui, oyjlUi_s, 1, malloc, return NULL );
+
+  *(oyjlOBJECT_e*)&ui->type /*"oyui"*/ = oyjlOBJECT_UI;
+
+  {
+    oyjl_val val, v;
+    char * app_type;
+    int i,n;
+    oyjlOptsPrivate_s * results;
+
+    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/app_type" ); app_type = OYJL_GET_STRING(val);
+    ui->app_type = app_type;
+
+    n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/header/sections" ) );
+    oyjlAllocHelper_m( ui->sections, oyjlUiHeaderSection_s, n+1, malloc, return NULL );
+    for(i = 0; i < n; ++i)
+    {
+      const char *nick, *label, *name, *desc;
+      *(oyjlOBJECT_e*)&ui->sections[i] /*"oihs"*/ = oyjlOBJECT_UI_HEADER_SECTION;
+      val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/header/sections/[%d]", i );
+      v = oyjlTreeGetValue( val, 0, "nick" ); nick = OYJL_GET_STRING(v);
+      ui->sections[i].nick = nick;
+      v = oyjlTreeGetValue( val, 0, "label" ); label = OYJL_GET_STRING(v);
+      ui->sections[i].label = label;
+      v = oyjlTreeGetValue( val, 0, "name" ); name = OYJL_GET_STRING(v);
+      ui->sections[i].name = name;
+      v = oyjlTreeGetValue( val, 0, "description" ); desc = OYJL_GET_STRING(v);
+      ui->sections[i].description = desc;
+    }
+    n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/array" ) );
+    oyjlAllocHelper_m( ui->opts, oyjlOptions_s, 1, malloc, return NULL );
+    *(oyjlOBJECT_e*)&ui->opts[0] /*"oiws"*/ = oyjlOBJECT_OPTIONS;
+    oyjlAllocHelper_m( ui->opts->private_data, oyjlOptsPrivate_s, 1, malloc, return NULL );
+    results = ui->opts->private_data;
+    results->memory_allocation = oyjlMEMORY_ALLOCATION_OPTIONS | oyjlMEMORY_ALLOCATION_ARRAY | oyjlMEMORY_ALLOCATION_SECTIONS;
+    oyjlAllocHelper_m( ui->opts->array, oyjlOption_s, n+1, malloc, return NULL );
+    for(i = 0; i < n; ++i)
+    {
+      const char *value_type_string, *o, *option;
+      const char *key, *name, *desc, *help, *value_name, *variable_type;
+      int flg;
+      oyjlVARIABLE_e var_type = oyjlNONE;
+      oyjlOPTIONTYPE_e value_type = oyjlOPTIONTYPE_START;
+      oyjlOption_s * opt = &ui->opts->array[i];
+      *(oyjlOBJECT_e*)&opt[0] /*"oiwi"*/ = oyjlOBJECT_OPTION;
+      val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
+      v = oyjlTreeGetValue( val, 0, "o" ); o = OYJL_GET_STRING(v);
+      opt->o = o;
+      v = oyjlTreeGetValue( val, 0, "option" ); option = OYJL_GET_STRING(v);
+      opt->option = option;
+      v = oyjlTreeGetValue( val, 0, "value_type" ); value_type_string = OYJL_GET_STRING(v);
+      if(value_type_string && strcmp(value_type_string, "oyjlOPTIONTYPE_CHOICE") == 0)
+        value_type = oyjlOPTIONTYPE_CHOICE;
+      else
+      if(value_type_string && strcmp(value_type_string, "oyjlOPTIONTYPE_FUNCTION") == 0)
+        value_type = oyjlOPTIONTYPE_FUNCTION;
+      else
+      if(value_type_string && strcmp(value_type_string, "oyjlOPTIONTYPE_DOUBLE") == 0)
+        value_type = oyjlOPTIONTYPE_DOUBLE;
+      else
+      if(value_type_string && strcmp(value_type_string, "oyjlOPTIONTYPE_NONE") == 0)
+        value_type = oyjlOPTIONTYPE_NONE;
+      opt->value_type = value_type;
+      switch(value_type)
+      {
+        case oyjlOPTIONTYPE_CHOICE:
+        {
+          char *nick, *name, *desc, *help;
+          int count = oyjlValueCount( oyjlTreeGetValue( val, 0, "values/choices/list" ) ), j;
+          oyjlAllocHelper_m( opt->values.choices.list, oyjlOptionChoice_s, count+1, malloc, return NULL );
+          for(j = 0; j < count; ++j)
+          {
+            oyjlOptionChoice_s * choice = &opt->values.choices.list[j];
+            oyjl_val c = oyjlTreeGetValueF( val, 0, "values/choices/list/[%d]", j );
+            v = oyjlTreeGetValue( c, 0, "nick" ); nick = OYJL_GET_STRING(v);
+            choice->nick = nick;
+            v = oyjlTreeGetValue( c, 0, "name" ); name = OYJL_GET_STRING(v);
+            choice->name = name;
+            v = oyjlTreeGetValue( c, 0, "description" ); desc = OYJL_GET_STRING(v);
+            choice->description = desc;
+            v = oyjlTreeGetValue( c, 0, "help" ); help = OYJL_GET_STRING(v);
+            choice->help = help;
+          }
+        }
+        break;
+        case oyjlOPTIONTYPE_DOUBLE:
+        {
+          double d, start, tick, end;
+          v = oyjlTreeGetValue( val, 0, "values/dbl/d" ); d = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
+          opt->values.dbl.d = d;
+          v = oyjlTreeGetValue( val, 0, "values/dbl/start" ); start = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
+          opt->values.dbl.start = start;
+          v = oyjlTreeGetValue( val, 0, "values/dbl/tick" ); tick = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
+          opt->values.dbl.tick = tick;
+          v = oyjlTreeGetValue( val, 0, "values/dbl/end" ); end = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
+          opt->values.dbl.end = end;
+        }
+        break;
+        default:
+        break;
+      }
+      v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
+      opt->flags = flg;
+      v = oyjlTreeGetValue( val, 0, "name" ); name = OYJL_GET_STRING(v);
+      opt->name = name;
+      v = oyjlTreeGetValue( val, 0, "key" ); key = OYJL_GET_STRING(v);
+      opt->key = key;
+      v = oyjlTreeGetValue( val, 0, "description" ); desc = OYJL_GET_STRING(v);
+      opt->description = desc;
+      v = oyjlTreeGetValue( val, 0, "help" ); help = OYJL_GET_STRING(v);
+      opt->help = help;
+      v = oyjlTreeGetValue( val, 0, "value_name" ); value_name = OYJL_GET_STRING(v);
+      opt->value_name = value_name;
+      v = oyjlTreeGetValue( val, 0, "variable_type" ); variable_type = OYJL_GET_STRING(v);
+      if(variable_type && strcmp(variable_type, "oyjlSTRING") == 0)
+        var_type = oyjlSTRING;
+      else
+      if(variable_type && strcmp(variable_type, "oyjlDOUBLE") == 0)
+        var_type = oyjlDOUBLE;
+      else
+      if(variable_type && strcmp(variable_type, "oyjlINT") == 0)
+        var_type = oyjlINT;
+      opt->variable_type = var_type;
+    }
+    n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/groups" ) );
+    results->memory_allocation |= oyjlMEMORY_ALLOCATION_GROUPS;
+    oyjlAllocHelper_m( ui->opts->groups, oyjlOptionGroup_s, n+1, malloc, return NULL );
+    for(i = 0; i < n; ++i)
+    {
+      const char *name, *desc, *help, *mandatory, *optional, *detail;
+      int flg;
+      oyjlOptionGroup_s * g = &ui->opts->groups[i];
+      *(oyjlOBJECT_e*)g /*"oiwg"*/ = oyjlOBJECT_OPTION_GROUP;
+      val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/groups/[%d]", i );
+      v = oyjlTreeGetValue( val, 0, "name" ); name = OYJL_GET_STRING(v);
+      g->name = name;
+      v = oyjlTreeGetValue( val, 0, "description" ); desc = OYJL_GET_STRING(v);
+      g->description = desc;
+      v = oyjlTreeGetValue( val, 0, "help" ); help = OYJL_GET_STRING(v);
+      g->help = help;
+      v = oyjlTreeGetValue( val, 0, "mandatory" ); mandatory = OYJL_GET_STRING(v);
+      g->mandatory = mandatory;
+      v = oyjlTreeGetValue( val, 0, "optional" ); optional = OYJL_GET_STRING(v);
+      g->optional = optional;
+      v = oyjlTreeGetValue( val, 0, "detail" ); detail = OYJL_GET_STRING(v);
+      g->detail = detail;
+      v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
+      g->flags = flg;
+    }
+    const char *nick, *name, *description, *logo;
+    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/nick" ); nick = OYJL_GET_STRING(val);
+    ui->nick = nick;
+    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/name" ); name = OYJL_GET_STRING(val);
+    ui->name = name;
+    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/description" ); description = OYJL_GET_STRING(val);
+    ui->description = description;
+    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/logo" ); logo = OYJL_GET_STRING(val);
+    ui->logo = logo;
+    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/attr" );
+    if(val)
+    {
+      oyjl_val attr = oyjlTreeNew( "" );
+      char ** attr_paths = oyjlTreeToPaths( val, 0, NULL, 0, &n );
+      for(i = 0; i < n; ++i)
+      {
+        const char * path = attr_paths[i];
+        oyjl_type type;
+        oyjl_val attrv, rootv;
+        rootv = oyjlTreeGetValue( val, 0, path );
+        type = rootv->type;
+        attrv = oyjlTreeGetValue( attr, OYJL_CREATE_NEW, path );
+        switch(type)
+        {
+          case oyjl_t_string: /* 1 - a text in UTF-8 */
+              oyjlValueSetString( attrv, rootv->u.string );
+              break;
+          case oyjl_t_number: /* 2 - floating or integer number */
+              if(OYJL_IS_INTEGER(rootv))
+                oyjlValueSetInt( attrv, rootv->u.number.i );
+              else
+                oyjlValueSetDouble( attrv, rootv->u.number.d );
+              break;
+          case oyjl_t_true:   /* 5 - boolean true or 1 */
+          case oyjl_t_false:  /* 6 - boolean false or 0 */
+          case oyjl_t_any:    /* 8 - not valid */
+              oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "%s->type is set to unsupported: %d", path, type );
+              break;
+          case oyjl_t_object: /* 3 - a JSON object */
+          case oyjl_t_array:  /* 4 - a JSON array */
+          case oyjl_t_null:   /* 7 - empty value */
+              break;
+        }
+      }
+      oyjlStringListRelease( &attr_paths, n, free );
+      oyjlOptions_SetAttributes( ui->opts, &attr );
+    }
+  }
+
+  return ui;
 }
 
 /** @brief    Translate a Ui at any time
