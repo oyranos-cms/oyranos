@@ -336,45 +336,6 @@ oyjlMhdRequestCompleted_cb           ( void              * cls,
   *con_cls = NULL;
 }
 
-#define OYJL_REMOVE                    0x01
-int oyjlStringSplitFind_             ( char             ** set,
-                                       const char        * delimiters,
-                                       const char        * option,
-                                       int                 flags )
-{
-  int found = 0;
-  char ** list;
-  int i, n;
-  if(set && *set && *set[0])
-  {
-    n = 0;
-    list = oyjlStringSplit2( *set, delimiters, 0, &n, NULL, malloc );
-    if(!option)
-      found = n;
-    else
-    {
-      char * new_set = NULL;
-      for( i = 0; i  < n; ++i )
-      {
-        const char * opt = list[i];
-        if(strcmp(opt, option) == 0)
-        {
-          found = n;
-          if(*oyjl_debug >= 2)
-            fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, option, *set );
-        } else if(flags & OYJL_REMOVE)
-          oyjlStringAdd( &new_set, 0,0, "%s%s", i&&new_set?",":"", opt );
-      }
-
-      if(flags & OYJL_REMOVE)
-      { free(*set); *set = new_set; }
-    }
-    oyjlStringListRelease( &list, n, free );
-  }
-
-  return found;
-}
-
 char * oyjlStringLinkify( const char * html )
 {
   char * t = oyjlStringCopy( html, 0 );
@@ -539,13 +500,13 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
             if(t)
               t[0] = '\000';
             txt = OYJL_GET_STRING(o);
-            if(!oyjlStringSplitFind_(&ignore, ",", path, 0))
+            if(!(oyjlStringSplitFind(ignore, ",", path, 0, NULL, 0,0) >= 0))
               oyjlStringListAdd( &argv, &argc, 0,0, "%s%s%s%s", is_no_dash?"":strlen(path) == 1?"-":"--", path, is_bool || is_no_dash?"":"=", is_bool?"":txt );
             //fprintf(stderr, " path: %s arg: %s argv[%d]: %s ", path, txt, argc, argv[argc-1]);
             if(path) { free(path); path = NULL; }
           }
         }
-        else if(path && !oyjlStringSplitFind_(&ignore, ",", path, 0))
+        else if(path && !(oyjlStringSplitFind(ignore, ",", path, 0, NULL, 0,0) >= 0))
           oyjlStringListAdd( &argv, &argc, 0,0, "%s%s%s%s", is_no_dash?"":strlen(path) == 1?"-":"--", path, is_bool || is_no_dash?"":"=", is_bool?"":txt );
 
         if(path) free(path);
@@ -577,8 +538,8 @@ static enum MHD_Result oyjlMhdAnswerToConnection_cb (
         if(data_format == 8)
         {
           int len = strlen(html);
-          if((len > 32 && oyjlStringStartsWith( html, "<?xml version=\"1.0\"" ) && strstr( html, "<svg" ) ) ||
-             (len > 32 && oyjlStringStartsWith( html, "<svg") == 1))
+          if((len > 32 && oyjlStringStartsWith( html, "<?xml version=\"1.0\"", OYJL_COMPARE_CASE ) && strstr( html, "<svg" ) ) ||
+             (len > 32 && oyjlStringStartsWith( html, "<svg", OYJL_COMPARE_CASE) == 1))
           {
             char * css_toc_text = NULL;
             oyjlStringAdd( &html_commented, 0,0, "<br />%s", con_info->command );
@@ -714,7 +675,7 @@ int  oyjlArgsWebGroupIsMan_          ( oyjl_val            g )
 {
   oyjl_val first_o = oyjlTreeGetValue(g, 0, "options/[0]/option");
   const char * txt = OYJL_GET_STRING(first_o);
-  if(oyjlStringStartsWith( txt, "man-"))
+  if(oyjlStringStartsWith( txt, "man-", OYJL_COMPARE_CASE))
     return 1;
   return 0;
 }
@@ -787,7 +748,7 @@ void oyjlArgsWebOptionPrint_         ( oyjl_val            opt,
   oyjl_val o = oyjlTreeGetValue(opt, 0, "option");
   oyjl_val choices;
   txt = OYJL_GET_STRING(o);
-  if(oyjlStringStartsWith( txt, "man-" ))
+  if(oyjlStringStartsWith( txt, "man-", OYJL_COMPARE_CASE ))
     return;
   o = oyjlTreeGetValue(opt, 0, "key");
   key = OYJL_GET_STRING(o);
@@ -1003,7 +964,7 @@ void oyjlArgsWebGroupPrintNonDetail_ ( oyjl_val            root,
         int flags = 0;
         oyjl_val o_key = oyjlTreeGetValue(o, 0, "key");
         const char * key = OYJL_GET_STRING(o_key);
-        if(oyjlStringSplitFind_(&ignore, ",", key, 0))
+        if(oyjlStringSplitFind(ignore, ",", key, 0, NULL, 0,0) >= 0)
           flags = 1;
         if(debug)
           oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "OyjlArgsWeb add option from group %d to form %s: %s", OYJL_DBG_ARGS, src_gcount-1, gname, opt_bold );
@@ -1045,11 +1006,11 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
   v = oyjlTreeGetValue(g, 0, "mandatory");
   mandatory = oyjlStringCopy( OYJL_GET_STRING(v), 0 );
   mandatory_orig = oyjlStringCopy( mandatory, 0 );
-  mandatory_n = oyjlStringSplitFind_(&mandatory, "|,", NULL, OYJL_REMOVE);
+  mandatory_n = oyjlStringSplitFind(mandatory, "|,", NULL, OYJL_REMOVE, &mandatory, 0,0);
   v = oyjlTreeGetValue(g, 0, "optional");
   optional = oyjlStringCopy( OYJL_GET_STRING(v), 0 );
   optional_orig = oyjlStringCopy( optional, 0 );
-  optional_n = oyjlStringSplitFind_(&optional, "|,", NULL, OYJL_REMOVE);
+  optional_n = oyjlStringSplitFind(optional, "|,", NULL, OYJL_REMOVE, &optional, 0,0);
   v = oyjlTreeGetValue(g, 0, "options");
   count = oyjlValueCount( v );
   for(j = 0; j < count; ++j)
@@ -1059,9 +1020,9 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
     oyjl_val o = oyjlTreeGetValue(opt, 0, "key");
     const char * key = OYJL_GET_STRING(o);
     int flags = 0;
-    if(oyjlStringSplitFind_(&mandatory, "|,", key, OYJL_REMOVE)) { is_mandatory = 1; ++mandatory_found; };
-    if(oyjlStringSplitFind_(&optional, "|,", key, OYJL_REMOVE)) { /*is_optional = 1;*/ ++optional_found; };
-    if(oyjlStringSplitFind_(&ignore, ",", key, 0))
+    if(oyjlStringSplitFind(mandatory, "|,", key, OYJL_REMOVE, &mandatory, 0,0) >= 0) { is_mandatory = 1; ++mandatory_found; };
+    if(oyjlStringSplitFind(optional, "|,", key, OYJL_REMOVE, &optional, 0,0) >= 0) { /*is_optional = 1;*/ ++optional_found; };
+    if(oyjlStringSplitFind(ignore, ",", key, 0, NULL, 0,0) >= 0)
       flags = 1;
     oyjlArgsWebOptionPrint_( opt, is_mandatory, t_, description, gcount, sec, flags );
   }
@@ -1124,14 +1085,14 @@ const char * oyjl_args_web_file_name_security_feature = NULL;
   const char * policy = policy_; \
   policy += 3; \
   if( !error && \
-      (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind_((char**)&oyjl_args_web_file_name_security_feature, ",", policy_, 0)) && \
+      (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind(oyjl_args_web_file_name_security_feature, ",", policy_, 0,NULL, 0,0) >= 0) && \
       strstr(fn, policy) ) { error = 1; error_msg = policy_ " - " description; } \
   if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        %s - %s\n", oyjlTermColor(oyjlITALIC, policy_), description ); \
 }
 #define OYJL_USE_POLICY(policy_, description) \
   if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        %s - %s\n", oyjlTermColor(oyjlITALIC, policy_), description ); \
   if( !error && \
-      (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind_((char**)&oyjl_args_web_file_name_security_feature, ",", policy_, 0)) )
+      (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind(oyjl_args_web_file_name_security_feature, ",", policy_, 0, NULL, 0,0) >= 0) )
 int oyjl_args_web_debug = 0;
 int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
                                        int                 write_size OYJL_UNUSED )
@@ -1187,9 +1148,9 @@ int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
       const char * arg = list[i];
       const char * dynamic_policy = arg;
       int allow = 0;
-      if(!oyjlStringStartsWith( arg, "allow_" )) continue;
+      if(!oyjlStringStartsWith( arg, "allow_", OYJL_COMPARE_CASE )) continue;
       dynamic_policy += 6;
-      allow = oyjlStringStartsWith( fn, dynamic_policy );
+      allow = oyjlStringStartsWith( fn, dynamic_policy, 0 );
 
       if(allow && hidden && (fn[0] == '.' || strstr(fn,"/.")))
       { except = 1; hidden = 0;
@@ -1305,11 +1266,15 @@ int oyjlArgsWebStart__               ( int                 argc,
   if(ui)
   {
     const char * web_pameters = NULL;
-    oyjlOptions_GetResult( ui->opts, "R", &web_pameters, 0,0 );
+    oyjlOptions_GetResult( ui->opts, "render", &web_pameters, 0,0 );
+    if(!web_pameters)
+      oyjlOptions_GetResult( ui->opts, "R", &web_pameters, 0,0 );
     if(web_pameters)
     {
       long lo = 8888;
       web_pameters_list = oyjlStringSplit( web_pameters, ':', &web_pameters_list_n, 0 );
+      if(debug)
+        fprintf (stderr, "Parameters for rendering web page: \"%s\" %d\n", web_pameters, web_pameters_list_n);
 
       for(i = 1 /* zero param is "web" */; i < web_pameters_list_n; ++i)
       {
@@ -1338,22 +1303,22 @@ int oyjlArgsWebStart__               ( int                 argc,
         OYJL_SUB_ARG_STRING( "security", 0, security )
         if(security)
         {
-          if(oyjlStringSplitFind_(&security, ",", "readonly", 0))
+          if(oyjlStringSplitFind(security, ",", "readonly", 0, NULL, 0,0) >= 0)
             sec = oyjlSECURITY_READONLY;
           else
-          if(oyjlStringSplitFind_(&security, ",", "interactive", 0))
+          if(oyjlStringSplitFind(security, ",", "interactive", 0, NULL, 0,0) >= 0)
             sec = oyjlSECURITY_INTERACTIVE;
           else
-          if(oyjlStringSplitFind_(&security, ",", "check_read", 0))
+          if(oyjlStringSplitFind(security, ",", "check_read", 0, NULL, 0,0) >= 0)
             sec = oyjlSECURITY_CHECK_READ;
           else
-          if(oyjlStringSplitFind_(&security, ",", "check_write", 0))
+          if(oyjlStringSplitFind(security, ",", "check_write", 0, NULL, 0,0) >= 0)
             sec = oyjlSECURITY_CHECK_WRITE;
           else
-          if(oyjlStringSplitFind_(&security, ",", "check", 0))
+          if(oyjlStringSplitFind(security, ",", "check", 0, NULL, 0,0) >= 0)
             sec = oyjlSECURITY_CHECK;
           else
-          if(oyjlStringSplitFind_(&security, ",", "lazy", 0))
+          if(oyjlStringSplitFind(security, ",", "lazy", 0, NULL, 0,0) >= 0)
             sec = oyjlSECURITY_LAZY;
           if(strchr(security, ',')) /* contains policies */
             oyjl_args_web_file_name_security_feature = security;
@@ -1379,6 +1344,8 @@ int oyjlArgsWebStart__               ( int                 argc,
         }
       }
     }
+    else
+      fprintf (stderr, "%s\n", oyjlTermColor( oyjlRED, "No parameters for rendering web page" ));
   }
 
   if(oyjlSECURITY_CHECK <= sec && sec < oyjlSECURITY_LAZY)
@@ -1747,7 +1714,7 @@ int oyjlArgsWebStart__               ( int                 argc,
       fprintf( stderr, "sec:%s ", oyjlTermColor(oyjlITALIC,sec_rules) );
     }
     fprintf( stderr, "css:%s ", OYJL_E(oyjlTermColor(css_text?oyjlITALIC:oyjlRED,css),"") );
-    fprintf( stderr, "css2:%s ", OYJL_E(oyjlTermColor(css2_text?oyjlITALIC:oyjlRED,css2),"") );
+    fprintf( stderr, "css(2):%s ", OYJL_E(oyjlTermColor(css2_text?oyjlITALIC:oyjlRED,css2),"") );
     fprintf( stderr, "ignore:%s ", OYJL_E(oyjlTermColor(oyjlITALIC,ignore),"") );
     fprintf( stderr, "%s %s\n", oyjl_args_web_run==1?"connect to":"simulate", oyjlTermColorF( oyjl_args_web_run==1?oyjlBOLD:oyjlBLUE, "%s//localhost:%d", tls_flag?"https":"http", port) );
 
@@ -1832,35 +1799,29 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
   {
     if(arg[0])
     {
-      char * low = oyjlStringToLower_( arg );
-      if(low)
+      if(oyjlStringStartsWith(arg,"gui", OYJL_COMPARE_CASE))
+        name = "OyjlArgsQml";
+      else
+      if(oyjlStringStartsWith(arg,"qml", OYJL_COMPARE_CASE))
+        name = "OyjlArgsQml";
+      else
+      if(oyjlStringStartsWith(arg,"cli", OYJL_COMPARE_CASE))
+        name = "OyjlArgsCli";
+      else
+      if(oyjlStringStartsWith(arg,"web", OYJL_COMPARE_CASE))
+        name = "OyjlArgsWeb";
+      if(!name)
       {
-        if(oyjlStringStartsWith(low,"gui"))
-          name = "OyjlArgsQml";
-        else
-        if(oyjlStringStartsWith(low,"qml"))
-          name = "OyjlArgsQml";
-        else
-        if(oyjlStringStartsWith(low,"cli"))
-          name = "OyjlArgsCli";
-        else
-        if(oyjlStringStartsWith(low,"web"))
-          name = "OyjlArgsWeb";
-        if(!name)
-        {
-          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s|%s", OYJL_DBG_ARGS, arg,low );
-          free(low);
-          return 1;
-        }
-        if(strcmp(name,"OyjlArgsWeb") == 0)
-          error = 0;
-        else
-        if(strcmp(name,"OyjlArgsCli") == 0)
-          error = -2;
-        else
-          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s|%s", OYJL_DBG_ARGS, arg,low );
-        free(low);
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s", OYJL_DBG_ARGS, arg );
+        return 1;
       }
+      if(strcmp(name,"OyjlArgsWeb") == 0)
+        error = 0;
+      else
+      if(strcmp(name,"OyjlArgsCli") == 0)
+        error = -2;
+      else
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s", OYJL_DBG_ARGS, arg );
     }
     else /* report all available renderers */
     {
