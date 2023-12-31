@@ -70,12 +70,12 @@ int          oyjlDataFormat          ( const char        * text )
   while( (c = text[i]) != 0 && (c == ' ' || c == '\t' || c == '\n' || c == '\r' ))
     i++;
   if( strlen(&text[i]) > 5 &&
-      ( oyjlStringStartsWith( &text[i], "<?xml" ) ||
+      ( oyjlStringStartsWith( &text[i], "<?xml", OYJL_COMPARE_CASE ) ||
         ( text[i] == '<' && text[i+1] != '<' ) ) )
     return 8;
   if(c == '[' || c == '{')
     return 7;
-  if((i == 0 || text[i-1] == '\n') && oyjlStringStartsWith( &text[i], "---\n" ))
+  if((i == 0 || text[i-1] == '\n') && oyjlStringStartsWith( &text[i], "---\n", 0 ))
     return 9;
   if(strstr(text, "#define ") || strstr(text, "#include ") || strstr(text, "int ") || strstr(text, "char *"))
     return 10;
@@ -571,6 +571,7 @@ char *     oyjlTreeToText            ( oyjl_val            v,
   int level = 0;
   char * text = NULL;
 
+  if(!v) return text;
   if(flags & OYJL_YAML)
     oyjlTreeToYaml( v, &level, &text );
   else if(flags & OYJL_XML)
@@ -2418,7 +2419,7 @@ char *         oyjlTranslate         ( oyjlTranslation_s * context,
       translated = oyjlTranslate2_( lang, catalog, start, end, domain, text, flags );
   }
 
-  return translated ? translated : (char*)text;
+  return translated && translated[0] ? translated : (char*)text;
 }
 
 int  oyjlXPathGetSize_               ( oyjl_val            v,
