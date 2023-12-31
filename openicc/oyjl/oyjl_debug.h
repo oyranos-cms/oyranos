@@ -39,7 +39,7 @@ void         oyjlDebugVariableSet    ( int               * debug );
 /* --- message helpers --- */
 /** @brief types of terminal color markers */
 typedef enum {
-  oyjlNO_MARK,                         /**< @brief plain */
+  oyjlNO_MARK = 1,                     /**< @brief plain */
   oyjlRED,                             /**< @brief red color */
   oyjlGREEN,                           /**< @brief green color */
   oyjlBLUE,                            /**< @brief blue color */
