@@ -67,8 +67,8 @@ typedef enum {
     oyjl_t_any = 8
 } oyjl_type;
 
-#define OYJL_NUMBER_INT_VALID          0x01
-#define OYJL_NUMBER_DOUBLE_VALID       0x02
+#define OYJL_NUMBER_INT_VALID          0x200
+#define OYJL_NUMBER_DOUBLE_VALID       0x400
 
 /** A pointer to a node in the parse tree */
 typedef struct oyjl_val_s * oyjl_val;
@@ -245,8 +245,8 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * csv,
 oyjl_val   oyjlTreeNew               ( const char        * path );
 void       oyjlTreeClearValue        ( oyjl_val            root,
                                        const char        * xpath );
-#define    OYJL_JSON                   0x0    /**< @brief  JSON format; default */
-#define    OYJL_YAML                   0x01   /**< @brief  YAML format */
+#define    OYJL_JSON                   0x01   /**< @brief  JSON format; default */
+#define    OYJL_YAML                   0x04   /**< @brief  YAML format */
 #define    OYJL_XML                    0x08   /**< @brief  XML format */
 #define    OYJL_CSV                    0x20   /**< @brief  CSV format - needs 2D array */
 #define    OYJL_CSV_SEMICOLON          0x40   /**< @brief  CSV format - needs 2D array */
