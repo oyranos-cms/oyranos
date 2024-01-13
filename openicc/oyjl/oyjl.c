@@ -77,7 +77,7 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
       fprintf(stderr, "%s file read:\t\"%s\" %d\n", oyjlPrintTime(OYJL_BRACKETS, oyjlNO_MARK), error_name, size);
 
     /* convert exported C declarated string into plain text using cc compiler */
-    if(oyjlStringStartsWith(text, "#define ") && !delimiter)
+    if(oyjlStringStartsWith(text, "#define ",0) && !delimiter)
     {
       int size = 0;
       char * t = oyjlStringCopy( text, 0 ), * name;
@@ -247,19 +247,19 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&set}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "t","type",          NULL,     _("Type"),     _("Get node type"),          NULL,NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&type}, NULL},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_REPETITION, "i","input",         NULL,     _("Input"),    _("File or Stream"),_("A JSON file name or a input stream like \"stdin\"."),_("FILENAME"),
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_REPETITION|OYJL_OPTION_FLAG_IMMEDIATE, "i","input",         NULL,     _("Input"),    _("File or Stream"),_("A JSON file name or a input stream like \"stdin\"."),_("FILENAME"),
         oyjlOPTIONTYPE_FUNCTION, {0},                oyjlSTRING,    {.s=&i_filename}, "file_names=*.[J,j][S,s][O,o][N,n];*.[X,x][M,m][L,l];*.[Y,y][A,a][M,m][L,l]"},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "x","xpath",         NULL,     _("XPath"),    _("Path specifier"),_("The path consists of slash '/' separated terms. Each term can be a key name or a square bracketed index. A empty term is used for a search inside a tree."),_("PATH"),
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_IMMEDIATE,  "x","xpath",         NULL,     _("XPath"),    _("Path specifier"),_("The path consists of slash '/' separated terms. Each term can be a key name or a square bracketed index. A empty term is used for a search inside a tree."),_("PATH"),
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&xpath}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "f","format",        NULL,     _("Format"),   _("Print Data Format"),       NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&format}, NULL},
-    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"p","plain",      NULL,     _("Plain"),    _("No Markup"),               NULL, NULL,
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG|OYJL_OPTION_FLAG_IMMEDIATE,"p","plain",      NULL,     _("Plain"),    _("No Markup"),               NULL, NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlSTRING,    {.s=&plain}, NULL},
-    {"oiwi", 0,                          "r","try-format",    NULL,     _("Try Format"),_("Try to find data format, even with offset."), NULL, _("FORMAT"),
+    {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE, "r","try-format",    NULL,     _("Try Format"),_("Try to find data format, even with offset."), NULL, _("FORMAT"),
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)r_choices, sizeof(r_choices), malloc )}, oyjlSTRING,    {.s=&try_format}, NULL},
-    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,"d","detect-numbers",NULL,  _("Detect"),    _("Try to detect numbers from non typesafe formats."),  _("Uses by default dot '.' as decimal separator."), _("SEPARATOR"),
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG|OYJL_OPTION_FLAG_IMMEDIATE,"d","detect-numbers",NULL,  _("Detect"),    _("Try to detect numbers from non typesafe formats."),  _("Uses by default dot '.' as decimal separator."), _("SEPARATOR"),
         oyjlOPTIONTYPE_CHOICE,   {.choices.list = (oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)d_choices, sizeof(d_choices), malloc )}, oyjlSTRING,    {.s=&detect}, NULL},
-    {"oiwi", 0,                          "w","wrap",          NULL,     _("Wrap Type"),_("language specific wrap"),  NULL, _("TYPE"),          
+    {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE, "w","wrap",          NULL,     _("Wrap Type"),_("language specific wrap"),  NULL, _("TYPE"),          
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)w_choices, sizeof(w_choices), malloc ), 0}}, oyjlSTRING,    {.s=&wrap}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "W","wrap-name",     NULL,     _("Wrap Name"),_("A name for the symbol to be defined."), _("Use only letters from alphabet [A-Z,a-z] including optional underscore '_'."), _("NAME"),          
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)W_choices, sizeof(W_choices), malloc ), 0}}, oyjlSTRING,    {.s=&wrap_name}, NULL},
