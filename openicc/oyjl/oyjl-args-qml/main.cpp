@@ -65,7 +65,7 @@ int main(int argc, const char *argv[])
    * *documentation* what you see fit. Add new ones as needed. */
   oyjlUiHeaderSection_s sections[] = {
     /* type, nick,            label, name,                  description  */
-    {"oihs", "version",       NULL,  "1.0",                 NULL},
+    {"oihs", "version",       NULL,  "0.9",                 NULL},
     {"oihs", "documentation", NULL,  "",                    _("The tool graphicaly renders Oyjl JSON UI files using QML.")},
     {"oihs", "date",          NULL,  "2020-11-15T12:00:00", _("November 15, 2020")},
     {"",0,0,0,0}};

@@ -19,6 +19,7 @@
 #include <QString>
 
 void app_log( QString s );
+void app_log( const char * log_text );
 void app_log( QString file, QString func, QString log_text );
 
 #define LOG( text ) app_log( QString(__FILE__) + ":" + QString::number(__LINE__), QString(__func__) + "()", text )

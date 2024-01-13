@@ -58,6 +58,8 @@ QString AppData::readFile(QString url)
     return text;
 }
 
+extern oyjlUi_s          * oyjl_ui_qml;
+
 /** @brief read document JSON from file
  *
  *  The function opens a JSON file. It then injects localisation, the
@@ -96,6 +98,38 @@ QString AppData::getJSON(QString url)
           oyjl_val root = oyjlTreeParse( json, error_buffer, 256 );
           if(error_buffer[0])
             LOG(QString(error_buffer));
+          else
+          {
+            int found = 0;
+            if( root && oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules") ) /* json */
+            {
+              found = 1;
+              LOG( QString("Found Json org/freedesktop/oyjl/modules: ") + QString::number(strlen(json)) );
+            }
+            else
+            if( root && oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/ui") ) /* -X=export */
+            {
+              oyjlUi_s * u = oyjlUi_ImportFromJson( root,0 );
+              char * t = oyjlUi_ToText( u, oyjlARGS_EXPORT_JSON, 0 );
+              int state = 0;
+              oyjlTreeFree(root);
+              root = oyjlTreeParse2( t, 0, __func__, &state );
+              if(t) free(t);
+              if(state)
+              {
+                fprintf(stderr, "ERROR:\t\"%s\"\n", oyjlPARSE_STATE_eToString(state));
+                char * error = NULL;
+                oyjlStringAdd( &error, 0,0, "{\"error\": \"%s\"}", json );
+                json = error;
+                if(!oyjl_ui_qml)
+                  oyjl_ui_qml = u;
+              } else
+                found = 1;
+              LOG( QString("Found Export org/freedesktop/oyjl/ui: ") + QString::number(strlen(json)) );
+            }
+            if(found == 0)
+              LOG( QString("Found no UI") );
+          }
           oyjlTreeFree( root );
         }
     }
@@ -107,7 +141,7 @@ QString AppData::getJSON(QString url)
     json["LOCALE_info"] = loc.name();
 
     QString jtext = QString(QJsonDocument(json).toJson(QJsonDocument::Indented));
-    LOG(tr("finished loading") + " size: " + QString::number(jtext.length()));
+    LOG(tr("finished loading") + " " + tr("size") + ": " + QString::number(jtext.length()));
 
     return jtext;
 }
@@ -118,8 +152,10 @@ QString AppData::plainJSON(QString json)
     QByteArray a = json.toUtf8();
     const char * jsont = a.constData();
     const char * t = oyjlTermColorToPlain(jsont, OYJL_REGEXP);
+#if 0
     if(app_debug)
-      LOG( QString("json.length(): ") + QString::number(json.length()) + " strlen(jsont): " + QString::number(strlen(jsont)) /*+ " json:\n" + t*/ );
+      LOG( QString("json.length(): ") + QString::number(json.length()) + " strlen(jsont): " + QString::number(strlen(jsont)) + " json:\n" + t );
+#endif
     QString txt( t );
     return txt;
 }
@@ -269,6 +305,9 @@ QString AppData::getLibDescription(int type)
     return QString("no description found for type ") + QString::number(type);
 }
 
+
+
+
 /** @brief modify the internal JSON model
  *
  *  @param key    object name levels separated by slash '/';
@@ -277,27 +316,28 @@ QString AppData::getLibDescription(int type)
  *                e.g.: "org/freedesktop/oyjl/[0]/firstKey"
  *  @param value  the actual string for the object
  */
-void AppData::setOption(QString key, QString value)
+void AppData::setOption(QString key, QString value, int current_group_id)
 {
-    LOG(key + ":" + value );
-    oyjl_val o;
     char * k = oyjlStringCopy(key.toLocal8Bit().constData(), malloc);
     char * v = oyjlStringCopy(value.toLocal8Bit().constData(), malloc);
     if(!m_model)
         m_model = oyjlTreeNew(k);
 
-    o = oyjlTreeGetValue(m_model, OYJL_CREATE_NEW, k);
-    oyjlValueSetString(o, v);
+    if(m_model_cli) { oyjlTreeFree(m_model_cli); m_model_cli = NULL; }
+    m_model_cli = oyjlUiJsonSetOption( m_ui, m_model, k,v, current_group_id, 0 );
 
-#if 0 // debuging
-    char * json = NULL;
-    int levels = 0;
-    oyjlTreeToJson(m_model, &levels, &json);
-    LOG(QString(json) + " \n" + k + ":" + v);
-    if(json) free(json);
-    if(k) free(k);
-    if(v) free(v);
-#endif
+    if(k) { free(k); k = NULL; }
+    if(v) { free(v); v = NULL; }
+}
+
+QString AppData::jsonToJson(QString json)
+{
+    oyjl_val root = oyjlTreeParse2( json.toLocal8Bit().constData(), 0, __func__, NULL );
+    char * text = oyjlTreeToText( root, OYJL_JSON );
+    oyjlTreeFree( root );
+    QString qtext( text );
+    free( text );
+    return qtext;
 }
 /** @brief obtain the internal JSON model
  *
@@ -341,6 +381,7 @@ QString AppData::dumpOptions()
         char * t = NULL;
         oyjlTreeToJson( m_model, &level, &t );
         qstring = t;
+        LOG(QString("m_model: %1").arg(qstring));
         if(t) free(t);
     }
     return qstring;

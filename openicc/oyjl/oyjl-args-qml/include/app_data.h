@@ -50,6 +50,8 @@ public:
     AppData(QObject * parent = nullptr)
       : QObject(parent)
       , m_model(nullptr)
+      , m_model_cli(nullptr)
+      , m_ui(nullptr)
     {
 #if !defined(Q_OS_ANDROID)
     // Linux polles the sysfs interface
@@ -83,13 +85,16 @@ public:
     Q_INVOKABLE QString getJSON(QString url);
     Q_INVOKABLE QString plainJSON(QString url);
     Q_INVOKABLE QString toHtml(QString ansi) { return QString(oyjlTermColorToHtml(ansi.toLocal8Bit().constData(),0)); };
+    Q_INVOKABLE QString jsonToJson(QString json);
     Q_INVOKABLE void  writeJSON(QString url);
     Q_INVOKABLE void  BT(void) { LOG( oyjlBT(0) );};
     Q_INVOKABLE QString getLibDescription(int);
-    Q_INVOKABLE void    setOption(QString key, QString value);
+    Q_INVOKABLE void    setUi(QString ui_json) { m_ui = oyjlTreeParse2( ui_json.toLocal8Bit().constData(), 0, __func__, 0 ); }
+    Q_INVOKABLE void    setOption(QString key, QString value, int group_id);
+    Q_INVOKABLE QString getArgs() { return oyjlTreeToText( m_model_cli, OYJL_JSON); };
     Q_INVOKABLE QString getOption(QString key);
     Q_INVOKABLE QString dumpOptions();
-    Q_INVOKABLE void    clearOptions() { oyjlTreeFree(m_model); m_model = nullptr; }
+    Q_INVOKABLE void    clearOptions() { oyjlTreeFree(m_model); m_model = nullptr; oyjlTreeFree(m_model_cli); m_model_cli = nullptr; oyjlTreeFree(m_ui); m_ui = nullptr; }
     Q_INVOKABLE QString findLogo(QString pattern);
     Q_INVOKABLE QString readFile(QString url);
     Q_INVOKABLE QString requestPermission( QString name );
@@ -109,6 +114,8 @@ private:
     QString m_log_msg;
     QTimer           battery_timer;
     oyjl_val m_model;
+    oyjl_val m_model_cli;
+    oyjl_val m_ui;
 };
 
 #endif // APP_DATA_H

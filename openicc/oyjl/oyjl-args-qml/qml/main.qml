@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2022 (C) Kai-Uwe Behrmann
+ *            2018-2023 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -501,13 +501,14 @@ AppWindow {
                 }
             }
 
-            if(app_debug)
-                statusText = "command_set: " + processSetCommand + " " + JSON.stringify(args) + " ex:" + mandatory_exclusive + " mand:" + group.mandatory
-            else
-                statusText = processSetCommand + " " + JSON.stringify(args)
-
+            var app_args = appData.getArgs();
             currentArgs = [];
-            currentArgs = args;
+            currentArgs = JSON.parse(appData.plainJSON(app_args));
+
+            if(app_debug)
+                statusText = "command_set: " + processSetCommand + " " + JSON.stringify(args) + " ex:" + mandatory_exclusive + " mand:" + group.mandatory + " currentArgs: " + currentArgs
+            else
+                statusText = processSetCommand + " " + JSON.stringify(currentArgs)
 
             setHistoryArgs()
 
@@ -1023,7 +1024,7 @@ AppWindow {
         }
 
         if(changed.length)
-            appData.setOption(key, changed);
+            appData.setOption(key, changed, group.id);
 
         name = P.getTranslatedItem( opt, "name", loc, catalog );
         var l = 0;
@@ -1113,11 +1114,10 @@ AppWindow {
         optionsModel.clear()
         appData.clearOptions()
         dataText = t;
-        appDataJsonString = t;
-        appJsonObject = JSON.parse(appData.plainJSON(t));
-        if( appJsonObject === "undefined" )
+        appData.setUi(t);
+        if( json === "undefined" )
             logText = "Parsing failed: " + t;
-        var j = appJsonObject;
+        var j = json;
         if(typeof j.LOCALE_info !== "undefined")
             loc = j.LOCALE_info;
         if(typeof j.org !== "undefined" &&
@@ -1220,6 +1220,9 @@ AppWindow {
                 if(typeof desc !== "undefined")
                     groupName = desc
             }
+            if(app_debug)
+              statusText = "group[" + g1 + "] " + groupName;
+            group.id = g1;
             var help = P.getTranslatedItem( group, "help", loc, catalog );
 
             var synopsis = "";
@@ -1276,6 +1279,9 @@ AppWindow {
                     setOptions( g, groupName2, help2 )
                 }
         }
+        appDataJsonString = appData.jsonToJson( JSON.stringify(j) );
+        appData.setUi(appDataJsonString);
+        appJsonObject = j;
         if(history_choices.length)
             setHistory(history_choices)
     }

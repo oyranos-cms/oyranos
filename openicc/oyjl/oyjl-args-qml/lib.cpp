@@ -101,7 +101,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
 
     app.setApplicationName(QString("oyjl-args-qml"));
     app.setApplicationDisplayName(QString("Oyjl"));
-    app.setApplicationVersion("0.8");
+    app.setApplicationVersion("0.9");
     app.setOrganizationName(QString("oyranos.org"));
     app.setWindowIcon(QIcon(":/images/logo"));
 
@@ -274,7 +274,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
       oyjlTreeFree( defaults ); defaults = NULL;
     }
 
-    char * t = oyjlTreeToText( root, 0 );
+    char * t = oyjlTreeToText( root, OYJL_JSON );
     if(t)
     {
       mgr.setUri( QString(t) );
@@ -350,40 +350,34 @@ static int oyjlArgsRendererSelect   (  oyjlUi_s          * ui )
   {
     if(arg[0])
     {
-      char * low = oyjlStringToLower_( arg );
-      if(low)
+      if(oyjlStringStartsWith(arg,"gui", OYJL_COMPARE_CASE))
+        name = "OyjlArgsQml";
+      else
+      if(oyjlStringStartsWith(arg,"qml", OYJL_COMPARE_CASE))
+        name = "OyjlArgsQml";
+      else
+      if(oyjlStringStartsWith(arg,"cli", OYJL_COMPARE_CASE))
+        name = "OyjlArgsCli";
+      else
+      if(oyjlStringStartsWith(arg,"web", OYJL_COMPARE_CASE))
+        name = "OyjlArgsWeb";
+      if(!name)
       {
-        if(oyjlStringStartsWith(low,"gui"))
-          name = "OyjlArgsQml";
-        else
-        if(oyjlStringStartsWith(low,"qml"))
-          name = "OyjlArgsQml";
-        else
-        if(oyjlStringStartsWith(low,"cli"))
-          name = "OyjlArgsCli";
-        else
-        if(oyjlStringStartsWith(low,"web"))
-          name = "OyjlArgsWeb";
-        if(!name)
-        {
-          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s|%s", OYJL_DBG_ARGS, arg,low );
-          free(low);
-          return 1;
-        }
-        if(strcmp(name,"OyjlArgsQml") == 0)
-          error = 0;
-        else
-        if(strcmp(name,"OyjlArgsCli") == 0)
-          error = -2;
-#ifdef OYJL_HAVE_MHD
-        else
-        if(strcmp(name,"OyjlArgsWeb") == 0)
-          error = -3;
-#endif
-        else
-          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s|%s", OYJL_DBG_ARGS, arg,low );
-        free(low);
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s", OYJL_DBG_ARGS, arg );
+        return 1;
       }
+      if(strcmp(name,"OyjlArgsQml") == 0)
+        error = 0;
+      else
+      if(strcmp(name,"OyjlArgsCli") == 0)
+        error = -2;
+#ifdef OYJL_HAVE_MHD
+      else
+      if(strcmp(name,"OyjlArgsWeb") == 0)
+        error = -3;
+#endif
+      else
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s", OYJL_DBG_ARGS, arg );
     }
     else /* report all available renderers */
     {
