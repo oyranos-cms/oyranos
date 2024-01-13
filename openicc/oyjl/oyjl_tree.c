@@ -1235,6 +1235,157 @@ void               oyjlTreeToCsv     ( oyjl_val            table,
   oyjlStr_Release( &string );
 }
 
+int oyjlIsNumber( const char c )
+{
+  if(((int)'0' <= (int)c &&
+        (int)c <= (int)'9') ||
+       c == '.' ||
+       c == '-' ||
+       c == 'e' ||
+       c == 'E' ||
+       c == ' '
+      )
+    return 1;
+  return 0;
+}
+
+/** @brief read a CSV text string into a C data structure (libOyjl)
+ *
+ *  Expected is a 2D table on input.
+ *
+ *  @see oyjlTreeToCsv()
+ *
+ *  @param[in]     text                the CSV text
+ *  @param[in]     delimiter           separator for oyjlStringSplit2
+ *  @param[in]     flags               for processing
+ *                                     - ::OYJL_NUMBER_DETECTION for parsing
+ *                                       of values as possibly numbers
+ *  @param[out]    error_buffer        place a error message
+ *  @param[out]    error_buffer_size   size of error_buffer
+ *  @return                            object tree on success,
+ *                                     else check error_buffer
+ */
+oyjl_val   oyjlTreeParseCsv          ( const char        * text,
+                                       const char        * delimiter,
+                                       int                 flags,
+                                       char              * error_buffer OYJL_UNUSED,
+                                       size_t              error_buffer_size OYJL_UNUSED)
+{
+  oyjl_val jroot = NULL;
+  int rows_n = 0, /* lines */
+      cols_n = 0, len;
+  char ** rows, ** cols, * row;
+  if(!text) return jroot;
+  if(*oyjl_debug)
+    fprintf( stderr, "lines: %d\n", rows_n );
+
+#ifdef OYJL_HAVE_LOCALE_H
+  char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
+  if(flags & OYJL_NUMBER_DETECTION)
+    setlocale(LC_NUMERIC, "C");
+#endif
+
+  rows = oyjlStringSplit( text, '\n', &rows_n, malloc );
+  cols = oyjlStringSplit2( rows[0], delimiter, 0, &cols_n, NULL, malloc );
+  oyjlStringListRelease( &cols, cols_n, free );
+
+  if(cols_n >= 1)
+  {
+    int i,index;
+    jroot = oyjlTreeNew( "" );
+    cols_n = 0;
+
+    for(i = 0; i < rows_n; ++i)
+    {
+      oyjl_val row_node, node;
+      row = rows[i];
+      len = strlen(row);
+      if(len > 1 && row[len-1] == '\r')
+        row[len-1] = '\000'; /* clean DOS linebreak '\r\n' */
+      cols = oyjlStringSplit2( row, delimiter, 0, &cols_n, NULL, malloc );
+
+      row_node = oyjlTreeGetValueF( jroot, OYJL_CREATE_NEW, "[%d]", i );
+      row_node->type = oyjl_t_array;
+      oyjlAllocHelper_m( row_node->u.array.values, oyjl_val, cols_n + 1, malloc,  goto clean_parse_csv );
+      row_node->u.array.len = cols_n + 1;
+      for(index = 0; index < cols_n; ++index)
+      {
+        node = NULL;
+        node = calloc( 1, sizeof(*node) );
+        if(!node) goto clean_parse_csv;
+        node->type = oyjl_t_null;
+        row_node->u.array.values[index] = node;
+      }
+
+      for(index = 0; index < cols_n; ++index)
+      {
+        int err = -1;
+        double d = -1;
+        char * val = cols[index];
+
+        node = row_node->u.array.values[index];
+
+        if(flags & OYJL_NUMBER_DETECTION)
+        {
+          char * number = oyjlStringCopy( val, 0 );
+          if(flags & OYJL_DECIMAL_SEPARATOR_COMMA)
+          {
+            char * t = strrchr( number, ',' );
+            if(t) t[0] = '.';
+          }
+          err = oyjlStringToDouble( number, &d, 0, OYJL_KEEP_LOCALE );
+          if(err == 0)
+            oyjlValueSetDouble( node, d );
+          if(err == 0)
+          {
+            free(node->u.number.r);
+            node->u.number.r = number;
+            free(val);
+            val = cols[index] = NULL;
+          }
+          else if(err != 0)
+          {
+            len = strlen(val);
+            if(oyjlStringStartsWith(val,"true",OYJL_COMPARE_CASE))
+            {
+              err = 0;
+              node->type = oyjl_t_true;
+            } else if(oyjlStringStartsWith(val,"false",OYJL_COMPARE_CASE))
+            {
+              err = 0;
+              node->type = oyjl_t_false;
+            }
+            if(number) { free(number); number = NULL; }
+          }
+        }
+
+        if(err != 0)
+          oyjlValueSetString( node, val );
+      }
+
+      if(text)
+      {
+        text = strchr( text, '\n' );
+        if(text) ++text;
+
+        if(*oyjl_debug > 1) fprintf( stderr, "\n" );
+      }
+      oyjlStringListRelease( &cols, cols_n, free ); cols_n = 0;
+    }
+  }
+  oyjlStringListRelease( &rows, rows_n, free );
+
+clean_parse_csv:
+#ifdef OYJL_HAVE_LOCALE_H
+  if(flags & OYJL_NUMBER_DETECTION)
+    setlocale(LC_NUMERIC, save_locale);
+  if(save_locale) free( save_locale );
+  oyjlStringListRelease( &cols, cols_n, free );
+#endif
+
+  return jroot;
+}
+
 
 /** @brief return the number of members if any at the node level
  *
