@@ -219,6 +219,8 @@ typedef enum {
   oyjlPARSE_STATE_RETURN_STATIC,       /**< @brief oyjl_val is static and must not be freed; needs OYJL_ALLOW_STATIC flag */
 } oyjlPARSE_STATE_e;
 const char*oyjlPARSE_STATE_eToString ( int                 state );
+#define OYJL_DELIMITER_COMMA      0x20 /**< @brief ',' comma */
+#define OYJL_DELIMITER_SEMICOLON  0x40 /**< @brief ';' semicolon */
 oyjl_val   oyjlTreeParse2            ( const char        * text,
                                        int                 flags,
                                        const char        * error_name,
@@ -235,9 +237,8 @@ oyjl_val   oyjlTreeParseYaml         ( const char        * yaml,
                                        char              * error_buffer,
                                        size_t              error_buffer_size);
 #endif
-#define OYJL_DELIMITER_COMMA      0x20 /**< @brief ',' comma */
-#define OYJL_DELIMITER_SEMICOLON  0x40 /**< @brief ';' semicolon */
 oyjl_val   oyjlTreeParseCsv          ( const char        * csv,
+                                       const char        * delimiter,
                                        int                 flags,
                                        char              * error_buffer,
                                        size_t              error_buffer_size);
