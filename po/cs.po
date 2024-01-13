@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2023-11-28 18:40+0100\n"
+"POT-Creation-Date: 2024-01-02 10:24+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "-k|--kelvin=NUMBER        Lambert (NUMBER:0 [≥0 ≤25000 Δ100])"
 msgstr ""
 
-#: oyjl.c:65 oyjl_args.c:5406
+#: oyjl.c:65 oyjl_args.c:5420
 msgid "... try with --help|-h option for usage text. give up"
 msgstr ""
 
@@ -29,19 +29,19 @@ msgstr ""
 msgid "2. Color"
 msgstr "Barva"
 
-#: oyjl.c:250 oyjl_translate.c:217
+#: oyjl.c:250 oyjl_translate.c:222
 msgid "A JSON file name or a input stream like \"stdin\"."
 msgstr ""
 
-#: oyjl_translate.c:219
+#: oyjl_translate.c:224
 msgid "A JSON file name or a output stream like \"stdout\"."
 msgstr ""
 
-#: oyjl_translate.c:245
+#: oyjl_translate.c:252
 msgid "A input function name string. e.g.: \"i18n(\\\"\""
 msgstr ""
 
-#: oyjl_args.c:5187
+#: oyjl_args.c:5201
 msgid "A mandatory sub command option needs to be placed first"
 msgstr ""
 
@@ -49,11 +49,12 @@ msgstr ""
 msgid "A name for the symbol to be defined."
 msgstr ""
 
-#: oyjl_translate.c:221
-msgid "A output format string."
+#: oyjl_translate.c:226
+#, c-format
+msgid "A output format string containing a %s for replacement."
 msgstr ""
 
-#: oyjl_translate.c:247
+#: oyjl_translate.c:254
 msgid "A output funtion name string. e.g.: \"_\""
 msgstr ""
 
@@ -63,7 +64,7 @@ msgid ""
 "lines."
 msgstr ""
 
-#: oyjl_args.c:6002 oyjl_args.c:6532 oyjl_args_tree.c:609
+#: oyjl_args.c:6016 oyjl_args.c:6546 oyjl_args_tree.c:609
 msgid "AUTHOR"
 msgstr ""
 
@@ -73,15 +74,15 @@ msgstr ""
 msgid "Actual mode"
 msgstr ""
 
-#: oyjl_translate.c:223 oyjl_translate.c:277
+#: oyjl_translate.c:230 oyjl_translate.c:284
 msgid "Add"
 msgstr ""
 
-#: oyjl_translate.c:223
+#: oyjl_translate.c:230
 msgid "Add Translation"
 msgstr ""
 
-#: oyjl_translate.c:202 oyjl_translate.c:223 oyjl_translate.c:277
+#: oyjl_translate.c:207 oyjl_translate.c:230 oyjl_translate.c:284
 msgid "Add gettext translated keys to JSON"
 msgstr ""
 
@@ -99,7 +100,7 @@ msgstr "Dostupná zařízení"
 msgid "Alternate"
 msgstr ""
 
-#: oyjl_translate.c:207
+#: oyjl_translate.c:212
 msgid "Alternatively use the -l=de_DE.UTF-8 option."
 msgstr ""
 
@@ -113,11 +114,11 @@ msgid ""
 "Arguments for options can be written with equal sign or with empty space."
 msgstr ""
 
-#: oyjl_args.c:5249 oyjl_args.c:6243
+#: oyjl_args.c:5263 oyjl_args.c:6257
 msgid "Author"
 msgstr ""
 
-#: oyjl_args.c:6012 oyjl_args.c:6014 oyjl_args.c:6546 oyjl_args.c:6548
+#: oyjl_args.c:6026 oyjl_args.c:6028 oyjl_args.c:6560 oyjl_args.c:6562
 #: oyjl_args_tree.c:612
 msgid "BUGS"
 msgstr ""
@@ -127,7 +128,7 @@ msgstr ""
 msgid "Base"
 msgstr ""
 
-#: oyjl_args.c:6253 oyjl_args.c:6255
+#: oyjl_args.c:6267 oyjl_args.c:6269
 msgid "Bugs"
 msgstr ""
 
@@ -142,11 +143,11 @@ msgstr ""
 msgid "C Stand Alone"
 msgstr ""
 
-#: oyjl.c:211 oyjl_translate.c:199
+#: oyjl.c:211 oyjl_translate.c:203
 msgid "C static char"
 msgstr ""
 
-#: oyjl_args.c:6006 oyjl_args.c:6536 oyjl_args_tree.c:610
+#: oyjl_args.c:6020 oyjl_args.c:6550 oyjl_args_tree.c:610
 msgid "COPYRIGHT"
 msgstr ""
 
@@ -194,7 +195,7 @@ msgid "Command line parser"
 msgstr ""
 
 #. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
-#: oyjl_translate.c:274
+#: oyjl_translate.c:281
 #, fuzzy
 msgid "Common Options"
 msgstr "Volba"
@@ -216,11 +217,15 @@ msgstr "Výstupní"
 msgid "Convert"
 msgstr "ICC Examin Verze"
 
-#: oyjl_translate.c:201 oyjl_translate.c:241
+#: oyjl_translate.c:206
+msgid "Convert C source to I18N JSON"
+msgstr ""
+
+#: oyjl_translate.c:205 oyjl_translate.c:248
 msgid "Convert JSON to gettext ready C strings"
 msgstr ""
 
-#: oyjl_translate.c:275
+#: oyjl_translate.c:282
 msgid "Convert JSON/C to gettext ready C strings"
 msgstr ""
 
@@ -228,7 +233,7 @@ msgstr ""
 #. Select a nick from *version*, *manufacturer*, *copyright*, *license*,
 #. * *url*, *support*, *download*, *sources*, *oyjl_module_author* and
 #. * *documentation*. Choose what you see fit. Add new ones as needed.
-#: oyjl_translate.c:191
+#: oyjl_translate.c:192
 msgid ""
 "Convert Oyjl UI JSON to C translatable strings for use with gettext tools "
 "and translate a tools UI using the programs own text domain. The resulting "
@@ -243,25 +248,25 @@ msgstr ""
 msgid "Convert eXported developer JSON to C source"
 msgstr ""
 
-#: oyjl_translate.c:225 oyjl_translate.c:278
+#: oyjl_translate.c:232 oyjl_translate.c:285
 #, fuzzy
 msgid "Copy"
 msgstr "Copyright"
 
-#: oyjl_translate.c:225
+#: oyjl_translate.c:232
 #, fuzzy
 msgid "Copy Translations"
 msgstr "je nástroj pro správu politik"
 
-#: oyjl_translate.c:278
+#: oyjl_translate.c:285
 msgid "Copy keys to JSON"
 msgstr ""
 
-#: oyjl_translate.c:203 oyjl_translate.c:225
+#: oyjl_translate.c:208 oyjl_translate.c:232
 msgid "Copy translated keys to JSON. Skip gettext."
 msgstr ""
 
-#: oyjl_args.c:6247 oyjl_args_tree.c:569
+#: oyjl_args.c:6261 oyjl_args_tree.c:569
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -273,7 +278,11 @@ msgstr "Nelze otevřít:"
 msgid "Count"
 msgstr ""
 
-#: oyjl_args.c:5880 oyjl_args.c:6400 oyjl_args_tree.c:606
+#: oyjl_translate.c:196
+msgid "Create translation Json with -af=json."
+msgstr ""
+
+#: oyjl_args.c:5894 oyjl_args.c:6414 oyjl_args_tree.c:606
 msgid "DESCRIPTION"
 msgstr ""
 
@@ -285,13 +294,13 @@ msgstr "Datum"
 msgid "Decimal Separator"
 msgstr ""
 
-#: oyjl_args.c:6095 oyjl_args_cli.c:271 oyjl_args_tree.c:605
-#: oyjl_args_web.c:1534
+#: oyjl_args.c:6109 oyjl_args_cli.c:271 oyjl_args_tree.c:605
+#: oyjl_args_web.c:1501
 #, fuzzy
 msgid "Description"
 msgstr "popis"
 
-#: oyjl_args_web.c:1548
+#: oyjl_args_web.c:1515
 msgid "Details"
 msgstr ""
 
@@ -303,7 +312,7 @@ msgstr ""
 msgid "Development"
 msgstr ""
 
-#: oyjl_translate.c:237
+#: oyjl_translate.c:244
 #, fuzzy
 msgid "Directory"
 msgstr "Novy adresar?"
@@ -316,7 +325,7 @@ msgstr ""
 msgid "Documentation"
 msgstr "Dokumentace"
 
-#: oyjl_translate.c:227
+#: oyjl_translate.c:234
 msgid "Domains"
 msgstr ""
 
@@ -328,7 +337,7 @@ msgstr ""
 msgid "Double mandatory"
 msgstr ""
 
-#: oyjl_args.c:3318
+#: oyjl_args.c:3331
 #, fuzzy
 msgid "Double occuring option"
 msgstr "popis"
@@ -341,24 +350,24 @@ msgstr ""
 msgid "E.g. -o|--option"
 msgstr ""
 
-#: oyjl_args.c:5664 oyjl_args_tree.c:615
+#: oyjl_args.c:5678 oyjl_args_tree.c:615
 msgid "ENVIRONMENT VARIABLES"
 msgstr ""
 
-#: oyjl_args.c:5660 oyjl_args_tree.c:613 oyjl_web.c:83 test-core.c:1242
+#: oyjl_args.c:5674 oyjl_args_tree.c:613 oyjl_web.c:83 test-core.c:1242
 #: oyjl-args-qml/main.cpp:94
 msgid "EXAMPLES"
 msgstr ""
 
-#: oyjl_args.c:5662 oyjl_args_tree.c:614
+#: oyjl_args.c:5676 oyjl_args_tree.c:614
 msgid "EXIT-STATE"
 msgstr ""
 
-#: oyjl_args.c:5664 oyjl_translate.c:251
+#: oyjl_args.c:5678 oyjl_translate.c:258
 msgid "Environment Variables"
 msgstr ""
 
-#: oyjl_args.c:1818 oyjl_init.c:176 test-core.c:169 test-core.c:1225
+#: oyjl_args.c:1837 oyjl_init.c:176 test-core.c:169 test-core.c:1225
 #: test-core.c:1226 test.c:228 test.c:290 test.c:400 test.c:420
 msgid "Example"
 msgstr "Příklad"
@@ -368,12 +377,12 @@ msgstr "Příklad"
 msgid "Example2"
 msgstr "Příklad"
 
-#: oyjl-args.c:101 oyjl.c:266 oyjl_args.c:5660 oyjl_translate.c:249
+#: oyjl-args.c:101 oyjl.c:266 oyjl_args.c:5674 oyjl_translate.c:256
 #, fuzzy
 msgid "Examples"
 msgstr "Příklad"
 
-#: oyjl_args.c:5662
+#: oyjl_args.c:5676
 msgid "Exit State"
 msgstr ""
 
@@ -385,27 +394,27 @@ msgstr ""
 msgid "Export formated text"
 msgstr ""
 
-#: oyjl_translate.c:241 oyjl_translate.c:275
+#: oyjl_translate.c:248 oyjl_translate.c:282
 #, fuzzy
 msgid "Extract"
 msgstr "Abstraktní"
 
-#: oyjl_translate.c:241
+#: oyjl_translate.c:248
 msgid "Extract translatable Messages"
 msgstr ""
 
-#: oyjl-args.c:88 oyjl.c:250 oyjl_translate.c:217 oyjl_translate.c:219
+#: oyjl-args.c:88 oyjl.c:250 oyjl_translate.c:222 oyjl_translate.c:224
 #: test-args.c:413 test-args.c:414 test-args.c:975 test-args.c:1090
 #: test-core.c:1235 test-core.c:1236 test.c:1985 test.c:1986 test.c:2124
 #: test.c:2125 oyjl-args-qml/mini-app.c:179 oyjl-args-qml/mini-app.c:180
 msgid "FILENAME"
 msgstr ""
 
-#: oyjl_args.c:5668 oyjl_args_tree.c:617
+#: oyjl_args.c:5682 oyjl_args_tree.c:617
 msgid "FILES"
 msgstr ""
 
-#: oyjl.c:258 oyjl_translate.c:221
+#: oyjl.c:258 oyjl_translate.c:226
 msgid "FORMAT"
 msgstr ""
 
@@ -418,12 +427,12 @@ msgstr ""
 msgid "File"
 msgstr "Soubory"
 
-#: oyjl.c:250 oyjl_translate.c:217 oyjl_translate.c:219
+#: oyjl.c:250 oyjl_translate.c:222 oyjl_translate.c:224
 #, fuzzy
 msgid "File or Stream"
 msgstr "profil nenalezen:"
 
-#: oyjl_args.c:5668
+#: oyjl_args.c:5682
 #, fuzzy
 msgid "Files"
 msgstr "Soubory"
@@ -434,17 +443,17 @@ msgid ""
 "For --render=XXX use -X=json JSON."
 msgstr ""
 
-#: oyjl-args.c:132 oyjl.c:316 oyjl_translate.c:297 oyjl_web.c:107
+#: oyjl-args.c:132 oyjl.c:316 oyjl_translate.c:304 oyjl_web.c:107
 #: oyjl-args-qml/main.cpp:118
 #, fuzzy
 msgid "For more information read the man page:"
 msgstr "Pro více informací viz manuálová stránka:"
 
-#: oyjl-args.c:105 oyjl.c:254 oyjl.c:295 oyjl_translate.c:221
+#: oyjl-args.c:105 oyjl.c:254 oyjl.c:295 oyjl_translate.c:226
 msgid "Format"
 msgstr ""
 
-#: oyjl_translate.c:221
+#: oyjl_translate.c:226
 msgid "Format string"
 msgstr ""
 
@@ -452,26 +461,26 @@ msgstr ""
 msgid "Formated text"
 msgstr ""
 
-#: oyjl_args.c:3008 oyjl_args.c:4240
+#: oyjl_args.c:3008 oyjl_args.c:4249
 msgid "Full Help"
 msgstr ""
 
-#: oyjl_translate.c:245 test.c:1988
+#: oyjl_translate.c:252 test.c:1988
 #, fuzzy
 msgid "Function"
 msgstr "Dokumentace"
 
-#: oyjl_translate.c:245 oyjl_translate.c:247
+#: oyjl_translate.c:252 oyjl_translate.c:254
 #, fuzzy
 msgid "Function Name"
 msgstr "Dokumentace"
 
-#: oyjl_translate.c:247
+#: oyjl_translate.c:254
 #, fuzzy
 msgid "Function Out"
 msgstr "Dokumentace"
 
-#: oyjl_args.c:5891 oyjl_args.c:6412
+#: oyjl_args.c:5905 oyjl_args.c:6426
 msgid "GENERAL OPTIONS"
 msgstr ""
 
@@ -485,7 +494,7 @@ msgstr "SGI"
 msgid "GUI + Command"
 msgstr ""
 
-#: oyjl-args.c:116 oyjl.c:296 oyjl_translate.c:279 oyjl_web.c:94
+#: oyjl-args.c:116 oyjl.c:296 oyjl_translate.c:286 oyjl_web.c:94
 #: test-args.c:436 test-args.c:800 test-args.c:986 test-args.c:1101
 #: test-core.c:1253 test-core.c:1337 test.c:2001 test.c:2138
 #: oyjl-args-qml/mini-app.c:196 oyjl-args-qml/main.cpp:105
@@ -543,29 +552,34 @@ msgstr ""
 msgid "Gui"
 msgstr ""
 
-#: oyjl_args.c:5666 oyjl_args_tree.c:616
+#: oyjl_args.c:5680 oyjl_args_tree.c:616
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl_args.c:4263 oyjl_web.c:78 test-args.c:416 test-args.c:977
+#: oyjl_args.c:4272 oyjl_web.c:78 test-args.c:416 test-args.c:977
 #: test-args.c:1092 test-core.c:1239 test.c:1990 test.c:2127
 #: oyjl-args-qml/mini-app.c:184
 msgid "Help"
 msgstr "Nápověda"
 
-#: oyjl_args_web.c:1573
+#: oyjl_args_web.c:1540
 msgid ""
 "Hints: Options with colord labels are mandatory. Options with italic labels "
 "are ignored. Multiple options '...' can be separated by semicolon ';' in the "
 "text field."
 msgstr ""
 
-#: oyjl_args.c:5666
+#: oyjl_args.c:5680
 #, fuzzy
 msgid "History"
 msgstr "Novy adresar?"
 
-#: oyjl_translate.c:278
+#. declare the option choices  *   nick,          name,               description,                  help
+#: oyjl_translate.c:196
+msgid "I18N JSON"
+msgstr ""
+
+#: oyjl_translate.c:285
 msgid ""
 "Import translations from other formats without gettext. Supported --input=Qt-"
 "xml-format.tr"
@@ -580,7 +594,7 @@ msgstr "Informace:"
 #. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
 #. value_type,              values,             variable_type, variable_name
 #. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
-#: oyjl.c:250 oyjl.c:285 oyjl_translate.c:217 oyjl-args-qml/main.cpp:83
+#: oyjl.c:250 oyjl.c:285 oyjl_translate.c:222 oyjl-args-qml/main.cpp:83
 #, fuzzy
 msgid "Input"
 msgstr "Vstupní"
@@ -605,7 +619,7 @@ msgstr ""
 msgid "JSON UI Description"
 msgstr "popis"
 
-#: oyjl_translate.c:192
+#: oyjl_translate.c:193
 msgid "January 2, 2020"
 msgstr ""
 
@@ -622,21 +636,21 @@ msgstr ""
 msgid "Key Name"
 msgstr "Mé jméno"
 
-#: oyjl_translate.c:229
+#: oyjl_translate.c:236
 #, fuzzy
 msgid "Key Name List"
 msgstr "Mé jméno"
 
-#: oyjl_translate.c:229
+#: oyjl_translate.c:236
 #, fuzzy
 msgid "Key Names"
 msgstr "Mé jméno"
 
-#: oyjl_translate.c:237
+#: oyjl_translate.c:244
 msgid "LOCALEDIR"
 msgstr ""
 
-#: oyjl_args.c:5248 oyjl_args.c:6008 oyjl_args.c:6249 oyjl_args.c:6538
+#: oyjl_args.c:5262 oyjl_args.c:6022 oyjl_args.c:6263 oyjl_args.c:6552
 #: oyjl_args_tree.c:570 oyjl_args_tree.c:611
 msgid "License"
 msgstr "Licence"
@@ -649,17 +663,17 @@ msgstr ""
 msgid "Line for a number argument."
 msgstr ""
 
-#: oyjl_translate.c:235
+#: oyjl_translate.c:242
 #, fuzzy
 msgid "List empty"
 msgstr "prazdne"
 
-#: oyjl_args.c:3012 oyjl_args.c:4246
+#: oyjl_args.c:3012 oyjl_args.c:4255
 #, fuzzy
 msgid "List groups"
 msgstr "Vypsat moduly:"
 
-#: oyjl_translate.c:235
+#: oyjl_translate.c:242
 #, fuzzy
 msgid "List not translated"
 msgstr "je nástroj pro správu politik"
@@ -675,20 +689,20 @@ msgstr "vložit JSON OpenICC ze souboru"
 msgid "Load a UI JSON declaration from tool"
 msgstr "je nástroj pro správu politik"
 
-#: oyjl_translate.c:231
+#: oyjl_translate.c:238
 msgid "Locale"
 msgstr ""
 
-#: oyjl_translate.c:237
+#: oyjl_translate.c:244
 #, fuzzy
 msgid "Locale Directory"
 msgstr "Novy adresar?"
 
-#: oyjl_translate.c:233
+#: oyjl_translate.c:240
 msgid "Locales"
 msgstr ""
 
-#: oyjl_translate.c:233
+#: oyjl_translate.c:240
 msgid "Locales List"
 msgstr ""
 
@@ -718,19 +732,19 @@ msgid "Markdown"
 msgstr ""
 
 #. parsed and checked with -i option
-#: oyjl-args.c:116 oyjl.c:296 oyjl_translate.c:279 oyjl_web.c:94
+#: oyjl-args.c:116 oyjl.c:296 oyjl_translate.c:286 oyjl_web.c:94
 #: test-args.c:436 test-args.c:800 test-args.c:986 test-args.c:1101
 #: test-core.c:1253 test-core.c:1337 test.c:2001 test.c:2138
 #: oyjl-args-qml/mini-app.c:196 oyjl-args-qml/main.cpp:105
 msgid "Misc"
 msgstr ""
 
-#: oyjl_args.c:5647
+#: oyjl_args.c:5661
 msgid "Missing choices list"
 msgstr ""
 
 #. "Missing mandatory option. No usage mode in synopsis lines found."
-#: oyjl_args.c:5156
+#: oyjl_args.c:5170
 msgid "Missing mandatory option. No usage mode in"
 msgstr ""
 
@@ -801,7 +815,7 @@ msgstr "Model:"
 msgid "Mode9"
 msgstr "Model:"
 
-#: oyjl_args_tree.c:546 oyjl_args_web.c:1507
+#: oyjl_args_tree.c:546 oyjl_args_web.c:1474
 #, fuzzy
 msgid "Module"
 msgstr "Volby modulu:"
@@ -810,8 +824,8 @@ msgstr "Volby modulu:"
 msgid "Multiple arguments for one option need each one option in front."
 msgstr ""
 
-#: oyjl.c:264 oyjl_args.c:5865 oyjl_args.c:6385 oyjl_args_tree.c:602
-#: oyjl_translate.c:245 oyjl_translate.c:247
+#: oyjl.c:264 oyjl_args.c:5879 oyjl_args.c:6399 oyjl_args_tree.c:602
+#: oyjl_translate.c:252 oyjl_translate.c:254
 msgid "NAME"
 msgstr ""
 
@@ -827,7 +841,7 @@ msgstr "Jméno"
 msgid "No"
 msgstr "Ne"
 
-#: oyjl.c:256
+#: oyjl.c:256 oyjl_translate.c:228
 msgid "No Markup"
 msgstr ""
 
@@ -851,7 +865,7 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: oyjl_args.c:5883 oyjl_args.c:6403 oyjl_args_tree.c:608
+#: oyjl_args.c:5897 oyjl_args.c:6417 oyjl_args_tree.c:608
 msgid "OPTIONS"
 msgstr ""
 
@@ -869,20 +883,20 @@ msgid ""
 "symbol '|'."
 msgstr ""
 
-#: oyjl_translate.c:239
+#: oyjl_translate.c:246
 #, fuzzy
 msgid "Only Translations"
 msgstr "je nástroj pro správu politik"
 
-#: oyjl_args.c:3868
+#: oyjl_args.c:3877
 msgid "Option has a different value range"
 msgstr ""
 
-#: oyjl_args.c:3540 oyjl_args.c:3610
+#: oyjl_args.c:3549 oyjl_args.c:3619
 msgid "Option has a unexpected argument"
 msgstr ""
 
-#: oyjl_args.c:3514 oyjl_args.c:3584
+#: oyjl_args.c:3523 oyjl_args.c:3593
 msgid "Option needs a argument"
 msgstr ""
 
@@ -891,22 +905,22 @@ msgstr ""
 msgid "Option not found"
 msgstr "Volba nepodporovaného typu:"
 
-#: oyjl_args.c:3335 oyjl_args.c:3347 oyjl_args.c:3484 oyjl_args.c:4802
+#: oyjl_args.c:3349 oyjl_args.c:3361 oyjl_args.c:3490 oyjl_args.c:4811
 #, fuzzy
 msgid "Option not supported"
 msgstr "Volba nepodporovaného typu:"
 
-#: oyjl_args.c:3558
+#: oyjl_args.c:3567
 #, fuzzy
 msgid "Option not supported with double dash"
 msgstr "Volba nepodporovaného typu:"
 
-#: oyjl_args.c:3633
+#: oyjl_args.c:3642
 #, fuzzy
 msgid "Option not supported without double dash"
 msgstr "Volba nepodporovaného typu:"
 
-#: oyjl_args.c:4819
+#: oyjl_args.c:4828
 msgid "Option range error"
 msgstr ""
 
@@ -915,7 +929,7 @@ msgstr ""
 msgid "Option syntax"
 msgstr "Volba nepodporovaného typu:"
 
-#: oyjl_args.c:3728
+#: oyjl_args.c:3737
 msgid ""
 "Optionless mode not supported. (That would need '#' option declaration.)"
 msgstr ""
@@ -924,13 +938,13 @@ msgstr ""
 msgid "Options can be concatenated on the command line."
 msgstr ""
 
-#: oyjl_args.c:3662
+#: oyjl_args.c:3671
 msgid ""
 "Options with arguments are not allowed in sub command style. A sub command "
 "has no leading '--'. It is a mandatory option of a option group."
 msgstr ""
 
-#: oyjl_translate.c:219 oyjl-args-qml/main.cpp:85
+#: oyjl_translate.c:224 oyjl-args-qml/main.cpp:85
 #, fuzzy
 msgid "Output"
 msgstr "Výstupní"
@@ -960,12 +974,12 @@ msgid "Oyjl Module Author"
 msgstr "Moduly Oyranosu"
 
 #. argc+argv are required for parsing the command line options
-#: oyjl_translate.c:284
+#: oyjl_translate.c:291
 #, fuzzy
 msgid "Oyjl Translation"
 msgstr "je nástroj pro správu politik"
 
-#: oyjl_translate.c:284
+#: oyjl_translate.c:291
 #, fuzzy
 msgid "Oyjl UI JSON Translation tool"
 msgstr "je nástroj pro správu politik"
@@ -994,7 +1008,7 @@ msgstr "Cesty"
 msgid "Permissions"
 msgstr "ICC Examin Verze"
 
-#: oyjl.c:256
+#: oyjl.c:256 oyjl_translate.c:228
 msgid "Plain"
 msgstr ""
 
@@ -1098,7 +1112,7 @@ msgstr ""
 msgid "Print count of leafs in node"
 msgstr ""
 
-#: oyjl_args.c:3009 oyjl_args.c:4241
+#: oyjl_args.c:3009 oyjl_args.c:4250
 msgid "Print help for all groups"
 msgstr ""
 
@@ -1106,7 +1120,7 @@ msgstr ""
 msgid "Print help for command line style interface"
 msgstr ""
 
-#: oyjl_args.c:3028 oyjl_args.c:4266
+#: oyjl_args.c:3028 oyjl_args.c:4275
 #, fuzzy
 msgid "Print help text"
 msgstr "Vytisknout nápovědu:"
@@ -1135,10 +1149,10 @@ msgstr ""
 msgid "Print type"
 msgstr "Tiskárna CUPS"
 
-#: oyjl_args.c:467 oyjl_args.c:3017 oyjl_args.c:3346 oyjl_args.c:4742
-#: oyjl_args.c:4766 oyjl_args.c:4792 oyjl_args.c:4801 oyjl_args.c:4818
-#: oyjl_args.c:5030 oyjl_args.c:5112 oyjl_args.c:5125 oyjl_args.c:5647
-#: oyjl_message.c:76
+#: oyjl_args.c:467 oyjl_args.c:3017 oyjl_args.c:3360 oyjl_args.c:4751
+#: oyjl_args.c:4775 oyjl_args.c:4801 oyjl_args.c:4810 oyjl_args.c:4827
+#: oyjl_args.c:5039 oyjl_args.c:5044 oyjl_args.c:5126 oyjl_args.c:5139
+#: oyjl_args.c:5661 oyjl_message.c:76
 msgid "Program Error:"
 msgstr ""
 
@@ -1169,7 +1183,7 @@ msgstr "Transformace"
 msgid "Render UI"
 msgstr "Transformace"
 
-#: oyjl_translate.c:432
+#: oyjl_translate.c:439
 msgid "Rendering Intent"
 msgstr "Záměr transformace"
 
@@ -1177,12 +1191,12 @@ msgstr "Záměr transformace"
 msgid "Results JSON"
 msgstr ""
 
-#: oyjl_args.c:5672 oyjl_args_tree.c:619 oyjl_web.c:85
+#: oyjl_args.c:5686 oyjl_args_tree.c:619 oyjl_web.c:85
 #: oyjl-args-qml/main.cpp:96
 msgid "SEE ALSO"
 msgstr ""
 
-#: oyjl_args.c:5670 oyjl_args_tree.c:618
+#: oyjl_args.c:5684 oyjl_args_tree.c:618
 msgid "SEE AS WELL"
 msgstr ""
 
@@ -1196,7 +1210,7 @@ msgstr ""
 msgid "STRING"
 msgstr ""
 
-#: oyjl_args.c:5868 oyjl_args.c:6388 oyjl_args_tree.c:604
+#: oyjl_args.c:5882 oyjl_args.c:6402 oyjl_args_tree.c:604
 msgid "SYNOPSIS"
 msgstr ""
 
@@ -1204,11 +1218,11 @@ msgstr ""
 msgid "Security Alert:"
 msgstr ""
 
-#: oyjl-args.c:103 oyjl.c:268 oyjl_args.c:5672 oyjl_translate.c:253
+#: oyjl-args.c:103 oyjl.c:268 oyjl_args.c:5686 oyjl_translate.c:260
 msgid "See Also"
 msgstr ""
 
-#: oyjl_args.c:5670
+#: oyjl_args.c:5684
 msgid "See As Well"
 msgstr ""
 
@@ -1225,7 +1239,7 @@ msgid ""
 "a local Web Server, which listens on local port."
 msgstr ""
 
-#: oyjl_args_web.c:1610 oyjl_args_web.c:1629
+#: oyjl_args_web.c:1577 oyjl_args_web.c:1596
 msgid "Send"
 msgstr ""
 
@@ -1246,7 +1260,7 @@ msgstr "Hodnota"
 msgid "Set a key name to a value"
 msgstr ""
 
-#: oyjl_translate.c:274
+#: oyjl_translate.c:281
 #, fuzzy
 msgid "Set basic parameters"
 msgstr "Parametry charakterizace"
@@ -1255,7 +1269,7 @@ msgstr "Parametry charakterizace"
 msgid "Set input file and path"
 msgstr ""
 
-#: oyjl_translate.c:207
+#: oyjl_translate.c:212
 msgid "Set the GNU gettext output encoding."
 msgstr ""
 
@@ -1282,11 +1296,11 @@ msgstr "Cesta"
 msgid "Show UI"
 msgstr "Ukazat:"
 
-#: oyjl_args.c:3013 oyjl_args.c:4247
+#: oyjl_args.c:3013 oyjl_args.c:4256
 msgid "Show all groups including syntax"
 msgstr ""
 
-#: oyjl_args.c:3030 oyjl_args.c:4268
+#: oyjl_args.c:3030 oyjl_args.c:4277
 msgid "Show usage information and hints for the tool."
 msgstr ""
 
@@ -1307,7 +1321,7 @@ msgstr ""
 msgid "Simple tool with two options, which both accept arguments."
 msgstr ""
 
-#: oyjl_translate.c:231
+#: oyjl_translate.c:238
 msgid "Single Locale"
 msgstr ""
 
@@ -1345,16 +1359,16 @@ msgid ""
 "or the command alone as string."
 msgstr ""
 
-#: oyjl-args.c:68 oyjl_args.c:3011 oyjl_args.c:4245 oyjl_args.c:5156
-#: oyjl_args.c:6099 oyjl_args_tree.c:603
+#: oyjl-args.c:68 oyjl_args.c:3011 oyjl_args.c:4254 oyjl_args.c:5170
+#: oyjl_args.c:6113 oyjl_args_tree.c:603
 msgid "Synopsis"
 msgstr ""
 
-#: oyjl_translate.c:227
+#: oyjl_translate.c:234
 msgid "TEXTDOMAIN1,TEXTDOMAIN2"
 msgstr ""
 
-#: oyjl.c:262 oyjl_translate.c:243
+#: oyjl.c:262 oyjl_translate.c:250
 msgid "TYPE"
 msgstr ""
 
@@ -1362,7 +1376,7 @@ msgstr ""
 msgid "Test"
 msgstr ""
 
-#: oyjl_translate.c:227
+#: oyjl_translate.c:234
 msgid "Text Domain List"
 msgstr ""
 
@@ -1494,15 +1508,23 @@ msgid ""
 "one form is noticed."
 msgstr ""
 
-#: oyjl_args.c:3661
+#: oyjl_args.c:3670
 msgid "This option expects no arguments"
 msgstr ""
 
-#: oyjl_args.c:5031 oyjl_args.c:5113 oyjl_args.c:5126
+#: oyjl_args.c:5040 oyjl_args.c:5127 oyjl_args.c:5140
 msgid "This option is not defined"
 msgstr ""
 
-#: oyjl_args.c:4793
+#: oyjl_args.c:5045
+msgid "This option is not defined by letter."
+msgstr ""
+
+#: oyjl_translate.c:196
+msgid "This option is useful only for smaller projects as a initial start."
+msgstr ""
+
+#: oyjl_args.c:4802
 msgid "This option needs oyjlOption_s::value_name defined"
 msgstr ""
 
@@ -1520,7 +1542,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr ""
 
-#: oyjl_args_tree.c:544 oyjl_args_web.c:1505
+#: oyjl_args_tree.c:544 oyjl_args_web.c:1472
 msgid "Tool"
 msgstr ""
 
@@ -1559,7 +1581,7 @@ msgstr ""
 msgid "Tools follows syntax rules."
 msgstr ""
 
-#: oyjl_translate.c:239
+#: oyjl_translate.c:246
 msgid "Translations only"
 msgstr ""
 
@@ -1575,7 +1597,7 @@ msgstr ""
 msgid "Try to find data format, even with offset."
 msgstr ""
 
-#: oyjl_translate.c:275
+#: oyjl_translate.c:282
 msgid ""
 "Two input modes are supported. Read Oyjl UI -X=export JSON. Or parse C "
 "sources to --function-name defined strings and replace them in --output by --"
@@ -1587,7 +1609,7 @@ msgstr ""
 msgid "Type"
 msgstr "Typ"
 
-#: oyjl_translate.c:207
+#: oyjl_translate.c:212
 msgid "Typical value is UTF-8."
 msgstr ""
 
@@ -1597,7 +1619,7 @@ msgstr ""
 msgid "Ui to source code"
 msgstr ""
 
-#: oyjl_args.c:3697
+#: oyjl_args.c:3706
 #, fuzzy
 msgid "Unbound options are not supported"
 msgstr "Volba nepodporovaného typu:"
@@ -1611,17 +1633,17 @@ msgstr "Unix a deriváty"
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:6114 oyjl_args_cli.c:276 oyjl_args_tree.c:607
-#: oyjl_translate.c:313
+#: oyjl_args.c:6128 oyjl_args_cli.c:276 oyjl_args_tree.c:607
+#: oyjl_translate.c:320
 msgid "Usage"
 msgstr "Použití"
 
 #: oyjl.c:62 oyjl.c:105 oyjl.c:107 oyjl.c:385 oyjl.c:553 oyjl_args.c:466
-#: oyjl_args.c:3318 oyjl_args.c:3334 oyjl_args.c:3483 oyjl_args.c:3513
-#: oyjl_args.c:3539 oyjl_args.c:3557 oyjl_args.c:3583 oyjl_args.c:3610
-#: oyjl_args.c:3632 oyjl_args.c:3660 oyjl_args.c:3696 oyjl_args.c:3728
-#: oyjl_args.c:3867 oyjl_args.c:5154 oyjl_args.c:5186 oyjl_message.c:75
-#: oyjl_translate.c:137 oyjl_translate.c:575 oyjl_yajl.c:1256
+#: oyjl_args.c:3331 oyjl_args.c:3348 oyjl_args.c:3489 oyjl_args.c:3522
+#: oyjl_args.c:3548 oyjl_args.c:3566 oyjl_args.c:3592 oyjl_args.c:3619
+#: oyjl_args.c:3641 oyjl_args.c:3669 oyjl_args.c:3705 oyjl_args.c:3737
+#: oyjl_args.c:3876 oyjl_args.c:5168 oyjl_args.c:5200 oyjl_message.c:75
+#: oyjl_translate.c:137 oyjl_translate.c:582 oyjl_yajl.c:1102
 msgid "Usage Error:"
 msgstr ""
 
@@ -1642,18 +1664,18 @@ msgstr ""
 msgid "Uses by default dot '.' as decimal separator."
 msgstr ""
 
-#: oyjl.c:273 oyjl_translate.c:259 oyjl-args-qml/main.cpp:88
+#: oyjl.c:273 oyjl_translate.c:266 oyjl-args-qml/main.cpp:88
 #, fuzzy
 msgid "Verbose"
 msgstr "upovídaný výstup"
 
-#: oyjl-args.c:99 oyjl.c:276 oyjl_args_tree.c:579 oyjl_translate.c:261
+#: oyjl-args.c:99 oyjl.c:276 oyjl_args_tree.c:579 oyjl_translate.c:268
 #: test-core.c:1241 oyjl-args-qml/main.cpp:90
 #, fuzzy
 msgid "Version"
 msgstr "ICC Examin Verze"
 
-#: oyjl_translate.c:204
+#: oyjl_translate.c:209
 #, fuzzy
 msgid "View MAN page"
 msgstr "Unix a deriváty"
@@ -1667,7 +1689,7 @@ msgstr ""
 msgid "Wrap Name"
 msgstr "Typ"
 
-#: oyjl.c:262 oyjl_translate.c:243
+#: oyjl.c:262 oyjl_translate.c:250
 #, fuzzy
 msgid "Wrap Type"
 msgstr "Typ"
@@ -1689,11 +1711,11 @@ msgstr ""
 msgid "Yes"
 msgstr "Ano"
 
-#: oyjl_translate.c:231
+#: oyjl_translate.c:238
 msgid "de_DE"
 msgstr ""
 
-#: oyjl_translate.c:233
+#: oyjl_translate.c:240
 msgid "de_DE,es_ES"
 msgstr ""
 
@@ -1723,7 +1745,7 @@ msgstr "Dokumentace"
 msgid "help"
 msgstr "nápověda"
 
-#: oyjl.c:273 oyjl_translate.c:259
+#: oyjl.c:273 oyjl_translate.c:266
 msgid "increase verbosity"
 msgstr ""
 
@@ -1737,28 +1759,28 @@ msgstr ""
 msgid "input"
 msgstr "Vstupní"
 
-#: oyjl.c:262 oyjl_translate.c:243
+#: oyjl.c:262 oyjl_translate.c:250
 #, fuzzy
 msgid "language specific wrap"
 msgstr "cesta příslušného počítače"
 
-#: oyjl_args.c:5156
+#: oyjl_args.c:5170
 #, fuzzy
 msgid "lines found."
 msgstr "nenalezeno:"
 
-#: oyjl_translate.c:235
+#: oyjl_translate.c:242
 #, fuzzy
 msgid "list empty translations too"
 msgstr "je nástroj pro správu politik"
 
-#: oyjl_translate.c:237
+#: oyjl_translate.c:244
 msgid ""
 "locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo "
 "gettext translations"
 msgstr ""
 
-#: oyjl_translate.c:233
+#: oyjl_translate.c:240
 msgid "locales in a comma separated list"
 msgstr ""
 
@@ -1768,16 +1790,16 @@ msgstr ""
 msgid "mini OyjlArgsQml example"
 msgstr ""
 
-#: oyjl_translate.c:229
+#: oyjl_translate.c:236
 #, fuzzy
 msgid "name,description,help"
 msgstr "popis"
 
-#: oyjl_args.c:3335
+#: oyjl_args.c:3349
 msgid "need a value_type"
 msgstr ""
 
-#: oyjl_args.c:3347 oyjl_args.c:4802
+#: oyjl_args.c:3361 oyjl_args.c:4811
 msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
 msgstr ""
 
@@ -1791,7 +1813,7 @@ msgstr ""
 msgid "output"
 msgstr "Výstupní"
 
-#: oyjl_translate.c:239
+#: oyjl_translate.c:246
 #, fuzzy
 msgid "output only translations"
 msgstr "je nástroj pro správu politik"
@@ -1836,21 +1858,25 @@ msgstr ""
 msgid "oyjl-args-render -i oyjl-ui-text.json -c oyjl-command.json"
 msgstr ""
 
-#: oyjl_translate.c:204
+#: oyjl_translate.c:209
 msgid "oyjl-translate -X man | groff -T utf8 -man -"
 msgstr ""
 
-#: oyjl_translate.c:202
+#: oyjl_translate.c:207
 msgid ""
 "oyjl-translate -a -i oyjl-ui.json -o result.json -k name,description,help -d "
 "TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES"
 msgstr ""
 
-#: oyjl_translate.c:203
+#: oyjl_translate.c:208
 msgid "oyjl-translate -c -i lang.tr -o result.json --locale de_DE"
 msgstr ""
 
-#: oyjl_translate.c:201
+#: oyjl_translate.c:206
+msgid "oyjl-translate -e -f=json -i oyjl-ui.c -o result.json"
+msgstr ""
+
+#: oyjl_translate.c:205
 #, c-format
 msgid ""
 "oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_(\"%s\"); ' -k "
@@ -1943,11 +1969,11 @@ msgstr "Začátek"
 msgid "status"
 msgstr ""
 
-#: oyjl_translate.c:227
+#: oyjl_translate.c:234
 msgid "text domain list of your project"
 msgstr ""
 
-#: oyjl_translate.c:229
+#: oyjl_translate.c:236
 msgid "to be used key names in a comma separated list"
 msgstr ""
 
@@ -1957,7 +1983,7 @@ msgstr ""
 msgid "verbose"
 msgstr "upovídaný výstup"
 
-#: oyjl-args.c:99 oyjl.c:276 oyjl_translate.c:261 oyjl_web.c:80
+#: oyjl-args.c:99 oyjl.c:276 oyjl_translate.c:268 oyjl_web.c:80
 #: test-core.c:1241 oyjl-args-qml/main.cpp:90
 #, fuzzy
 msgid "version"

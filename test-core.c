@@ -1025,7 +1025,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
 ;
 #else
 {
-  char * c_source = oyjlUiJsonToCode( json, OYJL_SOURCE_CODE_C );
+  char * c_source = oyjlUiExportToCode( json, OYJL_SOURCE_CODE_C );
   size_t len = c_source ? strlen(c_source) : 0;
   char * name = NULL;
   char info[48];
@@ -1043,12 +1043,12 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
 
   if(c_source && len == code_size)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
-    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)" );
+    "oyjlUiExportToCode(OYJL_SOURCE_CODE_C)" );
   } else
   { PRINT_SUB_INT( fail, len,
-    "oyjlUiJsonToCode(OYJL_SOURCE_CODE_C)" );
+    "oyjlUiExportToCode(OYJL_SOURCE_CODE_C)" );
   }
-  OYJL_TEST_WRITE_RESULT( c_source, len, "oyjlUiJsonToCode", "txt" )
+  OYJL_TEST_WRITE_RESULT( c_source, len, "oyjlUiExportToCode", "txt" )
   if(verbose && c_source)
     fprintf( zout, "%s\n", c_source );
   oyjlStringAdd( &name, 0,0, "%s.c", prog );
@@ -1076,16 +1076,16 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   }
   if(name) {free(name);} name = NULL;
 
-  c_source = oyjlUiJsonToCode( json, OYJL_COMPLETION_BASH );
+  c_source = oyjlUiExportToCode( json, OYJL_COMPLETION_BASH );
   len = c_source ? strlen(c_source) : 0;
   if(len == bash_size)
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
-    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH)" );
+    "oyjlUiExportToCode(OYJL_COMPLETION_BASH)" );
   } else
   { PRINT_SUB_INT( fail, len,
-    "oyjlUiJsonToCode(OYJL_COMPLETION_BASH)" );
+    "oyjlUiExportToCode(OYJL_COMPLETION_BASH)" );
   }
-  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiJsonToCode-Completion", "txt" )
+  OYJL_TEST_WRITE_RESULT( c_source, strlen(c_source), "oyjlUiExportToCode-Completion", "txt" )
   if(verbose && c_source)
     fprintf( zout, "%s\n", c_source );
   if(c_source) {free(c_source);} c_source = NULL;
@@ -1926,11 +1926,11 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
   myDeAllocFunc( text ); text = NULL;
 
   clck = oyjlClock();
-  text = oyjlTreeToText( root, 0 );
+  text = oyjlTreeToText( root, OYJL_JSON );
   clck = oyjlClock() - clck;
   fprintf( zout, "%s\n",
     oyjlPrintSubProfiling( -1, 1, clck/(double)CLOCKS_PER_SEC,"dump",
-    "oyjlTreeToText( 0 )                 1x %d", (int)strlen(text)) );
+    "oyjlTreeToText( OYJL_JSON )         1x %d", (int)strlen(text)) );
   myDeAllocFunc( text ); text = NULL;
   oyjlTreeFree( root );
 

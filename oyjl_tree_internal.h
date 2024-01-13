@@ -81,7 +81,7 @@ oyjlUiHeaderSection_s * oyjlUiInfo_  ( const char        * documentation,
 oyjl_val     oyjlUi_ExportToJson_    ( oyjlUi_s          * ui,
                                        int                 flags OYJL_UNUSED );
 oyjl_val     oyjlUi_ToJson_          ( oyjlUi_s          * ui );
-int oyjlOptionMandatoryIndex_        ( oyjlOption_s      * opt,
+int oyjlOption_MandatoryIndex_       ( oyjlOption_s      * opt,
                                        oyjlOptionGroup_s * g );
 char *         oyjlOptionGetKey_     ( const char        * ostring );
 int oyjlOptions_GroupHasOptionL_     ( oyjlOptions_s     * opts,
