@@ -37,223 +37,430 @@
 /** \addtogroup oyjl_args
  *  @{ *//* oyjl_args */
 
-/** @brief    Return a oyjlUi_s from JSON Import (libOyjlExtra)
- *  @memberof oyjlUi_s
+/** @brief    Find a sub string in a delimited list (libOyjlExtra)
  *
- *  The returned oyjlUi_s is a reverse of oyjlUi_ExportToJson().
- *  Static strings inside oyjlUi_s depend on root structure.
- *  The required JSON data need to match the -X export option as
- *  returned by the oyjlUi_ExportToJson() function.
- *
- *  @see oyjlUi_ExportToJson()
- *
- *  @version Oyjl: 1.0.0
- *  @date    2020/10/04
- *  @since   2020/10/04 (Oyjl: 1.0.0)
- */
-oyjlUi_s *     oyjlUi_ImportFromJson ( oyjl_val            root,
-                                       int                 flags OYJL_UNUSED )
+ *  @param[in,out] set                 text string for oyjlStringSplit2
+ *  @param[in]     delimiters          one ore more separating chars or empty for empty space
+ *  @param[in]     pattern             text to search for. If empty it will return the sub string count; optional
+ *  @param[in]     flags               flags for behaviour
+ *                                     - OYJL_REMOVE remove matched part from list (creates new set)
+ *                                     - OYJL_TO_JSON convert to list in JSON array format, can be combined with OYJL_NO_MARKUP
+ *                                     - OYJL_TO_TEXT convert to string list with highlighted matches
+ *                                     - OYJL_MARK convert to marked list in JSON format
+ *                                     - OYJL_COMPARE_CASE case independent compare function (default: exact strcmp)
+ *                                     - OYJL_COMPARE_LAZY search for pattern in sub string fron separated list using strstr()
+ *                                     - OYJL_COMPARE_STARTS_WITH search for sub string using oyjlStringStartsWith()
+ *                                     - OYJL_REGEXP regex compare using oyjlRegExpFind()
+ *                                     - OYJL_REVERSE swap the matching arguments and try to find a match from set for pattern
+ *  @return                            index of pattern match in list,
+ *                                     - -1 if nothing is found
+ * */
+int        oyjlStringSplitFind       ( const char        * set,
+                                       const char        * delimiters,
+                                       const char        * pattern,
+                                       int                 flags,
+                                       char             ** result,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
 {
-  oyjlUi_s * ui = NULL;
-  oyjlAllocHelper_m( ui, oyjlUi_s, 1, malloc, return NULL );
+  int found = -1;
+  char ** list;
+  int i, n;
 
-  *(oyjlOBJECT_e*)&ui->type /*"oyui"*/ = oyjlOBJECT_UI;
+  if(!alloc) alloc = malloc;
+  if(!deAlloc) deAlloc = free;
 
+  if(set && set[0])
   {
-    oyjl_val val, v;
-    char * app_type;
-    int i,n;
-    oyjlOptsPrivate_s * results;
-
-    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/app_type" ); app_type = OYJL_GET_STRING(val);
-    ui->app_type = app_type;
-
-    n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/header/sections" ) );
-    oyjlAllocHelper_m( ui->sections, oyjlUiHeaderSection_s, n+1, malloc, return NULL );
-    for(i = 0; i < n; ++i)
+    n = 0;
+    list = oyjlStringSplit2( set, delimiters, 0, &n, NULL, alloc );
+    if(!pattern)
+      found = n;
+    else
     {
-      const char *nick, *label, *name, *desc;
-      *(oyjlOBJECT_e*)&ui->sections[i] /*"oihs"*/ = oyjlOBJECT_UI_HEADER_SECTION;
-      val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/header/sections/[%d]", i );
-      v = oyjlTreeGetValue( val, 0, "nick" ); nick = OYJL_GET_STRING(v);
-      ui->sections[i].nick = nick;
-      v = oyjlTreeGetValue( val, 0, "label" ); label = OYJL_GET_STRING(v);
-      ui->sections[i].label = label;
-      v = oyjlTreeGetValue( val, 0, "name" ); name = OYJL_GET_STRING(v);
-      ui->sections[i].name = name;
-      v = oyjlTreeGetValue( val, 0, "description" ); desc = OYJL_GET_STRING(v);
-      ui->sections[i].description = desc;
-    }
-    n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/array" ) );
-    oyjlAllocHelper_m( ui->opts, oyjlOptions_s, 1, malloc, return NULL );
-    *(oyjlOBJECT_e*)&ui->opts[0] /*"oiws"*/ = oyjlOBJECT_OPTIONS;
-    oyjlAllocHelper_m( ui->opts->private_data, oyjlOptsPrivate_s, 1, malloc, return NULL );
-    results = ui->opts->private_data;
-    results->memory_allocation = oyjlMEMORY_ALLOCATION_OPTIONS | oyjlMEMORY_ALLOCATION_ARRAY | oyjlMEMORY_ALLOCATION_SECTIONS;
-    oyjlAllocHelper_m( ui->opts->array, oyjlOption_s, n+1, malloc, return NULL );
-    for(i = 0; i < n; ++i)
-    {
-      const char *value_type_string, *o, *option;
-      const char *key, *name, *desc, *help, *value_name, *variable_type;
-      int flg;
-      oyjlVARIABLE_e var_type = oyjlNONE;
-      oyjlOPTIONTYPE_e value_type = oyjlOPTIONTYPE_START;
-      oyjlOption_s * opt = &ui->opts->array[i];
-      *(oyjlOBJECT_e*)&opt[0] /*"oiwi"*/ = oyjlOBJECT_OPTION;
-      val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/array/[%d]", i );
-      v = oyjlTreeGetValue( val, 0, "o" ); o = OYJL_GET_STRING(v);
-      opt->o = o;
-      v = oyjlTreeGetValue( val, 0, "option" ); option = OYJL_GET_STRING(v);
-      opt->option = option;
-      v = oyjlTreeGetValue( val, 0, "value_type" ); value_type_string = OYJL_GET_STRING(v);
-      if(value_type_string && strcmp(value_type_string, "oyjlOPTIONTYPE_CHOICE") == 0)
-        value_type = oyjlOPTIONTYPE_CHOICE;
-      else
-      if(value_type_string && strcmp(value_type_string, "oyjlOPTIONTYPE_FUNCTION") == 0)
-        value_type = oyjlOPTIONTYPE_FUNCTION;
-      else
-      if(value_type_string && strcmp(value_type_string, "oyjlOPTIONTYPE_DOUBLE") == 0)
-        value_type = oyjlOPTIONTYPE_DOUBLE;
-      else
-      if(value_type_string && strcmp(value_type_string, "oyjlOPTIONTYPE_NONE") == 0)
-        value_type = oyjlOPTIONTYPE_NONE;
-      opt->value_type = value_type;
-      switch(value_type)
+      char * new_set = NULL;
+      for( i = 0; i  < n; ++i )
       {
-        case oyjlOPTIONTYPE_CHOICE:
+        const char * val = list[i],
+                   * text = val,
+                   * search = pattern;
+        int pos = -1;
+
+        if(flags & OYJL_REVERSE)
         {
-          char *nick, *name, *desc, *help;
-          int count = oyjlValueCount( oyjlTreeGetValue( val, 0, "values/choices/list" ) ), j;
-          oyjlAllocHelper_m( opt->values.choices.list, oyjlOptionChoice_s, count+1, malloc, return NULL );
-          for(j = 0; j < count; ++j)
+          search = val;
+          text = pattern;
+        }
+
+        if(flags & OYJL_COMPARE_STARTS_WITH)
+        {
+          if(oyjlStringStartsWith(text, search, flags))
           {
-            oyjlOptionChoice_s * choice = &opt->values.choices.list[j];
-            oyjl_val c = oyjlTreeGetValueF( val, 0, "values/choices/list/[%d]", j );
-            v = oyjlTreeGetValue( c, 0, "nick" ); nick = OYJL_GET_STRING(v);
-            choice->nick = nick;
-            v = oyjlTreeGetValue( c, 0, "name" ); name = OYJL_GET_STRING(v);
-            choice->name = name;
-            v = oyjlTreeGetValue( c, 0, "description" ); desc = OYJL_GET_STRING(v);
-            choice->description = desc;
-            v = oyjlTreeGetValue( c, 0, "help" ); help = OYJL_GET_STRING(v);
-            choice->help = help;
+            pos = found = i;
+            if(*oyjl_debug >= 2)
+              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
           }
-        }
-        break;
-        case oyjlOPTIONTYPE_DOUBLE:
+        } else if(flags & OYJL_COMPARE_CASE)
         {
-          double d, start, tick, end;
-          v = oyjlTreeGetValue( val, 0, "values/dbl/d" ); d = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
-          opt->values.dbl.d = d;
-          v = oyjlTreeGetValue( val, 0, "values/dbl/start" ); start = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
-          opt->values.dbl.start = start;
-          v = oyjlTreeGetValue( val, 0, "values/dbl/tick" ); tick = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
-          opt->values.dbl.tick = tick;
-          v = oyjlTreeGetValue( val, 0, "values/dbl/end" ); end = OYJL_IS_DOUBLE(v) ? OYJL_GET_DOUBLE(v) : -1.0;
-          opt->values.dbl.end = end;
+          if(strcasecmp(text, search) == 0)
+          {
+            pos = found = i;
+            if(*oyjl_debug >= 2)
+              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
+          }
+        } else if(flags & OYJL_COMPARE_LAZY)
+        {
+          if(strstr(text, search) != NULL)
+          {
+            pos = found = i;
+            if(*oyjl_debug >= 2)
+              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
+          }
+        } else if(flags & OYJL_REGEXP)
+        {
+          if(oyjlRegExpFind((char*)text, search, NULL) != NULL)
+          {
+            pos = found = i;
+            if(*oyjl_debug >= 2)
+              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
+          }
+        } else
+        if(strcmp(text, search) == 0)
+        {
+          pos = found = i;
+          if(*oyjl_debug >= 2)
+            fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
         }
-        break;
-        default:
-        break;
+ 
+        if(flags & OYJL_TO_JSON && !(pos == -1 && flags & OYJL_REMOVE))
+          oyjlStringAdd( &new_set, alloc,deAlloc, "%s\"%s\"", i&&new_set?", ":"", oyjlTermColor(flags&OYJL_NO_MARKUP?oyjlNO_MARK:oyjlRED,val) );
+        if(flags & OYJL_TO_TEXT && !(pos == -1 && flags & OYJL_REMOVE))
+        {
+          char sep[4] = {delimiters?delimiters[0]:' ',0,0,0};
+          oyjlStringAdd( &new_set, alloc,deAlloc,0, "%s%s", i&&new_set?sep:"", oyjlTermColor(flags&OYJL_NO_MARKUP?oyjlNO_MARK:oyjlRED,val) );
+        }
+        else if(pos == -1 && flags & OYJL_REMOVE)
+          oyjlStringAdd( &new_set, alloc,deAlloc,0, "%s%s", i&&new_set?",":"", val );
       }
-      v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
-      opt->flags = flg;
-      v = oyjlTreeGetValue( val, 0, "name" ); name = OYJL_GET_STRING(v);
-      opt->name = name;
-      v = oyjlTreeGetValue( val, 0, "key" ); key = OYJL_GET_STRING(v);
-      opt->key = key;
-      v = oyjlTreeGetValue( val, 0, "description" ); desc = OYJL_GET_STRING(v);
-      opt->description = desc;
-      v = oyjlTreeGetValue( val, 0, "help" ); help = OYJL_GET_STRING(v);
-      opt->help = help;
-      v = oyjlTreeGetValue( val, 0, "value_name" ); value_name = OYJL_GET_STRING(v);
-      opt->value_name = value_name;
-      v = oyjlTreeGetValue( val, 0, "variable_type" ); variable_type = OYJL_GET_STRING(v);
-      if(variable_type && strcmp(variable_type, "oyjlSTRING") == 0)
-        var_type = oyjlSTRING;
+
+      if(flags & OYJL_REMOVE)
+      { *result = new_set; }
       else
-      if(variable_type && strcmp(variable_type, "oyjlDOUBLE") == 0)
-        var_type = oyjlDOUBLE;
-      else
-      if(variable_type && strcmp(variable_type, "oyjlINT") == 0)
-        var_type = oyjlINT;
-      opt->variable_type = var_type;
+      { deAlloc(new_set); new_set = NULL; }
     }
-    n = oyjlValueCount( oyjlTreeGetValue( root, 0, "org/freedesktop/oyjl/ui/options/groups" ) );
-    results->memory_allocation |= oyjlMEMORY_ALLOCATION_GROUPS;
-    oyjlAllocHelper_m( ui->opts->groups, oyjlOptionGroup_s, n+1, malloc, return NULL );
-    for(i = 0; i < n; ++i)
+    oyjlStringListRelease( &list, n, deAlloc );
+  }
+
+  return found;
+}
+
+/* @return  a options index in the list of a groups mandatory/optional/detail options
+ * - >= 0 - if found
+ * - -1 - if not found
+ */
+int oyjlOptionGroupGetOptionIndex_   ( const char        * opt,
+                                       const char        * list )
+{
+  int found = oyjlStringSplitFind(list, "|,", opt, 0, NULL, 0,0);
+  return found;
+}
+
+int oyjlOptionsResultsWithGroupMatches(oyjl_val            results,
+                                       const char        * list,
+                                       oyjl_val          * args )
+{
+  oyjl_val a, r;
+  int n = oyjlValueCount( results ), i, index,
+      status = 0;
+  char * key;
+  const char * val;
+  for(i = 0; i < n; ++i)
+  {
+    a = NULL;
+    r = oyjlValuePosGet( results, i );
+    key = oyjlTreeGetPath( results, r );
+    if(!key) continue;
+    if(key && args && *args)
+      a = oyjlTreeGetValue(*args,0,key);
+    if(a)
     {
-      const char *name, *desc, *help, *mandatory, *optional, *detail;
-      int flg;
-      oyjlOptionGroup_s * g = &ui->opts->groups[i];
-      *(oyjlOBJECT_e*)g /*"oiwg"*/ = oyjlOBJECT_OPTION_GROUP;
-      val = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/ui/options/groups/[%d]", i );
-      v = oyjlTreeGetValue( val, 0, "name" ); name = OYJL_GET_STRING(v);
-      g->name = name;
-      v = oyjlTreeGetValue( val, 0, "description" ); desc = OYJL_GET_STRING(v);
-      g->description = desc;
-      v = oyjlTreeGetValue( val, 0, "help" ); help = OYJL_GET_STRING(v);
-      g->help = help;
-      v = oyjlTreeGetValue( val, 0, "mandatory" ); mandatory = OYJL_GET_STRING(v);
-      g->mandatory = mandatory;
-      v = oyjlTreeGetValue( val, 0, "optional" ); optional = OYJL_GET_STRING(v);
-      g->optional = optional;
-      v = oyjlTreeGetValue( val, 0, "detail" ); detail = OYJL_GET_STRING(v);
-      g->detail = detail;
-      v = oyjlTreeGetValue( val, 0, "flags" ); flg = OYJL_IS_INTEGER(v) ? OYJL_GET_INTEGER(v) : 0;
-      g->flags = flg;
+      free(key);
+      continue;
     }
-    const char *nick, *name, *description, *logo;
-    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/nick" ); nick = OYJL_GET_STRING(val);
-    ui->nick = nick;
-    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/name" ); name = OYJL_GET_STRING(val);
-    ui->name = name;
-    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/description" ); description = OYJL_GET_STRING(val);
-    ui->description = description;
-    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/logo" ); logo = OYJL_GET_STRING(val);
-    ui->logo = logo;
-    val = oyjlTreeGetValue( root, 0, OYJL_REG "/ui/attr" );
-    if(val)
+    if(!strrchr(key,'/'))
+    index = oyjlOptionGroupGetOptionIndex_(key,list);
+    if(index == -1)
     {
-      oyjl_val attr = oyjlTreeNew( "" );
-      char ** attr_paths = oyjlTreeToPaths( val, 0, NULL, 0, &n );
-      for(i = 0; i < n; ++i)
+      free(key);
+      continue;
+    }
+    if(args)
+    {
+      val = OYJL_GET_STRING(r);
+      if(!(*args)) *args = oyjlTreeNew("");
+      oyjlTreeSetStringF( *args, OYJL_CREATE_NEW, val, "%s", key );
+    }
+    free(key);
+  }
+
+  return status;
+}
+
+
+int  oyjlUiJsonGroupIsMan_           ( oyjl_val            g )
+{
+  oyjl_val first_o = oyjlTreeGetValue(g, 0, "options/[0]/option");
+  const char * txt = OYJL_GET_STRING(first_o);
+  if(oyjlStringStartsWith( txt, "man-", OYJL_COMPARE_CASE))
+    return 1;
+  return 0;
+}
+
+oyjl_val oyjlUiJsonFindOption_       ( oyjl_val            root,
+                                       const char        * option,
+                                       int               * gcount )
+{
+  int i, n;
+  oyjl_val v = oyjlTreeGetValue(root, 0, "org/freedesktop/oyjl/modules/[0]"); // use UI JSON
+  oyjl_val val = oyjlTreeGetValue(v, 0, "groups");
+  n = oyjlValueCount( val );
+  for(i = 0; i < n; ++i)
+  {
+    int j, count, has_options;
+    oyjl_val g = oyjlTreeGetValueF(val, 0, "[%d]", i);
+    has_options = oyjlTreeGetValue(g, 0, "options") == 0?0:oyjlUiJsonGroupIsMan_(g)?0:1;
+    if(has_options)
+    {
+      if(gcount) ++(*gcount);
+      v = oyjlTreeGetValue(g, 0, "options");
+      count = oyjlValueCount( v );
+      for(j = 0; j < count; ++j)
       {
-        const char * path = attr_paths[i];
-        oyjl_type type;
-        oyjl_val attrv, rootv;
-        rootv = oyjlTreeGetValue( val, 0, path );
-        type = rootv->type;
-        attrv = oyjlTreeGetValue( attr, OYJL_CREATE_NEW, path );
-        switch(type)
-        {
-          case oyjl_t_string: /* 1 - a text in UTF-8 */
-              oyjlValueSetString( attrv, rootv->u.string );
-              break;
-          case oyjl_t_number: /* 2 - floating or integer number */
-              if(OYJL_IS_INTEGER(rootv))
-                oyjlValueSetInt( attrv, rootv->u.number.i );
-              else
-                oyjlValueSetDouble( attrv, rootv->u.number.d );
-              break;
-          case oyjl_t_true:   /* 5 - boolean true or 1 */
-          case oyjl_t_false:  /* 6 - boolean false or 0 */
-          case oyjl_t_any:    /* 8 - not valid */
-              oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "%s->type is set to unsupported: %d", path, type );
-              break;
-          case oyjl_t_object: /* 3 - a JSON object */
-          case oyjl_t_array:  /* 4 - a JSON array */
-          case oyjl_t_null:   /* 7 - empty value */
-              break;
-        }
+        oyjl_val opt = oyjlTreeGetValueF(v, 0, "[%d]", j);
+        oyjl_val o = oyjlTreeGetValue(opt, 0, "key");
+        const char * key = OYJL_GET_STRING(o);
+        if(key && strcmp(option, key) == 0)
+          return opt;
       }
-      oyjlStringListRelease( &attr_paths, n, free );
-      oyjlOptions_SetAttributes( ui->opts, &attr );
+    }
+    v = oyjlTreeGetValue(g, 0, "groups");
+    count = oyjlValueCount( v );
+    for(j = 0; j < count; ++j)
+    {
+      g = oyjlTreeGetValueF(v, 0, "[%d]", j);
+      if(oyjlTreeGetValue(g, 0, "options"))
+      {
+        if(gcount) ++(*gcount);
+      }
     }
   }
 
-  return ui;
+  return 0;
+}
+
+char * oyjl_ui_json_option_print_cli_text_ = NULL;
+const char * oyjlUiJsonOptionPrintCli_(oyjl_val            opt,
+                                       const char        * value,
+                                       int                 flags )
+{
+  oyjl_val o = oyjlTreeGetValue(opt, 0, "option");
+  const char * txt = OYJL_GET_STRING(o),
+             * key, * type, * no_dash;
+  if(oyjl_ui_json_option_print_cli_text_) { free(oyjl_ui_json_option_print_cli_text_); oyjl_ui_json_option_print_cli_text_ = NULL; }
+  if(oyjlStringStartsWith( txt, "man-", OYJL_COMPARE_CASE ))
+    return oyjl_ui_json_option_print_cli_text_;
+
+  o = oyjlTreeGetValue(opt, 0, "key");
+  key = OYJL_GET_STRING(o);
+  o = oyjlTreeGetValue(opt, 0, "type");
+  type = OYJL_GET_STRING(o);
+  o = oyjlTreeGetValue(opt, 0, "no_dash");
+  no_dash = OYJL_GET_STRING(o);
+  if(key[0] == '@')
+    no_dash = "1";
+
+  if(type && strcmp(type,"bool") == 0)
+  {
+    if(!(value && strcmp(value,"false") == 0))
+    {
+      oyjlStringAdd( &oyjl_ui_json_option_print_cli_text_, 0,0, "%s%s", no_dash?"":strlen(key) == 1?"-":"--", key /*name*/ );
+      if(!(flags&OYJL_QUIET))
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s(bool):%s", OYJL_DBG_ARGS, key, value );
+    }
+  }
+  else
+  {
+    if(strcmp(key,"@") == 0)
+      oyjlStringAdd( &oyjl_ui_json_option_print_cli_text_, 0,0, "%s", value );
+    else if(type && (strcmp(type,"double") == 0 || strcmp(type,"choice") == 0 || strcmp(type,"string") == 0) &&
+        value && strcmp(value,"false") == 0)
+      return oyjl_ui_json_option_print_cli_text_; 
+    else
+      oyjlStringAdd( &oyjl_ui_json_option_print_cli_text_, 0,0, "%s%s=%s", no_dash?"":strlen(key) == 1?"-":"--", key, value );
+    if(!(flags&OYJL_QUIET))
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "%s:%s", OYJL_DBG_ARGS, key, value );
+  }
+
+  return oyjl_ui_json_option_print_cli_text_; 
+}
+
+
+#define OYJL_TREE_COPY_STRING( from_, from_name_, to_, to_name_ ) \
+  o = oyjlTreeGetValue(from_, 0, from_name_); t = OYJL_GET_STRING(o); if(!t) oyjlTreeClearValue( to_, to_name_); else { o = oyjlTreeGetValue(to_, OYJL_CREATE_NEW, to_name_); oyjlValueSetString(o, t); }
+/** @brief    Set interactive option and format cli args (libOyjlExtra)
+ *  @memberof oyjlUi_s
+ *
+ *  The input format is the JSON data from oyjlUi_ToJson().
+ *
+ *  @param[in]     root                the parsed JSON tree to convert
+ *  @param[in,out] results             the changed option and state
+ *  @param[in]     key                 the option key to change
+ *  @param[in]     value               the option value to change
+ *  @param[in]     current_group_id    the group which was modified
+ *  @param[in]     flags               nothing
+ *  @return                            the list of command line args
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2023/12/21
+ *  @since   2023/12/21 (Oyjl: 1.0.0)
+ */
+oyjl_val oyjlUiJsonSetOption         ( oyjl_val            root,
+                                       oyjl_val            results,
+                                       const char        * key,
+                                       const char        * value,
+                                       int                 current_group_id,
+                                       int                 flags OYJL_UNUSED )
+{
+    const char * t;
+    oyjl_val args_cli = NULL;
+    oyjl_val o = oyjlTreeGetValue(results, 0, "v"); t = OYJL_GET_STRING(o);
+    int verbose = t && strcmp(t,"true") == 0;
+    if(verbose)
+      oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "group[%d] %s:%s", OYJL_DBG_ARGS, current_group_id, key, value );
+    const char * k = key;
+    const char * v = value;
+    if(!results)
+        results = oyjlTreeNew(k);
+
+    o = oyjlTreeGetValue(results, OYJL_CREATE_NEW, k);
+    oyjlValueSetString(o, v);
+
+    const char * t2, * mandatory, * optional;
+    {
+      int key_group_id = -1;
+      int immediate = 0;
+      
+      oyjl_val o = oyjlTreeGetValueF( root, 0, "org/freedesktop/oyjl/modules/[0]/nick" );
+      const char * nick = OYJL_GET_STRING(o);
+      o = oyjlUiJsonFindOption_( root, k, &key_group_id );
+      o = oyjlTreeGetValueF( o, 0, "immediate" );
+      immediate = o?1:0;
+      const char * groups_path = "org/freedesktop/oyjl/modules/[0]/groups";
+      oyjl_val groups = oyjlTreeGetValueF( root, 0, groups_path ),
+               group;
+      if(current_group_id != key_group_id)
+        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "current group[%d] and group of key %d do not match", OYJL_DBG_ARGS, current_group_id, key_group_id );
+      if(!groups)
+        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "%s not found %d %s", OYJL_DBG_ARGS, groups_path, oyjlValueCount(root), oyjlTreeToText(root,OYJL_YAML) );
+      group = oyjlTreeGetValueF( groups, 0, "[%d]", current_group_id );
+      if(!group)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "group[%d] not found", OYJL_DBG_ARGS, current_group_id );
+      o = oyjlTreeGetValue(group, 0, "name"); t = OYJL_GET_STRING(o);
+      if(!t)
+      {
+        o = oyjlTreeGetValue(group, 0, "description"); t = OYJL_GET_STRING(o);
+        o = oyjlTreeGetValue(results, 0, "oyjl_group/description"); t2 = OYJL_GET_STRING(o);
+      }
+      else
+      {
+        o = oyjlTreeGetValue(results, 0, "oyjl_group/name"); t2 = OYJL_GET_STRING(o);
+      }
+      if(o && t && t2 && strcmp(t,t2) != 0)
+      {
+        OYJL_TREE_COPY_STRING(results, "oyjl_group/name", results, "oyjl_group/old/name")
+        OYJL_TREE_COPY_STRING(results, "oyjl_group/description", results, "oyjl_group/old/description")
+        OYJL_TREE_COPY_STRING(results, "oyjl_group/mandatory", results, "oyjl_group/old/mandatory")
+        OYJL_TREE_COPY_STRING(results, "oyjl_group/optional", results, "oyjl_group/old/optional")
+      }
+      OYJL_TREE_COPY_STRING(group, "name", results, "oyjl_group/name")
+      OYJL_TREE_COPY_STRING(group, "description", results, "oyjl_group/description")
+      OYJL_TREE_COPY_STRING(group, "mandatory", results, "oyjl_group/mandatory")
+      mandatory = t;
+      OYJL_TREE_COPY_STRING(group, "optional", results, "oyjl_group/optional")
+      optional = t;
+
+      int index = oyjlOptionGroupGetOptionIndex_( k, mandatory );
+      const char * gkey = "oyjl_group";
+      if(index < 0)
+      {
+        gkey = "oyjl_group/old";
+        o = oyjlTreeGetValue(results, 0, "oyjl_group/old/mandatory");
+        mandatory = OYJL_GET_STRING(o);
+        index = oyjlOptionGroupGetOptionIndex_( k, mandatory );
+        o = oyjlTreeGetValue(results, 0, "oyjl_group/old/optional");
+        optional = OYJL_GET_STRING(o);
+      }
+
+      if(index < 0 && immediate)
+      {
+        gkey = "oyjl_group";
+        o = oyjlTreeGetValue(results, 0, "oyjl_group/optional");
+        optional = OYJL_GET_STRING(o);
+        index = oyjlOptionGroupGetOptionIndex_( k, optional );
+        if(index < 0)
+        {
+          gkey = "oyjl_group/old";
+          o = oyjlTreeGetValue(results, 0, "oyjl_group/old/optional");
+          optional = OYJL_GET_STRING(o);
+          o = oyjlTreeGetValue(results, 0, "oyjl_group/old/mandatory");
+          mandatory = OYJL_GET_STRING(o);
+          index = oyjlOptionGroupGetOptionIndex_( k, optional );
+        } else
+        {
+          o = oyjlTreeGetValue(results, 0, "oyjl_group/mandatory");
+          mandatory = OYJL_GET_STRING(o);
+        }
+      }
+
+      char * msg = NULL;
+      if(index >= 0)
+      {
+        o = oyjlTreeGetValueF(results, 0, "%s/name", gkey); t = OYJL_GET_STRING(o);
+        if(!t) { o = oyjlTreeGetValueF(results, 0, "%s/description", gkey); t = OYJL_GET_STRING(o); if(!t) fprintf(stderr, "no name/description found for group in results[%s/...]\n", gkey);}
+        oyjl_val args = NULL;
+        oyjlOptionsResultsWithGroupMatches(results, mandatory, &args );
+        oyjlOptionsResultsWithGroupMatches(results, optional, &args );
+        char * match = oyjlTreeToText( args, OYJL_JSON );
+        if(verbose)
+          oyjlStringAdd( &msg, 0,0, " match: %s\n key: %s belongs to group: %s (%s[%d])", match?match:"", oyjlTermColor(oyjlBOLD,k), t, mandatory, index );
+        if(match) { free(match); match = NULL; }
+        args_cli = oyjlTreeNew("");
+        int n = oyjlValueCount(args), i, pos;
+        for(pos = i = 0; i < n; ++i)
+        {
+          o = oyjlValuePosGet( args, i );
+          char * okey = oyjlTreeGetPath( args, o );
+          const char * ovalue = OYJL_GET_STRING(o);
+          if(!okey) continue;
+          o = oyjlUiJsonFindOption_( root, okey, NULL );
+          const char * arg_cli = oyjlUiJsonOptionPrintCli_( o, ovalue, verbose?0:OYJL_QUIET );
+          if(arg_cli)
+            oyjlTreeSetStringF( args_cli, OYJL_CREATE_NEW, arg_cli, "[%d]", pos++ );
+          else
+            oyjlTreeClearValue( results, okey );
+        }
+        if(verbose)
+          oyjlStringAdd( &msg, 0,0, " cli: %s %s", nick, oyjlTreeToText( args_cli, OYJL_JSON ) );
+      }
+
+      char * json = oyjlTreeToText(results, OYJL_JSON);
+      if(verbose)
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "results: %s \"%s\": %s %s", OYJL_DBG_ARGS, json, k, v, msg );
+      if(json) free(json);
+      if(msg) free(msg);
+    }
+
+    return args_cli;
 }
 
 #define OYJL_TRANSLATE 0x01
@@ -514,7 +721,7 @@ static char oyjlUiGetVariableNameSuffixFromWord( const char * o, const char * op
   return c;
 }
 
-static oyjl_val oyjlFindOption_( oyjl_val root, char o )
+static oyjl_val oyjlUiExportFindOption_( oyjl_val root, char o )
 {
   char oo[4] = {o,0,0,0};
   int found = 0, k;
@@ -553,7 +760,7 @@ static oyjl_val oyjlFindOption_( oyjl_val root, char o )
  *  @date    2023/03/10
  *  @since   2019/06/24 (Oyjl: 1.0.0)
  */
-char *             oyjlUiJsonToCode  ( oyjl_val            root,
+char *             oyjlUiExportToCode( oyjl_val            root,
                                        int                 flags )
 {
   char * c = NULL;
@@ -874,7 +1081,7 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
         {
           for(j = 0; j < len; ++j)
           {
-            oyjl_val nv = oyjlFindOption_( root, name[j] );
+            oyjl_val nv = oyjlUiExportFindOption_( root, name[j] );
             if(!nv)
             {
               oo[0] = name[j];
@@ -1021,18 +1228,18 @@ char *             oyjlUiJsonToCode  ( oyjl_val            root,
     }
     if(!(flags & OYJL_NO_DEFAULT_OPTIONS))
     {
-      if(!help_found && !oyjlFindOption_( root, 'h' ))
+      if(!help_found && !oyjlUiExportFindOption_( root, 'h' ))
       oyjlStr_Push(s,"    /* default options -h and -v */\n" );
-      if(!help_found && !oyjlFindOption_( root, 'h' ))
+      if(!help_found && !oyjlUiExportFindOption_( root, 'h' ))
       oyjlStr_Push(s,"    {\"oiwi\", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, \"h\", \"help\", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&help}, NULL },\n" );
-      if(!verbose_found && !oyjlFindOption_( root, 'v' ))
+      if(!verbose_found && !oyjlUiExportFindOption_( root, 'v' ))
       oyjlStr_Push(s,"    {\"oiwi\", 0, \"v\", \"verbose\", NULL, _(\"verbose\"), _(\"Verbose\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&verbose}, NULL },\n" );
-      if(!render_found && !oyjlFindOption_( root, 'R' ))
+      if(!render_found && !oyjlUiExportFindOption_( root, 'R' ))
       {
       oyjlStr_Push(s,"    /* The --render option can be hidden and used only internally. */\n" );
       oyjlStr_Push(s,"    {\"oiwi\", OYJL_OPTION_FLAG_EDITABLE|OYJL_OPTION_FLAG_MAINTENANCE, \"R\", \"render\",  NULL, _(\"render\"),  _(\"Render\"),  NULL, NULL, oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&render}, NULL },\n" );
       }
-      if(!version_found && !oyjlFindOption_( root, 'V' ))
+      if(!version_found && !oyjlUiExportFindOption_( root, 'V' ))
       oyjlStr_Push(s,"    {\"oiwi\", 0, \"V\", \"version\", NULL, _(\"version\"), _(\"Version\"), NULL, NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&version}, NULL },\n" );
       oyjlStr_Push(s,"    /* default option template -X|--export */\n" );
       if(!export_found && !X_found)
