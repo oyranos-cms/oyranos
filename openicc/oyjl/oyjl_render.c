@@ -182,29 +182,23 @@ static int oyjlArgsRendererSelect_  (  oyjlUi_s          * ui )
   {
     if(arg[0])
     {
-      char * low = oyjlStringToLower_( arg );
-      if(low)
+      if(oyjlStringStartsWith(arg,"gui",OYJL_COMPARE_CASE))
+        name = "OyjlArgsQml";
+      else
+      if(oyjlStringStartsWith(arg,"qml",OYJL_COMPARE_CASE))
+        name = "OyjlArgsQml";
+      else
+      if(oyjlStringStartsWith(arg,"cli",OYJL_COMPARE_CASE))
+        name = "OyjlArgsCli";
+      else
+      if(oyjlStringStartsWith(arg,"web",OYJL_COMPARE_CASE))
+        name = "OyjlArgsWeb";
+      if(!name)
       {
-        if(oyjlStringStartsWith(low,"gui"))
-          name = "OyjlArgsQml";
-        else
-        if(oyjlStringStartsWith(low,"qml"))
-          name = "OyjlArgsQml";
-        else
-        if(oyjlStringStartsWith(low,"cli"))
-          name = "OyjlArgsCli";
-        else
-        if(oyjlStringStartsWith(low,"web"))
-          name = "OyjlArgsWeb";
-        if(!name)
-        {
-          oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s|%s", OYJL_DBG_ARGS, arg,oyjlTermColor(oyjlBOLD,low) );
-          free(low);
-          return 1;
-        }
-        free(low);
-        error = oyjlArgsRendererLoad_( name );
+        oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\"-R|--render\" not supported: %s", OYJL_DBG_ARGS, oyjlTermColor(oyjlBOLD,arg) );
+        return 1;
       }
+      error = oyjlArgsRendererLoad_( name );
     }
     else /* report all available renderers */
     {
