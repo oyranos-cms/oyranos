@@ -45,6 +45,11 @@ void app_log( QString log_text )
 #endif
 }
 
+void app_log( const char * log_text )
+{
+  app_log( QString(log_text) );
+}
+
 static QString * log_history = nullptr;
 
 void app_log( QString file, QString func, QString log_text )

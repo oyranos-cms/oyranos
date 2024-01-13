@@ -1,7 +1,7 @@
 /** @file OptionsList.qml
  *
  *  @par Copyright:
- *            2018-2020 (C) Kai-Uwe Behrmann
+ *            2018-2023 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
@@ -95,6 +95,8 @@ Rectangle {
                 lslider.labelFont.bold = set;
                 comboBox.labelFont.bold = set;
                 linput.labelFont.bold = set;
+                if(app_debug)
+                    statusText = "QML::OptionsList::setModified() set bold:" + set
             }
 
             Combo {
@@ -115,7 +117,12 @@ Rectangle {
                         init = false
                     } else
                         visible = false
-                    labelFont.bold = appData.getOption(key).length ? true : false
+                    labelFont.bold = appData.getOption(key).length && value !== "false" ? true : false
+                    if(app_debug)
+                    {
+                        var j = JSON.parse(appData.plainJSON(text))
+                        statusText = "QML::OptionsList::Combo::Component.onCompleted() " + j.key + " value:" + value + " \"" + combo.textAt(combo.currentIndex) + "\" currentValue:" + currentValue + " bold:" + labelFont.bold
+                    }
                 }
                 combo.onCurrentIndexChanged: {
                     var role = combo.textRole
@@ -123,17 +130,26 @@ Rectangle {
                     var t = combo.textAt(combo.currentIndex)
                     var i = combo.find(t)
                     var item = combo.model.get(i)
-                    var nick = item.nick
-                    labelFont.bold = appData.getOption(key).length ? true : false
+                    if(app_debug)
+                        statusText = "QML::OptionsList::combo.onCurrentIndexChanged() key:\"" + key + "\" item:" + JSON.stringify(item) + " currentValue: " + currentValue + " appData.getOption(key):" + appData.getOption(key)
+                    var nick = item !== undefined ? item.nick : false
+                    labelFont.bold = appData.getOption(key).length && appData.getOption(key) !== "false" && appData.getOption(key) !== false ? true : false
                     if(nick === currentValue || init)
                         return;
-                    statusText = key + ":" + nick + " " + combo.textAt(combo.currentIndex) + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + nick + "/" + currentValue
+                    if(app_debug)
+                        statusText = "QML::OptionsList::combo.onCurrentIndexChanged() " + key + ":" + nick + " " + combo.textAt(combo.currentIndex) + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + nick + "/" + currentValue + " bold:" + labelFont.bold
                     currentValue = nick;
-                    appData.setOption(key, item.nick)
+                    appData.setOption(key, nick, group.id)
                     var k = key
                     value = nick
                     changed = value
+                    if(app_debug)
+                        statusText = "QML::OptionsList::combo.onCurrentIndexChanged() " + key + " item:" + JSON.stringify(item) + " currentValue: " + currentValue + " appData.getOption(key):" + appData.getOption(key)
                     callback( key, value, type, group, 0 )
+                }
+                onLabelFontChanged: {
+                    if(app_debug)
+                        statusText = "QML::OptionsList:comboBox:onLabelFontChanged() " + key + ":" + currentValue + " font:" + labelFont.bold?"bold":"no mark"
                 }
             }
             LSlider {
@@ -161,7 +177,7 @@ Rectangle {
                         else
                             slider.value = v
                         if(app_debug)
-                            statusText = key + " double " + slider.from + " - " + slider.to + " , " + slider.stepSize
+                            statusText = "QML::OptionsList::LSlider::Component.onCompleted() " + key + " double " + slider.from + " - " + slider.to + " , " + slider.stepSize
                         labelFont.bold = appData.getOption(key).length ? true : false
                         visible = true
                         init = false
@@ -173,10 +189,11 @@ Rectangle {
                     var sv = slider.value
                     if(slider.value === currentValue || init)
                         return;
-                    statusText = key + ":" + currentValue + " " + slider.value + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + slider.value + "/" + currentValue
+                    if(app_debug)
+                        statusText = "QML::OptionsList::slider.onValueChanged() " + key + ":" + currentValue + " " + slider.value + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + slider.value + "/" + currentValue
                     currentValue = slider.value;
                     value = currentValue
-                    appData.setOption(key, value)
+                    appData.setOption(key, value, group.id)
                     var k = key
                     value = JSON.stringify(slider.value)
                     changed = value
@@ -203,7 +220,7 @@ Rectangle {
                         defaultValue = v
                         switcher.checked = (value === "true")
                         if(app_debug)
-                            statusText = key + " bool"
+                            statusText = "QML::OptionsList::LSwitch::Component.onCompleted() " + key + " bool"
                         button = run
                         visible = true
                         init = false
@@ -216,9 +233,10 @@ Rectangle {
                     var sv = switcher.checked
                     if(sv === currentValue || init)
                         return;
-                    statusText = key + ":" + currentValue + " " + sv + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + currentValue + "/" + sv
+                    if(app_debug)
+                        statusText = "QML::OptionsList::switcher.onCheckedChanged() " + key + ":" + currentValue + " " + sv + " " + qsTr("selected") + "  " + qsTr("new/old") + ": " + currentValue + "/" + sv
                     currentValue = sv;
-                    appData.setOption(key, sv)
+                    appData.setOption(key, sv, group.id)
                     var k = key
                     value = JSON.stringify(sv)
                     changed = value
@@ -237,9 +255,11 @@ Rectangle {
                 }
                 butt.onPressed: {
                     if(init) return;
-                    statusText = key + ":" + qsTr("selected")
-                    appData.setOption(key, true)
+                    if(app_debug)
+                        statusText = "QML::OptionsList::butt.onPressed() " + key + ":" + qsTr("selected")
+                    appData.setOption(key, true, group.id)
                     callback( key, JSON.stringify(true), type, group, 1 )
+                    setModified()
                 }
                 onChangedValueChanged: // just for fun as a Changed event; could alternatively be handled in onCheckedChanged as well
                 {
@@ -252,6 +272,8 @@ Rectangle {
                         set = true;
                     if(!set && v === true)
                         set = true;
+                    if(app_debug)
+                        statusText = "QML::OptionsList::onChangedValueChanged() " + key + " set: " + set
                     labelFont.bold = set;
                 }
             }
@@ -275,13 +297,15 @@ Rectangle {
                         if(typeof j.suggest !== "undefined")
                             defaultValue = j.suggest
                         if(app_debug)
-                            statusText = key + " string"
+                            statusText = "QML::OptionsList::LInput::Component.onCompleted() " + key + " string value:" + value
                         setDataText2( this, text, value )
                         repetition = j.repetition
                         visible = true
                         init = false
                     } else
                         visible = false
+                    if(app_debug)
+                        statusText = "QML::OptionsList::MouseArea::Component.onCompleted() appData.getOption(key).length " + appData.getOption(key).length
                     labelFont.bold = appData.getOption(key).length ? true : false
                 }
                 combo.onCurrentTextChanged: { value = combo.currentText; changed = value; }
@@ -317,15 +341,20 @@ Rectangle {
                         if( typeof model !== "undefined")
                             model.append({key: t})
                     }
-                    statusText = k + ":" + t
+                    if(app_debug)
+                        statusText = "QML::OptionsList::MouseArea::combo.onAccepted() " + k + ":" + t
                     //value = t
                     i.displayText = t;
                     i.editText = t;
                     //i.currentText = t;
                     value_old = value
-                    appData.setOption(key, value)
+                    appData.setOption(key, value, group.id)
                     callback( key, value, type, group, 0 )
                     labelFont.bold = appData.getOption(k).length ? true : false
+                }
+                onLabelFontChanged: {
+                    if(app_debug)
+                        statusText = "QML::OptionsList::linput::onLabelFontChanged() " + key + ":" + currentValue + " font:" + labelFont.bold?"bold":"no mark"
                 }
             }
             MouseArea {
@@ -404,8 +433,8 @@ Rectangle {
                 onDoubleClicked:
                 {
                     if(app_debug)
-                        statusText = "onDoubleClicked: " + key + ":" + value + " " + type
-                    appData.setOption(key, false)
+                        statusText = "QML::OptionsList::MouseArea::onDoubleClicked: " + key + ":" + value + " " + type
+                    appData.setOption(key, false, group.id)
                     current = ""
                     value = ""
                     changed = ""

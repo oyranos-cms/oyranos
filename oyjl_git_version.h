@@ -4,7 +4,7 @@
 #ifndef OYJL_GIT_VERSION_H
 #define OYJL_GIT_VERSION_H
 
-#define OYJL_GIT_VERSION               "3023-g11e6c52f8-2024-01-13"  /**< git describe --always HEAD  + date */ 
+#define OYJL_GIT_VERSION               "3024-g6303cd919-2024-01-13"  /**< git describe --always HEAD  + date */ 
 
 #endif /*OYJL_GIT_VERSION_H*/
 
