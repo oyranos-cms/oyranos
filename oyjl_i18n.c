@@ -130,7 +130,7 @@ const char *   oyjlSetLocale         ( int                 category OYJL_UNUSED,
              * dbg = getenv("OYJL_DEBUG"),
              * setloc = NULL;
   int debug = dbg?atoi(dbg):0;
-  if((lang && lang[0] && language && language[0] && strcmp(lang,language) != 0 && !oyjlStringStartsWith(lang,language) && !oyjlStringStartsWith(lang,"C")) ||
+  if((lang && lang[0] && language && language[0] && strcmp(lang,language) != 0 && !oyjlStringStartsWith(lang,language,0) && !oyjlStringStartsWith(lang,"C",0)) ||
      (!(lang && lang[0]) && language && language[0]))
   {
     if(debug && lang) fprintf(stderr, OYJL_DBG_FORMAT "old LANG=%s ", OYJL_DBG_ARGS, getenv("LANG") );
