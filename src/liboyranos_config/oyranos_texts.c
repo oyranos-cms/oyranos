@@ -25,6 +25,7 @@
 #include "oyOptions_s_.h"
 
 #include "oyranos_db.h"
+#include "oyranos_dbus_macros.h"
 #include "oyranos_cache.h"
 #include "oyranos_config_internal.h"
 #include "oyranos.h"
@@ -2590,6 +2591,9 @@ int          oySetPersistentString   ( const char        * key_name,
     rc = oyDBSetString( key_name, scope, value, comment );
   else
     rc = oyDBEraseKey( key_name, scope );
+#ifdef HAVE_DBUS
+   oyDBusSendPing( scope, key_name );
+#endif
   if(scope == oySCOPE_USER_SYS)
   {
     if(strchr( key_name, '/' ))
