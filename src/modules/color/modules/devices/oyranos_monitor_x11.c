@@ -1220,6 +1220,22 @@ oyMonitor_s * oyX1GetMonitor         ( const char        * display_name )
   return oyX1Monitor_newFrom_( display_name, 1 );
 }
 
+char * oyX1ReadCmd                   ( const char        * cmd )
+{
+  char * t = NULL;
+  FILE * fp = popen(cmd, "r");
+  if(fp)
+  {
+    int n;
+    oyX1Alloc( t, 48, pclose(fp); return NULL;)
+    n = fread( t, sizeof(char), 48, fp );
+    if(0 <= n && n < 48) t[n] = '\000';
+    else t[47] = '\000';
+    pclose(fp);
+  }
+  return t;
+}
+
 int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
                                        const char        * profile_name,
                                        const char        * profile_data OY_UNUSED,
@@ -1244,18 +1260,12 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
 
   if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "profile_name = %s\n", OY_DBG_ARGS_, profile_name?profile_name:"" );
 
-  int version = 0; char * t = NULL;
+  int version = 0;
   const char * xs = "-s";
-  FILE * fp = popen("xcalib -version", "r");
-  if(fp)
-  {
-    int n;
-    oyX1Alloc( t, 48, pclose(fp); free(dpy_name); return 1;)
-    n = fread( t, sizeof(char), 48, fp );
-    if(0 <= n && n < 48) t[n] = '\000';
-    else t[47] = '\000';
-    pclose(fp);
-  } else
+  char * t = oyX1ReadCmd("FORCE_NO_COLORTERM=1 xcalib -version");
+  if(!(t && t[0]))
+    t = oyX1ReadCmd("FORCE_NO_COLORTERM=1 xcalib --version");
+  if(!(t && t[0]))
   {
     fprintf( stderr, OY_DBG_FORMAT_ "xcalib not found for setting with %s\n", OY_DBG_ARGS_, profile_name );
     status |= OY_CALIB_ERROR;
@@ -1266,10 +1276,12 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
     char * tmp = strstr(t, "xcalib ");
 
     tmp = &tmp[7];
+    if(tmp[0] == 'v')
+      ++tmp;
     sscanf( tmp, "%d.%d.%d", &major, &minor, &micro );
     version = major*10000 + minor * 100 + micro;
 
-    if(version < 0 || oy_debug)
+    if(version <= 0 || oy_debug)
       fprintf( stderr, OY_DBG_FORMAT_ "xcalib version string: \"%s\" \"%s\" version: %d\n", OY_DBG_ARGS_, t, tmp, version );
   }
   if(t) { free(t); t = NULL; }
