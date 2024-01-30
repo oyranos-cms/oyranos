@@ -1,0 +1,269 @@
+.TH "oyranos-monitor" 1 "February 22, 2018" "User Commands"
+.SH NAME
+oyranos-monitor v0.9.7 \- Monitor configuration with Oyranos CMS
+.SH ÜBERSICHT
+\fBoyranos-monitor\fR | \fB\-s\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-v\fR]
+.br
+\fBoyranos-monitor\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-system-wide\fR] [\fB\-v\fR] ICC_DATEINAME
+.br
+\fBoyranos-monitor\fR \fB\-e\fR \fB\-u\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-system-wide\fR] [\fB\-v\fR]
+.br
+\fBoyranos-monitor\fR \fB\-l\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-short\fR] [\fB\-\-path\fR] [\fB\-c\fR] [\fB\-v\fR] [\fB\-\-module\fR \fIMODULENAME\fR] [\fB\-2\fR] [\fB\-4\fR]
+.br
+\fBoyranos-monitor\fR \fB\-f\fR \fIedid|icc|edid_icc|vcgt...\fR \fB\-a\fR \fB\-\-modules\fR \fB\-L\fR [\fB\-o\fR \fIOUT_FILENAME|default:stdout\fR] [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-display\fR \fINAME\fR] [\fB\-m\fR] [\fB\-v\fR] [\fB\-2\fR] [\fB\-4\fR]
+.br
+\fBoyranos-monitor\fR \fB\-\-daemon\fR [\fB\-v\fR]
+.br
+\fBoyranos-monitor\fR \fB\-\-add-edid\fR \fIDATEINAME\fR \fB\-\-add-vcgt\fR \fIDATEINAME\fR \fB\-\-profile\fR \fIICC_DATEINAME\fR [\fB\-\-name\fR \fINAME\fR] [\fB\-v\fR]
+.br
+\fBoyranos-monitor\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-R\fR \fIgui|cli|web|...\fR \fB\-V\fR [\fB\-v\fR]
+.SH BESCHREIBUNG
+The oyranos-monitor programm let you query and set the monitor profile(s) within the Oyranos color management system (CMS). Profiles are stored in a data base, the Oyranos DB.
+.SH OPTIONEN
+.SS
+Setze grundlegende Parameter
+.br
+\fB\-x\fR \fIPIXEL\fR	select the screen at the x position. The Oyranos screens are if possible real devices. A screen position must be unique and not shared by different screens, otherwise it will be ambiguous.
+.br
+\fB\-y\fR \fIPIXEL\fR	select the screen at the y position.
+.br
+\fB\-d\fR|\fB\-\-device-pos\fR \fINUMMER\fR	position in device list. The numbering of monitors starts with zero for the first device. To get the number of all available devices use "oyranos-monitor -l | wc -l".
+.br
+\fB\-\-display\fR \fINAME\fR	Use DISPLAY
+.br
+\fB\-\-module\fR \fIMODULENAME\fR	select module
+.br
+\fB\-c\fR|\fB\-\-x-color-region-target\fR	show the X Color Management (XCM) device profile
+.br
+\fB\-\-system-wide\fR	do system wide, might need admin or root privileges
+.br
+\fB\-2\fR|\fB\-\-icc-version-2\fR	Wähle ICC V2 Profile
+.br
+\fB\-4\fR|\fB\-\-icc-version-4\fR	Wähle ICC V4 Profile
+.br
+.SS
+Activate Profiles
+\fBoyranos-monitor\fR | \fB\-s\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-v\fR]
+.br
+Set up the X11 server with the Oyranos DB stored monitor ICC profile(s).
+.br
+.sp
+.br
+|	No args
+.RS
+Run command without arguments
+.RE
+\fB\-s\fR|\fB\-\-setup\fR	Setup a ICC profile for all or a selected monitor
+.br
+.SS
+Set New Profile
+\fBoyranos-monitor\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-system-wide\fR] [\fB\-v\fR] ICC_DATEINAME
+.br
+Assign a monitor ICC profile to the selected screen and store in the Oyranos DB.
+.br
+.sp
+.br
+\fIICC_DATEINAME\fR	ICC device profile for a monitor
+.br
+.SS
+Erase Profile
+\fBoyranos-monitor\fR \fB\-e\fR \fB\-u\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-system-wide\fR] [\fB\-v\fR]
+.br
+\fB\-e\fR|\fB\-\-erase\fR	Release a ICC profile from a monitor device
+.RS
+Reset the hardware gamma table to the defaults and erase from the Oyranos DB
+.RE
+\fB\-u\fR|\fB\-\-unset\fR	Release a ICC profile from a monitor device
+.RS
+Reset the hardware gamma table to the defaults.
+.RE
+.SS
+List Devices
+\fBoyranos-monitor\fR \fB\-l\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-short\fR] [\fB\-\-path\fR] [\fB\-c\fR] [\fB\-v\fR] [\fB\-\-module\fR \fIMODULENAME\fR] [\fB\-2\fR] [\fB\-4\fR]
+.br
+List names and show details.
+.br
+.sp
+.br
+\fB\-l\fR|\fB\-\-list\fR	list devices
+.br
+\fB\-\-short\fR	Zeige nur den Profilnamen
+.br
+\fB\-\-path\fR	kompletter Pfad- und Dateiname
+.br
+.SS
+Give Informations
+\fBoyranos-monitor\fR \fB\-f\fR \fIedid|icc|edid_icc|vcgt...\fR \fB\-a\fR \fB\-\-modules\fR \fB\-L\fR [\fB\-o\fR \fIOUT_FILENAME|default:stdout\fR] [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-display\fR \fINAME\fR] [\fB\-m\fR] [\fB\-v\fR] [\fB\-2\fR] [\fB\-4\fR]
+.br
+\fB\-f\fR|\fB\-\-format\fR \fIedid|icc|edid_icc|vcgt...\fR	[edid|icc|edid_icc|vcgt] Get data
+.RS
+Select a data format. Possible are edid for server side EDID data, icc for a server side ICC profile, edid_icc for a ICC profile created  from  server side  EDID and vcgt for effect and monitor white point merged into a possibly altered VCGT tag. Without the -o/--ouput option the output is written to stdout.
+.RE
+\fB\-o\fR|\fB\-\-output\fR \fIOUT_FILENAME|default:stdout\fR	OUT_FILENAME Write data selected by -f/--format to the given filename.
+.br
+\fB\-m\fR|\fB\-\-device-meta-tag\fR	(--device-meta-tag) switch is accepted by the -f=icc and -f=edid_icc option. It embeddes device and driver informations about the actual device for
+.RS
+later easier ICC profile to device assignment.  This becomes useful for sharing ICC profiles.
+.RE
+\fB\-a\fR|\fB\-\-xcm-active\fR	
+.RS
+Show if X Color Management is active
+.RE
+\fB\-\-modules\fR	
+.RS
+List monitor modules
+.RE
+\fB\-L\fR|\fB\-\-list-taxi\fR	Liste Taxi Profile
+.br
+.SS
+Run Daemon
+\fBoyranos-monitor\fR \fB\-\-daemon\fR [\fB\-v\fR]
+.br
+Keep a session up to date.
+.br
+.sp
+.br
+\fB\-\-daemon\fR	
+.RS
+Run as daemon to observe monitor hotplug events and update the setup.
+.RE
+.SS
+Add Device Meta Data
+\fBoyranos-monitor\fR \fB\-\-add-edid\fR \fIDATEINAME\fR \fB\-\-add-vcgt\fR \fIDATEINAME\fR \fB\-\-profile\fR \fIICC_DATEINAME\fR [\fB\-\-name\fR \fINAME\fR] [\fB\-v\fR]
+.br
+Add device information to a profile for automated selection.
+.br
+.sp
+.br
+\fB\-\-add-edid\fR \fIDATEINAME\fR	EDID Filename
+.RS
+Embedd EDID keys to a ICC profile as meta tag. Requires --profile.
+.RE
+\fB\-\-add-vcgt\fR \fIDATEINAME\fR	VCGT Filename
+.RS
+Embedd VCGT calibration to a ICC profile as vcgt tag. FILENAME can be output from 'xcalib -p'. Requires --profile.
+.RE
+\fB\-\-profile\fR \fIICC_DATEINAME\fR	ICC profile.
+.br
+\fB\-\-name\fR \fINAME\fR	String for ICC profile internal name.
+.br
+.SS
+General Options
+\fBoyranos-monitor\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-R\fR \fIgui|cli|web|...\fR \fB\-V\fR [\fB\-v\fR]
+.br
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Zeige Hilfetext an
+.RS
+Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+.RE
+	\fB\-h\fR -		# Vollständige Hilfe : Zeige Hilfe für alle Gruppen
+.br
+	\fB\-h\fR synopsis		# Übersicht : Liste Gruppen - Zeige alle Gruppen mit Syntax
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+.RS
+Hole Benutzerschnittstelle als Text
+.RE
+	\fB\-X\fR man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
+.br
+	\fB\-X\fR markdown		# Markdown : Formatierter Text - Hole formatierten Text
+.br
+	\fB\-X\fR json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
+.br
+	\fB\-X\fR json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\fB\-X\fR export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler. Das Format kann mit dem oyjl-args Werkzeug umgewandelt werden.
+.br
+\fB\-V\fR|\fB\-\-version\fR	Version
+.br
+\fB\-R\fR|\fB\-\-render\fR \fIgui|cli|web|...\fR	Darstellung
+.br
+	\fB\-R\fR gui		# Gui : Zeige UI - Zeige eine interaktive grafische Benutzerschnittstelle.
+.br
+	\fB\-R\fR cli		# Cli : Zeige UI - Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile.
+.br
+	\fB\-R\fR web		# Web : Starte Web Server - Starte lokalen Web Service für die Darstellung in einem Webbrowser. Die -R=web:help Unteroption zeigt weitere Informationen an.
+.br
+	\fB\-R\fR -
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	plaudere mehr
+.br
+.SH ENVIRONMENT
+.TP
+DISPLAY
+.br
+On X11 systems the display is selected by this variable.
+.TP
+OY_DEBUG
+.br
+setze den Oyranos Fehlersuchniveau. Die -v Option kann alternativ benutzt werden.
+.TP
+XDG_DATA_HOME XDG_DATA_DIRS
+.br
+richte Oyranos auf obere Verzeichnisse, welche Resourcen enthalten. An die Pfade für ICC Profile wird "color/icc" angehangen. http://www.openicc.org/index.php%3Ftitle=OpenIccDirectoryProposal.html
+.br
+http://www.oyranos.com/wiki/index.php?title=OpenIccDirectoryProposal
+.TP
+OY_MODULE_PATH
+.br
+zeige Oyranos zusätzliche Verzeichnisse mit Modulen.
+.SH BEISPIELE
+.TP
+Put the following in a setup script like .xinitrc
+.br
+# select a monitor profile, load the binary blob into X and
+.br
+# fill the VideoCardGammaTable, if appropriate
+.br
+oyranos-monitor
+.TP
+Assign a ICC profile to a screen
+.br
+oyranos-monitor -x pos -y pos profilename
+.TP
+Reset a screens hardware LUT in order to do a calibration
+.br
+oyranos-monitor -e -x pos -y pos profilename
+.TP
+Query the server side, network transparent profile
+.br
+oyranos-monitor -x pos -y pos
+.TP
+List all Oyranos monitor devices
+.br
+oyranos-monitor -l
+.TP
+Show the first Oyranos monitor device verbosely
+.br
+oyranos-monitor -l -v -d 0
+.TP
+Pass the monitor profile to a external tool
+.br
+iccDumpProfile -v "`oyranos-monitor -l -d 0 -c --path`"
+.TP
+List all monitor devices through the oyX1 module
+.br
+oyranos-monitor -l --module oyX1
+.TP
+Dump data in the format following the -f option
+.br
+oyranos-monitor -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos -m
+.TP
+Embedd device informations into ICC meta tag
+.br
+oyranos-monitor --add-edid=edid_filename --profile=profilename.icc --name=profilename
+.SH SIEHE AUCH
+.TP
+oyranos-config-fltk(1) oyranos-policy(1) oyranos-profiles(1) oyranos(3)
+.br
+.TP
+http://www.oyranos.org
+.br
+.SH AUTOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH KOPIERRECHT
+© 2005-2021 Kai-Uwe Behrmann and others
+.br
+Lizenz: newBSD http://www.oyranos.org
+.SH FEHLER
+https://www.gitlab.com/oyranos/oyranos/issues 
+

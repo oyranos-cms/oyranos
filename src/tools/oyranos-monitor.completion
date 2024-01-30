@@ -1,0 +1,161 @@
+_oyranos_monitor()
+{
+    local cur prev words cword
+    _init_completion -s || return
+
+    #set -x -v
+
+    local SEARCH=${COMP_WORDS[COMP_CWORD]}
+    if [[ "$SEARCH" == "=" ]]; then
+      SEARCH=""
+    fi
+
+    : "autocomplete options with choices for long options "$prev""
+    case "$prev" in
+        --help) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('-' 'synopsis')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --render) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('gui' 'cli' 'web' '-')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --export) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+    esac
+    : "autocomplete options with choices for single letter options "$cur""
+    case "$cur" in
+        -h=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('-' 'synopsis')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -R=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('gui' 'cli' 'web' '-')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -X=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "autocomplete options "$cur""
+    case "$cur" in
+        -x|-y|-d|-f|-o|-h|-R|-X)
+            : "finish short options with choices"
+            COMPREPLY=("$cur=\"")
+            set +x +v
+            return
+            ;;
+        --display|--device-pos|--module|--format|--output|--add-edid|--add-vcgt|--profile|--name|--help|--render|--export)
+            : "finish long options with choices"
+            COMPREPLY=("$cur=\"")
+            set +x +v
+            return
+            ;;
+        -s|-g|-2|-4|-u|-e|-l|-L|-c|-a|-m|-v|-V)
+            : "finish short options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+        --setup|--gamma|--icc-version-2|--icc-version-4|--system-wide|--unset|--erase|--list|--list-taxi|--short|--path|--x-color-region-target|--modules|--xcm-active|--device-meta-tag|--daemon|--verbose|--version)
+            : "finish long options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "show help for none '@' UIs"
+    if [[ "$cur" == "" ]]; then
+      if [[ ${COMP_WORDS[1]} == "" ]]; then
+        $1 help synopsis 1>&2
+      else
+        $1 help ${COMP_WORDS[1]} 1>&2
+      fi
+    fi
+
+
+    : "suggest group options for subcommands"
+    if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
+      case "${COMP_WORDS[1]}" in
+        -s|--setup)
+          COMPREPLY=($(compgen -W '-x=  -y=  -d= --device-pos= -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -e|--erase|-u|--unset)
+          COMPREPLY=($(compgen -W '-x=  -y=  -d= --device-pos= --system-wide -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -l|--list)
+          COMPREPLY=($(compgen -W '-x=  -y=  -d= --device-pos= --short --path -c --x-color-region-target -v --verbose --module= -2 --icc-version-2 -4 --icc-version-4' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -f|--format|-a|--xcm-active|--modules|-L|--list-taxi)
+          COMPREPLY=($(compgen -W '-o= --output= -x=  -y=  -d= --device-pos= --display= -m --device-meta-tag -v --verbose -2 --icc-version-2 -4 --icc-version-4' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --daemon)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --add-edid|--add-vcgt|--profile)
+          COMPREPLY=($(compgen -W '--name= -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -h|--help|-X|--export|-R|--render|-V|--version)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        .*)
+          COMPREPLY=($(compgen -W '-x=  -y=  -d= --device-pos= --system-wide -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+      esac
+    fi
+
+    : "suggest mandatory options on first args only"
+    if [[ "${COMP_WORDS[2]}" == "" ]]; then
+      local WORD_LIST=()
+      WORD_LIST=("${WORD_LIST[@]}" -s --setup -e --erase -u --unset -l --list -f= --format= -a --xcm-active --modules -L --list-taxi --daemon --add-edid= --add-vcgt= --profile= -h= --help= -X= --export= -R= --render= -V --version)
+      COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+      set +x +v
+      return
+    fi
+
+    set +x +v
+} &&
+complete -o nosort -F _oyranos_monitor -o nospace oyranos-monitor
+
+

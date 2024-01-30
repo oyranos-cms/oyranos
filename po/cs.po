@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-01-24 21:59+0100\n"
+"POT-Creation-Date: 2024-01-30 16:28+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -75,15 +75,7 @@ msgstr ""
 msgid "----"
 msgstr "----"
 
-#: tools/oyranos_gamma.c:245
-msgid "--module name"
-msgstr "--module jméno"
-
-#: tools/oyranos_gamma.c:246
-msgid "-d device_position_start_from_zero"
-msgstr "-d device_position_start_from_zero"
-
-#: examples/taxi.c:67 tools/oyranos_gamma.c:244
+#: examples/taxi.c:67
 msgid "-v verbose"
 msgstr "-v upovídaný výstup"
 
@@ -408,10 +400,6 @@ msgstr "Aktivovat profily:"
 msgid "Activate Profiles"
 msgstr "Aktivovat profily:"
 
-#: tools/oyranos_gamma.c:224
-msgid "Activate profiles:"
-msgstr "Aktivovat profily:"
-
 #: liboyranos_config/oyranos_texts.c:359 liboyranos_config/oyranos_texts.c:360
 msgid "Active Policy:"
 msgstr "Aktivní politika:"
@@ -701,7 +689,6 @@ msgstr "Dostupná zařízení"
 #: tools/oyranos-device.c:688 tools/oyranos-device.c:703
 #: tools/oyranos-device.c:717 tools/oyranos-device.c:1166
 #: tools/oyranos-device.c:1286 tools/oyranos-monitor.c:469
-#: tools/oyranos_gamma.c:407
 msgid "Available devices"
 msgstr "Dostupná zařízení"
 
@@ -1494,7 +1481,7 @@ msgstr "Nelze otevřít profil"
 msgid "Could not open: "
 msgstr "Nelze otevřít:"
 
-#: tools/oyranos-monitor.c:468 tools/oyranos_gamma.c:406
+#: tools/oyranos-monitor.c:468
 msgid "Could not resolve device"
 msgstr "Nelze rozpoznat zařízení"
 
@@ -1658,7 +1645,7 @@ msgstr "alokace selhala"
 msgid "DISPLAY"
 msgstr ""
 
-#: tools/oyranos-monitor.c:355 tools/oyranos_gamma.c:293
+#: tools/oyranos-monitor.c:355
 msgid "DISPLAY variable not set: giving up."
 msgstr "Proměnná DISPLAY není nastavena: ukončeno."
 
@@ -1960,7 +1947,7 @@ msgstr ""
 msgid "Dump data in the format following the -f option"
 msgstr ""
 
-#: examples/libraw/oyranos_file.cpp:49 tools/oyranos_gamma.c:240
+#: examples/libraw/oyranos_file.cpp:49
 msgid "Dump data:"
 msgstr "Vypsat data:"
 
@@ -2005,7 +1992,7 @@ msgstr "jméno profilu"
 msgid "EFI CMM"
 msgstr ""
 
-#: tools/oyranos-monitor.c:400 tools/oyranos_gamma.c:338
+#: tools/oyranos-monitor.c:400
 #, fuzzy
 msgid "ERROR"
 msgstr "!!! CHYBA"
@@ -2157,10 +2144,6 @@ msgstr ""
 #: tools/oyranos-monitor.c:236
 #, fuzzy
 msgid "Erase Profile"
-msgstr "Smazat profil:"
-
-#: tools/oyranos_gamma.c:221
-msgid "Erase profile:"
 msgstr "Smazat profil:"
 
 #: examples/image_display/image_display.cpp:1279
@@ -2333,9 +2316,8 @@ msgstr "Pro obrazovku"
 #: tools/oyranos-convert.c:297 tools/oyranos-device.c:479
 #: tools/oyranos-monitor-white-point.c:604 tools/oyranos-monitor.c:259
 #: tools/oyranos-policy.c:170 tools/oyranos-profile.c:405
-#: tools/oyranos_gamma.c:248 tools/oyranos_profile_graph.c:607
-#: tools/oyranos_profiles.c:178
-#, fuzzy, c-format
+#: tools/oyranos_profile_graph.c:607 tools/oyranos_profiles.c:178
+#, fuzzy
 msgid "For more information read the man page:"
 msgstr "Pro více informací viz manuálová stránka:"
 
@@ -2390,7 +2372,6 @@ msgid "General options"
 msgstr "Obecné volby:"
 
 #: examples/libraw/oyranos_file.cpp:66 examples/taxi.c:66
-#: tools/oyranos_gamma.c:243
 msgid "General options:"
 msgstr "Obecné volby:"
 
@@ -3304,11 +3285,6 @@ msgstr "Cesty"
 msgid "List Taxi DB profiles for selected device"
 msgstr "Vypsat profil Taxi pro vybrané zařízení:"
 
-#: tools/oyranos_gamma.c:234
-#, fuzzy
-msgid "List Taxi DB profiles for selected device:"
-msgstr "Vypsat profil Taxi pro vybrané zařízení:"
-
 #: tools/oyranos-device.c:413 tools/oyranos-monitor.c:182
 #, fuzzy
 msgid "List Taxi Profiles"
@@ -3357,10 +3333,6 @@ msgstr "Vypsat zařízení:"
 msgid "List devices"
 msgstr "Vypsat zařízení:"
 
-#: tools/oyranos_gamma.c:227
-msgid "List devices:"
-msgstr "Vypsat zařízení:"
-
 #: tools/oyranos-config.c:273
 #, fuzzy
 msgid "List existing paths inside DB"
@@ -3375,10 +3347,6 @@ msgstr "Vypsat zahrnuté štítky ICC:"
 #, fuzzy
 msgid "List local DB profiles for selected device"
 msgstr "Vypsat profil Taxi pro vybrané zařízení:"
-
-#: tools/oyranos_gamma.c:237
-msgid "List modules:"
-msgstr "Vypsat moduly:"
 
 #: tools/oyranos-monitor.c:192
 #, fuzzy
@@ -4679,7 +4647,7 @@ msgstr "Platforma:   "
 msgid "Platform:        "
 msgstr "Datum:       "
 
-#: tools/oyranos-monitor.c:497 tools/oyranos_gamma.c:435
+#: tools/oyranos-monitor.c:497
 msgid "Please specify a monitor with the -d option."
 msgstr "Prosím specifikujte monitor pomocí volby -d."
 
@@ -5464,10 +5432,6 @@ msgstr "Upravit volby ..."
 msgid "Set new policy"
 msgstr "Uložit jako novou politiku:"
 
-#: tools/oyranos_gamma.c:217
-msgid "Set new profile:"
-msgstr "Nastavit nový profil:"
-
 #: tools/oyranos-monitor-white-point.c:525
 #, fuzzy
 msgid "Set night time effect"
@@ -6017,12 +5981,11 @@ msgstr "Taxi ID"
 msgid "Taxi DB Profiles"
 msgstr "Výchozí profily"
 
-#: tools/oyranos-monitor.c:549 tools/oyranos_gamma.c:487
+#: tools/oyranos-monitor.c:549
 msgid "Taxi DB entries for device"
 msgstr "Záznamy pro zařízení v Taxi DB"
 
 #: tools/oyranos-device.c:1207 tools/oyranos-monitor.c:552
-#: tools/oyranos_gamma.c:490
 msgid "Taxi ID"
 msgstr "Taxi ID"
 
@@ -7073,7 +7036,6 @@ msgid "Unset device"
 msgstr "Vypsat zařízení:"
 
 #: examples/libraw/oyranos_file.cpp:45 examples/taxi.c:49
-#: tools/oyranos_gamma.c:216
 msgid "Usage"
 msgstr "Použití"
 
@@ -7227,7 +7189,7 @@ msgstr "Pozorovací podmínky"
 msgid "Viewing conditions description"
 msgstr "Popis pozorovacích podmínek"
 
-#: tools/oyranos-monitor.c:394 tools/oyranos_gamma.c:332
+#: tools/oyranos-monitor.c:394
 #, fuzzy
 msgid "WARN"
 msgstr "VAROVÁNÍ"
@@ -7373,7 +7335,7 @@ msgstr "Můžete je získat na http://sf.net/projects/openicc"
 msgid "Yxy"
 msgstr "Yxy"
 
-#: tools/oyranos-monitor.c:505 tools/oyranos_gamma.c:443
+#: tools/oyranos-monitor.c:505
 msgid "Zero profiles found in Taxi ICC DB"
 msgstr "V Taxi ICC DB nebyly nalezeny žádné profily"
 
@@ -7516,7 +7478,6 @@ msgid "default profile type does not exist:"
 msgstr "výchozí typ profilu neexistuje:"
 
 #: tools/oyranos-device.c:1208 tools/oyranos-monitor.c:553
-#: tools/oyranos_gamma.c:491
 msgid "description"
 msgstr "popis"
 
@@ -7599,9 +7560,6 @@ msgstr "selhalo!"
 #: tools/oyranos-monitor.c:766 tools/oyranos-monitor.c:988
 #: tools/oyranos-monitor.c:1193 tools/oyranos-monitor.c:1196
 #: tools/oyranos-monitor.c:1200 tools/oyranos-monitor.c:1238
-#: tools/oyranos_gamma.c:704 tools/oyranos_gamma.c:877
-#: tools/oyranos_gamma.c:1034 tools/oyranos_gamma.c:1037
-#: tools/oyranos_gamma.c:1041 tools/oyranos_gamma.c:1079
 msgid "found issues"
 msgstr "nalezené problémy"
 
@@ -7771,10 +7729,6 @@ msgstr "je nástroj na transformace ICC"
 msgid "is a Taxi DB tool"
 msgstr "Výchozí profily"
 
-#: tools/oyranos_gamma.c:215 tools/oyranos_gamma.c:273
-msgid "is a color profile administration tool for monitors"
-msgstr "je nástroj pro barvové profily monitorů"
-
 #: tools/oyranos-config.c:305
 msgid "lastReleaseVersion-gitCommitNumber-gitCommitSHA1ID-Year-month-day"
 msgstr ""
@@ -7844,7 +7798,6 @@ msgid "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE"
 msgstr ""
 
 #: tools/oyranos-device.c:1208 tools/oyranos-monitor.c:553
-#: tools/oyranos_gamma.c:491
 msgid "match value"
 msgstr "hledat hodnotu"
 
@@ -8114,18 +8067,12 @@ msgstr "jméno profilu"
 msgid "print module ID or profile name"
 msgstr "--short vytisknout pouze název souboru"
 
-#. --short argument
-#: tools/oyranos_gamma.c:230
-msgid "print only the file name"
-msgstr "vytisknout pouze název souboru"
-
 #: examples/image_display/oyranos-image-display.c:83
 #, fuzzy
 msgid "print text and exit"
 msgstr "Zastavit nacitani"
 
-#. --path argument
-#: tools/oyranos-device.c:405 tools/oyranos_gamma.c:232
+#: tools/oyranos-device.c:405
 #, fuzzy
 msgid "print the full file name"
 msgstr "--short vytisknout pouze název souboru"
@@ -8138,10 +8085,6 @@ msgstr "použít třídu zařízení"
 #: tools/oyranos-device.c:383 tools/oyranos-device.c:385
 msgid "profile file name"
 msgstr "jméno profil souboru"
-
-#: tools/oyranos_gamma.c:219
-msgid "profile name"
-msgstr "jméno profilu"
 
 #: liboyranos_config/oyranos_io.c:178
 msgid "profile not found in color path:"
@@ -8434,7 +8377,7 @@ msgid "write to specified file"
 msgstr "zapsat do souboru"
 
 #: API_generated/oyOptions_s.c:1617 examples/libraw/oyranos_file.cpp:236
-#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:309
+#: examples/taxi.c:203 tools/oyranos_profiles.c:309
 msgid "wrong argument to option:"
 msgstr "chybný argument pro volbu:"
 
@@ -8519,6 +8462,12 @@ msgstr ""
 #~ msgid "---"
 #~ msgstr "---"
 
+#~ msgid "--module name"
+#~ msgstr "--module jméno"
+
+#~ msgid "-d device_position_start_from_zero"
+#~ msgstr "-d device_position_start_from_zero"
+
 #~ msgid "..."
 #~ msgstr "..."
 
@@ -8555,6 +8504,9 @@ msgstr ""
 
 #~ msgid "Acknowledgement"
 #~ msgstr "Podekovani"
+
+#~ msgid "Activate profiles:"
+#~ msgstr "Aktivovat profily:"
 
 #~ msgid "Add Path containing ICC profiles"
 #~ msgstr "Pridat cestu obsahujici ICC profily"
@@ -8772,6 +8724,9 @@ msgstr ""
 
 #~ msgid "Dump out the actual settings:"
 #~ msgstr "Vypsat aktuální nastavení:"
+
+#~ msgid "Erase profile:"
+#~ msgstr "Smazat profil:"
 
 #~ msgid "Error getting atom"
 #~ msgstr "Chyba při získávání atomu"
@@ -9015,6 +8970,10 @@ msgstr ""
 #~ msgid "Links"
 #~ msgstr "Odkazy"
 
+#, fuzzy
+#~ msgid "List Taxi DB profiles for selected device:"
+#~ msgstr "Vypsat profil Taxi pro vybrané zařízení:"
+
 #~ msgid "List Taxi profile for selected device:"
 #~ msgstr "Vypsat profil Taxi pro vybrané zařízení:"
 
@@ -9028,6 +8987,9 @@ msgstr ""
 #~ msgid "List device classes:"
 #~ msgstr "Vypsat zařízení:"
 
+#~ msgid "List devices:"
+#~ msgstr "Vypsat zařízení:"
+
 #, fuzzy
 #~ msgid "List groups"
 #~ msgstr "Cesty"
@@ -9038,6 +9000,9 @@ msgstr ""
 #, fuzzy
 #~ msgid "List local DB profiles for selected device:"
 #~ msgstr "Vypsat profil Taxi pro vybrané zařízení:"
+
+#~ msgid "List modules:"
+#~ msgstr "Vypsat moduly:"
 
 #~ msgid "List search paths:"
 #~ msgstr "Vypsat prohledávané cesty:"
@@ -9406,6 +9371,9 @@ msgstr ""
 #, fuzzy
 #~ msgid "Set day time command"
 #~ msgstr "ukázat volby politiky"
+
+#~ msgid "Set new profile:"
+#~ msgstr "Nastavit nový profil:"
 
 #, fuzzy
 #~ msgid "Set nightly command"
@@ -9894,6 +9862,9 @@ msgstr ""
 #~ msgid "is a color profile administration tool for color devices"
 #~ msgstr "je nástroj pro barvové profily monitorů"
 
+#~ msgid "is a color profile administration tool for monitors"
+#~ msgstr "je nástroj pro barvové profily monitorů"
+
 #~ msgid "is a policy administration tool"
 #~ msgstr "je nástroj pro správu politik"
 
@@ -10076,6 +10047,9 @@ msgstr ""
 #~ msgid "print a help text"
 #~ msgstr "Vytisknout nápovědu:"
 
+#~ msgid "print only the file name"
+#~ msgstr "vytisknout pouze název souboru"
+
 #, fuzzy
 #~ msgid "print only the profile name"
 #~ msgstr "--short vytisknout pouze název souboru"
@@ -10083,6 +10057,9 @@ msgstr ""
 #, fuzzy
 #~ msgid "print the full module name"
 #~ msgstr "--short vytisknout pouze název souboru"
+
+#~ msgid "profile name"
+#~ msgstr "jméno profilu"
 
 #~ msgid "profiles where originally involved"
 #~ msgstr "profily byly puvodne pouzity"

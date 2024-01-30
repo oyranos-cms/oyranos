@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-01-24 21:59+0100\n"
+"POT-Creation-Date: 2024-01-30 16:28+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -77,15 +77,7 @@ msgstr "- - Verkleinere Ansicht"
 msgid "----"
 msgstr "----"
 
-#: tools/oyranos_gamma.c:245
-msgid "--module name"
-msgstr "--module Name"
-
-#: tools/oyranos_gamma.c:246
-msgid "-d device_position_start_from_zero"
-msgstr "-d geräte_position_startet_von_null"
-
-#: examples/taxi.c:67 tools/oyranos_gamma.c:244
+#: examples/taxi.c:67
 msgid "-v verbose"
 msgstr "-v plauders"
 
@@ -416,10 +408,6 @@ msgstr "Aktiviere"
 msgid "Activate Profiles"
 msgstr "Aktivieren eines Profiles:"
 
-#: tools/oyranos_gamma.c:224
-msgid "Activate profiles:"
-msgstr "Aktivieren eines Profiles:"
-
 #: liboyranos_config/oyranos_texts.c:359 liboyranos_config/oyranos_texts.c:360
 msgid "Active Policy:"
 msgstr "Aktive Richtlinie:"
@@ -696,7 +684,6 @@ msgstr "Verfügbare Geräteprofile:"
 #: tools/oyranos-device.c:688 tools/oyranos-device.c:703
 #: tools/oyranos-device.c:717 tools/oyranos-device.c:1166
 #: tools/oyranos-device.c:1286 tools/oyranos-monitor.c:469
-#: tools/oyranos_gamma.c:407
 msgid "Available devices"
 msgstr "Verfügbare Geräte"
 
@@ -1459,7 +1446,7 @@ msgstr "Konnte Profil nicht laden"
 msgid "Could not open: "
 msgstr "Konnte nicht öffnen: "
 
-#: tools/oyranos-monitor.c:468 tools/oyranos_gamma.c:406
+#: tools/oyranos-monitor.c:468
 msgid "Could not resolve device"
 msgstr "Konnte Gerät nicht auflösen"
 
@@ -1615,7 +1602,7 @@ msgstr "DB Verbindung bereits gesetzt"
 msgid "DISPLAY"
 msgstr ""
 
-#: tools/oyranos-monitor.c:355 tools/oyranos_gamma.c:293
+#: tools/oyranos-monitor.c:355
 msgid "DISPLAY variable not set: giving up."
 msgstr "DISPLAY Variable nicht gesetzt: gebe auf."
 
@@ -1896,7 +1883,7 @@ msgstr "Ausgabe von OpenICC Json"
 msgid "Dump data in the format following the -f option"
 msgstr ""
 
-#: examples/libraw/oyranos_file.cpp:49 tools/oyranos_gamma.c:240
+#: examples/libraw/oyranos_file.cpp:49
 msgid "Dump data:"
 msgstr "Schreibe Daten:"
 
@@ -1939,7 +1926,7 @@ msgstr "Dateiname"
 msgid "EFI CMM"
 msgstr "EFI CMM"
 
-#: tools/oyranos-monitor.c:400 tools/oyranos_gamma.c:338
+#: tools/oyranos-monitor.c:400
 msgid "ERROR"
 msgstr "Fehler"
 
@@ -2090,10 +2077,6 @@ msgstr "Löschen"
 #: tools/oyranos-monitor.c:236
 #, fuzzy
 msgid "Erase Profile"
-msgstr "Melde Profil ab:"
-
-#: tools/oyranos_gamma.c:221
-msgid "Erase profile:"
 msgstr "Melde Profil ab:"
 
 #: examples/image_display/image_display.cpp:1279
@@ -2262,9 +2245,7 @@ msgstr "Bildschirm"
 #: tools/oyranos-convert.c:297 tools/oyranos-device.c:479
 #: tools/oyranos-monitor-white-point.c:604 tools/oyranos-monitor.c:259
 #: tools/oyranos-policy.c:170 tools/oyranos-profile.c:405
-#: tools/oyranos_gamma.c:248 tools/oyranos_profile_graph.c:607
-#: tools/oyranos_profiles.c:178
-#, c-format
+#: tools/oyranos_profile_graph.c:607 tools/oyranos_profiles.c:178
 msgid "For more information read the man page:"
 msgstr "Mehr Informationen stehen im Handbuch:"
 
@@ -2316,7 +2297,6 @@ msgid "General options"
 msgstr "Allgemeine Optionen"
 
 #: examples/libraw/oyranos_file.cpp:66 examples/taxi.c:66
-#: tools/oyranos_gamma.c:243
 msgid "General options:"
 msgstr "Allgemeine Optionen:"
 
@@ -3162,10 +3142,6 @@ msgstr "Liste Elemente"
 msgid "List Taxi DB profiles for selected device"
 msgstr "Liste Profile von Taxi für gewähltes Gerät"
 
-#: tools/oyranos_gamma.c:234
-msgid "List Taxi DB profiles for selected device:"
-msgstr "Liste Profile von Taxi für gewähltes Gerät:"
-
 #: tools/oyranos-device.c:413 tools/oyranos-monitor.c:182
 msgid "List Taxi Profiles"
 msgstr "Liste Taxi Profile"
@@ -3208,10 +3184,6 @@ msgstr "Zeige Geräteklassen"
 msgid "List devices"
 msgstr "Geräteliste"
 
-#: tools/oyranos_gamma.c:227
-msgid "List devices:"
-msgstr "Geräteliste:"
-
 #: tools/oyranos-config.c:273
 msgid "List existing paths inside DB"
 msgstr "Zeige vorhandene Pfade innerhalb der OpenICC DB"
@@ -3223,10 +3195,6 @@ msgstr "Liste der enthaltenen ICC Elemente"
 #: tools/oyranos-device.c:409 tools/oyranos-device.c:455
 msgid "List local DB profiles for selected device"
 msgstr "Liste lokale DB Profile für gewähltes Gerät"
-
-#: tools/oyranos_gamma.c:237
-msgid "List modules:"
-msgstr "Modulliste:"
 
 #: tools/oyranos-monitor.c:192
 #, fuzzy
@@ -4424,7 +4392,7 @@ msgstr "Plattform"
 msgid "Platform:        "
 msgstr "Plattform:       "
 
-#: tools/oyranos-monitor.c:497 tools/oyranos_gamma.c:435
+#: tools/oyranos-monitor.c:497
 msgid "Please specify a monitor with the -d option."
 msgstr "Bitte einen Monitor mit der Option -d wählen."
 
@@ -5153,10 +5121,6 @@ msgstr "Editiere lcm2 Optionen"
 msgid "Set new policy"
 msgstr "Setze in eine neue Richtlinie"
 
-#: tools/oyranos_gamma.c:217
-msgid "Set new profile:"
-msgstr "Setze neues Profil:"
-
 #: tools/oyranos-monitor-white-point.c:525
 msgid "Set night time effect"
 msgstr "Setze den Nacht Effect"
@@ -5669,12 +5633,11 @@ msgstr "Taxi DB"
 msgid "Taxi DB Profiles"
 msgstr "Verfügbare Taxiprofile"
 
-#: tools/oyranos-monitor.c:549 tools/oyranos_gamma.c:487
+#: tools/oyranos-monitor.c:549
 msgid "Taxi DB entries for device"
 msgstr "Taxi DB Einträge für das Gerät"
 
 #: tools/oyranos-device.c:1207 tools/oyranos-monitor.c:552
-#: tools/oyranos_gamma.c:490
 msgid "Taxi ID"
 msgstr "Taxi ID"
 
@@ -6765,7 +6728,6 @@ msgid "Unset device"
 msgstr "Setze Gerät zurück"
 
 #: examples/libraw/oyranos_file.cpp:45 examples/taxi.c:49
-#: tools/oyranos_gamma.c:216
 msgid "Usage"
 msgstr "Benutzung"
 
@@ -6914,7 +6876,7 @@ msgstr "Betrachtungsbedingungen"
 msgid "Viewing conditions description"
 msgstr "Beschreibung der Betrachtungbedingungen"
 
-#: tools/oyranos-monitor.c:394 tools/oyranos_gamma.c:332
+#: tools/oyranos-monitor.c:394
 msgid "WARN"
 msgstr "WARNUNG"
 
@@ -7054,7 +7016,7 @@ msgstr "Sie können es erhalten von http://sf.net/projects/openicc"
 msgid "Yxy"
 msgstr "Yxy"
 
-#: tools/oyranos-monitor.c:505 tools/oyranos_gamma.c:443
+#: tools/oyranos-monitor.c:505
 msgid "Zero profiles found in Taxi ICC DB"
 msgstr "Keine Profile in Taxi ICC DB gefunden"
 
@@ -7197,7 +7159,6 @@ msgid "default profile type does not exist:"
 msgstr "Standard Profiltyp existiert nicht:"
 
 #: tools/oyranos-device.c:1208 tools/oyranos-monitor.c:553
-#: tools/oyranos_gamma.c:491
 msgid "description"
 msgstr "Beschreibung"
 
@@ -7274,9 +7235,6 @@ msgstr "daneben!"
 #: tools/oyranos-monitor.c:766 tools/oyranos-monitor.c:988
 #: tools/oyranos-monitor.c:1193 tools/oyranos-monitor.c:1196
 #: tools/oyranos-monitor.c:1200 tools/oyranos-monitor.c:1238
-#: tools/oyranos_gamma.c:704 tools/oyranos_gamma.c:877
-#: tools/oyranos_gamma.c:1034 tools/oyranos_gamma.c:1037
-#: tools/oyranos_gamma.c:1041 tools/oyranos_gamma.c:1079
 msgid "found issues"
 msgstr "fand Probleme"
 
@@ -7435,10 +7393,6 @@ msgstr "ist ein Kamera Rohdatenumwandlungswerkzeug"
 msgid "is a Taxi DB tool"
 msgstr "ist ein Taxi DB Werkzeug"
 
-#: tools/oyranos_gamma.c:215 tools/oyranos_gamma.c:273
-msgid "is a color profile administration tool for monitors"
-msgstr "ist ein Farbprofilverwaltungswerkzeug für Bildschirme"
-
 #: tools/oyranos-config.c:305
 msgid "lastReleaseVersion-gitCommitNumber-gitCommitSHA1ID-Year-month-day"
 msgstr ""
@@ -7509,7 +7463,6 @@ msgid "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE"
 msgstr "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|DATEI"
 
 #: tools/oyranos-device.c:1208 tools/oyranos-monitor.c:553
-#: tools/oyranos_gamma.c:491
 msgid "match value"
 msgstr "Übereinstimmungswert"
 
@@ -7777,17 +7730,11 @@ msgstr "stelle dem Dateinamen voran"
 msgid "print module ID or profile name"
 msgstr "zeige Modul ID oder Profilnamen"
 
-#. --short argument
-#: tools/oyranos_gamma.c:230
-msgid "print only the file name"
-msgstr "zeige nur den Profilnamen"
-
 #: examples/image_display/oyranos-image-display.c:83
 msgid "print text and exit"
 msgstr "Zeige Hilfetext an und und beende"
 
-#. --path argument
-#: tools/oyranos-device.c:405 tools/oyranos_gamma.c:232
+#: tools/oyranos-device.c:405
 msgid "print the full file name"
 msgstr "zeige den vollständigen Dateiname"
 
@@ -7798,10 +7745,6 @@ msgstr "zeige die Geräteklasse des Modules"
 #: tools/oyranos-device.c:383 tools/oyranos-device.c:385
 msgid "profile file name"
 msgstr "Profildateiname"
-
-#: tools/oyranos_gamma.c:219
-msgid "profile name"
-msgstr "Profilname"
 
 #: liboyranos_config/oyranos_io.c:178
 msgid "profile not found in color path:"
@@ -8093,7 +8036,7 @@ msgid "write to specified file"
 msgstr "schreibe nach Datei"
 
 #: API_generated/oyOptions_s.c:1617 examples/libraw/oyranos_file.cpp:236
-#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:309
+#: examples/taxi.c:203 tools/oyranos_profiles.c:309
 msgid "wrong argument to option:"
 msgstr "Falsches Argument für Option:"
 
@@ -8168,12 +8111,18 @@ msgstr "xyY"
 #~ msgid "&Done"
 #~ msgstr "&Fertig"
 
+#~ msgid "--module name"
+#~ msgstr "--module Name"
+
 #, fuzzy
 #~ msgid "--path print the full file name"
 #~ msgstr "zeige den vollständigen Modulnamen"
 
 #~ msgid "--short print only the file name"
 #~ msgstr "--short zeige nur den Dateinamen"
+
+#~ msgid "-d device_position_start_from_zero"
+#~ msgstr "-d geräte_position_startet_von_null"
 
 #~ msgid "... try with --help|-h option for usage text. give up"
 #~ msgstr "... probieren Sie --help|-h Option für Hilfe. Gebe auf"
@@ -8219,6 +8168,9 @@ msgstr "xyY"
 
 #~ msgid "Acknowledgement"
 #~ msgstr "Dank"
+
+#~ msgid "Activate profiles:"
+#~ msgstr "Aktivieren eines Profiles:"
 
 #~ msgid "Add Path containing ICC profiles"
 #~ msgstr "Pfad mit ICC Profilen hinzufügen"
@@ -8485,6 +8437,9 @@ msgstr "xyY"
 #, fuzzy
 #~ msgid "EDID_FILENAME"
 #~ msgstr "ICC_DATEINAME"
+
+#~ msgid "Erase profile:"
+#~ msgstr "Melde Profil ab:"
 
 #~ msgid "Error"
 #~ msgstr "Fehler"
@@ -8792,6 +8747,9 @@ msgstr "xyY"
 #~ msgid "Links"
 #~ msgstr "Verknüpfung"
 
+#~ msgid "List Taxi DB profiles for selected device:"
+#~ msgstr "Liste Profile von Taxi für gewähltes Gerät:"
+
 #~ msgid "List available ICC profiles:"
 #~ msgstr "Liste der verfügbaren ICC Farbprofile"
 
@@ -8800,6 +8758,9 @@ msgstr "xyY"
 
 #~ msgid "List device classes:"
 #~ msgstr "Zeige Geräteklassen:"
+
+#~ msgid "List devices:"
+#~ msgstr "Geräteliste:"
 
 #, fuzzy
 #~ msgid "List groups"
@@ -8810,6 +8771,9 @@ msgstr "xyY"
 
 #~ msgid "List local DB profiles for selected device:"
 #~ msgstr "Liste lokale DB Profile für gewähltes Gerät:"
+
+#~ msgid "List modules:"
+#~ msgstr "Modulliste:"
 
 #~ msgid "List search paths:"
 #~ msgstr "Zeige Suchpfade:"
@@ -9215,6 +9179,9 @@ msgstr "xyY"
 #, fuzzy
 #~ msgid "Set day time command"
 #~ msgstr "Setze den Tagesmodus"
+
+#~ msgid "Set new profile:"
+#~ msgstr "Setze neues Profil:"
 
 #, fuzzy
 #~ msgid "Set nightly command"
@@ -9687,6 +9654,9 @@ msgstr "xyY"
 #~ msgid "is a color profile administration tool for color devices"
 #~ msgstr "ist ein Farbprofilverwaltungswerkzeug für Farbgeräte"
 
+#~ msgid "is a color profile administration tool for monitors"
+#~ msgstr "ist ein Farbprofilverwaltungswerkzeug für Bildschirme"
+
 #~ msgid "is a monitor white point handler"
 #~ msgstr "ist ein Monitorweißpunkt Werkzeug"
 
@@ -9857,11 +9827,17 @@ msgstr "xyY"
 #~ msgid "positive, "
 #~ msgstr "positiv, "
 
+#~ msgid "print only the file name"
+#~ msgstr "zeige nur den Profilnamen"
+
 #~ msgid "print only the profile name"
 #~ msgstr "zeige nur den Profilnamen"
 
 #~ msgid "print the full module name"
 #~ msgstr "zeige den vollständigen Modulnamen"
+
+#~ msgid "profile name"
+#~ msgstr "Profilname"
 
 #~ msgid "program is not properly installed or missed"
 #~ msgstr "Das Programm ist nicht korrekt installiert oder nicht vorhanden."

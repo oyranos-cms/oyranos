@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-01-24 21:59+0100\n"
+"POT-Creation-Date: 2024-01-30 16:28+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -78,15 +78,7 @@ msgstr ""
 msgid "----"
 msgstr ""
 
-#: tools/oyranos_gamma.c:245
-msgid "--module name"
-msgstr ""
-
-#: tools/oyranos_gamma.c:246
-msgid "-d device_position_start_from_zero"
-msgstr ""
-
-#: examples/taxi.c:67 tools/oyranos_gamma.c:244
+#: examples/taxi.c:67
 msgid "-v verbose"
 msgstr ""
 
@@ -421,10 +413,6 @@ msgstr ""
 msgid "Activate Profiles"
 msgstr "kolora"
 
-#: tools/oyranos_gamma.c:224
-msgid "Activate profiles:"
-msgstr ""
-
 #: liboyranos_config/oyranos_texts.c:359 liboyranos_config/oyranos_texts.c:360
 msgid "Active Policy:"
 msgstr ""
@@ -712,7 +700,6 @@ msgstr "kolora"
 #: tools/oyranos-device.c:688 tools/oyranos-device.c:703
 #: tools/oyranos-device.c:717 tools/oyranos-device.c:1166
 #: tools/oyranos-device.c:1286 tools/oyranos-monitor.c:469
-#: tools/oyranos_gamma.c:407
 #, fuzzy
 msgid "Available devices"
 msgstr "kolora"
@@ -1453,7 +1440,7 @@ msgstr ""
 msgid "Could not open: "
 msgstr ""
 
-#: tools/oyranos-monitor.c:468 tools/oyranos_gamma.c:406
+#: tools/oyranos-monitor.c:468
 msgid "Could not resolve device"
 msgstr ""
 
@@ -1612,7 +1599,7 @@ msgstr ""
 msgid "DISPLAY"
 msgstr ""
 
-#: tools/oyranos-monitor.c:355 tools/oyranos_gamma.c:293
+#: tools/oyranos-monitor.c:355
 msgid "DISPLAY variable not set: giving up."
 msgstr ""
 
@@ -1910,7 +1897,7 @@ msgstr ""
 msgid "Dump data in the format following the -f option"
 msgstr ""
 
-#: examples/libraw/oyranos_file.cpp:49 tools/oyranos_gamma.c:240
+#: examples/libraw/oyranos_file.cpp:49
 msgid "Dump data:"
 msgstr ""
 
@@ -1954,7 +1941,7 @@ msgstr "nomo"
 msgid "EFI CMM"
 msgstr ""
 
-#: tools/oyranos-monitor.c:400 tools/oyranos_gamma.c:338
+#: tools/oyranos-monitor.c:400
 msgid "ERROR"
 msgstr ""
 
@@ -2101,10 +2088,6 @@ msgstr ""
 #, fuzzy
 msgid "Erase Profile"
 msgstr "kolora"
-
-#: tools/oyranos_gamma.c:221
-msgid "Erase profile:"
-msgstr ""
 
 #: examples/image_display/image_display.cpp:1279
 msgid "Examine ICC Conversion ..."
@@ -2276,9 +2259,7 @@ msgstr "verda"
 #: tools/oyranos-convert.c:297 tools/oyranos-device.c:479
 #: tools/oyranos-monitor-white-point.c:604 tools/oyranos-monitor.c:259
 #: tools/oyranos-policy.c:170 tools/oyranos-profile.c:405
-#: tools/oyranos_gamma.c:248 tools/oyranos_profile_graph.c:607
-#: tools/oyranos_profiles.c:178
-#, c-format
+#: tools/oyranos_profile_graph.c:607 tools/oyranos_profiles.c:178
 msgid "For more information read the man page:"
 msgstr ""
 
@@ -2331,7 +2312,6 @@ msgid "General options"
 msgstr ""
 
 #: examples/libraw/oyranos_file.cpp:66 examples/taxi.c:66
-#: tools/oyranos_gamma.c:243
 msgid "General options:"
 msgstr ""
 
@@ -3161,10 +3141,6 @@ msgstr ""
 msgid "List Taxi DB profiles for selected device"
 msgstr ""
 
-#: tools/oyranos_gamma.c:234
-msgid "List Taxi DB profiles for selected device:"
-msgstr ""
-
 #: tools/oyranos-device.c:413 tools/oyranos-monitor.c:182
 #, fuzzy
 msgid "List Taxi Profiles"
@@ -3212,11 +3188,6 @@ msgstr "kolora"
 msgid "List devices"
 msgstr "kolora"
 
-#: tools/oyranos_gamma.c:227
-#, fuzzy
-msgid "List devices:"
-msgstr "kolora"
-
 #: tools/oyranos-config.c:273
 msgid "List existing paths inside DB"
 msgstr ""
@@ -3227,10 +3198,6 @@ msgstr ""
 
 #: tools/oyranos-device.c:409 tools/oyranos-device.c:455
 msgid "List local DB profiles for selected device"
-msgstr ""
-
-#: tools/oyranos_gamma.c:237
-msgid "List modules:"
 msgstr ""
 
 #: tools/oyranos-monitor.c:192
@@ -4440,7 +4407,7 @@ msgstr ""
 msgid "Platform:        "
 msgstr ""
 
-#: tools/oyranos-monitor.c:497 tools/oyranos_gamma.c:435
+#: tools/oyranos-monitor.c:497
 msgid "Please specify a monitor with the -d option."
 msgstr ""
 
@@ -5194,10 +5161,6 @@ msgstr ""
 msgid "Set new policy"
 msgstr ""
 
-#: tools/oyranos_gamma.c:217
-msgid "Set new profile:"
-msgstr ""
-
 #: tools/oyranos-monitor-white-point.c:525
 #, fuzzy
 msgid "Set night time effect"
@@ -5714,12 +5677,11 @@ msgstr ""
 msgid "Taxi DB Profiles"
 msgstr ""
 
-#: tools/oyranos-monitor.c:549 tools/oyranos_gamma.c:487
+#: tools/oyranos-monitor.c:549
 msgid "Taxi DB entries for device"
 msgstr ""
 
 #: tools/oyranos-device.c:1207 tools/oyranos-monitor.c:552
-#: tools/oyranos_gamma.c:490
 msgid "Taxi ID"
 msgstr ""
 
@@ -6531,7 +6493,6 @@ msgid "Unset device"
 msgstr "kolora"
 
 #: examples/libraw/oyranos_file.cpp:45 examples/taxi.c:49
-#: tools/oyranos_gamma.c:216
 msgid "Usage"
 msgstr ""
 
@@ -6677,7 +6638,7 @@ msgstr ""
 msgid "Viewing conditions description"
 msgstr ""
 
-#: tools/oyranos-monitor.c:394 tools/oyranos_gamma.c:332
+#: tools/oyranos-monitor.c:394
 msgid "WARN"
 msgstr ""
 
@@ -6817,7 +6778,7 @@ msgstr ""
 msgid "Yxy"
 msgstr ""
 
-#: tools/oyranos-monitor.c:505 tools/oyranos_gamma.c:443
+#: tools/oyranos-monitor.c:505
 msgid "Zero profiles found in Taxi ICC DB"
 msgstr ""
 
@@ -6958,7 +6919,6 @@ msgid "default profile type does not exist:"
 msgstr ""
 
 #: tools/oyranos-device.c:1208 tools/oyranos-monitor.c:553
-#: tools/oyranos_gamma.c:491
 msgid "description"
 msgstr ""
 
@@ -7037,9 +6997,6 @@ msgstr ""
 #: tools/oyranos-monitor.c:766 tools/oyranos-monitor.c:988
 #: tools/oyranos-monitor.c:1193 tools/oyranos-monitor.c:1196
 #: tools/oyranos-monitor.c:1200 tools/oyranos-monitor.c:1238
-#: tools/oyranos_gamma.c:704 tools/oyranos_gamma.c:877
-#: tools/oyranos_gamma.c:1034 tools/oyranos_gamma.c:1037
-#: tools/oyranos_gamma.c:1041 tools/oyranos_gamma.c:1079
 msgid "found issues"
 msgstr ""
 
@@ -7199,10 +7156,6 @@ msgstr ""
 msgid "is a Taxi DB tool"
 msgstr ""
 
-#: tools/oyranos_gamma.c:215 tools/oyranos_gamma.c:273
-msgid "is a color profile administration tool for monitors"
-msgstr ""
-
 #: tools/oyranos-config.c:305
 msgid "lastReleaseVersion-gitCommitNumber-gitCommitSHA1ID-Year-month-day"
 msgstr ""
@@ -7266,7 +7219,6 @@ msgid "l|rgb|cmyk|gray|lab|xyz|web|effect|proof|FILE"
 msgstr ""
 
 #: tools/oyranos-device.c:1208 tools/oyranos-monitor.c:553
-#: tools/oyranos_gamma.c:491
 msgid "match value"
 msgstr ""
 
@@ -7536,17 +7488,11 @@ msgstr "nomo"
 msgid "print module ID or profile name"
 msgstr ""
 
-#. --short argument
-#: tools/oyranos_gamma.c:230
-msgid "print only the file name"
-msgstr ""
-
 #: examples/image_display/oyranos-image-display.c:83
 msgid "print text and exit"
 msgstr ""
 
-#. --path argument
-#: tools/oyranos-device.c:405 tools/oyranos_gamma.c:232
+#: tools/oyranos-device.c:405
 msgid "print the full file name"
 msgstr ""
 
@@ -7556,10 +7502,6 @@ msgstr ""
 
 #: tools/oyranos-device.c:383 tools/oyranos-device.c:385
 msgid "profile file name"
-msgstr ""
-
-#: tools/oyranos_gamma.c:219
-msgid "profile name"
 msgstr ""
 
 #: liboyranos_config/oyranos_io.c:178
@@ -7838,7 +7780,7 @@ msgid "write to specified file"
 msgstr ""
 
 #: API_generated/oyOptions_s.c:1617 examples/libraw/oyranos_file.cpp:236
-#: examples/taxi.c:203 tools/oyranos_gamma.c:262 tools/oyranos_profiles.c:309
+#: examples/taxi.c:203 tools/oyranos_profiles.c:309
 msgid "wrong argument to option:"
 msgstr ""
 
@@ -7957,6 +7899,10 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "List device classes:"
+#~ msgstr "kolora"
+
+#, fuzzy
+#~ msgid "List devices:"
 #~ msgstr "kolora"
 
 #, fuzzy
