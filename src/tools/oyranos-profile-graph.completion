@@ -88,6 +88,22 @@ _oyranos_profile_graph()
             set +x +v
             return
             ;;
+        --calib) # long option with dynamic args
+            local OYJL_TEXTS
+            if [[ "${COMP_WORDS[COMP_CWORD]}" == "=" ]]; then
+              OYJL_TEXTS=$(${COMP_LINE}oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            else
+              OYJL_TEXTS=$(${COMP_LINE} --calib=oyjl-list | sed 's/\[/_/g;s/\]/_/g')
+            fi
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
         --export) # long option with static args
             local IFS=$'\n'
             local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
@@ -206,7 +222,7 @@ _oyranos_profile_graph()
             set +x +v
             return
             ;;
-        --change-thickness|--format|--hue|--lightness|--chroma|--background-lightness|--import|--index|--illuminant|--kelvin|--output|--spectral-format|--swatch-format|--pattern|--spectral|--thickness|--width|--export|--render)
+        --change-thickness|--format|--hue|--lightness|--chroma|--background-lightness|--import|--index|--illuminant|--kelvin|--output|--spectral-format|--swatch-format|--pattern|--spectral|--calib|--thickness|--width|--export|--render)
             : "finish long options with choices"
             COMPREPLY=("$cur=\"")
             set +x +v
@@ -275,6 +291,11 @@ _oyranos_profile_graph()
             set +x +v
             return
             ;;
+        --calib)
+          COMPREPLY=($(compgen -W '-t= --thickness= -b --no-border -l= --background-lightness= -g --no-color -w= --width= -T --raster -o= --output= -v --verbose -z --scale' -- "$cur"))
+            set +x +v
+            return
+            ;;
         -X|--export|-h|--help|-V|--version|-R|--render)
           COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
             set +x +v
@@ -297,7 +318,7 @@ _oyranos_profile_graph()
         do WORD_LIST=("${WORD_LIST[@]}"
 "$OYJL_TEXT")
       done
-      WORD_LIST=("${WORD_LIST[@]}" -H= --hue= -S --standard-observer -O --observer-64 -k= --kelvin= -u= --illuminant= -s= --spectral= -p= --spectral-format= -i= --import= -X= --export= -h --help -V --version -R= --render=)
+      WORD_LIST=("${WORD_LIST[@]}" -H= --hue= -S --standard-observer -O --observer-64 -k= --kelvin= -u= --illuminant= -s= --spectral= -p= --spectral-format= -i= --import= --calib= -X= --export= -h --help -V --version -R= --render=)
       COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return

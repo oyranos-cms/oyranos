@@ -2,7 +2,7 @@
 .SH NAME
 oyranos-config v0.9.7 \- Konfiguration
 .SH ÜBERSICHT
-\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:WERT\fR | \fB\-l\fR | \fB\-\-dump-db\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR]
+\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:WERT\fR | \fB\-l\fR | \fB\-\-dump-db\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR] [\fB\-n\fR]
 .br
 \fBoyranos-config\fR \fB\-d\fR\fI[=0|1]\fR [\fB\-v\fR]
 .br
@@ -12,13 +12,15 @@ oyranos-config v0.9.7 \- Konfiguration
 .br
 \fBoyranos-config\fR | \fB\-\-cflags\fR | \fB\-\-ldflags\fR | \fB\-\-ldstaticflags\fR | \fB\-\-sourcedir\fR | \fB\-\-builddir\fR [\fB\-v\fR]
 .br
+\fBoyranos-config\fR \fB\-b\fR \fIQUELLTEXT.c\fR [\fB\-\-cflags\fR] [\fB\-\-ldflags\fR] [\fB\-\-install\fR] [\fB\-\-install-prefix-name\fR \fINAME\fR] [\fB\-v\fR]
+.br
 \fBoyranos-config\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und statische Informationen.
 .SH OPTIONEN
 .SS
 Einstellungen
-\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:WERT\fR | \fB\-l\fR | \fB\-\-dump-db\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR]
+\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:WERT\fR | \fB\-l\fR | \fB\-\-dump-db\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR] [\fB\-n\fR]
 .br
 Handhabe OpenICC Konfigurations DB auf niedriger Ebene.
 .br
@@ -27,6 +29,8 @@ Handhabe OpenICC Konfigurations DB auf niedriger Ebene.
 \fB\-g\fR|\fB\-\-get\fR \fIXPATH\fR	Lese einen Wert
 .br
 \fB\-s\fR|\fB\-\-set\fR \fIXPATH:WERT\fR	Setze einen Wert
+.br
+\fB\-n\fR|\fB\-\-native-update-event\fR	Send natiev update event
 .br
 \fB\-l\fR|\fB\-\-list\fR	Zeige vorhandene Pfade innerhalb der OpenICC DB
 .br
@@ -110,6 +114,22 @@ Die Texte dienen dem Übersetzen von Programmen.
 .br
 \fB\-\-builddir\fR	Oyranos lokaler Übersetzungpfad
 .br
+.SS
+Übersetze ein Modul
+\fBoyranos-config\fR \fB\-b\fR \fIQUELLTEXT.c\fR [\fB\-\-cflags\fR] [\fB\-\-ldflags\fR] [\fB\-\-install\fR] [\fB\-\-install-prefix-name\fR \fINAME\fR] [\fB\-v\fR]
+.br
+Install ein Modul aus der Quelle heraus. Benutze --cflags Option um Überletzungoptionen durchzureichen und --ldflags um Verknüpfungsoptionen weiterzugeben. Benutze den ':' Teiler für mehrere Optionen.
+.br
+.sp
+.br
+\fB\-b\fR|\fB\-\-build\fR \fIQUELLTEXT.c\fR	übersetze ein Modul
+.RS
+Diese Option ist für Module bestehend aus einer Datei geeignet.
+.RE
+\fB\-\-install\fR	installiere das Module
+.br
+\fB\-\-install-prefix-name\fR \fINAME\fR	stelle dem Dateinamen voran
+.br
 .SH ALLGEMEINE OPTIONEN
 .SS
 Allgemeine Optionen
@@ -189,6 +209,10 @@ oyranos-config -d 1 -v > log-datei.txt
 Übersetze ein einfaches Programm
 .br
 cc `oyranos-config --cflags` meineDatei.c `oyranos-config --ldflags` -o meinProgramm
+.TP
+Installiere Modul aus Quellen
+.br
+oyranos-config --build=oyranos_cmm_lcm2.c --install --cflags=-fPIC:-fopenmp:-g:-O0 --ldflags=-lm:-llcms2
 .TP
 Zeige systemsichtbare Profile im Oyranos Installationspfad
 .br

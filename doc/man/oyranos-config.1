@@ -2,7 +2,7 @@
 .SH NAME
 oyranos-config v0.9.7 \- Config
 .SH SYNOPSIS
-\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:VALUE\fR | \fB\-l\fR | \fB\-\-dump-db\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR]
+\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:VALUE\fR | \fB\-l\fR | \fB\-\-dump-db\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR] [\fB\-n\fR]
 .br
 \fBoyranos-config\fR \fB\-d\fR\fI[=0|1]\fR [\fB\-v\fR]
 .br
@@ -12,13 +12,15 @@ oyranos-config v0.9.7 \- Config
 .br
 \fBoyranos-config\fR | \fB\-\-cflags\fR | \fB\-\-ldflags\fR | \fB\-\-ldstaticflags\fR | \fB\-\-sourcedir\fR | \fB\-\-builddir\fR [\fB\-v\fR]
 .br
+\fBoyranos-config\fR \fB\-b\fR \fISOURCE.c\fR [\fB\-\-cflags\fR] [\fB\-\-ldflags\fR] [\fB\-\-install\fR] [\fB\-\-install-prefix-name\fR \fINAME\fR] [\fB\-v\fR]
+.br
 \fBoyranos-config\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The tool can read and set OpenICC DB options, and display paths and static information.
 .SH OPTIONS
 .SS
 Persistent Settings
-\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:VALUE\fR | \fB\-l\fR | \fB\-\-dump-db\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR]
+\fBoyranos-config\fR \fB\-g\fR \fIXPATH\fR | \fB\-s\fR \fIXPATH:VALUE\fR | \fB\-l\fR | \fB\-\-dump-db\fR | \fB\-p\fR [\fB\-v\fR] [\fB\-z\fR] [\fB\-n\fR]
 .br
 Handle OpenICC DB configuration on low level.
 .br
@@ -27,6 +29,8 @@ Handle OpenICC DB configuration on low level.
 \fB\-g\fR|\fB\-\-get\fR \fIXPATH\fR	Get a Value
 .br
 \fB\-s\fR|\fB\-\-set\fR \fIXPATH:VALUE\fR	Set a Value
+.br
+\fB\-n\fR|\fB\-\-native-update-event\fR	Send natiev update event
 .br
 \fB\-l\fR|\fB\-\-list\fR	List existing paths inside DB
 .br
@@ -110,6 +114,22 @@ These strings can be used to compile programs.
 .br
 \fB\-\-builddir\fR	Oyranos local build directory name
 .br
+.SS
+Compile a Module
+\fBoyranos-config\fR \fB\-b\fR \fISOURCE.c\fR [\fB\-\-cflags\fR] [\fB\-\-ldflags\fR] [\fB\-\-install\fR] [\fB\-\-install-prefix-name\fR \fINAME\fR] [\fB\-v\fR]
+.br
+Install a module from source. Use the --cflags option to pass in compile flags and the --ldflags option to pass in link options for this module. Use ':' string separator for multiple --cflags and --ldflags options.
+.br
+.sp
+.br
+\fB\-b\fR|\fB\-\-build\fR \fISOURCE.c\fR	build a module
+.RS
+This option is for single file modules.
+.RE
+\fB\-\-install\fR	install the module
+.br
+\fB\-\-install-prefix-name\fR \fINAME\fR	prepend to file name
+.br
 .SH GENERAL OPTIONS
 .SS
 General options
@@ -189,6 +209,10 @@ oyranos-config -d 1 -v > log-file.txt
 Compile a simple programm
 .br
 cc `oyranos-config --cflags` myFile.c `oyranos-config --ldflags` -o myProg
+.TP
+Install module from source
+.br
+oyranos-config --build=oyranos_cmm_lcm2.c --install --cflags=-fPIC:-fopenmp:-g:-O0 --ldflags=-lm:-llcms2
 .TP
 Show system wide visible profiles from the Oyranos installation path
 .br

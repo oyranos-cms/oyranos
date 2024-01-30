@@ -10,7 +10,7 @@ oyranos-config v0.9.7 - Konfiguration
 
 <h2>ÜBERSICHT <a href="#toc" name="synopsis">&uarr;</a></h2>
 
-<strong>oyranos-config</strong> <a href="#get"><strong>-g</strong>=<em>XPATH</em></a> | <strong>-s</strong>=<em>XPATH:WERT</em> | <strong>-l</strong> | <strong>--dump-db</strong> | <strong>-p</strong> [<strong>-v</strong>] [<strong>-z</strong>]
+<strong>oyranos-config</strong> <a href="#get"><strong>-g</strong>=<em>XPATH</em></a> | <strong>-s</strong>=<em>XPATH:WERT</em> | <strong>-l</strong> | <strong>--dump-db</strong> | <strong>-p</strong> [<strong>-v</strong>] [<strong>-z</strong>] [<strong>-n</strong>]
 <br />
 <strong>oyranos-config</strong> <a href="#daemon"><strong>-d</strong><em>[=0|1]</em></a> [<strong>-v</strong>]
 <br />
@@ -19,6 +19,8 @@ oyranos-config v0.9.7 - Konfiguration
 <strong>oyranos-config</strong> <a href="#Version"><strong>--Version</strong></a> | <strong>--api-version</strong> | <strong>--num-version</strong> | <strong>--git-version</strong> [<strong>-v</strong>]
 <br />
 <strong>oyranos-config</strong> | <strong>--cflags</strong> | <strong>--ldflags</strong> | <strong>--ldstaticflags</strong> | <strong>--sourcedir</strong> | <strong>--builddir</strong> [<strong>-v</strong>]
+<br />
+<strong>oyranos-config</strong> <a href="#build"><strong>-b</strong>=<em>QUELLTEXT.c</em></a> [<strong>--cflags</strong>] [<strong>--ldflags</strong>] [<strong>--install</strong>] [<strong>--install-prefix-name</strong>=<em>NAME</em>] [<strong>-v</strong>]
 <br />
 <strong>oyranos-config</strong> <a href="#export"><strong>-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
@@ -30,13 +32,14 @@ Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und 
 
 <h3 id="get">Einstellungen</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>-g</strong>=<em>XPATH</em> | <strong>-s</strong>=<em>XPATH:WERT</em> | <strong>-l</strong> | <strong>--dump-db</strong> | <strong>-p</strong> [<strong>-v</strong>] [<strong>-z</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>-g</strong>=<em>XPATH</em> | <strong>-s</strong>=<em>XPATH:WERT</em> | <strong>-l</strong> | <strong>--dump-db</strong> | <strong>-p</strong> [<strong>-v</strong>] [<strong>-z</strong>] [<strong>-n</strong>]
 
 &nbsp;&nbsp;Handhabe OpenICC Konfigurations DB auf niedriger Ebene.
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-g</strong>|<strong>--get</strong>=<em>XPATH</em></td> <td>Lese einen Wert </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong>=<em>XPATH:WERT</em></td> <td>Setze einen Wert </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--native-update-event</strong></td> <td>Send natiev update event</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-l</strong>|<strong>--list</strong></td> <td>Zeige vorhandene Pfade innerhalb der OpenICC DB</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--dump-db</strong></td> <td>Ausgabe der OpenICC DB</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--path</strong></td> <td>Zeige DB Dateipfad</td> </tr>
@@ -99,6 +102,20 @@ Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und 
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--ldstaticflags</strong></td> <td>statische Verknüpfungsargumente</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--sourcedir</strong></td> <td>Oyranos lokaler Quelltextpfad</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--builddir</strong></td> <td>Oyranos lokaler Übersetzungpfad</td> </tr>
+</table>
+
+<h3 id="build">Übersetze ein Modul</h3>
+
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-config</strong></a> <strong>-b</strong>=<em>QUELLTEXT.c</em> [<strong>--cflags</strong>] [<strong>--ldflags</strong>] [<strong>--install</strong>] [<strong>--install-prefix-name</strong>=<em>NAME</em>] [<strong>-v</strong>]
+
+&nbsp;&nbsp;Install ein Modul aus der Quelle heraus. Benutze --cflags Option um Überletzungoptionen durchzureichen und --ldflags um Verknüpfungsoptionen weiterzugeben. Benutze den ':' Teiler für mehrere Optionen.
+
+<table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-b</strong>|<strong>--build</strong>=<em>QUELLTEXT.c</em></td> <td>übersetze ein Modul<br />Diese Option ist für Module bestehend aus einer Datei geeignet.  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--install</strong></td> <td>installiere das Module</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--install-prefix-name</strong>=<em>NAME</em></td> <td>stelle dem Dateinamen voran  </td>
+ </tr>
 </table>
 
 
@@ -164,6 +181,8 @@ Das Werkzeug zeigt und ändert OpenICC DB Einstellungen, und es zeigt Pfade und 
 &nbsp;&nbsp;oyranos-config -d 1 -v > log-datei.txt
 #### Übersetze ein einfaches Programm
 &nbsp;&nbsp;cc `oyranos-config --cflags` meineDatei.c `oyranos-config --ldflags` -o meinProgramm
+#### Installiere Modul aus Quellen
+&nbsp;&nbsp;oyranos-config --build=oyranos_cmm_lcm2.c --install --cflags=-fPIC:-fopenmp:-g:-O0 --ldflags=-lm:-llcms2
 #### Zeige systemsichtbare Profile im Oyranos Installationspfad
 &nbsp;&nbsp;ls `oyranos-config --syscolordir --iccdirname`
 

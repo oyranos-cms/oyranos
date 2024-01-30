@@ -18,6 +18,8 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Zeichner
 .br
 \fBoyranos-profile-graph\fR \fB\-i\fR \fIDATEI\fR [\fB\-I\fR \fISEITE\fR] [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR]
 .br
+\fBoyranos-profile-graph\fR \fB\-\-calib\fR \fIDATEI\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR] [\fB\-z\fR]
+.br
 \fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder in Bildern eingebetteten ICC Profilen eine Grafik. Vorgabemäßig malt es die Sättigungslinie eines anzugebenden ICC Profiles und schreibt die Grafik nach stdout.
@@ -152,6 +154,12 @@ Unterstützt werden Farbseiten im NCC Format, welche ein Seiten layout mit refer
 .RS
 Gib einen Seitenname als Wort oder eine Seitennummer an. -1 listet alle Seitennamen der importierten Datei an.
 .RE
+.SS
+Show Calibration Curves
+\fBoyranos-profile-graph\fR \fB\-\-calib\fR \fIDATEI\fR [\fB\-t\fR \fINUMMER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMMER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMMER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|DATEI\fR] [\fB\-v\fR] [\fB\-z\fR]
+.br
+\fB\-\-calib\fR \fIDATEI\fR	VCGT Calibration Input
+.br
 .SH ALLGEMEINE OPTIONEN
 .SS
 Allgemeine Optionen

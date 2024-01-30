@@ -18,6 +18,8 @@ oyranos-profile-graph v0.9.7 \- Oyranos Profile Graph
 .br
 \fBoyranos-profile-graph\fR \fB\-i\fR \fIFILE\fR [\fB\-I\fR \fIPAGE\fR] [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-f\fR \fIFORMAT\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR]
 .br
+\fBoyranos-profile-graph\fR \fB\-\-calib\fR \fIFILE\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR] [\fB\-z\fR]
+.br
 \fBoyranos-profile-graph\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profiles from images to a graph image. By default the program shows the saturation line of the specified profiles and writes to stdout.
@@ -152,6 +154,12 @@ Supported is a color page in NCC format, which contains pages layout with refere
 .RS
 Specify a page name as string or page index as number. -1 will list all page names of the imported file.
 .RE
+.SS
+Show Calibration Curves
+\fBoyranos-profile-graph\fR \fB\-\-calib\fR \fIFILE\fR [\fB\-t\fR \fINUMBER\fR] [\fB\-b\fR] [\fB\-l\fR \fINUMBER\fR] [\fB\-g\fR] [\fB\-w\fR \fINUMBER\fR] [\fB\-T\fR] [\fB\-o\fR \fI-|FILE\fR] [\fB\-v\fR] [\fB\-z\fR]
+.br
+\fB\-\-calib\fR \fIFILE\fR	VCGT Calibration Input
+.br
 .SH GENERAL OPTIONS
 .SS
 General options
