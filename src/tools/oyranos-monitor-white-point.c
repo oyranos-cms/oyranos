@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System 
  *
- *  Copyright (C) 2017-2022  Kai-Uwe Behrmann
+ *  Copyright (C) 2017-2023  Kai-Uwe Behrmann
  *
  */
 
@@ -48,6 +48,7 @@
 #define DBG_S_ if(oy_debug >= 1)DBG_S
 #define DBG1_S_ if(oy_debug >= 1)DBG1_S
 #define DBG2_S_ if(oy_debug >= 1)DBG2_S
+#define DBG3_S_ if(oy_debug >= 1)DBG3_S
 int __sunriset__( int year, int month, int day, double lon, double lat,
                   double altit, int upper_limb, double *trise, double *tset );
 int findLocation(oySCOPE_e scope, int dry, int verbose);
@@ -1263,6 +1264,8 @@ int checkWtptState(int dry)
   int error = 0;
   int cmode;
   char * effect = NULL;
+  char * scheme = NULL;
+  char * ccs = NULL;
 
   int    diff;
   double dtime, rise, set;
@@ -1286,7 +1289,10 @@ int checkWtptState(int dry)
   { oyFree_m_(value);
   }
   if(!active)
+  {
+    DBG_S_( "oyranos-monitor-white-point is not active set" );
     return -1;
+  }
 
 
   dtime = oyGetCurrentGMTHour_(&diff);
@@ -1308,16 +1314,32 @@ int checkWtptState(int dry)
     int use_effect = 0;
     int night_set_to = -1;
 
+    if(oy_debug >= 1)
+    {
+      char * t = oyGetPersistentString( OY_DISPLAY_STD "/night", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      DBG1_S_( "night = %s", t ? t : "----" );
+      if(t) oyFree_m_(t);
+    }
+
     cmode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
     effect = oyGetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+    ccs = getCurrentColorScheme();
     fprintf (stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
-    fprintf (stderr, "%s: %s %s: %s\n", _("Actual white point mode"), oyjlTermColor(oyjlBOLD,cmode<choices?choices_string_list[cmode]:"----"),
-            _("Effect"), oyNoEmptyString_m_(effect));
+    if(rise < dtime && dtime <= set)
+      fprintf (stderr, "%s ", oyjlTermColor(oyjlBLUE, _("Day Mode")) );
+    else
+      fprintf (stderr, "%s ", oyjlTermColor(oyjlRED, _("Night Mode")) );
+    fprintf (stderr, "%s: %s %s: %s %s: %s\n", _("Actual white point mode"), oyjlTermColor(oyjlBOLD,cmode<choices?choices_string_list[cmode]:"----"),
+            _("Effect"), oyNoEmptyString_m_(effect),
+            _("Color Scheme"), oyNoEmptyString_m_(ccs));
+
 
     if(rise < dtime && dtime <= set)
     /* day time */
     {
       char * value = oyGetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_sunlight", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      scheme = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_color_scheme", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      DBG3_S_( "day time rise = %f dtime = %f set = %f", rise, dtime, set );
       if(value)
       {
         new_mode = atoi(value);
@@ -1326,6 +1348,7 @@ int checkWtptState(int dry)
         new_mode = 4;
 
       new_effect = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_effect", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      DBG1_S_( "new_effect = %s", new_effect ? new_effect : "----" );
       if(new_effect)
         ++use_effect;
       else
@@ -1348,6 +1371,8 @@ int checkWtptState(int dry)
     /* night time */
     {
       char * value = oyGetPersistentString( OY_DISPLAY_STD "/display_white_point_mode_night", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      scheme = oyGetPersistentString( OY_DISPLAY_STD "/night_color_scheme", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
+      DBG3_S_( "night time rise = %f dtime = %f set = %f", rise, dtime, set );
       if(value)
       {
         new_mode = atoi(value);
@@ -1397,6 +1422,8 @@ int checkWtptState(int dry)
         }
       }
     }
+    DBG1_S_( "night_set_to = %d", night_set_to );
+
 
     if( (new_mode != cmode) ||
         ((effect?1:0) != (new_effect?1:0) ||
@@ -1421,23 +1448,16 @@ int checkWtptState(int dry)
         error = setWtptMode( scope, new_mode, dry );
     }
 
-    if(dry == 0 && night_set_to >= 0)
+    if(dry == 0 && scheme && (!ccs || strcmp(scheme, ccs) != 0))
     {
-      char * ccs = getCurrentColorScheme();
-      if(night_set_to == 1)
-        value = oyGetPersistentString( OY_DISPLAY_STD "/night_color_scheme", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-      else
-        value = oyGetPersistentString( OY_DISPLAY_STD "/sunlight_color_scheme", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
-      if(value && (!ccs || strcmp(value, ccs) != 0))
-      {
-        setColorScheme( value);
-        fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
-        fprintf(  stderr, "%s: %s %s/%s\n", _("New color scheme"),
-                _("old/new"), oyNoEmptyString_m_(ccs), oyjlTermColor(oyjlBOLD,value) );
-      }
-      oyFree_m_(value);
+      setColorScheme( scheme);
+      fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+      fprintf(  stderr, "%s: %s %s/%s\n", _("New color scheme"),
+                _("old/new"), oyNoEmptyString_m_(ccs), oyjlTermColor(oyjlBOLD,scheme) );
     }
 
+    if(ccs) oyFree_m_(ccs);
+    if(scheme) oyFree_m_(scheme);
     if(effect) oyFree_m_(effect);
     if(new_effect) oyFree_m_(new_effect);
   }
