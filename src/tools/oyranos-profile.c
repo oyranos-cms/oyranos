@@ -1092,7 +1092,7 @@ int main( int argc_, char**argv_, char ** envv OYJL_UNUSED )
 
   /* language needs to be initialised before setup of data structures */
 #ifdef OYJL_HAVE_LOCALE_H
-  setlocale(LC_ALL,"");
+  oyjlSetLocale(LC_ALL,"");
 #endif
   oyExportStart_(EXPORT_CHECK_NO);
 

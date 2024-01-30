@@ -886,7 +886,7 @@ int main( int argc_, char ** argv_)
   /* language needs to be initialised before setup of data structures */
 #ifdef OYJL_USE_GETTEXT
 #ifdef OYJL_HAVE_LOCALE_H
-  setlocale(LC_ALL,"");
+  oyjlSetLocale(LC_ALL,"");
 #endif
 #endif
 
