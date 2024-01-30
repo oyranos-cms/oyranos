@@ -42,9 +42,9 @@ Wandle Oyjl UI JSON nach C übersetzbare Texte für gettext Werkzeuge und übers
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-e</strong>|<strong>--extract</strong></td> <td>Auszug übersetzbarer Nachrichten<br />Wandle JSON in gettext lesbare C Texte</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong>=<em>FORMAT</em></td> <td>Formatierungstext<br />A output format string containing a %s for replacement.
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong>=<em>FORMAT</em></td> <td>Formatierungstext<br />Ein Ausgabeformattext welcher %s als Platzhalter enthält.
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-f</strong> json</td><td># I18N JSON : Create translation Json with -af=json. - This option is useful only for smaller projects as a initial start.</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-f</strong> json</td><td># ÜbersetzungJSON : Erzeuge ÜbersetzungJSON mit -af=json. - Diese Option ist nur für kleinere Projekte nützlich als Initialstart.</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-f</strong> i18n(\"%s\");</td>
   </table>
   </td>
@@ -138,7 +138,7 @@ Wandle Oyjl UI JSON nach C übersetzbare Texte für gettext Werkzeuge und übers
 #### Wandle JSON in gettext lesbare C Texte
 &nbsp;&nbsp;oyjl-translate -e [-v] -i oyjl-ui.json -o ergebnis.json -f '_("%s"); ' -k name,description,help
 #### Wandle C Quelltext nach ÜbersetzungsJSON
-&nbsp;&nbsp;oyjl-translate -e -f=json -i oyjl-ui.c -o result.json
+&nbsp;&nbsp;oyjl-translate -e -f=json -i oyjl-ui.json -o ergebnis.json
 #### Füge mit gettext übersetzte Schlüssel zu JSON hinzu
 &nbsp;&nbsp;oyjl-translate -a -i oyjl-ui.json -o ergebnis.json -k name,description,help -d TEXTKATALOG -p SPRACHPFAD -l de_DE,es_ES
 #### Kopiere übersetzte Schlüssel nach JSON. Lasse gettext aus.
