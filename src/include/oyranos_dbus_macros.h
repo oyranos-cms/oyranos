@@ -97,7 +97,7 @@ int oyDbusReceiveMessage (DBusBusType type, DBusHandleMessageFunction filter_fun
     goto error; \
   } \
  \
-  dbus_bus_add_match (connection, "type='signal',interface='org.libelektra',path='/org/libelektra/configuration'", &error); \
+  dbus_bus_add_match (connection, "type='signal',interface='org.libelektra',path='/org/libelektra/configuration',member=Commit", &error); \
   if (dbus_error_is_set (&error)) goto error; \
  \
   if (!dbus_connection_add_filter (connection, filter_func, user_data, NULL)) \
@@ -126,6 +126,19 @@ static void        oySleep           ( double              seconds ) \
   usleep((useconds_t)(seconds*(double)1000000)); \
 }
 
+/** ping to oyWatchDBus_m/oyDbusReceiveMessage_m
+ */
+#define oyDBusSendPing( scope, keyName ) { \
+  char * elkey = NULL; oyjlStringAdd( &elkey, 0,0, "%s/%s", scope==oySCOPE_SYSTEM ? "system" : "user", keyName ); \
+  DBusConnection * connection = dbus_bus_get( scope==oySCOPE_SYSTEM ? DBUS_BUS_SYSTEM : DBUS_BUS_SESSION, NULL ); \
+  DBusMessage * message = dbus_message_new_signal( "/org/libelektra/configuration"/*path*/, "org.libelektra"/*interfacce*/, "Commit" ); \
+  dbus_message_append_args( message, DBUS_TYPE_STRING, &elkey, DBUS_TYPE_INVALID ); \
+  dbus_connection_send( connection, message, NULL ); \
+  dbus_message_unref( message ); \
+  if(oy_debug) fprintf( stderr, "send DBus: %s\n", oyNoEmptyString_m_(elkey) ); \
+  dbus_connection_unref( connection ); \
+  free(elkey); \
+}
 
 /* --- oyJob_s callbacks --- */
 
