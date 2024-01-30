@@ -536,8 +536,7 @@ int myMain( int argc, const char ** argv )
     oyConfig_s * c = 0,
                * dt = 0;
     size_t size = 0;
-    const char * filename = 0,
-               * device_name = 0;
+    const char * filename = 0;
     char * data = 0, *t;
     int n = 0;
 

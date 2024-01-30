@@ -613,6 +613,11 @@ int      oyProfile_CreateEffectVCGT  ( oyProfile_s       * prof )
   int width = 256;
   uint16_t * vcgt = oyProfile_GetVCGT( prof, &width );
   oyImage_s * img;
+  if(oy_debug)
+    oyMessageFunc_p( oyMSG_DBG,(oyStruct_s*)prof, OY_DBG_FORMAT_
+                        "vcgt width %d",
+                        OY_DBG_ARGS_,
+                        width );
   if(vcgt && getenv("OY_DEBUG_WRITE"))
   {
     img = oyImage_Create( width, 1, vcgt, OY_TYPE_123_16, prof, 0 );
@@ -824,6 +829,7 @@ OYAPI int OYEXPORT oyDeviceGetProfile( oyConfig_s        * device,
     o = oyConfig_Find( device, "icc_profile" );
 
   p = (oyProfile_s*) oyOption_GetStruct( o, oyOBJECT_PROFILE_S );
+  oyOption_Release( &o );
   if(oyProfile_GetSignature( p, oySIGNATURE_MAGIC ) == icMagicNumber)
     *profile = p;
   else if(!error)
