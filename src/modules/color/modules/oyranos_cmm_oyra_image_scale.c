@@ -354,6 +354,8 @@ oyCMMapi_s * oyraApi7ImageScaleCreate(void)
                               * sockets[2] = {0,0};
   plugs[0] = plug;
   sockets[0] = socket;
+  oyObject_SetNames( plug->oy_, "oyra7", __func__, OY_IMAGE_SCALE_REGISTRATION );
+  oyObject_SetNames( socket->oy_, "oyra7", __func__, OY_IMAGE_SCALE_REGISTRATION );
 
   oyConnectorImaging_SetDataTypes( plug, data_types, 6 );
   oyConnectorImaging_SetReg( plug, "//" OY_TYPE_STD "/manipulator.data" );
@@ -396,6 +398,7 @@ oyCMMapi_s * oyraApi7ImageScaleCreate(void)
                                        (oyConnector_s**)plugs, 1, 0,
                                        (oyConnector_s**)sockets, 1, 0,
                                        0, 0 );
+  oyObject_SetNames( scale7->oy_, "oyra7", __func__, OY_IMAGE_SCALE_REGISTRATION );
   return (oyCMMapi_s*) scale7;
 }
 
@@ -487,6 +490,7 @@ oyCMMapi_s * oyraApi4ImageScaleCreate(void)
                                        NULL,
                                        ui,
                                        NULL );
+  oyObject_SetNames( scale4->oy_, "oyra4", __func__, OY_IMAGE_SCALE_REGISTRATION );
   return (oyCMMapi_s*)scale4;
 }
 /* OY_IMAGE_SCALE_REGISTRATION ----------------------------------------------*/

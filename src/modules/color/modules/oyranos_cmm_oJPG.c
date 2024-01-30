@@ -231,6 +231,7 @@ oyCMMapi_s * ojpgApi7CmmCreateRead   ( const char        * format,
 
   oyStringAddPrintf( &oJPG_registration_7read, AD,
                      OY_oJPG_FILTER_REGISTRATION_BASE"file_read.input_%s._%s._CPU._ACCEL", format, CMM_NICK );
+  oyObject_SetNames( socket->oy_, "oJPG7", __func__, oJPG_registration_7read );
 
   if(oy_debug >= 2) ojpg_msg(oyMSG_DBG, NULL, _DBG_FORMAT_ "registration:%s ojpg %s", _DBG_ARGS_,
                              oJPG_registration_7read,
@@ -261,6 +262,7 @@ oyCMMapi_s * ojpgApi7CmmCreateRead   ( const char        * format,
                                        (oyConnector_s**)plugs, 0, 0,
                                        (oyConnector_s**)sockets, 1, 0,
                                        properties, 0 );
+  oyObject_SetNames( cmm7->oy_, "oJPG7", __func__, oJPG_registration_7read );
   oyFree_m_(oJPG_registration_7read);
   return (oyCMMapi_s*) cmm7;
 }
@@ -316,6 +318,7 @@ oyCMMapi_s * ojpgApi4CmmCreateRead   ( const char        * format )
                                        ojpgFilterNode_GetText,
                                        ui,
                                        NULL );
+  oyObject_SetNames( cmm4->oy_, "oJPG4", __func__, oJPG_registration_4read );
   oyFree_m_(oJPG_registration_4read);
 
 
@@ -857,6 +860,7 @@ oyCMMapi_s * ojpgApi7CmmCreateWrite  ( const char        * format,
 
   oyStringAddPrintf( &oJPG_registration_7write, AD,
                      OY_oJPG_FILTER_REGISTRATION_BASE"file_write.write_%s._%s._CPU._ACCEL", format, CMM_NICK );
+  oyObject_SetNames( socket->oy_, "oJPG7", __func__, oJPG_registration_7write );
 
   if(oy_debug >= 2) ojpg_msg(oyMSG_DBG, NULL, _DBG_FORMAT_ "registration:%s ojpg %s", _DBG_ARGS_,
                              oJPG_registration_7write,
@@ -887,6 +891,7 @@ oyCMMapi_s * ojpgApi7CmmCreateWrite  ( const char        * format,
                                        (oyConnector_s**)plugs, 0, 0,
                                        (oyConnector_s**)sockets, 1, 0,
                                        properties, 0 );
+  oyObject_SetNames( cmm7->oy_, "oJPG7", __func__, oJPG_registration_7write );
   oyFree_m_(oJPG_registration_7write);
   return (oyCMMapi_s*) cmm7;
 }
@@ -942,6 +947,7 @@ oyCMMapi_s * ojpgApi4CmmCreateWrite  ( const char        * format )
                                        ojpgFilterNode_GetText,
                                        ui,
                                        NULL );
+  oyObject_SetNames( cmm4->oy_, "oJPG4", __func__, oJPG_registration_4write );
   oyFree_m_(oJPG_registration_4write);
 
   oyCMMapi4_SetBackendContext( cmm4, backend_context );

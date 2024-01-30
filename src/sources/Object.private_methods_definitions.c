@@ -230,8 +230,8 @@ void               oyObject_UnTrack    ( oyObject_s          obj )
   if(obj->ref_ < -1 && (oy_debug_objects >= 0 || oy_debug))
   {
     const char * type = obj->parent_?oyStructTypeToText(obj->parent_->type_):"";
-    fprintf( stderr, OY_DBG_FORMAT_ "!!!ERROR: Object[%d] has unexpected reference counter: %d  %s\n", OY_DBG_ARGS_, obj->id_, obj->ref_, type );
     OY_BACKTRACE_PRINT
+    fprintf( stderr, OY_DBG_FORMAT_ "!!!ERROR: Object[%d] has unexpected reference counter: %d  %s\n", OY_DBG_ARGS_, obj->id_, obj->ref_, type );
   }
   if(oy_debug_objects <= -2)
   {

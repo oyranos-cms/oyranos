@@ -364,7 +364,7 @@ int            oyObject_GetId        ( oyObject_s          object )
        id_ == 1)
     {
       if(obj->ref_ >= 0)
-        fputs( oyObject_Show( obj ), stderr );
+        fprintf( stderr, "    %s", oyObject_Show( obj ) );
       fflush( stderr );
     }
   } else if(obj && oy_debug_objects == obj->id_)
@@ -414,7 +414,7 @@ OYAPI const char * OYEXPORT  oyObject_Show (
       oy_object_show_text_[0] = 0;
       snprintf( oy_object_show_text_, 64, "\"%s", tmp );
       if(silen > 64) sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], " ..." );
-      sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], "\"[%d] refs: %d", obj->id_, obj->ref_ );
+      sprintf( &oy_object_show_text_[strlen(oy_object_show_text_)], "\"[%d] refs: ->%d", obj->id_, obj->ref_ );
       switch(st->type_)
       {
       case oyOBJECT_ARRAY2D_S:

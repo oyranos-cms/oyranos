@@ -364,6 +364,8 @@ oyCMMapi_s * oyraApi7ImageChannelCreate(void)
                               * sockets[2] = {0,0};
   plugs[0] = plug;
   sockets[0] = socket;
+  oyObject_SetNames( plug->oy_, "oyra7", __func__, OY_IMAGE_CHANNEL_REGISTRATION );
+  oyObject_SetNames( socket->oy_, "oyra7", __func__, OY_IMAGE_CHANNEL_REGISTRATION );
 
   oyConnectorImaging_SetDataTypes( plug, data_types, 6 );
   oyConnectorImaging_SetReg( plug, "//" OY_TYPE_STD "/manipulator.data" );
@@ -406,6 +408,7 @@ oyCMMapi_s * oyraApi7ImageChannelCreate(void)
                                        (oyConnector_s**)plugs, 1, 0,
                                        (oyConnector_s**)sockets, 1, 0,
                                        0, 0 );
+  oyObject_SetNames( channel7->oy_, "oyra7", __func__, OY_IMAGE_CHANNEL_REGISTRATION );
   return (oyCMMapi_s*) channel7;
 }
 
@@ -474,6 +477,7 @@ oyCMMapi_s * oyraApi4ImageChannelCreate(void)
                                        NULL,
                                        ui,
                                        NULL );
+  oyObject_SetNames( channel4->oy_, "oyra4", __func__, OY_IMAGE_CHANNEL_REGISTRATION );
   return (oyCMMapi_s*)channel4;
 }
 /* OY_IMAGE_CHANNEL_REGISTRATION ----------------------------------------------*/

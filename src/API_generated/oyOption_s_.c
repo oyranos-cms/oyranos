@@ -481,7 +481,7 @@ oyOption_s_ * oyOption_Copy_ ( oyOption_s_ *option, oyObject_s object )
             for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
               fprintf( stderr, "  " );
           }
-          fprintf( stderr, "parent[%d]: %s[%d]\n", i,
+          fprintf( stderr, "\\ parent[%d]: %s[%d]\n", i,
                    track_name, parents[i]->oy_->id_ );
         }
       }
@@ -556,7 +556,7 @@ int oyOption_Release_( oyOption_s_ **option )
           for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
             fprintf( stderr, "  " );
         fprintf( stderr, "%s[%d] unref with refs: %d-- observers: %d parents: %d\n",
-                 (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
+                 (s->oy_->id_ == id_)?oyjlTermColorF(oyjlRED, "%s", track_name):track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
           track_name = oyStructTypeToText(parents[i]->type_);
@@ -568,7 +568,7 @@ int oyOption_Release_( oyOption_s_ **option )
             for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
               fprintf( stderr, "  " );
           }
-          fprintf( stderr, "parent[%d]: %s[%d]\n", i,
+          fprintf( stderr, "\\ parent[%d]: %s[%d]\n", i,
                    track_name, parents[i]->oy_->id_ );
         }
       }

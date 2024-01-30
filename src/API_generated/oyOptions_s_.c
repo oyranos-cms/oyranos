@@ -493,7 +493,7 @@ int oyOptions_Release_( oyOptions_s_ **options )
         if(s->oy_->id_ == id_)
           for( i = 0; i < s->oy_->ref_ - observer_refs - n; ++i)
             fprintf( stderr, "  " );
-        fprintf( stderr, "%s[%d] unref with refs: %d-- observers: %d parents: %d\n",
+        fprintf( stderr, OY_DBG_FORMAT_ "%s[%d] unref with refs: %d-- observers: %d parents: %d\n", OY_DBG_ARGS_,
                  (s->oy_->id_ == id_)?oyjlTermColor(oyjlRED, track_name):track_name, s->oy_->id_, s->oy_->ref_, observer_refs, n );
         for(i = 0; i < n; ++i)
         {
