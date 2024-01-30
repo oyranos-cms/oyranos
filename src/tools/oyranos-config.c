@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2017-2022 (C) Kai-Uwe Behrmann
+ *            2017-2023 (C) Kai-Uwe Behrmann
  *
  *  @brief    DB manipulation tool
  *  @internal
@@ -210,6 +210,7 @@ int myMain( int argc , const char** argv )
   int list = 0;
   const char * get = 0;
   const char * set = 0;
+  int native_update_event = 0;
   int dump_db = 0;
   int daemon = 0;
   int system_wide = 0;
@@ -223,8 +224,11 @@ int myMain( int argc , const char** argv )
   int api_version = 0;
   int num_version = 0;
   int git_version = 0;
-  int cflags = 0;
-  int ldflags = 0;
+  const char * build = NULL;
+  int install = 0;
+  const char * install_prefix_name = NULL;
+  const char * cflags = NULL;
+  const char * ldflags = NULL;
   int ldstaticflags = 0;
   int sourcedir = 0;
   int builddir = 0;
@@ -250,6 +254,7 @@ int myMain( int argc , const char** argv )
                                     {"",_("Show all settings with values"),_("oyranos-config -l -v"),                        ""},
                                     {"",_("Watch events"),_("oyranos-config -d 1 -v > log-file.txt"),""},
                                     {"",_("Compile a simple programm"),_("cc `oyranos-config --cflags` myFile.c `oyranos-config --ldflags` -o myProg"),""},
+                                    {"",_("Install module from source"),_("oyranos-config --build=oyranos_cmm_lcm2.c --install --cflags=-fPIC:-fopenmp:-g:-O0 --ldflags=-lm:-llcms2"),""},
                                     {"",_("Show system wide visible profiles from the Oyranos installation path"),_("ls `oyranos-config --syscolordir --iccdirname`"),""},
                                     {NULL,NULL,NULL,NULL}};
 
@@ -271,6 +276,8 @@ int myMain( int argc , const char** argv )
         oyjlOPTIONTYPE_FUNCTION, {.getChoices=listKeys}, oyjlSTRING,{.s=&get},NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","set",           NULL,     _("Set"),      _("Set a Value"),             NULL, _("XPATH:VALUE"),   
         oyjlOPTIONTYPE_FUNCTION, {.getChoices=listVals}, oyjlSTRING,{.s=&set},NULL},
+    {"oiwi", 0,                          "n","native-update-event",NULL,_("Native Update"),_("Send natiev update event"), NULL, NULL,   
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&native_update_event},NULL},
     {"oiwi", 0,                          NULL,"dump-db",      NULL,     _("Dump DB"),  _("Dump OpenICC DB"),         NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&dump_db},NULL},
     {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG, "d","daemon",    NULL,     _("Daemon"),   _("Watch DB changes"),        NULL, _("0|1"),           
@@ -297,11 +304,17 @@ int myMain( int argc , const char** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&num_version},NULL},
     {"oiwi", 0,                          NULL,"git-version",   NULL,    "git-version", _("Show version as in git"),  _("lastReleaseVersion-gitCommitNumber-gitCommitSHA1ID-Year-month-day"), NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&git_version},NULL},
-    {"oiwi", 0,                          NULL,"cflags",        NULL,    "cflags",      _("compiler flags"),          NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&cflags},NULL},
-    {"oiwi", 0,                          NULL,"ldflags",       NULL,    "ldflags",     _("dynamic link flags"),      NULL, NULL,               
-        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&ldflags},NULL},
-    {"oiwi", 0,                          NULL,"ldstaticflags", NULL,    "ldstaticflags",_("static linking flags"),    NULL, NULL,               
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "b", "build",         NULL,    "build",       _("build a module"),          _("This option is for single file modules."),  _("SOURCE.c"),               
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&build},NULL},
+    {"oiwi", 0,                          NULL,"install",       NULL,    "install",     _("install the module"),      NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&install},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  NULL, "install-prefix-name",NULL,   "install-prefix-name",_("prepend to file name"),NULL,  _("NAME"),               
+        oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&install_prefix_name},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,NULL,"cflags",     NULL,    "cflags",      _("compiler flags"),          NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlSTRING,    {.s=&cflags},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_ACCEPT_NO_ARG,NULL,"ldflags",    NULL,    "ldflags",     _("dynamic link flags"),      NULL, NULL,               
+        oyjlOPTIONTYPE_NONE,     {0},                oyjlSTRING,    {.s=&ldflags},NULL},
+    {"oiwi", 0,                          NULL,"ldstaticflags", NULL,    "ldstaticflags",_("static linking flags"),   NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&ldstaticflags},NULL},
     {"oiwi", 0,                          NULL,"sourcedir",     NULL,    "sourcedir",   _("Oyranos local source directory name"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&sourcedir},NULL},
@@ -327,13 +340,14 @@ int myMain( int argc , const char** argv )
   /* declare option groups, for better syntax checking and UI groups */
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,               description,                  help,               mandatory,     optional,      detail */
-    {"oiwg", 0,     _("Settings"),      _("Persistent Settings"),     _("Handle OpenICC DB configuration on low level."),"g|s|l|dump-db|p","v,z","g,s,l,dump-db,p",NULL},
+    {"oiwg", 0,     _("Settings"),      _("Persistent Settings"),     _("Handle OpenICC DB configuration on low level."),"g|s|l|dump-db|p","v,z,n","g,s,n,l,dump-db,p",NULL},
 #ifdef HAVE_DBUS
     {"oiwg", 0,     _("Watch"),         _("Observe config changes"),  _("Will only work on command line."),"d",           "v",           "d" ,NULL},
 #endif
     {"oiwg", 0,     _("Install Paths"), _("Show Install Paths"),      _("Show statically configured and compiled in paths of Oyranos CMS."),               "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir","v,z",         "syscolordir|usercolordir|iccdirname|settingsdirname|cmmdir|metadir",NULL},
     {"oiwg", 0,     _("Version"),       _("Show Version"),            _("Release Version follow of a Major(API|ABI)-Minor(Feature)-Micro(Patch|Bug Fix) scheme. For orientation in git the last release, commit number, SHA1 ID and Year-month-day parts are available."), "Version|api-version|num-version|git-version","v",           "Version|api-version|num-version|git-version",NULL},
     {"oiwg", 0,     _("Options"),       _("Miscellaneous options"),   _("These strings can be used to compile programs."),"#|cflags|ldflags|ldstaticflags|sourcedir|builddir","v",           "#|cflags|ldflags|ldstaticflags|sourcedir|builddir",NULL},
+    {"oiwg", 0,     _("Build"),         _("Compile a Module"),        _("Install a module from source. Use the --cflags option to pass in compile flags and the --ldflags option to pass in link options for this module. Use ':' string separator for multiple --cflags and --ldflags options."), "b","cflags,ldflags,install,install-prefix-name,v",           "b,install,install-prefix-name",NULL},
     {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL,         "X|h|V|R",     "v",           "h,X,R,V,z,v",NULL},
     {"",0,0,0,0,0,0,0,0}
   };
@@ -469,16 +483,73 @@ int myMain( int argc , const char** argv )
   else if(git_version)
   { fprintf( stdout, "%s\n", OY_GIT_VERSION ); return 0; }
 
-  if(cflags)
-  { system( "pkg-config --cflags oyranos" ); }
-  if(ldflags)
-  { system( "pkg-config --libs oyranos" ); }
-  if(ldstaticflags)
-  { puts( "-L" OY_LIBDIR " -loyranos-static" ); }
-  if(sourcedir)
-  { puts( OY_SOURCEDIR "\n" ); return 0; }
-  if(builddir)
-  { puts( OY_BUILDDIR "\n" ); return 0; }
+  if(build)
+  {
+    char * compile = NULL;
+    const char * compiler = getenv("CC");
+    char * out = NULL, * t = NULL;
+
+    if(!compiler)
+      compiler = "cc";
+
+    if(install)
+    {
+      t = strrchr( build, OY_SLASH_C );
+
+      oyjlStringAdd( &out, 0,0, OY_CMMDIR "%s%s%s", t?OY_SLASH:"", install_prefix_name ? install_prefix_name : "", t ? t + 1 : build );
+    }
+    else
+      out = oyjlStringCopy( build, 0 );
+    t = strrchr(out,'.');
+
+    if(t) t[0] = '\000';
+    oyjlStringReplace( &out, "oyranos_cmm_", "", 0,0 );
+    oyjlStringPush( &out,  OY_MODULE_NAME ".so", 0,0 );
+    if(verbose)
+      fprintf( stderr, "Output: %s\n", oyjlTermColor( oyjlBOLD, out ) );
+
+    oyjlStringAdd( &compile, 0,0, "%s -shared", compiler );
+    if(cflags && strcmp( cflags,"1" ) != 0)
+    {
+      t = oyjlStringCopy( cflags, 0 );
+      oyjlStringReplace( &t, ";", " ", 0,0 );
+      oyjlStringReplace( &t, ":", " ", 0,0 );
+      oyjlStringAdd( &compile, 0,0, " %s", t );
+      free(t);
+    }
+    if(ldflags && strcmp( ldflags,"1" ) != 0)
+    {
+      t = oyjlStringCopy( ldflags, 0 );
+      oyjlStringReplace( &t, ";", " ", 0,0 );
+      oyjlStringReplace( &t, ":", " ", 0,0 );
+      oyjlStringAdd( &compile, 0,0, " %s", t );
+      free(t);
+    }
+    oyjlStringAdd( &compile, 0,0, " %s -o %s", build, out );
+    free(out); out = NULL;
+
+    if(verbose)
+    {
+      fprintf( stderr, "Compiler: %s (change with CC environment variable)\n", oyjlTermColor( oyjlBOLD, compiler ) );
+      fprintf( stderr, "Compile line: %s\n", oyjlTermColor( oyjlBOLD, compile ) );
+      fflush( stderr );
+    }
+    system( compile );
+    free(compile);
+
+  } else
+  {
+    if(cflags)
+    { system( "pkg-config --cflags oyranos" ); }
+    if(ldflags)
+    { system( "pkg-config --libs oyranos" ); }
+    if(ldstaticflags)
+    { puts( "-L" OY_LIBDIR " -loyranos-static" ); }
+    if(sourcedir)
+    { puts( OY_SOURCEDIR "\n" ); return 0; }
+    if(builddir)
+    { puts( OY_BUILDDIR "\n" ); return 0; }
+  }
 
   if(path)
   {
@@ -561,6 +632,7 @@ int myMain( int argc , const char** argv )
 
       oyStringListRelease( &list, count, oyDeAllocateFunc_ );
 
+      if(native_update_event)
       {
         /* ping X11 observers about option change
          * ... by setting a known property again to its old value
@@ -572,8 +644,8 @@ int myMain( int argc , const char** argv )
         oyOptions_Release( &opts );
       }
 
-    if(error)
-      printf("send_native_update_event failed\n");
+      if(error)
+        printf("send_native_update_event failed\n");
     }
     else if(count == 1)
     {
@@ -589,6 +661,7 @@ int myMain( int argc , const char** argv )
 
       oyStringListRelease( &list, count, oyDeAllocateFunc_ );
 
+      if(native_update_event)
       {
         /* ping X11 observers about option change
          * ... by setting a known property again to its old value
