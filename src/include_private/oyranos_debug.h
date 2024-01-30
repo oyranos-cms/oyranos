@@ -51,8 +51,8 @@ double   oyGetCurrentGMTHour         ( int               * gmt_to_local_time_dif
 const char *       oyPrintTime       ( );
 
 #if defined(__GNUC__)
-# define  OY_DBG_FORMAT_ "%s(%s:%d) "
-# define  OY_DBG_ARGS_   oyjlTermColor(oyjlBOLD, __func__), strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
+# define  OY_DBG_FORMAT_ "%s "
+# define  OY_DBG_ARGS_   oyjlFunctionPrint( __func__, strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__ )
 #else
 # define  OY_DBG_FORMAT_ "%s:%d "
 # define  OY_DBG_ARGS_   strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__
