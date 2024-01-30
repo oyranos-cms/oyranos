@@ -46,14 +46,14 @@
 using namespace std;
 /* --- internal definitions --- */
 
-#define PRFX "raw-image.oyRE: "
+#define PRFX "camera.oyRE: "
 #define PRFX_EXIF "EXIF_"
 #define PRFX_LRAW "LRAW_"
 /* select a own four byte identifier string instead of "dDev" and replace the
  * dDev in the below macros.
  */
 #define CMM_NICK "oyRE"
-#define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "device" OY_SLASH "config.icc_profile.raw-image." CMM_NICK
+#define CMM_BASE_REG OY_TOP_SHARED OY_SLASH OY_DOMAIN_STD OY_SLASH OY_TYPE_STD OY_SLASH "device" OY_SLASH "config.icc_profile.camera." CMM_NICK
 #define CMM_VERSION {OYRANOS_VERSION_A,OYRANOS_VERSION_B,OYRANOS_VERSION_C}
 
 #define catCMMfunc(nick,func) nick ## func
@@ -102,7 +102,7 @@ extern oyCMMapi8_s_ _api8;
 static char * _category = NULL;
 
 
-bool is_raw( int id );
+bool is_raw( Exiv2::ImageType id );
 int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params);
 int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *option);
 
@@ -111,7 +111,7 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *option);
 int CMMapiInit( oyStruct_s * filter )
 {
   int error = 0;
-  const char * rfilter = "config.icc_profile.raw-image.oyRE";
+  const char * rfilter = "config.icc_profile.camera.oyRE";
 
   if(!_initialised)
     error = oyDeviceCMMInit( filter, rfilter, 0 );
@@ -385,7 +385,7 @@ class exif2options {
  *
  * \todo { Untested }
  */
-int DeviceFromHandle(oyOptions_s **options, Exiv2::Image::AutoPtr image)
+int DeviceFromHandle(oyOptions_s **options, Exiv2::Image::UniquePtr & image)
 {
    int error = 0;
 
@@ -1284,7 +1284,7 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 
 int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
 {
-   Exiv2::Image::AutoPtr device_handle;
+   Exiv2::Image::UniquePtr device_handle;
    oyAlloc_f allocateFunc = malloc;
    if (handle_opt) {
       char * filename = NULL;
@@ -1332,21 +1332,21 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
    return 0;
 }
 
-bool is_raw( int id )
+bool is_raw( Exiv2::ImageType id )
 {
    //using namespace Exiv2::ImageType;
    switch (id) {
-      case 3: //crw:
-      case 4: //tiff
-      case 5: //mrw:
-      case 7: //cr2:
-      case 8: //raf:
-      case 9: //orf:
-      case 16: //rw2:
+      case Exiv2::ImageType::crw:
+      case Exiv2::ImageType::tiff:
+      case Exiv2::ImageType::mrw:
+      case Exiv2::ImageType::cr2:
+      case Exiv2::ImageType::raf:
+      case Exiv2::ImageType::orf:
+      case Exiv2::ImageType::rw2:
          return true;
          break;
       default:
-         if(id == 0)
+         if(id == Exiv2::ImageType::none)
            return false;
          else
            return true;

@@ -30,12 +30,12 @@ MACRO(OY_TRANSLATE_MODULE)
   ENDIF()
 
   IF( USE_GETTEXT )
-    MESSAGE( "-- OYJL_JSON_TOOL: " ${OYJL_JSON_TOOL} )
+    MESSAGE( "-- OYJL_JSON_TOOL(${OY_MODULE}-i18n.c): " ${OYJL_JSON_TOOL} )
     ADD_CUSTOM_TARGET( ${OY_MODULE}-i18n.c
-      COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -i ${CMM}.json -ek name,label,description,help -o ${CMAKE_SOURCE_DIR}/src/modules/${OY_MODULE}-i18n.c
-      DEPENDS ${CMM}.json ${OYJL_JSON_TOOL}
+      COMMAND LANG=C ${OYJL_JSON_TOOL} -i ${CMM}.json -ek name,label,description,help -o ${CMAKE_SOURCE_DIR}/src/modules/${OY_MODULE}-i18n.c
+      DEPENDS ${CMM}.json ${OYJL_JSON_TOOL_DEPENDS}
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      COMMENT "Extract translatable messages to ${OY_MODULE}-i18n.c"
+      COMMENT "Extract translatable messages to ${CMAKE_SOURCE_DIR}/src/modules/${OY_MODULE}-i18n.c"
     )
 
     # add translations to the declaration JSON
@@ -55,7 +55,7 @@ MACRO(OY_TRANSLATE_MODULE)
     MESSAGE( "Lingua: ${MY_LINGUAS_COMMA}" )
     ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c
       COMMAND test -d || mkdir ${CMAKE_BINARY_DIR}/locale && echo ""
-      COMMAND LANG=C PATH=$(PATH):${CMAKE_BINARY_DIR}/openicc/oyjl LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/openicc/oyjl:${OYJL_LIBRARY_DIRS} oyjl-translate -ai ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -k name,label,description,help -o ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c -w C -d ${PACKAGE_NAME} -l ${MY_LINGUAS_COMMA} -p ${CMAKE_BINARY_DIR}/locale
+      COMMAND LANG=C ${OYJL_JSON_TOOL} -ai ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.json -k name,label,description,help -o ${CMAKE_CURRENT_SOURCE_DIR}/${CMM}.i18n.c -w C -d ${PACKAGE_NAME} -l ${MY_LINGUAS_COMMA} -p ${CMAKE_BINARY_DIR}/locale
       DEPENDS ${CMM}.json
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       COMMENT "Add ${MY_LINGUAS_COMMA} translated messages to ${CMM} declaration"
