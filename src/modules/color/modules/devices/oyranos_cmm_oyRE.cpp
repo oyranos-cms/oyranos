@@ -34,8 +34,18 @@
 
 #include <exiv2/image.hpp>
 #include <exiv2/exif.hpp>
+#define EXIV2_VERSION_NUM EXIV2_MAJOR_VERSION*10000 + EXIV2_MINOR_VERSION*100 + EXIV2_PATCH_VERSION
+#if EXIV2_VERSION_NUM >= 2800
+#define EXIV_IMAGE_PTR   Exiv2::Image::UniquePtr
+#define EXIV_IMAGE_TYPE  Exiv2::ImageType
+#else
+#define EXIV_IMAGE_PTR   Exiv2::Image::AutoPtr
+#define EXIV_IMAGE_TYPE  int
+#endif
 
+#include <libraw/libraw_version.h>
 #include <libraw/libraw.h>
+#define LIBRAW_VERSION_NUM LIBRAW_MAJOR_VERSION*10000 + LIBRAW_MINOR_VERSION*100 + LIBRAW_PATCH_VERSION
 
 #include <string>
 #include <sstream>
@@ -102,7 +112,7 @@ extern oyCMMapi8_s_ _api8;
 static char * _category = NULL;
 
 
-bool is_raw( Exiv2::ImageType id );
+bool is_raw( EXIV_IMAGE_TYPE id );
 int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params);
 int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *option);
 
@@ -133,7 +143,7 @@ int CMMapiReset( oyStruct_s * filter )
   return error;
 }
 
-int CMMinit( oyStruct_s * filter OY_UNUSED ) { return 0; }
+int CMMinit( oyStruct_s * filter OY_UNUSED ) { if(oy_debug) fprintf( stderr, OY_DBG_FORMAT_ "LIBRAW_VERSION_NUM: %d EXIV2_VERSION_NUM: %d\n", OY_DBG_ARGS_, LIBRAW_VERSION_NUM, EXIV2_VERSION_NUM ); return 0; }
 int CMMreset( oyStruct_s * filter OY_UNUSED ) { return 0; }
 
 oyPointer CMMallocateFunc(size_t size)
@@ -385,7 +395,7 @@ class exif2options {
  *
  * \todo { Untested }
  */
-int DeviceFromHandle(oyOptions_s **options, Exiv2::Image::UniquePtr & image)
+int DeviceFromHandle(oyOptions_s **options, EXIV_IMAGE_PTR & image)
 {
    int error = 0;
 
@@ -1284,7 +1294,7 @@ int DeviceFromContext(oyConfig_s **config, libraw_output_params_t *params)
 
 int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
 {
-   Exiv2::Image::UniquePtr device_handle;
+   EXIV_IMAGE_PTR device_handle;
    oyAlloc_f allocateFunc = malloc;
    if (handle_opt) {
       char * filename = NULL;
@@ -1332,6 +1342,7 @@ int DeviceFromHandle_opt(oyConfig_s *device, oyOption_s *handle_opt)
    return 0;
 }
 
+#if EXIV2_VERSION_NUM >= 2800
 bool is_raw( Exiv2::ImageType id )
 {
    //using namespace Exiv2::ImageType;
@@ -1352,4 +1363,26 @@ bool is_raw( Exiv2::ImageType id )
            return true;
    }
 }
+#else
+bool is_raw( int id )
+{
+   //using namespace Exiv2::ImageType;
+   switch (id) {
+      case 3: //crw:
+      case 4: //tiff
+      case 5: //mrw:
+      case 7: //cr2:
+      case 8: //raf:
+      case 9: //orf:
+      case 16: //rw2:
+         return true;
+         break;
+      default:
+         if(id == 0)
+           return false;
+         else
+           return true;
+   }
+}
+#endif
 /**  @} *//* oyre_device */
