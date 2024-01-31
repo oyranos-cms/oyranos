@@ -2093,7 +2093,7 @@ static int oyjlTermColorCheck_       ( int                 flags )
  *                                     - 1 for simple color term
  *                                     - 2 for truecolor term
  *  @version Oyjl: 1.0.0
- *  @date    2022/05/08
+ *  @date    2024/01/31
  *  @since   2020/03/09 (Oyjl: 1.0.0)
  */
 int          oyjlTermColorInit       ( int                 flags )
@@ -2105,13 +2105,19 @@ int          oyjlTermColorInit       ( int                 flags )
              oyjl_color_ = 0;
   if(!oyjl_colorterm_init_ || flags & OYJL_RESET_COLORTERM)
   {
+    const char * term;
     oyjl_colorterm_init_ = 1;
     oyjl_colorterm_ = getenv("COLORTERM");
+    if(!oyjl_colorterm_)
+    {
+      term = getenv("TERM");
+      if(term && strcmp(term, "linux") == 0)
+        oyjl_colorterm_ = term;
+    }
     if(flags & OYJL_OBSERVE)
       fprintf(stderr, "%s COLORTERM\n", getenv("COLORTERM")?"has":"no" );
     oyjl_color_ = oyjl_colorterm_ != NULL ? 1 : 0;
-    if(!oyjl_colorterm_) oyjl_colorterm_ = getenv("TERM");
-    oyjl_truecolor_ = oyjl_colorterm_ && strcmp(oyjl_colorterm_,"truecolor") == 0;
+    oyjl_truecolor_ = oyjl_colorterm_ && (strcmp(oyjl_colorterm_,"truecolor") == 0 || strcmp(oyjl_colorterm_,"linux") == 0);
     if(!oyjlTermColorCheck_(flags))
       oyjl_truecolor_ = oyjl_color_ = 0;
     if( getenv("FORCE_COLORTERM") || flags & OYJL_FORCE_COLORTERM )
