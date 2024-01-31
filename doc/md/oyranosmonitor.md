@@ -40,11 +40,11 @@ The oyranos-monitor programm let you query and set the monitor profile(s) within
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-y</strong>=<em>PIXEL</em></td> <td>select the screen at the y position.  </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--device-pos</strong>=<em>NUMBER</em></td> <td>position in device list. The numbering of monitors starts with zero for the first device. To get the number of all available devices use "oyranos-monitor -l | wc -l".  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--device-pos</strong>=<em>NUMBER</em></td> <td>Position in device list.<br />The numbering of monitors starts with zero for the first device. To get the number of all available devices use "oyranos-monitor -l | wc -l".  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--display</strong>=<em>NAME</em></td> <td>Use DISPLAY  </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--module</strong>=<em>MODULENAME</em></td> <td>select module  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--module</strong>=<em>MODULENAME</em></td> <td>Select module<br />See as well the --modules option.  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-c</strong>|<strong>--x-color-region-target</strong></td> <td>show the X Color Management (XCM) device profile</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--system-wide</strong></td> <td>do system wide, might need admin or root privileges</td> </tr>
@@ -100,11 +100,11 @@ The oyranos-monitor programm let you query and set the monitor profile(s) within
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor</strong></a> <strong>-f</strong>=<em>edid|icc|edid_icc|vcgt...</em> <strong>-a</strong> <strong>--modules</strong> <strong>-L</strong> [<strong>-o</strong>=<em>OUT_FILENAME|default:stdout</em>] [<strong>-x</strong>=<em>PIXEL</em>] [<strong>-y</strong>=<em>PIXEL</em>|<strong>-d</strong>=<em>NUMBER</em>] [<strong>--display</strong>=<em>NAME</em>] [<strong>-m</strong>] [<strong>-v</strong>] [<strong>-2</strong>] [<strong>-4</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong>=<em>edid|icc|edid_icc|vcgt...</em></td> <td>[edid|icc|edid_icc|vcgt] Get data<br />Select a data format. Possible are edid for server side EDID data, icc for a server side ICC profile, edid_icc for a ICC profile created  from  server side  EDID and vcgt for effect and monitor white point merged into a possibly altered VCGT tag. Without the -o/--ouput option the output is written to stdout.  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-f</strong>|<strong>--format</strong>=<em>edid|icc|edid_icc|vcgt...</em></td> <td>Select data format<br />Select a data format. Possible are edid for server side EDID data, icc for a server side ICC profile, edid_icc for a ICC profile created  from  server side  EDID and vcgt for effect and monitor white point merged into a possibly altered VCGT tag. Without the -o/--ouput option the output is written to stdout.  </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong>=<em>OUT_FILENAME|default:stdout</em></td> <td>OUT_FILENAME Write data selected by -f/--format to the given filename.  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong>=<em>OUT_FILENAME|default:stdout</em></td> <td>Write data selected by -f/--format to the given filename.  </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--device-meta-tag</strong></td> <td>(--device-meta-tag) switch is accepted by the -f=icc and -f=edid_icc option. It embeddes device and driver informations about the actual device for<br />later easier ICC profile to device assignment.  This becomes useful for sharing ICC profiles.</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--device-meta-tag</strong></td> <td>(--device-meta-tag) switch is accepted by the -f=icc and -f=edid_icc option.<br />It embeddes device and driver informations about the actual device for later easier ICC profile to device assignment.  This becomes useful for sharing ICC profiles.</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-a</strong>|<strong>--xcm-active</strong></td> <td><br />Show if X Color Management is active</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--modules</strong></td> <td><br />List monitor modules</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-L</strong>|<strong>--list-taxi</strong></td> <td>List Taxi Profiles</td> </tr>
@@ -189,11 +189,9 @@ The oyranos-monitor programm let you query and set the monitor profile(s) within
 <h2>EXAMPLES <a href="#toc" name="examples">&uarr;</a></h2>
 
 #### Put the following in a setup script like .xinitrc
-&nbsp;&nbsp;# select a monitor profile, load the binary blob into X and
-  <br />
-&nbsp;&nbsp;# fill the VideoCardGammaTable, if appropriate
-  <br />
 &nbsp;&nbsp;oyranos-monitor
+  <br />
+&nbsp;&nbsp;Select a monitor profile, load the binary blob into X and fill the VideoCardGammaTable, if appropriate
 #### Assign a ICC profile to a screen
 &nbsp;&nbsp;oyranos-monitor -x pos -y pos profilename
 #### Reset a screens hardware LUT in order to do a calibration

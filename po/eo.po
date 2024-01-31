@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-01-30 16:28+0100\n"
+"POT-Creation-Date: 2024-01-31 20:36+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -30,14 +30,6 @@ msgstr ""
 msgid "!!! ERROR"
 msgstr ""
 
-#: tools/oyranos-monitor.c:134
-msgid "# fill the VideoCardGammaTable, if appropriate"
-msgstr ""
-
-#: tools/oyranos-monitor.c:134
-msgid "# select a monitor profile, load the binary blob into X and"
-msgstr ""
-
 #. '>'
 #: examples/image_display/image_display.cpp:584
 msgid "&gt; - next image"
@@ -50,8 +42,7 @@ msgstr ""
 
 #: tools/oyranos-monitor.c:200
 msgid ""
-"(--device-meta-tag) switch is accepted by the -f=icc and -f=edid_icc option. "
-"It embeddes device and driver informations about the actual device for"
+"(--device-meta-tag) switch is accepted by the -f=icc and -f=edid_icc option."
 msgstr ""
 
 #: tools/oyranos_profiles.c:119
@@ -447,12 +438,8 @@ msgstr ""
 msgid "Add Device Meta Data"
 msgstr "kolora"
 
-#: tools/oyranos-monitor.c:240
+#: tools/oyranos-monitor.c:202 tools/oyranos-monitor.c:240
 msgid "Add EDID"
-msgstr ""
-
-#: tools/oyranos-monitor.c:202
-msgid "Add Edid"
 msgstr ""
 
 #: tools/oyranos-monitor.c:204
@@ -484,7 +471,7 @@ msgstr ""
 
 #: examples/oyranos_cmm_dDev.c:853 examples/oyranos_cmm_dFil.c:185
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:977
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1176
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1186
 msgid "All the small details for using this module."
 msgstr ""
 
@@ -951,7 +938,7 @@ msgstr ""
 msgid "Camera"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1055
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1065
 msgid "CameraRaw"
 msgstr ""
 
@@ -1085,7 +1072,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:901
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:856
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1366
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1055
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1065
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4800
 #: modules/color/modules/oyranos_cmm_lcms.c:2785
 msgid "Color"
@@ -1349,7 +1336,7 @@ msgstr ""
 
 #: examples/oyranos_cmm_dDev.c:843
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:968
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1167
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1177
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr ""
 
@@ -1699,7 +1686,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:904
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:857
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1369
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1055
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1065
 #, fuzzy
 msgid "Device"
 msgstr "kolora"
@@ -2958,6 +2945,13 @@ msgstr ""
 msgid "Introduction"
 msgstr ""
 
+#: tools/oyranos-monitor.c:200
+msgid ""
+"It embeddes device and driver informations about the actual device for later "
+"easier ICC profile to device assignment.  This becomes useful for sharing "
+"ICC profiles."
+msgstr ""
+
 #: tools/oyranos-profile.c:350
 #, fuzzy
 msgid "Json Name"
@@ -3446,7 +3440,7 @@ msgstr ""
 #: examples/oyranos_cmm_dDev.c:845
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:1019
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:970
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1169
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1179
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4925
 #: modules/color/modules/oyranos_cmm_lcms.c:2899
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
@@ -3685,7 +3679,7 @@ msgstr "nomo"
 
 #: examples/oyranos_cmm_dDev.c:851 examples/oyranos_cmm_dFil.c:183
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:975
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1174
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1184
 msgid "My filter introduction."
 msgstr ""
 
@@ -3890,10 +3884,6 @@ msgstr ""
 #, fuzzy
 msgid "Node Name"
 msgstr "nomo"
-
-#: tools/oyranos-monitor.c:198
-msgid "OUT_FILENAME Write data selected by -f/--format to the given filename."
-msgstr ""
 
 #: tools/oyranos-monitor.c:198
 msgid "OUT_FILENAME|default:stdout"
@@ -4137,7 +4127,7 @@ msgstr "kolora"
 msgid "Oyranos Profiles"
 msgstr "kolora"
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1151
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1161
 msgid "Oyranos RAW Image"
 msgstr ""
 
@@ -4231,7 +4221,7 @@ msgstr "blanco punkto"
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:1010
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:963
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1504
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1162
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1172
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
 #: modules/color/modules/oyranos_cmm_oicc.c:1217
 #: modules/color/modules/oyranos_cmm_oydi.c:1366
@@ -4424,6 +4414,10 @@ msgstr ""
 
 #: tools/oyranos-policy.c:298
 msgid "Policy search paths"
+msgstr ""
+
+#: tools/oyranos-monitor.c:166
+msgid "Position in device list."
 msgstr ""
 
 #: liboyranos_config/oyranos_icc.c:484
@@ -4686,13 +4680,13 @@ msgstr ""
 msgid "Raster"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1044
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1054
 msgid ""
 "Raw camera data, which are in file containing raw sensor data from a camera "
 "still picture."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1042
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1052
 msgid "RawCamera"
 msgstr ""
 
@@ -4964,6 +4958,10 @@ msgstr ""
 msgid "See Also"
 msgstr ""
 
+#: tools/oyranos-monitor.c:190
+msgid "See as well the --modules option."
+msgstr ""
+
 #: API_generated/oyranos_profile.c:81
 msgid "Seldom used Profile claimed Intent"
 msgstr ""
@@ -5045,6 +5043,12 @@ msgid ""
 "written to stdout."
 msgstr ""
 
+#: tools/oyranos-monitor.c:134
+msgid ""
+"Select a monitor profile, load the binary blob into X and fill the "
+"VideoCardGammaTable, if appropriate"
+msgstr ""
+
 #: tools/oyranos_profile_graph.c:487
 msgid "Select a page by chroma (saturation) in the HLC Color Atlas."
 msgstr ""
@@ -5068,9 +5072,18 @@ msgstr ""
 msgid "Select active policy"
 msgstr "blanco punkto"
 
+#: tools/oyranos-monitor.c:196
+msgid "Select data format"
+msgstr ""
+
 #: tools/oyranos-convert.c:236
 msgid "Select format"
 msgstr ""
+
+#: tools/oyranos-monitor.c:190
+#, fuzzy
+msgid "Select module"
+msgstr "blanco punkto"
 
 #: liboyranos_config/oyranos_texts.c:660 liboyranos_config/oyranos_texts.c:680
 msgid "Select the core CMM"
@@ -6196,6 +6209,12 @@ msgstr ""
 msgid "The my_handler takes a option with key name \"print\" and prints it."
 msgstr ""
 
+#: tools/oyranos-monitor.c:166
+msgid ""
+"The numbering of monitors starts with zero for the first device. To get the "
+"number of all available devices use \"oyranos-monitor -l | wc -l\"."
+msgstr ""
+
 #: tools/oyranos-monitor-white-point.c:527
 msgid ""
 "The option needs xbacklight installed and supporting your device for dimming "
@@ -6317,7 +6336,7 @@ msgid ""
 "resource overhead."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1153
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1163
 msgid "The raw image backend of Oyranos."
 msgstr ""
 
@@ -6698,6 +6717,10 @@ msgstr ""
 msgid "Write PPM Image Filter Object"
 msgstr ""
 
+#: tools/oyranos-monitor.c:198
+msgid "Write data selected by -f/--format to the given filename."
+msgstr ""
+
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:2934
 msgid "Write to"
 msgstr ""
@@ -6791,10 +6814,6 @@ msgstr ""
 #, fuzzy
 msgid "Zoran CMM"
 msgstr "Koloro b"
-
-#: tools/oyranos-monitor.c:196
-msgid "[edid|icc|edid_icc|vcgt] Get data"
-msgstr ""
 
 #. * @brief none profile
 #. *
@@ -6986,9 +7005,9 @@ msgid "failed!"
 msgstr ""
 
 #: API_generated/oyranos_devices.c:2539 API_generated/oyranos_devices.c:2551
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:725
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:731
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:743
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:735
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:741
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:753
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4510
 #: modules/color/modules/oyranos_cmm_lcms.c:2453
 #: modules/color/modules/oyranos_cmm_oPNG.c:999
@@ -7158,12 +7177,6 @@ msgstr ""
 
 #: tools/oyranos-config.c:305
 msgid "lastReleaseVersion-gitCommitNumber-gitCommitSHA1ID-Year-month-day"
-msgstr ""
-
-#: tools/oyranos-monitor.c:200
-msgid ""
-"later easier ICC profile to device assignment.  This becomes useful for "
-"sharing ICC profiles."
 msgstr ""
 
 #. oyranos_cmm_lcm2.json:org/freedesktop/oyjl/modules/[0]/groups/[0]/groups/[0]/name
@@ -7353,11 +7366,6 @@ msgstr ""
 msgid "oyranos-image-display --no-logo image.ppm"
 msgstr ""
 
-#: tools/oyranos-monitor.c:134
-#, fuzzy
-msgid "oyranos-monitor"
-msgstr "kolora"
-
 #: tools/oyranos-monitor.c:143
 msgid ""
 "oyranos-monitor --add-edid=edid_filename --profile=profilename.icc --"
@@ -7466,13 +7474,6 @@ msgstr ""
 #: liboyranos_core/oyranos_io_core.c:1319
 #: liboyranos_core/oyranos_io_core.c:1914
 msgid "path is not readable"
-msgstr ""
-
-#: tools/oyranos-monitor.c:166
-msgid ""
-"position in device list. The numbering of monitors starts with zero for the "
-"first device. To get the number of all available devices use \"oyranos-"
-"monitor -l | wc -l\"."
 msgstr ""
 
 #: tools/oyranos-profile.c:311
@@ -7586,11 +7587,6 @@ msgstr ""
 #: tools/oyranos-convert.c:246
 msgid "select floating point 64-bit precision data format"
 msgstr ""
-
-#: tools/oyranos-monitor.c:190
-#, fuzzy
-msgid "select module"
-msgstr "blanco punkto"
 
 #: tools/oyranos-profile.c:332 tools/oyranos-profile.c:334
 msgid "select tag"
@@ -8045,6 +8041,10 @@ msgstr ""
 #, fuzzy
 #~ msgid "module name"
 #~ msgstr "Ekrano"
+
+#, fuzzy
+#~ msgid "oyranos-monitor"
+#~ msgstr "kolora"
 
 #, fuzzy
 #~ msgid "policy name"

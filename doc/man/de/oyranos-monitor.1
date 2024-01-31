@@ -1,6 +1,6 @@
-.TH "oyranos-monitor" 1 "February 22, 2018" "User Commands"
+.TH "oyranos-monitor" 1 "22. Februar 2018" "User Commands"
 .SH NAME
-oyranos-monitor v0.9.7 \- Monitor configuration with Oyranos CMS
+oyranos-monitor v0.9.7 \- Monitorkonfiguration mit dem Oyranos Farbmanagementsystem
 .SH ÜBERSICHT
 \fBoyranos-monitor\fR | \fB\-s\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-v\fR]
 .br
@@ -8,9 +8,9 @@ oyranos-monitor v0.9.7 \- Monitor configuration with Oyranos CMS
 .br
 \fBoyranos-monitor\fR \fB\-e\fR \fB\-u\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-system-wide\fR] [\fB\-v\fR]
 .br
-\fBoyranos-monitor\fR \fB\-l\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-short\fR] [\fB\-\-path\fR] [\fB\-c\fR] [\fB\-v\fR] [\fB\-\-module\fR \fIMODULENAME\fR] [\fB\-2\fR] [\fB\-4\fR]
+\fBoyranos-monitor\fR \fB\-l\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-short\fR] [\fB\-\-path\fR] [\fB\-c\fR] [\fB\-v\fR] [\fB\-\-module\fR \fIMODULE_NAME\fR] [\fB\-2\fR] [\fB\-4\fR]
 .br
-\fBoyranos-monitor\fR \fB\-f\fR \fIedid|icc|edid_icc|vcgt...\fR \fB\-a\fR \fB\-\-modules\fR \fB\-L\fR [\fB\-o\fR \fIOUT_FILENAME|default:stdout\fR] [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-display\fR \fINAME\fR] [\fB\-m\fR] [\fB\-v\fR] [\fB\-2\fR] [\fB\-4\fR]
+\fBoyranos-monitor\fR \fB\-f\fR \fIedid|icc|edid_icc|vcgt...\fR \fB\-a\fR \fB\-\-modules\fR \fB\-L\fR [\fB\-o\fR \fIAUSGABE_DATEINAME|voreingestellt:stdout\fR] [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-display\fR \fINAME\fR] [\fB\-m\fR] [\fB\-v\fR] [\fB\-2\fR] [\fB\-4\fR]
 .br
 \fBoyranos-monitor\fR \fB\-\-daemon\fR [\fB\-v\fR]
 .br
@@ -18,137 +18,141 @@ oyranos-monitor v0.9.7 \- Monitor configuration with Oyranos CMS
 .br
 \fBoyranos-monitor\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-R\fR \fIgui|cli|web|...\fR \fB\-V\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
-The oyranos-monitor programm let you query and set the monitor profile(s) within the Oyranos color management system (CMS). Profiles are stored in a data base, the Oyranos DB.
+Das oyranos-monitor Program erlaubt das Erfragen und setzen von Bildschirmprofilen innerhalb des Oyranos Farbmanagementsystems (CMS). Die Profile werden in einer Datenbank gespeichert, der Oyranos DB.
 .SH OPTIONEN
 .SS
 Setze grundlegende Parameter
 .br
-\fB\-x\fR \fIPIXEL\fR	select the screen at the x position. The Oyranos screens are if possible real devices. A screen position must be unique and not shared by different screens, otherwise it will be ambiguous.
+\fB\-x\fR \fIPIXEL\fR	Wähle die Anzeige an der x Position. Die oyranos Ausgaben, sind wenn möglich Geräte. Überlappende Positionen werden nicht unterstützt.
 .br
-\fB\-y\fR \fIPIXEL\fR	select the screen at the y position.
+\fB\-y\fR \fIPIXEL\fR	Wähle die Anzeige an der y Position.
 .br
-\fB\-d\fR|\fB\-\-device-pos\fR \fINUMMER\fR	position in device list. The numbering of monitors starts with zero for the first device. To get the number of all available devices use "oyranos-monitor -l | wc -l".
+\fB\-d\fR|\fB\-\-device-pos\fR \fINUMMER\fR	Position in Geräteliste.
+.RS
+Die Nummerierung der Bildschirme startet mit Null. Um die Zahl aller verfügbaren Geräte zu erhalten benutze: "oyranos-monitor -l | wc -l".
+.RE
+\fB\-\-display\fR \fINAME\fR	Nutze DISPLAY
 .br
-\fB\-\-display\fR \fINAME\fR	Use DISPLAY
+\fB\-\-module\fR \fIMODULE_NAME\fR	Wähle Modul
+.RS
+Siehe auch die --modules Option.
+.RE
+\fB\-c\fR|\fB\-\-x-color-region-target\fR	Zeige X Color Management (XCM) Geräteprofil
 .br
-\fB\-\-module\fR \fIMODULENAME\fR	select module
-.br
-\fB\-c\fR|\fB\-\-x-color-region-target\fR	show the X Color Management (XCM) device profile
-.br
-\fB\-\-system-wide\fR	do system wide, might need admin or root privileges
+\fB\-\-system-wide\fR	Tue es systemweit, benötigt eventuell Adminrechte
 .br
 \fB\-2\fR|\fB\-\-icc-version-2\fR	Wähle ICC V2 Profile
 .br
 \fB\-4\fR|\fB\-\-icc-version-4\fR	Wähle ICC V4 Profile
 .br
 .SS
-Activate Profiles
+Aktiviere Profile
 \fBoyranos-monitor\fR | \fB\-s\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-v\fR]
 .br
-Set up the X11 server with the Oyranos DB stored monitor ICC profile(s).
+Initialisiere den X11 Server mit dem ICC Geräteprofl aus der Oyranos DB.
 .br
 .sp
 .br
-|	No args
+|	Keine Argumente
 .RS
-Run command without arguments
+Starte Kommando ohne Argumente
 .RE
-\fB\-s\fR|\fB\-\-setup\fR	Setup a ICC profile for all or a selected monitor
+\fB\-s\fR|\fB\-\-setup\fR	Stelle ICC Profil für alle oder einen gewählten Bildschirm
 .br
 .SS
-Set New Profile
+Setze neues Profil
 \fBoyranos-monitor\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-system-wide\fR] [\fB\-v\fR] ICC_DATEINAME
 .br
-Assign a monitor ICC profile to the selected screen and store in the Oyranos DB.
+Füge ein ICC Bildschirmprofil der gewählten Anzeige zu und speichere in der Oyranos DB
 .br
 .sp
 .br
-\fIICC_DATEINAME\fR	ICC device profile for a monitor
+\fIICC_DATEINAME\fR	ICC Farbprofil für einen Bildschirm
 .br
 .SS
-Erase Profile
+Melde Profil ab
 \fBoyranos-monitor\fR \fB\-e\fR \fB\-u\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-system-wide\fR] [\fB\-v\fR]
 .br
-\fB\-e\fR|\fB\-\-erase\fR	Release a ICC profile from a monitor device
+\fB\-e\fR|\fB\-\-erase\fR	Löse ein ICC Profil von einem Bildschirmgerät
 .RS
-Reset the hardware gamma table to the defaults and erase from the Oyranos DB
+Setze die Gerätegammatabelle zu den Vorgabewerten und lösche von der Oyranos DB
 .RE
-\fB\-u\fR|\fB\-\-unset\fR	Release a ICC profile from a monitor device
+\fB\-u\fR|\fB\-\-unset\fR	Löse ein ICC Profil von einem Bildschirmgerät
 .RS
-Reset the hardware gamma table to the defaults.
+Setze die Gerätegammatabelle zu den Vorgabewerten
 .RE
 .SS
-List Devices
-\fBoyranos-monitor\fR \fB\-l\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-short\fR] [\fB\-\-path\fR] [\fB\-c\fR] [\fB\-v\fR] [\fB\-\-module\fR \fIMODULENAME\fR] [\fB\-2\fR] [\fB\-4\fR]
+Geräteliste
+\fBoyranos-monitor\fR \fB\-l\fR [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-short\fR] [\fB\-\-path\fR] [\fB\-c\fR] [\fB\-v\fR] [\fB\-\-module\fR \fIMODULE_NAME\fR] [\fB\-2\fR] [\fB\-4\fR]
 .br
-List names and show details.
+Liste Namen auf und zeige Details.
 .br
 .sp
 .br
-\fB\-l\fR|\fB\-\-list\fR	list devices
+\fB\-l\fR|\fB\-\-list\fR	Zeige Geräteliste
 .br
 \fB\-\-short\fR	Zeige nur den Profilnamen
 .br
 \fB\-\-path\fR	kompletter Pfad- und Dateiname
 .br
 .SS
-Give Informations
-\fBoyranos-monitor\fR \fB\-f\fR \fIedid|icc|edid_icc|vcgt...\fR \fB\-a\fR \fB\-\-modules\fR \fB\-L\fR [\fB\-o\fR \fIOUT_FILENAME|default:stdout\fR] [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-display\fR \fINAME\fR] [\fB\-m\fR] [\fB\-v\fR] [\fB\-2\fR] [\fB\-4\fR]
+Zeige Informationen
+\fBoyranos-monitor\fR \fB\-f\fR \fIedid|icc|edid_icc|vcgt...\fR \fB\-a\fR \fB\-\-modules\fR \fB\-L\fR [\fB\-o\fR \fIAUSGABE_DATEINAME|voreingestellt:stdout\fR] [\fB\-x\fR \fIPIXEL\fR] [\fB\-y\fR \fIPIXEL\fR|\fB\-d\fR \fINUMMER\fR] [\fB\-\-display\fR \fINAME\fR] [\fB\-m\fR] [\fB\-v\fR] [\fB\-2\fR] [\fB\-4\fR]
 .br
-\fB\-f\fR|\fB\-\-format\fR \fIedid|icc|edid_icc|vcgt...\fR	[edid|icc|edid_icc|vcgt] Get data
+\fB\-f\fR|\fB\-\-format\fR \fIedid|icc|edid_icc|vcgt...\fR	Wähle Datenformat
 .RS
-Select a data format. Possible are edid for server side EDID data, icc for a server side ICC profile, edid_icc for a ICC profile created  from  server side  EDID and vcgt for effect and monitor white point merged into a possibly altered VCGT tag. Without the -o/--ouput option the output is written to stdout.
+Wähle ein Datenformat. Möglich sind edid für EDID Daten, icc für ein ICC Profil edid_icc für ein ICC Profil welches aus EDID Daten erzeugt wurde und vcgt für Grafikkartengammatabelle.
 .RE
-\fB\-o\fR|\fB\-\-output\fR \fIOUT_FILENAME|default:stdout\fR	OUT_FILENAME Write data selected by -f/--format to the given filename.
+\fB\-o\fR|\fB\-\-output\fR \fIAUSGABE_DATEINAME|voreingestellt:stdout\fR	Schreibe Daten passend zur -f/--format Option heraus.
 .br
-\fB\-m\fR|\fB\-\-device-meta-tag\fR	(--device-meta-tag) switch is accepted by the -f=icc and -f=edid_icc option. It embeddes device and driver informations about the actual device for
+\fB\-m\fR|\fB\-\-device-meta-tag\fR	(--device-meta-tag) Schalter wird von -f=icc und -f=edid_icc Optionen akzeptiert.
 .RS
-later easier ICC profile to device assignment.  This becomes useful for sharing ICC profiles.
+Bette Geräte Informations in ein Geräteprofil ein. Dies erleichter die passende Profileauswahl sowohl lokal als auch beim Teilen mit anderen Nutzern und Systemen.
 .RE
 \fB\-a\fR|\fB\-\-xcm-active\fR	
 .RS
-Show if X Color Management is active
+Erfrage X Color Management Farbserver Status.
 .RE
 \fB\-\-modules\fR	
 .RS
-List monitor modules
+Bildschirmmodulliste
 .RE
 \fB\-L\fR|\fB\-\-list-taxi\fR	Liste Taxi Profile
 .br
 .SS
-Run Daemon
+Starte Dienst
 \fBoyranos-monitor\fR \fB\-\-daemon\fR [\fB\-v\fR]
 .br
-Keep a session up to date.
+Halte die Sitzung aktuell.
 .br
 .sp
 .br
 \fB\-\-daemon\fR	
 .RS
-Run as daemon to observe monitor hotplug events and update the setup.
+Starte Dienst, um laufend neue Bildschirme zu erkennen und einzustellen.
 .RE
 .SS
-Add Device Meta Data
+Füge Geräte Meta Element hinzu
 \fBoyranos-monitor\fR \fB\-\-add-edid\fR \fIDATEINAME\fR \fB\-\-add-vcgt\fR \fIDATEINAME\fR \fB\-\-profile\fR \fIICC_DATEINAME\fR [\fB\-\-name\fR \fINAME\fR] [\fB\-v\fR]
 .br
-Add device information to a profile for automated selection.
+Füge Geräte Informationen zu einen Profile hinzu für automatisierte Auswahl.
 .br
 .sp
 .br
-\fB\-\-add-edid\fR \fIDATEINAME\fR	EDID Filename
+\fB\-\-add-edid\fR \fIDATEINAME\fR	EDID Dateiname
 .RS
-Embedd EDID keys to a ICC profile as meta tag. Requires --profile.
+Bette EDID Schlüssen in ein ICC Profle als meta Element. Benötigt --profile Option.
 .RE
-\fB\-\-add-vcgt\fR \fIDATEINAME\fR	VCGT Filename
+\fB\-\-add-vcgt\fR \fIDATEINAME\fR	VCGT Dateiname
 .RS
-Embedd VCGT calibration to a ICC profile as vcgt tag. FILENAME can be output from 'xcalib -p'. Requires --profile.
+Bette eine VCGT Kalibration in ein ICC Profil als vcgt Element. DATEINAME kann die Ausgabe von xcalib -p sein. Die Option benötigt --proflile.
 .RE
-\fB\-\-profile\fR \fIICC_DATEINAME\fR	ICC profile.
+\fB\-\-profile\fR \fIICC_DATEINAME\fR	ICC Profil
 .br
-\fB\-\-name\fR \fINAME\fR	String for ICC profile internal name.
+\fB\-\-name\fR \fINAME\fR	Bezeichnung für den Internen Namen eines ICC Profiles
 .br
 .SS
-General Options
+Allgemeine Optionen
 \fBoyranos-monitor\fR \fB\-h\fR\fI[=synopsis|...]\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR \fB\-R\fR \fIgui|cli|web|...\fR \fB\-V\fR [\fB\-v\fR]
 .br
 \fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Zeige Hilfetext an
@@ -191,7 +195,7 @@ Hole Benutzerschnittstelle als Text
 .TP
 DISPLAY
 .br
-On X11 systems the display is selected by this variable.
+Auf X11 Systemen wird die Anzeige mit dieser Variable ausgewählt.
 .TP
 OY_DEBUG
 .br
@@ -208,47 +212,45 @@ OY_MODULE_PATH
 zeige Oyranos zusätzliche Verzeichnisse mit Modulen.
 .SH BEISPIELE
 .TP
-Put the following in a setup script like .xinitrc
-.br
-# select a monitor profile, load the binary blob into X and
-.br
-# fill the VideoCardGammaTable, if appropriate
+Schreibe folgende Zeile in ein Startskript wie .xinitrc
 .br
 oyranos-monitor
+.br
+Wähle ein Bildschirmprofl und lade es in X und fülle die Grafikkartengammatabelle falls Daten dafür enthalten sind.
 .TP
-Assign a ICC profile to a screen
+Weise Farbprofil einem Gerät zu
 .br
 oyranos-monitor -x pos -y pos profilename
 .TP
-Reset a screens hardware LUT in order to do a calibration
+Setze eine Gerätekurve zurück,um z.B. eine Kalibration durchzuführen.
 .br
 oyranos-monitor -e -x pos -y pos profilename
 .TP
-Query the server side, network transparent profile
+Erfrage das serverseitige, netzwerkzugängliche Profil
 .br
 oyranos-monitor -x pos -y pos
 .TP
-List all Oyranos monitor devices
+Liste alle Oyranos Bildschirm Farbgerät auf
 .br
 oyranos-monitor -l
 .TP
-Show the first Oyranos monitor device verbosely
+Zeige das erste Oyranos Bildschirmgerät plaudernd an
 .br
 oyranos-monitor -l -v -d 0
 .TP
-Pass the monitor profile to a external tool
+Sende das Profil einem externen Werkzeug.
 .br
 iccDumpProfile -v "`oyranos-monitor -l -d 0 -c --path`"
 .TP
-List all monitor devices through the oyX1 module
+Liste alle Bildschirmgeräte durch das oyX1 Modul
 .br
 oyranos-monitor -l --module oyX1
 .TP
-Dump data in the format following the -f option
+Drucke Daten aus passend zur -f Option
 .br
 oyranos-monitor -f=[edid|icc|edid_icc] -o=edid.bin -x=pos -y=pos -m
 .TP
-Embedd device informations into ICC meta tag
+Bette Geräteinformationen in ICC meta Block ein
 .br
 oyranos-monitor --add-edid=edid_filename --profile=profilename.icc --name=profilename
 .SH SIEHE AUCH

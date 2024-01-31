@@ -149,12 +149,12 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder in Bildern 
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-I</strong>|<strong>--index</strong>=<em>SEITE</em></td> <td>Seitenauswahl<br />Gib einen Seitenname als Wort oder eine Seitennummer an. -1 listet alle Seitennamen der importierten Datei an. </tr>
 </table>
 
-<h3 id="calib">Show Calibration Curves</h3>
+<h3 id="calib">Zeige Kalibrationskurven</h3>
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-profile-graph</strong></a> <strong>--calib</strong>=<em>DATEI</em> [<strong>-t</strong>=<em>NUMMER</em>] [<strong>-b</strong>] [<strong>-l</strong>=<em>NUMMER</em>] [<strong>-g</strong>] [<strong>-w</strong>=<em>NUMMER</em>] [<strong>-T</strong>] [<strong>-o</strong>=<em>-|DATEI</em>] [<strong>-v</strong>] [<strong>-z</strong>]
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--calib</strong>=<em>DATEI</em></td> <td>VCGT Calibration Input </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--calib</strong>=<em>DATEI</em></td> <td>VCGT Kalibrations Eingabe </tr>
 </table>
 
 
