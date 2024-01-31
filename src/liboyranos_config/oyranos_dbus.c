@@ -55,7 +55,6 @@ void oyDBusSendPing( oySCOPE_e scope, const char * keyName )
     fprintf (stderr, "Failed to open connection to \"%s\" message bus: %s\n", (scope == oySCOPE_SYSTEM) ? "system" : "session",
              error.message?error.message:"----");
     if(connection) dbus_error_free( &error );
-    if(elkey) free(elkey);
     goto oyDBusSendPing_clean;
   }
   if(oy_debug) fputs( oyjlBT(0), stderr );
