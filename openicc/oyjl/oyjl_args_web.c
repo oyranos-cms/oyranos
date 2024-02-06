@@ -1087,10 +1087,10 @@ const char * oyjl_args_web_file_name_security_feature = NULL;
   if( !error && \
       (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind(oyjl_args_web_file_name_security_feature, ",", policy_, 0,NULL, 0,0) >= 0) && \
       strstr(fn, policy) ) { error = 1; error_msg = policy_ " - " description; } \
-  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        %s - %s\n", oyjlTermColor(oyjlITALIC, policy_), description ); \
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        %s\t- %s\n", oyjlTermColor(oyjlITALIC, policy_), description ); \
 }
 #define OYJL_USE_POLICY(policy_, description) \
-  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        %s - %s\n", oyjlTermColor(oyjlITALIC, policy_), description ); \
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        %s\t- %s\n", oyjlTermColor(oyjlITALIC, policy_), description ); \
   if( !error && \
       (!oyjl_args_web_file_name_security_feature || oyjlStringSplitFind(oyjl_args_web_file_name_security_feature, ",", policy_, 0, NULL, 0,0) >= 0) )
 int oyjl_args_web_debug = 0;
@@ -1173,7 +1173,7 @@ int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
       }
     }
   }
-  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        %s - allow custom /my/path exceptions, overriding no_above or no_hidden rules: e.g. =check,no_hidden,allow_/home/user/.local/share\n", oyjlTermColor(oyjlITALIC,"allow_/my/path") );
+  if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "        %s\t- allow custom /my/path exceptions, overriding no_above or no_hidden rules: e.g. =check,no_hidden,allow_/home/user/.local/share\n", oyjlTermColor(oyjlITALIC,"allow_/my/path") );
 
   if(hidden)
   { error = 1; error_msg = ". - no hidden file and directory"; }
@@ -1655,21 +1655,21 @@ int oyjlArgsWebStart__               ( int                 argc,
     if(debug)
       oyjlWriteFile("oyjl_args_web-debug.html", get_page, strlen(get_page+1) );
     struct oyjl_mhd_context_struct context = { get_page, sec, "/", callback, argv[0], debug, ignore, css_text, css2_text };
-#define OYJL_WEB_OPT_HELP( bold_, txt_ ) fprintf( stderr, "      %s: %s\n", oyjlTermColor(oyjlBOLD, bold_), txt_ )
-#define OYJL_WEB_ARG_HELP( bold_, txt_ ) fprintf( stderr, "        =%s - %s\n", oyjlTermColor(oyjlITALIC, bold_), txt_ )
+#define OYJL_WEB_OPT_HELP( bold_, txt_, has_args) fprintf( stderr, "      %s%s\t%s\n", oyjlTermColor(oyjlBOLD, bold_), has_args?"=":"", txt_ )
+#define OYJL_WEB_ARG_HELP( bold_, txt_ ) fprintf( stderr, "        =%s\t- %s\n", oyjlTermColor(oyjlITALIC, bold_), txt_ )
     if(help)
     {
       const char * arg = "oyjl-list";
-      fprintf( stderr, "  %s:\n", oyjlTermColor(oyjlUNDERLINE,"Help") );
+      fprintf( stderr, "  %s:\n", oyjlTermColor(oyjlUNDERLINE,_("Help")) );
       fprintf( stderr, "    %s\n\n",
         oyjlTermColor(oyjlBOLD,"--render=web:port=8888:https_key=filename.tls:https_cert=filename.tls:css=first.css:css=second.css:security=level:ignore=o,option") );
-      OYJL_WEB_OPT_HELP( "port", "select the port for the host; default is 8888" );
-      OYJL_WEB_OPT_HELP( "https_key", "adds a https key file; default is none, if no filename is provided it uses a self certified inbuild key" );
-      OYJL_WEB_OPT_HELP( "https_cert", "adds a certificate for https; default is none, if no filename is provided it uses a self certified inbuild certificate" );
-      OYJL_WEB_OPT_HELP( "css", "can by called two times to add CSS layout file(s), which will by embedded into the HTML code, if it has no arg, it uses a default" );
-      OYJL_WEB_OPT_HELP( "ignore", "add comma separated list of skip options, which are marked in HTML and get not accepted, e.g. ignore=\"o,option,v,verbose" );
-      OYJL_WEB_OPT_HELP( "help", "show this help text" );
-      OYJL_WEB_OPT_HELP( "security", "specifies the security level used; default is readonly inactive web page generation" );
+      OYJL_WEB_OPT_HELP( "port", "select the port for the host; default is 8888", 1 );
+      OYJL_WEB_OPT_HELP( "https_key", "adds a https key file; default is none, if no filename is provided it uses a self certified inbuild key", 1 );
+      OYJL_WEB_OPT_HELP( "https_cert", "adds a certificate for https; default is none, if no filename is provided it uses a self certified inbuild certificate", 1 );
+      OYJL_WEB_OPT_HELP( "css", "can by called two times to add CSS layout file(s), which will by embedded into the HTML code, if it has no arg, it uses a default", 1 );
+      OYJL_WEB_OPT_HELP( "ignore", "add comma separated list of skip options, which are marked in HTML and get not accepted, e.g. ignore=\"o,option,v,verbose",1  );
+      OYJL_WEB_OPT_HELP( "help", _("Print help text"), 0 );
+      OYJL_WEB_OPT_HELP( "security", "specifies the security level used; default is readonly inactive web page generation", 1 );
       OYJL_WEB_ARG_HELP( "readonly", "is passive and default" );
       OYJL_WEB_ARG_HELP( "interactive", "contains interactive forms element and returns the respond JSON" );
       OYJL_WEB_ARG_HELP( "check_read", "for this level and above set oyjlArgsWebFileNameSecurity() for oyjlFileRead() and calls the specified callback from oyjlArgsRender(callback)" );
@@ -1700,10 +1700,10 @@ int oyjlArgsWebStart__               ( int                 argc,
       }
     }
     fprintf( stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
-    fprintf( stderr, "port:%s%s%s%s%s %s ",
+    fprintf( stderr, "port=%s%s%s%s%s %s ",
         oyjlTermColorF( oyjl_args_web_run==1?oyjlGREEN:oyjlBLUE, "%d", port ),
-        https_key?" https_key:":"", https_key?https_key:"",
-        https_cert?" https_cert:":"", https_cert?https_cert:"",
+        https_key?" https_key=":"", https_key?https_key:"",
+        https_cert?" https_cert=":"", https_cert?https_cert:"",
         tls_flag?"MHD_USE_TLS":https_key||https_cert?"noTLS:need both https_key and https_cert filenames":"" );
     {
       const char * sec_rules = NULL;
@@ -1711,11 +1711,11 @@ int oyjlArgsWebStart__               ( int                 argc,
         sec_rules = oyjl_args_web_file_name_security_feature;
       if(!sec_rules)
         sec_rules = sec == oyjlSECURITY_LAZY?"lazy":sec==oyjlSECURITY_INTERACTIVE?"interactive":sec==oyjlSECURITY_CHECK?"check":sec==oyjlSECURITY_CHECK_READ?"check_read":sec==oyjlSECURITY_CHECK_WRITE?"check_write":"readonly";
-      fprintf( stderr, "sec:%s ", oyjlTermColor(oyjlITALIC,sec_rules) );
+      fprintf( stderr, "security=%s ", oyjlTermColor(oyjlITALIC,sec_rules) );
     }
-    fprintf( stderr, "css:%s ", OYJL_E(oyjlTermColor(css_text?oyjlITALIC:oyjlRED,css),"") );
-    fprintf( stderr, "css(2):%s ", OYJL_E(oyjlTermColor(css2_text?oyjlITALIC:oyjlRED,css2),"") );
-    fprintf( stderr, "ignore:%s ", OYJL_E(oyjlTermColor(oyjlITALIC,ignore),"") );
+    fprintf( stderr, "css=%s ", OYJL_E(oyjlTermColor(css_text?oyjlITALIC:oyjlRED,css),"") );
+    fprintf( stderr, "css(2)=%s ", OYJL_E(oyjlTermColor(css2_text?oyjlITALIC:oyjlRED,css2),"") );
+    fprintf( stderr, "ignore=%s ", OYJL_E(oyjlTermColor(oyjlITALIC,ignore),"") );
     fprintf( stderr, "%s %s\n", oyjl_args_web_run==1?"connect to":"simulate", oyjlTermColorF( oyjl_args_web_run==1?oyjlBOLD:oyjlBLUE, "%s//localhost:%d", tls_flag?"https":"http", port) );
 
     if(oyjl_args_web_run == 1)

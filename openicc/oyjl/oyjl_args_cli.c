@@ -141,6 +141,23 @@ int oyjlArgsCliStart__               ( int                 argc,
   oyjl_val root = NULL;
   char error_buffer[256] = {0};
   int r = 0;
+
+  if(ui)
+  {
+    const char * value = NULL;
+    oyjlOptions_GetResult( ui->opts, "render", &value, 0, 0 );
+    if(!value) oyjlOptions_GetResult( ui->opts, "R", &value, 0, 0 );
+    if(debug)
+      fprintf( stderr, "render=\"%s\"\n", value );
+    if(oyjlStringSplitFind(value, ":", "help", 0, NULL, 0,0) >= 0)
+    {
+      fprintf( stderr, "  %s:\n", oyjlTermColor(oyjlUNDERLINE, _("Help")) );
+      fprintf( stderr, "    %s\n\n", oyjlTermColor(oyjlBOLD,  "--render=cli:help") );
+      fprintf( stderr, "      %s\t%s\n", oyjlTermColor(oyjlBOLD, "help"), _("Print help text") );
+      return 0;
+    }
+  }
+
   if( json && strlen( json ) )
   {
     r = oyjlIsFile( json, "r", OYJL_NO_CHECK, NULL, 0 );

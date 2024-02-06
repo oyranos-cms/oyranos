@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-01-31 14:51+0100\n"
+"POT-Creation-Date: 2024-02-06 07:37+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -291,7 +291,7 @@ msgstr ""
 msgid "Decimal Separator"
 msgstr ""
 
-#: oyjl_args.c:6115 oyjl_args_cli.c:271 oyjl_args_tree.c:605
+#: oyjl_args.c:6115 oyjl_args_cli.c:288 oyjl_args_tree.c:605
 #: oyjl_args_web.c:1501
 #, fuzzy
 msgid "Description"
@@ -541,9 +541,9 @@ msgstr ""
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl_args.c:4278 oyjl_web.c:78 test-args.c:416 test-args.c:977
-#: test-args.c:1092 test-core.c:1239 test.c:1990 test.c:2127
-#: oyjl-args-qml/mini-app.c:184
+#: oyjl_args.c:4278 oyjl_args_cli.c:154 oyjl_args_web.c:1663 oyjl_web.c:78
+#: test-args.c:416 test-args.c:977 test-args.c:1092 test-core.c:1239
+#: test.c:1990 test.c:2127 oyjl-args-qml/mini-app.c:184
 msgid "Help"
 msgstr ""
 
@@ -1077,7 +1077,7 @@ msgstr ""
 msgid "Print help for command line style interface"
 msgstr ""
 
-#: oyjl_args.c:3034 oyjl_args.c:4281
+#: oyjl_args.c:3034 oyjl_args.c:4281 oyjl_args_cli.c:156 oyjl_args_web.c:1671
 #, fuzzy
 msgid "Print help text"
 msgstr "verda"
@@ -1326,6 +1326,12 @@ msgstr ""
 
 #: oyjl_translate.c:234
 msgid "Text Domain List"
+msgstr ""
+
+#: oyjl-args.c:116
+msgid ""
+"The -R option can in parts accept additional sub arguments to the base "
+"argument. For an overview use the help subargument oyjl-args -R=web:help."
 msgstr ""
 
 #: oyjl-args.c:77
@@ -1579,7 +1585,7 @@ msgstr ""
 msgid "Url"
 msgstr ""
 
-#: oyjl_args.c:6134 oyjl_args_cli.c:276 oyjl_args_tree.c:607
+#: oyjl_args.c:6134 oyjl_args_cli.c:293 oyjl_args_tree.c:607
 #: oyjl_translate.c:320
 msgid "Usage"
 msgstr ""
