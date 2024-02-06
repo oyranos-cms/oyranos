@@ -39,7 +39,7 @@ Werkzeug um Benutzerschnittstellen in JSON von *-X export* nach Quelltext zu üb
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyjl-args</strong></a> <strong>-h</strong><em>[=synopsis|...]</em> <strong>-X</strong>=<em>json|json+command|man|markdown</em> <strong>-R</strong>=<em>gui|cli|web|...</em> <strong>-V</strong> [<strong>-i</strong>=<em>DATEINAME</em>] [<strong>-v</strong>]
 
-&nbsp;&nbsp;The -R option can in parts accept additional sub arguments to the base argument. For an overview use the help subargument oyjl-args -R=web:help.
+&nbsp;&nbsp;Die -R Option unterstützt teilweise zusätzliche Unterargumente. Für einen Überblick, versuchen Sie das 'help' Unterargument: oyjl-args -R=web:help.
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Zeige Hilfetext an<br />Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
