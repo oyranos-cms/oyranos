@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2019-2023  Kai-Uwe Behrmann
+ *  Copyright (C) 2019-2024  Kai-Uwe Behrmann
  *
  *  @brief    Oyjl Args Tool
  *  @internal
@@ -113,7 +113,7 @@ int myMain( int argc, const char ** argv )
   oyjlOptionGroup_s groups[] = {
   /* type,   flags, name,      description,          help, mandatory, optional, detail */
     {"oiwg", 0,     _("Convert"),_("Generate source code"),NULL, "i", "c-stand-alone,completion-bash,v","i,c-stand-alone,completion-bash", "oiwg/comment=parsed and checked with -i option" }, /* parsed and checked with -i option */
-    {"oiwg", 0,     _("Misc"), _("General options"), NULL, "h,X,R,V",   "i,v",      "h,X,R,V,v", "comment=just show in documentation" }, /* just show in documentation */
+    {"oiwg", 0,     _("Misc"), _("General options"), _("The -R option can in parts accept additional sub arguments to the base argument. For an overview use the help subargument oyjl-args -R=web:help."), "h,X,R,V",   "i,v",      "h,X,R,V,v", "comment=just show in documentation" }, /* just show in documentation */
     {"",0,0,0,0,0,0,0,0}
   };
 

@@ -244,13 +244,13 @@
     <message>
         <location filename="../main2.cpp" line="96"/>
         <source>QML Options Renderer</source>
-        <translation type="unfinished"></translation>
+        <translation>QML Optionen Betrachter</translation>
     </message>
     <message>
         <location filename="../main2.cpp" line="101"/>
         <location filename="../main2.cpp" line="105"/>
         <source>path/to/options.json</source>
-        <translation type="unfinished"></translation>
+        <translation>pfad/nach/optionen.json</translation>
     </message>
     <message>
         <location filename="../main2.cpp" line="104"/>
@@ -294,6 +294,10 @@
         <location filename="../main2.cpp" line="143"/>
         <source>is a QML renderer for Oyjl JSON options.</source>
         <translation>ist ein Betrachter für Oyjl JSON Optionen.</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Hilfe</translation>
     </message>
 </context>
 </TS>

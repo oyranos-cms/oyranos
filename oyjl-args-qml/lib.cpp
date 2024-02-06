@@ -261,6 +261,18 @@ int oyjlArgsQmlStart__               ( int                 argc,
       if(module)
         LOG( QString("use generated UI JSON") );
       root = module;
+      const char * value = NULL;
+      oyjlOptions_GetResult( ui->opts, "render", &value, 0, 0 );
+      if(!value) oyjlOptions_GetResult( ui->opts, "R", &value, 0, 0 );
+      fprintf( stderr, "render=\"%s\"\n", value );
+      if(oyjlStringSplitFind(value, ":", "help", 0, NULL, 0,0) >= 0)
+      {
+        fprintf( stderr, "  %s:\n", oyjlTermColor(oyjlUNDERLINE, QCoreApplication::translate("main", "Help").toLocal8Bit().data()) );
+        fprintf( stderr, "    %s\n\n", oyjlTermColor(oyjlBOLD, "--render=qml:start=instant") );
+        fprintf( stderr, "      %s=\t%s\n", oyjlTermColor(oyjlBOLD, "start"), QCoreApplication::translate("main", "Select start mode; optional, default is interactive").toLocal8Bit().data() );
+        fprintf( stderr, "        =%s\t- %s\n", oyjlTermColor( oyjlITALIC, "instant"), QCoreApplication::translate("main", "Execute the tool without previous interaction using the provided arguments and display results.").toLocal8Bit().data() );
+        return 0;
+      }
     }
 
     // get our defaults
