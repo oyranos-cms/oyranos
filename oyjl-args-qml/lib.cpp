@@ -237,6 +237,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
       LOG( QString("Found Export org/freedesktop/oyjl/ui: ") + QString::number(strlen(json)) );
     }
 
+    const char * renderer_value = NULL;
     if(found == 0)
     {
       char * json = oyjlUi_ToJson( ui, 0 ); // generate JSON from ui data struct
@@ -261,11 +262,10 @@ int oyjlArgsQmlStart__               ( int                 argc,
       if(module)
         LOG( QString("use generated UI JSON") );
       root = module;
-      const char * value = NULL;
-      oyjlOptions_GetResult( ui->opts, "render", &value, 0, 0 );
-      if(!value) oyjlOptions_GetResult( ui->opts, "R", &value, 0, 0 );
-      fprintf( stderr, "render=\"%s\"\n", value );
-      if(oyjlStringSplitFind(value, ":", "help", 0, NULL, 0,0) >= 0)
+      oyjlOptions_GetResult( ui->opts, "render", &renderer_value, 0, 0 );
+      if(!renderer_value) oyjlOptions_GetResult( ui->opts, "R", &renderer_value, 0, 0 );
+      fprintf( stderr, "render=\"%s\"\n", renderer_value );
+      if(oyjlStringSplitFind(renderer_value, ":", "help", 0, NULL, 0,0) >= 0)
       {
         fprintf( stderr, "  %s:\n", oyjlTermColor(oyjlUNDERLINE, QCoreApplication::translate("main", "Help").toLocal8Bit().data()) );
         fprintf( stderr, "    %s\n\n", oyjlTermColor(oyjlBOLD, "--render=qml:start=instant") );
@@ -285,6 +285,9 @@ int oyjlArgsQmlStart__               ( int                 argc,
       oyjlUiJsonSetDefaults( root, defaults );
       oyjlTreeFree( defaults ); defaults = NULL;
     }
+
+    if(oyjlStringSplitFind(renderer_value, ":", "start=instant", 0, NULL, 0,0) >= 0)
+      oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "instant", "start" );
 
     char * t = oyjlTreeToText( root, OYJL_JSON );
     if(t)
