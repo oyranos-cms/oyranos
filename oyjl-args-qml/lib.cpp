@@ -295,6 +295,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
 
 
     oyjl_val c = NULL;
+    int set_commands_inject = 0;
     if( commands )
     {
       int state = 0;
@@ -306,10 +307,14 @@ int oyjlArgsQmlStart__               ( int                 argc,
       oyjlTreeSetStringF( c, OYJL_CREATE_NEW, ui->nick, "command_set" );
     }
     if(oyjlStringSplitFind(renderer_value, ":", "start=instant", 0, NULL, 0,0) >= 0)
+    {
       oyjlTreeSetStringF( c, OYJL_CREATE_NEW, "instant", "start" );
+      set_commands_inject = 0x01;
+    }
     t = oyjlTreeToText( c, OYJL_JSON );
     if(c) { oyjlTreeFree( c ); c = NULL; }
-    fprintf( stderr, OYJL_DBG_FORMAT "setCommands(=\"%s\")\n", OYJL_DBG_ARGS, t );
+    if(set_commands_inject)
+      fprintf( stderr, OYJL_DBG_FORMAT "inject into setCommands(%s)\n", OYJL_DBG_ARGS, set_commands_inject&0x01?"start=instant":"" );
     mgr.setCommands( t );
     free(t); t = NULL;
 
