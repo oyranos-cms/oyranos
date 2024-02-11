@@ -95,6 +95,14 @@ AppWindow {
                 command_set_option = c.command_set_option
             else
                 command_set_option = ""
+            if( typeof c.start !== "undefined" )
+            {
+                if( c.start === "instant" )
+                {
+                    var app_args = appData.plainJSON(appData.getArgs());
+                    interactiveCallback( "oyjl-history", app_args, "string", "", "" )
+                }
+            }
         }
 
         statusText = qsTr("commands enabled") + " = " + variable
