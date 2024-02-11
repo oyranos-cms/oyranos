@@ -43,7 +43,7 @@ char **    oyjlStringSplit2          ( const char        * text,
                                        int               * count,
                                        int              ** index,
                                        void*            (* alloc)(size_t));
-#define OYJL_COMPARE_CASE              0x01
+#define OYJL_COMPARE_CASE              0x01           /**< case insensitive like with strcasecmp() */
 #define OYJL_COMPARE_LAZY              0x02
 #define OYJL_COMPARE_STARTS_WITH       0x04
 #define OYJL_REMOVE                    0x08
