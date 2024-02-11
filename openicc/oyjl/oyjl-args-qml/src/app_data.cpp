@@ -320,12 +320,19 @@ void AppData::setOption(QString key, QString value, int current_group_id)
 {
     char * k = oyjlStringCopy(key.toLocal8Bit().constData(), malloc);
     char * v = oyjlStringCopy(value.toLocal8Bit().constData(), malloc);
+
+    /* ignore call to this */
+    if((strcmp(k,"R")==0 || strcmp(k,"render")==0) &&
+       (oyjlStringStartsWith(v,"gui",OYJL_COMPARE_CASE) || oyjlStringStartsWith(v,"qml",OYJL_COMPARE_CASE)))
+       goto AppData_setOption_clean;
+
     if(!m_model)
         m_model = oyjlTreeNew(k);
 
     if(m_model_cli) { oyjlTreeFree(m_model_cli); m_model_cli = NULL; }
     m_model_cli = oyjlUiJsonSetOption( m_ui, m_model, k,v, current_group_id, 0 );
 
+AppData_setOption_clean:
     if(k) { free(k); k = NULL; }
     if(v) { free(v); v = NULL; }
 }
