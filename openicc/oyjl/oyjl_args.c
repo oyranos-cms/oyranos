@@ -4081,7 +4081,7 @@ char * oyjlOptions_PrintHelpSynopsis_( oyjlOptions_s  *    opts,
   int opt_group = 0;
   int gstyle = style | g->flags;
   char next_delimiter, at_delimiter = '\000';
-  const char * prog = opts->argv[0];
+  const char * prog = opts->argv ? opts->argv[0] : NULL;
   char * text = oyjlStringCopy( "", malloc );
   if(prog && strchr(prog,'/'))
     prog = strrchr(prog,'/') + 1;
@@ -4091,7 +4091,7 @@ char * oyjlOptions_PrintHelpSynopsis_( oyjlOptions_s  *    opts,
   if( m || on )
   {
     if(style & oyjlOPTIONSTYLE_MAN)
-      oyjlStringAdd( &text, malloc, free, "\\fB%s\\fR", prog );
+      oyjlStringAdd( &text, malloc, free, "\\fB%s\\fR", prog?prog:"----" );
     else if(style & oyjlOPTIONSTYLE_MARKDOWN)
     {
       if(style & oyjlOPTIONSTYLE_LINK_SYNOPSIS)
