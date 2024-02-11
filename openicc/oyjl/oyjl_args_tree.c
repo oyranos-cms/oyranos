@@ -787,8 +787,6 @@ oyjl_val     oyjlUi_ToJson_          ( oyjlUi_s          * ui )
             for(l = 0; l < count; ++l)
             {
               const char * opt = results[l];
-              if(strchr(opt, '='))
-                opt = strchr(opt, '=') + 1;
               oyjlStringAdd( &changed, 0,0, "%s%s", l?",":"", opt );
             }
             if(changed)
