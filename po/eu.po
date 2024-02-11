@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-02-06 07:37+0100\n"
+"POT-Creation-Date: 2024-02-11 12:20+0100\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -840,7 +840,7 @@ msgstr ""
 msgid "Name"
 msgstr "Izena"
 
-#: oyjl_args_tree.c:966
+#: oyjl_args_tree.c:964
 msgid "No"
 msgstr ""
 
@@ -1708,7 +1708,7 @@ msgstr "Pausarazi"
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:966
+#: oyjl_args_tree.c:964
 msgid "Yes"
 msgstr "Bai"
 

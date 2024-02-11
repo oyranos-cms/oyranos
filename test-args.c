@@ -52,8 +52,8 @@ extern oyjlMessage_f oyjlMessage_p;
 #include "oyjl_args.c"
 
 void oyjlLibRelease();
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyjl Args Test Program\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Args Test Program finished\n\n"); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub);
+#define OYJL_TEST_MAIN_SETUP  printf("\n    %s Program\n", oyjlTermColor(oyjlBOLD, "OyjlArgs Test"));
+#define OYJL_TEST_MAIN_FINISH printf("\n    %s Program finished\n\n", oyjlTermColor(oyjlBOLD, "OyjlArgs Test")); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub);
 #define OYJL_TEST_NAME "test-args"
 #include "oyjl_test_main.h"
 #define progNAME( name ) name
@@ -1009,7 +1009,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && (size == 471 || size == 359))
+  if(!ui && (size == 511 || size == 359))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - sub command followed by unbound    %d", size );
   } else
@@ -1029,7 +1029,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && (size == 471 || size == 359))
+  if(!ui && (size == 511 || size == 359))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - mandatory sub command followed by unbound" );
   } else
@@ -1053,7 +1053,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && (size == 471 || size == 359))
+  if(!ui && (size == 511 || size == 359))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - mandatory integer sub command followed by unbound" );
   } else
@@ -1073,7 +1073,7 @@ oyjlTESTRESULT_e testArgs()
   fclose(oyjl_help_zout); oyjl_help_zout = NULL;
   size = 0;
   text = oyjlReadFile( fn , &size );
-  if(!ui && (size == 894 || size == 638))
+  if(!ui && (size == 934 || size == 638))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS, 
     "help - mandatory integer sub command      %d", size );
   } else

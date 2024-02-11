@@ -30,8 +30,8 @@
   TEST_RUN( testFunction, "Functions", 1 );
 
 void oyjlLibRelease();
-#define OYJL_TEST_MAIN_SETUP  printf("\n    OyjlCore Test Program\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    OyjlCore Test Program finished\n\n"); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub);
+#define OYJL_TEST_MAIN_SETUP  printf("\n    %s Program\n", oyjlTermColor(oyjlBOLD, "OyjlCore Test"));
+#define OYJL_TEST_MAIN_FINISH printf("\n    %s Program finished\n\n", oyjlTermColor(oyjlBOLD, "OyjlCore Test")); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub);
 #define OYJL_TEST_NAME "test-core"
 #include "oyjl.h"
 #include "oyjl_test_main.h"

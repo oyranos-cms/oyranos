@@ -15,8 +15,8 @@
   TEST_RUN( testA, "A Test", 1 ); \
   TEST_RUN( testB, "B Test", 1 );
 
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Test Program\n");
-#define OYJL_TEST_MAIN_FINISH printf("\n    Test Program finished\n\n"); if(oyjl_print_sub) free(oyjl_print_sub);
+#define OYJL_TEST_MAIN_SETUP  printf("\n    %s Program\n", oyjlTermColor_(oyjlBOLD, "OyjlTest"));
+#define OYJL_TEST_MAIN_FINISH printf("\n    %s Program finished\n\n", oyjlTermColor_(oyjlBOLD, "OyjlTest")); if(oyjl_print_sub) free(oyjl_print_sub);
 #include "oyjl_test_main.h"
 
 int local_debug = 0;

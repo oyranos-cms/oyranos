@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-02-06 07:37+0100\n"
+"POT-Creation-Date: 2024-02-11 12:20+0100\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -794,7 +794,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: oyjl_args_tree.c:966
+#: oyjl_args_tree.c:964
 msgid "No"
 msgstr ""
 
@@ -1618,7 +1618,7 @@ msgstr ""
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:966
+#: oyjl_args_tree.c:964
 msgid "Yes"
 msgstr ""
 

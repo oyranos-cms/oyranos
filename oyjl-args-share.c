@@ -3,7 +3,7 @@
  *  oyjl - UI helpers shared code
  *
  *  @par Copyright:
- *            2018-2022 (C) Kai-Uwe Behrmann
+ *            2018-2024 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl argument handling with libOyjlCore
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
