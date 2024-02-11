@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-02-06 07:37+0100\n"
+"POT-Creation-Date: 2024-02-11 12:20+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -837,7 +837,7 @@ msgstr ""
 msgid "Name"
 msgstr "Jméno"
 
-#: oyjl_args_tree.c:966
+#: oyjl_args_tree.c:964
 msgid "No"
 msgstr "Ne"
 
@@ -1713,7 +1713,7 @@ msgstr "Cesty"
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:966
+#: oyjl_args_tree.c:964
 msgid "Yes"
 msgstr "Ano"
 

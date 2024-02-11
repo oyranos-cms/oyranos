@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-02-06 07:37+0100\n"
+"POT-Creation-Date: 2024-02-11 12:20+0100\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  <eo@li.org>\n"
@@ -812,7 +812,7 @@ msgstr ""
 msgid "Name"
 msgstr "nomo"
 
-#: oyjl_args_tree.c:966
+#: oyjl_args_tree.c:964
 msgid "No"
 msgstr ""
 
@@ -1654,7 +1654,7 @@ msgstr ""
 msgid "YAML"
 msgstr ""
 
-#: oyjl_args_tree.c:966
+#: oyjl_args_tree.c:964
 msgid "Yes"
 msgstr "Jes"
 

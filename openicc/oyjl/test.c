@@ -60,14 +60,14 @@
 #endif
 
 void oyjlLibRelease();
-#define OYJL_TEST_MAIN_SETUP  printf("\n    Oyjl Test Program\n");
+#define OYJL_TEST_MAIN_SETUP  printf("\n    %s Program\n", oyjlTermColor(oyjlBOLD, "Oyjl Test"));
 
 #include "oyjl.h"
 #ifdef OYJL_HAVE_LIBXML2
 #include <libxml/parser.h>
-# define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Test Program finished\n\n"); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub); xmlCleanupParser();
+# define OYJL_TEST_MAIN_FINISH printf("\n    %s Program finished\n\n", oyjlTermColor(oyjlBOLD, "Oyjl Test")); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub); xmlCleanupParser();
 #else
-# define OYJL_TEST_MAIN_FINISH printf("\n    Oyjl Test Program finished\n\n"); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub);
+# define OYJL_TEST_MAIN_FINISH printf("\n    %s Program finished\n\n", oyjlTermColor(oyjlBOLD, "Oyjl Test")); oyjlLibRelease(); if(oyjl_print_sub) free(oyjl_print_sub);
 #endif
 #include "oyjl_test_main.h"
 
