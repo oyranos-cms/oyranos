@@ -264,7 +264,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
       root = module;
       oyjlOptions_GetResult( ui->opts, "render", &renderer_value, 0, 0 );
       if(!renderer_value) oyjlOptions_GetResult( ui->opts, "R", &renderer_value, 0, 0 );
-      fprintf( stderr, "render=\"%s\"\n", renderer_value );
+      fprintf( stderr, OYJL_DBG_FORMAT "render=\"%s\"\n", OYJL_DBG_ARGS, renderer_value );
       if(oyjlStringSplitFind(renderer_value, ":", "help", 0, NULL, 0,0) >= 0)
       {
         fprintf( stderr, "  %s:\n", oyjlTermColor(oyjlUNDERLINE, QCoreApplication::translate("main", "Help").toLocal8Bit().data()) );
@@ -286,9 +286,6 @@ int oyjlArgsQmlStart__               ( int                 argc,
       oyjlTreeFree( defaults ); defaults = NULL;
     }
 
-    if(oyjlStringSplitFind(renderer_value, ":", "start=instant", 0, NULL, 0,0) >= 0)
-      oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "instant", "start" );
-
     char * t = oyjlTreeToText( root, OYJL_JSON );
     if(t)
     {
@@ -296,14 +293,25 @@ int oyjlArgsQmlStart__               ( int                 argc,
       free(t); t = NULL;
     }
 
+
+    oyjl_val c = NULL;
     if( commands )
-      mgr.setCommands( commands );
+    {
+      int state = 0;
+      c = oyjlTreeParse2( commands, 0, __func__, &state );
+    }
     else
     {
-      t = NULL; oyjlStringAdd( &t, 0,0, "{\"command_set\": \"%s\"}", ui->nick );
-      mgr.setCommands(t);
-      free(t);
+      c = oyjlTreeNew("");
+      oyjlTreeSetStringF( c, OYJL_CREATE_NEW, ui->nick, "command_set" );
     }
+    if(oyjlStringSplitFind(renderer_value, ":", "start=instant", 0, NULL, 0,0) >= 0)
+      oyjlTreeSetStringF( c, OYJL_CREATE_NEW, "instant", "start" );
+    t = oyjlTreeToText( c, OYJL_JSON );
+    if(c) { oyjlTreeFree( c ); c = NULL; }
+    fprintf( stderr, OYJL_DBG_FORMAT "setCommands(=\"%s\")\n", OYJL_DBG_ARGS, t );
+    mgr.setCommands( t );
+    free(t); t = NULL;
 
     if( output )
       mgr.setOutput( output );
