@@ -52,6 +52,9 @@
  *                                     - OYJL_COMPARE_STARTS_WITH search for sub string using oyjlStringStartsWith()
  *                                     - OYJL_REGEXP regex compare using oyjlRegExpFind()
  *                                     - OYJL_REVERSE swap the matching arguments and try to find a match from set for pattern
+ *  @param[out]    result              results depending on flags; optional
+ *  @param[in]     alloc               custom malloc; optional
+ *  @param[in]     deAlloc             custom free; optional
  *  @return                            index of pattern match in list,
  *                                     - -1 if nothing is found
  * */
@@ -141,6 +144,8 @@ int        oyjlStringSplitFind       ( const char        * set,
         }
         else if(pos == -1 && flags & OYJL_REMOVE)
           oyjlStringAdd( &new_set, alloc,deAlloc,0, "%s%s", i&&new_set?",":"", val );
+        else if(!(flags & OYJL_REMOVE) && result && new_set == NULL && *result == NULL && pos != -1)
+          *result = oyjlStringCopy( val, alloc );
       }
 
       if(flags & OYJL_REMOVE)
