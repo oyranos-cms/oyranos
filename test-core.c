@@ -647,6 +647,29 @@ oyjlTESTRESULT_e testString ()
   }
   if(doubles) { free(doubles); } doubles = NULL;
 
+
+
+  int found = oyjlStringSplitFind( "gui:start=instant:repeat_ms=200", ":", "repeat_ms", OYJL_COMPARE_STARTS_WITH, &t, malloc, free );
+  if( found >= 0 &&
+      t && strcmp(strchr(t,'=')+1,"200") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringSplitFind(\"ui:start=instant:repeat_ms=200\",\"repeat_ms\",OYJL_COMPARE_STARTS_WITH) found = %d t = \"%s\"", found, t );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringSplitFind(\"ui:start=instant:repeat_ms=200\",\"repeat_ms\",OYJL_COMPARE_STARTS_WITH) found = %d t = \"%s\"", found, t );
+  }
+  if(t) { free(t); t = NULL; }
+
+  found = oyjlStringSplitFind( "gui:start=instant:repeat_ms=200", ":", "start=instant", 0, NULL, 0,0 );
+  if( found == 1 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringSplitFind(\"ui:start=instant:repeat_ms=200\",\"start=instant\") found = %d", found );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringSplitFind(\"ui:start=instant:repeat_ms=200\",\"start=instant\") found = %d", found );
+  }
+
+
   clck = oyjlClock();
   n = 1000;
   for(i = 0; i < n; ++i)
