@@ -103,6 +103,13 @@ AppWindow {
                     interactiveCallback( "oyjl-history", app_args, "string", "", "" )
                 }
             }
+            if( typeof c.repeat_ms !== "undefined" )
+            {
+                repeat_interval = c.repeat_ms;
+                repeatTimer.repeat = true;
+                statusText = "repeat " + repeat_interval
+                repeatTimer.start();
+            }
         }
 
         statusText = qsTr("commands enabled") + " = " + variable
@@ -532,6 +539,18 @@ AppWindow {
         // icon is set in oyjlArgsQmlStart_() {app.setWindowIcon()}
         //icon = ":/images/logo-sw" //do not use here, as it will block custom icon
         logo = "/images/logo-sw"
+    }
+
+    property var repeat_interval: 1000;
+    Timer {
+        id: repeatTimer
+        objectName: "repeatTimer"
+        triggeredOnStart: false
+        interval: repeat_interval
+        onTriggered: {
+            var app_args = appData.plainJSON(appData.getArgs());
+            interactiveCallback( "oyjl-history", app_args, "string", "", "" )
+        }
     }
 
     property var permission: []

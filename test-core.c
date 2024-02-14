@@ -649,24 +649,24 @@ oyjlTESTRESULT_e testString ()
 
 
 
-  int found = oyjlStringSplitFind( "gui:start=instant:repeat_ms=200", ":", "repeat_ms", OYJL_COMPARE_STARTS_WITH, &t, malloc, free );
+  int found = oyjlStringSplitFind( "gui:start=instant:repeat_s=2", ":", "repeat_s", OYJL_COMPARE_STARTS_WITH, &t, malloc, free );
   if( found >= 0 &&
-      t && strcmp(strchr(t,'=')+1,"200") == 0)
+      t && strcmp(strchr(t,'=')+1,"2") == 0)
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringSplitFind(\"ui:start=instant:repeat_ms=200\",\"repeat_ms\",OYJL_COMPARE_STARTS_WITH) found = %d t = \"%s\"", found, t );
+    "oyjlStringSplitFind(\"ui:start=instant:repeat_s=2\",\"repeat_s\",OYJL_COMPARE_STARTS_WITH) found = %d t = \"%s\"", found, t );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringSplitFind(\"ui:start=instant:repeat_ms=200\",\"repeat_ms\",OYJL_COMPARE_STARTS_WITH) found = %d t = \"%s\"", found, t );
+    "oyjlStringSplitFind(\"ui:start=instant:repeat_s=2\",\"repeat_s\",OYJL_COMPARE_STARTS_WITH) found = %d t = \"%s\"", found, t );
   }
   if(t) { free(t); t = NULL; }
 
-  found = oyjlStringSplitFind( "gui:start=instant:repeat_ms=200", ":", "start=instant", 0, NULL, 0,0 );
+  found = oyjlStringSplitFind( "gui:start=instant:repeat_s=2", ":", "start=instant", 0, NULL, 0,0 );
   if( found == 1 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringSplitFind(\"ui:start=instant:repeat_ms=200\",\"start=instant\") found = %d", found );
+    "oyjlStringSplitFind(\"ui:start=instant:repeat_s=2\",\"start=instant\") found = %d", found );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringSplitFind(\"ui:start=instant:repeat_ms=200\",\"start=instant\") found = %d", found );
+    "oyjlStringSplitFind(\"ui:start=instant:repeat_s=2\",\"start=instant\") found = %d", found );
   }
 
 

@@ -299,5 +299,13 @@
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
+    <message>
+        <source>Set an interval; optional</source>
+        <translation>Setze einen Zeitabstand; freiwillig</translation>
+    </message>
+    <message>
+        <source>Set repeat interval in seconds.</source>
+        <translation>Setze das Wiederholungsinterval in Sekunden.</translation>
+    </message>
 </context>
 </TS>
