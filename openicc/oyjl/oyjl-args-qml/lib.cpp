@@ -271,6 +271,8 @@ int oyjlArgsQmlStart__               ( int                 argc,
         fprintf( stderr, "    %s\n\n", oyjlTermColor(oyjlBOLD, "--render=qml:start=instant") );
         fprintf( stderr, "      %s=\t%s\n", oyjlTermColor(oyjlBOLD, "start"), QCoreApplication::translate("main", "Select start mode; optional, default is interactive").toLocal8Bit().data() );
         fprintf( stderr, "        =%s\t- %s\n", oyjlTermColor( oyjlITALIC, "instant"), QCoreApplication::translate("main", "Execute the tool without previous interaction using the provided arguments and display results.").toLocal8Bit().data() );
+        fprintf( stderr, "      %s=\t%s\n", oyjlTermColor(oyjlBOLD, "repeat_s"), QCoreApplication::translate("main", "Set an interval; optional").toLocal8Bit().data() );
+        fprintf( stderr, "        =%s\t- %s\n", oyjlTermColor( oyjlITALIC, "seconds"), QCoreApplication::translate("main", "Set repeat interval in seconds.").toLocal8Bit().data() );
         return 0;
       }
     }
@@ -296,6 +298,7 @@ int oyjlArgsQmlStart__               ( int                 argc,
 
     oyjl_val c = NULL;
     int set_commands_inject = 0;
+    char * repeat_s = NULL;
     if( commands )
     {
       int state = 0;
@@ -309,13 +312,31 @@ int oyjlArgsQmlStart__               ( int                 argc,
     if(oyjlStringSplitFind(renderer_value, ":", "start=instant", 0, NULL, 0,0) >= 0)
     {
       oyjlTreeSetStringF( c, OYJL_CREATE_NEW, "instant", "start" );
-      set_commands_inject = 0x01;
+      set_commands_inject |= 0x01;
+    }
+    if(oyjlStringSplitFind(renderer_value, ":", "repeat_s", OYJL_COMPARE_STARTS_WITH, &t, 0,0) >= 0)
+    {
+      char * val = strchr(t, '=');
+      if(val) ++val;
+      repeat_s = oyjlStringCopy(val?val:"1", 0);
+      double dbl = 0;
+      oyjlStringToDouble( repeat_s, &dbl, NULL, OYJL_KEEP_LOCALE );
+      free(t); t = NULL;
+      OYJL_SETLOCALE_C
+      oyjlTermColorFPtr( oyjlNO_MARK, &t, "%f", dbl*1000.0 );
+      OYJL_SETLOCALE_RESET
+      val = strchr(t,'.'); if(val) val[0] = '\000';
+      oyjlTreeSetStringF( c, OYJL_CREATE_NEW, t, "repeat_ms" );
+      set_commands_inject |= 0x02;
     }
     t = oyjlTreeToText( c, OYJL_JSON );
     if(c) { oyjlTreeFree( c ); c = NULL; }
     if(set_commands_inject)
-      fprintf( stderr, OYJL_DBG_FORMAT "inject into setCommands(%s)\n", OYJL_DBG_ARGS, set_commands_inject&0x01?"start=instant":"" );
+      fprintf( stderr, OYJL_DBG_FORMAT "inject into setCommands(%s %s%s%s)\n", OYJL_DBG_ARGS,
+          set_commands_inject&0x01?"start=instant":"",
+          set_commands_inject&0x02?"repeat_s":"", set_commands_inject&0x02?"=":"", set_commands_inject&0x02?repeat_s:"" );
     mgr.setCommands( t );
+    if(repeat_s) { free(repeat_s); repeat_s = NULL; }
     free(t); t = NULL;
 
     if( output )
