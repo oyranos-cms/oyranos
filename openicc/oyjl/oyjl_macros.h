@@ -121,6 +121,17 @@ if(format_ && strchr(format_,'%') != NULL) { \
 }
 #endif
 
+#ifdef OYJL_HAVE_LOCALE_H
+#define OYJL_SETLOCALE_C \
+  char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc ); \
+  setlocale(LC_NUMERIC, "C");
+#define OYJL_SETLOCALE_RESET \
+  setlocale(LC_NUMERIC, save_locale); \
+  if(save_locale) free( save_locale );
+#else
+#define OYJL_SETLOCALE_C
+#endif
+
 #define oyjlAllocHelper_m(ptr_, type, size_, alloc_func, action) { \
   if ((size_) <= 0) {                                       \
       oyjlMessage_p( oyjlMSG_INSUFFICIENT_DATA, 0, "Nothing to allocate"); \
