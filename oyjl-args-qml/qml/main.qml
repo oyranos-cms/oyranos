@@ -108,6 +108,7 @@ AppWindow {
                 repeat_interval = c.repeat_ms;
                 repeatTimer.repeat = true;
                 statusText = "repeat " + repeat_interval
+                repeat_args = appData.plainJSON(appData.getArgs());
                 repeatTimer.start();
             }
         }
@@ -326,6 +327,8 @@ AppWindow {
             processSet.waitForFinished()
             return;
         }
+        repeat_args = []
+        repeatTimer.stop();
 
         var opts = optionsModel
         var n = optionsModel.count
@@ -542,14 +545,14 @@ AppWindow {
     }
 
     property var repeat_interval: 1000;
+    property var repeat_args: []
     Timer {
         id: repeatTimer
         objectName: "repeatTimer"
         triggeredOnStart: false
         interval: repeat_interval
         onTriggered: {
-            var app_args = appData.plainJSON(appData.getArgs());
-            interactiveCallback( "oyjl-history", app_args, "string", "", "" )
+            interactiveCallback( "oyjl-history", repeat_args, "string", "", "" )
         }
     }
 
