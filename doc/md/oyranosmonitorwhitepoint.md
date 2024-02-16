@@ -18,9 +18,11 @@ oyranos-monitor-white-point v0.9.7 - Night Manager
 <br />
 <strong>oyranos-monitor-white-point</strong> <a href="#location"><strong>-l</strong></a> | <strong>-i</strong>=<em>ANGLE_IN_DEGREE</em> <strong>-o</strong>=<em>ANGLE_IN_DEGREE</em> [<strong>-t</strong>=<em>ANGLE_IN_DEGREE</em>] [<strong>-z</strong>] [<strong>-v</strong>] [<strong>-y</strong>]
 <br />
+<strong>oyranos-monitor-white-point</strong> <a href="#sunrise"><strong>-r</strong><em>[=FORMAT]</em></a> <strong>-m</strong> [<strong>-v</strong>]
+<br />
 <strong>oyranos-monitor-white-point</strong> <a href="#daemon"><strong>-d</strong><em>[=0|1|2]</em></a> [<strong>-v</strong>]
 <br />
-<strong>oyranos-monitor-white-point</strong> <a href="#modes"><strong>-m</strong></a> | <strong>-r</strong><em>[=FORMAT]</em> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
+<strong>oyranos-monitor-white-point</strong> <a href="#export"><strong>-X</strong>=<em>json|json+command|man|markdown</em></a> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
@@ -133,6 +135,21 @@ The tool can set the actual white point or set it by local day and night time. A
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-t</strong>|<strong>--twilight</strong>=<em>ANGLE_IN_DEGREE</em></td> <td>Set Twilight angle: 0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical (ANGLE_IN_DEGREE:0 [≥-18 ≤18 Δ1])</td> </tr>
 </table>
 
+<h3 id="sunrise">Give Informations</h3>
+
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-r</strong><em>[=FORMAT]</em> <strong>-m</strong> [<strong>-v</strong>]
+
+<table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--sunrise</strong><em>[=FORMAT]</em></td> <td>Show local time, used geographical location, twilight height angles, sun rise and sun set times
+  <table>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> TEXT</td><td># TEXT</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-r</strong> JSON</td><td># JSON</td></tr>
+  </table>
+  </td>
+ </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--modes</strong></td> <td>Show white point modes</td> </tr>
+</table>
+
 <h3 id="daemon">Run sunset daemon</h3>
 
 &nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-d</strong><em>[=0|1|2]</em> [<strong>-v</strong>]
@@ -151,23 +168,15 @@ The tool can set the actual white point or set it by local day and night time. A
 
 <h2>GENERAL OPTIONS <a href="#toc" name="general_options">&uarr;</a></h2>
 
-<h3 id="modes">General options</h3>
+<h3 id="export">General options</h3>
 
-&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-m</strong> | <strong>-r</strong><em>[=FORMAT]</em> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-monitor-white-point</strong></a> <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-h</strong><em>[=synopsis|...]</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-h</strong>|<strong>--help</strong><em>[=synopsis|...]</em></td> <td>Print help text<br />Show usage information and hints for the tool.
   <table>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> -</td><td># Full Help : Print help for all groups</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-h</strong> synopsis</td><td># Synopsis : List groups - Show all groups including syntax</td></tr>
-  </table>
-  </td>
- </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--modes</strong></td> <td>Show white point modes</td> </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--sunrise</strong><em>[=FORMAT]</em></td> <td>Show local time, used geographical location, twilight height angles, sun rise and sun set times
-  <table>
-   <tr><td style='padding-left:0.5em'><strong>-r</strong> TEXT</td><td># TEXT</td></tr>
-   <tr><td style='padding-left:0.5em'><strong>-r</strong> JSON</td><td># JSON</td></tr>
   </table>
   </td>
  </tr>

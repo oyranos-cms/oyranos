@@ -10,9 +10,11 @@ oyranos-monitor-white-point v0.9.7 \- Night Manager
 .br
 \fBoyranos-monitor-white-point\fR \fB\-l\fR | \fB\-i\fR \fIANGLE_IN_DEGREE\fR \fB\-o\fR \fIANGLE_IN_DEGREE\fR [\fB\-t\fR \fIANGLE_IN_DEGREE\fR] [\fB\-z\fR] [\fB\-v\fR] [\fB\-y\fR]
 .br
+\fBoyranos-monitor-white-point\fR \fB\-r\fR\fI[=FORMAT]\fR \fB\-m\fR [\fB\-v\fR]
+.br
 \fBoyranos-monitor-white-point\fR \fB\-d\fR\fI[=0|1|2]\fR [\fB\-v\fR]
 .br
-\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR\fI[=FORMAT]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH DESCRIPTION
 The tool can set the actual white point or set it by local day and night time. A additional effect profile can be selected.
 .SH OPTIONS
@@ -145,6 +147,18 @@ Location and Twilight
 0:sunrise/sunset|-6:civil|-12:nautical|-18:astronomical
 .RE
 .SS
+Give Informations
+\fBoyranos-monitor-white-point\fR \fB\-r\fR\fI[=FORMAT]\fR \fB\-m\fR [\fB\-v\fR]
+.br
+\fB\-r\fR|\fB\-\-sunrise\fR\fI[=FORMAT]\fR	Show local time, used geographical location, twilight height angles, sun rise and sun set times
+.br
+	\fB\-r\fR TEXT		# TEXT
+.br
+	\fB\-r\fR JSON		# JSON
+.br
+\fB\-m\fR|\fB\-\-modes\fR	Show white point modes
+.br
+.SS
 Run sunset daemon
 \fBoyranos-monitor-white-point\fR \fB\-d\fR\fI[=0|1|2]\fR [\fB\-v\fR]
 .br
@@ -159,7 +173,7 @@ Run sunset daemon
 .SH GENERAL OPTIONS
 .SS
 General options
-\fBoyranos-monitor-white-point\fR \fB\-m\fR | \fB\-r\fR\fI[=FORMAT]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
+\fBoyranos-monitor-white-point\fR \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .br
 \fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Print help text
 .RS
@@ -168,14 +182,6 @@ Show usage information and hints for the tool.
 	\fB\-h\fR -		# Full Help : Print help for all groups
 .br
 	\fB\-h\fR synopsis		# Synopsis : List groups - Show all groups including syntax
-.br
-\fB\-m\fR|\fB\-\-modes\fR	Show white point modes
-.br
-\fB\-r\fR|\fB\-\-sunrise\fR\fI[=FORMAT]\fR	Show local time, used geographical location, twilight height angles, sun rise and sun set times
-.br
-	\fB\-r\fR TEXT		# TEXT
-.br
-	\fB\-r\fR JSON		# JSON
 .br
 \fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Export formated text
 .RS

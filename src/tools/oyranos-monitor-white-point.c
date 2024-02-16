@@ -566,8 +566,9 @@ int myMain( int argc , const char** argv )
 #endif
     {"oiwg", 0, _("Day Mode"), _("Sun light appearance"), NULL, "s,e,sunlight-color-scheme", "z,v,y", "s,e,sunlight-color-scheme",NULL},
     {"oiwg", OYJL_GROUP_FLAG_EXPLICITE, _("Location"), _("Location and Twilight"), NULL, "l|i,o", "t,z,v,y", "l,i,o,t",NULL},
+    {"oiwg", 0, _("Information"), _("Give Informations"), NULL, "r,m", "v", "r,m",NULL},
     {"oiwg", 0, _("Daemon Service"), _("Run sunset daemon"), NULL, "d", "v", "d",NULL},
-    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL, "m|r|X|h|V|R", "v", "h,m,r,X,R,V,z,y,v",NULL},
+    {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, _("Misc"), _("General options"), NULL, "X|h|V|R", "v", "h,X,R,V,z,y,v",NULL},
     {"",0,0,0,0,0,0,0,0}
   };
   double night = isNight(0);

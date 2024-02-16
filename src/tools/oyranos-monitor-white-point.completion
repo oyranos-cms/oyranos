@@ -342,12 +342,17 @@ _oyranos_monitor_white_point()
             set +x +v
             return
             ;;
+        -r|--sunrise|-m|--modes)
+          COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
         -d|--daemon)
           COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
             set +x +v
             return
             ;;
-        -m|--modes|-r|--sunrise|-X|--export|-h|--help|-V|--version|-R|--render)
+        -X|--export|-h|--help|-V|--version|-R|--render)
           COMPREPLY=($(compgen -W '-v --verbose' -- "$cur"))
             set +x +v
             return
@@ -358,7 +363,7 @@ _oyranos_monitor_white_point()
     : "suggest mandatory options on first args only"
     if [[ "${COMP_WORDS[2]}" == "" ]]; then
       local WORD_LIST=()
-      WORD_LIST=("${WORD_LIST[@]}" -n= --night-white-point= -g= --night-effect= -b= --night-backlight= --night-color-scheme= -w= --white-point= -a= --automatic= -s= --sun-white-point= -e= --sunlight-effect= --sunlight-color-scheme= -l --location -i= --latitude= -o= --longitude= -d= --daemon= -m --modes -r= --sunrise= -X= --export= -h= --help= -V --version -R= --render=)
+      WORD_LIST=("${WORD_LIST[@]}" -n= --night-white-point= -g= --night-effect= -b= --night-backlight= --night-color-scheme= -w= --white-point= -a= --automatic= -s= --sun-white-point= -e= --sunlight-effect= --sunlight-color-scheme= -l --location -i= --latitude= -o= --longitude= -r= --sunrise= -m --modes -d= --daemon= -X= --export= -h= --help= -V --version -R= --render=)
       COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
       set +x +v
       return
