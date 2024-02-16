@@ -246,6 +246,128 @@ char **        oyjlStringSplit2      ( const char        * text,
   return list;
 }
 
+/** @brief    Find a sub string in a delimited list (libOyjlExtra)
+ * 
+ *  @param[in,out] set                 text string for oyjlStringSplit2
+ *  @param[in]     delimiters          one ore more separating chars or empty for empty space
+ *  @param[in]     pattern             text to search for. If empty it will return the sub string count; optional
+ *  @param[in]     flags               flags for behaviour
+ *                                     - OYJL_REMOVE remove matched part from list (creates new set)
+ *                                     - OYJL_TO_JSON convert to list in JSON array format, can be combined with OYJL_NO_MARKUP
+ *                                     - OYJL_TO_TEXT convert to string list with highlighted matches
+ *                                     - OYJL_MARK convert to marked list in JSON format
+ *                                     - OYJL_COMPARE_CASE case independent compare function (default: exact strcmp)
+ *                                     - OYJL_COMPARE_LAZY search for pattern in sub string fron separated list using strstr()
+ *                                     - OYJL_COMPARE_STARTS_WITH search for sub string using oyjlStringStartsWith()
+ *                                     - OYJL_REGEXP regex compare using oyjlRegExpFind()
+ *                                     - OYJL_REVERSE swap the matching arguments and try to find a match from set for pattern
+ *  @param[out]    result              results depending on flags; optional
+ *  @param[in]     alloc               custom malloc; optional
+ *  @param[in]     deAlloc             custom free; optional
+ *  @return                            index of pattern match in list,
+ *                                     - -1 if nothing is found
+ * */
+int        oyjlStringSplitFind       ( const char        * set,
+                                       const char        * delimiters,
+                                       const char        * pattern,
+                                       int                 flags,
+                                       char             ** result,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  int found = -1;
+  char ** list;
+  int i, n;
+
+  if(!alloc) alloc = malloc;
+  if(!deAlloc) deAlloc = free;
+
+  if(set && set[0])
+  {
+    n = 0;
+    list = oyjlStringSplit2( set, delimiters, 0, &n, NULL, alloc );
+    if(!pattern)
+      found = n;
+    else
+    {
+      char * new_set = NULL;
+      for( i = 0; i  < n; ++i )
+      {
+        const char * val = list[i],
+                   * text = val,
+                   * search = pattern;
+        int pos = -1;
+
+        if(flags & OYJL_REVERSE)
+        {
+          search = val;
+          text = pattern;
+        }
+
+        if(flags & OYJL_COMPARE_STARTS_WITH)
+        {
+          if(oyjlStringStartsWith(text, search, flags))
+          {
+            pos = found = i;
+            if(*oyjl_debug >= 2)
+              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
+          }
+        } else if(flags & OYJL_COMPARE_CASE)
+        {
+          if(strcasecmp(text, search) == 0)
+          {
+            pos = found = i;
+            if(*oyjl_debug >= 2)
+              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
+          }
+        } else if(flags & OYJL_COMPARE_LAZY)
+        {
+          if(strstr(text, search) != NULL)
+          {
+            pos = found = i;
+            if(*oyjl_debug >= 2)
+              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
+          }
+        } else if(flags & OYJL_REGEXP)
+        {
+          if(oyjlRegExpFind((char*)text, search, NULL) != NULL)
+          {
+            pos = found = i;
+            if(*oyjl_debug >= 2)
+              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
+          }
+        } else
+        if(strcmp(text, search) == 0)
+        {
+          pos = found = i;
+          if(*oyjl_debug >= 2)
+            fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
+        }
+ 
+        if(flags & OYJL_TO_JSON && !(pos == -1 && flags & OYJL_REMOVE))
+          oyjlStringAdd( &new_set, alloc,deAlloc, "%s\"%s\"", i&&new_set?", ":"", oyjlTermColor(flags&OYJL_NO_MARKUP?oyjlNO_MARK:oyjlRED,val) );
+        if(flags & OYJL_TO_TEXT && !(pos == -1 && flags & OYJL_REMOVE))
+        {
+          char sep[4] = {delimiters?delimiters[0]:' ',0,0,0};
+          oyjlStringAdd( &new_set, alloc,deAlloc,0, "%s%s", i&&new_set?sep:"", oyjlTermColor(flags&OYJL_NO_MARKUP?oyjlNO_MARK:oyjlRED,val) );
+        }
+        else if(pos == -1 && flags & OYJL_REMOVE)
+          oyjlStringAdd( &new_set, alloc,deAlloc,0, "%s%s", i&&new_set?",":"", val );
+        else if(!(flags & OYJL_REMOVE) && result && new_set == NULL && *result == NULL && pos != -1)
+          *result = oyjlStringCopy( val, alloc );
+      }
+
+      if(flags & OYJL_REMOVE)
+      { *result = new_set; }
+      else
+      { deAlloc(new_set); new_set = NULL; }
+    }
+    oyjlStringListRelease( &list, n, deAlloc );
+  }
+
+  return found;
+}
+
 /** @brief   duplicate a string with custom allocator
  *
  *  The function adds the allocator over standard strdup().
