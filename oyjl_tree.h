@@ -208,6 +208,29 @@ OYJL_API oyjl_val oyjlTreeGet ( oyjl_val parent, const char ** path, oyjl_type t
 
 #undef Florian_Forster_SOURCE_GUARD
 
+/** @internal
+ *  Get a pointer from a array at pos or NULL if the value is out of array len. */
+#define OYJL_GET_ARRAY_POS(v, pos)  (OYJL_IS_ARRAY(v) ? (&(v)->u.array)->len > pos ? (&(v)->u.array)->values[pos] : NULL : NULL)
+
+/** @internal
+ *  Get a pointer from a 2D array at pos i/j or NULL if the value is out of both array len. */
+#define OYJL_GET_ARRAY_2D_POS(v, pos_i, pos_j) ( OYJL_GET_ARRAY_POS(OYJL_GET_ARRAY_POS(v, pos_i), pos_j) )
+
+/** @internal
+ *  Get a integer from a 2D array. */
+#define OYJL_GET_ARRAY_2D_STRING(v, pos_i, pos_j)  (OYJL_IS_STRING(OYJL_GET_ARRAY_2D_POS(v, pos_i, pos_j)) ? OYJL_GET_STRING(OYJL_GET_ARRAY_2D_POS(v, pos_i, pos_j)) : NULL)
+
+#ifndef INT32_MIN
+# define INT32_MIN		(-2147483647-1)
+#endif
+/** @internal
+ *  Get a integer from a 2D array. Return INT32_MIN if not available. */
+#define OYJL_GET_ARRAY_2D_INTEGER(v, pos_i, pos_j)  (OYJL_IS_INTEGER(OYJL_GET_ARRAY_2D_POS(v, pos_i, pos_j)) ? OYJL_GET_INTEGER(OYJL_GET_ARRAY_2D_POS(v, pos_i, pos_j)) : INT32_MIN)
+
+/** @internal
+ *  Get a double from a 2D array. Return NAN if not available. NAN is defined in math.h . */
+#define OYJL_GET_ARRAY_2D_DOUBLE(v, pos_i, pos_j)  (OYJL_IS_DOUBLE(OYJL_GET_ARRAY_2D_POS(v, pos_i, pos_j)) ? OYJL_GET_DOUBLE(OYJL_GET_ARRAY_2D_POS(v, pos_i, pos_j)) : NAN)
+
 #define OYJL_NUMBER_DETECTION 0x1000     /**< @brief try to parse values as number */
 #define OYJL_DECIMAL_SEPARATOR_COMMA 0x2000 /**< @brief use comma ',' as decimal separator */
 #define OYJL_ALLOW_STATIC     0x10     /**< @brief allow to read static format */

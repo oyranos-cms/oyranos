@@ -1719,8 +1719,33 @@ A1;B1;C1;D1;E1;F1\n\
     fprintf( zout, "%s\n", text );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeToCsv", "txt" )
-  oyjlTreeFree( root ); root = NULL;
   myDeAllocFunc(text); text = NULL;
+
+  if(OYJL_GET_ARRAY_2D_INTEGER(root,2,2) == 1234)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "OYJL_GET_ARRAY_2D_INTEGER(csv,2,2)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "OYJL_GET_ARRAY_2D_INTEGER(csv,2,2) %d", OYJL_GET_ARRAY_2D_INTEGER(root,2,2) );
+  }
+
+  if(OYJL_GET_ARRAY_2D_DOUBLE(root,2,5) == 12.34)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "OYJL_GET_ARRAY_2D_DOUBLE(csv,2,5)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "OYJL_GET_ARRAY_2D_DOUBLE(csv,2,5) %s", oyjlValueText(OYJL_GET_ARRAY_2D_POS(root,2,5),0) );
+  }
+
+  const char * t = OYJL_GET_ARRAY_2D_STRING(root,0,0);
+  if(t && strcmp( t, "header") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "OYJL_GET_ARRAY_2D_STRING(csv,0,0)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "OYJL_GET_ARRAY_2D_STRING(csv,0,0) %s", t );
+  }
+  oyjlTreeFree( root ); root = NULL;
 
   return result;
 }
