@@ -1286,8 +1286,13 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
 #endif
 
   rows = oyjlStringSplit( text, '\n', &rows_n, malloc );
+  if( rows && rows_n > 1 &&
+      rows[rows_n-1] &&
+      strlen(rows[rows_n-1]) == 0)
+    --rows_n;
   cols = oyjlStringSplit2( rows[0], delimiter, 0, &cols_n, NULL, malloc );
   oyjlStringListRelease( &cols, cols_n, free );
+  fprintf( stderr, "rows: %d cols: %d\n", rows_n, cols_n );
 
   if(cols_n >= 1)
   {
@@ -1303,11 +1308,12 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
       if(len > 1 && row[len-1] == '\r')
         row[len-1] = '\000'; /* clean DOS linebreak '\r\n' */
       cols = oyjlStringSplit2( row, delimiter, 0, &cols_n, NULL, malloc );
+      if(cols && cols_n > 1 && cols[cols_n-1] && cols[cols_n-1][0] == '\n') --cols_n;
 
       row_node = oyjlTreeGetValueF( jroot, OYJL_CREATE_NEW, "[%d]", i );
       row_node->type = oyjl_t_array;
       oyjlAllocHelper_m( row_node->u.array.values, oyjl_val, cols_n + 1, malloc,  goto clean_parse_csv );
-      row_node->u.array.len = cols_n + 1;
+      row_node->u.array.len = cols_n;
       for(index = 0; index < cols_n; ++index)
       {
         node = NULL;
