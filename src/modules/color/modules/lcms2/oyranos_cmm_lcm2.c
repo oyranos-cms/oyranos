@@ -66,6 +66,7 @@ oyCMMapi10_s          l2cms_api10_cmm2;                  OY_LCM2_CREATE_MATRIX_R
 oyCMMapi10_s          l2cms_api10_cmm3;                  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_LAB_REGISTRATION
 oyCMMapi10_s          l2cms_api10_cmm4;                  OY_LCM2_CREATE_ABSTRACT_WHITE_POINT_BRADFORD_REGISTRATION
 oyCMMapi10_s          l2cms_api10_cmm5;                  OY_LCM2_PARSE_CGATS
+oyCMMapi10_s          l2cms_api10_cmm6;                  OY_LCM2_CREATE_CALIBRATION_DEVICE_LINK
 */
 
 void* oyAllocateFunc_           (size_t        size);
@@ -303,6 +304,7 @@ static void (*l2cmsSetDeviceClass)(cmsHPROFILE hProfile, cmsProfileClassSignatur
 static void (*l2cmsSetColorSpace)(cmsHPROFILE hProfile, cmsColorSpaceSignature sig) = NULL;
 static void (*l2cmsSetPCS)(cmsHPROFILE hProfile, cmsColorSpaceSignature pcs) = NULL;
 static cmsToneCurve* (*l2cmsBuildGamma)(cmsContext ContextID, cmsFloat64Number Gamma) = NULL;
+static cmsToneCurve*(*l2cmsBuildTabulatedToneCurve16)(cmsContext ContextID, cmsUInt32Number nEntries, const cmsUInt16Number values[]) = NULL;
 static cmsToneCurve*(*l2cmsBuildSegmentedToneCurve)(cmsContext ContextID, cmsUInt32Number nSegments, const cmsCurveSegment Segments[]) = NULL;
 static cmsToneCurve*(*l2cmsBuildParametricToneCurve)(cmsContext ContextID, cmsInt32Number Type, const cmsFloat64Number Parameters[]) = NULL;
 static void (*l2cmsFreeToneCurve)(cmsToneCurve* Curve) = NULL;
@@ -474,6 +476,7 @@ int lcm2registerFuncs( int init, const char * fn OY_UNUSED )
       REGISTER_FUNC( cmsSetColorSpace, NULL );
       REGISTER_FUNC( cmsSetPCS, NULL );
       REGISTER_FUNC( cmsBuildGamma, NULL );
+      REGISTER_FUNC( cmsBuildTabulatedToneCurve16, NULL );
       REGISTER_FUNC( cmsBuildSegmentedToneCurve, NULL );
       REGISTER_FUNC( cmsBuildParametricToneCurve, NULL );
       REGISTER_FUNC( cmsFreeToneCurve, NULL );
@@ -713,6 +716,7 @@ int                l2cmsCMMreset      ( oyStruct_s        * filter OY_UNUSED )
 #define cmsSetColorSpace l2cmsSetColorSpace
 #define cmsSetPCS l2cmsSetPCS
 #define cmsBuildGamma l2cmsBuildGamma
+#define cmsBuildTabulatedToneCurve16 l2cmsBuildTabulatedToneCurve16
 #define cmsBuildSegmentedToneCurve l2cmsBuildSegmentedToneCurve
 #define cmsBuildParametricToneCurve l2cmsBuildParametricToneCurve
 #define cmsFreeToneCurve l2cmsFreeToneCurve
@@ -3516,6 +3520,288 @@ int l2cmsGetOptionsUI                ( oyCMMapiFilter_s   * module OY_UNUSED,
  *
  *  @{ */
 
+/* OY_LCM2_CREATE_CALIBRATION_DEVICE_LINK -------------------------- */
+
+/** @brief   TODO: Parse a CGATS text
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/11/26 (Oyranos: 0.9.7)
+ *  @date    2019/02/04
+ */
+oyPointer_s* lcm2ParseCGATS          ( const char        * cgats )
+{
+  int error = !cgats;
+  oyPointer_s * ptr = NULL;
+  oyjl_val root = NULL;
+  char ** props = NULL;
+  cmsHANDLE lcgats;
+
+  if(error) return ptr;
+  cmsContext tc = l2cmsCreateContext( NULL, NULL ); /* threading context */
+  lcgats = l2cmsIT8LoadFromMem(tc, cgats, strlen(cgats));
+  int n = l2cmsIT8EnumProperties( lcgats, &props ), i;
+  for(i = 0; i < n; ++i)
+    l2cms_msg( oyMSG_DBG, NULL, OY_DBG_FORMAT_
+               "Properties: %s", OY_DBG_ARGS_, props[i] );
+  /* lcms has no API to analyse BEGIN_DATA_FORMAT END_DATA_FORMAT section - very limiting in order to understand the meaning of the table values */
+  n = l2cmsIT8EnumPropertyMulti( lcgats, "BEGIN_DATA_FORMAT", (const char***)&props );
+
+  /** @todo implement CGATS parsing with cmsCGATS */
+  ptr = oyPointer_New(0);
+  oyPointer_Set( ptr, __FILE__,
+                 "oyjl_val", root, 0, 0 );
+
+  return ptr;
+}
+
+#define OY_LCM2_CREATE_CALIBRATION_DEVICE_LINK OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH \
+  "create_profile.device_calibration.icc._" CMM_NICK "._CPU"
+
+/** Function lcm2CalibrationDeviceLink
+ *  @brief   create a White point correction profile
+ *
+ *  Abstract profiles can easily be merged into a multi profile transform.
+ *
+ *  @see lcm2CreateAbstractWhitePointProfile()
+ *
+ *  @param         csp                 The color space, "rgb" or "cmyk"
+ *  @param         curves              the curves in range 0...65535
+ *  @param         curve_size          the curve size, e.g. 256
+ *  @param         icc_profile_flags   profile flags
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/06/05 (Oyranos: 0.9.7)
+ *  @date    2024/02/18
+ */
+oyProfile_s* lcm2CalibrationDeviceLink(const char        * csp,
+                                       uint16_t         ** curves,
+                                       int                 curve_size,
+                                       uint32_t            icc_profile_flags )
+{
+  int error = 0;
+  cmsHPROFILE hp = NULL;
+  int count = csp && strcmp( csp, "rgb" ) == 0 ? 3 : strcmp( csp, "cmyk" ) == 0 ? 4 : 0, i;
+  double profile_version = 2.4;
+  oyProfile_s * prof = NULL;
+  cmsToneCurve * m_curves[4];
+  cmsContext tc = l2cmsCreateContext( NULL, NULL ); /* threading context */
+
+  l2cms_msg( oyMSG_DBG, NULL, OY_DBG_FORMAT_
+             "CalibDL csp: %s", OY_DBG_ARGS_, csp );
+
+  if(icc_profile_flags & OY_ICC_VERSION_2)
+    profile_version = 4.3;
+
+  for(i = 0; i < count; ++i)
+    m_curves[i] = cmsBuildTabulatedToneCurve16( tc, curve_size, curves[i] );
+
+  error = lcm2CreateCalibrationProfileM ( m_curves,
+                                          csp,
+                                          profile_version,
+                                          "Calibration DL", /*my_calibration_description*/
+                                          NULL, /*my_calibration_descriptions*/
+                                          NULL, /*my_calibration_file_name*/
+                                          "Oyranos CMS", /*provider*/
+                                          CMM_NICK, /*vendor*/
+                                          ICC_2011_LICENSE,
+                                          csp /*const char        * device_model*/,
+                                          NULL/*const char        * device_manufacturer*/,
+                                          NULL/*const char       ** my_meta_data*/,
+                                          &hp
+                                        );
+
+  for(i = 0; i < count; ++i)
+    cmsFreeToneCurve(m_curves[i]);
+
+  if(error || !hp)
+  {
+    l2cms_msg( oyMSG_WARN, (oyStruct_s*)NULL, OY_DBG_FORMAT_ " "
+               "failed to build calibration: %s",
+               OY_DBG_ARGS_, csp );
+  } else
+  {
+    void * data;
+    size_t size = 0;
+    data = lcm2WriteProfileToMem( hp, &size, oyAllocateFunc_ );
+    prof = oyProfile_FromMem( size, data, 0,0 );
+    if(data && size) oyFree_m_( data );
+    l2cms_msg( oyMSG_DBG, NULL, OY_DBG_FORMAT_
+             "CalibDL description: %s", OY_DBG_ARGS_, oyProfile_GetText( prof, oyNAME_DESCRIPTION ) );
+  }
+
+  if(oy_debug && getenv("OY_DEBUG_WRITE"))
+  {
+      char * t = 0; oyjlStringAdd( &t, 0,0,
+      "%04d-%s-abstract-wtptL[%d]", ++oy_debug_write_id,CMM_NICK,oyStruct_GetId((oyStruct_s*)prof));
+      lcm2WriteProfileToFile( hp, t, NULL,NULL );
+      oyFree_m_(t);
+  }
+
+  if(hp) l2cmsCloseProfile( hp );
+
+  return prof;
+}
+
+/** @brief  l2cmsMOptions_Handle6()
+ *  This function implements oyMOptions_Handle_f.
+ *
+ *  The calibration curves are stored in "device_calibration" option as string and
+ *  structured as arrays "[[r0, g0, b0], [r1, g1, b1], ... [rn-1, gn-1, bn-1]]".
+ *  The range is 0...65535 .
+ *
+ *  @param[in]     options             expects at least two options
+ *                                     - "csp": The option shall be a string and contain "rgb" or "cmyk".
+ *                                     - "device_calibration": The option shall be a JSON string.
+ *                                     - "icc_profile_flags"  ::OY_ICC_VERSION_2 and ::OY_ICC_VERSION_4 let select version 2 and 4 profiles separately. optional
+ *                                     This option shall be a integer.
+ *  @param[in]     command             "//" OY_TYPE_STD "/create_profile.device_calibration"
+ *  @param[out]    result              will contain a oyProfile_s in "icc_profile.create_profile.device_calibration"
+ *
+ *  This function uses internally lcm2CreateCalibrationProfileM().
+ *  @param[in]     options             expects at least one options
+ *                                     - "device_calibration": The option shall be a string.
+ *
+ *  The Handler uses internally lcm2CreateCalibrationProfileM().
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/11/26 (Oyranos: 0.9.7)
+ *  @date    2024/02/18
+ */
+int          l2cmsMOptions_Handle6   ( oyOptions_s       * options,
+                                       const char        * command,
+                                       oyOptions_s      ** result )
+{
+  int error = 0;
+
+  if(oyFilterRegistrationMatch(command,"can_handle", 0))
+  {
+    if(oyFilterRegistrationMatch(command,"create_profile.device_calibration", 0))
+    {
+      const char * csp = oyOptions_FindString( options, "csp", 0 );
+      if(!csp) error = 1;
+      return error;
+    }
+    else
+      return -1;
+  }
+  else if(oyFilterRegistrationMatch(command,"create_profile.device_calibration", 0))
+  {
+    oyProfile_s * prof = NULL;
+    const char * csp = oyOptions_FindString( options, "csp", 0 ),
+               * device_calibration = oyOptions_FindString( options, "device_calibration", 0 );
+    unsigned count = csp && strcmp( csp, "rgb" ) == 0 ? 3 : strcmp( csp, "cmyk" ) == 0 ? 4 : 0;
+    oyjl_val root = oyJsonParse( device_calibration, NULL );
+    uint16_t * curves_data[4], curves_data_n = oyjlValueCount( root );
+    unsigned i,j;
+    int32_t icc_profile_flags = 0;
+    oyOptions_FindInt( options, "icc_profile_flags", 0, &icc_profile_flags ); 
+
+    for( i = 0; i < count; ++i )
+      curves_data[i] = oyAllocateFunc_( sizeof(uint16_t) * curves_data_n );
+    for( i = 0; i < curves_data_n; ++i )
+    {
+      for( j = 0; j < count; ++j )
+      {
+        int cval = OYJL_GET_ARRAY_2D_INTEGER(root,i,j);
+        curves_data[j][i] = cval;
+      }
+    }
+
+    prof = lcm2CalibrationDeviceLink ( csp, curves_data, curves_data_n, icc_profile_flags );
+
+    if(prof)
+    {
+      oyOption_s * o = oyOption_FromRegistration( OY_TOP_SHARED OY_SLASH OY_DOMAIN_INTERNAL OY_SLASH OY_TYPE_STD OY_SLASH "icc_profile.create_profle.device_calibration._" CMM_NICK, 0 );
+      error = oyOption_MoveInStruct( o, (oyStruct_s**) &prof );
+      if(!*result)
+        *result = oyOptions_New(0);
+      oyOptions_MoveIn( *result, &o, -1 );
+    } else
+        l2cms_msg( oyMSG_WARN, (oyStruct_s*)options, OY_DBG_FORMAT_
+                   "Creation of device link for calibration failed",
+                   OY_DBG_ARGS_ );
+  }
+
+  return 0;
+}
+/**
+ *  This function implements oyCMMinfoGetText_f.
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/06/06 (Oyranos: 0.9.7)
+ *  @date    2019/02/04
+ */
+const char * l2cmsInfoGetTextProfileC6(const char        * select,
+                                       oyNAME_e            type,
+                                       oyStruct_s        * context OY_UNUSED )
+{
+         if(strcmp(select, "can_handle")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "check";
+    else if(type == oyNAME_NAME)
+      return _("check");
+    else
+      return _("Check if this module can handle a certain command.");
+  } else if(strcmp(select, "create_profile")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "device_calibration";
+    else if(type == oyNAME_NAME)
+      return _("Create Device Calibration DeviceLink.");
+    else
+      return _("The littleCMS \"device_calibration\" command lets you create a device link from curves. The filter expects a oyOption_s object with name \"csp\" containing a string value with \"rgb\" for VCGT or \"cmyk\" curves. The actual calibration curves  curves are expected in \"device_calibration\" option as string and JSON format structured as arrays \"[[r0, g0, b0], [r1, g1, b1], ... [rn-1, gn-1, bn-1]]\". The values are integers in range 0..65535. The result will appear in \"icc_profile.create_profle.device_calibration\" as a oyProfile_s object.");
+  } else if(strcmp(select, "help")==0)
+  {
+         if(type == oyNAME_NICK)
+      return "help";
+    else if(type == oyNAME_NAME)
+      return _("Create Device Calibration DeviceLink.");
+    else
+      return _("The littleCMS \"device_calibration\" command lets you encode device link files. See the \"create_profile\" info item.");
+  }
+  return 0;
+}
+const char *l2cms_texts_device_calibration[4] = {"can_handle","create_profile","help",0};
+
+/** l2cms_api10_cmm5
+ *  @brief   Node for creating a calibration device link
+ *
+ *  littleCMS 2 oyCMMapi10_s implementation
+ *
+ *  For the front end API see oyOptions_Handle(). The backend options
+ *  are described in l2cmsMOptions_Handle6().
+ *
+ *  @version Oyranos: 0.9.7
+ *  @since   2017/06/05 (Oyranos: 0.9.7)
+ *  @date    2019/02/04
+ */
+oyCMMapi10_s_    l2cms_api10_cmm6 = {
+
+  oyOBJECT_CMM_API10_S,
+  0,0,0,
+  0,
+
+  l2cmsCMMapiInit,
+  l2cmsCMMapiReset,
+  l2cmsCMMMessageFuncSet,
+
+  OY_LCM2_CREATE_CALIBRATION_DEVICE_LINK,
+
+  CMM_VERSION,
+  CMM_API_VERSION,                  /**< int32_t module_api[3] */
+  0,   /* id_; keep empty */
+  0,   /* api5_; keep empty */
+  0,   /* runtime_context */
+ 
+  l2cmsInfoGetTextProfileC6,            /**< getText */
+  (char**)l2cms_texts_device_calibration,      /**<texts; list of arguments to getText*/
+ 
+  l2cmsMOptions_Handle6                 /**< oyMOptions_Handle_f oyMOptions_Handle */
+};
+
+/* OY_LCM2_CREATE_CALIBRATION_DEVICE_LINK -------------------------- */
+
 #if 0
 /* the OY_LCM2_PARSE_CGATS filter can not be implemented as described in lcm2ParseCGATS */
 /* OY_LCM2_PARSE_CGATS -------------------------- */
@@ -3938,7 +4224,7 @@ oyCMMapi10_s_    l2cms_api10_cmm4 = {
 
   oyOBJECT_CMM_API10_S,
   0,0,0,
-  0,//(oyCMMapi_s*) & l2cms_api10_cmm5,
+  (oyCMMapi_s*) & l2cms_api10_cmm6,
 
   l2cmsCMMapiInit,
   l2cmsCMMapiReset,
