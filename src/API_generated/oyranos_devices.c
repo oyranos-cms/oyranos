@@ -1396,6 +1396,17 @@ OYAPI int  OYEXPORT oyDeviceFromJSON ( const char        * json_text,
   oyFree_m_( t );
       
   count = oyjlValueCount(json_device);
+  if(count == 0)
+  {
+    oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                        OY_STD "/device/%s", device_class );
+    json_device = oyjlTreeGetValue( json, 0, t );
+    count = oyjlValueCount(json_device);
+
+    if(!json_device || count == 0)
+      WARNc2_S( "\"%s\" %s\n", t,_("not found:") );
+    oyFree_m_( t );
+  }
   if(device_)
   for(i = 0; i < count; ++i)
   {
