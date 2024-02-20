@@ -2165,6 +2165,102 @@ lcm2CreateAbstractWhitePointProfileBClean:
   return error;
 }
 
+/** Function  lcm2CreateCalibrationProfileM
+ *  @brief    Create a calibration profile of type device link in rgb or cmyk PCS
+ *
+ *  Possible computation emlements are m_curves.
+ *
+ *  @param[in]    m_curve              optional input curve for all CIE*XYZ;
+ *                                     channels in range 0.0 ... PCS*XYZ_MAX
+ *  @param[in]    csp                  color space; currently only "*srgb"
+ *  @param[in]    icc_profile_version  4.3
+ *  @param[in]    my_calibration_description              internal profile name
+ *  @param[in]    my_calibration_descriptions             internal profile name translated
+ *  @param[in]    my_calibration_file_name                profile file name. If present a ICC profile will be written to that name. optional
+ *  @param[in]    provider             e.g. "My Project 2019"
+ *  @param[in]    vendor               e.g. "My Name"
+ *  @param[in]    my_license           e.g. "This profile is made available by %s, with permission of %s, and may be copied, distributed, embedded, made, used, and sold without restriction. Altered versions of this profile shall have the original identification and copyright information removed and shall not be misrepresented as the original profile."
+ *                                     - first %%s is replaced by the provider string arg and
+ *                                     - second %%s is replaced by the vendor string arg
+ *  @param[in]    device_model         e.g. "My Set"
+ *  @param[in]    device_manufacturer  e.g. "www.mydomain.net"
+ *  @param[in]    my_meta_data         e.g. {"DOMAIN_,GROUP_","DOMAIN_key1","value1","GROUP_key2","value2"}
+ *  @param[out]   h_profile            the resulting profile
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2024/02/18
+ *  @since   2019/03/03 (Oyranos: 0.9.7)
+ */
+int          lcm2CreateCalibrationProfileM (
+                                       cmsToneCurve     ** m_curves,
+                                       const char        * csp,
+                                       double              icc_profile_version,
+                                       const char        * my_calibration_description,
+                                       const char       ** my_calibration_descriptions,
+                                       const char        * my_calibration_file_name,
+                                       const char        * provider,
+                                       const char        * vendor,
+                                       const char        * my_license,
+                                       const char        * device_model,
+                                       const char        * device_manufacturer,
+                                       const char       ** my_meta_data,
+                                       cmsHPROFILE       * h_profile
+                                     )
+{
+  cmsHPROFILE profile = 0;
+  int error = !m_curves;
+
+  if(error)
+  {
+    lcm2msg_p( 301, NULL, "%s(%s:%d) no m_curves arg: %s", __func__, strrchr(__FILE__,'/')+1,__LINE__, csp?csp:"----");
+    goto lcm2CreateCalibrationProfileMClean;
+  }
+
+  profile = lcm2CreateProfileFragment (
+                             csp, csp,
+                             icc_profile_version,
+                             my_calibration_description,
+                             provider, vendor, my_license, 
+                             device_model, device_manufacturer, NULL);
+  if(!profile) goto lcm2CreateCalibrationProfileMClean;
+
+  if(my_meta_data)
+    lcm2AddMetaTexts ( profile, my_meta_data[0], &my_meta_data[1], cmsSigMetaTag );
+
+  {
+    cmsPipeline * pl = cmsPipelineAlloc( 0,3,3 );
+ 
+    cmsPipelineInsertStage( pl, cmsAT_BEGIN,
+                            cmsStageAllocToneCurves( 0, 3, m_curves ) );
+    cmsWriteTag( profile, cmsSigAToB0Tag, pl );
+
+    if(pl) cmsPipelineFree( pl );
+  }
+  if(error) goto lcm2CreateCalibrationProfileMClean;
+
+
+  lcm2AddMluDescription ( profile, my_calibration_descriptions,
+                          cmsSigProfileDescriptionMLTag
+                        );
+
+  if(my_calibration_file_name)
+  {
+    char * fn = lcm2WriteProfileToFile( profile, my_calibration_file_name, 0,0 );
+    lcm2msg_p( 302, NULL, "wrote to: %s", fn?fn:"----");
+    lcm2Free_m(fn);
+  }
+
+  if(h_profile)
+    *h_profile = profile;
+  else
+    cmsCloseProfile( profile );
+
+lcm2CreateCalibrationProfileMClean:
+
+  return error;
+}
+
+
 /** Function  lcm2CreateProfileFragment
  *  @brief    Create a color profile starter
  *
@@ -2240,11 +2336,27 @@ cmsHPROFILE  lcm2CreateProfileFragment(
   if(!h_profile)
   { h_profile = cmsCreateProfilePlaceholder( 0 ); } if(!h_profile) goto lcm2CreateProfileFragmentClean;
 
-  if(in_space_profile) h_in_space  = lcm2OpenProfileFile( in_space_profile, NULL );
-  if(out_space_profile)h_out_space = lcm2OpenProfileFile( out_space_profile, NULL );
+  if(in_space_profile)
+  {
+    h_in_space  = lcm2OpenProfileFile( in_space_profile, NULL );
+    if(h_in_space)
+      csp_in = cmsGetColorSpace( h_in_space );
+    else if(strcmp("rgb", in_space_profile) == 0)
+      csp_in = cmsSigRgbData;
+    else if(strcmp("cmyk", in_space_profile) == 0)
+      csp_in = cmsSigCmykData;
+  }
+  if(out_space_profile)
+  {
+    h_out_space = lcm2OpenProfileFile( out_space_profile, NULL );
+    if(h_out_space)
+      csp_out = cmsGetColorSpace( h_out_space );
+    else if(strcmp("rgb", out_space_profile) == 0)
+      csp_out = cmsSigRgbData;
+    else if(strcmp("cmyk", out_space_profile) == 0)
+      csp_out = cmsSigCmykData;
+  }
 
-  csp_in = cmsGetColorSpace( h_in_space );
-  csp_out = cmsGetColorSpace( h_out_space );
 
   cmsSetProfileVersion( h_profile, icc_profile_version );
 

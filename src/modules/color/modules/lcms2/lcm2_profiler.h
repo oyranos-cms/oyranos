@@ -116,6 +116,21 @@ int          lcm2CreateAbstractWhitePointProfileBradford (
                                        char             ** my_abstract_file_name,
                                        cmsHPROFILE       * h_profile
                                      );
+int          lcm2CreateCalibrationProfileM (
+                                       cmsToneCurve     ** m_curves,
+                                       const char        * csp,
+                                       double              icc_profile_version,
+                                       const char        * my_calibration_description,
+                                       const char       ** my_calibration_descriptions,
+                                       const char        * my_calibration_file_name,
+                                       const char        * provider,
+                                       const char        * vendor,
+                                       const char        * my_license,
+                                       const char        * device_model,
+                                       const char        * device_manufacturer,
+                                       const char       ** my_meta_data,
+                                       cmsHPROFILE       * h_profile
+                                     );
 cmsHPROFILE  lcm2OpenProfileFile     ( const char        * my_space_profile,
                                        const char        * my_space_profile_path );
 char *       lcm2WriteProfileToFile  ( cmsHPROFILE         my_space_profile,
