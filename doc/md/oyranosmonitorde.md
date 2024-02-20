@@ -129,7 +129,7 @@ Das oyranos-monitor Program erlaubt das Erfragen und setzen von Bildschirmprofil
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--add-edid</strong>=<em>DATEINAME</em></td> <td>EDID Dateiname<br />Bette EDID Schlüssen in ein ICC Profle als meta Element. Benötigt --profile Option.  </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--add-vcgt</strong>=<em>DATEINAME</em></td> <td>VCGT Dateiname<br />Bette eine VCGT Kalibration in ein ICC Profil als vcgt Element. DATEINAME kann die Ausgabe von xcalib -p sein. Die Option benötigt --proflile.  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--add-vcgt</strong>=<em>DATEINAME</em></td> <td>VCGT Dateiname<br />Bette eine VCGT Kalibration in ein ICC Profil als vcgt Element. DATEINAME kann die Ausgabe von xcalib -p sein. Die Option benötigt --profile.  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--profile</strong>=<em>ICC_DATEINAME</em></td> <td>ICC Profil  </td>
  </tr>

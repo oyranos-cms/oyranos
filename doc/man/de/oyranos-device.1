@@ -20,6 +20,8 @@ oyranos-device v0.9.7 \- Oyranos Farbgerät
 .br
 \fBoyranos-device\fR \fB\-f\fR \fIicc|openicc+rank-map|openicc|openicc-rank-map\fR \fB\-c\fR \fIKLASSE\fR \fB\-d\fR \fINUMMER\fR \fB\-j\fR \fIDATEINAME\fR \fB\-k\fR \fIDATEINAME\fR [\fB\-o\fR \fIDATEINAME\fR] [\fB\-\-only-db\fR] [\fB\-m\fR]
 .br
+\fBoyranos-device\fR \fB\-\-calibration\fR \fIDATEINAME\fR [\fB\-m\fR] [\fB\-j\fR \fIDATEINAME\fR] [\fB\-f\fR \fIicc|openicc+rank-map|openicc|openicc-rank-map\fR] [\fB\-n\fR \fIICC_DATEINAME\fR]
+.br
 \fBoyranos-device\fR \fB\-h\fR \fIsynopsis|...\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR | \fB\-R\fR \fIgui|cli|web|...\fR [\fB\-v\fR]
 .SH BESCHREIBUNG
 Das oyranos-device Program zeigt und ändert Einstellungen zu ICC Geräteprofilen.
@@ -166,6 +168,24 @@ Benötigt -c und -d Optionen.
 \fB\-\-only-db\fR	benutze nur DB Schlüssel/Wertepaare für -f=openicc
 .br
 \fB\-m\fR|\fB\-\-device-meta-tag\fR	bette Geräte-und Treiberinformationen in ICC meta Block ein
+.br
+.SS
+Wandle Kalibrationsdaten
+\fBoyranos-device\fR \fB\-\-calibration\fR \fIDATEINAME\fR [\fB\-m\fR] [\fB\-j\fR \fIDATEINAME\fR] [\fB\-f\fR \fIicc|openicc+rank-map|openicc|openicc-rank-map\fR] [\fB\-n\fR \fIICC_DATEINAME\fR]
+.br
+Benutze dies für VCGT oder Druckerkalibrationen. Das Kommando erzeugt Geräteverknüpfungsprofile. Diese können in eine Farbumwandlung eingefügt werden, wenn sie keine native calibration nutzen soll. Dies wäre z.B. der Fall mit einem OptOut Fenster und dem Compiz compicc Farbmanagement.
+.br
+.sp
+.br
+\fB\-\-calibration\fR \fIDATEINAME\fR	Erzeuge Verknüpfungsprofile
+.RS
+DATEINAME kann die Ausgabe sein von xcalib -p .
+.RE
+\fB\-m\fR|\fB\-\-device-meta-tag\fR	bette Geräte-und Treiberinformationen in ICC meta Block ein
+.br
+\fB\-j\fR|\fB\-\-device-json\fR \fIDATEINAME\fR	benutze Geräte JSON alternativ zu den -c und -d Optionen
+.br
+\fB\-n\fR|\fB\-\-new-profile-name\fR \fIICC_DATEINAME\fR	Profildateiname
 .br
 .SH ALLGEMEINE OPTIONEN
 .SS

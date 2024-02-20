@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2012-2021 (C) Kai-Uwe Behrmann
+ *            2012-2024 (C) Kai-Uwe Behrmann
  *
  *  @brief    device manipulation tool
  *  @internal
@@ -30,6 +30,7 @@
 #include "oyranos_texts.h"
 #include "oyranos_config_internal.h"
 #include "oyProfiles_s.h"
+#include "oyProfile_s_.h" /* oyProfile_ToFile_() */
 
 #include "oyjl.h"
 #include "oyjl_macros.h"
@@ -308,6 +309,19 @@ oyjlOptionChoice_s * getDeviceProfileChoices    ( oyjlOption_s      * o OYJL_UNU
   return c;
 }
 
+void  oyProfile_SetTimeNow           ( oyProfile_s       * profile )
+{
+  struct tm * gmt;
+  time_t cutime = time(NULL); /* time right NOW */
+  gmt = localtime( &cutime );
+  oyProfile_SetSignature( profile, 1900+gmt->tm_year, oySIGNATURE_DATETIME_YEAR );
+  oyProfile_SetSignature( profile, 1+gmt->tm_mon, oySIGNATURE_DATETIME_MONTH );
+  oyProfile_SetSignature( profile, gmt->tm_mday, oySIGNATURE_DATETIME_DAY );
+  oyProfile_SetSignature( profile, gmt->tm_hour, oySIGNATURE_DATETIME_HOURS );
+  oyProfile_SetSignature( profile, gmt->tm_min, oySIGNATURE_DATETIME_MINUTES );
+  oyProfile_SetSignature( profile, gmt->tm_sec, oySIGNATURE_DATETIME_SECONDS );
+}
+
 /* This function is called the
  * * first time for GUI generation and then
  * * for executing the tool.
@@ -338,6 +352,7 @@ int myMain( int argc, const char ** argv )
   const char * format = 0;
   const char * device_json = 0;
   const char * rank_json = 0;
+  const char * calibration = NULL;
   const char * output = 0;
   int icc_version_2 = 0;
   int icc_version_4 = 0;
@@ -424,6 +439,8 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&only_db},NULL},
     {"oiwi", 0,                          "m","device-meta-tag",NULL,     _("Device Meta Tag"),_("embedd device and driver information into ICC meta tag"),NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&device_meta_tag},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  NULL,"calibration",   NULL,     _("Device Calibration"),_("Generate a device link profile."), _("FILENAME can be output of xcalib -p ."), _("FILENAME"),
+        oyjlOPTIONTYPE_FUNCTION, {0},                oyjlSTRING,    {.s=&calibration},NULL},
     {"oiwi", 0,                          "h","help",          NULL,     NULL,          NULL,                    NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlNONE,      {0},NULL},
     {"oiwi", 0, "X", "export", NULL, NULL, NULL, NULL, NULL, oyjlOPTIONTYPE_CHOICE, {.choices.list = NULL}, oyjlSTRING, {.s=&export},NULL},
@@ -455,6 +472,7 @@ int myMain( int argc, const char ** argv )
     {"oiwg", 0,     NULL,               _("List local DB profiles for selected device"),_("Needs -c and -d options."),               "list-profiles","c,d,show-non-device-related","list-profiles,show-non-device-related",NULL},
     {"oiwg", 0,     NULL,               _("List Taxi DB profiles for selected device"),_("Needs -c and -d options."),               "list-taxi-profiles","c,d,show-non-device-related","list-taxi-profiles,show-non-device-related",NULL},
     {"oiwg", 0,     NULL,               _("Dump device color state"), _("Needs -c and -d options."),               "f,c,d,j,k",   "o,only-db,m", "f,o,j,k,only-db,m",NULL},
+    {"oiwg", 0,     NULL,               _("Convert Calibration Data"), _("Use for VCGT or printer calibrations. The command generates a device link profile. This can be used for insertion into a conversion, which does not use native calibration, like a opt out window with Compiz compicc window color management."), "calibration",   "m,j,f,n", "calibration,m,j,n",NULL},
     {"oiwg", OYJL_GROUP_FLAG_GENERAL_OPTS, NULL, _("General options"),NULL,               "h|X|V|R",     "v",           "h,X,V,R,v",NULL},
     {"",0,0,0,0,0,0,0,0}
   };
@@ -1248,7 +1266,85 @@ int myMain( int argc, const char ** argv )
     oyConfig_Release( &c );
     return 0;
 
+  } else if( calibration )
+  {
+    uint32_t id[4];
+    char * calib_fn = oyResolveDirFileName_(calibration);
+    char * error_buffer = calloc(sizeof(char), 128);
+    oyProfile_s * prof = NULL;
+    const char * csp = NULL;
+    char * data = oyReadFileToMem_( calib_fn, &size, oyAllocateFunc_ );
+    oyjl_val root = oyjlTreeParseCsv( data, NULL, OYJL_NUMBER_DETECTION, error_buffer, 128 );
+    int channels_n = oyjlValueCount(oyjlTreeGetValue(root,0,"[0]"));
+    if(channels_n == 3)
+      csp = "rgb";
+    else if(channels_n == 4)
+      csp = "cmyk";
+    oyFree_m_(calib_fn);
+    oyFree_m_(data);
 
+    if(root)
+    {
+      oyOptions_s * opts = oyOptions_New(0),
+                  * result = 0;
+      t = oyjlTreeToText(root, OYJL_JSON | OYJL_NO_MARKUP);
+      error = oyOptions_SetFromString( &opts,
+                                       "//" OY_TYPE_STD "/device_calibration",
+                                       t, OY_CREATE_NEW );
+      error = oyOptions_SetFromString( &opts,
+                                       "//" OY_TYPE_STD "/csp",
+                                       csp, OY_CREATE_NEW );
+      free(t); t = NULL;
+      error = oyOptions_SetFromInt( &opts,
+                                      "//" OY_TYPE_STD "/icc_profile_flags",
+                                      flags, 0, OY_CREATE_NEW );
+      oyOptions_Handle( "///create_profile.device_calibration.icc",
+                        opts,"create_profile.icc_profile.device_calibration",
+                        &result );
+      prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile", oyOBJECT_PROFILE_S );
+      oyOptions_Release( &result );
+    }
+
+    t = oyConfig_FindString( c, "manufacturer", 0 );
+    if(t)
+      error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t );
+    t =  oyConfig_FindString( c, "model", 0 );
+    if(t)
+      error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
+    if(channels_n == 3)
+      error = oyProfile_AddTagText( prof, icSigProfileDescriptionTag,
+                                    "VCGT Calibration Data" );
+
+    if(device_meta_tag)
+    {
+      oyOptions_s * opts = 0;
+      const char * t = oyConfig_FindString( c, "prefix", 0 );
+      error = oyOptions_SetFromString( &opts, "///key_prefix_required",
+                                           t, OY_CREATE_NEW );
+      oyProfile_AddDevice( prof, c, opts );
+      oyOptions_Release( &opts );
+    }
+
+    if(new_profile_name)
+      error = oyProfile_AddTagText( prof, icSigProfileDescriptionTag, new_profile_name );
+
+    /* serialise before requesting a ICC md5 */
+    oyProfile_SetTimeNow( prof );
+    data = oyProfile_GetMem( prof, &size, 0, oyAllocFunc );
+    oyFree_m_(data);
+    oyProfile_GetMD5( prof, OY_COMPUTE, id );
+    {
+      const char * dest = new_profile_name?new_profile_name:"device link";
+      char * t = oyjlStringCopy( dest, 0 ),
+           * tmp = strrchr( t, '.' );
+      if(!(tmp && strlen(tmp) == 4))
+        oyjlStringAdd( &t, 0,0, ".icc" );
+      oyProfile_ToFile_( (oyProfile_s_*)prof, t );
+      if(verbose)
+        fprintf(stderr, "Wrote: \"%s\" to %s\n", dest, t );
+      free(t);
+    }
+    oyProfile_Release( &prof );
   } else if(format && c)
   {
     oyConfDomain_s * d = oyConfDomain_FromReg( device_class, 0 );

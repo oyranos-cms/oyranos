@@ -28,6 +28,8 @@ oyranos-device v0.9.7 - Oyranos Color Devices
 <br />
 <strong>oyranos-device</strong> <a href="#format"><strong>-f</strong>=<em>icc|openicc+rank-map|openicc|openicc-rank-map</em></a> <strong>-c</strong>=<em>CLASS</em> <strong>-d</strong>=<em>NUMBER</em> <strong>-j</strong>=<em>FILENAME</em> <strong>-k</strong>=<em>FILENAME</em> [<strong>-o</strong>=<em>FILENAME</em>] [<strong>--only-db</strong>] [<strong>-m</strong>]
 <br />
+<strong>oyranos-device</strong> <a href="#calibration"><strong>--calibration</strong>=<em>FILENAME</em></a> [<strong>-m</strong>] [<strong>-j</strong>=<em>FILENAME</em>] [<strong>-f</strong>=<em>icc|openicc+rank-map|openicc|openicc-rank-map</em>] [<strong>-n</strong>=<em>ICC_FILE_NAME</em>]
+<br />
 <strong>oyranos-device</strong> <a href="#help"><strong>-h</strong>=<em>synopsis|...</em></a> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
@@ -167,6 +169,20 @@ The oyranos-device program shows and administrates ICC profiles for color device
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--rank-json</strong>=<em>FILENAME</em></td> <td>use rank map JSON alternatively to -c and -d options </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--only-db</strong></td> <td>use only DB keys for -f=openicc</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--device-meta-tag</strong></td> <td>embedd device and driver information into ICC meta tag</td> </tr>
+</table>
+
+<h3 id="calibration">Convert Calibration Data</h3>
+
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-device</strong></a> <strong>--calibration</strong>=<em>FILENAME</em> [<strong>-m</strong>] [<strong>-j</strong>=<em>FILENAME</em>] [<strong>-f</strong>=<em>icc|openicc+rank-map|openicc|openicc-rank-map</em>] [<strong>-n</strong>=<em>ICC_FILE_NAME</em>]
+
+&nbsp;&nbsp;Use for VCGT or printer calibrations. The command generates a device link profile. This can be used for insertion into a conversion, which does not use native calibration, like a opt out window with Compiz compicc window color management.
+
+<table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--calibration</strong>=<em>FILENAME</em></td> <td>Generate a device link profile.<br />FILENAME can be output of xcalib -p . </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--device-meta-tag</strong></td> <td>embedd device and driver information into ICC meta tag</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-j</strong>|<strong>--device-json</strong>=<em>FILENAME</em></td> <td>use device JSON alternatively to -c and -d options </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--new-profile-name</strong>=<em>ICC_FILE_NAME</em></td> <td>jméno profil souboru  </td>
+ </tr>
 </table>
 
 

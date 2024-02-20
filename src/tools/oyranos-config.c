@@ -276,7 +276,7 @@ int myMain( int argc , const char** argv )
         oyjlOPTIONTYPE_FUNCTION, {.getChoices=listKeys}, oyjlSTRING,{.s=&get},NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","set",           NULL,     _("Set"),      _("Set a Value"),             NULL, _("XPATH:VALUE"),   
         oyjlOPTIONTYPE_FUNCTION, {.getChoices=listVals}, oyjlSTRING,{.s=&set},NULL},
-    {"oiwi", 0,                          "n","native-update-event",NULL,_("Native Update"),_("Send natiev update event"), NULL, NULL,   
+    {"oiwi", 0,                          "n","native-update-event",NULL,_("Native Update"),_("Send native update event"), NULL, NULL,   
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&native_update_event},NULL},
     {"oiwi", 0,                          NULL,"dump-db",      NULL,     _("Dump DB"),  _("Dump OpenICC DB"),         NULL, NULL,               
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&dump_db},NULL},

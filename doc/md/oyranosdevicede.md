@@ -28,6 +28,8 @@ oyranos-device v0.9.7 - Oyranos Farbgerät
 <br />
 <strong>oyranos-device</strong> <a href="#format"><strong>-f</strong>=<em>icc|openicc+rank-map|openicc|openicc-rank-map</em></a> <strong>-c</strong>=<em>KLASSE</em> <strong>-d</strong>=<em>NUMMER</em> <strong>-j</strong>=<em>DATEINAME</em> <strong>-k</strong>=<em>DATEINAME</em> [<strong>-o</strong>=<em>DATEINAME</em>] [<strong>--only-db</strong>] [<strong>-m</strong>]
 <br />
+<strong>oyranos-device</strong> <a href="#calibration"><strong>--calibration</strong>=<em>DATEINAME</em></a> [<strong>-m</strong>] [<strong>-j</strong>=<em>DATEINAME</em>] [<strong>-f</strong>=<em>icc|openicc+rank-map|openicc|openicc-rank-map</em>] [<strong>-n</strong>=<em>ICC_DATEINAME</em>]
+<br />
 <strong>oyranos-device</strong> <a href="#help"><strong>-h</strong>=<em>synopsis|...</em></a> | <strong>-X</strong>=<em>json|json+command|man|markdown</em> | <strong>-V</strong> | <strong>-R</strong>=<em>gui|cli|web|...</em> [<strong>-v</strong>]
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
@@ -167,6 +169,20 @@ Das oyranos-device Program zeigt und ändert Einstellungen zu ICC Geräteprofile
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-k</strong>|<strong>--rank-json</strong>=<em>DATEINAME</em></td> <td>benutze Wichtungstabelle im JSON-Format alternativ zu den -c und -d Optionen </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--only-db</strong></td> <td>benutze nur DB Schlüssel/Wertepaare für -f=openicc</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--device-meta-tag</strong></td> <td>bette Geräte-und Treiberinformationen in ICC meta Block ein</td> </tr>
+</table>
+
+<h3 id="calibration">Wandle Kalibrationsdaten</h3>
+
+&nbsp;&nbsp; <a href="#synopsis"><strong>oyranos-device</strong></a> <strong>--calibration</strong>=<em>DATEINAME</em> [<strong>-m</strong>] [<strong>-j</strong>=<em>DATEINAME</em>] [<strong>-f</strong>=<em>icc|openicc+rank-map|openicc|openicc-rank-map</em>] [<strong>-n</strong>=<em>ICC_DATEINAME</em>]
+
+&nbsp;&nbsp;Benutze dies für VCGT oder Druckerkalibrationen. Das Kommando erzeugt Geräteverknüpfungsprofile. Diese können in eine Farbumwandlung eingefügt werden, wenn sie keine native calibration nutzen soll. Dies wäre z.B. der Fall mit einem OptOut Fenster und dem Compiz compicc Farbmanagement.
+
+<table style='width:100%'>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>--calibration</strong>=<em>DATEINAME</em></td> <td>Erzeuge Verknüpfungsprofile<br />DATEINAME kann die Ausgabe sein von xcalib -p . </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-m</strong>|<strong>--device-meta-tag</strong></td> <td>bette Geräte-und Treiberinformationen in ICC meta Block ein</td> </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-j</strong>|<strong>--device-json</strong>=<em>DATEINAME</em></td> <td>benutze Geräte JSON alternativ zu den -c und -d Optionen </tr>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-n</strong>|<strong>--new-profile-name</strong>=<em>ICC_DATEINAME</em></td> <td>Profildateiname  </td>
+ </tr>
 </table>
 
 
