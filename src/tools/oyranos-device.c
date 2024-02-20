@@ -25,6 +25,7 @@
 #include "oyranos_i18n.h"
 #include "oyranos_icc.h"
 #include "oyranos_module_internal.h"
+#include "oyranos_monitor_effect.h"
 #include "oyranos_sentinel.h"
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
@@ -156,8 +157,8 @@ char **  listProfiles                ( oyConfig_s        * c, /* device */
         int error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/options/source",
                                          "backend_core", OY_CREATE_NEW );
         error = oyDeviceToJSON( c, options, &json, oyAllocFunc );
-        fprintf( stderr, OY_DBG_FORMAT_ "%s%s %s: %d\n%s\n", OY_DBG_ARGS_, t,
-                 _("found profiles for device class"), device_class, size, json );
+        fprintf( stderr, OY_DBG_FORMAT_ "%s%s %s: %d\n%s%s\n", OY_DBG_ARGS_, t,
+                 _("found profiles for device class"), device_class, size, json, error?"error":"" );
         free(t);
         if(json) free(json);
       }
@@ -555,7 +556,7 @@ int myMain( int argc, const char ** argv )
                * dt = 0;
     size_t size = 0;
     const char * filename = 0;
-    char * data = 0, *t;
+    char * data = NULL;
     int n = 0;
 
     if(print_class) simple = 2;
@@ -1270,12 +1271,11 @@ int myMain( int argc, const char ** argv )
   {
     uint32_t id[4];
     char * calib_fn = oyResolveDirFileName_(calibration);
-    char * error_buffer = calloc(sizeof(char), 128);
     oyProfile_s * prof = NULL;
-    const char * csp = NULL;
+    const char * csp = NULL, * text = NULL;
     char * data = oyReadFileToMem_( calib_fn, &size, oyAllocateFunc_ );
-    oyjl_val root = oyjlTreeParseCsv( data, NULL, OYJL_NUMBER_DETECTION, error_buffer, 128 );
-    int channels_n = oyjlValueCount(oyjlTreeGetValue(root,0,"[0]"));
+    int channels_n = 0, width = 0;
+    char * channel_json = oyParseCsvVCGT( data, &channels_n, &width );
     if(channels_n == 3)
       csp = "rgb";
     else if(channels_n == 4)
@@ -1283,34 +1283,15 @@ int myMain( int argc, const char ** argv )
     oyFree_m_(calib_fn);
     oyFree_m_(data);
 
-    if(root)
-    {
-      oyOptions_s * opts = oyOptions_New(0),
-                  * result = 0;
-      t = oyjlTreeToText(root, OYJL_JSON | OYJL_NO_MARKUP);
-      error = oyOptions_SetFromString( &opts,
-                                       "//" OY_TYPE_STD "/device_calibration",
-                                       t, OY_CREATE_NEW );
-      error = oyOptions_SetFromString( &opts,
-                                       "//" OY_TYPE_STD "/csp",
-                                       csp, OY_CREATE_NEW );
-      free(t); t = NULL;
-      error = oyOptions_SetFromInt( &opts,
-                                      "//" OY_TYPE_STD "/icc_profile_flags",
-                                      flags, 0, OY_CREATE_NEW );
-      oyOptions_Handle( "///create_profile.device_calibration.icc",
-                        opts,"create_profile.icc_profile.device_calibration",
-                        &result );
-      prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile", oyOBJECT_PROFILE_S );
-      oyOptions_Release( &result );
-    }
+    /* create device link */
+    prof = oyProfile_FromVCGT( channel_json, csp, flags );
 
-    t = oyConfig_FindString( c, "manufacturer", 0 );
-    if(t)
-      error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, t );
-    t =  oyConfig_FindString( c, "model", 0 );
-    if(t)
-      error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, t);
+    text = oyConfig_FindString( c, "manufacturer", 0 );
+    if(text)
+      error = oyProfile_AddTagText( prof, icSigDeviceMfgDescTag, text );
+    text =  oyConfig_FindString( c, "model", 0 );
+    if(text)
+      error = oyProfile_AddTagText( prof, icSigDeviceModelDescTag, text);
     if(channels_n == 3)
       error = oyProfile_AddTagText( prof, icSigProfileDescriptionTag,
                                     "VCGT Calibration Data" );
@@ -1340,8 +1321,7 @@ int myMain( int argc, const char ** argv )
       if(!(tmp && strlen(tmp) == 4))
         oyjlStringAdd( &t, 0,0, ".icc" );
       oyProfile_ToFile_( (oyProfile_s_*)prof, t );
-      if(verbose)
-        fprintf(stderr, "Wrote: \"%s\" to %s\n", dest, t );
+      fprintf(stderr, "Wrote: \"%s\" to %s\n", dest, t );
       free(t);
     }
     oyProfile_Release( &prof );

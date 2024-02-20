@@ -3,7 +3,7 @@
  *  Oyranos is an open source Color Management System 
  *
  *  @par Copyright:
- *            2018 (C) Kai-Uwe Behrmann
+ *            2018-2024 (C) Kai-Uwe Behrmann
  *
  *  @internal
  *  @brief    monitor effect APIs
@@ -30,6 +30,12 @@ int      oyProfileAddWhitePointEffect( oyProfile_s       * monitor_profile,
 uint16_t*oyProfileGetWhitePointRamp  ( int                 width,
                                        oyProfile_s       * p,
                                        oyOptions_s       * options );
+char *  oyParseCsvVCGT               ( const char        * text,
+                                       int               * width,
+                                       int               * channels );
+oyProfile_s * oyProfile_FromVCGT     ( const char        * curves_json,
+                                       const char        * csp,
+                                       int                 flags );
 uint16_t*oyProfile_GetVCGT           ( oyProfile_s       * profile,
                                        int               * width );
 int      oyProfile_SetVCGT           ( oyProfile_s       * profile,

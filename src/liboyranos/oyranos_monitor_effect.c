@@ -458,6 +458,62 @@ uint16_t * oyProfileGetWhitePointRamp( int                 width,
   return ramp;
 }
 
+char *  oyParseCsvVCGT               ( const char        * text,
+                                       int               * width,
+                                       int               * channels )
+{
+  char * error_buffer = calloc(sizeof(char), 128);
+  oyjl_val root = oyjlTreeParseCsv( text, NULL, OYJL_NUMBER_DETECTION, error_buffer, 128 );
+  int channels_n = oyjlValueCount(oyjlTreeGetValue(root,0,"[0]"));
+  int entries = oyjlValueCount(oyjlTreeGetValue(root,0,""));
+  char * t = NULL;
+
+  if(root)
+    t = oyjlTreeToText(root, OYJL_JSON | OYJL_NO_MARKUP);
+  else
+    oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)NULL, OY_DBG_FORMAT_
+                     "could not parse. Need space separated value format like from xcalib -p: 0 0 0\\n3 3 2\\n6 6 4\\n...",
+                     OY_DBG_ARGS_ );
+
+  free(error_buffer);
+  oyjlTreeFree( root );
+
+  if(width)    *width    = entries;
+  if(channels) *channels = channels_n;
+
+  return t;
+}
+
+oyProfile_s * oyProfile_FromVCGT     ( const char        * curves_json,
+                                       const char        * csp,
+                                       int                 flags )
+{
+  oyProfile_s * prof = NULL;
+  oyOptions_s * opts = oyOptions_New(0),
+              * result = 0;
+  int error = oyOptions_SetFromString( &opts,
+                                       "//" OY_TYPE_STD "/device_calibration",
+                                       curves_json, OY_CREATE_NEW );
+  error = oyOptions_SetFromString(     &opts,
+                                       "//" OY_TYPE_STD "/csp",
+                                       csp, OY_CREATE_NEW );
+  error = oyOptions_SetFromInt(        &opts,
+                                      "//" OY_TYPE_STD "/icc_profile_flags",
+                                      flags, 0, OY_CREATE_NEW );
+  if(error)
+    oyMessageFunc_p( oyMSG_WARN,(oyStruct_s*)NULL, OY_DBG_FORMAT_
+                     "error for oyOptions_SetFromInt() = %d",
+                     OY_DBG_ARGS_, error );
+  oyOptions_Handle( "///create_profile.device_calibration.icc",
+                    opts,"create_profile.icc_profile.device_calibration",
+                    &result );
+  prof = (oyProfile_s*)oyOptions_GetType( result, -1, "icc_profile", oyOBJECT_PROFILE_S );
+  oyOptions_Release( &opts );
+  oyOptions_Release( &result );
+
+  return prof;
+}
+
 uint16_t *   oyProfile_GetVCGT       ( oyProfile_s       * profile,
                                        int               * width )
 {
