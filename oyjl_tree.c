@@ -1275,7 +1275,7 @@ oyjl_val   oyjlTreeParseCsv          ( const char        * text,
   int rows_n = 0, /* lines */
       cols_n = 0, len;
   char ** rows, ** cols, * row;
-  if(!text) return jroot;
+  if(!(text && text[0])) return jroot;
   if(*oyjl_debug)
     fprintf( stderr, "lines: %d\n", rows_n );
 
