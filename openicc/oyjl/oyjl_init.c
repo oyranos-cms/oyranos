@@ -51,6 +51,7 @@ static char * oyjl_nls_path_ = NULL;
 char * oyjl_debug_node_path_ = NULL;
 char * oyjl_debug_node_value_ = NULL;
 extern char * oyjl_term_color_;
+extern char * oyjl_term_color_f_;
 extern char * oyjl_term_color_html_;
 extern char * oyjl_term_color_plain_;
 extern int oyjl_args_render_init_;
@@ -96,6 +97,11 @@ void oyjlLibRelease() {
   {
     free(oyjl_term_color_);
     oyjl_term_color_ = NULL;
+  }
+  if(oyjl_term_color_f_)
+  {
+    free(oyjl_term_color_f_);
+    oyjl_term_color_f_ = NULL;
   }
   if(oyjl_term_color_html_)
   {

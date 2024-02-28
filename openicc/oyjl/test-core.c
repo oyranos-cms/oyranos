@@ -1530,8 +1530,8 @@ oyjlTESTRESULT_e progNAME(testArgs)()
 
   const char * option_string = "v:i=2:o=string";
   oyjl_val defaults = oyjlOptionStringToJson( option_string );
-  plain = oyjlTreeToText( defaults, OYJL_NO_MARKUP );
-  len = strlen(plain);
+  text = oyjlTreeToText( defaults, OYJL_NO_MARKUP );
+  len = strlen(text);
   if( len == 50 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "oyjlOptionStringToJson(\"%s\")", option_string );
@@ -1539,13 +1539,14 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, len,
     "oyjlOptionStringToJson(\"%s\")", option_string );
   }
-  if(verbose && plain)
-    fprintf(zout, "%s\n", plain );
-  OYJL_TEST_WRITE_RESULT( plain, strlen(plain), "oyjlOptionStringToJson", "txt" )
+  if(verbose && text)
+    fprintf(zout, "%s\n", text );
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlOptionStringToJson", "txt" )
+  free( text ); text = NULL;
 
   oyjlUiJsonSetDefaults( root, defaults );
-  plain = oyjlTreeToText( root, OYJL_NO_MARKUP );
-  len = strlen(plain);
+  text = oyjlTreeToText( root, OYJL_NO_MARKUP );
+  len = strlen(text);
   if( len == 5304 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "oyjlUiJsonSetDefaults(\"%s\")", option_string );
@@ -1553,9 +1554,12 @@ oyjlTESTRESULT_e progNAME(testArgs)()
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, len,
     "oyjlUiJsonSetDefaults(\"%s\")", option_string );
   }
-  if((verbose || result != oyjlTESTRESULT_SUCCESS) && plain)
-    fprintf(zout, "%s\n", plain );
-  OYJL_TEST_WRITE_RESULT( plain, strlen(plain), "oyjlOptionStringToJson", "txt" )
+  if((verbose || result != oyjlTESTRESULT_SUCCESS) && text)
+    fprintf(zout, "%s\n", text );
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlOptionStringToJson", "txt" )
+  oyjlTreeFree( root ); root = NULL;
+  oyjlTreeFree( defaults ); defaults = NULL;
+  free( text ); text = NULL;
 
   return result;
 }

@@ -150,6 +150,7 @@ oyjl_val oyjlOptionStringToJson      ( const char        * opts )
     oyjlValueSetString( val, value );
     free(key);
   }
+  oyjlStringListRelease( &list, n, free );
 
   return root;
 }
@@ -203,6 +204,7 @@ void             oyjlUiJsonSetDefaults(oyjl_val            root,
       }
     }
   }
+  oyjlStringListRelease( &defaults_list, count, free );
 }
 /** @} *//* oyjl_args */
 
