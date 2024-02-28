@@ -1727,6 +1727,9 @@ void oyjlLibRelease() {
     oyjl_translation_context_reserve_ = 0;
   }
   if(oyjl_term_color_) { free(oyjl_term_color_); oyjl_term_color_ = NULL; }
+#if defined (OYJL_INTERNAL)
+  if(oyjl_term_color_f_) { free(oyjl_term_color_f_); oyjl_term_color_f_ = NULL; }
+#endif /* OYJL_INTERNAL */
   if(oyjl_term_color_html_) { free(oyjl_term_color_html_); oyjl_term_color_html_ = NULL; }
   if(oyjl_term_color_plain_) { free(oyjl_term_color_plain_); oyjl_term_color_plain_ = NULL; }
 }

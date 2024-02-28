@@ -246,7 +246,7 @@ char **        oyjlStringSplit2      ( const char        * text,
   return list;
 }
 
-/** @brief    Find a sub string in a delimited list (libOyjlExtra)
+/** @brief    Find a sub string in a delimited list
  * 
  *  @param[in,out] set                 text string for oyjlStringSplit2
  *  @param[in]     delimiters          one ore more separating chars or empty for empty space
