@@ -413,12 +413,30 @@ oyjlTESTRESULT_e testString ()
   }
   oyjlStringListRelease( &list, list_n, myDeAllocFunc );
 
+  char * t = oyjlStringCopy( "word", 0 );;
+  oyjlStringPrepend( &t, "pre-", 0,0 );
+  if(strcmp(t, "pre-word") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringPrepend()" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringPrepend()" );
+  }
+  oyjlStringPush( &t, "-end", 0,0 );
+  if(strcmp(t, "pre-word-end") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringPush()" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringPush()" );
+  }
+  free(t); t = NULL;
+
   test = "element";
   const char * slist[] = { test, NULL };
   list_n = 0;
   oyjlStringListAddList( &list, &list_n, slist, 1, 0, 0 );
   oyjlStringListAddList( &list, &list_n, slist, 1, 0, 0 );
-  char * t = NULL;
   for(i = 0; i < list_n; ++i)
     oyjlStringAdd( &t, 0,0, "%s%s", i?",":"", list[i] );
   if(strcmp(t, "element,element") == 0)
