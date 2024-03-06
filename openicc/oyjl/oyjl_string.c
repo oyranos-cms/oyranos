@@ -518,6 +518,21 @@ void       oyjlStringPush            ( char             ** text,
   oyjlStringAddN(text, append, strlen(append), alloc, deAlloc );
 }
 
+void       oyjlStringPrepend         ( char             ** text,
+                                       const char        * prepend,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  char * t = NULL;
+  t = oyjlStringCopy( prepend, alloc );
+  if(*text)
+  {
+    oyjlStringAddN(&t, *text, strlen(*text), alloc, deAlloc );
+    if(deAlloc) deAlloc(*text); else free(*text);
+  }
+  *text = t; t = NULL;
+}
+
 /** @brief   substitute pattern in a string
  *
  *  @param[in,out] text                source string for in place manipulation

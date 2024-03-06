@@ -82,6 +82,10 @@ void       oyjlStringPush            ( char             ** text,
                                        const char        * append,
                                        void*            (* alloc)(size_t),
                                        void             (* deAlloc)(void*) );
+void       oyjlStringPrepend         ( char             ** text,
+                                       const char        * prepend,
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) );
 int        oyjlStringReplace         ( char             ** text,
                                        const char        * search,
                                        const char        * replacement,
