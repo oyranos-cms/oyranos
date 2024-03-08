@@ -482,17 +482,25 @@ int myMain( int argc, const char ** argv )
           char * lang = langs[i], * language = NULL;
           int j, k;
 
-          const char * checklocale = setlocale( LC_MESSAGES, lang );
+          const char * checklocale;
+          if(strchr(lang,'.'))
+            oyjlStringAdd( &language, 0,0, "%s", lang );
+          else
+            oyjlStringAdd( &language, 0,0, "%s.UTF-8", lang );
+          checklocale = setlocale( LC_MESSAGES, language );
           if(*oyjl_debug || checklocale == NULL || verbose)
-            fprintf(stderr, "setlocale(%s) == %s\n", oyjlTermColor(oyjlGREEN,lang), checklocale );
+            fprintf(stderr, OYJL_DBG_FORMAT "setlocale(%s) == %s\n", OYJL_DBG_ARGS, oyjlTermColorF(oyjlGREEN,language), checklocale );
+
+          free(language);
 
           if(!checklocale)
             continue;
 
+          language = oyjlLanguage( lang );
 
-          oyjlStringAdd( &language, 0,0, "LANGUAGE=%s", lang );
+          oyjlStringPrepend( &language, "LANGUAGE=", 0,0 );
           if(*oyjl_debug || verbose)
-            fprintf(stderr, "putenv(%s)\n", oyjlTermColor(oyjlGREEN,language) );
+            fprintf(stderr, "putenv(%s)\n", oyjlTermColorF(oyjlGREEN,"%s", language) );
           putenv(language); /* GNU */
           free(language);
 
