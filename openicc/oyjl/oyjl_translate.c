@@ -142,11 +142,33 @@ oyjl_val oyjlTreeParseXXX            ( const char        * text,
 
   return root;
 }
+
 int oyjlStrcmpWrap_ (const void * a_, const void * b_)
 {
   const char * a = *(const char **)a_,
              * b = *(const char **)b_;
   return strcmp(a,b);
+}
+void oyjlTreeSortStrings             ( oyjl_val          * root,
+                                       int                 verbose )
+{
+  int count = 0, i;
+  oyjl_val sorted, root_ = *root;
+  char ** paths = oyjlTreeToPaths( root_, 1000000, NULL, OYJL_KEY, &count );
+
+  qsort( paths, count, sizeof(char*), oyjlStrcmpWrap_ );
+
+  sorted = oyjlTreeNew("org/freedesktop/oyjl/translations");
+  for(i = 0; i < count; ++i)
+  {
+    const char * path = paths[i], * t;
+    t = oyjlTreeGetString_( root_, 0, path );
+    oyjlTreeSetStringF( sorted, OYJL_CREATE_NEW, t, "%s", path );
+    if(verbose)
+      fprintf( stderr, "path[%d]: %s:%s\n", i, path, t );
+  }
+  oyjlTreeFree( root_ );
+  *root = sorted; sorted = NULL;
 }
 
 /* This function is called the
@@ -577,6 +599,8 @@ int myMain( int argc, const char ** argv )
         if(text) free(text);
         text = NULL;
         i = 0;
+        oyjlTreeSortStrings( new_translations ? &new_translations : &root,
+                             verbose );
         oyjlTreeToJson( new_translations?new_translations:root, &i, &text );
 
       } else if(copy)
