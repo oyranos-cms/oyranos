@@ -460,6 +460,7 @@ int myMain( int argc, const char ** argv )
                                   {"cgats",_("CGATS"),"",_("CGATS Values")},
                                   {"icc-xml",_("Icc XML"),"",_("ICC Named Color Values")},
                                   {"ppm",_("PPM"),"",_("Spectral PAM Image")},
+                                  {"lab",_("Lab"),"",_("Cie*Lab values")},
                                   {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s p_format[]={ {"png",_("PNG"),"",_("PNG Raster")},
                                   {"svg",_("SVG"),"",_("SVG Vector")},
@@ -500,7 +501,7 @@ int myMain( int argc, const char ** argv )
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)spe_form, sizeof(spe_form), 0 )}, oyjlSTRING, {.s=&format},NULL},
     {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE,"m", "swatch-format", NULL, _("Format"),      _("Specify output file format"), NULL, _("FORMAT"), oyjlOPTIONTYPE_CHOICE,
       {.choices.list = (oyjlOptionChoice_s*)oyjlStringAppendN( NULL, (const char*)p_format, sizeof(p_format), 0 )}, oyjlSTRING, {.s=&format},NULL},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "P", "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  NULL, _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&pattern},NULL},
+    {"oiwi", OYJL_OPTION_FLAG_IMMEDIATE|OYJL_OPTION_FLAG_EDITABLE, "P", "pattern",       NULL, _("Pattern"),       _("Filter of Color Names"),  "RegExp", _("STRING"), oyjlOPTIONTYPE_CHOICE, {0}, oyjlSTRING, {.s=&pattern},NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, "s", "spectral",      NULL, _("Spectral"),      _("Spectral Input"),         NULL, _("FILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = listSpectral}, oyjlSTRING, {.s=&input},NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE, NULL, "calib"   ,     NULL, _("VCGT"),          _("VCGT Calibration Input"), NULL, _("FILE"), oyjlOPTIONTYPE_FUNCTION, {.getChoices = listVcgt}, oyjlSTRING, {.s=&calib},NULL},
     {"oiwi", 0,                         "S", "standard-observer",NULL,_("Standard Observer"),_("CIE Standard Observer 1931 2°"), NULL,NULL, oyjlOPTIONTYPE_NONE, {0}, oyjlINT, {.i=&standardobs},NULL},
@@ -697,6 +698,7 @@ int myMain( int argc, const char ** argv )
     {
       text = HLC_EPV_M0_V2_3_json;
       data_format = oyNAME_JSON;
+      if(verbose) fprintf( stderr, "Load internal JSON data: \"%s\"\n", oyjlTermColor(oyjlBOLD, input) );
     }
 
     if(data_format == oyNAME_JSON)
@@ -805,10 +807,14 @@ int myMain( int argc, const char ** argv )
       fprintf( stderr, "channels: %d (%d) count: %d (%f %f - %f %f / %f %f) scale: %f\n",
                (int)spectral_channels, (int)size, spectral_count,
                spectra_rect[0], spectra_rect[1], spectra_rect[2], spectra_rect[3], min_y, max_y, scale );
-      if(verbose)
+      if((format && oyStringCaseCmp_(format, "lab") == 0) ||
+          verbose)
       {
-        fprintf( stderr, OY_DBG_FORMAT_ "%s\n", OY_DBG_ARGS_, oySpectrumGetString( spectra, oySPECTRUM_CHANNELS ) );
-        fprintf( stderr, "white:\t%f %f %f\n", white.f[0], white.f[1], white.f[2] );
+        if(verbose)
+        {
+          fprintf( stderr, OY_DBG_FORMAT_ "%s\n", OY_DBG_ARGS_, oySpectrumGetString( spectra, oySPECTRUM_CHANNELS ) );
+          fprintf( stderr, "white:\t%f %f %f\n", white.f[0], white.f[1], white.f[2] );
+        }
         for(j = 0; j < spectral_count; ++j)
         {
           double computedXYZ[3] = { spectra_XYZ[j].f[0]/white.f[0], spectra_XYZ[j].f[1]/white.f[0], spectra_XYZ[j].f[2]/white.f[0] };
@@ -860,20 +866,30 @@ int myMain( int argc, const char ** argv )
               oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, computedLab[1]/256.0+0.5, "collection/[0]/colors/[%d]/lab/[0]/data/[1]", j );
               oyjlTreeSetDoubleF( specT, OYJL_CREATE_NEW, computedLab[2]/256.0+0.5, "collection/[0]/colors/[%d]/lab/[0]/data/[2]", j );
             }
-            if(j < 10)
+            if(format && oyStringCaseCmp_(format, "lab") == 0)
+            {
+              fprintf( stdout, "%5d \"%s\"%s",
+                       j, oyjlTermColor(oyjlBOLD,name), strlen(name) < 10 ? "\t": "" );
+              fprintf( stdout, "\t%s", oyjlTermColorF(oyjlBLUE, "%7.2lf %7.2lf %7.2lf\n",
+                       computedLab[0], computedLab[1], computedLab[2] ) );
+            }
+            if(verbose && j < 10)
             {
               double DE = OY_HYP3(fabs(computedLab[0]-Lab[0]),fabs(computedLab[1]-Lab[1]),fabs(computedLab[2]-Lab[2]));
-              fprintf( stderr, "%d \"%s\"%s  white/scale: %f computedScaledXYZ:\t%f %f %f ",
-                       j, name, strlen(name) < 10 ? "\t": "", white.f[0], spectra_XYZ[j].f[0]/white.f[0]/CIE_Y_max, spectra_XYZ[j].f[1]/white.f[0]/CIE_Y_max, spectra_XYZ[j].f[2]/white.f[0]/CIE_Y_max );
-              fprintf( stderr, "-> Lab:%d %d %d\t%d %d %d (rgb)\n",
-                       (int)(computedLab[0]+.5), (int)(computedLab[1]+.5), (int)(computedLab[2]+.5), (int)(rgb[0]*255.), (int)(rgb[1]*255.), (int)(rgb[2]*255.) );
-              if(strlen(name) > 8) fprintf( stderr, "\t" );
-              fprintf( stderr, "\t\t\t\t\tfound XYZ:\t%f %f %f ",
-                       XYZ[0], XYZ[1], XYZ[2] );
-              fprintf( stderr, ":: Lab:%d %d %d\t%d %d %d (srgb) DE: %f\n",
-                       (int)(Lab[0]+.5), (int)(Lab[1]+.5), (int)(Lab[2]+.5), (int)(srgb[0]*255.+.5), (int)(srgb[1]*255.+.5), (int)(srgb[2]*255.+.5), DE );
+              fprintf( stderr, "%5d \"%s\"%s  white/scale: %f computedScaledXYZ: %.04f %.04f %.04f ",
+                       j, oyjlTermColor(oyjlBOLD,name), strlen(name) < 10 ? "\t": "", white.f[0], spectra_XYZ[j].f[0]/white.f[0]/CIE_Y_max, spectra_XYZ[j].f[1]/white.f[0]/CIE_Y_max, spectra_XYZ[j].f[2]/white.f[0]/CIE_Y_max );
+              fprintf( stderr, "-> Lab: %7.2f %7.2f %7.2f  rgb: %3d %3d %3d\n",
+                       computedLab[0], computedLab[1], computedLab[2], (int)(rgb[0]*255.), (int)(rgb[1]*255.), (int)(rgb[2]*255.) );
+              if(XYZ[0] != -1 && XYZ[1] != -1 && XYZ[2] != -1)
+              {
+                if(strlen(name) > 8) fprintf( stderr, "\t" );
+                fprintf( stderr, "\t\t\t\t\tfound XYZ:\t%f %f %f ",
+                         XYZ[0], XYZ[1], XYZ[2] );
+                fprintf( stderr, ":: Lab:%d %d %d\t%d %d %d (srgb) DE: %f\n",
+                         (int)(Lab[0]+.5), (int)(Lab[1]+.5), (int)(Lab[2]+.5), (int)(srgb[0]*255.+.5), (int)(srgb[1]*255.+.5), (int)(srgb[2]*255.+.5), DE );
+              }
             }
-            else if(j == 10)
+            else if(verbose && j == 10)
               fprintf( stderr, "%d\t... more might follow\n", j );
           }
         }
@@ -1247,7 +1263,7 @@ int myMain( int argc, const char ** argv )
     {
       if(specT)
       {
-        string = oyjlTreeToText( specT, OYJL_JSON | OYJL_NO_MARKUP );
+        string = oyjlTreeToText( specT, OYJL_JSON );
         if(!output || strcmp(output,"-") == 0)
           fwrite( string, sizeof(char), strlen(string), stdout );
         else
@@ -1295,6 +1311,8 @@ int myMain( int argc, const char ** argv )
       } else
         oyMessageFunc_p(oyMSG_ERROR,NULL,"no input tree found");
     }
+    else if(oyStringCaseCmp_(format, "lab") == 0)
+      oyMessageFunc_p( oyMSG_DBG, NULL, "export format: %s", format );
     else if(format)
       oyMessageFunc_p( oyMSG_ERROR, NULL, "export format not supported: %s", format );
 
