@@ -139,16 +139,19 @@ const char *   oyjlSetLocale         ( int                 category OYJL_UNUSED,
   } else {
     if(!(language && language[0]) && lang && lang[0])
     {
-      setenv("LANGUAGE", lang, 1);
+      char * l = oyjlLanguage( lang );
+      setenv("LANGUAGE", l, 1);
       if(debug) fprintf(stderr, OYJL_DBG_FORMAT "LANGUAGE=%s (LANG=%s) ", OYJL_DBG_ARGS, getenv("LANGUAGE"), getenv("LANG") );
+      free(l);
     }
   }
 #ifdef OYJL_HAVE_LOCALE_H
   setloc = setlocale( category, loc );
+  if(debug) fprintf(stderr, "call setlocale(\"%s\") %s ", loc, setloc );
 #else
   setloc = loc;
 #endif
-  if(debug) fprintf(stderr, OYJL_DBG_FORMAT "setlocale(loc: %s) = %s\n", OYJL_DBG_ARGS, loc, setloc );
+  if(debug) fprintf(stderr, OYJL_DBG_FORMAT "loc: \"%s\" return: %s\n", OYJL_DBG_ARGS, loc, setloc );
   return setloc;
 }
 
