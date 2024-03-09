@@ -112,7 +112,13 @@ int main(int argc, char** argv)
   memset(tests_failed, 0, sizeof(char*) * OYJL_TEST_MAX_COUNT);
   /* do tests */
 
+#ifdef __cplusplus
+}
+#endif
   TESTS_RUN
+#ifdef __cplusplus
+extern "C" {
+#endif
 
   /* give a summary */
   if(!list)
