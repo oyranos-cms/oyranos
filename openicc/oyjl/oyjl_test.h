@@ -458,19 +458,19 @@ oyjlTESTRESULT_e oy_test_last_result = oyjlTESTRESULT_UNKNOWN;
 
 /** Like ::PRINT_SUB_BASIC but with variable columns size. */
 #define PRINT_SUB( result_, ... ) \
-{ PRINT_SUB_BASIC( result_, \
+{ PRINT_SUB_BASIC( result_, "%s", \
     oyjlPrintSub(-1,-1, ## __VA_ARGS__ ) ); \
 }
 
 /** Like ::PRINT_SUB_BASIC but with variable columns size and right side integer print. */
 #define PRINT_SUB_INT( result_, count_, ... ) \
-{ PRINT_SUB_BASIC( result_, \
+{ PRINT_SUB_BASIC( result_, "%s", \
     oyjlPrintSub(-1, count_, ## __VA_ARGS__ ) ); \
 }
 
 /** Like ::PRINT_SUB_BASIC but with variable columns size and right side profiling print. */
 #define PRINT_SUB_PROFILING( result_, integer_, duration_, term_, ... ) \
-{ PRINT_SUB_BASIC( result_, \
+{ PRINT_SUB_BASIC( result_, "%s", \
     oyjlPrintSubProfiling(-1, integer_, duration_, term_, ## __VA_ARGS__ ) ); \
 }
 
