@@ -374,7 +374,7 @@ oyjlTESTRESULT_e oyjlTestRun         ( oyjlTESTRESULT_e  (*test)(void),
   i = oyjl_print_sub_length + 12;
   while(i--) sprintf( &text[strlen(text)], "_" );
   sprintf( &text[strlen(text)], "\n" );
-  fprintf( stdout, text );
+  fprintf( stdout, "%s", text );
   free(text);
   fprintf(stdout, "Test[%d]: %s ... ", number, test_name );
 
@@ -749,7 +749,7 @@ const char * oyjlPrintSubProfiling   ( int                 space,
     even = !even;
     tmp = (char*) realloc( text, re );
     text = tmp;
-    for( i = vlen - 1; i < space; ++i ) sprintf( &text[strlen(text)], i < space - 16&&i>vlen+5 ? even?((odd = !odd) == 0)?mark:" ":mark : " " );
+    for( i = vlen - 1; i < space; ++i ) sprintf( &text[strlen(text)], "%s", i < space - 16&&i>vlen+5 ? even?((odd = !odd) == 0)?mark:" ":mark : " " );
   }
   free(visual); visual = NULL;
 

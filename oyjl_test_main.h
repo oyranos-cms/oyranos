@@ -144,7 +144,7 @@ int main(int argc, char** argv)
     while(i--) fputs( " ", stdout );
     fputs( "#\n", stdout );
     fprintf( stdout, "#                     " );
-    fprintf( stdout, oyjlTermColor_(oyjlBOLD, "Results" ));
+    fprintf( stdout, "%s", oyjlTermColor_(oyjlBOLD, "Results" ));
     i = oyjl_print_sub_length - 18;
     while(i--) fputs( " ", stdout );
     fputs( "#\n", stdout );
