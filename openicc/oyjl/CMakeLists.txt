@@ -670,6 +670,8 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
   ENDIF( VALGRIND_EXECUTABLE )
   ADD_EXECUTABLE( oyjl-test-test "${CMAKE_CURRENT_SOURCE_DIR}/test-test.c" )
   TARGET_LINK_LIBRARIES( oyjl-test-test ${EXTRA_CORE_LIBS} )
+  ADD_EXECUTABLE( oyjl-test-test-pp "${CMAKE_CURRENT_SOURCE_DIR}/test-test-pp.cpp" )
+  TARGET_LINK_LIBRARIES( oyjl-test-test-pp ${EXTRA_CORE_LIBS} )
   ADD_EXECUTABLE( oyjl-test-args "${CMAKE_CURRENT_SOURCE_DIR}/test-args.c" )
   TARGET_LINK_LIBRARIES( oyjl-test-args ${EXTRA_CORE_LIBS} )
   ADD_EXECUTABLE( oyjl-test-core "${CMAKE_CURRENT_SOURCE_DIR}/test-core.c" )
@@ -681,8 +683,10 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
   ADD_EXECUTABLE( oyjl-test-static "${CMAKE_CURRENT_SOURCE_DIR}/test.c" )
   TARGET_LINK_LIBRARIES( oyjl-test-static ${PACKAGE_NAME}-extra-static ${PACKAGE_NAME}-static ${PACKAGE_NAME}-core-static ${EXTRA_LIBS} )
   ADD_CUSTOM_TARGET(check-test
-        OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-test
-        DEPENDS oyjl-test-test
+        COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-test
+        COMMAND echo "oyjl-test-test-pp"
+        COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-test-pp
+        DEPENDS oyjl-test-test oyjl-test-test-pp
         COMMENT "Test header only test framework" VERBATIM )
   ADD_CUSTOM_TARGET(check-args
         OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-args
