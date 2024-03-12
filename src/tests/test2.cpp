@@ -8035,6 +8035,16 @@ oyjlTESTRESULT_e testDAG2()
   }
   oyImage_Release( &image );
 
+  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.dng", 0, &image, 0 );
+  if( image )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_FromFile( \"oyranos.dng\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyImage_FromFile(DNG)" );
+  }
+  oyImage_Release( &image );
+
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;

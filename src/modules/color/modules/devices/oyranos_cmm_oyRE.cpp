@@ -183,6 +183,71 @@ void ConfigsFromPatternUsage(oyStruct_s * options)
 }
 
 
+
+typedef struct
+{
+    unsigned black;
+    unsigned data_maximum;
+    unsigned maximum;
+
+// Canon (SpecularWhiteLevel)
+// Kodak (14N, 14nx, SLR/c/n, DCS720X, DCS760C, DCS760M, ProBack, ProBack645, P712, P880, P850)
+// Olympus, except:
+//	C5050Z, C5060WZ, C7070WZ, C8080WZ
+//	SP350, SP500UZ, SP510UZ, SP565UZ
+//	E-10, E-20
+//	E-300, E-330, E-400, E-410, E-420, E-450, E-500, E-510, E-520
+//	E-1, E-3
+//	XZ-1
+// Panasonic
+// Pentax
+// Sony
+// and aliases of the above
+// DNG
+    long linear_max[4];
+
+    float fmaximum;
+    float fnorm;
+    ushort white[8][8];
+    float cam_mul[4];
+    float pre_mul[4];
+    float cmatrix[3][4];
+    float ccm[3][4];
+    float rgb_cam[3][4];
+    float cam_xyz[4][3];
+    struct ph1_t phase_one_data;
+    float flash_used;
+    float canon_ev;
+    char model2[64];
+    char UniqueCameraModel[64];
+    char LocalizedCameraModel[64];
+    char ImageUniqueID[64];
+    char RawDataUniqueID[17];
+    char OriginalRawFileName[64];
+    void *profile;
+    unsigned profile_length;
+    unsigned black_stat[8];
+    libraw_dng_color_t dng_color[2];
+    libraw_dng_levels_t dng_levels;
+    int WB_Coeffs[256][4];    /* R, G1, B, G2 coeffs */
+    float WBCT_Coeffs[64][5]; /* CCT, than R, G1, B, G2 coeffs */
+    int as_shot_wb_applied;
+    libraw_P1_color_t P1_color[2];
+    unsigned raw_bps; /* for Phase One: raw format; For other cameras: bits per pixel (copy of tiff_bps in most cases) */
+                      /* Phase One raw format values, makernotes tag 0x010e:
+                      0    Name unknown
+                      1    "RAW 1"
+                      2    "RAW 2"
+                      3    "IIQ L" (IIQ L14)
+                      4    Never seen
+                      5    "IIQ S"
+                      6    "IIQ Sv2" (S14 / S14+)
+                      7    Never seen
+                      8    "IIQ L16" (IIQ L16EX / IIQ L16)
+                      */
+	int ExifColorSpace;
+} oyre_libraw_colordata_t;
+
 oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
                                          int32_t      icc_profile_flags,
                                          const char * manufacturer,
@@ -190,9 +255,16 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
                                          int        * is_existing OY_UNUSED )
 {
   static oyProfile_s * p = NULL;
+  oyre_libraw_colordata_t * oyre_libraw_colordata = (oyre_libraw_colordata_t*)&color.black;
 
-  if(color.profile_length)
-    p = oyProfile_FromMem( color.profile_length, color.profile, 0,0);
+  if(oyre_libraw_colordata->profile_length)
+  {
+    p = oyProfile_FromMem( oyre_libraw_colordata->profile_length, oyre_libraw_colordata->profile, 0,0);
+    if(oy_debug)
+      printf("color.profile_length: %s\n",oyjlTermColorF(oyjlBLUE,"%d", color.profile_length));
+  } else
+    if(oy_debug)
+      printf("no color.profile for %s:%s\n", manufacturer, model);
 
   if(!p)
   {
@@ -201,27 +273,30 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
               "redx_redy_greenx_greeny_bluex_bluey_whitex_whitey_gamma", NULL );
 
     int fail = 0;
-    for(int i = 0; i < 3; ++i)
-    {
-      for(int j = 0; j < 3; ++j)
-      {
-        if(i < 3 && color.cam_xyz[i][j] == 0)
-          fail = 1;
-      }
-    }
     oyMAT3 cam_zyx, pre_mul, ab_cm, ab_cm_inverse;
     oyCIExyYTriple ab_cm_inverse_xyY = {{{0,0},{0,0},{0,0}}};
-    
+    for(int i = 0; i < 3; ++i)
+      for(int j = 0; j < 3; ++j)
+        // mirror diagonal
+        if((cam_zyx.v[j].n[i] = color.cam_xyz[i][j]) == 0.0)
+          ++fail;
+    if(fail == 9)
+    {
+      fail = 0;
+      for(int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+          if((cam_zyx.v[j].n[i] = color.dng_color[1].colormatrix[i][j]) == 0)
+            ++fail;
+      if(oy_debug)
+        printf("dng_color[1].colormatrix %s for %s:%s\n", fail==9?"all zero":"fine", manufacturer, model);
+    }
+ 
     // Convert camera matrix to ICC profile
     // In theory that should perform the same conversion like dcraw/libraw do.
 
     memset(&pre_mul,0,sizeof(oyMAT3));
     for(int i = 0; i < 3; ++i)
       pre_mul.v[i].n[i] = color.pre_mul[i];
-    for(int i = 0; i < 3; ++i)
-      for(int j = 0; j < 3; ++j)
-        // mirror diagonal
-        cam_zyx.v[j].n[i] = color.cam_xyz[i][j];
 
     // DNG-1.3 says in Mapping Camera Color Space to CIE XYZ Space
     // XYZtoCamera = AB (AnalogBalance:pre_mul?) * CC (CameraCalibration2:?)
@@ -240,16 +315,16 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
              OY_DBG_ARGS_ );
     }
 
-    if(oy_debug)
+    if(oy_debug || fail == 9)
     {
-      printf("color.cam_xyz:\n%s",oyMat43show( color.cam_xyz ));
-      printf("color.cam_mul:\n%s",oyMat4show( color.cam_mul ));
-      printf("color.pre_mul:\n%s",oyMat4show( color.pre_mul ));
-      printf("pre_mul:\n%s",oyMAT3show( const_cast<oyMAT3*>(&pre_mul) ));
-      printf("color.rgb_cam:\n%s",oyMat34show( color.rgb_cam ));
-      printf("color.cmatrix:\n%s",oyMat34show( color.cmatrix ));
-      printf("ab*cm|pre_mul*cam_xyz:\n%s",oyMAT3show( const_cast<oyMAT3*>(&ab_cm) ));
-      printf("ab_cm_inverse:\n%s",oyMAT3show( const_cast<oyMAT3*>(&ab_cm_inverse) ));
+      printf("color.cam_xyz:\n%s",oyjlTermColor(oyjlBLUE,oyMat43show( color.cam_xyz )));
+      printf("color.cam_mul:\n%s",oyjlTermColor(oyjlBLUE,oyMat4show( color.cam_mul )));
+      printf("color.pre_mul:\n%s",oyjlTermColor(oyjlBLUE,oyMat4show( color.pre_mul )));
+      printf("pre_mul:\n%s",oyjlTermColor(oyjlBLUE,oyMAT3show( const_cast<oyMAT3*>(&pre_mul) )));
+      printf("color.rgb_cam:\n%s",oyjlTermColor(oyjlBLUE,oyMat34show( color.rgb_cam )));
+      printf("color.cmatrix:\n%s",oyjlTermColor(oyjlBLUE,oyMat34show( color.cmatrix )));
+      printf("ab*cm|pre_mul*cam_xyz:\n%s",oyjlTermColor(oyjlBLUE,oyMAT3show( const_cast<oyMAT3*>(&ab_cm) )));
+      printf("ab_cm_inverse:\n%s",oyjlTermColor(oyjlBLUE,oyMAT3show( const_cast<oyMAT3*>(&ab_cm_inverse) )));
       if(!fail)
       printf("=> ");
       printf("ab_cm_inverse_xyY:\n%s", oyCIExyYTriple_Show(const_cast<oyCIExyYTriple*>(&ab_cm_inverse_xyY)));
@@ -308,8 +383,6 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
           OY_DBG_ARGS_, name);
 
 
-      oyProfile_SetSignature( p, icSigInputClass, oySIGNATURE_CLASS);
-
     } else
       name = oyStringCopy("ICC Examin ROMM gamma 1.0", oyAllocateFunc_ );
 
@@ -330,6 +403,8 @@ oyProfile_s * createMatrixProfile      ( libraw_colordata_t & color,
         oyRE_msg(oyMSG_DBG, (oyStruct_s*)0,
           OY_DBG_FORMAT_ " profile creation failed by \"%s\"",
           OY_DBG_ARGS_, reg);
+
+      oyProfile_SetSignature( p, icSigInputClass, oySIGNATURE_CLASS);
 
       oyProfile_AddTagText( p, icSigProfileDescriptionTag, name);
     }
@@ -678,6 +753,7 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
 {
    oyAlloc_f allocateFunc = malloc;
    int error = 0;
+   int verbose = oyOptions_FindString( options, "verbose", 0 ) ? 1:0;
 
    if(oy_debug > 2)
    oyRE_msg( oyMSG_DBG,  (oyStruct_s *) options, _DBG_FORMAT_ PRFX 
@@ -700,6 +776,9 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
    /*Init for "driver_version" option*/
    int driver_version_number = LibRaw::versionNumber();
    const char *driver_version_string = LibRaw::version();
+   if(verbose)
+     oyRE_msg(oyMSG_WARN, (oyStruct_s *) options, _DBG_FORMAT_ "\n "
+              "LibRaw::version():%s", _DBG_ARGS_, driver_version_string );
 
    const char *command_list = oyOptions_FindString(options, "command", "list");
    const char *command_properties = oyOptions_FindString(options, "command", "properties");
