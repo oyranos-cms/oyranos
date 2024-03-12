@@ -157,7 +157,7 @@ The tool can set the actual white point or set it by local day and night time. A
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong><em>[=0|1|2]</em></td> <td>Control user daemon
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td>#  : Deactivate</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td># Disable : Deactivate</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 1</td><td># Autostart : Autostart</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 2</td><td># Activate : Activate</td></tr>
   </table>

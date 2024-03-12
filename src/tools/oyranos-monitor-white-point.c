@@ -497,7 +497,7 @@ int myMain( int argc , const char** argv )
   oyjlOptionChoice_s r_choices[] = {{"TEXT",        "TEXT",             NULL,                         NULL},
                                     {"JSON",        "JSON",             NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
-  oyjlOptionChoice_s d_choices[] = {{"0", _(""), _("Deactivate"), ""},
+  oyjlOptionChoice_s d_choices[] = {{"0", _("Disable"), _("Deactivate"), ""},
                                     {"1", _("Autostart"), _("Autostart"), ""},
                                     {"2", _("Activate"), _("Activate"), ""},
                                     {NULL,NULL,NULL,NULL}};

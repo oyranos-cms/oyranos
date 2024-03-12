@@ -132,10 +132,11 @@ Das oyranos-profile-graph Programm erzeugt aus einem ICC Profil oder in Bildern 
    <tr><td style='padding-left:0.5em'><strong>-p</strong> cgats</td><td># CGATS - CGATS Werte</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-p</strong> icc-xml</td><td># Icc XML - ICC Einzelfarben Werte</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-p</strong> ppm</td><td># PPM - Spektrales PAM Bild</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> lab</td><td># Lab - CIE*Lab Werte</td></tr>
   </table>
   </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--pattern</strong>=<em>WORT</em></td> <td>Filter für Farbnamen  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--pattern</strong>=<em>WORT</em></td> <td>Filter für Farbnamen<br />RegExp  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-z</strong>|<strong>--scale</strong></td> <td>Skaliere die Höhe der Spektrumkurve</td> </tr>
 </table>

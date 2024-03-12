@@ -132,10 +132,11 @@ The  oyranos-profile-graph programm converts ICC profiles or embedded ICC profil
    <tr><td style='padding-left:0.5em'><strong>-p</strong> cgats</td><td># CGATS - CGATS Values</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-p</strong> icc-xml</td><td># Icc XML - ICC Named Color Values</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-p</strong> ppm</td><td># PPM - Spectral PAM Image</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-p</strong> lab</td><td># Lab - Cie*Lab values</td></tr>
   </table>
   </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--pattern</strong>=<em>STRING</em></td> <td>Filter of Color Names  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-P</strong>|<strong>--pattern</strong>=<em>STRING</em></td> <td>Filter of Color Names<br />RegExp  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-z</strong>|<strong>--scale</strong></td> <td>Scale the height of the spectrum graph</td> </tr>
 </table>

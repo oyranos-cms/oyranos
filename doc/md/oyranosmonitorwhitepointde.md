@@ -157,7 +157,7 @@ Das Werkzeug kann den momentanen Weißpunkt setzen oder ihn abhängig von der Ta
 <table style='width:100%'>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-d</strong>|<strong>--daemon</strong><em>[=0|1|2]</em></td> <td>Setze Sonnenuntergangsdienst
   <table>
-   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td>#  : Deaktiviere</td></tr>
+   <tr><td style='padding-left:0.5em'><strong>-d</strong> 0</td><td># Ausschalten : Deaktiviere</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 1</td><td># Automatischer Start : Automatischer Start</td></tr>
    <tr><td style='padding-left:0.5em'><strong>-d</strong> 2</td><td># Aktiviere : Aktiviere</td></tr>
   </table>
