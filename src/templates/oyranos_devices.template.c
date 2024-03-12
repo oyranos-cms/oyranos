@@ -286,7 +286,7 @@ icProfileClassSignature oyDeviceSigGet(oyConfig_s        * device )
     deviceSignature = icSigDisplayClass;
   else if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "scanner", 0 ))
     deviceSignature = icSigInputClass;
-  else if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "raw-image", 0 ))
+  else if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "camera", 0 ))
     deviceSignature = icSigInputClass;
   else if(oyFilterRegistrationMatch( oyConfigPriv_m(device)->registration, "printer", 0 ))
     deviceSignature = icSigOutputClass;

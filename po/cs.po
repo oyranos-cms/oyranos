@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oyranos\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-03-09 12:37+0100\n"
+"POT-Creation-Date: 2024-03-11 20:31+0100\n"
 "PO-Revision-Date: 2012-10-19 15:10+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -458,7 +458,7 @@ msgstr ""
 
 #: examples/oyranos_cmm_dDev.c:853 examples/oyranos_cmm_dFil.c:185
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:977
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1186
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1265
 msgid "All the small details for using this module."
 msgstr "Všechny ty malé detaily pro používání tohoto modulu."
 
@@ -942,7 +942,7 @@ msgstr "Datum kalibrace"
 msgid "Camera"
 msgstr "CameraRaw"
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1065
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1144
 msgid "CameraRaw"
 msgstr "CameraRaw"
 
@@ -1097,7 +1097,7 @@ msgstr "Sbírky nastavení Oyranosu"
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:901
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:856
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1366
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1065
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1144
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:5087
 #: modules/color/modules/oyranos_cmm_lcms.c:2785
 msgid "Color"
@@ -1380,7 +1380,7 @@ msgstr "Copyright (c) 2009 Joseph Simon; MIT"
 
 #: examples/oyranos_cmm_dDev.c:843
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:968
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1177
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1256
 msgid "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 msgstr "Copyright (c) 2009 Kai-Uwe Behrmann; MIT"
 
@@ -1754,7 +1754,7 @@ msgstr ""
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:904
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:857
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1369
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1065
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1144
 msgid "Device"
 msgstr "Zařízení"
 
@@ -3654,7 +3654,7 @@ msgstr "MIT"
 #: examples/oyranos_cmm_dDev.c:845
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:1019
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:970
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1179
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1258
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:5212
 #: modules/color/modules/oyranos_cmm_lcms.c:2899
 msgid "MIT license: http://www.opensource.org/licenses/mit-license.php"
@@ -3906,7 +3906,7 @@ msgstr "Mé jméno"
 
 #: examples/oyranos_cmm_dDev.c:851 examples/oyranos_cmm_dFil.c:183
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:975
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1184
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1263
 msgid "My filter introduction."
 msgstr "Úvod k filtrům."
 
@@ -4368,7 +4368,7 @@ msgstr "Moduly Oyranosu"
 msgid "Oyranos Profiles"
 msgstr "Moduly Oyranosu"
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1161
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1240
 #, fuzzy
 msgid "Oyranos RAW Image"
 msgstr "Oyranos RAW Image"
@@ -4479,7 +4479,7 @@ msgstr "Oyranos X11"
 #: modules/color/modules/devices/oyranos_cmm_CUPS.c:1010
 #: modules/color/modules/devices/oyranos_cmm_SANE.c:963
 #: modules/color/modules/devices/oyranos_cmm_disp.c:1504
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1172
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1251
 #: modules/color/modules/oyranos_cmm_lraw.cpp:230
 #: modules/color/modules/oyranos_cmm_oicc.c:1217
 #: modules/color/modules/oyranos_cmm_oydi.c:1366
@@ -4958,7 +4958,7 @@ msgstr ""
 msgid "Raster"
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1054
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1133
 msgid ""
 "Raw camera data, which are in file containing raw sensor data from a camera "
 "still picture."
@@ -4966,7 +4966,7 @@ msgstr ""
 "Data z fotoaparátu (RAW), která jsou v souboru obsahujícím surová data ze "
 "senzoru fotoaparátu."
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1052
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1131
 #, fuzzy
 msgid "RawCamera"
 msgstr "RawCamera"
@@ -6910,7 +6910,7 @@ msgid ""
 "resource overhead."
 msgstr ""
 
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1163
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:1242
 msgid "The raw image backend of Oyranos."
 msgstr "Backend Oyranosu pro RAW snímky."
 
@@ -7634,9 +7634,9 @@ msgid "failed!"
 msgstr "selhalo!"
 
 #: API_generated/oyranos_devices.c:2550 API_generated/oyranos_devices.c:2562
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:735
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:741
-#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:753
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:814
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:820
+#: modules/color/modules/devices/oyranos_cmm_oyRE.cpp:832
 #: modules/color/modules/lcms2/oyranos_cmm_lcm2.c:4797
 #: modules/color/modules/oyranos_cmm_lcms.c:2453
 #: modules/color/modules/oyranos_cmm_oPNG.c:999
@@ -7926,7 +7926,7 @@ msgstr ""
 msgid "not a profile:"
 msgstr "není profil:"
 
-#: API_generated/oyConfig_s.c:1062 API_generated/oyranos_devices.c:1395
+#: API_generated/oyConfig_s.c:1066 API_generated/oyranos_devices.c:1395
 #: API_generated/oyranos_devices.c:1407 liboyranos_config/oyranos_check.c:76
 msgid "not found:"
 msgstr "nenalezeno:"

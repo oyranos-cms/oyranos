@@ -25,7 +25,7 @@
 #include "oyranos_string.h"
 #include "oyranos_texts.h"
 #include "config.icc_profile.printer.CUPS.json.h"
-#include "config.icc_profile.raw-image.oyRE.json.h"
+#include "config.icc_profile.camera.oyRE.json.h"
 #include "config.icc_profile.scanner.SANE.json.h"
 
 

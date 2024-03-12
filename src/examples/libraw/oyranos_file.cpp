@@ -278,7 +278,7 @@ int main(int argc, char ** argv)
       error = oyOptions_SetFromInt( &options,
                                   "//" OY_TYPE_STD "/icc_profile_flags",
                                   icc_profile_flags, 0, OY_CREATE_NEW );
-    error = oyDeviceGet( 0, "raw-image", image_name, options, &device );
+    error = oyDeviceGet( 0, "camera", image_name, options, &device );
 
     oyOption_s * o = oyOptions_Find( *oyConfig_GetOptions(device, "data"),
                                      "icc_profile", oyNAME_PATTERN );

@@ -354,7 +354,7 @@ OYAPI int  OYEXPORT oyConfig_EraseFromDB (
  *                                     be sent
  *
  *  @version Oyranos: 0.9.7
- *  @date    2017/01/05
+ *  @date    2024/03/11
  *  @since   2017/01/05 (Oyranos: 0.9.7)
  */
 OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
@@ -364,7 +364,8 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
                                        int                 flags,
                                        int32_t           * rank_value )
 {
-  int error = !module_device || !db_pattern;
+  int error = !module_device || !db_pattern,
+      multiple_dopts = 0;
   int domain_n, pattern_n, i, j, k, l,
       rank = 0,
       has_opt;
@@ -414,7 +415,7 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
       has_opt = 0;
 
       /* check for double occurences */
-      for(l = 0; l < i; ++l)
+      for(l = i+1; l < i; ++l)
       {
         check = oyOptions_Get( dopts, l );
         check_opt = oyFilterRegistrationToText( oyOption_GetRegistration(check),
@@ -422,8 +423,9 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
         if(oyStrcmp_(d_opt, check_opt) == 0)
         {
           check_val = oyOption_GetValueText( check, oyAllocateFunc_ );
-          WARNc4_S( "%d %s occured twice with: %s %s", i, d_opt, check_val,
+          DBG_PROG4_S( "%d %s occured twice with: %s %s", i, d_opt, check_val,
                     check_val ? check_val : "" );
+          ++multiple_dopts;
           if(check_val) oyFree_m_( check_val );
         }
 
@@ -537,6 +539,8 @@ OYAPI int OYEXPORT oyConfig_Match    ( oyConfig_s        * module_device,
       if(d_val)
         oyFree_m_( d_val );
     }
+    if(multiple_dopts)
+      WARNc1_S( "Found multiple_dopts: %d\n", multiple_dopts );
   }
 
   if(rank_value)

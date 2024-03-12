@@ -308,7 +308,7 @@ oyConfig_s * oyREgetColorInfo        ( const char        * filename,
    oyOptions_MoveIn(options, &context_opt, -1);
 
    /*Call Oyranos*/
-   oyDeviceGet(OY_TYPE_STD, "raw-image", filename, options, &device);
+   oyDeviceGet(OY_TYPE_STD, "camera", filename, options, &device);
 
   return device;
 }
@@ -458,8 +458,8 @@ int      lrawFilterPlug_ImageInputRAWRun (
       byteps = 2;
       maxval = 65535;
       lraw_msg( oyMSG_WARN, (oyStruct_s*)node,
-             OY_DBG_FORMAT_ " maxval: %g",
-             OY_DBG_ARGS_, maxval );
+             OY_DBG_FORMAT_ " %dx%d maxval: %g",
+             OY_DBG_ARGS_, width, height, maxval );
     }
 
   } else
@@ -612,7 +612,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
       error = oyOptions_SetFromString( &options, "//" OY_TYPE_STD "/config/command",
                                      "properties", OY_CREATE_NEW | OY_MATCH_KEY );  
 
-      error = oyDeviceGet( 0, "raw-image", filename, options, &device );
+      error = oyDeviceGet( 0, "camera", filename, options, &device );
 
       o = oyOptions_Find( *oyConfig_GetOptions(device, "data"),
                           "icc_profile.fallback", oyNAME_PATTERN );
