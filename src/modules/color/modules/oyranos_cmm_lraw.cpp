@@ -332,6 +332,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   oyFilterNode_s * node = 0;
   int error = 0;
   const char * filename = 0;
+  char * filemem = 0;
   oyDATATYPE_e data_type = oyUINT8;
   oyPROFILE_e profile_type = oyEDITING_RGB;
   oyProfile_s * prof = 0;
@@ -397,11 +398,10 @@ int      lrawFilterPlug_ImageInputRAWRun (
   if(filename)
   {
     int size = 0;
-    char * mem = oyjlReadFile( filename, 0, &size );
+    filemem = oyjlReadFile( filename, 0, &size );
     if(size > 0)
     {
-      error = rip.open_buffer( mem, (size_t)size );
-      free(mem);
+      error = rip.open_buffer( filemem, (size_t)size );
     }
   }
 
@@ -420,10 +420,16 @@ int      lrawFilterPlug_ImageInputRAWRun (
 
   params->output_color = 0;    /* raw_color */
   params->output_bps = 16;     /* linear space */
-  params->gamm[0] = 1.0; params->gamm[1] = 1.0;
-  params->user_qual = 3;
-  params->use_camera_wb = 1;
+  params->gamm[0] = 1.0; params->gamm[1] = 1.0; /* By default settings for rec. BT.709 are used: power 2.222 (i.e. gamm[0]=1/2.222) and slope 4.5. For sRGB curve use gamm[0]=1/2.4 and gamm[1]=12.92, for linear curve set gamm[0]/gamm[1] to 1.0. */
+  params->user_qual = 12; /* Modified AHD interpolation (by Anton Petrusevich) */
+  params->use_camera_wb = 1; /* If possible, use the white balance from the camera. */
+  params->highlight = 4; /* 0-9: Highlight mode (0=clip, 1=unclip, 2=blend, 3+=rebuild). */
+#if 1
+  params->exp_correc = 1;
+#else
   params->no_auto_bright = 1;
+#endif
+  params->fbdd_noiserd = 3;
 
   oyOptions_s * node_options = oyFilterNode_GetOptions( node, 0 );
   int render = oyOptions_FindString( node_options, "render", "0" ) == NULL ? 1 : 0;
@@ -445,6 +451,9 @@ int      lrawFilterPlug_ImageInputRAWRun (
     clck = oyClock() - clck;
     DBG_NUM1_S("rip.dcraw_make_mem_image(): %g", clck/1000000.0 );
   }
+
+  rip.recycle();
+  if(filemem) free(filemem);
 
   if(image_rgb)
   {
@@ -690,6 +699,7 @@ int      lrawFilterPlug_ImageInputRAWRun (
   oyImage_Release( &image_in );
   oyOptions_Release( &image_in_tags );
   oyOptions_Release( &node_options );
+  oyOptions_Release( &options );
   oyImage_Release( &image );
   oyImage_Release( &output_image );
   oyFilterSocket_Release( &socket );
