@@ -736,6 +736,9 @@ int Configs_FromPattern(const char *registration, oyOptions_s * options, oyConfi
      devices = oyConfigs_New(0);
    oyConfigs_MoveIn(devices, &device, -1);
    *s = devices;
+
+   oyOption_Release( &handle_opt );
+   oyOption_Release( &version_opt );
  
    return error;
 }
@@ -1080,6 +1083,10 @@ int Configs_Modify(oyConfigs_s * devices, oyOptions_s * options)
          oyConfig_Release(&device);
       }
    }
+
+   oyOption_Release( &context_opt );
+   oyOption_Release( &handle_opt );
+   oyOption_Release( &version_opt );
 
    return error;
 }
