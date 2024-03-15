@@ -39,6 +39,7 @@
   TEST_RUN( test_oyTextIccDictMatch,  "IccDict matching", 1 ); \
   TEST_RUN( testPolicy, "Policy handling", 1 ); \
   TEST_RUN( testWidgets, "Widgets", 1 ); \
+  TEST_RUN( testImageIO, "Image I/O", 1 ); \
   TEST_RUN( testCMMDevicesListing, "CMM devices listing", 1 ); \
   TEST_RUN( testCMMDevicesDetails, "CMM devices details", 1 ); \
   TEST_RUN( testCMMRankMap, "rank map handling", 1 ); \
@@ -60,7 +61,7 @@
   TEST_RUN( testCCorrectFlags, "Conversion Correct Option Flags", 1 ); \
   TEST_RUN( testCache, "Cache", 1 ); \
   TEST_RUN( testPaths, "Paths", 1 ); \
-  TEST_RUN( testIO, "I/O", 1 );
+  TEST_RUN( testFileIO, "File I/O", 1 );
 
 #include "oyranos.h"
 #include "oyranos_string.h"
@@ -100,7 +101,7 @@ double d[6] = {0.5,0.5,0.5,0,0,0};
         oyObjectTreePrint( 0x01 | 0x02 | 0x08, text ? text : __func__ ); \
         oyFree_m_( text ) \
       } \
-      PRINT_SUB_INT( onfail,                 object_count, "%s:", msg?msg:"objects"); \
+      PRINT_SUB_INT( onfail,                 object_count, "%s:", msg?msg:"objects (OY_DEBUG_OBJECTS)"); \
     } else \
     { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, object_count, "%s:", msg?msg:"objects"); \
     } \
@@ -5123,6 +5124,81 @@ oyjlTESTRESULT_e testWidgets ()
   return result;
 }
 
+oyjlTESTRESULT_e testImageIO()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+  OBJECT_COUNT_SETUP
+
+  int error = 0;
+
+  oyImage_s * image = NULL;
+  error = oyImage_FromFile( OY_SOURCEDIR "not_existing.png", 0, &image, 0 );
+  if( !image )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_FromFile( \"not_existing.png\" )" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyImage_FromFile( \"not_existing.png\" )" );
+  }
+  oyImage_Release( &image );
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects noimg" )
+
+
+  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.png", 0, &image, 0 );
+  if( image )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_FromFile( \"oyranos.png\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyImage_FromFile()" );
+  }
+  error = oyImage_WritePPM( image, OY_SOURCEDIR "/extras/icons/oyranos.pam", "plain copy of oyranos.png" );
+  if( error == 0 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_WritePPM( \"oyranos.pam\"" );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, error,
+    "oyImage_WritePPM( \"oyranos.pam\"" );
+  }
+  oyImage_Release( &image );
+
+  system( "pngtopnm " OY_SOURCEDIR "/extras/icons/oyranos.png > " OY_SOURCEDIR "/extras/icons/oyranos.ppm" );
+  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.ppm", 0, &image, 0 );
+  if( image )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_FromFile( \"oyranos.ppm\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyImage_FromFile()" );
+  }
+  oyImage_Release( &image );
+
+  system( "pnmtojpeg " OY_SOURCEDIR "/extras/icons/oyranos.ppm > " OY_SOURCEDIR "/extras/icons/oyranos.jpg" );
+  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.jpg", 0, &image, 0 );
+  if( image )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_FromFile( \"oyranos.jpg\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyImage_FromFile()" );
+  }
+  oyImage_Release( &image );
+
+  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.dng", 0, &image, 0 );
+  if( image )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyImage_FromFile( \"oyranos.dng\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
+    "oyImage_FromFile(DNG)" );
+  }
+  oyImage_Release( &image );
+
+  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
+
+  return result;
+}
 
 
 oyjlTESTRESULT_e testCMMDevicesListing ()
@@ -7738,7 +7814,7 @@ oyjlTESTRESULT_e testRectangles()
   return result;
 }
 
-int myNodeSignal( oyObserver_s *observer, oySIGNAL_e signal_type, oyStruct_s *signal_data )
+int myNodeSignal( oyObserver_s *observer OY_UNUSED, oySIGNAL_e signal_type, oyStruct_s *signal_data )
 {
   int count = oyOption_GetValueInt( (oyOption_s*) signal_data, -1 );
   if(signal_data && signal_data->type_ == oyOBJECT_OPTION_S)
@@ -7765,7 +7841,7 @@ oyjlTESTRESULT_e testDAG2()
                                        "//" OY_TYPE_STD "/icc_color", NULL, 0 );
   oyProfile_s * p_in = NULL, * p_out = NULL;
   int error = 0,
-      i = 2,n = 10;
+      n = 10;
   const int src_width  = 4 * 1024,
       src_height =     512,
       dst_width  = 2 * 1024,
@@ -7979,73 +8055,6 @@ oyjlTESTRESULT_e testDAG2()
   oyFree_m_(buf_16in);
   oyFree_m_(buf_16out);
   OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects release" )
-
-
-  oyImage_s * image = NULL;
-  error = oyImage_FromFile( OY_SOURCEDIR "not_existing.png", 0, &image, 0 );
-  if( !image )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyImage_FromFile( \"not_existing.png\" )" );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyImage_FromFile( \"not_existing.png\" )" );
-  }
-  oyImage_Release( &image );
-
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 0, 1, "objects noimg" )
-
-
-  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.png", 0, &image, 0 );
-  if( image )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyImage_FromFile( \"oyranos.png\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyImage_FromFile()" );
-  }
-  error = oyImage_WritePPM( image, OY_SOURCEDIR "/extras/icons/oyranos.pam", "plain copy of oyranos.png" );
-  if( error == 0 )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyImage_WritePPM( \"oyranos.pam\"" );
-  } else
-  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, error,
-    "oyImage_WritePPM( \"oyranos.pam\"" );
-  }
-  oyImage_Release( &image );
-
-  system( "pngtopnm " OY_SOURCEDIR "/extras/icons/oyranos.png > " OY_SOURCEDIR "/extras/icons/oyranos.ppm" );
-  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.ppm", 0, &image, 0 );
-  if( image )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyImage_FromFile( \"oyranos.ppm\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyImage_FromFile()" );
-  }
-  oyImage_Release( &image );
-
-  system( "pnmtojpeg " OY_SOURCEDIR "/extras/icons/oyranos.ppm > " OY_SOURCEDIR "/extras/icons/oyranos.jpg" );
-  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.jpg", 0, &image, 0 );
-  if( image )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyImage_FromFile( \"oyranos.jpg\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyImage_FromFile()" );
-  }
-  oyImage_Release( &image );
-
-  error = oyImage_FromFile( OY_SOURCEDIR "/extras/icons/oyranos.dng", 0, &image, 0 );
-  if( image )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyImage_FromFile( \"oyranos.dng\" )  = %dx%d", oyImage_GetWidth(image ), oyImage_GetHeight( image ) );
-  } else
-  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
-    "oyImage_FromFile(DNG)" );
-  }
-  oyImage_Release( &image );
-
-  OBJECT_COUNT_PRINT( oyjlTESTRESULT_FAIL, 1, 0, NULL )
 
   return result;
 }
@@ -10203,7 +10212,7 @@ oyjlTESTRESULT_e testConfDomain ()
   return result;
 }
 
-oyjlTESTRESULT_e testIO()
+oyjlTESTRESULT_e testFileIO()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 

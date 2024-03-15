@@ -60,7 +60,7 @@ _oyranos_profile_graph()
             ;;
         --spectral-format) # long option with static args
             local IFS=$'\n'
-            local WORD_LIST=('png' 'svg' 'csv' 'ncc' 'cgats' 'icc-xml' 'ppm')
+            local WORD_LIST=('png' 'svg' 'csv' 'ncc' 'cgats' 'icc-xml' 'ppm' 'lab')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
             set +x +v
             return
@@ -169,7 +169,7 @@ _oyranos_profile_graph()
             ;;
         -p=*) # single letter option with static args
             local IFS=$'\n'
-            local WORD_LIST=('png' 'svg' 'csv' 'ncc' 'cgats' 'icc-xml' 'ppm')
+            local WORD_LIST=('png' 'svg' 'csv' 'ncc' 'cgats' 'icc-xml' 'ppm' 'lab')
             COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
             set +x +v
             return
