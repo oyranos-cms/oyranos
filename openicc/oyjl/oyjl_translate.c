@@ -32,10 +32,11 @@ oyjl_val oyjlTreeParsePo             ( const char        * text,
   char ** blocks = oyjlStringSplit2( text, "\n\n", oyjlRegExpDelimiter, &count, NULL, NULL );
   if(count)
     root = oyjlTreeNew("!DOCTYPE TS");
-  fprintf( stderr, "count: %d\n", count );
+  fprintf( stderr, OYJL_DBG_FORMAT "count: %d\n", OYJL_DBG_ARGS, count );
   for(i = 0; i < count; ++i)
   {
     const char * block = blocks[i];
+    int fuzzy = strstr(block, "#, fuzzy") != 0 ? 1 : 0;
     if(strstr(block, "msgid") && !strstr(block, "~ msgid"))
     {
       const char * msgid = strstr( block, "msgid" );
@@ -56,7 +57,9 @@ oyjl_val oyjlTreeParsePo             ( const char        * text,
       tmp = (char*)oyjlRegExpDelimiter( tr, "\"$", 0 );
       if(tmp)
         tmp[0] = '\000';
-      if(!(t[0] && tr[0]) || strcmp(t,tr) == 0)
+      if(fuzzy && verbose)
+        fprintf( stderr, "%s %s: %s - %s\n", oyjlTermColorF( oyjlBLUE, "[%d]:", i ), t, tr, oyjlTermColor(oyjlITALIC, "fuzzy") );
+      if(!(t[0] && tr[0]) || strcmp(t,tr) == 0 || fuzzy)
       {
         free(t); free(tr);
         continue;
