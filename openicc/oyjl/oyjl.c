@@ -99,6 +99,31 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
       text = text_tmp;
     }
 
+    /* convert exported C declarated oiJS into plain text using cc compiler */
+    if( oyjlStringStartsWith(text, "unsigned char ",0) && strstr(text, "_oiJS[]") != NULL &&
+        !delimiter )
+    {
+      int size = 0;
+      char * t = oyjlStringCopy( text, 0 ), * name, * tmp;
+      name = oyjlStringCopy( t, 0 );
+      tmp = strchr( name, '\n' );
+      if(tmp) tmp[0] = '\000';
+      sscanf( text, "unsigned char %s_oiJS[] = {\n", name );
+      tmp = strstr( name, "_oiJS[]" );
+      if(tmp) tmp[0] = '\000';
+      if(verbose)
+        fprintf( stderr, "Found C object: %s_oiJS\n", oyjlTermColor(oyjlBOLD, name) );
+
+      oyjlStringAdd( &t, 0,0, "\n#include <stdio.h>\n#include <oyjl.h>\nint main(int argc OYJL_UNUSED, char**argv OYJL_UNUSED)\n{\noyjl_val oiJS = (oyjl_val) %s_oiJS;\noyjl_val root = oyjlTreeDeSerialise(oiJS,0,0);\nchar * t = oyjlTreeToText( root, OYJL_JSON);\nputs(t);\n }\n", name );
+      oyjlWriteFile( "oyjl_tmp.c", t, strlen(t) );
+      free(t);
+      free(name);
+      text_tmp = oyjlReadCommandF( &size, "r", malloc, "cc -I %s/../include/oyjl -L %s/../lib64 -L %s/../lib -l OyjlCore -g -Wall -Wextra oyjl_tmp.c -o oyjl-tmp; ./oyjl-tmp", OYJL_DATADIR, OYJL_DATADIR, OYJL_DATADIR );
+      if(!verbose)
+      { remove("oyjl-tmp"); remove("oyjl_tmp.c"); }
+      text = text_tmp;
+    }
+
     int status = 0;
     root_ = oyjlTreeParse2( text, delimiter | flags, __func__, &status );
     if(status)
