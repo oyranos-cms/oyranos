@@ -2114,13 +2114,19 @@ int          oyjlTermColorInit       ( int                 flags )
     if(!oyjl_colorterm_)
     {
       term = getenv("TERM");
-      if(term && strcmp(term, "linux") == 0)
-        oyjl_colorterm_ = term;
+      if(term)
+      {
+        if(strcmp(term, "linux") == 0)
+          oyjl_colorterm_ = term;
+        else
+        if(strcmp(term, "xterm-256color") == 0)
+          oyjl_colorterm_ = term;
+      }
     }
     if(flags & OYJL_OBSERVE)
       fprintf(stderr, "%s COLORTERM\n", getenv("COLORTERM")?"has":"no" );
     oyjl_color_ = oyjl_colorterm_ != NULL ? 1 : 0;
-    oyjl_truecolor_ = oyjl_colorterm_ && (strcmp(oyjl_colorterm_,"truecolor") == 0 || strcmp(oyjl_colorterm_,"linux") == 0);
+    oyjl_truecolor_ = oyjl_colorterm_ && (strcmp(oyjl_colorterm_,"truecolor") == 0 || strcmp(oyjl_colorterm_,"linux") == 0 || strcmp(oyjl_colorterm_,"xterm-256color") == 0);
     if(!oyjlTermColorCheck_(flags))
       oyjl_truecolor_ = oyjl_color_ = 0;
     if( getenv("FORCE_COLORTERM") || flags & OYJL_FORCE_COLORTERM )
@@ -2157,7 +2163,9 @@ int          oyjlTermColorInit       ( int                 flags )
 #endif
 const char * oyjlTermColorPtr( oyjlTEXTMARK_e rgb, char ** color_text, const char * text)
 {
-  int color_env = oyjlTermColorInit( *oyjl_debug > 1?OYJL_OBSERVE:0 ),
+  const char * dbg = getenv("OYJL_DEBUG");
+  int debug = *oyjl_debug == 0 && dbg?atoi(dbg):*oyjl_debug;
+  int color_env = oyjlTermColorInit( debug > 1?OYJL_OBSERVE:0 ),
       color = color_env & 0x01,
       truecolor = color_env & 0x02;
 
