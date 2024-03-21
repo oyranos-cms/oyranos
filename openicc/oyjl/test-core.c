@@ -354,6 +354,67 @@ oyjlTESTRESULT_e testString ()
   }
   myDeAllocFunc(test_out);
 
+  if(oyjlStringFind("test", "test", OYJL_COMPARE_EXACT) != -1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringFind( OYJL_COMPARE_EXACT)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringFind(OYJL_COMPARE_EXACT)" );
+  }
+  if(oyjlStringFind("test", "none", OYJL_COMPARE_EXACT) != -1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "!oyjlStringFind(OYJL_COMPARE_EXACT)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "!oyjlStringFind(OYJL_COMPARE_EXACT)" );
+  }
+
+  if(oyjlStringFind("test", "Test", OYJL_COMPARE_CASE) != -1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringFind( OYJL_COMPARE_CASE)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringFind(OYJL_COMPARE_CASE)" );
+  }
+  if(oyjlStringFind("test", "None", OYJL_COMPARE_CASE) != -1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "!oyjlStringFind(OYJL_COMPARE_CASE)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "!oyjlStringFind(OYJL_COMPARE_CASE)" );
+  }
+
+  if(oyjlStringFind("test", "st", OYJL_COMPARE_LAZY) != -1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringFind( OYJL_COMPARE_LAZY)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringFind(OYJL_COMPARE_LAZY)" );
+  }
+  if(oyjlStringFind("test", "no", OYJL_COMPARE_LAZY) != -1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "!oyjlStringFind(OYJL_COMPARE_LAZY)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "!oyjlStringFind(OYJL_COMPARE_LAZY)" );
+  }
+
+  if(oyjlStringFind("test", "te", OYJL_COMPARE_STARTS_WITH) != -1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringFind( OYJL_COMPARE_STARTS_WITH)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringFind(OYJL_COMPARE_STARTS_WITH)" );
+  }
+  if(oyjlStringFind("test", "st", OYJL_COMPARE_STARTS_WITH) != -1)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "!oyjlStringFind(OYJL_COMPARE_STARTS_WITH)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "!oyjlStringFind(OYJL_COMPARE_STARTS_WITH)" );
+  }
+
+
   int list_n = 0;
   int *index = NULL;
   const char * text = "org/domain/eins.lib,org/domain/zwei.txt;org/domain/drei.lib?net/welt/vier.lib:net/welt/vier.txt$/net/welt/fuenf;/net/welt/fuenf";
@@ -392,6 +453,28 @@ oyjlTESTRESULT_e testString ()
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlStringListFreeDoubles()" );
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
+  }
+
+  oyjlStringListFree( list, &list_n, 4, 8, myDeAllocFunc );
+  if(list_n == 4 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringListFree(4,8)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringListFree(4,8)" );
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
+  }
+
+  oyjlStringListFree( list, &list_n, 1, 1, myDeAllocFunc );
+  if(list_n == 3 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringListFree(1,1)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringListFree(1,1)" );
     for(i = 0; i < list_n; ++i)
       fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
   }
