@@ -43,12 +43,16 @@ char **    oyjlStringSplit2          ( const char        * text,
                                        int               * count,
                                        int              ** index,
                                        void*            (* alloc)(size_t));
-#define OYJL_COMPARE_CASE              0x01           /**< case insensitive like with strcasecmp() */
-#define OYJL_COMPARE_LAZY              0x02
-#define OYJL_COMPARE_STARTS_WITH       0x04
-#define OYJL_REMOVE                    0x08
-#define OYJL_TO_JSON                   0x10
-#define OYJL_TO_TEXT                   0x20
+#define OYJL_COMPARE_EXACT             0x01           /**< like with strcmp() */
+#define OYJL_COMPARE_CASE              0x02           /**< case insensitive like with strcasecmp() */
+#define OYJL_COMPARE_LAZY              0x04
+#define OYJL_COMPARE_STARTS_WITH       0x08
+int        oyjlStringFind            ( const char        * text,
+                                       const char        * pattern,
+                                       int                 flags );
+#define OYJL_REMOVE                    0x10
+#define OYJL_TO_JSON                   0x20
+#define OYJL_TO_TEXT                   0x40
 int        oyjlStringSplitFind       ( const char        * set,
                                        const char        * delimiters,
                                        const char        * pattern,
@@ -101,6 +105,11 @@ void       oyjlStringListRelease     ( char            *** l,
 void       oyjlStringListFreeDoubles ( char             ** list,
                                        int               * list_n,
                                        void             (* deAlloc)(void*) );
+void       oyjlStringListFree        ( char             ** list,
+                                       int               * list_n,
+                                       int                 start,
+                                       int                 count,
+                                       void             (* deAlloc)(void*) );
 void       oyjlStringListAddList     ( char            *** list,
                                        int               * n,
                                        const char       ** append,
@@ -124,6 +133,11 @@ int        oyjlStringListAdd         ( char            *** list,
                                        void             (* deAlloc)(void*),
                                        const char        * format,
                                                            ... );
+int        oyjlStringListFind        ( char             ** list,
+                                       int               * list_n,
+                                       const char        * pattern,
+                                       int                 flags,
+                                       void             (* deAlloc)(void*) );
 int        oyjlStringToLong          ( const char        * text,
                                        long              * value,
                                        const char       ** end );
