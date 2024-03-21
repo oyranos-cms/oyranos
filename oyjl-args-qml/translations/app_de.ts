@@ -265,7 +265,7 @@
     <message>
         <location filename="../main2.cpp" line="109"/>
         <source>path/to/commands.json</source>
-        <translation>pfad/zo/kommando.json</translation>
+        <translation>pfad/zu/kommando.json</translation>
     </message>
     <message>
         <location filename="../main2.cpp" line="112"/>

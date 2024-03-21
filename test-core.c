@@ -460,10 +460,10 @@ oyjlTESTRESULT_e testString ()
   oyjlStringListFree( list, &list_n, 4, 8, myDeAllocFunc );
   if(list_n == 4 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringListFree(4,8)" );
+    "oyjlStringListFree(4,8) list_n; %d", list_n );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringListFree(4,8)" );
+    "oyjlStringListFree(4,8) list_n; %d", list_n );
     for(i = 0; i < list_n; ++i)
       fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
   }
@@ -471,10 +471,40 @@ oyjlTESTRESULT_e testString ()
   oyjlStringListFree( list, &list_n, 1, 1, myDeAllocFunc );
   if(list_n == 3 )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlStringListFree(1,1)" );
+    "oyjlStringListFree(1,1) list_n: %d", list_n );
   } else
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
-    "oyjlStringListFree(1,1)" );
+    "oyjlStringListFree(1,1) list_n; %d", list_n );
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
+  }
+
+  if(oyjlStringListFind( list, &list_n, "", 0,0 ) < 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringListFind(\"\") < 0" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringListFind(\"\") < 0" );
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
+  }
+
+  if(oyjlStringListFind( list, &list_n, list[2], 0,0 ) == 2)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringListFind(\"%s\") == [2/%d]", list[2], list_n );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringListFind(\"%s\") == [2/%d]", list[2], list_n );
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
+  }
+
+  if(oyjlStringListFind( list, &list_n, list[1], OYJL_REMOVE, free ) == 1 && list_n == 2)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringListFind(OYJL_REMOVE) list_n: %d", list_n );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringListFind(OYJL_REMOVE) list_n: %d", list_n );
     for(i = 0; i < list_n; ++i)
       fprintf(zout, " list[%d] \"%s\"\n", i, list[i] );
   }
