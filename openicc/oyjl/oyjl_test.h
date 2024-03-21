@@ -246,6 +246,7 @@ const char * oyjlTestResultToString  ( oyjlTESTRESULT_e      error, int use_colo
  */
 FILE * zout;
 int oyjl_test_number = 0;
+int oyjl_test_count = 0;
 const char * oyjl_test_file = NULL;
 int oyjl_test_file_line = -1;
 void oyjlSetDbgPosition( const char * file, int line )
@@ -267,11 +268,11 @@ oyjlTESTRESULT_e prog(void); \
       for(i = argpos; i < argc; ++i) \
         if(strstr(text, argv[i]) != 0 || \
            atoi(argv[i]) == oyjl_test_number ) \
-          oyjlTestRun( prog, text, oyjl_test_number ); \
+          oyjlTestRun( prog, text, oyjl_test_number, oyjl_test_count ); \
   } else if(list) \
     printf( "[%d] %s\n", oyjl_test_number, text); \
   else if(do_it) \
-    oyjlTestRun( prog, text, oyjl_test_number ); \
+    oyjlTestRun( prog, text, oyjl_test_number, oyjl_test_count ); \
   ++oyjl_test_number; \
 }
 
@@ -335,10 +336,12 @@ int oyjl_print_sub_length = 51;
  *  @param         test                test function
  *  @param         test_name           short string for status line
  *  @param         number              internal test number
+ *  @param         count               internal test count
  */
 oyjlTESTRESULT_e oyjlTestRun         ( oyjlTESTRESULT_e  (*test)(void),
                                        const char        * test_name,
-                                       int                 number )
+                                       int                 number,
+                                       int                 count )
 {
   oyjlTESTRESULT_e error = oyjlTESTRESULT_UNKNOWN;
   char * text = NULL;
@@ -376,7 +379,10 @@ oyjlTESTRESULT_e oyjlTestRun         ( oyjlTESTRESULT_e  (*test)(void),
   sprintf( &text[strlen(text)], "\n" );
   fprintf( stdout, "%s", text );
   free(text);
-  fprintf(stdout, "Test[%d]: %s ... ", number, test_name );
+  if(count)
+    fprintf(stdout, "Test[%d/%d]: %s ... ", number, count, test_name );
+  else
+    fprintf(stdout, "Test[%d]: %s ... ", number, test_name );
 
   error = test();
 
