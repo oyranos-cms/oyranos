@@ -272,7 +272,7 @@ char ** listColorSchemes( int * count )
 {
   int n = 0, size = 0, i;
   char ** list, ** result_list = NULL;
-  char * result = oyjlReadCommandF( &size, "r", malloc, "LANG=C plasma-apply-colorscheme --list-schemes" );
+  char * result = oyjlReadCommandF( &size, "r", malloc, "LANG=C.UTF-8 plasma-apply-colorscheme --list-schemes" );
   list = oyjlStringSplit( result, '\n', &n, 0 );
 
   *count = 0;
@@ -368,7 +368,7 @@ static oyjlOptionChoice_s * getColorSchemeChoices (
         c[pos].description = strdup("");
         c[pos].help = strdup("");
 
-        if(selected && value && strcmp(t, value) == 0)
+        if(selected && value && strcasecmp(t, value) == 0)
           *selected = pos;
 
         ++pos;
@@ -384,7 +384,7 @@ static oyjlOptionChoice_s * getColorSchemeChoices (
 char * getCurrentColorScheme()
 {
   int n = 0,i, size = 0;
-  char * result = oyjlReadCommandF( &size, "r", malloc, "LANG=C plasma-apply-colorscheme --list-schemes" );
+  char * result = oyjlReadCommandF( &size, "r", malloc, "LANG=C.UTF-8 plasma-apply-colorscheme --list-schemes" );
   char ** list = oyjlStringSplit( result, '\n', &n, 0 );
   char * current = NULL;
 
@@ -419,7 +419,10 @@ void setColorScheme( const char * scheme )
   char * result;
   const char * home = oyGetHomeDir_();
   const char * ThemeName = strstr(scheme, "dark") == NULL && strstr(scheme, "Dark") == NULL?"Adwaita":"Adwaita-dark";
-
+  int list_n = 0;
+  char ** list = listColorSchemes( &list_n );
+  int pos = oyjlStringListFind( list, &list_n, scheme, OYJL_COMPARE_CASE, 0 );
+  scheme = pos >= 0 ? list[pos] : scheme;
   oyjlStringAdd( &command, 0,0, "plasma-apply-colorscheme %s; export THEME=%s; sed -i \"/Net\\/ThemeName/cNet\\/ThemeName \\\"$THEME\\\"\" %s/.config/xsettingsd/xsettingsd.conf; xsettingsd & (sleep 1; killall xsettingsd)", scheme, ThemeName, home );
   result = oyjlReadCommandF( &size, "r", malloc, command );
 
@@ -1177,12 +1180,12 @@ int getSunriseSunset( double * rise, double * set, int dry, const char * format,
     int hour, minute, second, gmt_diff_second;
     double elevation;
     oyjl_val root = NULL;
-    if(format && strcmp(format,"JSON") == 0)
+    if(format && strcasecmp(format,"JSON") == 0)
       root = oyjlTreeNew(NULL);
 
     dtime = oyGetCurrentGMTHour_( &gmt_diff_second );
     oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour_(0), gmt_diff_second ), &hour, &minute, &second );
-    if(format && strcmp(format,"JSON") == 0)
+    if(format && strcasecmp(format,"JSON") == 0)
     {
       int is_night;
       if(*rise < dtime && dtime <= *set)
@@ -1202,7 +1205,7 @@ int getSunriseSunset( double * rise, double * set, int dry, const char * format,
     oySplitHour( oyGetCurrentLocalHour( *rise, gmt_diff_second ), &hour, &minute, &second );
     if(text)
     {
-      if(format && strcmp(format,"JSON") == 0)
+      if(format && strcasecmp(format,"JSON") == 0)
       {
         oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, lat, "org/freedesktop/openicc/display/latitude" );
         oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, lon, "org/freedesktop/openicc/display/longitude" );
@@ -1223,7 +1226,7 @@ int getSunriseSunset( double * rise, double * set, int dry, const char * format,
       }
     }
     oySplitHour( oyGetCurrentLocalHour( *set,  gmt_diff_second ), &hour, &minute, &second );
-    if(format && strcmp(format,"JSON") == 0)
+    if(format && strcasecmp(format,"JSON") == 0)
     {
       int level = 0;
       oyjlTreeSetDoubleF(root, OYJL_CREATE_NEW, hour, "local/sun/set/hour" );
@@ -1428,7 +1431,7 @@ int checkWtptState(int dry)
 
     if( (new_mode != cmode) ||
         ((effect?1:0) != (new_effect?1:0) ||
-         (effect && new_effect && strcmp(effect, new_effect) != 0)))
+         (effect && new_effect && strcasecmp(effect, new_effect) != 0)))
     {
       fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
       fprintf(  stderr, "%s: %s %s: %s\n", _("New white point mode"), oyjlTermColor(oyjlBOLD,new_mode<choices?choices_string_list[new_mode]:"----"),
@@ -1449,7 +1452,7 @@ int checkWtptState(int dry)
         error = setWtptMode( scope, new_mode, dry );
     }
 
-    if(dry == 0 && scheme && (!ccs || strcmp(scheme, ccs) != 0))
+    if(dry == 0 && scheme && (!ccs || strcasecmp(scheme, ccs) != 0))
     {
       setColorScheme( scheme);
       fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
