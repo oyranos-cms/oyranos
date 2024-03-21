@@ -66,19 +66,6 @@ int verbose = 0;
 #define TEST_RUN( prog, text, do_it ) oyjlTESTRESULT_e prog(void);
 TESTS_RUN /* declare test functions outside main() for C++ and almost reset the TEST_RUN macro */
 #undef TEST_RUN
-#define TEST_RUN( prog, text, do_it ) \
-{ \
-  if(argc > argpos && do_it) { \
-      for(i = argpos; i < argc; ++i) \
-        if(strstr(text, argv[i]) != 0 || \
-           atoi(argv[i]) == oyjl_test_number ) \
-          oyjlTestRun( prog, text, oyjl_test_number ); \
-  } else if(list) \
-    printf( "[%d] %s\n", oyjl_test_number, text); \
-  else if(do_it) \
-    oyjlTestRun( prog, text, oyjl_test_number ); \
-  ++oyjl_test_number; \
-}
 
 /** @brief simple start function for testing program */
 int main(int argc, char** argv)
@@ -130,6 +117,23 @@ int main(int argc, char** argv)
   memset(tests_failed, 0, sizeof(char*) * OYJL_TEST_MAX_COUNT);
   /* do tests */
 
+#undef TEST_RUN
+#define TEST_RUN( prog, text, do_it ) ++oyjl_test_count;
+TESTS_RUN /* count */
+#undef TEST_RUN
+#define TEST_RUN( prog, text, do_it ) \
+{ \
+  if(argc > argpos && do_it) { \
+      for(i = argpos; i < argc; ++i) \
+        if(strstr(text, argv[i]) != 0 || \
+           atoi(argv[i]) == oyjl_test_number ) \
+          oyjlTestRun( prog, text, oyjl_test_number, oyjl_test_count ); \
+  } else if(list) \
+    printf( "[%d] %s\n", oyjl_test_number, text); \
+  else if(do_it) \
+    oyjlTestRun( prog, text, oyjl_test_number, oyjl_test_count ); \
+  ++oyjl_test_number; \
+}
   TESTS_RUN
 
   /* give a summary */
