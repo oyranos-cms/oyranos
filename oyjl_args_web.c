@@ -41,12 +41,6 @@
 
 int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
                                        int                 write_size );
-#define OYJL_CASE_COMPARE              0x01
-#define OYJL_LAZY                      0x02
-int oyjlStringListFind               ( char             ** list,
-                                       int                 list_n,
-                                       const char        * value,
-                                       int                 flags );
 
 #ifdef _MSC_VER
 #ifndef strcasecmp
@@ -1048,33 +1042,6 @@ void oyjlArgsWebGroupPrint_          ( oyjl_val            groups,
 
 #include "oyjl_io_internal.h"
 
-int oyjlStringListFind               ( char             ** list,
-                                       int                 list_n,
-                                       const char        * value,
-                                       int                 flags )
-{
-  int i, pos = -1, found = 0;
-  for(i = 0; i < list_n; ++i)
-  {
-    const char * val = list[i];
-    if(flags & OYJL_CASE_COMPARE)
-    {
-      if(strcasecmp(val, value) == 0)
-        ++found;
-    } else if(flags & OYJL_LAZY)
-    {
-      if(strstr(val, value) != NULL)
-        ++found;
-    } else
-      if(strcmp(val, value) == 0)
-        ++found;
-
-    if(found)
-      pos = i;
-  }
-  return pos;
-}
-
 char ** oyjl_args_web_file_names_allowed = NULL;
 int     oyjl_args_web_file_names_allowed_n = 0;
 char ** oyjl_args_web_file_names_no = NULL;
@@ -1107,9 +1074,9 @@ int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
 
   if(!fn) return 1;
 
-  if(oyjlStringListFind( oyjl_args_web_file_names_allowed, oyjl_args_web_file_names_allowed_n, fn, 0 ) >= 0)
+  if(oyjlStringListFind( oyjl_args_web_file_names_allowed, &oyjl_args_web_file_names_allowed_n, fn, 0,0 ) >= 0)
     return 0;
-  if(oyjlStringListFind( oyjl_args_web_file_names_no, oyjl_args_web_file_names_no_n, fn, 0 ) >= 0)
+  if(oyjlStringListFind( oyjl_args_web_file_names_no, &oyjl_args_web_file_names_no_n, fn, 0,0 ) >= 0)
     return 1;
 
   if( strcmp(fn, "oyjl-list") == 0 ) fprintf( stderr, "      with %s=\"checkXXX\" use all \"security\" file check policies or add one by one on a as needed base, separated by comma, from %s()\n      Avalable file check policies are:\n", oyjlTermColor(oyjlBOLD,"security"), __func__ );

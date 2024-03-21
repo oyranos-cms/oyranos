@@ -246,21 +246,136 @@ char **        oyjlStringSplit2      ( const char        * text,
   return list;
 }
 
+/** @brief    Match a string from pattern 
+ * 
+ *  @param[in]     text                text string
+ *  @param[in]     pattern             text to search for. If empty it will return the matched string count; optional
+ *  @param[in]     flags               flags for behaviour; default is ::OYJL_COMPARE_EXACT match with strcmp() == 0
+ *                                     - ::OYJL_COMPARE_CASE case independent compare function (default: exact strcmp)
+ *                                     - ::OYJL_COMPARE_LAZY search for pattern in sub string fron separated list using strstr()
+ *                                     - ::OYJL_COMPARE_STARTS_WITH search for sub string using oyjlStringStartsWith()
+ *                                     - ::OYJL_REGEXP regex compare using oyjlRegExpFind()
+ *                                     - ::OYJL_REVERSE swap the matching arguments and try to find a match from set for pattern
+ *  @return                            result,
+ *                                     -  0 - for not found
+ *                                     -  1 - for matched
+ *                                     - -1 on issue like text or pattern args are missed
+ * */
+int        oyjlStringFind            ( const char        * text,
+                                       const char        * pattern,
+                                       int                 flags )
+{
+  const char * search = pattern;
+  int found = 0;
+
+  if(!(text && text[0]) || !(pattern && pattern[0]))
+  {
+    found = -1;
+    return found;
+  }
+
+  if(flags & OYJL_REVERSE)
+  {
+    search = text;
+    text = pattern;
+  }
+
+  if(flags & OYJL_COMPARE_STARTS_WITH)
+  {
+    if(oyjlStringStartsWith(text, search, flags))
+      found = 1;
+  }
+  else if(flags & OYJL_COMPARE_CASE)
+  {
+    if(strcasecmp(text, search) == 0)
+      found = 1;
+  }
+  else if(flags & OYJL_COMPARE_LAZY)
+  {
+    if(strstr(text, search) != NULL)
+      found = 1;
+  }
+  else if(flags & OYJL_REGEXP)
+  {
+    if(oyjlRegExpFind((char*)text, search, NULL) != NULL)
+      found = 1;
+  }
+  else
+    if(strcmp(text, search) == 0)
+      found = 1;
+
+  return found;
+}
+
+/** @brief    Find a string in a list
+ * 
+ *  @param[in]     list                text string list
+ *  @param[in]     pattern             text to search for. If empty it will return the matched string count; optional
+ *  @param[in]     flags               flags for behaviour
+ *                                     - ::OYJL_REMOVE remove matched part from list
+ *                                     - ::OYJL_COMPARE_CASE case independent compare function (default: exact strcmp)
+ *                                     - ::OYJL_COMPARE_LAZY search for pattern in sub string fron separated list using strstr()
+ *                                     - ::OYJL_COMPARE_STARTS_WITH search for sub string using oyjlStringStartsWith()
+ *                                     - ::OYJL_REGEXP regex compare using oyjlRegExpFind()
+ *                                     - ::OYJL_REVERSE swap the matching arguments and try to find a match from set for pattern
+ *  @param[out]    match               result depending on flags; optional
+ *  @return                            index of pattern match in list, or count with OYJL_REMOVE
+ *                                     - -1 if nothing is found
+ * */
+int        oyjlStringListFind        ( char             ** list,
+                                       int               * list_n,
+                                       const char        * pattern,
+                                       int                 flags,
+                                       void             (* deAlloc)(void*) )
+{
+  int found = -1, i, n = *list_n;
+  if(deAlloc == 0) deAlloc = free;
+
+  if(flags & OYJL_REMOVE) found = 0;
+
+  for( i = 0; i  < n; ++i )
+  {
+    const char * text = list[i];
+    int pos = -1;
+
+    if(oyjlStringFind(text, pattern, flags) == 1)
+      pos = i;
+
+    if(flags & OYJL_REMOVE)
+    {
+      if(pos != -1)
+      {
+        oyjlStringListFree( list, list_n, pos, 1, deAlloc );
+        ++found;
+      }
+    } else
+    {
+      if( pos != -1 )
+      {
+        found = pos;
+        break;
+      }
+    }
+  }
+
+  return found;
+}
+
 /** @brief    Find a sub string in a delimited list
  * 
  *  @param[in,out] set                 text string for oyjlStringSplit2
  *  @param[in]     delimiters          one ore more separating chars or empty for empty space
  *  @param[in]     pattern             text to search for. If empty it will return the sub string count; optional
  *  @param[in]     flags               flags for behaviour
- *                                     - OYJL_REMOVE remove matched part from list (creates new set)
- *                                     - OYJL_TO_JSON convert to list in JSON array format, can be combined with OYJL_NO_MARKUP
- *                                     - OYJL_TO_TEXT convert to string list with highlighted matches
- *                                     - OYJL_MARK convert to marked list in JSON format
- *                                     - OYJL_COMPARE_CASE case independent compare function (default: exact strcmp)
- *                                     - OYJL_COMPARE_LAZY search for pattern in sub string fron separated list using strstr()
- *                                     - OYJL_COMPARE_STARTS_WITH search for sub string using oyjlStringStartsWith()
- *                                     - OYJL_REGEXP regex compare using oyjlRegExpFind()
- *                                     - OYJL_REVERSE swap the matching arguments and try to find a match from set for pattern
+ *                                     - ::OYJL_REMOVE remove matched part from list (creates new set)
+ *                                     - ::OYJL_TO_JSON convert to list in JSON array format, can be combined with OYJL_NO_MARKUP
+ *                                     - ::OYJL_TO_TEXT convert to string list with highlighted matches
+ *                                     - ::OYJL_MARK convert to marked list in JSON format
+ *                                     - ::OYJL_COMPARE_CASE case independent compare function (default: exact strcmp)
+ *                                     - ::OYJL_COMPARE_LAZY search for pattern in sub string fron separated list using strstr()
+ *                                     - ::OYJL_COMPARE_STARTS_WITH search for sub string using oyjlStringStartsWith()
+ *                                     - ::OYJL_REGEXP regex compare using oyjlRegExpFind()
+ *                                     - ::OYJL_REVERSE swap the matching arguments and try to find a match from set for pattern
  *  @param[out]    result              results depending on flags; optional
  *  @param[in]     alloc               custom malloc; optional
  *  @param[in]     deAlloc             custom free; optional
@@ -293,51 +408,10 @@ int        oyjlStringSplitFind       ( const char        * set,
       char * new_set = NULL;
       for( i = 0; i  < n; ++i )
       {
-        const char * val = list[i],
-                   * text = val,
-                   * search = pattern;
+        const char * text = list[i];
         int pos = -1;
 
-        if(flags & OYJL_REVERSE)
-        {
-          search = val;
-          text = pattern;
-        }
-
-        if(flags & OYJL_COMPARE_STARTS_WITH)
-        {
-          if(oyjlStringStartsWith(text, search, flags))
-          {
-            pos = found = i;
-            if(*oyjl_debug >= 2)
-              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
-          }
-        } else if(flags & OYJL_COMPARE_CASE)
-        {
-          if(strcasecmp(text, search) == 0)
-          {
-            pos = found = i;
-            if(*oyjl_debug >= 2)
-              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
-          }
-        } else if(flags & OYJL_COMPARE_LAZY)
-        {
-          if(strstr(text, search) != NULL)
-          {
-            pos = found = i;
-            if(*oyjl_debug >= 2)
-              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
-          }
-        } else if(flags & OYJL_REGEXP)
-        {
-          if(oyjlRegExpFind((char*)text, search, NULL) != NULL)
-          {
-            pos = found = i;
-            if(*oyjl_debug >= 2)
-              fprintf( stderr, OYJL_DBG_FORMAT "%s found inside %s\n", OYJL_DBG_ARGS, pattern, set );
-          }
-        } else
-        if(strcmp(text, search) == 0)
+        if(oyjlStringFind(text, pattern, flags) == 1)
         {
           pos = found = i;
           if(*oyjl_debug >= 2)
@@ -345,16 +419,16 @@ int        oyjlStringSplitFind       ( const char        * set,
         }
  
         if(flags & OYJL_TO_JSON && !(pos == -1 && flags & OYJL_REMOVE))
-          oyjlStringAdd( &new_set, alloc,deAlloc, "%s\"%s\"", i&&new_set?", ":"", oyjlTermColor(flags&OYJL_NO_MARKUP?oyjlNO_MARK:oyjlRED,val) );
+          oyjlStringAdd( &new_set, alloc,deAlloc, "%s\"%s\"", i&&new_set?", ":"", oyjlTermColor(flags&OYJL_NO_MARKUP?oyjlNO_MARK:oyjlRED,text) );
         if(flags & OYJL_TO_TEXT && !(pos == -1 && flags & OYJL_REMOVE))
         {
           char sep[4] = {delimiters?delimiters[0]:' ',0,0,0};
-          oyjlStringAdd( &new_set, alloc,deAlloc,0, "%s%s", i&&new_set?sep:"", oyjlTermColor(flags&OYJL_NO_MARKUP?oyjlNO_MARK:oyjlRED,val) );
+          oyjlStringAdd( &new_set, alloc,deAlloc,0, "%s%s", i&&new_set?sep:"", oyjlTermColor(flags&OYJL_NO_MARKUP?oyjlNO_MARK:oyjlRED,text) );
         }
         else if(pos == -1 && flags & OYJL_REMOVE)
-          oyjlStringAdd( &new_set, alloc,deAlloc,0, "%s%s", i&&new_set?",":"", val );
+          oyjlStringAdd( &new_set, alloc,deAlloc,0, "%s%s", i&&new_set?",":"", text );
         else if(!(flags & OYJL_REMOVE) && result && new_set == NULL && *result == NULL && pos != -1)
-          *result = oyjlStringCopy( val, alloc );
+          *result = oyjlStringCopy( text, alloc );
       }
 
       if(flags & OYJL_REMOVE)
@@ -767,6 +841,45 @@ void       oyjlStringListFreeDoubles (
 
   *list_n = pos;
 }
+
+/** @brief   remove elements from array
+ *
+ *  @version Oyjl: 1.0.0
+ *  @date    2024/03/22
+ *  @since   2024/03/22 (Oyjl: 1.0.0)
+ */
+void       oyjlStringListFree        ( char             ** list,
+                                       int               * list_n,
+                                       int                 start,
+                                       int                 count,
+                                       void             (* deAlloc)(void*) )
+{
+  int i, n, tail;
+  if(deAlloc == 0) deAlloc = free;
+
+  if(!list || !*list || !list_n || !(*list_n) || start >= (*list_n) -1 || count <= 0)
+    return;
+
+  n = *list_n;
+  if(start + count > n)
+    count = n - start;
+  tail = n - start - count;
+
+  for( i = start; i < start + count; ++i )
+  {
+    if(list[i])
+      deAlloc( list[i] );
+    list[i] = NULL;
+    --(*list_n);
+  }
+
+  if(count)
+  {
+    memmove( &list[start], &list[start+count], sizeof(char*) * tail );
+    list[ start + count + 1 ] = NULL;
+  }
+}
+
 
 /** @brief append a string list to an other and handle memory */
 void     oyjlStringListAddList       ( char            *** list,
