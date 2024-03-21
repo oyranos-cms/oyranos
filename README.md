@@ -130,7 +130,7 @@ device specific Informations (ICC profiles) und system wide settings.
   (b) replace the branch name in line 44.
 
 #### openSUSE Leap 15.5
-    zypper install cmake color-filesystem gcc-c++ git autoconf libtool make patch pkgconfig desktop-file-utils xdg-utils update-desktop-files ghostscript-fonts-std Mesa-devel libltdl-devel cups-devel elektra libxml2-devel libyajl-devel libyaml-devel libmicrohttpd-devel liblcms-devel liblcms2-devel libjpeg-devel libpng-devel libtiff-devel libraw-devel libexiv2-devel libxcm-devel libXcm0 xorg-x11-libXfixes-devel xorg-x11-libXpm-devel libXinerama-devel libXrandr-devel libXxf86vm-devel xbacklight sane-backends-devel fltk-devel libXft-devel ftgl-devel gettext gettext-tools cairo-devel netpbm
+    zypper install cmake color-filesystem gcc-c++ git autoconf libtool make patch pkgconfig desktop-file-utils xdg-utils update-desktop-files ghostscript-fonts-std Mesa-devel libltdl-devel cups-devel elektra libxml2-devel libyajl-devel libyaml-devel libmicrohttpd-devel liblcms-devel liblcms2-devel libjpeg-devel libpng-devel libtiff-devel libraw-devel libexiv2-devel libxcm-devel libXcm0 libSM-devel xorg-x11-libXfixes-devel xorg-x11-libXpm-devel libXinerama-devel libXrandr-devel libXxf86vm-devel xbacklight sane-backends-devel fltk-devel libXft-devel ftgl-devel glu-devel gettext gettext-tools cairo-devel netpbm
     # oyranos-0.9.7 can now be installed successfully.
     zypper install libqt4-devel libqt5-qtbase-common-devel          # Synnefo
     zypper install patterns-kde-devel_kde_frameworks                # KolorManager

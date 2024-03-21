@@ -4,7 +4,7 @@
 #ifndef OYRANOS_GIT_VERSION_H
 #define OYRANOS_GIT_VERSION_H
 
-#define OY_GIT_VERSION                 "0.9.6-3088-g8cbeec38e-2024-03-15"  /**< git describe --always HEAD  + date */ 
+#define OY_GIT_VERSION                 "0.9.6-3091-g2895cf96a"  /**< git describe --always HEAD */
 
 
 #endif /*OYRANOS_GIT_VERSION_H*/
