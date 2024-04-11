@@ -133,6 +133,7 @@ static char ** oyjlStringSplitSpace_ ( const char        * text,
   return list;
 }
 
+/* length is the length of the delimiter found in text */
 const char * oyjlStringDelimiter ( const char * text, const char * delimiter, int * length )
 {
   int i,j, dn = delimiter ? strlen(delimiter) : 0, len = text?strlen(text):0;
@@ -141,7 +142,7 @@ const char * oyjlStringDelimiter ( const char * text, const char * delimiter, in
       if(text[j] && text[j] == delimiter[i])
       {
         if(length)
-          *length = j;
+          *length = 1;
         return &text[j];
       }
   return NULL;
@@ -173,7 +174,7 @@ char **        oyjlStringSplit       ( const char        * text,
  *                                     e.g. comma ","; optional;
  *                                     default zero: extract white space separated words
  *  @param[in]     splitFunc           function for splitting, default is
- *                                     oyjlStringSplit(); optional
+ *                                     oyjlStringDelimiter(); optional
  *  @param[out]    count               number of detected string segments; optional
  *  @param[out]    index               to be allocated array of detected delimiter indexes; The array will contain the list of indexes in text, which lead to the actual split positional index.; optional
  *  @param[in]     alloc               custom allocator; optional, default is malloc
@@ -219,10 +220,13 @@ char **        oyjlStringSplit2      ( const char        * text,
       const char * start = text;
       for(i = 0; i < n; ++i)
       {
+        char * t = NULL;
         intptr_t len = 0;
-        int length = 0;
+        int length = 0,
+            pos;
         const char * end = splitFunc(start, delimiter, &length);
-        if(index && length) (*index)[i] = length + start - text;
+        pos = end - text;
+        if(index && length) (*index)[i] = pos;
 
         if(end > start)
           len = end - start;
@@ -231,11 +235,12 @@ char **        oyjlStringSplit2      ( const char        * text,
         else
           len = strlen(start);
 
-        if((list[i] = alloc( len+1 )) == 0) return NULL;
+        if((t = alloc( len+1 )) == 0) return NULL;
 
-        memcpy( list[i], start, len );
-        list[i][len] = 0;
-        start += len + 1;
+        memcpy( t, start, len );
+        t[len] = 0;
+        list[i] = t; t = NULL;
+        start += len + length;
       }
     }
   }
@@ -1136,14 +1141,15 @@ char *     oyjlRegExpFind            ( char              * text,
   return match;
 }
 
+/* length is the length of the delimiter found in text */
 const char * oyjlRegExpDelimiter ( const char * text, const char * delimiter, int * length )
 {
-  const char * pos = oyjlRegExpFind( (char*)text, delimiter, NULL ),
-             * pos2 = pos ? oyjlRegExpFind( (char*)pos+1, delimiter, NULL ) : NULL;
+  int len = 0;
+  const char * pos = oyjlRegExpFind( (char*)text, delimiter, &len );
   if(pos)
   {
     if(length)
-      *length = pos2!=NULL ? pos2-pos : (int)strlen(pos);
+      *length = len;
     return pos;
   }
   return NULL;

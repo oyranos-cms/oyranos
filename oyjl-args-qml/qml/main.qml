@@ -3,7 +3,7 @@
  *  Oyjl JSON QML is a graphical renderer of UI files.
  *
  *  @par Copyright:
- *            2018-2023 (C) Kai-Uwe Behrmann
+ *            2018-2024 (C) Kai-Uwe Behrmann
  *            All Rights reserved.
  *
  *  @par License:
