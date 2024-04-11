@@ -1160,6 +1160,30 @@ oyjlTESTRESULT_e testString ()
     "oyjlRegExpFind( \"%s\", \"%s\" )", txt, oyjlNoEmpty(regexp) );
   }
 
+  // text = "org/domain/eins.lib,org/domain/zwei.txt;org/domain/drei.lib?net/welt/vier.lib:net/welt/vier.txt$/net/welt/fuenf;/net/welt/fuenf";
+  list = oyjlStringSplit2( text, "/welt/", oyjlRegExpDelimiter, &list_n, &index, myAllocFunc );
+
+  if( list_n == 5 &&
+      (index && list[1] && strcmp(list[1], "vier.lib:net") == 0) &&
+      (index && strcmp(list[2], "vier.txt$/net") == 0) &&
+      (index && text[index[2]] == '/') &&
+      (index && text[index[2]] == '/')
+    )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlStringSplit2(oyjlRegExpDelimiter)" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlStringSplit2(oyjlRegExpDelimiter)" );
+  }
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || verbose)
+  {
+    fprintf( zout, " text: \"%s\"\n", text );
+    for(i = 0; i < list_n; ++i)
+      fprintf(zout, " list[%d] \"%s\" index in text of delimiter: %d\n", i, list[i], index ? index[i] : -1 );
+  }
+  oyjlStringListRelease( &list, list_n, myDeAllocFunc );
+  if(index) { myDeAllocFunc( index ); index = NULL; }
+
   return result;
 }
 
