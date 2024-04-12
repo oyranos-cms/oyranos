@@ -297,8 +297,11 @@ int        oyjlStringFind            ( const char        * text,
   }
   else if(flags & OYJL_COMPARE_LAZY)
   {
-    if(strstr(text, search) != NULL)
+    char * t_low = oyjlStringToLower_(text),
+         * s_low = oyjlStringToLower_(search);
+    if(strstr(t_low, s_low) != NULL)
       found = 1;
+    free(t_low); free(s_low);
   }
   else if(flags & OYJL_REGEXP)
   {

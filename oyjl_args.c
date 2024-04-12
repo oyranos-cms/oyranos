@@ -1043,7 +1043,7 @@ const char * oyjlStringDelimiter ( const char * text, const char * delimiter, in
       if(text[j] && text[j] == delimiter[i])
       {
         if(length)
-          *length = j;
+          *length = 1;
         return &text[j];
       }
   return NULL;
