@@ -918,8 +918,6 @@ int myMain( int argc, const char ** argv )
     HLC_PARAM_SETUP
     int h = 0;
     char * t = NULL;
-    time_t cutime;         /* Time since epoch */
-    struct tm * gmt;
     oyStructList_s * ccs = oyStructList_New(0); /* color conversions */
     oyProfiles_s * ps = oyProfiles_New(0);
     oyProfile_s * pLab = oyProfile_FromStd( oyASSUMED_LAB, 0, 0 );
@@ -950,12 +948,7 @@ int myMain( int argc, const char ** argv )
     oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, t, "creator" );
     free( t ); t = NULL;
 
-    t = calloc(48,sizeof(char));
-    cutime = time(NULL); /* time right NOW */
-    gmt = localtime( &cutime );
-    strftime( t, 48, "%FT%H:%M:%S%z", gmt );
-    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, t, "date" );
-    free( t ); t = NULL;
+    oyjlTreeSetStringF( specT, OYJL_CREATE_NEW, oyjlPrintTime( 0, oyjlNO_MARK ), "date" );
 
     if(profile_count)
     {

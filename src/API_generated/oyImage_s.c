@@ -1254,18 +1254,9 @@ int          oyImage_WritePPM        ( oyImage_s         * image,
       fputc( '\n', fp );
       oyFree_m_( t );
 
-      {
-        time_t  cutime;         /* Time since epoch */
-        struct tm       *gmt;
-        char time_str[24];
-
-        cutime = time(NULL); /* time right NOW */
-        gmt = gmtime(&cutime);
-        strftime(time_str, 24, "%Y/%m/%d %H:%M:%S", gmt);
-        snprintf( text, 128, "# DATE/TIME: %s\n", time_str );
-        len = strlen( text );
-        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
-      }
+      snprintf( text, 128, "# DATE/TIME: %s\n", oyjlPrintTime( 0, oyjlNO_MARK ) );
+      len = strlen( text );
+      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
 
       snprintf( text, 128, "# COLORSPACE: %s\n", colorspacename ?
                 colorspacename : "--" );
