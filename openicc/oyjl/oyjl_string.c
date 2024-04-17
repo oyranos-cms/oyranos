@@ -295,6 +295,11 @@ int        oyjlStringFind            ( const char        * text,
     if(strcasecmp(text, search) == 0)
       found = 1;
   }
+  else if(flags & OYJL_COMPARE_FIND_NEEDLE)
+  {
+    if(strstr(text, search) != NULL)
+      found = 1;
+  }
   else if(flags & OYJL_COMPARE_LAZY)
   {
     char * t_low = oyjlStringToLower_(text),
@@ -322,7 +327,8 @@ int        oyjlStringFind            ( const char        * text,
  *  @param[in]     flags               flags for behaviour
  *                                     - ::OYJL_REMOVE remove matched part from list
  *                                     - ::OYJL_COMPARE_CASE case independent compare function (default: exact strcmp)
- *                                     - ::OYJL_COMPARE_LAZY search for pattern in sub string fron separated list using strstr()
+ *                                     - ::OYJL_COMPARE_FIND_NEEDLE search for pattern in sub string fron separated list using strstr()
+ *                                     - ::OYJL_COMPARE_LAZY search for pattern in sub string fron separated list using strstr() all lower case
  *                                     - ::OYJL_COMPARE_STARTS_WITH search for sub string using oyjlStringStartsWith()
  *                                     - ::OYJL_REGEXP regex compare using oyjlRegExpFind()
  *                                     - ::OYJL_REVERSE swap the matching arguments and try to find a match from set for pattern
@@ -380,7 +386,8 @@ int        oyjlStringListFind        ( char             ** list,
  *                                     - ::OYJL_TO_TEXT convert to string list with highlighted matches
  *                                     - ::OYJL_MARK convert to marked list in JSON format
  *                                     - ::OYJL_COMPARE_CASE case independent compare function (default: exact strcmp)
- *                                     - ::OYJL_COMPARE_LAZY search for pattern in sub string fron separated list using strstr()
+ *                                     - ::OYJL_COMPARE_FIND_NEEDLE search for pattern in sub string fron separated list using strstr()
+ *                                     - ::OYJL_COMPARE_LAZY search for pattern in sub string fron separated list using strstr() all lower case
  *                                     - ::OYJL_COMPARE_STARTS_WITH search for sub string using oyjlStringStartsWith()
  *                                     - ::OYJL_REGEXP regex compare using oyjlRegExpFind()
  *                                     - ::OYJL_REVERSE swap the matching arguments and try to find a match from set for pattern
@@ -802,6 +809,24 @@ int        oyjlStringListAdd         ( char            *** list,
   return 0;
 }
 
+/** @brief modify a string list */
+void       oyjlStringListDo          ( char             ** list,
+                                       int                 n,
+                                       const char        * string,
+                                       void             (* listDo)(char**,const char*, void*(*)(size_t),void(*)(void*)),
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) )
+{
+  int i;
+  for(i=0; i < n; ++i)
+  {
+    char * text = list[i];
+    listDo( &text, string, alloc, deAlloc );
+    list[i] = text;
+  }
+}
+
+
 /** @brief filter doubles out
  *
  *  @version Oyranos: 0.9.6
@@ -915,8 +940,8 @@ void     oyjlStringListAddList       ( char            *** list,
 /** show better const behaviour and return instant error status over strtol()
  *
  *  @param[in]     text                string
- *  @param[out]    value               resulting number
- *  @param[out]    end                 possibly part after number
+ *  @param[out]    value               resulting number; optional
+ *  @param[out]    end                 possibly part after number; optional
  *  @return                            error
  *                                     - 0 : text input was completely read as number
  *                                     - -1 : text input was read as number with white space or other text after; can be seen in end argument
@@ -930,7 +955,10 @@ int      oyjlStringToLong            ( const char        * text,
 {
   char * end_ = 0;
   int error = -1;
-  *value = strtol( text, &end_, 0 );
+  long l;
+  l = strtol( text, &end_, 0 );
+  if(value)
+    *value = l;
   if(end_ && end_ != text && isdigit(text[0]) && !isdigit(end_[0]) )
   {
     if(end_[0] && end_ != text)

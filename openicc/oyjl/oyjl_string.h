@@ -46,13 +46,14 @@ char **    oyjlStringSplit2          ( const char        * text,
 #define OYJL_COMPARE_EXACT             0x01           /**< like with strcmp() */
 #define OYJL_COMPARE_CASE              0x02           /**< case insensitive like with strcasecmp() */
 #define OYJL_COMPARE_LAZY              0x04
-#define OYJL_COMPARE_STARTS_WITH       0x08
+#define OYJL_COMPARE_FIND_NEEDLE       0x08
+#define OYJL_COMPARE_STARTS_WITH       0x10
 int        oyjlStringFind            ( const char        * text,
                                        const char        * pattern,
                                        int                 flags );
-#define OYJL_REMOVE                    0x10
-#define OYJL_TO_JSON                   0x20
-#define OYJL_TO_TEXT                   0x40
+#define OYJL_REMOVE                    0x20
+#define OYJL_TO_JSON                   0x40
+#define OYJL_TO_TEXT                   0x80
 int        oyjlStringSplitFind       ( const char        * set,
                                        const char        * delimiters,
                                        const char        * pattern,
@@ -133,6 +134,12 @@ int        oyjlStringListAdd         ( char            *** list,
                                        void             (* deAlloc)(void*),
                                        const char        * format,
                                                            ... );
+void       oyjlStringListDo          ( char             ** list,
+                                       int                 n,
+                                       const char        * string,
+                                       void             (* listDo)(char**,const char*, void*(*)(size_t),void(*)(void*)),
+                                       void*            (* alloc)(size_t),
+                                       void             (* deAlloc)(void*) );
 int        oyjlStringListFind        ( char             ** list,
                                        int               * list_n,
                                        const char        * pattern,
