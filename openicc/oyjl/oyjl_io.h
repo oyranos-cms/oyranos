@@ -66,6 +66,7 @@ int        oyjlIsFile                ( const char        * fullname,
                                        int                 flags,
                                        char              * info,
                                        int                 info_len );
+int        oyjlFsize                 ( FILE              * fp );
 int        oyjlHasApplication        ( const char        * app_name);
 
 /** @brief custom file name checker function type

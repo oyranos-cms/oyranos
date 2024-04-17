@@ -573,6 +573,28 @@ int   oyjlIsFile                     ( const char        * fullname,
   return r;
 }
 
+int        oyjlFsize                 ( FILE              * fp )
+{
+  int size = 0;
+  if(fp && fp != stdin && fp != stdout && fp != stderr)
+  {
+    fseek( fp, 0L, SEEK_END );
+    size = ftell( fp );
+    if(size == -1)
+    {
+      switch(errno)
+      {
+        case EBADF:        WARNc_S("Not a seekable stream %d", errno); break;
+        case EINVAL:       WARNc_S("Wrong argument %d", errno); break;
+        default:           WARNc_S("%s", strerror(errno)); break;
+      }
+      return -1;
+    }
+    rewind(fp);
+  }
+  return size;
+}
+
 char* oyjlExtractPathFromFileName_ (const char* file_name)
 {
   char * path_name = NULL;
