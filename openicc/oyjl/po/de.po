@@ -1869,8 +1869,8 @@ msgid "oyjl-translate -c -i lang.tr -o result.json --locale de_DE"
 msgstr "oyjl-translate -c -i sprache.tr -o ergebnis.json --locale de_DE"
 
 #: oyjl_translate.c:231
-msgid "oyjl-translate -e -f=json -i oyjl-ui.c -o result.json"
-msgstr "oyjl-translate -e -f=json -i oyjl-ui.json -o ergebnis.json"
+msgid "oyjl-translate -e -f=json -i project.c -o result.json"
+msgstr "oyjl-translate -e -f=json -i projekt.c -o ergebnis.json"
 
 #: oyjl_translate.c:230
 #, c-format

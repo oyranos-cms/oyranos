@@ -228,7 +228,7 @@ int myMain( int argc, const char ** argv )
   oyjlOptionChoice_s w_choices[] = {{"C",           _("C static char"), NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s A_choices[] = {{_("Convert JSON to gettext ready C strings"),_("oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_(\"%s\"); ' -k name,description,help"),NULL,                         NULL},
-                                    {_("Convert C source to I18N JSON"),_("oyjl-translate -e -f=json -i oyjl-ui.c -o result.json"),NULL,                         NULL},
+                                    {_("Convert C source to I18N JSON"),_("oyjl-translate -e -f=json -i project.c -o result.json"),NULL,                         NULL},
                                     {_("Add gettext translated keys to JSON"),_("oyjl-translate -a -i oyjl-ui.json -o result.json -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES"),NULL,                         NULL},
                                     {_("Copy translated keys to JSON. Skip gettext."),_("oyjl-translate -c -i lang.tr -o result.json --locale de_DE"),NULL,                         NULL},
                                     {_("View MAN page"),_("oyjl-translate -X man | groff -T utf8 -man -"), NULL,NULL},

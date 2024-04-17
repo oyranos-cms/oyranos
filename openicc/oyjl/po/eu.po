@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-04-15 12:59+0200\n"
+"POT-Creation-Date: 2024-04-17 21:20+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1875,7 +1875,7 @@ msgid "oyjl-translate -c -i lang.tr -o result.json --locale de_DE"
 msgstr ""
 
 #: oyjl_translate.c:231
-msgid "oyjl-translate -e -f=json -i oyjl-ui.c -o result.json"
+msgid "oyjl-translate -e -f=json -i project.c -o result.json"
 msgstr ""
 
 #: oyjl_translate.c:230
