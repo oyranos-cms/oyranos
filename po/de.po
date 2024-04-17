@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-04-11 13:30+0200\n"
+"POT-Creation-Date: 2024-04-15 12:59+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -32,13 +32,17 @@ msgstr "... versuche bitte die --help|-h Option für einen Hilfetext. Gebe auf"
 msgid "2. Color"
 msgstr "2. Farbe"
 
-#: oyjl.c:275 oyjl_translate.c:247
+#: oyjl.c:275
 msgid "A JSON file name or a input stream like \"stdin\"."
 msgstr "Ein JSON-Dateiname oder Eingangsdatenstrom wie \"stdin\""
 
+#: oyjl_translate.c:247
+msgid "A file name or a input stream like \"stdin\"."
+msgstr "Ein Dateiname oder Eingangsdatenstrom wie \"stdin\""
+
 #: oyjl_translate.c:249
-msgid "A JSON file name or a output stream like \"stdout\"."
-msgstr "Ein JSON-Dateiname oder Ausgangsdatenstrom wie \"stdout\""
+msgid "A file name or a output stream like \"stdout\"."
+msgstr "Ein Dateiname oder Ausgangsdatenstrom wie \"stdout\""
 
 #: oyjl_translate.c:277
 msgid "A input function name string. e.g.: \"i18n(\\\"\""
