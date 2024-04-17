@@ -28,9 +28,9 @@ Wandle Oyjl UI JSON nach C übersetzbare Texte für gettext Werkzeuge und übers
 
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>DATEINAME</em></td> <td>Datei oder Datenstrom<br />Ein JSON-Dateiname oder Eingangsdatenstrom wie "stdin"  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>DATEINAME</em></td> <td>Datei oder Datenstrom<br />Ein Dateiname oder Eingangsdatenstrom wie "stdin"  </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong>=<em>DATEINAME</em></td> <td>Datei oder Datenstrom<br />Ein JSON-Dateiname oder Ausgangsdatenstrom wie "stdout"  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong>=<em>DATEINAME</em></td> <td>Datei oder Datenstrom<br />Ein Dateiname oder Ausgangsdatenstrom wie "stdout"  </td>
  </tr>
 </table>
 

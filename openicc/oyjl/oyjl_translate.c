@@ -244,9 +244,9 @@ int myMain( int argc, const char ** argv )
   oyjlOption_s oarray[] = {
   /* type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,         
         value_type,              values,             variable_type, variable_name */
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "i","input",         NULL,     _("Input"),    _("File or Stream"),          _("A JSON file name or a input stream like \"stdin\"."),_("FILENAME"),      
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "i","input",         NULL,     _("Input"),    _("File or Stream"),          _("A file name or a input stream like \"stdin\"."),_("FILENAME"),      
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&input}, NULL},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Output"),   _("File or Stream"),          _("A JSON file name or a output stream like \"stdout\"."),_("FILENAME"),      
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "o","output",        NULL,     _("Output"),   _("File or Stream"),          _("A file name or a output stream like \"stdout\"."),_("FILENAME"),      
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&output}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "f","format",        NULL,     _("Format"),   _("Format string"),           _("A output format string containing a %s for replacement."),_("FORMAT"), 
         oyjlOPTIONTYPE_CHOICE,   {.choices = {(oyjlOptionChoice_s*) oyjlStringAppendN( NULL, (const char*)f_choices, sizeof(f_choices), malloc ), 0}}, oyjlSTRING,    {.s=&format}, NULL},

@@ -28,9 +28,9 @@ Convert Oyjl UI JSON to C translatable strings for use with gettext tools and tr
 
 
 <table style='width:100%'>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>FILENAME</em></td> <td>File or Stream<br />A JSON file name or a input stream like "stdin".  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>FILENAME</em></td> <td>File or Stream<br />A file name or a input stream like "stdin".  </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong>=<em>FILENAME</em></td> <td>File or Stream<br />A JSON file name or a output stream like "stdout".  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-o</strong>|<strong>--output</strong>=<em>FILENAME</em></td> <td>File or Stream<br />A file name or a output stream like "stdout".  </td>
  </tr>
 </table>
 

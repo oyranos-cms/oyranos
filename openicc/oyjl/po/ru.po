@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-04-11 13:30+0200\n"
+"POT-Creation-Date: 2024-04-15 12:59+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -34,12 +34,16 @@ msgstr ""
 msgid "2. Color"
 msgstr ""
 
-#: oyjl.c:275 oyjl_translate.c:247
+#: oyjl.c:275
 msgid "A JSON file name or a input stream like \"stdin\"."
 msgstr ""
 
+#: oyjl_translate.c:247
+msgid "A file name or a input stream like \"stdin\"."
+msgstr ""
+
 #: oyjl_translate.c:249
-msgid "A JSON file name or a output stream like \"stdout\"."
+msgid "A file name or a output stream like \"stdout\"."
 msgstr ""
 
 #: oyjl_translate.c:277
