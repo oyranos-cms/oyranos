@@ -138,7 +138,7 @@ Convert Oyjl UI JSON to C translatable strings for use with gettext tools and tr
 #### Convert JSON to gettext ready C strings
 &nbsp;&nbsp;oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_("%s"); ' -k name,description,help
 #### Convert C source to I18N JSON
-&nbsp;&nbsp;oyjl-translate -e -f=json -i oyjl-ui.c -o result.json
+&nbsp;&nbsp;oyjl-translate -e -f=json -i project.c -o result.json
 #### Add gettext translated keys to JSON
 &nbsp;&nbsp;oyjl-translate -a -i oyjl-ui.json -o result.json -k name,description,help -d TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES
 #### Copy translated keys to JSON. Skip gettext.

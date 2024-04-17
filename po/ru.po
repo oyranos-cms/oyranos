@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-04-15 12:59+0200\n"
+"POT-Creation-Date: 2024-04-17 21:20+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -1778,7 +1778,7 @@ msgid "oyjl-translate -c -i lang.tr -o result.json --locale de_DE"
 msgstr ""
 
 #: oyjl_translate.c:231
-msgid "oyjl-translate -e -f=json -i oyjl-ui.c -o result.json"
+msgid "oyjl-translate -e -f=json -i project.c -o result.json"
 msgstr ""
 
 #: oyjl_translate.c:230
