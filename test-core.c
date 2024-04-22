@@ -2294,6 +2294,92 @@ oyjlTESTRESULT_e testIO ()
   fprintf( zout, "oyjlReadFile() = \"%s\" %d\n", text, size );
   if(text) { free(text); text = NULL; }
 
+  t = "../";
+  if(oyjlIsDir(t))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlIsDir(%s)", t );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlIsDir(%s)", t );
+  }
+
+  t = "~";
+  text = oyjlResolveDirFile( t );
+  if(oyjlIsDir(text))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  }
+  free(text);
+
+  t = "~/";
+  text = oyjlResolveDirFile( t );
+  if(oyjlIsDir(text))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  }
+  free(text);
+
+  t = "~/Downloads";
+  text = oyjlResolveDirFile( t );
+  if(oyjlIsDir(text))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  }
+  free(text);
+
+  t = ".";
+  text = oyjlResolveDirFile( t );
+  if(oyjlIsDir(text))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  }
+  free(text);
+
+  t = "./";
+  text = oyjlResolveDirFile( t );
+  if(oyjlIsDir(text))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  }
+  free(text);
+
+  t = "./docs";
+  text = oyjlResolveDirFile( t );
+  if(oyjlIsDir(text))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  }
+  free(text);
+
+  t = "./docs/";
+  text = oyjlResolveDirFile( t );
+  if(oyjlIsDir(text))
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlResolveDirFile(%s) = %s", t, text );
+  }
+  free(text);
+
   if( verbose )
     fprintf( zout, "info: %s %s\n", info, info2 );
 

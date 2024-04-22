@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-04-17 21:20+0200\n"
+"POT-Creation-Date: 2024-04-21 19:28+0200\n"
 "PO-Revision-Date: 2015-02-20 17:32+0100\n"
 "Last-Translator: Kai-Uwe Behrmann <ku.b@gmx.de>\n"
 "Language-Team: russian <ru@li.org>\n"
@@ -269,7 +269,7 @@ msgstr ""
 msgid "Copyright"
 msgstr ""
 
-#: oyjl_io.c:132 oyjl_io.c:202
+#: oyjl_io.c:136 oyjl_io.c:206
 msgid "Could not open: "
 msgstr ""
 
@@ -1081,7 +1081,7 @@ msgstr ""
 msgid "Program Error:"
 msgstr ""
 
-#: oyjl_args.c:1480 oyjl_io.c:356
+#: oyjl_args.c:1480 oyjl_io.c:360
 msgid "Program not found"
 msgstr ""
 

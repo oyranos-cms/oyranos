@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-04-17 21:20+0200\n"
+"POT-Creation-Date: 2024-04-21 19:28+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -278,7 +278,7 @@ msgstr ""
 msgid "Copyright"
 msgstr "Copyright-a"
 
-#: oyjl_io.c:132 oyjl_io.c:202
+#: oyjl_io.c:136 oyjl_io.c:206
 #, fuzzy
 msgid "Could not open: "
 msgstr "Ezin izan da letra-tipoa ireki:"
@@ -1160,7 +1160,7 @@ msgstr "Puntua"
 msgid "Program Error:"
 msgstr ""
 
-#: oyjl_args.c:1480 oyjl_io.c:356
+#: oyjl_args.c:1480 oyjl_io.c:360
 #, fuzzy
 msgid "Program not found"
 msgstr "Profila-kolorea"

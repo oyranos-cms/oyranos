@@ -217,7 +217,7 @@ OYJL_API oyjl_val oyjlTreeGet ( oyjl_val parent, const char ** path, oyjl_type t
 #define OYJL_GET_ARRAY_2D_POS(v, pos_i, pos_j) ( OYJL_GET_ARRAY_POS(OYJL_GET_ARRAY_POS(v, pos_i), pos_j) )
 
 /** @internal
- *  Get a integer from a 2D array. */
+ *  Get a string from a 2D array. */
 #define OYJL_GET_ARRAY_2D_STRING(v, pos_i, pos_j)  (OYJL_IS_STRING(OYJL_GET_ARRAY_2D_POS(v, pos_i, pos_j)) ? OYJL_GET_STRING(OYJL_GET_ARRAY_2D_POS(v, pos_i, pos_j)) : NULL)
 
 #ifndef INT32_MIN

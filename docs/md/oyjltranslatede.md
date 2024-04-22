@@ -138,7 +138,7 @@ Wandle Oyjl UI JSON nach C übersetzbare Texte für gettext Werkzeuge und übers
 #### Wandle JSON in gettext lesbare C Texte
 &nbsp;&nbsp;oyjl-translate -e [-v] -i oyjl-ui.json -o ergebnis.json -f '_("%s"); ' -k name,description,help
 #### Wandle C Quelltext nach ÜbersetzungsJSON
-&nbsp;&nbsp;oyjl-translate -e -f=json -i project.c -o result.json
+&nbsp;&nbsp;oyjl-translate -e -f=json -i projekt.c -o ergebnis.json
 #### Füge mit gettext übersetzte Schlüssel zu JSON hinzu
 &nbsp;&nbsp;oyjl-translate -a -i oyjl-ui.json -o ergebnis.json -k name,description,help -d TEXTKATALOG -p SPRACHPFAD -l de_DE,es_ES
 #### Kopiere übersetzte Schlüssel nach JSON. Lasse gettext aus.

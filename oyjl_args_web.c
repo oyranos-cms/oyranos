@@ -1099,7 +1099,7 @@ int oyjlArgsWebFileNameSecurity      ( const char       ** full_filename,
     int len = strlen(fn),
         clen;
 
-    cd = oyjlGetCurrentDir_();
+    cd = oyjlResolveDirFile(".");
     clen = strlen(cd);
 
     if(!len || !clen || len < clen || memcmp( fn, cd, clen ) != 0)

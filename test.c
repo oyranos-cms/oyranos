@@ -2487,7 +2487,7 @@ oyjlTESTRESULT_e   testTool          ( const char        * prog,
     command = NULL;
   }
 
-  t = oyjlReadCommandF( &size, "r", malloc, "LANG=C %s/%s --help", OYJL_BUILDDIR, prog );
+  t = oyjlReadCommandF( &size, "r", malloc, "%s%s --help", strstr(prog,  "LANG=")?"":"LANG=C ./", prog );
   plain = oyjlTermColorToPlain(t, 0);
   len = t ? strlen(plain) : 0;
   if(len == help_size)
