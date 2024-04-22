@@ -125,8 +125,12 @@ char *     oyjlReadFileP             ( FILE              * fp,
     s = fread(text, sizeof(char), size, fp);
     text[size] = '\000';
     if(s != size)
-      WARNc_S( "fread %lu but should read %lu",
-              (long unsigned int) s, (long unsigned int)size);
+      WARNc_S( "%s fread %lu but should read %lu",
+              file_name?file_name:"", (long unsigned int) s, (long unsigned int)size);
+    if(s == 0)
+    {
+      size = 0; free(text); text = NULL;
+    }
   } else
   {
     WARNc_S( "%s\"%s\"", _("Could not open: "), file_name);
@@ -365,6 +369,9 @@ char * oyjlReadCmdToMem_             ( const char        * command,
 }
 
 /** @brief Read a stream from shell command.
+ *
+ *  param[in]                          mode                Is passed to popen. optional; Can contain dot '.' separated attributes:
+ *                                                         - verbose - print infos to stderr. Example: (..., mode = "r.verbose", ...)
  */
 char *     oyjlReadCommandF          ( int               * size,
                                        const char        * mode,
@@ -374,14 +381,27 @@ char *     oyjlReadCommandF          ( int               * size,
 {
   char * result = NULL;
   char * text = 0;
+  char * mtext = mode ? oyjlStringCopy( mode, 0 ) : NULL, * t;
+  int verbose = 0;
 
   if(!alloc) alloc = malloc;
 
   OYJL_CREATE_VA_STRING(format, text, malloc, return NULL)
 
-  result = oyjlReadCmdToMem_( text, size, mode, alloc );
+  if(mtext) t = strchr( mtext, '.' );
+  if(t)
+  {
+    if(oyjlStringSplitFind(mtext, ".", "verbose", 0, NULL, 0,0) >= 0)
+      verbose = 1;
+    t[0] = '\000';
+  }
+  if(verbose)
+    fprintf( stderr, OYJL_DBG_FORMAT "%s\n", OYJL_DBG_ARGS, text );
+
+  result = oyjlReadCmdToMem_( text, size, mtext, alloc );
 
   free(text);
+  if(mtext) free(mtext);
 
   return result;
 }
@@ -504,6 +524,100 @@ int oyjlIsFileFull_ (const char* fullFileName, const char * read_mode)
 
   return r;
 }
+
+#ifndef WARNc_S
+#define WARNc_S(...) oyjlMessage_p( oyjlMSG_ERROR, 0, __VA_ARGS__ )
+#endif
+
+char * oyjlGetCurrentDir ()
+{
+# if defined(_WIN32)
+  char * path = NULL;
+  DWORD len = 0;
+
+  len = GetCurrentDirectory(0,NULL);
+
+  if(len)
+    oyjlAllocString_m_( path, len+1,
+                      oyAllocateFunc_, return NULL );
+    
+  if(len && path)
+  {
+    int i;
+
+    len = GetCurrentDirectory( len+1, path );
+
+    for(i=0; i < len; ++i)
+      if(path[i] == '\\')
+        path[i] = '/';
+  } else
+    WARNc_S("Could not get \"PWD\" directory name");
+
+  return path;
+# else
+  char * name = oyjlStringCopy( getenv("PWD"), 0 );
+
+  if(!name)
+    WARNc_S("Could not get \"PWD\" directory name");
+
+  return name;
+# endif
+}
+const char * oyjlGetHomeDir_ ()
+{
+# if defined(_WIN32)
+  static CHAR path[MAX_PATH];
+  static int init = 0;
+
+
+  if(init)
+    return path;
+
+  init = 1;
+
+  if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, &path[0])))
+  {
+    int len = strlen(path), i;
+    for(i=0; i < len; ++i)
+      if(path[i] == '\\')
+        path[i] = '/';
+  }
+  else
+    WARNc_S("Could not get \"HOME\" directory name");
+
+  return path;
+# else
+  const char* name = getenv("HOME");
+
+  if(!name)
+    WARNc_S("Could not get \"HOME\" directory name");
+  return name;
+# endif
+}
+
+char * oyjlResolveDirFile (const char* name)
+{
+  char * new_name = NULL, * tmp = NULL;
+  const char * home = NULL;
+
+  if(!name)
+  {
+    WARNc_S ("no name");
+    return NULL;
+  }
+
+  /* user directory */
+  if (name[0] == '~')
+  {
+    home = oyjlGetHomeDir_();
+    oyjlStringAdd( &tmp, 0,0, "%s%s%s", home?home:"", home && home[0] && home[strlen(home)-1] == '/' ? "" : "/", &name[0]+1 );
+  }
+
+  new_name = realpath( tmp?tmp:name, 0 );
+  if(tmp) free(tmp);
+
+  return new_name;
+}
 int oyjlIsDirFull_ (const char* name)
 {
   struct stat status;
@@ -536,6 +650,11 @@ int oyjlIsDirFull_ (const char* name)
   return r;
 }
 
+int        oyjlIsDir                 ( const char        * fullname)
+{
+  return oyjlIsDirFull_( fullname );
+}
+
 int   oyjlIsFile                     ( const char        * fullname,
                                        const char        * mode,
                                        int                 flags,
@@ -546,6 +665,8 @@ int   oyjlIsFile                     ( const char        * fullname,
   int r = 0;
   memset(&status,0,sizeof(struct stat));
   double mod_time = 0.0;
+
+  if(!fullname) return 0;
 
   if(flags & OYJL_NO_CHECK || ((flags & OYJL_IO_WRITE) ? oyjlFileNameCheckWrite_p( &fullname, 0 ) == 0 : oyjlFileNameCheckRead_p( &fullname, 0 ) == 0))
     r = oyjlIsFileFull_( fullname, mode );
@@ -716,6 +837,9 @@ int  oyjlWriteFile                   ( const char        * filename,
   }
   full_name = filename;
 
+  if(!r && size == 0)
+    remove( full_name );
+  else
   if(!r)
   {
     fp = fopen(full_name, "wb");
