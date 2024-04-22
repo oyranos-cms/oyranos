@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-04-15 12:59+0200\n"
+"POT-Creation-Date: 2024-04-21 19:28+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -277,7 +277,7 @@ msgstr "Kopiere übersetzte Schlüssel nach JSON. Lasse gettext aus."
 msgid "Copyright"
 msgstr "Kopierrecht"
 
-#: oyjl_io.c:132 oyjl_io.c:202
+#: oyjl_io.c:136 oyjl_io.c:206
 msgid "Could not open: "
 msgstr "Konnte nicht öffnen: "
 
@@ -1103,7 +1103,7 @@ msgstr "Zeige Typ"
 msgid "Program Error:"
 msgstr "Programmfehler:"
 
-#: oyjl_args.c:1480 oyjl_io.c:356
+#: oyjl_args.c:1480 oyjl_io.c:360
 msgid "Program not found"
 msgstr "Programm nicht gefunden"
 

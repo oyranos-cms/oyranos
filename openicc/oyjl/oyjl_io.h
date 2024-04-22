@@ -66,6 +66,8 @@ int        oyjlIsFile                ( const char        * fullname,
                                        int                 flags,
                                        char              * info,
                                        int                 info_len );
+int        oyjlIsDir                 ( const char        * fullname );
+char *     oyjlResolveDirFile        ( const char        * file_name );      
 int        oyjlFsize                 ( FILE              * fp );
 int        oyjlHasApplication        ( const char        * app_name);
 

@@ -37,9 +37,7 @@ extern "C" {
 #else
 #define OYJL_SLASH_C '/'
 #endif
-char * oyjlGetCurrentDir_ ();
 const char * oyjlGetHomeDir_ ();
-char * oyjlResolveDirFileName_ (const char* name);
 /** @} *//* oyjl_io */
 
 #ifdef __cplusplus

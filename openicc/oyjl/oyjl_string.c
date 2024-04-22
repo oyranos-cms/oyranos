@@ -206,8 +206,7 @@ char **        oyjlStringSplit2      ( const char        * text,
     tmp = splitFunc(tmp, delimiter, NULL);
     if(tmp == text) ++n;
     tmp = text;
-    do { ++n;
-    } while( (tmp = splitFunc(tmp + 1, delimiter, NULL)) );
+    do { ++n; } while( (tmp = splitFunc(tmp + 1, delimiter, NULL)) );
 
     tmp = 0;
 
