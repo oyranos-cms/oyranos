@@ -105,7 +105,8 @@ int oyjlArgsQmlStart__               ( int                 argc,
     app.setOrganizationName(QString("oyranos.org"));
     app.setWindowIcon(QIcon(":/images/logo"));
 
-    app_debug = debug;
+    if(debug > 1)
+      app_debug = debug - 1;
     if(app_debug)
     {
         LOG( QString("app args[") + QString::number(argc) + "]:" );
