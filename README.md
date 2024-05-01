@@ -9,9 +9,9 @@ The Oyjl API provides a platformindependent C interface for JSON I/O, conversion
 
 Usage
 -----
-[oyjl Tool Syntax](docs/md/oyjl.md) [de](docs/md/oyjlde.md)
-[oyjl-args Tool Syntax](docs/md/oyjlargs.md) [de](docs/md/oyjlargsde.md)
-[oyjl-translate Tool Syntax](docs/md/oyjltranslate.md) [de](docs/md/oyjltranslatede.md)
+* [oyjl Tool Syntax](docs/md/oyjl.md) [de](docs/md/oyjlde.md)
+* [oyjl-args Tool Syntax](docs/md/oyjlargs.md) [de](docs/md/oyjlargsde.md)
+* [oyjl-translate Tool Syntax](docs/md/oyjltranslate.md) [de](docs/md/oyjltranslatede.md)
 
 
 Documentation
