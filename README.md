@@ -16,7 +16,7 @@ Usage
 
 Documentation
 -------------
-https://codedocs.xyz/oyranos‐cms/oyranos/group\_\_oyjl.html
+[![Documentation](https://codedocs.xyz/oyranos-cms/oyranos.svg)](https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html)
 
 
 Dependencies
