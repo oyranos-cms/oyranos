@@ -53,8 +53,9 @@ void listFiles(const char * path, char *** list, int * count, const char * suffi
             oyjlStringListPush( list, count, name, malloc, free );
         else
         {
-          char * end = &name[strlen(name) - strlen(suffix)];
-          if(strcasecmp(end, suffix) == 0)
+          char * dot = strrchr( name, '.' ),
+               * end = dot ? dot+1 : NULL;
+          if(end && strcasecmp(end, suffix) == 0)
             oyjlStringListPush( list, count, name, malloc, free );
         }
         free(name);
