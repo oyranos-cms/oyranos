@@ -1,0 +1,160 @@
+_oyjl_args()
+{
+    local cur prev words cword
+    _init_completion -s || return
+
+    #set -x -v
+
+    local SEARCH=${COMP_WORDS[COMP_CWORD]}
+    if [[ "$SEARCH" == "=" ]]; then
+      SEARCH=""
+    fi
+
+    : "autocomplete options with choices for long options "$prev""
+    case "$prev" in
+        --input) # long option with dynamic args
+            local OYJL_TEXTS=$(ls 2>/dev/null)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --c-stand-alone) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('base')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --help) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('-' 'synopsis')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --export) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        --render) # long option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('gui' 'cli' 'web' '-')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+            set +x +v
+            return
+            ;;
+    esac
+    : "autocomplete options with choices for single letter options "$cur""
+    case "$cur" in
+        -i=*) # single letter option with dynamic args
+            local OYJL_TEXTS=$(ls 2>/dev/null)
+            local IFS=$'\n'
+            local WORD_LIST=()
+            for OYJL_TEXT in $OYJL_TEXTS
+              do WORD_LIST=("${WORD_LIST[@]}" "$OYJL_TEXT")
+            done
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -h=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('-' 'synopsis')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -X=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('man' 'markdown' 'json' 'json+command' 'export')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+        -R=*) # single letter option with static args
+            local IFS=$'\n'
+            local WORD_LIST=('gui' 'cli' 'web' '-')
+            COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$SEARCH"))
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "autocomplete options "$cur""
+    case "$cur" in
+        -i|-o|-t|-h|-X|-R)
+            : "finish short options with choices"
+            COMPREPLY=("$cur=\"")
+            set +x +v
+            return
+            ;;
+        --input|--c-stand-alone|--test|--format|--help|--export|--render)
+            : "finish long options with choices"
+            COMPREPLY=("$cur=\"")
+            set +x +v
+            return
+            ;;
+        -v|-V)
+            : "finish short options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+        --completion-bash|--option|--synopsis|--verbose|--version)
+            : "finish long options without choices"
+            COMPREPLY=("$cur ")
+            set +x +v
+            return
+            ;;
+    esac
+
+
+    : "show help for none '@' UIs"
+    if [[ "$cur" == "" ]]; then
+      if [[ ${COMP_WORDS[1]} == "" ]]; then
+        $1 help synopsis 1>&2
+      else
+        $1 help ${COMP_WORDS[1]} 1>&2
+      fi
+    fi
+
+
+    : "suggest group options for subcommands"
+    if [[ "$cur" == "" ]] || [[ "$cur" == "-" ]] || [[ "$cur" == -- ]] || [[ "$cur" == -* ]]; then
+      case "${COMP_WORDS[1]}" in
+        -i|--input)
+          COMPREPLY=($(compgen -W '--c-stand-alone= --completion-bash -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+        -h|--help|-X|--export|-R|--render|-V|--version)
+          COMPREPLY=($(compgen -W '-i= --input= -v --verbose' -- "$cur"))
+            set +x +v
+            return
+            ;;
+      esac
+    fi
+
+    : "suggest mandatory options on first args only"
+    if [[ "${COMP_WORDS[2]}" == "" ]]; then
+      local WORD_LIST=()
+      WORD_LIST=("${WORD_LIST[@]}" -i= --input= -h= --help= -X= --export= -R= --render= -V --version)
+      COMPREPLY=($(compgen -W '"${WORD_LIST[@]}"' -- "$cur"))
+      set +x +v
+      return
+    fi
+
+    set +x +v
+} &&
+complete -o nosort -F _oyjl_args -o nospace oyjl-args
+
+

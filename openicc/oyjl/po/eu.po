@@ -1,0 +1,4489 @@
+# translation of cinepaint_icc-examin_eu.po to Basque
+# Copyright (C) 2006 Kai-Uwe Behrmann
+# This file is distributed under BSD license.
+#
+# Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>, 2007.
+# Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2007.
+#: test.c:281
+msgid ""
+msgstr ""
+"Project-Id-Version: eu\n"
+"Report-Msgid-Bugs-To: ku.b@gmx.de\n"
+"POT-Creation-Date: 2024-04-21 19:28+0200\n"
+"PO-Revision-Date: 2007-11-07 11:11+0100\n"
+"Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
+"Language-Team: Basque <itzulpena@euskalgnu.org>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: oyjl-args.c:79
+msgid "-k|--kelvin=NUMBER        Lambert (NUMBER:0 [≥0 ≤25000 Δ100])"
+msgstr ""
+
+#: oyjl.c:65 oyjl_args.c:5437
+msgid "... try with --help|-h option for usage text. give up"
+msgstr ""
+
+#: test.c:317
+#, fuzzy
+msgid "2. Color"
+msgstr "Kolorea"
+
+#: oyjl.c:275
+msgid "A JSON file name or a input stream like \"stdin\"."
+msgstr ""
+
+#: oyjl_translate.c:247
+msgid "A file name or a input stream like \"stdin\"."
+msgstr ""
+
+#: oyjl_translate.c:249
+msgid "A file name or a output stream like \"stdout\"."
+msgstr ""
+
+#: oyjl_translate.c:277
+msgid "A input function name string. e.g.: \"i18n(\\\"\""
+msgstr ""
+
+#: oyjl_args.c:5218
+msgid "A mandatory sub command option needs to be placed first"
+msgstr ""
+
+#: oyjl.c:289
+msgid "A name for the symbol to be defined."
+msgstr ""
+
+#: oyjl_translate.c:251
+#, c-format
+msgid "A output format string containing a %s for replacement."
+msgstr ""
+
+#: oyjl_translate.c:279
+msgid "A output funtion name string. e.g.: \"_\""
+msgstr ""
+
+#: oyjl-args.c:68
+msgid ""
+"A tool can provide different rule sets, expressed in different synopsis "
+"lines."
+msgstr ""
+
+#: oyjl_args.c:6033 oyjl_args.c:6563 oyjl_args_tree.c:611
+msgid "AUTHOR"
+msgstr ""
+
+#: test-args.c:432 test-args.c:799 test-args.c:985 test-args.c:1100
+#: test-core.c:1430 test-core.c:1514 test.c:2025 test.c:2162
+#: oyjl-args-qml/mini-app.c:195
+msgid "Actual mode"
+msgstr ""
+
+#: oyjl_translate.c:255 oyjl_translate.c:309
+msgid "Add"
+msgstr ""
+
+#: oyjl_translate.c:255
+msgid "Add Translation"
+msgstr ""
+
+#: oyjl_translate.c:232 oyjl_translate.c:255 oyjl_translate.c:309
+msgid "Add gettext translated keys to JSON"
+msgstr ""
+
+#: test-args.c:404 test-core.c:1399
+#, fuzzy
+msgid "All Device Classes"
+msgstr "Gailuaren koloreak"
+
+#: oyjl_args.c:3071
+msgid "All available data"
+msgstr ""
+
+#: test-args.c:433
+msgid "Alternate"
+msgstr ""
+
+#: oyjl_translate.c:237
+msgid "Alternatively use the -l=de_DE.UTF-8 option."
+msgstr ""
+
+#: test-args.c:431 test-core.c:1429 test.c:2024 test.c:2161
+#: oyjl-args-qml/mini-app.c:194
+msgid "Any arg mode"
+msgstr ""
+
+#: oyjl-args.c:82
+msgid ""
+"Arguments for options can be written with equal sign or with empty space."
+msgstr ""
+
+#: oyjl_args.c:5280 oyjl_args.c:6274
+msgid "Author"
+msgstr ""
+
+#: oyjl_args.c:6043 oyjl_args.c:6045 oyjl_args.c:6577 oyjl_args.c:6579
+#: oyjl_args_tree.c:614
+msgid "BUGS"
+msgstr ""
+
+#. declare the option choices  *   nick,          name,               description,                  help
+#: oyjl-args.c:61
+msgid "Base"
+msgstr ""
+
+#: oyjl_args.c:6284 oyjl_args.c:6286
+msgid "Bugs"
+msgstr ""
+
+#: oyjl-args.c:72
+msgid ""
+"By default all options are required like the -o one and is mandatory. The "
+"second option is enclosed in squared brackets is not required but might be "
+"used and thus is optional. "
+msgstr ""
+
+#: oyjl-args.c:89
+msgid "C Stand Alone"
+msgstr ""
+
+#: oyjl.c:236 oyjl_translate.c:228
+msgid "C static char"
+msgstr ""
+
+#: oyjl_args.c:6037 oyjl_args.c:6567 oyjl_args_tree.c:612
+msgid "COPYRIGHT"
+msgstr ""
+
+#: oyjl.c:261
+#, fuzzy
+msgid "CSV"
+msgstr "BPC"
+
+#: oyjl.c:263
+msgid "CSV-semicolon"
+msgstr ""
+
+#: oyjl_args.c:3097
+msgid "Cli"
+msgstr ""
+
+#: test.c:308 test.c:409 test.c:431 test.c:734
+msgid "Color"
+msgstr "Kolorea"
+
+#: test.c:335
+#, fuzzy
+msgid "Color \"Rose\""
+msgstr "b kolorea"
+
+#: test.c:326 test.c:723
+#, fuzzy
+msgid "Color [3]"
+msgstr "b kolorea"
+
+#. declare the option choices  *   nick,          name,               description,                  help
+#: oyjl.c:228
+msgid "Comma"
+msgstr ""
+
+#: oyjl-args-qml/main.cpp:84
+msgid "Command"
+msgstr ""
+
+#: oyjl-args.c:74
+msgid "Command line example: prog -f=file1.ext -f=file2.ext -f file3.ext"
+msgstr ""
+
+#: oyjl-args.c:80
+msgid "Command line parser"
+msgstr ""
+
+#. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
+#: oyjl_translate.c:306
+#, fuzzy
+msgid "Common Options"
+msgstr "Bereizketa"
+
+#: oyjl-args.c:90
+#, fuzzy
+msgid "Completion Bash"
+msgstr "Bereizketa"
+
+#: test-args.c:415 test-args.c:976 test-args.c:1091 test-core.c:1415
+#: test.c:2012 test.c:2151 oyjl-args-qml/mini-app.c:181
+#, fuzzy
+msgid "Control Output"
+msgstr "Irteera"
+
+#. type,   flags, name,      description,          help, mandatory, optional, detail
+#: oyjl-args.c:115
+#, fuzzy
+msgid "Convert"
+msgstr "ICC Examin-en bertsioa"
+
+#: oyjl_translate.c:231
+msgid "Convert C source to I18N JSON"
+msgstr ""
+
+#: oyjl_translate.c:230 oyjl_translate.c:273
+msgid "Convert JSON to gettext ready C strings"
+msgstr ""
+
+#: oyjl_translate.c:307
+msgid "Convert JSON/C to gettext ready C strings"
+msgstr ""
+
+#. handle options
+#. Select a nick from *version*, *manufacturer*, *copyright*, *license*,
+#. * *url*, *support*, *download*, *sources*, *oyjl_module_author* and
+#. * *documentation*. Choose what you see fit. Add new ones as needed.
+#: oyjl_translate.c:217
+msgid ""
+"Convert Oyjl UI JSON to C translatable strings for use with gettext tools "
+"and translate a tools UI using the programs own text domain. The resulting "
+"Oyjl UI JSON can be used for translated rendering."
+msgstr ""
+
+#: oyjl-args.c:122
+msgid "Convert UI JSON to C code using libOyjl"
+msgstr ""
+
+#: oyjl-args.c:63
+msgid "Convert eXported developer JSON to C source"
+msgstr ""
+
+#: oyjl_translate.c:257 oyjl_translate.c:310
+#, fuzzy
+msgid "Copy"
+msgstr "Copyright-a"
+
+#: oyjl_translate.c:257
+#, fuzzy
+msgid "Copy Translations"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl_translate.c:310
+msgid "Copy keys to JSON"
+msgstr ""
+
+#: oyjl_translate.c:233 oyjl_translate.c:257
+msgid "Copy translated keys to JSON. Skip gettext."
+msgstr ""
+
+#: oyjl_args.c:6278 oyjl_args_tree.c:571
+msgid "Copyright"
+msgstr "Copyright-a"
+
+#: oyjl_io.c:136 oyjl_io.c:206
+#, fuzzy
+msgid "Could not open: "
+msgstr "Ezin izan da letra-tipoa ireki:"
+
+#: oyjl.c:265 oyjl.c:316
+msgid "Count"
+msgstr ""
+
+#: oyjl_translate.c:221
+msgid "Create translation Json with -af=json."
+msgstr ""
+
+#: oyjl_args.c:5911 oyjl_args.c:6431 oyjl_args_tree.c:608
+msgid "DESCRIPTION"
+msgstr ""
+
+#: oyjl_args_tree.c:580
+#, fuzzy
+msgid "Date"
+msgstr "Data"
+
+#: oyjl.c:228 oyjl.c:229
+msgid "Decimal Separator"
+msgstr ""
+
+#: oyjl_args.c:6126 oyjl_args_cli.c:288 oyjl_args_tree.c:607
+#: oyjl_args_web.c:1468
+#, fuzzy
+msgid "Description"
+msgstr "Azalpena"
+
+#: oyjl_args_web.c:1482
+msgid "Details"
+msgstr ""
+
+#: oyjl.c:285
+msgid "Detect"
+msgstr ""
+
+#: oyjl_args_tree.c:577
+msgid "Development"
+msgstr ""
+
+#: oyjl_translate.c:269
+#, fuzzy
+msgid "Directory"
+msgstr "Direktorio berria?"
+
+#: oyjl_args.c:3096
+msgid "Display a interactive graphical User Interface."
+msgstr ""
+
+#: oyjl_args_tree.c:579
+msgid "Documentation"
+msgstr "Dokumentazioa"
+
+#: oyjl_translate.c:259
+msgid "Domains"
+msgstr ""
+
+#: oyjl.c:229
+msgid "Dot"
+msgstr ""
+
+#: test-args.c:435
+msgid "Double mandatory"
+msgstr ""
+
+#: oyjl_args.c:3348
+#, fuzzy
+msgid "Double occuring option"
+msgstr "Azalpena"
+
+#: oyjl_args_tree.c:575
+msgid "Download"
+msgstr ""
+
+#: oyjl-args.c:78
+msgid "E.g. -o|--option"
+msgstr ""
+
+#: oyjl_args.c:5695 oyjl_args_tree.c:617
+msgid "ENVIRONMENT VARIABLES"
+msgstr ""
+
+#: oyjl_args.c:5691 oyjl_args_tree.c:615 oyjl_web.c:83 test-core.c:1420
+#: oyjl-args-qml/main.cpp:94
+msgid "EXAMPLES"
+msgstr ""
+
+#: oyjl_args.c:5693 oyjl_args_tree.c:616
+msgid "EXIT-STATE"
+msgstr ""
+
+#: oyjl_args.c:5695 oyjl_translate.c:283
+msgid "Environment Variables"
+msgstr ""
+
+#: oyjl_args.c:1840 oyjl_init.c:182 test-core.c:169 test-core.c:1403
+#: test-core.c:1404 test.c:228 test.c:290 test.c:400 test.c:420
+msgid "Example"
+msgstr ""
+
+#: test.c:299
+msgid "Example2"
+msgstr ""
+
+#: oyjl-args.c:101 oyjl.c:291 oyjl_args.c:5691 oyjl_translate.c:281
+msgid "Examples"
+msgstr ""
+
+#: oyjl_args.c:5693
+msgid "Exit State"
+msgstr ""
+
+#: oyjl_args.c:3070
+msgid "Export"
+msgstr ""
+
+#: oyjl_args.c:3082
+msgid "Export formated text"
+msgstr ""
+
+#: oyjl_translate.c:273 oyjl_translate.c:307
+#, fuzzy
+msgid "Extract"
+msgstr "Abstraktua"
+
+#: oyjl_translate.c:273
+msgid "Extract translatable Messages"
+msgstr ""
+
+#: oyjl-args.c:88 oyjl.c:275 oyjl_translate.c:247 oyjl_translate.c:249
+#: test-args.c:413 test-args.c:414 test-args.c:975 test-args.c:1090
+#: test-core.c:1413 test-core.c:1414 test.c:2010 test.c:2011 test.c:2149
+#: test.c:2150 oyjl-args-qml/mini-app.c:179 oyjl-args-qml/mini-app.c:180
+msgid "FILENAME"
+msgstr ""
+
+#: oyjl_args.c:5699 oyjl_args_tree.c:619
+msgid "FILES"
+msgstr ""
+
+#: oyjl.c:283 oyjl_translate.c:251
+msgid "FORMAT"
+msgstr ""
+
+#: test.c:2013
+msgid "FUNCTION"
+msgstr ""
+
+#: oyjl-args-qml/mini-app.c:180
+#, fuzzy
+msgid "File"
+msgstr "Fitxategia"
+
+#: oyjl.c:275 oyjl_translate.c:247 oyjl_translate.c:249
+#, fuzzy
+msgid "File or Stream"
+msgstr "Profila-kolorea"
+
+#: oyjl_args.c:5699
+#, fuzzy
+msgid "Files"
+msgstr "Fitxategia"
+
+#: oyjl-args.c:88
+msgid ""
+"For C code output (default) and --completion-bash output use -X=export JSON. "
+"For --render=XXX use -X=json JSON."
+msgstr ""
+
+#: oyjl-args.c:132 oyjl.c:341 oyjl_translate.c:329 oyjl_web.c:107
+#: oyjl-args-qml/main.cpp:118
+msgid "For more information read the man page:"
+msgstr ""
+
+#: oyjl-args.c:105 oyjl.c:279 oyjl.c:320 oyjl_translate.c:251
+msgid "Format"
+msgstr ""
+
+#: oyjl_translate.c:251
+msgid "Format string"
+msgstr ""
+
+#: oyjl_args.c:3062
+msgid "Formated text"
+msgstr ""
+
+#: oyjl_args.c:3025 oyjl_args.c:4266
+msgid "Full Help"
+msgstr ""
+
+#: oyjl_translate.c:277 test.c:2013
+#, fuzzy
+msgid "Function"
+msgstr "Dokumentazioa"
+
+#: oyjl_translate.c:277 oyjl_translate.c:279
+#, fuzzy
+msgid "Function Name"
+msgstr "Dokumentazioa"
+
+#: oyjl_translate.c:279
+#, fuzzy
+msgid "Function Out"
+msgstr "Dokumentazioa"
+
+#: oyjl_args.c:5922 oyjl_args.c:6443
+msgid "GENERAL OPTIONS"
+msgstr ""
+
+#. type,   flags, name,      description,          help, mandatory, optional, detail
+#: oyjl_args.c:3065 oyjl_web.c:93 oyjl-args-qml/main.cpp:104
+#, fuzzy
+msgid "GUI"
+msgstr "SGI"
+
+#: oyjl_args.c:3068
+msgid "GUI + Command"
+msgstr ""
+
+#: oyjl-args.c:116 oyjl.c:321 oyjl_translate.c:311 oyjl_web.c:94
+#: test-args.c:436 test-args.c:800 test-args.c:986 test-args.c:1101
+#: test-core.c:1431 test-core.c:1515 test.c:2026 test.c:2163
+#: oyjl-args-qml/mini-app.c:196 oyjl-args-qml/main.cpp:105
+#, fuzzy
+msgid "General options"
+msgstr "Bereizketa"
+
+#: oyjl-args.c:89
+msgid "Generate C code for oyjl_args.c inclusion."
+msgstr ""
+
+#: oyjl-args.c:90
+msgid "Generate bash completion code"
+msgstr ""
+
+#: oyjl-args.c:115
+msgid "Generate source code"
+msgstr ""
+
+#: oyjl-args.c:91
+msgid "Generate test Args Export"
+msgstr ""
+
+#: oyjl_args.c:3069
+msgid "Get Oyjl Json UI declaration incuding command"
+msgstr ""
+
+#: oyjl_args.c:3084
+msgid "Get UI converted into text formats"
+msgstr ""
+
+#: oyjl_args.c:3072
+msgid ""
+"Get UI data for developers. The format can be converted by the oyjl-args "
+"tool."
+msgstr ""
+
+#: oyjl_args.c:3066
+msgid "Get a Oyjl Json UI declaration"
+msgstr ""
+
+#: oyjl_args.c:3060
+msgid "Get a unix man page"
+msgstr ""
+
+#: oyjl_args.c:3063
+msgid "Get formated text"
+msgstr ""
+
+#: oyjl.c:273
+msgid "Get node type"
+msgstr ""
+
+#: oyjl_args.c:3094
+msgid "Gui"
+msgstr ""
+
+#: oyjl_args.c:5697 oyjl_args_tree.c:618
+msgid "HISTORY"
+msgstr ""
+
+#: oyjl_args.c:4289 oyjl_args_cli.c:154 oyjl_args_web.c:1630 oyjl_web.c:78
+#: test-args.c:416 test-args.c:977 test-args.c:1092 test-core.c:1417
+#: test.c:2015 test.c:2152 oyjl-args-qml/mini-app.c:184
+msgid "Help"
+msgstr ""
+
+#: oyjl_args_web.c:1507
+msgid ""
+"Hints: Options with colord labels are mandatory. Options with italic labels "
+"are ignored. Multiple options '...' can be separated by semicolon ';' in the "
+"text field."
+msgstr ""
+
+#: oyjl_args.c:5697
+#, fuzzy
+msgid "History"
+msgstr "Direktorio berria?"
+
+#. declare the option choices  *   nick,          name,               description,                  help
+#: oyjl_translate.c:221
+msgid "I18N JSON"
+msgstr ""
+
+#: oyjl_translate.c:310
+msgid ""
+"Import translations from other formats without gettext. Supported --input=Qt-"
+"xml-format.tr"
+msgstr ""
+
+#: oyjl_core.c:166
+#, fuzzy
+msgid "Information"
+msgstr "Informazioa:"
+
+#. type,   flags, name,               description,                  help,               mandatory,     optional,      detail
+#. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
+#. value_type,              values,             variable_type, variable_name
+#. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
+#: oyjl.c:275 oyjl.c:310 oyjl_translate.c:247 oyjl-args-qml/main.cpp:83
+#, fuzzy
+msgid "Input"
+msgstr "Sarrera"
+
+#: oyjl_args.c:465 oyjl_message.c:74
+msgid "Insufficient Data:"
+msgstr ""
+
+#. type,   flags,                      o,  option,          key,      name,          description,                  help, value_name,
+#. value_type,              values,             variable_type, variable_name
+#: oyjl.c:255 test-args.c:405 test-core.c:1400
+msgid "JSON"
+msgstr ""
+
+#: oyjl_web.c:76 oyjl-args-qml/main.cpp:84
+msgid "JSON Command"
+msgstr ""
+
+#. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
+#: oyjl_web.c:75 oyjl-args-qml/main.cpp:83
+#, fuzzy
+msgid "JSON UI Description"
+msgstr "Azalpena"
+
+#: oyjl_translate.c:218
+msgid "January 2, 2020"
+msgstr ""
+
+#: oyjl_args.c:3064
+msgid "Json"
+msgstr ""
+
+#: oyjl_args.c:3067
+msgid "Json + Command"
+msgstr ""
+
+#: oyjl.c:267 oyjl.c:317
+#, fuzzy
+msgid "Key Name"
+msgstr "Izena"
+
+#: oyjl_translate.c:261
+#, fuzzy
+msgid "Key Name List"
+msgstr "Izena"
+
+#: oyjl_translate.c:261
+#, fuzzy
+msgid "Key Names"
+msgstr "Izena"
+
+#: oyjl_translate.c:269
+msgid "LOCALEDIR"
+msgstr ""
+
+#: oyjl_args.c:5279 oyjl_args.c:6039 oyjl_args.c:6280 oyjl_args.c:6569
+#: oyjl_args_tree.c:572 oyjl_args_tree.c:613
+msgid "License"
+msgstr "Lizentzia"
+
+#: oyjl.c:329
+msgid "Light weight JSON parse and manipulation tool"
+msgstr ""
+
+#: oyjl-args.c:79
+msgid "Line for a number argument."
+msgstr ""
+
+#: oyjl_translate.c:267
+#, fuzzy
+msgid "List empty"
+msgstr "hutsa"
+
+#: oyjl_args.c:3029 oyjl_args.c:4272
+#, fuzzy
+msgid "List groups"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl_translate.c:267
+#, fuzzy
+msgid "List not translated"
+msgstr "Oyranos-en ezarpenak"
+
+#. declare the option choices  *   nick,          name,               description,                  help
+#: oyjl_web.c:66 oyjl-args-qml/main.cpp:74
+msgid "Load a UI JSON declaration from file"
+msgstr ""
+
+#: oyjl_web.c:67 oyjl-args-qml/main.cpp:75
+#, fuzzy
+msgid "Load a UI JSON declaration from tool"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl_translate.c:263
+msgid "Locale"
+msgstr ""
+
+#: oyjl_translate.c:269
+#, fuzzy
+msgid "Locale Directory"
+msgstr "Direktorio berria?"
+
+#: oyjl_translate.c:265
+msgid "Locales"
+msgstr ""
+
+#: oyjl_translate.c:265
+msgid "Locales List"
+msgstr ""
+
+#: test-args.c:434
+msgid "Long"
+msgstr ""
+
+#: oyjl_args.c:3058
+#, fuzzy
+msgid "Man"
+msgstr "Magenta"
+
+#: oyjl_args_tree.c:570
+#, fuzzy
+msgid "Manufacturer"
+msgstr "Hornitzailea:   "
+
+#: oyjl_web.c:62
+msgid "March 05, 2020"
+msgstr ""
+
+#: oyjl-args.c:58
+msgid "March 10, 2023"
+msgstr ""
+
+#: oyjl_args.c:3061
+msgid "Markdown"
+msgstr ""
+
+#. parsed and checked with -i option
+#: oyjl-args.c:116 oyjl.c:321 oyjl_translate.c:311 oyjl_web.c:94
+#: test-args.c:436 test-args.c:800 test-args.c:986 test-args.c:1101
+#: test-core.c:1431 test-core.c:1515 test.c:2026 test.c:2163
+#: oyjl-args-qml/mini-app.c:196 oyjl-args-qml/main.cpp:105
+msgid "Misc"
+msgstr ""
+
+#: oyjl_args.c:5678
+msgid "Missing choices list"
+msgstr ""
+
+#. "Missing mandatory option. No usage mode in synopsis lines found."
+#: oyjl_args.c:5187
+msgid "Missing mandatory option. No usage mode in"
+msgstr ""
+
+#. type,   flags, name,      description,          help, mandatory, optional, detail
+#: test-args.c:799 test-args.c:985 test-args.c:1100 test-core.c:1514
+#, fuzzy
+msgid "Mode"
+msgstr "Modeloa:"
+
+#. type,   flags, name,      description,          help, mandatory, optional, detail
+#: test.c:357 test.c:2160
+#, fuzzy
+msgid "Mode(1)"
+msgstr "Modeloa:"
+
+#. type,   flags, name,      description,          help, mandatory, optional, detail
+#: test-args.c:427 test-core.c:1428 test.c:2023 oyjl-args-qml/mini-app.c:193
+#, fuzzy
+msgid "Mode1"
+msgstr "Modeloa:"
+
+#. accepted even if none of the mandatory options is set
+#: test-args.c:428 test-core.c:1429 test.c:2024 test.c:2161
+#: oyjl-args-qml/mini-app.c:194
+#, fuzzy
+msgid "Mode2"
+msgstr "Modeloa:"
+
+#. accepted even if none of the mandatory options is set
+#. accepted if anonymous arguments are set
+#: test-args.c:429 test-core.c:1430 test.c:2025 test.c:2162
+#: oyjl-args-qml/mini-app.c:195
+#, fuzzy
+msgid "Mode3"
+msgstr "Modeloa:"
+
+#. accepted even if none of the mandatory options is set
+#: test-args.c:430
+#, fuzzy
+msgid "Mode4"
+msgstr "Modeloa:"
+
+#. accepted even if none of the mandatory options is set
+#: test-args.c:431
+#, fuzzy
+msgid "Mode5"
+msgstr "Modeloa:"
+
+#. accepted if anonymous arguments are set
+#: test-args.c:432
+#, fuzzy
+msgid "Mode6"
+msgstr "Modeloa:"
+
+#. parsed and checked with -i option
+#: test-args.c:433
+#, fuzzy
+msgid "Mode7"
+msgstr "Modeloa:"
+
+#: test-args.c:434
+#, fuzzy
+msgid "Mode8"
+msgstr "Modeloa:"
+
+#: test-args.c:435
+#, fuzzy
+msgid "Mode9"
+msgstr "Modeloa:"
+
+#: oyjl_args_tree.c:548 oyjl_args_web.c:1441
+#, fuzzy
+msgid "Module"
+msgstr "Bereizketa"
+
+#: oyjl-args.c:83
+msgid "Multiple arguments for one option need each one option in front."
+msgstr ""
+
+#: oyjl.c:289 oyjl_args.c:5896 oyjl_args.c:6416 oyjl_args_tree.c:604
+#: oyjl_translate.c:277 oyjl_translate.c:279
+msgid "NAME"
+msgstr ""
+
+#: test.c:2014
+msgid "NUMBER"
+msgstr ""
+
+#: oyjl_args_tree.c:603
+msgid "Name"
+msgstr "Izena"
+
+#: oyjl_args_tree.c:966
+msgid "No"
+msgstr ""
+
+#: oyjl.c:281 oyjl_translate.c:253
+msgid "No Markup"
+msgstr ""
+
+#: test.c:378 test.c:389
+msgid "Nonsense"
+msgstr ""
+
+#: oyjl.c:225
+msgid "November 12, 2017"
+msgstr ""
+
+#: oyjl-args-qml/main.cpp:70
+msgid "November 15, 2020"
+msgstr ""
+
+#: oyjl-args-qml/mini-app.c:161
+msgid "November 28, 2019"
+msgstr ""
+
+#: test.c:2014
+msgid "Number"
+msgstr ""
+
+#: oyjl_args.c:5914 oyjl_args.c:6434 oyjl_args_tree.c:610
+msgid "OPTIONS"
+msgstr ""
+
+#: test-args.c:393 test-core.c:1392 test.c:1994 test.c:2133
+msgid "October 10, 2018"
+msgstr ""
+
+#: oyjl-args.c:89
+msgid "Omit libOyjlCore reference."
+msgstr ""
+
+#: oyjl-args.c:78
+msgid ""
+"One letter option name and long name forms are show separated by the pipe "
+"symbol '|'."
+msgstr ""
+
+#: oyjl_translate.c:271
+#, fuzzy
+msgid "Only Translations"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl_args.c:3894
+msgid "Option has a different value range"
+msgstr ""
+
+#: oyjl_args.c:3566 oyjl_args.c:3636
+msgid "Option has a unexpected argument"
+msgstr ""
+
+#: oyjl_args.c:3540 oyjl_args.c:3610
+msgid "Option needs a argument"
+msgstr ""
+
+#: oyjl_args.c:3314
+#, fuzzy
+msgid "Option not found"
+msgstr "Biratu inguruan"
+
+#: oyjl_args.c:3366 oyjl_args.c:3378 oyjl_args.c:3507 oyjl_args.c:4828
+msgid "Option not supported"
+msgstr ""
+
+#: oyjl_args.c:3584
+msgid "Option not supported with double dash"
+msgstr ""
+
+#: oyjl_args.c:3659
+msgid "Option not supported without double dash"
+msgstr ""
+
+#: oyjl_args.c:4845
+msgid "Option range error"
+msgstr ""
+
+#: oyjl-args.c:78
+#, fuzzy
+msgid "Option syntax"
+msgstr "Bereizketa"
+
+#: oyjl_args.c:3754
+msgid ""
+"Optionless mode not supported. (That would need '#' option declaration.)"
+msgstr ""
+
+#: oyjl-args.c:81
+msgid "Options can be concatenated on the command line."
+msgstr ""
+
+#: oyjl_args.c:3688
+msgid ""
+"Options with arguments are not allowed in sub command style. A sub command "
+"has no leading '--'. It is a mandatory option of a option group."
+msgstr ""
+
+#: oyjl_translate.c:249 oyjl-args-qml/main.cpp:85
+#, fuzzy
+msgid "Output"
+msgstr "Irteera"
+
+#. tell about the tool
+#. argc+argv are required for parsing the command line options
+#: oyjl-args-qml/main.cpp:111
+#, fuzzy
+msgid "Oyjl Args QML Viewer"
+msgstr "kargatuta"
+
+#. tell about the tool
+#. argc+argv are required for parsing the command line options
+#: oyjl_web.c:100
+#, fuzzy
+msgid "Oyjl Args Renderer"
+msgstr "kargatuta"
+
+#. argc+argv are required for parsing the command line options
+#: oyjl.c:329
+msgid "Oyjl Json Manipulation"
+msgstr ""
+
+#: oyjl_args_tree.c:578
+#, fuzzy
+msgid "Oyjl Module Author"
+msgstr "Oyranos-en ezarpenak"
+
+#. argc+argv are required for parsing the command line options
+#: oyjl_translate.c:316
+#, fuzzy
+msgid "Oyjl Translation"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl_translate.c:316
+#, fuzzy
+msgid "Oyjl UI JSON Translation tool"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl-args.c:68
+msgid ""
+"OyjlArgs requires, checks and enforces rules. These rules are expressed in "
+"each synopsis line."
+msgstr ""
+
+#: oyjl.c:277
+msgid "PATH"
+msgstr ""
+
+#: oyjl.c:277
+msgid "Path specifier"
+msgstr ""
+
+#: oyjl.c:269 oyjl.c:319
+#, fuzzy
+msgid "Paths"
+msgstr "Pausarazi"
+
+#: oyjl_args_tree.c:582
+#, fuzzy
+msgid "Permissions"
+msgstr "ICC Examin-en bertsioa"
+
+#: oyjl.c:281 oyjl_translate.c:253
+msgid "Plain"
+msgstr ""
+
+#: test-args.c:404 test-core.c:1399 test.c:2001 test.c:2140
+#: oyjl-args-qml/mini-app.c:170
+#, fuzzy
+msgid "Print All"
+msgstr "Puntua"
+
+#: oyjl.c:314
+#, fuzzy
+msgid "Print CSV"
+msgstr "Puntua"
+
+#: oyjl.c:261 oyjl.c:314
+#, fuzzy
+msgid "Print CSV to stdout"
+msgstr "Puntua"
+
+#: oyjl.c:263
+#, fuzzy
+msgid "Print CSV with semicolon to stdout"
+msgstr "Puntua"
+
+#: oyjl.c:315
+#, fuzzy
+msgid "Print CSV-semicolon"
+msgstr "Puntua"
+
+#: oyjl.c:315
+#, fuzzy
+msgid "Print CSV-semicolon to stdout"
+msgstr "Puntua"
+
+#: test-args.c:405 test-core.c:1400 test.c:2002 test.c:2141
+#: oyjl-args-qml/mini-app.c:171
+#, fuzzy
+msgid "Print Camera"
+msgstr "Fitxategi-izena"
+
+#: test.c:2002 test.c:2141 oyjl-args-qml/mini-app.c:171
+#, fuzzy
+msgid "Print Camera JSON"
+msgstr "Puntua"
+
+#: oyjl.c:279
+#, fuzzy
+msgid "Print Data Format"
+msgstr "Fitxategi-izena"
+
+#: oyjl.c:320
+#, fuzzy
+msgid "Print Data Format."
+msgstr "Fitxategi-izena"
+
+#: oyjl.c:311
+#, fuzzy
+msgid "Print JSON"
+msgstr "Puntua"
+
+#: oyjl.c:241 oyjl.c:255 oyjl.c:311
+#, fuzzy
+msgid "Print JSON to stdout"
+msgstr "Puntua"
+
+#: test-args.c:406 test-core.c:1401 test.c:2003 test.c:2142
+#: oyjl-args-qml/mini-app.c:172
+#, fuzzy
+msgid "Print None"
+msgstr "Puntua"
+
+#: oyjl.c:313
+#, fuzzy
+msgid "Print XML"
+msgstr "Puntua"
+
+#: oyjl.c:259 oyjl.c:313
+#, fuzzy
+msgid "Print XML to stdout"
+msgstr "Puntua"
+
+#: oyjl.c:312
+#, fuzzy
+msgid "Print YAML"
+msgstr "Puntua"
+
+#: oyjl.c:257 oyjl.c:312
+#, fuzzy
+msgid "Print YAML to stdout"
+msgstr "Puntua"
+
+#: oyjl.c:244 oyjl.c:269
+msgid "Print all matching paths"
+msgstr ""
+
+#: oyjl.c:319
+msgid "Print all matching paths."
+msgstr ""
+
+#: oyjl.c:242 oyjl.c:265
+msgid "Print count of leafs in node"
+msgstr ""
+
+#: oyjl_args.c:3026 oyjl_args.c:4267
+msgid "Print help for all groups"
+msgstr ""
+
+#: oyjl-args-qml/mini-app.c:184
+msgid "Print help for command line style interface"
+msgstr ""
+
+#: oyjl_args.c:3045 oyjl_args.c:4292 oyjl_args_cli.c:156 oyjl_args_web.c:1638
+#, fuzzy
+msgid "Print help text"
+msgstr "Puntua"
+
+#: oyjl.c:317
+#, fuzzy
+msgid "Print key name"
+msgstr "Fitxategi-izena"
+
+#: oyjl.c:243 oyjl.c:267
+#, fuzzy
+msgid "Print key name of node"
+msgstr "Fitxategi-izena"
+
+#: oyjl.c:316
+#, fuzzy
+msgid "Print node count"
+msgstr "Puntua"
+
+#: oyjl_args.c:3099
+msgid "Print on Command Line Interface."
+msgstr ""
+
+#: oyjl.c:318
+#, fuzzy
+msgid "Print type"
+msgstr "Puntua"
+
+#: oyjl_args.c:467 oyjl_args.c:3034 oyjl_args.c:3377 oyjl_args.c:4768
+#: oyjl_args.c:4792 oyjl_args.c:4818 oyjl_args.c:4827 oyjl_args.c:4844
+#: oyjl_args.c:5056 oyjl_args.c:5061 oyjl_args.c:5143 oyjl_args.c:5156
+#: oyjl_args.c:5678 oyjl_message.c:76
+msgid "Program Error:"
+msgstr ""
+
+#: oyjl_args.c:1480 oyjl_io.c:360
+#, fuzzy
+msgid "Program not found"
+msgstr "Profila-kolorea"
+
+#: oyjl-args-qml/main.cpp:104
+msgid "QML UI"
+msgstr ""
+
+#. use newline separated permissions in name + write newline separated list in description; both lists need to match in count
+#: test-args.c:398 oyjl-args-qml/mini-app.c:163
+msgid ""
+"Read external storage for global data access, like downloads, music ...\n"
+"Write external storage to create and modify global data."
+msgstr ""
+
+#. The --render option can be hidden and used only internally.
+#: oyjl-args-qml/mini-app.c:183 oyjl-args-qml/main.cpp:93
+#, fuzzy
+msgid "Render"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl_web.c:93
+#, fuzzy
+msgid "Render UI"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl_translate.c:464
+#, fuzzy
+msgid "Rendering Intent"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl_web.c:77 oyjl-args-qml/main.cpp:85
+msgid "Results JSON"
+msgstr ""
+
+#: oyjl_args.c:5703 oyjl_args_tree.c:621 oyjl_web.c:85
+#: oyjl-args-qml/main.cpp:96
+msgid "SEE ALSO"
+msgstr ""
+
+#: oyjl_args.c:5701 oyjl_args_tree.c:620
+msgid "SEE AS WELL"
+msgstr ""
+
+#: oyjl.c:285
+msgid "SEPARATOR"
+msgstr ""
+
+#: oyjl.c:271 oyjl_web.c:75 oyjl_web.c:76 oyjl_web.c:77
+#: oyjl-args-qml/main.cpp:83 oyjl-args-qml/main.cpp:84
+#: oyjl-args-qml/main.cpp:85
+msgid "STRING"
+msgstr ""
+
+#: oyjl_args.c:5899 oyjl_args.c:6419 oyjl_args_tree.c:606
+msgid "SYNOPSIS"
+msgstr ""
+
+#: oyjl_args.c:468 oyjl_message.c:77
+msgid "Security Alert:"
+msgstr ""
+
+#: oyjl-args.c:103 oyjl.c:293 oyjl_args.c:5703 oyjl_translate.c:285
+msgid "See Also"
+msgstr ""
+
+#: oyjl_args.c:5701
+msgid "See As Well"
+msgstr ""
+
+#: oyjl_args.c:3112
+#, fuzzy
+msgid "Select Renderer"
+msgstr "kargatuta"
+
+#: oyjl_args.c:3114
+msgid ""
+"Select and possibly configure Renderer. -R=\"gui\" will just launch a "
+"graphical UI. -R=\"web:port=port_number:https_key=TLS_private_key_filename:"
+"https_cert=TLS_CA_certificate_filename:css=layout_filename.css\" will launch "
+"a local Web Server, which listens on local port."
+msgstr ""
+
+#: oyjl_args_web.c:1544 oyjl_args_web.c:1563
+msgid "Send"
+msgstr ""
+
+#: oyjl-args.c:88 test-args.c:413 test-args.c:414 test-args.c:975
+#: test-args.c:1090 test-core.c:1413 test-core.c:1414 test.c:2010 test.c:2011
+#: test.c:2149 test.c:2150 oyjl-args-qml/mini-app.c:179
+#: oyjl-args-qml/mini-app.c:180
+#, fuzzy
+msgid "Set Input"
+msgstr "Sarrera"
+
+#: oyjl.c:271
+#, fuzzy
+msgid "Set Value"
+msgstr "Balioa"
+
+#: oyjl.c:245 oyjl.c:271
+msgid "Set a key name to a value"
+msgstr ""
+
+#: oyjl_translate.c:306
+#, fuzzy
+msgid "Set basic parameters"
+msgstr "Profila-parametroak"
+
+#: oyjl.c:310
+msgid "Set input file and path"
+msgstr ""
+
+#: oyjl_translate.c:237
+msgid "Set the GNU gettext output encoding."
+msgstr ""
+
+#. tell about the tool
+#. argc+argv are required for parsing the command line options
+#: test-args.c:442 test-args.c:588 test-args.c:601 test-args.c:616
+#: test-args.c:806 test-args.c:820 test-args.c:833 test-args.c:846
+#: test-args.c:860 test-args.c:874 test-args.c:992 test-args.c:1007
+#: test-args.c:1027 test-args.c:1051 test-args.c:1071 test-args.c:1108
+#: test-core.c:1437 test-core.c:1483 test-core.c:1521 test-core.c:1536
+#: test-core.c:1549 test-core.c:1577 test-core.c:1591 test.c:2066 test.c:2170
+#: test.c:2293
+msgid "Short example tool using libOyjl"
+msgstr ""
+
+#: test-args.c:412 test-core.c:1412 test.c:2009 test.c:2148
+#: oyjl-args-qml/mini-app.c:178
+msgid "Show Status"
+msgstr ""
+
+#: oyjl_args.c:3095 oyjl_args.c:3098
+#, fuzzy
+msgid "Show UI"
+msgstr "Erakutsi:"
+
+#: oyjl_args.c:3030 oyjl_args.c:4273
+msgid "Show all groups including syntax"
+msgstr ""
+
+#: oyjl_args.c:3047 oyjl_args.c:4294
+msgid "Show usage information and hints for the tool."
+msgstr ""
+
+#: test-args.c:427 test-args.c:428 test-args.c:429 test-args.c:430
+#: test-core.c:1428 test.c:2023 oyjl-args-qml/mini-app.c:193
+msgid "Simple mode"
+msgstr ""
+
+#: test.c:2160
+msgid "Simple mode \"(1)\""
+msgstr ""
+
+#: oyjl-args.c:69 oyjl-args.c:70
+msgid "Simple tool with only one option."
+msgstr ""
+
+#: oyjl-args.c:71
+msgid "Simple tool with two options, which both accept arguments."
+msgstr ""
+
+#: oyjl_translate.c:263
+msgid "Single Locale"
+msgstr ""
+
+#: oyjl-args-qml/main.cpp:111
+msgid "Small JSON UI tool using libOyjl and QML"
+msgstr ""
+
+#: oyjl_web.c:100
+msgid "Small JSON UI tool using libOyjl and a selectable renderer"
+msgstr ""
+
+#: oyjl_args_tree.c:576
+msgid "Sources"
+msgstr ""
+
+#: oyjl_args.c:3101
+msgid "Start Web Server"
+msgstr ""
+
+#: oyjl_args.c:3102
+msgid ""
+"Start a local Web Service to connect a Webbrowser with. Use the -R=web:help "
+"sub option to see more information."
+msgstr ""
+
+#: oyjl_args_tree.c:574
+msgid "Support"
+msgstr ""
+
+#: oyjl-args-qml/main.cpp:84
+msgid ""
+"Supported is the value of '+' as hint to take the merged in data from the "
+"input. The command can be passed as JSON string, e.g. \"{\"command_set\":"
+"\"my-cli-program\"}\", as file name pointing to JSON containing the command "
+"or the command alone as string."
+msgstr ""
+
+#: oyjl-args.c:68 oyjl_args.c:3028 oyjl_args.c:4271 oyjl_args.c:5187
+#: oyjl_args.c:6130 oyjl_args_tree.c:605
+msgid "Synopsis"
+msgstr ""
+
+#: oyjl_translate.c:259
+msgid "TEXTDOMAIN1,TEXTDOMAIN2"
+msgstr ""
+
+#: oyjl.c:287 oyjl_translate.c:275
+msgid "TYPE"
+msgstr ""
+
+#: oyjl-args.c:91
+msgid "Test"
+msgstr ""
+
+#: oyjl_translate.c:259
+msgid "Text Domain List"
+msgstr ""
+
+#: oyjl-args.c:116
+msgid ""
+"The -R option can in parts accept additional sub arguments to the base "
+"argument. For an overview use the help subargument oyjl-args -R=web:help."
+msgstr ""
+
+#: oyjl-args.c:77
+msgid ""
+"The @ option argument(s) are mentioned as last in order to not confuse with "
+"sub tool options or with option arguments."
+msgstr ""
+
+#: oyjl-args.c:80
+msgid "The OyjlArgs command line parser follows the above rules."
+msgstr ""
+
+#: oyjl-args.c:81
+msgid ""
+"The OyjlArgs parser takes each letter after a single dash as a separated "
+"option."
+msgstr ""
+
+#: oyjl-args.c:71
+msgid ""
+"The argument can be representet by a big letter content hint, like FILE, "
+"NUMBER etc. Or it is a collection of pipe separated choices."
+msgstr ""
+
+#: oyjl-args.c:69
+msgid ""
+"The command line tool is in the following examples called \"prog\" for "
+"simplicity."
+msgstr ""
+
+#: test.c:1993 test.c:2132
+msgid "The example tool demonstrates the usage of the libOyjl API's."
+msgstr ""
+
+#: oyjl-args-qml/mini-app.c:160
+msgid ""
+"The example tool demontrates the usage of the libOyjl API's and loads "
+"libOyjlArgsQml on demand."
+msgstr ""
+
+#: test-args.c:392 test-core.c:1391
+msgid "The example tool demontrates the usage of the libOyjl API's."
+msgstr ""
+
+#: oyjl-args-qml/main.cpp:83
+msgid ""
+"The file format can be JSON from a tool generated by libOyjl with the -X "
+"export option."
+msgstr ""
+
+#: oyjl-args.c:81
+msgid "The last option can have a argument."
+msgstr ""
+
+#: oyjl-args.c:71
+msgid ""
+"The later --name option names a few choices and shows with the immediately "
+"following three dots, that the choices are not exclusive and might be "
+"edited. OyjlArgs checks for args following the option name even without the "
+"equal sign '='."
+msgstr ""
+
+#: oyjl-args.c:70
+msgid "The option consists of more than one letter starting with two dashs."
+msgstr ""
+
+#: oyjl-args.c:69
+msgid ""
+"The option consists of one single letter and thus starts with a single dash."
+msgstr ""
+
+#: oyjl-args.c:78
+msgid "The options are described each individually in more detail."
+msgstr ""
+
+#. handle options
+#: oyjl.c:224
+msgid ""
+"The oyjl program can be used to parse, filter sub trees, select values and "
+"modify values in JSON texts."
+msgstr ""
+
+#: oyjl.c:277
+msgid ""
+"The path consists of slash '/' separated terms. Each term can be a key name "
+"or a square bracketed index. A empty term is used for a search inside a tree."
+msgstr ""
+
+#: oyjl-args.c:79
+msgid ""
+"The single letter and long option names are noticed and followed by the "
+"number symbolic name. After that the short name of the option is printed. "
+"After the opening brace is the symbolic name repated, followed by the "
+"default value. In square brackets follow boundaries ≥ minimal value, ≤ "
+"maximal value and Δ the step or tick."
+msgstr ""
+
+#: oyjl-args.c:75
+msgid ""
+"The tool can be called without any option. But one optional option might "
+"occure."
+msgstr ""
+
+#: oyjl-args-qml/main.cpp:69
+msgid "The tool graphicaly renders Oyjl JSON UI files using QML."
+msgstr ""
+
+#: oyjl-args.c:76
+msgid "The tool has one long mandatory option name without leading dashes."
+msgstr ""
+
+#: oyjl_web.c:61
+msgid "The tool renders Oyjl JSON UI files."
+msgstr ""
+
+#: test-args.c:435
+msgid "This Group checks correct constraints."
+msgstr ""
+
+#: test-args.c:434
+msgid "This Group handles Long options"
+msgstr ""
+
+#: oyjl-args.c:70
+msgid ""
+"This is called a long option name. The same option can be triggered by the "
+"single letter name or the long option name. Inside the Synopsis line only "
+"one form is noticed."
+msgstr ""
+
+#: oyjl_args.c:3687
+msgid "This option expects no arguments"
+msgstr ""
+
+#: oyjl_args.c:5057 oyjl_args.c:5144 oyjl_args.c:5157
+msgid "This option is not defined"
+msgstr ""
+
+#: oyjl_args.c:5062
+msgid "This option is not defined by letter."
+msgstr ""
+
+#: oyjl_translate.c:221
+msgid "This option is useful only for smaller projects as a initial start."
+msgstr ""
+
+#: oyjl_args.c:4819
+msgid "This option needs oyjlOption_s::value_name defined"
+msgstr ""
+
+#: test-args.c:419 test-args.c:420
+msgid "This options explanation text."
+msgstr ""
+
+#: oyjl-args.c:76
+msgid ""
+"This style is used sometimes for one complex tool for multiple connected "
+"tasks. The sub tool sections help in separating the different tool areas."
+msgstr ""
+
+#: oyjl.c:410
+msgid "Too many input files for option"
+msgstr ""
+
+#: oyjl_args_tree.c:546 oyjl_args_web.c:1439
+msgid "Tool"
+msgstr ""
+
+#: oyjl-args.c:74
+msgid ""
+"Tool options with three dots after empty space ' ...' can occure multiple "
+"times."
+msgstr ""
+
+#: oyjl-args.c:73
+msgid "Tool options, which might be follwed by an argument."
+msgstr ""
+
+#. handle options
+#: oyjl-args.c:57
+msgid "Tool to convert UI JSON description from *-X export* into source code."
+msgstr ""
+
+#: oyjl-args.c:77
+msgid "Tool with default option free style arguments."
+msgstr ""
+
+#: oyjl-args.c:76
+msgid "Tool with sub tool option syntax."
+msgstr ""
+
+#: oyjl-args.c:72
+msgid "Tool with two differently required options."
+msgstr ""
+
+#: oyjl-args.c:75
+msgid "Tool without option requirement."
+msgstr ""
+
+#: oyjl-args.c:68
+msgid "Tools follows syntax rules."
+msgstr ""
+
+#: oyjl_translate.c:271
+msgid "Translations only"
+msgstr ""
+
+#: oyjl.c:283
+msgid "Try Format"
+msgstr ""
+
+#: oyjl.c:285
+msgid "Try to detect numbers from non typesafe formats."
+msgstr ""
+
+#: oyjl.c:283
+msgid "Try to find data format, even with offset."
+msgstr ""
+
+#: oyjl_translate.c:307
+msgid ""
+"Two input modes are supported. Read Oyjl UI -X=export JSON. Or parse C "
+"sources to --function-name defined strings and replace them in --output by --"
+"function-name-out. The later is useful for oyjlTranslation_s, Qt style or "
+"other translations."
+msgstr ""
+
+#: oyjl.c:273 oyjl.c:318
+msgid "Type"
+msgstr ""
+
+#: oyjl_translate.c:237
+msgid "Typical value is UTF-8."
+msgstr ""
+
+#. tell about the tool
+#. argc+argv are required for parsing the command line options
+#: oyjl-args.c:122
+msgid "Ui to source code"
+msgstr ""
+
+#: oyjl_args.c:3723
+msgid "Unbound options are not supported"
+msgstr ""
+
+#: oyjl_args.c:3059
+msgid "Unix Man page"
+msgstr ""
+
+#: oyjl_args_tree.c:573
+msgid "Url"
+msgstr ""
+
+#: oyjl_args.c:6145 oyjl_args_cli.c:293 oyjl_args_tree.c:609
+#: oyjl_translate.c:345
+msgid "Usage"
+msgstr ""
+
+#: oyjl.c:62 oyjl.c:130 oyjl.c:132 oyjl.c:410 oyjl.c:578 oyjl_args.c:466
+#: oyjl_args.c:3348 oyjl_args.c:3365 oyjl_args.c:3506 oyjl_args.c:3539
+#: oyjl_args.c:3565 oyjl_args.c:3583 oyjl_args.c:3609 oyjl_args.c:3636
+#: oyjl_args.c:3658 oyjl_args.c:3686 oyjl_args.c:3722 oyjl_args.c:3754
+#: oyjl_args.c:3893 oyjl_args.c:5185 oyjl_args.c:5217 oyjl_message.c:75
+#: oyjl_translate.c:140 oyjl_translate.c:617 oyjl_yajl.c:1102
+msgid "Usage Error:"
+msgstr ""
+
+#: oyjl-args.c:61
+msgid "Use OAJL_ARGS_BASE API only."
+msgstr ""
+
+#: test.c:347
+msgid "Use [A-Z,a-z] underscore '_'."
+msgstr ""
+
+#: oyjl.c:289
+msgid ""
+"Use only letters from alphabet [A-Z,a-z] including optional underscore '_'."
+msgstr ""
+
+#: oyjl.c:285
+msgid "Uses by default dot '.' as decimal separator."
+msgstr ""
+
+#: oyjl.c:298 oyjl_translate.c:291 oyjl-args-qml/main.cpp:88
+msgid "Verbose"
+msgstr ""
+
+#: oyjl-args.c:99 oyjl.c:301 oyjl_args_tree.c:581 oyjl_translate.c:293
+#: test-core.c:1419 oyjl-args-qml/main.cpp:90
+#, fuzzy
+msgid "Version"
+msgstr "ICC Examin-en bertsioa"
+
+#: oyjl_translate.c:234
+msgid "View MAN page"
+msgstr ""
+
+#: oyjl_args.c:3100
+msgid "Web"
+msgstr ""
+
+#: oyjl.c:289
+#, fuzzy
+msgid "Wrap Name"
+msgstr "Izena"
+
+#: oyjl.c:287 oyjl_translate.c:275
+msgid "Wrap Type"
+msgstr ""
+
+#: oyjl.c:259
+msgid "XML"
+msgstr ""
+
+#: oyjl.c:277
+#, fuzzy
+msgid "XPath"
+msgstr "Pausarazi"
+
+#: oyjl.c:257
+msgid "YAML"
+msgstr ""
+
+#: oyjl_args_tree.c:966
+msgid "Yes"
+msgstr "Bai"
+
+#: oyjl_translate.c:263
+msgid "de_DE"
+msgstr ""
+
+#: oyjl_translate.c:265
+msgid "de_DE,es_ES"
+msgstr ""
+
+#: oyjl-args-qml/mini-app.c:186
+msgid "error"
+msgstr ""
+
+#: oyjl_args.c:3079
+msgid "export"
+msgstr ""
+
+#: oyjl-args-qml/mini-app.c:248 oyjl-args-qml/mini-app.c:286
+msgid "finished"
+msgstr ""
+
+#: test.c:2013
+#, fuzzy
+msgid "function"
+msgstr "Dokumentazioa"
+
+#. default options -h, -v and -V
+#: oyjl_args.c:3042 oyjl_web.c:78 test-args.c:416 test-args.c:977
+#: test-args.c:1092 test-core.c:1417 test.c:2015 test.c:2152
+#: oyjl-args-qml/mini-app.c:184
+#, fuzzy
+msgid "help"
+msgstr "Laguntza"
+
+#: oyjl.c:298 oyjl_translate.c:291
+msgid "increase verbosity"
+msgstr ""
+
+#. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
+#. OYJL_OPTION_FLAG_EDITABLE
+#: oyjl-args.c:88 test-args.c:413 test-args.c:414 test-args.c:975
+#: test-args.c:1090 test-core.c:1413 test-core.c:1414 test.c:2010 test.c:2011
+#: test.c:2149 test.c:2150 oyjl-args-qml/mini-app.c:179
+#: oyjl-args-qml/mini-app.c:180
+#, fuzzy
+msgid "input"
+msgstr "Sarrera"
+
+#: oyjl.c:287 oyjl_translate.c:275
+msgid "language specific wrap"
+msgstr ""
+
+#: oyjl_args.c:5187
+msgid "lines found."
+msgstr ""
+
+#: oyjl_translate.c:267
+#, fuzzy
+msgid "list empty translations too"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl_translate.c:269
+msgid ""
+"locale directory containing the your-locale/LC_MESSAGES/your-textdomain.mo "
+"gettext translations"
+msgstr ""
+
+#: oyjl_translate.c:265
+msgid "locales in a comma separated list"
+msgstr ""
+
+#. tell about the tool
+#. argc+argv are required for parsing the command line options
+#: oyjl-args-qml/mini-app.c:202
+msgid "mini OyjlArgsQml example"
+msgstr ""
+
+#: oyjl_translate.c:261
+#, fuzzy
+msgid "name,description,help"
+msgstr "Azalpena"
+
+#: oyjl_args.c:3366
+msgid "need a value_type"
+msgstr ""
+
+#: oyjl_args.c:3378 oyjl_args.c:4828
+msgid "needs OYJL_OPTION_FLAG_EDITABLE or choices"
+msgstr ""
+
+#: test.c:2014
+msgid "number"
+msgstr ""
+
+#: test-args.c:415 test-args.c:976 test-args.c:1091 test-core.c:1415
+#: test.c:2012 test.c:2151 oyjl-args-qml/mini-app.c:181
+#, fuzzy
+msgid "output"
+msgstr "Irteera"
+
+#: oyjl_translate.c:271
+#, fuzzy
+msgid "output only translations"
+msgstr "Oyranos-en ezarpenak"
+
+#: oyjl-args-qml/main.cpp:75
+msgid "oyjl -X json+command | oyjl-args-qml -i - -c +"
+msgstr ""
+
+#: oyjl_web.c:67
+msgid "oyjl -X json+command | oyjl-args-render -i - -c +"
+msgstr ""
+
+#: oyjl.c:242
+msgid "oyjl -c -i text.json -x my/path/"
+msgstr ""
+
+#: oyjl.c:241
+msgid "oyjl -i text.json -x ///[0]"
+msgstr ""
+
+#: oyjl.c:245
+msgid "oyjl -i text.json -x my/path/to/key -s value"
+msgstr ""
+
+#: oyjl.c:243
+msgid "oyjl -k -i text.json -x ///[0]"
+msgstr ""
+
+#: oyjl.c:244
+msgid "oyjl -p -i text.json -x //"
+msgstr ""
+
+#: oyjl-args.c:63
+msgid "oyjl-args -X export | oyjl-args -i -"
+msgstr ""
+
+#: oyjl-args-qml/main.cpp:74
+msgid "oyjl-args-qml -i oyjl-ui-text.json -c oyjl-command.json"
+msgstr ""
+
+#: oyjl_web.c:66
+msgid "oyjl-args-render -i oyjl-ui-text.json -c oyjl-command.json"
+msgstr ""
+
+#: oyjl_translate.c:234
+msgid "oyjl-translate -X man | groff -T utf8 -man -"
+msgstr ""
+
+#: oyjl_translate.c:232
+msgid ""
+"oyjl-translate -a -i oyjl-ui.json -o result.json -k name,description,help -d "
+"TEXTDOMAIN -p LOCALEDIR -l de_DE,es_ES"
+msgstr ""
+
+#: oyjl_translate.c:233
+msgid "oyjl-translate -c -i lang.tr -o result.json --locale de_DE"
+msgstr ""
+
+#: oyjl_translate.c:231
+msgid "oyjl-translate -e -f=json -i project.c -o result.json"
+msgstr ""
+
+#: oyjl_translate.c:230
+#, c-format
+msgid ""
+"oyjl-translate -e [-v] -i oyjl-ui.json -o result.json -f '_(\"%s\"); ' -k "
+"name,description,help"
+msgstr ""
+
+#. declare some option choices
+#: test-args.c:401 test-core.c:1396 test.c:1998 test.c:2137
+msgid "oyjl.json"
+msgstr ""
+
+#: test-args.c:402 test-core.c:1397 test.c:1999 test.c:2138
+msgid "oyjl2.json"
+msgstr ""
+
+#: test-core.c:1404
+msgid "prog --opt2=arg2"
+msgstr ""
+
+#: test-core.c:1403
+msgid "prog --opt=arg"
+msgstr ""
+
+#: oyjl-args.c:70
+msgid "prog --option"
+msgstr ""
+
+#: oyjl-args.c:74
+msgid "prog -f=FILE ... [-i=FILE ...]"
+msgstr ""
+
+#: oyjl-args.c:73
+msgid "prog -h[=synopsis|...] [--option[=NUMBER]]"
+msgstr ""
+
+#: oyjl-args.c:81
+msgid "prog -hvi=file.ext"
+msgstr ""
+
+#: test.c:367
+msgid "prog -i test.json ///my/path/"
+msgstr ""
+
+#: oyjl-args.c:82
+msgid "prog -i=file-in.ext -o file-out.ext"
+msgstr ""
+
+#: oyjl-args.c:83
+msgid "prog -i=file1.ext -i file2.ext -i file3.ext"
+msgstr ""
+
+#: oyjl-args.c:69
+msgid "prog -o"
+msgstr ""
+
+#: oyjl-args.c:72
+msgid "prog -o [-v]"
+msgstr ""
+
+#: oyjl-args.c:71
+msgid "prog -o=ARG --name=one|two|..."
+msgstr ""
+
+#: oyjl-args.c:77
+msgid "prog [-v] FILE ..."
+msgstr ""
+
+#: oyjl-args.c:76
+msgid "prog sub -o [-i] [-v]"
+msgstr ""
+
+#: oyjl-args.c:75
+msgid "prog | [-v]"
+msgstr ""
+
+#. The --render option can be hidden and used only internally.
+#: oyjl_args.c:3109 oyjl-args-qml/mini-app.c:183
+msgid "render"
+msgstr ""
+
+#: oyjl-args-qml/mini-app.c:210 oyjl-args-qml/mini-app.c:282
+#, fuzzy
+msgid "started"
+msgstr "Izarra"
+
+#. type,   flags, o,   option,    key,  name,         description,         help, value_name,    value_type,               values,                                                          variable_type, output variable
+#: test-args.c:412 test-core.c:1412 test.c:2009 test.c:2148
+#: oyjl-args-qml/mini-app.c:178
+msgid "status"
+msgstr ""
+
+#: oyjl_translate.c:259
+msgid "text domain list of your project"
+msgstr ""
+
+#: oyjl_translate.c:261
+msgid "to be used key names in a comma separated list"
+msgstr ""
+
+#: oyjl-args.c:98 oyjl_web.c:79 test-args.c:417 test-args.c:978
+#: test-args.c:1093 test-core.c:1418 test.c:2016 test.c:2153
+#: oyjl-args-qml/mini-app.c:185 oyjl-args-qml/main.cpp:88
+msgid "verbose"
+msgstr ""
+
+#: oyjl-args.c:99 oyjl.c:301 oyjl_translate.c:293 oyjl_web.c:80
+#: test-core.c:1419 oyjl-args-qml/main.cpp:90
+#, fuzzy
+msgid "version"
+msgstr "ICC Examin-en bertsioa"
+
+#: oyjl.c:64
+msgid "wrong argument to option:"
+msgstr ""
+
+#~ msgid ""
+#~ "    ICC Examin is licensed under the GPL version 2.    Especially all "
+#~ "icc_* files are licensed under the GPL.<br>    The other source files may "
+#~ "contain devergine licenses, which are detectable from file headers. "
+#~ msgstr ""
+#~ "    ICC Examin plugin-a GPL lizentziaren 2. bertsioarekin kaleratzen da. "
+#~ "Batizpat icc_* fitxategi guztiak GPL lizentzia dute.<br>     Iturburuko "
+#~ "bestelako fitxategiek beste lizentziak eduki ditzakete, fitxategietako "
+#~ "goiburuetan agertzen direlarik."
+
+#~ msgid "    head  head    128 File header"
+#~ msgstr "    goib. goib.   128 Fitxategi-goiburua"
+
+#~ msgid "  (dE CIE 2000) averaging: "
+#~ msgstr "  (dE CIE 2000) batez bestekoa: "
+
+#~ msgid "  FLTK: Bill Spitzack and others www.fltk.org<br>\n"
+#~ msgstr "  FLTK: Bill Spitzack eta besteak: www.fltk.org<br>\n"
+
+#~ msgid "  FLU: Jason Bryan www.osc.edu/~jbryan/FLU/<br>\n"
+#~ msgstr "  FLU: Jason Bryan www.osc.edu/~jbryan/FLU/<br>\n"
+
+#~ msgid ""
+#~ "  FTGL: Henry Maddocks homepages.paradise.net.nz/henryj/code/#FTGL<br>\n"
+#~ msgstr ""
+#~ "  FTGL: Henry Maddocks homepages.paradise.net.nz/henryj/code/#FTGL<br>\n"
+
+#~ msgid "  agv 3D Navigation: Philip Winston<br>\n"
+#~ msgstr "  agv 3D nabigazioa: Philip Winston<br>\n"
+
+#~ msgid ""
+#~ "  argyll: Greame Gill web.access.net.au/argyll/argyllcms.html<br<br><br>\n"
+#~ msgstr ""
+#~ "  argyll: Greame Gill web.access.net.au/argyll/argyllcms.html<br<br><br>\n"
+
+#~ msgid "  littleCMS: Marti Maria www.littlecms.com<br>\n"
+#~ msgstr "  littleCMS: Marti Maria www.littlecms.com<br>\n"
+
+#~ msgid "  maximum: "
+#~ msgstr "  gehienezkoa: "
+
+#~ msgid "  minimum: "
+#~ msgstr "  gutxienekoa: "
+
+#~ msgid " typ - no text output"
+#~ msgstr " typ - irteerako testurik ez"
+
+#~ msgid " used too early!"
+#~ msgstr " goizegi erabilita!"
+
+#~ msgid " with "
+#~ msgstr " honekin "
+
+#~ msgid " with Gamma: 1.0"
+#~ msgstr " gammarekin: 1.0"
+
+#~ msgid " with one entry for gamma: "
+#~ msgstr " gammaren sarrera batekin: "
+
+#~ msgid "!!! Warning !!!"
+#~ msgstr "Abisua !!!"
+
+#, fuzzy
+#~ msgid "(device) link class"
+#~ msgstr "Gailuaren koloreak"
+
+#~ msgid "---"
+#~ msgstr "---"
+
+#~ msgid "----"
+#~ msgstr "----"
+
+#, fuzzy
+#~ msgid "--module name"
+#~ msgstr "Fitxategi-izena"
+
+#~ msgid "..."
+#~ msgstr "..."
+
+#~ msgid "0"
+#~ msgstr "0"
+
+#~ msgid "0,0,0"
+#~ msgstr "0,0,0"
+
+#~ msgid "0/45, 45/0"
+#~ msgstr "0/45, 45/0"
+
+#~ msgid "0/d or d/0"
+#~ msgstr "0/d edo d/0"
+
+#, fuzzy
+#~ msgid "1. Channel"
+#~ msgstr "Kanala"
+
+#, fuzzy
+#~ msgid "1.0"
+#~ msgstr "100"
+
+#~ msgid "10 degree (1964)"
+#~ msgstr "10 gradu (1964)"
+
+#, fuzzy
+#~ msgid "10. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "10color"
+#~ msgstr "10kolorea"
+
+#, fuzzy
+#~ msgid "11. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "11color"
+#~ msgstr "11kolorea"
+
+#, fuzzy
+#~ msgid "12. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "12color"
+#~ msgstr "12kolorea"
+
+#, fuzzy
+#~ msgid "13. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "13color"
+#~ msgstr "13kolorea"
+
+#, fuzzy
+#~ msgid "14. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "14color"
+#~ msgstr "14kolorea"
+
+#, fuzzy
+#~ msgid "15. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "15color"
+#~ msgstr "15kolorea"
+
+#, fuzzy
+#~ msgid "16. Channel"
+#~ msgstr "Kanala"
+
+#, fuzzy
+#~ msgid "1964 10° Observer Graph:"
+#~ msgstr "Behatzaile estandarra"
+
+#~ msgid "2 degree (1931)"
+#~ msgstr "2 gradu (1931)"
+
+#, fuzzy
+#~ msgid "2. Channel"
+#~ msgstr "Kanala"
+
+#, fuzzy
+#~ msgid "2004"
+#~ msgstr "dE2000"
+
+#, fuzzy
+#~ msgid "2008"
+#~ msgstr "dE2000"
+
+#, fuzzy
+#~ msgid "2D Graph from profiles:"
+#~ msgstr "profilik ez"
+
+#~ msgid "2color"
+#~ msgstr "2kolorea"
+
+#, fuzzy
+#~ msgid "3. Channel"
+#~ msgstr "Kanala"
+
+#, fuzzy
+#~ msgid "3D Lookup table with"
+#~ msgstr "3D taula blokeatua honekin"
+
+#~ msgid "3color"
+#~ msgstr "3kolorea"
+
+#, fuzzy
+#~ msgid "4. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "4color"
+#~ msgstr "4kolorea"
+
+#, fuzzy
+#~ msgid "5. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "5color"
+#~ msgstr "5kolorea"
+
+#, fuzzy
+#~ msgid "6. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "6color"
+#~ msgstr "6kolorea"
+
+#, fuzzy
+#~ msgid "7. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "7color"
+#~ msgstr "7kolorea"
+
+#, fuzzy
+#~ msgid "8. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "8color"
+#~ msgstr "8kolorea"
+
+#, fuzzy
+#~ msgid "9. Channel"
+#~ msgstr "Kanala"
+
+#~ msgid "9color"
+#~ msgstr "9kolorea"
+
+#~ msgid "</b>  maximum: "
+#~ msgstr "</b>  gehienezkoa: "
+
+#~ msgid "</b> Measurement"
+#~ msgstr "</b> neurketa"
+
+#~ msgid "?"
+#~ msgstr "?"
+
+#~ msgid "???"
+#~ msgstr "???"
+
+#~ msgid "@2>"
+#~ msgstr "@2>"
+
+#~ msgid "@8>"
+#~ msgstr "@8>"
+
+#~ msgid "About"
+#~ msgstr "Honi buruz"
+
+#~ msgid "About ICC Examin"
+#~ msgstr "ICC Examin-i buruz"
+
+#~ msgid "Absolute Colorimetric"
+#~ msgstr "Koloremetria absolutua"
+
+#~ msgid "Acknowledgement"
+#~ msgstr "Aitorpena"
+
+#, fuzzy
+#~ msgid "Activate"
+#~ msgstr "profilik ez"
+
+#, fuzzy
+#~ msgid "Active Policy:"
+#~ msgstr "profilik ez"
+
+#~ msgid "Active matrix monitor"
+#~ msgstr "Matrize aktibozko monitorea"
+
+#, fuzzy
+#~ msgid "Adaptation State"
+#~ msgstr "Kalibrazio-data"
+
+#, fuzzy
+#~ msgid "Add Device"
+#~ msgstr "Gailu-klasea"
+
+#~ msgid "Add to Favorites"
+#~ msgstr "Gehitu gogokoei"
+
+#~ msgid "All Files (*)"
+#~ msgstr "Fitxategi denak (*)"
+
+#, fuzzy
+#~ msgid "Analyze ICC profile information on your system."
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Assign Assumed Profile"
+#~ msgstr "profilik ez"
+
+#, fuzzy
+#~ msgid "Assign No Profile"
+#~ msgstr "profilik ez"
+
+#, fuzzy
+#~ msgid "Assign profile to device:"
+#~ msgstr "profilik ez"
+
+#, fuzzy
+#~ msgid "Assumed Cmyk source"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Assumed Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Assumed Color Space for untagged colors"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Assumed Gray source"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Assumed Lab source"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Assumed Rgb source"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Assumed Web source"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Assumed XYZ source"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Attributes"
+#~ msgstr "Atributuak:     "
+
+#, fuzzy
+#~ msgid "Attributes:      "
+#~ msgstr "Atributuak:     "
+
+#, fuzzy
+#~ msgid "Available Device Profiles:"
+#~ msgstr "Zein ICC profila?"
+
+#~ msgid "B"
+#~ msgstr "U"
+
+#, fuzzy
+#~ msgid "Back side"
+#~ msgstr "Atzeko planoan"
+
+#~ msgid "Background color"
+#~ msgstr "Atzeko planoaren kolorea"
+
+#~ msgid "Black"
+#~ msgstr "Beltza"
+
+#~ msgid "Blue"
+#~ msgstr "Urdina"
+
+#~ msgid "Blue Colorant"
+#~ msgstr "Urdin koloragarria"
+
+#, fuzzy
+#~ msgid "Blue Gamma:"
+#~ msgstr "Bideo-txartelaren gamma"
+
+#~ msgid "Blue tone reproduction curve"
+#~ msgstr "Tonu urdinaren erreprodukzio-kurba"
+
+#, fuzzy
+#~ msgid "Blue xy:"
+#~ msgstr "Urdina"
+
+#~ msgid "C"
+#~ msgstr "C"
+
+#~ msgid "CGATS View"
+#~ msgstr "CGATS ikuspegia"
+
+#~ msgid "CIE *L"
+#~ msgstr "CIE *L"
+
+#~ msgid "CIE *a"
+#~ msgstr "CIE *a"
+
+#~ msgid "CIE *b"
+#~ msgstr "CIE *b"
+
+#~ msgid "CIE *u"
+#~ msgstr "CIE *u"
+
+#~ msgid "CIE *v"
+#~ msgstr "CIE *v"
+
+#~ msgid "CIE X"
+#~ msgstr "CIE X"
+
+#~ msgid "CIE Y (Luminance)"
+#~ msgstr "CIE Y (luminantzia)"
+
+#~ msgid "CIE Z"
+#~ msgstr "CIE Z"
+
+#~ msgid "CIE x"
+#~ msgstr "CIE x"
+
+#~ msgid "CIE y"
+#~ msgstr "CIE y"
+
+#~ msgid "CIE*Lab"
+#~ msgstr "CIE*Lab"
+
+#, fuzzy
+#~ msgid "CMM Core"
+#~ msgstr "kargatuta"
+
+#, fuzzy
+#~ msgid "CMM Core Fallback"
+#~ msgstr "kargatuta"
+
+#, fuzzy
+#~ msgid "CMM Renderer Fallback"
+#~ msgstr "kargatuta"
+
+#~ msgid "CMM: <b>lcms</b>"
+#~ msgstr "CMM: <b>lcms</b>"
+
+#~ msgid "CMYK"
+#~ msgstr "CMYK"
+
+#~ msgid "Calibration date"
+#~ msgstr "Kalibrazio-data"
+
+#, fuzzy
+#~ msgid "Can not write profile"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#~ msgid "Cancel"
+#~ msgstr "Utzi"
+
+#~ msgid "Cathode ray tube display"
+#~ msgstr "Katodo-izpien hodizko pantaila"
+
+#~ msgid "Chain selection"
+#~ msgstr "Kate-hautapena"
+
+#, fuzzy
+#~ msgid "Channels"
+#~ msgstr "Kanala"
+
+#~ msgid "Choose File"
+#~ msgstr "Aukeratu fitxategia"
+
+#~ msgid "Choose one profile tag"
+#~ msgstr "Aukeratu profilaren etiketa"
+
+#~ msgid "Chromaticity"
+#~ msgstr "Ñabardura"
+
+#~ msgid "Class:       "
+#~ msgstr "Klasea:         "
+
+#~ msgid "Close"
+#~ msgstr "Itxi"
+
+#, fuzzy
+#~ msgid "Cmm:             "
+#~ msgstr "CMM:            "
+
+#~ msgid "Cmy"
+#~ msgstr "Cmy"
+
+#~ msgid "Cmyk"
+#~ msgstr "Cmyk"
+
+#~ msgid "Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#~ msgid "Color adaption matrix"
+#~ msgstr "Kolorea egokitzeko matrizea"
+
+#, fuzzy
+#~ msgid "Color channel names"
+#~ msgstr "Kolore-marra"
+
+#, fuzzy
+#~ msgid "Color channel order"
+#~ msgstr "Kolore-marra"
+
+#, fuzzy
+#~ msgid "Color channel output names"
+#~ msgstr "Kolore-marra"
+
+#~ msgid "Color measurement data"
+#~ msgstr "Kolore-neurketaren datuak"
+
+#~ msgid ""
+#~ "Color profiles are often available from manufacturers of optical devices "
+#~ "(digital camera, scanner, printer). With ICC Examin you can get an "
+#~ "impression of the internal data , stored in a ICC profile. For profiles "
+#~ "containing measurement data, ICC Examin can generate a quality report. "
+#~ "The deviation, calculated from the measurement data is shown as well in "
+#~ "the three dimensional gamut viewer.<br>"
+#~ msgstr ""
+#~ "Gailu optikoen (kamera digitala, eskanerra, inprimagailua) hornitzaileek "
+#~ "eskuragarri jarri ohi dute koloreen profilak. ICC Examin plugin-arekin "
+#~ "ICC profila baten barneko datuen inpresioa lor daiteke. ICC Examin-ek "
+#~ "kalitate-txostena sor dezake profileek dituzten neurtzeko datuetatik."
+#~ "Desbiderapena, neurtzeko datuetatik kalkulatua, erakusten da, baita hiru "
+#~ "dimentsiotako kolore-gama ikustailean."
+
+#~ msgid "Color r"
+#~ msgstr "r kolorea"
+
+#~ msgid "Compare Measurement <-> Profile Colors"
+#~ msgstr "Konparatu neurketa <-> profilaren koloreak"
+
+#~ msgid "Conversion table with 16-bit precission:"
+#~ msgstr "Bihurketa-taula 16 bit-eko doitzasunarekin:"
+
+#~ msgid "Conversion table with 8-bit precission:"
+#~ msgstr "Bihurketa-taula 8 bit-eko doitzasunarekin:"
+
+#, fuzzy
+#~ msgid "Convert to Default Cmyk Editing Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Convert to Default Rgb Editing Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Copyright &copy;"
+#~ msgstr "Copyright-a"
+
+#, fuzzy
+#~ msgid "Copyright:       "
+#~ msgstr "Copyright-a"
+
+#, fuzzy
+#~ msgid "Could not alloc memory"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not create a intermediate db object for"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not create root JSON node for"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not find config"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not find db::config object for"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not obtain JSON node for"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not open ICC profile"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not open default ICC profile"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not open device"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not open instrument"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not open or invalid data: "
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not open profile"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not resolve device."
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not resolve device_json"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not resolve device_name"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not setup db objetc"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Could not write to file"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Create a ICC matrix profile."
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "Create a ICC proofing profile."
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "Creation Date:   "
+#~ msgstr "Kalibrazio-data"
+
+#, fuzzy
+#~ msgid "Curve Channels:"
+#~ msgstr "Kanala"
+
+#, fuzzy
+#~ msgid "Curve Precission:"
+#~ msgstr "profila\"."
+
+#, fuzzy
+#~ msgid "Curve Segments:"
+#~ msgstr "Kanala"
+
+#, fuzzy
+#~ msgid "Curves"
+#~ msgstr "Probako kurbak"
+
+#, fuzzy
+#~ msgid "Curves for Optimization"
+#~ msgstr "Bereizketa"
+
+#~ msgid "Cyan"
+#~ msgstr "Cyana"
+
+#, fuzzy
+#~ msgid "DB File Name"
+#~ msgstr "Fitxategi-izena:"
+
+#, fuzzy
+#~ msgid "Daemon Service"
+#~ msgstr "Gailu-klasea"
+
+#, fuzzy
+#~ msgid "Data Color Space:"
+#~ msgstr "Kolore-espazioa:"
+
+#, fuzzy
+#~ msgid "Date:"
+#~ msgstr "Data"
+
+#, fuzzy
+#~ msgid "Day Mode"
+#~ msgstr "Modeloa:"
+
+#, fuzzy
+#~ msgid "Default Profiles"
+#~ msgstr "profila\"."
+
+#, fuzzy
+#~ msgid "Description:     "
+#~ msgstr "Azalpena"
+
+#, fuzzy
+#~ msgid "Device"
+#~ msgstr "Gailu-klasea"
+
+#~ msgid "Device Colors"
+#~ msgstr "Gailuaren koloreak"
+
+#, fuzzy
+#~ msgid "Device File"
+#~ msgstr "Seriekoa:"
+
+#, fuzzy
+#~ msgid "Device Manufacturer"
+#~ msgstr "Hornitzailea:   "
+
+#, fuzzy
+#~ msgid "Device Model"
+#~ msgstr "Seriekoa:"
+
+#, fuzzy
+#~ msgid "Device Serial:"
+#~ msgstr "Seriekoa:"
+
+#, fuzzy
+#~ msgid "Device Settings"
+#~ msgstr "Seriekoa:"
+
+#~ msgid "Device colors"
+#~ msgstr "Gailuaren koloreak"
+
+#~ msgid "Device manufacturerer description"
+#~ msgstr "Gailuaren hornitzailearen azalpena"
+
+#, fuzzy
+#~ msgid "Device position"
+#~ msgstr "Gailu modeloaren azalpena"
+
+#~ msgid "Digital camera"
+#~ msgstr "Kamera digitala"
+
+#~ msgid "Display"
+#~ msgstr "Pantaila"
+
+#, fuzzy
+#~ msgid "Driver version:"
+#~ msgstr "Fitxategi-izena"
+
+#, fuzzy
+#~ msgid "Dump data:"
+#~ msgstr "Data"
+
+#, fuzzy
+#~ msgid "Dump device color state:"
+#~ msgstr "Gailuaren koloreak"
+
+#~ msgid "Dye sublimation printer"
+#~ msgstr "Sublimazio-koloragarrizko inprimagailua"
+
+#~ msgid "EBU Tech.3213-E"
+#~ msgstr "EBU Tech.3213-E"
+
+#, fuzzy
+#~ msgid "Edit Options ..."
+#~ msgstr "Bereizketa"
+
+#, fuzzy
+#~ msgid "Editing Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Editing Gray"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Editing Lab"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Effect abtract Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#~ msgid "Electrophotographic printer"
+#~ msgstr "Inprimagailu elektrofotografikoa"
+
+#~ msgid "Electrostatic printer"
+#~ msgstr "Inprimagailu elektrostatikoa"
+
+#, fuzzy
+#~ msgid "Erase Devices"
+#~ msgstr "Gailu-klasea"
+
+#, fuzzy
+#~ msgid "Erase profile:"
+#~ msgstr "profilik ez"
+
+#~ msgid "Error in ICC profile tag found!"
+#~ msgstr "Errorea aurkitu da ICC profilako etiketan."
+
+#, fuzzy
+#~ msgid "Error obtaining profile"
+#~ msgstr "okerreko etiketa-tamaina profilan "
+
+#, fuzzy
+#~ msgid "Extended Options"
+#~ msgstr "Bereizketa"
+
+#, fuzzy
+#~ msgid "Extract ICC profile:"
+#~ msgstr "Zein ICC profila?"
+
+#~ msgid "Favorites"
+#~ msgstr "Gogokoak"
+
+#, fuzzy
+#~ msgid "File Name"
+#~ msgstr "Fitxategi-izena:"
+
+#, fuzzy
+#~ msgid "File Name of OpenICC Device Data Base JSON"
+#~ msgstr "Gailuaren koloreak"
+
+#, fuzzy
+#~ msgid "File exists"
+#~ msgstr "Fitxategi-sistema"
+
+#~ msgid "File header invalid"
+#~ msgstr "Fitxategiaren goiburua baliogabea"
+
+#, fuzzy
+#~ msgid "File name is missed"
+#~ msgstr "Fitxategi-sistema"
+
+#~ msgid "File not loaded!"
+#~ msgstr "Fitxategia ez da kargatu."
+
+#, fuzzy
+#~ msgid "File:            "
+#~ msgstr "Tamaina:        "
+
+#~ msgid "Filename (ICC data type)"
+#~ msgstr "Fitxategi-izena (ICC datu mota)"
+
+#~ msgid "Filename (corrupted ICC data type)"
+#~ msgstr "Fitxategi-izena (hondatutako ICC datu mota)"
+
+#~ msgid "Filename (other data type)"
+#~ msgstr "Fitxategi-izena (beste datu mota)"
+
+#~ msgid "Film scanner"
+#~ msgstr "Film-eskanerra"
+
+#~ msgid "Film writer"
+#~ msgstr "Film-idazlea"
+
+#, fuzzy
+#~ msgid "Flags:           "
+#~ msgstr "Banderak:       "
+
+#~ msgid "Flare"
+#~ msgstr "Erlantza"
+
+#~ msgid "Flexography"
+#~ msgstr "Flexografia"
+
+#, fuzzy
+#~ msgid "For Print"
+#~ msgstr "Pantaila:"
+
+#, fuzzy
+#~ msgid "For Screen"
+#~ msgstr "Pantaila:"
+
+#~ msgid "For the visualisation of gamut (external):<br>\n"
+#~ msgstr "Kolore-gamaren bisualizazioa (kanpokoa):<br>\n"
+
+#~ msgid "G"
+#~ msgstr "B"
+
+#, fuzzy
+#~ msgid "Gamma"
+#~ msgstr "Bideo-txartelaren gamma"
+
+#~ msgid "Gamma Blue:  "
+#~ msgstr "Gamma urdina:"
+
+#~ msgid "Gamma Green:"
+#~ msgstr "Gamma berdea:"
+
+#~ msgid "Gamma Green: "
+#~ msgstr "Gamma berdea:"
+
+#~ msgid "Gamma Red:   "
+#~ msgstr "Gamma gorria:"
+
+#~ msgid "Gamut"
+#~ msgstr "Kolore-gama"
+
+#~ msgid "Gamut View"
+#~ msgstr "Kolore-gamaren ikuspegia"
+
+#, fuzzy
+#~ msgid "Gamut Warning"
+#~ msgstr "Kolore-gamaren abisua"
+
+#~ msgid "Gamut selector"
+#~ msgstr "Kolore-gama hautatzailea"
+
+#, fuzzy
+#~ msgid "General options:"
+#~ msgstr "Bereizketa"
+
+#, fuzzy
+#~ msgid "Generate Device Link Profile:"
+#~ msgstr "Zein ICC profila?"
+
+#~ msgid "Geometrie"
+#~ msgstr "Geometria"
+
+#, fuzzy
+#~ msgid "Get Conversion"
+#~ msgstr "Fitxategi-izena"
+
+#, fuzzy
+#~ msgid "Get ICC profile"
+#~ msgstr "Zein ICC profila?"
+
+#~ msgid "Grafic Card Gamma Table"
+#~ msgstr "Txartel grafikoaren gamma-taula"
+
+#~ msgid "Gravure"
+#~ msgstr "Sakongrabatzea"
+
+#~ msgid "Gray"
+#~ msgstr "Grisa"
+
+#~ msgid "Gray tone reproduction curve"
+#~ msgstr "Tonu grisaren erreprodukzio-kurba"
+
+#~ msgid "Green"
+#~ msgstr "Berdea"
+
+#~ msgid "Green Colorant"
+#~ msgstr "Gris koloragarria"
+
+#, fuzzy
+#~ msgid "Green Gamma:"
+#~ msgstr "Bideo-txartelaren gamma"
+
+#~ msgid "Green tone reproduction curve"
+#~ msgstr "Tonu berdearen erreprodukzio-kurba"
+
+#, fuzzy
+#~ msgid "Green xy:"
+#~ msgstr "Berdea"
+
+#~ msgid "HTML Documents (*.htm*)"
+#~ msgstr "HTML dokumentuak (*.htm*)"
+
+#, fuzzy
+#~ msgid "Handle options."
+#~ msgstr "Bereizketa"
+
+#, fuzzy
+#~ msgid "High Precission"
+#~ msgstr "profila\"."
+
+#, fuzzy
+#~ msgid "Hints"
+#~ msgstr " puntu"
+
+#~ msgid "Hls"
+#~ msgstr "Ñas"
+
+#~ msgid "Hsv"
+#~ msgstr "Ñsb"
+
+#~ msgid "Huch, unknown exception"
+#~ msgstr "Salbuespen ezezaguna"
+
+#~ msgid "Hue"
+#~ msgstr "Ñabardura"
+
+#~ msgid "ICC Examin"
+#~ msgstr "ICC Examin"
+
+#~ msgid ""
+#~ "ICC Examin is a viewer for color profiles according to ICC standard  - "
+#~ "www.color.org . At the moment version 2 profiles are supported."
+#~ msgstr ""
+#~ "ICC Examin plugin-a ICC estandarraren araberako koloreen profilaren "
+#~ "ikustailea da: www.color.org . Uneko bertsioak 2 profila soilik onartzen "
+#~ "ditu."
+
+#~ msgid "ICC Examin uses following libraries:<br>\n"
+#~ msgstr "ICC Examin-ek honako liburutegiak erabiltzen ditu:<br>\n"
+
+#~ msgid ""
+#~ "ICC color profiles (*.{I,i}{C,c}{M,m,C,c})\tMeasurement (*.{txt,it8,IT8,"
+#~ "RGB,CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Gamuts (*.{wrl,"
+#~ "vrml}"
+#~ msgstr ""
+#~ "ICC kolore-profilak (*.{I,i}{C,c}{M,m,C,c})\tNeurketa (*.{txt,it8,IT8,RGB,"
+#~ "CMYK,ti*,cgats,CIE,cie,nCIE,oRPT,DLY,LAB,Q60})\tArgyll Kolore-gama (*."
+#~ "{wrl,vrml}"
+
+#, fuzzy
+#~ msgid "ICC header Attributes"
+#~ msgstr "Aukeratu atribututa"
+
+#, fuzzy
+#~ msgid "ICC profile"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "ICC profile id written"
+#~ msgstr "ICC profilaren goiburua"
+
+#, fuzzy
+#~ msgid "ICC profile search paths"
+#~ msgstr "ICC profilaren goiburua"
+
+#, fuzzy
+#~ msgid "ICC profiles"
+#~ msgstr "Zein ICC profila?"
+
+#~ msgid "ITU-R BT.709"
+#~ msgstr "ITU-R BT.709"
+
+#, fuzzy
+#~ msgid "Illuminant"
+#~ msgstr "A iluminatzailea"
+
+#~ msgid "Illuminant ---"
+#~ msgstr "--- iluminatzailea"
+
+#~ msgid "Illuminant A"
+#~ msgstr "A iluminatzailea"
+
+#~ msgid "Illuminant D50"
+#~ msgstr "D50 iluminatzailea"
+
+#~ msgid "Illuminant D55"
+#~ msgstr "D55 iluminatzailea"
+
+#~ msgid "Illuminant D65"
+#~ msgstr "D65 iluminatzailea"
+
+#~ msgid "Illuminant D93"
+#~ msgstr "D93 iluminatzailea"
+
+#~ msgid "Illuminant F2"
+#~ msgstr "F2 iluminatzailea"
+
+#~ msgid "Illuminant F8"
+#~ msgstr "F8 iluminatzailea"
+
+#, fuzzy
+#~ msgid "Illuminant Spectrum Graph:"
+#~ msgstr "A iluminatzailea"
+
+#~ msgid "Illuminant Type"
+#~ msgstr "Iluminatzaile mota"
+
+#~ msgid "Illuminant unknown"
+#~ msgstr "Iluminatzaile ezezaguna"
+
+#~ msgid "Illuminant with equal energy E"
+#~ msgstr "Iluminatzailea E energia berdinarekin"
+
+#, fuzzy
+#~ msgid "Illuminant:      "
+#~ msgstr "Iluminatzailea: "
+
+#~ msgid "Illustration"
+#~ msgstr "Ilustrazioa"
+
+#~ msgid "InkJet printer"
+#~ msgstr "Tintazko inprimagailua"
+
+#, fuzzy
+#~ msgid "Input Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Install ICC profile:"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "Install profile"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "Install selected profile"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "Install the selected profile."
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "Intent"
+#~ msgstr "Helburua:"
+
+#~ msgid "Intent:      "
+#~ msgstr "Helburua:       "
+
+#~ msgid "K"
+#~ msgstr "K"
+
+#~ msgid "L"
+#~ msgstr "L"
+
+#~ msgid "L'"
+#~ msgstr "L'"
+
+#~ msgid "LANG"
+#~ msgstr "HIZK"
+
+#~ msgid "Lab"
+#~ msgstr "Lab"
+
+#~ msgid "Lightness"
+#~ msgstr "Argitasuna"
+
+#~ msgid "Linear output curve"
+#~ msgstr "Irteerako kurba lineala"
+
+#~ msgid "Linearisation"
+#~ msgstr "Linealisazioa"
+
+#~ msgid "Link"
+#~ msgstr "Esteka"
+
+#~ msgid "Links"
+#~ msgstr "Estekak"
+
+#, fuzzy
+#~ msgid "List Devices"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "List available ICC profiles:"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "List device classes:"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "List search paths:"
+#~ msgstr "ICC profilaren goiburua"
+
+#~ msgid "Load"
+#~ msgstr "Kargatu"
+
+#~ msgid "Load the current monitor profile"
+#~ msgstr "Kargatu uneko monitorearen profila"
+
+#~ msgid "Loading .."
+#~ msgstr "Kargatzen ..."
+
+#, fuzzy
+#~ msgid "Lookup table, PCS to device, intent perceptual"
+#~ msgstr "Blokeatu taula, PCStik gailura, fotometria helburuarekin"
+
+#, fuzzy
+#~ msgid "Lookup table, PCS to device, intent relative colorimetric"
+#~ msgstr "Blokeatu taula, PCStik gailura, koloremetria erlatibo helburuarekin"
+
+#, fuzzy
+#~ msgid "Lookup table, PCS to device, intent saturation"
+#~ msgstr "Blokeatu taula, PCStik gailura, saturazio helburuarekin"
+
+#, fuzzy
+#~ msgid "Lookup table, device to PCS, intent perceptual"
+#~ msgstr "Blokeatu taula, gailutik PCSra, fotometria helburuarekin"
+
+#, fuzzy
+#~ msgid "Lookup table, device to PCS, intent relative colorimetric"
+#~ msgstr "Blokeatu taula, gailutik PCSra, koloremetria erlatibo helburuarekin"
+
+#, fuzzy
+#~ msgid "Lookup table, device to PCS, intent saturation"
+#~ msgstr "Blokeatu taula, gailutik PCSra, saturazio helburuarekin"
+
+#~ msgid "Luminance"
+#~ msgstr "Luminantzia"
+
+#~ msgid "Luminance Y"
+#~ msgstr "Luminantzia Y"
+
+#~ msgid "Luv"
+#~ msgstr "Luv"
+
+#~ msgid "Macintosh"
+#~ msgstr "Macintosh"
+
+#, fuzzy
+#~ msgid "Magic:           "
+#~ msgstr "Magikoa:        "
+
+#~ msgid "Manage Favorites"
+#~ msgstr "Kudeatu gogokoak"
+
+#~ msgid "Manufacturer:"
+#~ msgstr "Hornitzailea:   "
+
+#, fuzzy
+#~ msgid "Manufacturer:    "
+#~ msgstr "Hornitzailea: "
+
+#, fuzzy
+#~ msgid "Marti"
+#~ msgstr "Matrizea"
+
+#, fuzzy
+#~ msgid "Marti Maria"
+#~ msgstr "Matrizea"
+
+#, fuzzy
+#~ msgid "Matrix"
+#~ msgstr "Matrizea"
+
+#, fuzzy
+#~ msgid "May 2004 - September 2008"
+#~ msgstr "2004.eko maiatza - 2007.eko iraila"
+
+#, fuzzy
+#~ msgid "Me"
+#~ msgstr "M"
+
+#~ msgid "Meas color"
+#~ msgstr "Neurtu kolorea"
+
+#~ msgid "Measured colors"
+#~ msgstr "Neurtutako koloreak"
+
+#~ msgid "Measurement"
+#~ msgstr "Neurketa"
+
+#~ msgid "Measurement patch"
+#~ msgstr "Neurketa bidea"
+
+#~ msgid "Measurment- and profile colors from <b>"
+#~ msgstr "Neurketa eta profila-kolorea hemendik:<b>"
+
+#~ msgid "Media black point"
+#~ msgstr "Puntu-beltza euskarria"
+
+#~ msgid "Microsoft"
+#~ msgstr "Microsoft"
+
+#, fuzzy
+#~ msgid "Model:"
+#~ msgstr "Modeloa:"
+
+#~ msgid "Model:      "
+#~ msgstr "Modeloa:    "
+
+#, fuzzy
+#~ msgid "Model:           "
+#~ msgstr "Modeloa:        "
+
+#, fuzzy
+#~ msgid "Modell"
+#~ msgstr "Modeloa:"
+
+#, fuzzy
+#~ msgid "Modell:"
+#~ msgstr "Modeloa:"
+
+#, fuzzy
+#~ msgid "Modes"
+#~ msgstr "Modeloa:"
+
+#, fuzzy
+#~ msgid "Modify Profile:"
+#~ msgstr "Monitorearen profila"
+
+#, fuzzy
+#~ msgid "Monitor"
+#~ msgstr "Bideo-monitorea"
+
+#~ msgid "My Computer"
+#~ msgstr "Ordenagailua"
+
+#, fuzzy
+#~ msgid "My Filter"
+#~ msgstr "Iragazki pertsonalizatua"
+
+#, fuzzy
+#~ msgid "My Filter Object"
+#~ msgstr "Iragazki pertsonalizatua"
+
+#~ msgid ""
+#~ "My cordially thank is especially dedicated to Marti Maria and the many "
+#~ "writers of the Lcms-user email list."
+#~ msgstr ""
+#~ "Nire eskerrik goxoenak bereziki Marti Maria-rentzako da, eta Lcms-ko "
+#~ "erabiltzaileen posta-zerrendako idazle guztientzako."
+
+#~ msgid "Named Color"
+#~ msgstr "Kolore izenduna"
+
+#~ msgid "Named Color 2"
+#~ msgstr "2. kolore izenduna"
+
+#~ msgid "Named color order"
+#~ msgstr "Kolore izendunen ordena"
+
+#, fuzzy
+#~ msgid "Native Gamut"
+#~ msgstr "Gorde kolore-gama VRML gisa"
+
+#, fuzzy
+#~ msgid "Need a ICC profile argument."
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Need a ICC profile to modify."
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Night Manager"
+#~ msgstr "Gris argia"
+
+#, fuzzy
+#~ msgid "Night Mode"
+#~ msgstr "Modeloa:"
+
+#~ msgid "No Color"
+#~ msgstr "Kolorerik ez"
+
+#, fuzzy
+#~ msgid "No ICC profile id detected"
+#~ msgstr "ICC profilaren goiburua"
+
+#, fuzzy
+#~ msgid "No Image profile"
+#~ msgstr "Irudiaren profila..."
+
+#~ msgid "No active drawable found."
+#~ msgstr "Ez da marrazgai aktiborik aurkitu."
+
+#~ msgid "No profil assigned to image."
+#~ msgstr "Ez dago profilik esleituta irudiari."
+
+#~ msgid "No. Tag   Type   Size Description"
+#~ msgstr "IDa Etik. Mota   Tam. Azalpena"
+
+#~ msgid "Number of colors:"
+#~ msgstr "Kolore kopurua:"
+
+#~ msgid "Number of input channels"
+#~ msgstr "Sarrerako kanal kopurua"
+
+#~ msgid "Number of output channels"
+#~ msgstr "Irteerako kanal kopurua"
+
+#~ msgid "OK"
+#~ msgstr "Ados"
+
+#~ msgid "Offset Lithography"
+#~ msgstr "Desplazamendu litografikoa"
+
+#~ msgid "Open"
+#~ msgstr "Ireki"
+
+#, fuzzy
+#~ msgid "OpenICC Json"
+#~ msgstr "ICC Examin-en bertsioa"
+
+#, fuzzy
+#~ msgid "Optimization"
+#~ msgstr "Bereizketa"
+
+#, fuzzy
+#~ msgid "Optimization Curves"
+#~ msgstr "Bereizketa"
+
+#, fuzzy
+#~ msgid "Output Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Oyranos "
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos CMS ICC profile tool"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos CUPS"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos Dummy"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos Help"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos ICC policy"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos RAW Image"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos Scanner"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#~ msgid "Oyranos Settings"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos Settings Group"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos Version"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos X11"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Oyranos display filter"
+#~ msgstr "huts egin du X pantaila irekitzean"
+
+#, fuzzy
+#~ msgid "Oyranos supplied modules"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#~ msgid "P22"
+#~ msgstr "P22"
+
+#, fuzzy
+#~ msgid "PCS Color Space: "
+#~ msgstr "Kolore-espazioa:"
+
+#~ msgid "PCS:         "
+#~ msgstr "PCS:            "
+
+#~ msgid "Passive matrix monitor"
+#~ msgstr "Matrize pasibozko monitorea"
+
+#, fuzzy
+#~ msgid "Path can not be written"
+#~ msgstr "Profila ez da idatzi."
+
+#, fuzzy
+#~ msgid "Perceptual"
+#~ msgstr "Aurrebista, saturatua"
+
+#~ msgid "Photo CD"
+#~ msgstr "Photo CD"
+
+#~ msgid "PhotoImageSetter"
+#~ msgstr "Argazki ezartzailea"
+
+#~ msgid "Photographic paper printer"
+#~ msgstr "Paper fotografikoko inprimagailua"
+
+#~ msgid "Photometric"
+#~ msgstr "Fotometrikoa"
+
+#, fuzzy
+#~ msgid "Platform"
+#~ msgstr "Plataforma:     "
+
+#, fuzzy
+#~ msgid "Platform:        "
+#~ msgstr "Data:           "
+
+#~ msgid "Please choose an existing file!"
+#~ msgstr "Aukeratu existitzen den fitxategia."
+
+#, fuzzy
+#~ msgid "Policy search paths"
+#~ msgstr "ICC profilaren goiburua"
+
+#~ msgid "Pos"
+#~ msgstr "Pos."
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, absolute colorimetric"
+#~ msgstr "Koloremetria absolutua"
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, perceptual"
+#~ msgstr "Aurrebista, saturatua"
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, relative colorimetric"
+#~ msgstr "Aurrebista, koloremetria erlatiboa"
+
+#, fuzzy
+#~ msgid "Postscript 2 CRD, saturated"
+#~ msgstr "Aurrebista, saturatua"
+
+#, fuzzy
+#~ msgid "Postscript 2 Rendering Intent"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Postscript CRD Information"
+#~ msgstr "Aurrebista, saturatua"
+
+#, fuzzy
+#~ msgid "Preferred CIE*Lab Editing Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Preferred Cmyk Editing Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Preferred Gray Editing Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Preferred Rgb Editing Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Preferred XYZ Editing Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#~ msgid "Preview"
+#~ msgstr "Aurrebista"
+
+#, fuzzy
+#~ msgid "Preview, perceptual"
+#~ msgstr "Aurrebista, saturatua"
+
+#~ msgid "Preview, photografic"
+#~ msgstr "Aurrebista, fotografikoa"
+
+#~ msgid "Preview, relative colorimetric"
+#~ msgstr "Aurrebista, koloremetria erlatiboa"
+
+#~ msgid "Preview, saturated"
+#~ msgstr "Aurrebista, saturatua"
+
+#, fuzzy
+#~ msgid "Print ui on console."
+#~ msgstr "Fitxategi-izena"
+
+#, fuzzy
+#~ msgid "Print:"
+#~ msgstr "Puntua"
+
+#, fuzzy
+#~ msgid "Profile Connection Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Profile ID:      "
+#~ msgstr "profilik ez"
+
+#, fuzzy
+#~ msgid "Profile Illuminant"
+#~ msgstr "A iluminatzailea"
+
+#, fuzzy
+#~ msgid "Profile Information"
+#~ msgstr "Informazioa:"
+
+#, fuzzy
+#~ msgid "Profile Tags"
+#~ msgstr "Fitxategi-izena"
+
+#~ msgid "Profile at the moment\"."
+#~ msgstr "Uneko profila\"."
+
+#, fuzzy
+#~ msgid "Profile contains no description"
+#~ msgstr "Profilaren azalpena"
+
+#, fuzzy
+#~ msgid "Profile description"
+#~ msgstr "Profila-sekuentziaren azalpena"
+
+#~ msgid "Profile description, multilingual"
+#~ msgstr "Profilaren azalpena, hizkuntza anitzetan"
+
+#, fuzzy
+#~ msgid "Profile exists already"
+#~ msgstr "Profila kapsulatuta dago eta "
+
+#~ msgid "Profile is not embedded and "
+#~ msgstr "Profila ez dago kapsulatuta eta "
+
+#~ msgid "Profile sequence description"
+#~ msgstr "Profila-sekuentziaren azalpena"
+
+#, fuzzy
+#~ msgid "Profile sequence identification"
+#~ msgstr "Profila-sekuentziaren azalpena"
+
+#~ msgid "Profile\" is designed for an other device"
+#~ msgstr "profila\" beste gailu batentzako ezarrita dago"
+
+#~ msgid "Profile\"."
+#~ msgstr "profila\"."
+
+#, fuzzy
+#~ msgid "Profile:         "
+#~ msgstr "Tamaina:        "
+
+#~ msgid "Projection Television"
+#~ msgstr "Proiekziozko telebista"
+
+#, fuzzy
+#~ msgid "Prompt"
+#~ msgstr "Proiektua"
+
+#~ msgid "Proof Profile..."
+#~ msgstr "Frogako profila..."
+
+#, fuzzy
+#~ msgid "Proofing"
+#~ msgstr "profila\"."
+
+#, fuzzy
+#~ msgid "Proofing Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Proofing Rendering Intent"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Proofing Settings"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#~ msgid "Quit"
+#~ msgstr "Irten"
+
+#~ msgid "R"
+#~ msgstr "G"
+
+#~ msgid "RGB"
+#~ msgstr "GBU"
+
+#, fuzzy
+#~ msgid "RGB primaries missed"
+#~ msgstr "GBU primarioak"
+
+#~ msgid "RGB result not available"
+#~ msgstr "GBUren emaitza ez dago erabilgarri"
+
+#, fuzzy
+#~ msgid "Read PNG"
+#~ msgstr "Prest"
+
+#, fuzzy
+#~ msgid "Read PPM"
+#~ msgstr "Prest"
+
+#~ msgid "Red"
+#~ msgstr "Gorria"
+
+#~ msgid "Red Colorant"
+#~ msgstr "Gorri koloragarria"
+
+#, fuzzy
+#~ msgid "Red Gamma:"
+#~ msgstr "Bideo-txartelaren gamma"
+
+#~ msgid "Red tone reproduction curve"
+#~ msgstr "Tonu gorriaren erreprodukzio-kurba"
+
+#, fuzzy
+#~ msgid "Red xy:"
+#~ msgstr "Gorria"
+
+#~ msgid "Reflective scanner"
+#~ msgstr "Eskaner islatzailea"
+
+#~ msgid "Reflective, "
+#~ msgstr "Isolatzailea, "
+
+#~ msgid "Relative Colorimetric"
+#~ msgstr "Koloremetria erlatiboa"
+
+#~ msgid "Report View"
+#~ msgstr "Txostenaren ikuspegia"
+
+#~ msgid "Reset"
+#~ msgstr "Berrezarri"
+
+#~ msgid "Rgb"
+#~ msgstr "Gbu"
+
+#~ msgid "Rotate around slice"
+#~ msgstr "Biratu zatiaren inguruan"
+
+#~ msgid "SMPTE RP145-1994"
+#~ msgstr "SMPTE RP145-1994"
+
+#~ msgid "Saturation"
+#~ msgstr "Saturazioa"
+
+#, fuzzy
+#~ msgid "Saturation Graph:"
+#~ msgstr "Saturazioa"
+
+#~ msgid "Save"
+#~ msgstr "Gorde"
+
+#~ msgid "Save Gamut as Profile"
+#~ msgstr "Gorde kolore-gama profila gisa"
+
+#~ msgid "Save Gamut as VRML"
+#~ msgstr "Gorde kolore-gama VRML gisa"
+
+#~ msgid "Save Report"
+#~ msgstr "Gorde txostena"
+
+#, fuzzy
+#~ msgid "Save as VRML"
+#~ msgstr "Gorde kolore-gama VRML gisa"
+
+#, fuzzy
+#~ msgid "Save to a new policy:"
+#~ msgstr "profilik ez"
+
+#, fuzzy
+#~ msgid "Scanner"
+#~ msgstr "Film-eskanerra"
+
+#, fuzzy
+#~ msgid "Screening"
+#~ msgstr "Pantaila:"
+
+#, fuzzy
+#~ msgid "Screening Description"
+#~ msgstr "Profila-sekuentziaren azalpena"
+
+#, fuzzy
+#~ msgid "Segmented Curve"
+#~ msgstr "Probako kurbak"
+
+#, fuzzy
+#~ msgid "Select Profile"
+#~ msgstr "profila\"."
+
+#, fuzzy
+#~ msgid "Select a directory with ICC profiles"
+#~ msgstr "ICC profilari buruzko txostena"
+
+#, fuzzy
+#~ msgid "Select active policy:"
+#~ msgstr "profilik ez"
+
+#, fuzzy
+#~ msgid "Serial:"
+#~ msgstr "Seriekoa:"
+
+#~ msgid "Set"
+#~ msgstr "Ezarri"
+
+#, fuzzy
+#~ msgid "Set new profile:"
+#~ msgstr "profilik ez"
+
+#~ msgid ""
+#~ "Set the current profile as monitor profile and upload vcgt tag to the "
+#~ "video card"
+#~ msgstr ""
+#~ "Ezarri uneko profila monitorearen profila gisa eta kargatu vctg etiketa "
+#~ "bideo-txartelean"
+
+#, fuzzy
+#~ msgid "Set white point mode"
+#~ msgstr "Puntu-zuria euskarria"
+
+#, fuzzy
+#~ msgid "Settings"
+#~ msgstr "Ezarpenak"
+
+#, fuzzy
+#~ msgid "Setup device:"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "Show Help:"
+#~ msgstr "Modeloa:"
+
+#~ msgid "Show Main Window"
+#~ msgstr "Erakutsi leiho nagusia"
+
+#, fuzzy
+#~ msgid "Show Profile ID:"
+#~ msgstr "profilik ez"
+
+#~ msgid "Show all channels of this table a own window."
+#~ msgstr "Erakutsi taula honen kanal guztiak leiho propioan"
+
+#, fuzzy
+#~ msgid "Show only device related ICC profiles"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "Show white point modes"
+#~ msgstr "Puntu-zuria euskarria"
+
+#~ msgid "Silkscreen"
+#~ msgstr "Serigrafia"
+
+#, fuzzy
+#~ msgid "Simulation/Proof Color Space"
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "Size"
+#~ msgstr "Tamaina"
+
+#, fuzzy
+#~ msgid "Size:"
+#~ msgstr "Tamaina"
+
+#, fuzzy
+#~ msgid "Size:            "
+#~ msgstr "Tamaina:        "
+
+#~ msgid "Slice"
+#~ msgstr "Zatitu"
+
+#~ msgid "Slice plane"
+#~ msgstr "Zati planoa"
+
+#~ msgid "Solaris"
+#~ msgstr "Solaris"
+
+#~ msgid "Sphere 1dE"
+#~ msgstr "1dE esfera"
+
+#~ msgid "Sphere 2dE"
+#~ msgstr "2dE esfera"
+
+#~ msgid "Sphere 4dE"
+#~ msgstr "4dE esfera"
+
+#, fuzzy
+#~ msgid "Standard Observer 1931 2° Graph:"
+#~ msgstr "Behatzaile estandarra"
+
+#~ msgid "Std-exception occured: "
+#~ msgstr "STD salbuespena gertatu da: "
+
+#~ msgid "Stop loading "
+#~ msgstr "Gelditu kargatzea "
+
+#, fuzzy
+#~ msgid "Tag Version:"
+#~ msgstr "Bertsioa:       "
+
+#~ msgid "Taligent"
+#~ msgstr "Taligent"
+
+#, fuzzy
+#~ msgid "Taxi DB Profiles"
+#~ msgstr "profila\"."
+
+#~ msgid "Technologie"
+#~ msgstr "Teknologia"
+
+#, fuzzy
+#~ msgid "Technology:"
+#~ msgstr "Teknologia"
+
+#~ msgid "Texts"
+#~ msgstr "Testuak"
+
+#~ msgid "Texts/Arrows on/off"
+#~ msgstr "Testuak/Geziak aktibatu/desaktibatu"
+
+#~ msgid ""
+#~ "The appliance of color profiles shall help to achive an easy color data "
+#~ "exchange, regardless which application or what kind of operating system "
+#~ "is used. As well color adaption between different devices is possible, "
+#~ "provided the color characteristics of both devices are known. The qulity "
+#~ "of a color transform from one to an other device depends mainly on the "
+#~ "quality of the color measurement and the used profiling algorithm during "
+#~ "profile creation."
+#~ msgstr ""
+#~ "Koloreen profila aplikatzeak kolore-datuak elkartrukatzeko erraztasuna "
+#~ "lortzen lagun dezake, berdin diolarik zein aplikazio edo sistema eragile "
+#~ "erabiltzen den. Gailuen arteko kolore-moldaketa posiblea denez, bi "
+#~ "gailuetan emandako kolore-ezaugarriak ezagunak dira. Kolorearen "
+#~ "eraldaketaren (gailu batetik bestera) kalitatea kolorearen neurketaren "
+#~ "kalitatearen arabera dago, baita profila sortzean erabilitako profila-"
+#~ "algoritmoaren arabera ere."
+
+#~ msgid ""
+#~ "The internal color transformations are currently realised with functions "
+#~ "of the littleCMS program library."
+#~ msgstr ""
+#~ "littleCMS programaren liburutegiko funtzioak erabiliz lantzen dira "
+#~ "barneko kolore eraldaketak."
+
+#, fuzzy
+#~ msgid ""
+#~ "The preferred CIE*Lab Editing Color Space shall describe the CIE*Lab."
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid ""
+#~ "The preferred Cmyk Editing Color Space should represent a color space "
+#~ "that complies to well defined printing conditions like FOGRA or SWOP."
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid ""
+#~ "The preferred Gray Editing Color Space shall describe a single lightness "
+#~ "channel color space for grayscale images."
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid ""
+#~ "The preferred Rgb Editing Color Space should represent a well behaving "
+#~ "color space like sRGB."
+#~ msgstr "Kolore-espazioa"
+
+#, fuzzy
+#~ msgid "The preferred XYZ Editing Color Space shall describe CIE*XYZ."
+#~ msgstr "Kolore-espazioa"
+
+#~ msgid "Thermal wax printer"
+#~ msgstr "Inprimagailu ezko-termala"
+
+#~ msgid "Transparent, "
+#~ msgstr "Gardena, "
+
+#, fuzzy
+#~ msgid "Type:            "
+#~ msgstr "Data:           "
+
+#, fuzzy
+#~ msgid "Unknown argument"
+#~ msgstr "Aitorpena"
+
+#~ msgid "VRML Files (*.wrl)"
+#~ msgstr "VRML fitxategiak (*.wrl)"
+
+#, fuzzy
+#~ msgid "Version:         "
+#~ msgstr "CMM:            "
+
+#~ msgid "Video Monitor"
+#~ msgstr "Bideo-monitorea"
+
+#~ msgid "Video camera"
+#~ msgstr "Bideo-kamera"
+
+#~ msgid "VideoCardGammaTable"
+#~ msgstr "Bideo-txartelaren gamma taula"
+
+#~ msgid "View"
+#~ msgstr "Ikusi"
+
+#~ msgid "Viewing Conditions"
+#~ msgstr "Ikuspegiaren baldintzak"
+
+#~ msgid "Viewing conditions description"
+#~ msgstr "Ikuspegiaren baldintzen azalpena"
+
+#~ msgid "WARNING: Could not load corrupt or damaged profile."
+#~ msgstr "ABISUA: ezin izan da hondatutako profila kargatu."
+
+#~ msgid "WARNING: Could not load profile."
+#~ msgstr "ABISUA: ezin izan da profila kargatu."
+
+#~ msgid "Watch Colors 3D..."
+#~ msgstr "Begiratu 3D koloreak..."
+
+#~ msgid "Watch Colors 3D.2..."
+#~ msgstr "Begiratu 3D.2 koloreak..."
+
+#~ msgid "What kind of image is this?"
+#~ msgstr "Zein motatako irudia da hau?"
+
+#~ msgid "What kind of image is this?\n"
+#~ msgstr "Zein motatako irudia da hau?\n"
+
+#, fuzzy
+#~ msgid "White xy:"
+#~ msgstr "Zuria"
+
+#~ msgid "Windows"
+#~ msgstr "Leihoak"
+
+#~ msgid "Work Space"
+#~ msgstr "Laneko area"
+
+#, fuzzy
+#~ msgid "Write"
+#~ msgstr "Puntua"
+
+#, fuzzy
+#~ msgid "Write DB File"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#, fuzzy
+#~ msgid "Write PNG"
+#~ msgstr "Puntua"
+
+#, fuzzy
+#~ msgid "Write PPM"
+#~ msgstr "Puntua"
+
+#, fuzzy
+#~ msgid "Write to ICC profile:"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "Wrong ICC profile id detected"
+#~ msgstr "Errorea aurkitu da ICC profilako etiketan."
+
+#~ msgid "Wrong profil assigned to image."
+#~ msgstr "Okerreko profila irudiari esleituta."
+
+#, fuzzy
+#~ msgid "Wrote file"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#~ msgid "X"
+#~ msgstr "X"
+
+#~ msgid "X'"
+#~ msgstr "X'"
+
+#~ msgid "XYZ"
+#~ msgstr "XYZ"
+
+#~ msgid "XineramaScreen:"
+#~ msgstr "Xinerama pantaila:"
+
+#~ msgid "Y"
+#~ msgstr "Y"
+
+#~ msgid "Y'"
+#~ msgstr "Y'"
+
+#~ msgid "YCbCr"
+#~ msgstr "YCbCr"
+
+#~ msgid "Yellow"
+#~ msgstr "Horia"
+
+#~ msgid "Your"
+#~ msgstr "Zure"
+
+#~ msgid "Yxy"
+#~ msgstr "Yxy"
+
+#~ msgid "Z"
+#~ msgstr "Z"
+
+#~ msgid "Z'"
+#~ msgstr "Z'"
+
+#, fuzzy
+#~ msgid "[none]"
+#~ msgstr "bat ere ez"
+
+#~ msgid "a"
+#~ msgstr "a"
+
+#~ msgid "a'"
+#~ msgstr "a'"
+
+#, fuzzy
+#~ msgid "abstract class"
+#~ msgstr "Abstraktua"
+
+#, fuzzy
+#~ msgid "allocation failed"
+#~ msgstr "Kalibrazio-data"
+
+#, fuzzy
+#~ msgid "at:"
+#~ msgstr "Data"
+
+#~ msgid "averaging deviations (dE CIE*Lab):<b> "
+#~ msgstr "batez besteko desbiderapena (dE CIE*Lab):<b> "
+
+#~ msgid "axis"
+#~ msgstr "ardatza"
+
+#~ msgid "b"
+#~ msgstr "b"
+
+#~ msgid "b'"
+#~ msgstr "b'"
+
+#~ msgid "bfd"
+#~ msgstr "bfd"
+
+#~ msgid "black/white"
+#~ msgstr "beltza/zuria"
+
+#~ msgid "bytes"
+#~ msgstr "byte"
+
+#~ msgid "can be used independently from image."
+#~ msgstr "iruditik independenteki erabil daiteke."
+
+#~ msgid "can not be used independently from image."
+#~ msgstr "ezin da erabili iruditik independenteki"
+
+#~ msgid "color"
+#~ msgstr "kolorea"
+
+#, fuzzy
+#~ msgid "color space class"
+#~ msgstr "Kolore-espazioa"
+
+#~ msgid "colored"
+#~ msgstr "koloreztatua"
+
+#~ msgid "crdi"
+#~ msgstr "crdi"
+
+#, fuzzy
+#~ msgid "create OpenICC device color state JSON including the rank map"
+#~ msgstr "Gailuaren koloreak"
+
+#, fuzzy
+#~ msgid "create OpenICC device color state rank map JSON"
+#~ msgstr "Gailuaren koloreak"
+
+#, fuzzy
+#~ msgid "create fallback ICC profile"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "create_profile"
+#~ msgstr "profilik ez"
+
+#~ msgid "created by:  "
+#~ msgstr "sortzailea:     "
+
+#~ msgid "dE Lab"
+#~ msgstr "dE Lab"
+
+#~ msgid "dE2000"
+#~ msgstr "dE2000"
+
+#, fuzzy
+#~ msgid "device-class"
+#~ msgstr "Gailuaren koloreak"
+
+#, fuzzy
+#~ msgid "device_class not found:"
+#~ msgstr "Profila-kolorea"
+
+#, fuzzy
+#~ msgid "display class"
+#~ msgstr "Pantaila"
+
+#, fuzzy
+#~ msgid "draw gray"
+#~ msgstr "Gris iluna"
+
+#, fuzzy
+#~ msgid "dump ICC profile"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "dump OpenICC device color state rank map JSON"
+#~ msgstr "Gailuaren koloreak"
+
+#, fuzzy
+#~ msgid "erase-device"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#~ msgid "exception occured: "
+#~ msgstr "salbuespena gertatu da: "
+
+#, fuzzy
+#~ msgid "extract ICC color profile"
+#~ msgstr "Zein ICC profila?"
+
+#~ msgid "file size 0 for "
+#~ msgstr "fitxategi honen tamaina 0: "
+
+#, fuzzy
+#~ msgid "file-name"
+#~ msgstr "Fitxategi-izena:"
+
+#~ msgid "found no content for"
+#~ msgstr "ez da honen edukirik aurkitu"
+
+#, fuzzy
+#~ msgid "found no observer"
+#~ msgstr "ez da goibururik aurkitu"
+
+#, fuzzy
+#~ msgid "gamma"
+#~ msgstr "kolore-gama"
+
+#~ msgid "gamut"
+#~ msgstr "kolore-gama"
+
+#~ msgid "glossy, "
+#~ msgstr "satinatua, "
+
+#~ msgid "gray"
+#~ msgstr "grisa"
+
+#~ msgid "high contrast"
+#~ msgstr "kontraste altua"
+
+#, fuzzy
+#~ msgid "http://www.behrmann.name"
+#~ msgstr "web gunea: www.behrmann.name <br>"
+
+#, fuzzy
+#~ msgid "input class"
+#~ msgstr "Pantaila"
+
+#, fuzzy
+#~ msgid "installed new policy"
+#~ msgstr "profilik ez"
+
+#~ msgid ""
+#~ "integrated sources, lock at the according files for licence conditions:"
+#~ "<br>\n"
+#~ msgstr ""
+#~ "integratutako iturburuak, begiratu dagokien fitxategiak lizentzia-"
+#~ "kontratua ezagutzeko:<br>\n"
+
+#, fuzzy
+#~ msgid "internal name"
+#~ msgstr "Barneko errorea"
+
+#, fuzzy
+#~ msgid "is a CameraRaw conversion tool"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "is a ICC color conversion tool"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "is a ICC color profile grapher"
+#~ msgstr "ICC kolore-profilak (*.ic*)"
+
+#, fuzzy
+#~ msgid "is a ICC profile information tool"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "is a Oyranos module options tool"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "is a Oyranos o(X)FORMS options tool"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "is a color profile administration tool for color devices"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "is a color profile administration tool for monitors"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#~ msgid "is not valid for an"
+#~ msgstr "ez da baliozko "
+
+#~ msgid "left mouse button -> go back"
+#~ msgstr "saguaren ezkerreko botoia -> joan atzera"
+
+#~ msgid "left-/middle-/right mouse button -> rotate/cut/menu"
+#~ msgstr "saguaren ezkerreko/erdiko/eskuineko botoia -> biratu/ebaki/menua"
+
+#~ msgid "lineare entrance curve with 256 steps"
+#~ msgstr "sarrerako kurba lineala 256 urratsekin"
+
+#~ msgid "lineare exit curve with 256 steps"
+#~ msgstr "irteerako kurba lineala 256 urratsekin"
+
+#, fuzzy
+#~ msgid "list-devices"
+#~ msgstr "Oyranos-en ezarpenak"
+
+#, fuzzy
+#~ msgid "location"
+#~ msgstr "Dokumentazioa"
+
+#~ msgid "matte, "
+#~ msgstr "distiragabea, "
+
+#, fuzzy
+#~ msgid "module name"
+#~ msgstr "Fitxategi-izena"
+
+#~ msgid "mouse"
+#~ msgstr "sagua"
+
+#, fuzzy
+#~ msgid "nLut"
+#~ msgstr "Sarrera"
+
+#, fuzzy
+#~ msgid "named color class"
+#~ msgstr "Kolore izendunen izenak"
+
+#~ msgid "negative, "
+#~ msgstr "negatiboa, "
+
+#, fuzzy
+#~ msgid "no EDID available from"
+#~ msgstr "ez dago erabilgarri"
+
+#, fuzzy
+#~ msgid "no EDID available from X properties"
+#~ msgstr "ez dago erabilgarri"
+
+#, fuzzy
+#~ msgid "no Screen found"
+#~ msgstr "Pantaila osoa aktibatu/desaktibatu"
+
+#~ msgid "no gammagradient information obtained"
+#~ msgstr "ez da gamma-gradientearen informaziorik lortu"
+
+#~ msgid "no measurment data or correct profile conversion available"
+#~ msgstr "neurtzeko daturik edo profila zuzenaren bihurketa erabilgarririk ez"
+
+#~ msgid "no net found in VRML file"
+#~ msgstr "ez da sarerik aurkitu VRML fitxategian"
+
+#~ msgid "no net found. Is Argyll installed?"
+#~ msgstr "ez da sarerik aurkitu. Argyll instalatuta dago?"
+
+#~ msgid "noName"
+#~ msgstr "izengabea"
+
+#, fuzzy
+#~ msgid "not a profile:"
+#~ msgstr "profilik ez"
+
+#~ msgid "not inside memory block"
+#~ msgstr "ez dago memoria-blokearen barruan"
+
+#~ msgid "o'clock"
+#~ msgstr "puntuan"
+
+#, fuzzy
+#~ msgid "omit the spectral line"
+#~ msgstr "Marra espektrala"
+
+#~ msgid "open X Display failed"
+#~ msgstr "huts egin du X pantaila irekitzean"
+
+#, fuzzy
+#~ msgid "open X Screen failed"
+#~ msgstr "huts egin du X pantaila irekitzean"
+
+#, fuzzy
+#~ msgid "output class"
+#~ msgstr "Abstraktua"
+
+#~ msgid "points length per side"
+#~ msgstr "puntu-luzera aldeko"
+
+#, fuzzy
+#~ msgid "policy name"
+#~ msgstr "ez da fitxategi-izenik eman"
+
+#, fuzzy
+#~ msgid "policy or filename"
+#~ msgstr "ez da fitxategi-izenik eman"
+
+#~ msgid "positive, "
+#~ msgstr "positiboa, "
+
+#, fuzzy
+#~ msgid "print only the file name"
+#~ msgstr "ez da fitxategi-izenik eman"
+
+#, fuzzy
+#~ msgid "print only the profile name"
+#~ msgstr "ez da fitxategi-izenik eman"
+
+#, fuzzy
+#~ msgid "print the full file name"
+#~ msgstr "ez da fitxategi-izenik eman"
+
+#, fuzzy
+#~ msgid "print the modules device class"
+#~ msgstr "Gailuaren koloreak"
+
+#, fuzzy
+#~ msgid "profile file name"
+#~ msgstr "Fitxategi-izena"
+
+#, fuzzy
+#~ msgid "profile name"
+#~ msgstr "Fitxategi-izena"
+
+#, fuzzy
+#~ msgid "profile not found in color path:"
+#~ msgstr "Profila-kolorea"
+
+#~ msgid "ps2i"
+#~ msgstr "ps2i"
+
+#~ msgid "ps2s"
+#~ msgstr "ps2s"
+
+#~ msgid "psd0"
+#~ msgstr "psa0"
+
+#~ msgid "psd1"
+#~ msgstr "psa1"
+
+#~ msgid "psd2"
+#~ msgstr "psa2"
+
+#~ msgid "psd3"
+#~ msgstr "psa3"
+
+#, fuzzy
+#~ msgid "read from file"
+#~ msgstr "profilik ez"
+
+#, fuzzy
+#~ msgid "read input stream"
+#~ msgstr "Sarrerako kurba lineala"
+
+#~ msgid "reset to standard gamma"
+#~ msgstr "berrezarri gamma estandarrera"
+
+#~ msgid "scrd"
+#~ msgstr "scrd"
+
+#~ msgid "scrn"
+#~ msgstr "scrn"
+
+#~ msgid "seconds"
+#~ msgstr "segundo"
+
+#, fuzzy
+#~ msgid "select ICC v2 profiles"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "select ICC v4 profiles"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "select a ICC v2 profile"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "select a ICC v4 profile"
+#~ msgstr "Zein ICC profila?"
+
+#~ msgid "shells"
+#~ msgstr "irudi-gainjarriak"
+
+#, fuzzy
+#~ msgid "show as well non matching profiles"
+#~ msgstr "Irudiaren profila..."
+
+#, fuzzy
+#~ msgid "start"
+#~ msgstr "Izarra"
+
+#~ msgid "steps"
+#~ msgstr "urratsak"
+
+#~ msgid "tag list is corrupted for tag"
+#~ msgstr "etiketa-zerrenda hondatuta dago: "
+
+#~ msgid "unknown"
+#~ msgstr "ezezaguna"
+
+#~ msgid "unknown Color"
+#~ msgstr "kolore ezezaguna"
+
+#, fuzzy
+#~ msgid "use device class"
+#~ msgstr "Gailuaren koloreak"
+
+#, fuzzy
+#~ msgid "use device sub path"
+#~ msgstr "Gailuaren koloreak"
+
+#, fuzzy
+#~ msgid "use new name"
+#~ msgstr "Fitxategi-izena"
+
+#~ msgid "use sRGB"
+#~ msgstr "erabili sGBU"
+
+#, fuzzy
+#~ msgid "will overwrite policy file"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"
+
+#~ msgid "with"
+#~ msgstr "honekin"
+
+#~ msgid "without markers"
+#~ msgstr "markatzailerik gabe"
+
+#, fuzzy
+#~ msgid "write assigned ICC profile"
+#~ msgstr "Zein ICC profila?"
+
+#, fuzzy
+#~ msgid "write to specified file"
+#~ msgstr "Ezin izan da letra-tipoa ireki:"

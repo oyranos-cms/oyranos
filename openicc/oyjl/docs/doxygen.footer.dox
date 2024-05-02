@@ -1,0 +1,13 @@
+<hr>
+<p class="footer">
+Generated for <a href="http://www.oyranos.org">$projectname - Version $projectnumber</a> by
+<a href="http://www.doxygen.org"><img src="doxygen.png" alt="Doxygen"
+align="middle" border="0"/>$doxygenversion</a><br/>
+Copyright &copy; 2006-2022 Kai-Uwe Behrmann and others.
+All Rights Reserved.</p>
+
+<hr>
+<!--#include virtual="/attrib.incl" -->
+
+</body>
+</html>

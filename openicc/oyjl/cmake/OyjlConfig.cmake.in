@@ -1,0 +1,187 @@
+# - Find Oyjl
+# Find the native Oyjl headers and libraries.
+#
+#  OYJL_FOUND        - True if Oyjl found.
+#  OYJL_INCLUDE_DIRS - where to find kdb.h, etc.
+#  OYJL_LIBRARIES    - List of libraries when using Oyjl.
+#  OYJL_LIBRARY_DIRS - where to find libraries
+#
+#  OYJL_VERSION       - The version of oyjl (x.y.z)
+#  OYJL_VERSION_MAJOR - The major version of oyjl (x)
+#  OYJL_VERSION_MINOR - The minor version of oyjl (y)
+#  OYJL_VERSION_MICRO - The patch version of oyjl (z)
+#
+#  OYJL_LINGUAS       - Oyjl translation languages
+#  OYJL_LINGUAS_FULL  - Oyjl translation languages with country code
+#
+#  OYJL_INCLUDE_DIR         - Include of of the Oyjl.framework Headers path
+#  OYJL_LIBRARIES           - libraries for imaging API + above
+#  OYJL_LIBRARIES_EXTRA     - linked libraries
+#  OYJL_LIBRARY_QML         - QML library dynamic
+#  OYJL_LIBRARY_QML_STATIC  - QML static dynamic
+#
+#  HAVE_OYJL          - TRUE
+#  HAVE_OYJL_QML      - TRUE
+#  HAVE_OYJL_QML_STATIC-TRUE
+#
+#  OYJL_DOCUMENT_TOOL( toolName toolSources languages:e.g.:de_DE.UTF8 documentPath) - create localised markdown docs for gitlab/-hub and MAN pages for OyjlArgs enabled tools
+#  OYJL_COMPLETION_TOOL( toolName toolSources ) - create bash shell .completion
+
+
+# Set path to the header file.
+SET(OYJL_INCLUDE_DIR
+      @CMAKE_INSTALL_FULL_INCLUDEDIR@/@PROJECT_DOWN_NAME@
+   )
+MARK_AS_ADVANCED(OYJL_INCLUDE_DIR)
+
+# Set path to the library.
+FIND_LIBRARY(OYJL_CORE_LIBRARY
+	NAMES @PROJECT_NAME@Core
+	PATHS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+)
+FIND_LIBRARY(OYJL_LIBRARY
+	NAMES @PROJECT_NAME@
+	PATHS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+)
+IF( OYJL_LIBRARY AND OYJL_CORE_LIBRARY )
+  SET( OYJL_CORE_LIBRARIES ${OYJL_CORE_LIBRARY} )
+  SET( OYJL_LIBRARIES ${OYJL_LIBRARY} ${OYJL_CORE_LIBRARY} @CONFIG_YAJL_LIBRARIES@ @CONFIG_YAML_LIBRARIES@ @CONFIG_LIBXML2_LIBRARIES@ )
+ENDIF()
+
+FIND_LIBRARY(OYJL_CORE_STATIC_LIBRARY
+	NAMES @PACKAGE_NAME@-core-static
+	PATHS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+)
+FIND_LIBRARY(OYJL_STATIC_LIBRARY
+	NAMES @PACKAGE_NAME@-static
+	PATHS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+)
+MARK_AS_ADVANCED(OYJL_STATIC_LIBRARY)
+IF(NOT OYJL_LIBRARIES AND OYJL_STATIC_LIBRARY)
+  SET( OYJL_CORE_LIBRARIES ${OYJL_CORE_STATIC_LIBRARY} )
+  SET( OYJL_LIBRARIES ${OYJL_STATIC_LIBRARY} ${OYJL_CORE_STATIC_LIBRARY} @CONFIG_YAJL_LIBRARIES@ @CONFIG_YAML_LIBRARIES@ @CONFIG_LIBXML2_LIBRARIES@ )
+ENDIF()
+
+FIND_LIBRARY(OYJL_LIBRARY_QML
+	NAMES @PROJECT_NAME@ArgsQml
+	PATHS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+)
+
+FIND_LIBRARY(OYJL_LIBRARY_QML_STATIC
+	NAMES @PACKAGE_NAME@-args-qml-static
+	PATHS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+)
+
+MARK_AS_ADVANCED(OYJL_LIBRARIES)
+
+# handle the QUIETLY and REQUIRED arguments and set OYJL_FOUND to TRUE if
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Oyjl DEFAULT_MSG OYJL_LIBRARIES OYJL_INCLUDE_DIR)
+
+if (OYJL_FOUND)
+  SET( OYJL_VERSION_MAJOR @OYJL_VERSION_MAJOR@ )
+  SET( OYJL_VERSION_MINOR @OYJL_VERSION_MINOR@ )
+  SET( OYJL_VERSION_MICRO @OYJL_VERSION_MICRO@ )
+  SET( OYJL_VERSION       @OYJL_VERSION@ )
+  SET( OYJL_LIBRARIES_EXTRA         @EXTRA_LIBS@ )
+  SET( OYJL_LINGUAS       @OYJL_LINGUAS_SHORT@ )
+  SET( OYJL_LINGUAS_FULL       @OYJL_LINGUAS_FULL@ )
+  SET( HAVE_OYJL          TRUE )
+  IF( OYJL_LIBRARY_QML OR OYJL_LIBRARY_QML_STATIC )
+    SET( HAVE_OYJL_QML    TRUE )
+  ENDIF()
+  IF( OYJL_LIBRARY_QML_STATIC )
+    SET( HAVE_OYJL_QML_STATIC TRUE )
+  ENDIF()
+  SET( OYJL_INCLUDE_DIRS ${OYJL_INCLUDE_DIR} )
+  SET( OYJL_LIBRARY_DIRS @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@ )
+
+endif (OYJL_FOUND)
+
+# _tool      name to execute for  _tool -X man ...
+# _tool_src  update document after edit dependency
+# _langs     catalogs to use  SET( MY_LANGS cs_CZ de_DE fr_FR.UTF8 )
+# _doc_path  file system location to store the documents into, usually "docs" -> docs/md/... docs/man/... docs/man/_langs/...
+# use GETTEXT_FOUND for gettext style translations
+# or use USE_I18N without gettext and e.g. OyjlCore style: #define _(text) oyjlTranslate( trc, text )
+MACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
+  IF( CMAKE_CROSSCOMPILING )
+    MESSAGE( "-- Skipping ${_tool} docu: cross compiling; Hint: build first for local march to generate docu + i18n" )
+  ELSE( CMAKE_CROSSCOMPILING )
+    ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/man/${_tool}.1
+          COMMAND mkdir -p "${_doc_path}/man/"
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH LANG=C DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${_tool}.1
+          DEPENDS ${_tool} ${_tool_src}
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+    ADD_CUSTOM_TARGET( ${_tool}.1 ALL
+          DEPENDS ${_doc_path}/man/${_tool}.1
+          COMMENT "Extract manual page to ${_tool}.1"
+    )
+    STRING(REGEX REPLACE "-" "" _tool_md ${_tool})
+    MESSAGE( "${_tool_md}: ${_doc_path}/md/${_tool_md}.md" )
+    ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/md/${_tool_md}.md
+          COMMAND mkdir -p "${_doc_path}/md/"
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH LANG=C DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}.md
+          DEPENDS ${_tool} ${_tool_src}
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+    ADD_CUSTOM_TARGET( ${_tool_md}.md ALL
+          DEPENDS ${_doc_path}/md/${_tool_md}.md
+          COMMENT "Extract markdown formated manual page to ${_tool_md}.md"
+    )
+    IF( GETTEXT_FOUND OR USE_I18N )
+    # add translations
+      IF( GETTEXT_FOUND )
+        SET( MY_LOCPATH LOCPATH=${CMAKE_BINARY_DIR}/locale )
+        SET( MY_LOCCOPY cp -a ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/openicc.mo ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LOCALEDIR}/${short_lang}/LC_MESSAGES/oyjl.mo ${CMAKE_BINARY_DIR}/locale/${short_lang}/LC_MESSAGES/ || echo nothing to copy )
+      ELSE( GETTEXT_FOUND )
+        SET( MY_LOCCOPY echo use USE_I18N path without gettext )
+      ENDIF( GETTEXT_FOUND )
+      FOREACH( _lang ${_langs} )
+        #SET( _lang "de_DE.UTF-8" )
+        STRING(SUBSTRING ${_lang} 0 2 short_lang)
+        MESSAGE( "add \"${_tool}\": \"" ${short_lang} "\" from ${_lang} / \"${_langs}\"" )
+        ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/man/${short_lang}/${_tool}.1
+            COMMAND mkdir -p "${_doc_path}/man/${short_lang}/"
+            COMMAND ${MY_LOCCOPY}
+            COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH ${MY_LOCPATH} LANGUAGE=${_lang} DISPLAY="man_page" ${_tool} -X man > ${_doc_path}/man/${short_lang}/${_tool}.1
+            DEPENDS ${_tool} ${_tool_src}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        )
+        ADD_CUSTOM_TARGET( ${_tool}-${short_lang}.1 ALL
+            DEPENDS ${_doc_path}/man/${short_lang}/${_tool}.1
+            COMMENT "Extract ${_lang} manual page to ${_doc_path}/man/${short_lang}/${_tool}.1"
+        )
+
+        ADD_CUSTOM_COMMAND( OUTPUT ${_doc_path}/md/${_tool_md}${short_lang}.md
+          COMMAND PATH=. LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH ${MY_LOCPATH} LANGUAGE=${_lang} DISPLAY="man_page" ${_tool} -X markdown > ${_doc_path}/md/${_tool_md}${short_lang}.md
+            DEPENDS ${_tool} ${_tool_src}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        )
+        ADD_CUSTOM_TARGET( ${_tool_md}${short_lang}.md ALL
+            DEPENDS ${_doc_path}/md/${_tool_md}${short_lang}.md
+            COMMENT "Extract markdown formated ${_lang} manual page to ${_tool_md}${short_lang}.md"
+        )
+      ENDFOREACH( _lang ${_langs} )
+    ENDIF( GETTEXT_FOUND OR USE_I18N )
+  ENDIF( CMAKE_CROSSCOMPILING )
+ENDMACRO(OYJL_DOCUMENT_TOOL _tool _tool_src _langs _doc_path)
+
+MACRO(OYJL_COMPLETION_TOOL _tool _tool_src)
+  IF( CMAKE_CROSSCOMPILING )
+    MESSAGE( "-- Skipping ${_tool} completion: cross compiling" )
+  ELSE( CMAKE_CROSSCOMPILING )
+    ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
+        COMMAND LANG=C PATH=.:$$PATH LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH ${_tool} -X export | PATH=.:$$PATH LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$$LD_LIBRARY_PATH oyjl-args -i - --completion-bash > ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
+        DEPENDS ${_tool} ${_tool_src}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+    ADD_CUSTOM_TARGET( ${_tool}.completion ALL
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion
+        COMMENT "Generate bash completion script code ${_tool}.completion"
+    )
+    INSTALL( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${_tool}.completion DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/bash-completion/completions/ )
+  ENDIF( CMAKE_CROSSCOMPILING )
+ENDMACRO(OYJL_COMPLETION_TOOL)

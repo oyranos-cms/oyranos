@@ -1,0 +1,38 @@
+/** @file  oyjl_version.h
+ *  @brief automatic generated variables
+ */
+#ifndef OYJL_VERSION_H
+#define OYJL_VERSION_H
+
+#define OYJL_VERSION_A @OYJL_VERSION_MAJOR@	/**< version variable */
+#define OYJL_VERSION_B @OYJL_VERSION_MINOR@	/**< version variable */
+#define OYJL_VERSION_C @OYJL_VERSION_MICRO@	/**< version variable */
+#define OYJL_VERSION_NAME "@OYJL_VERSION_MAJOR@.@OYJL_VERSION_MINOR@.@OYJL_VERSION_MICRO@"	/**< version variable */
+#define OYJL_VERSION (@OYJL_VERSION_MAJOR@ * 10000 + @OYJL_VERSION_MINOR@ * 100 + @OYJL_VERSION_MICRO@)	/**< version variable */
+
+#define OYJL_YAJL_VERSION @YAJL_VERSION@
+#cmakedefine HAVE_YAJL
+#cmakedefine HAVE_YAJL_VERSION_H
+
+#cmakedefine OYJL_HAVE_YAML
+#cmakedefine OYJL_HAVE_LIBXML2
+
+#cmakedefine HAVE_DL
+#cmakedefine HAVE_QT
+#cmakedefine OYJL_HAVE_BACKTRACE
+#cmakedefine OYJL_HAVE_LANGINFO_H
+#cmakedefine OYJL_HAVE_LOCALE_H
+#cmakedefine OYJL_HAVE_LIBINTL_H
+#cmakedefine OYJL_USE_GETTEXT
+#cmakedefine OYJL_HAVE_MHD
+#cmakedefine OYJL_HAVE_REGEX_H
+#cmakedefine USE_GCOV
+#define OYJL_DOMAIN     "@PROJECT_DOWN_NAME@"
+#define OYJL_LOCALEDIR  "@OYJL_LOCALEDIR@"
+#define OYJL_DATADIR    "@CMAKE_INSTALL_FULL_DATAROOTDIR@"      /**< install variable */
+
+#define OYJL_LIB_PREFIX "@CMAKE_SHARED_LIBRARY_PREFIX@"
+#define OYJL_LIB_SUFFIX "@CMAKE_SHARED_LIBRARY_SUFFIX@"
+
+#endif /*OYJL_VERSION_H*/
+

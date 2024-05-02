@@ -1,0 +1,240 @@
+.TH "oyjl" 1 "12. November 2017" "User Commands"
+.SH NAME
+oyjl v1.0.0 \- Oyjl Json Bearbeitung
+.SH ÜBERSICHT
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBoyjl\fR \fBcsv\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBoyjl\fR \fBcsv-semicolon\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBoyjl\fR \fBformat\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBoyjl\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
+.SH BESCHREIBUNG
+Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl und Wertveränderung in einem JSON Text.
+.SH OPTIONEN
+.SS
+Setze Eingangsdateiname und Pfad
+.br
+\fB\-i\fR|\fB\-\-input\fR \fIDATEINAME\fR ...	Datei oder Datenstrom
+.RS
+Ein JSON-Dateiname oder Eingangsdatenstrom wie "stdin"
+.RE
+\fB\-x\fR|\fB\-\-xpath\fR \fIPFAD\fR	Pfadangabe
+.RS
+Der Pfad besteht aus Namen, welche durch Schrägstrich '/' getrennt sind. Jeder Name kann ein Schlüsselname sein oder ein Index in eckigen Klammern. Ein leerer Name wird für die Suche innerhalb eines Baumes benutzt.
+.RE
+\fB\-s\fR|\fB\-\-set\fR \fITEXT\fR	Setze Wert des Schlüssels
+.br
+\fB\-p\fR|\fB\-\-plain\fR	Keine Textformatierung
+.br
+\fB\-r\fR|\fB\-\-try-format\fR \fIFORMAT\fR	Versuche ein Datenformat zu finden, auch mit Versatz.
+.br
+	\fB\-r\fR JSON		# JSON
+.br
+	\fB\-r\fR XML		# XML
+.br
+	\fB\-r\fR CSV		# CSV
+.br
+	\fB\-r\fR CSV-semicolon		# CSV-semicolon
+.br
+\fB\-d\fR|\fB\-\-detect-numbers\fR\fI[=TRENNER]\fR	Versuche Zahlen in nicht typensicheren Formaten zu erkennen.
+.RS
+Voreingestellt ist der Punkt '.' als Ganzzahlentrenner.
+.RE
+	\fB\-d\fR ,		# Komma : Ganzzahlentrenner
+.br
+	\fB\-d\fR .		# Punkt : Ganzzahlentrenner
+.br
+\fB\-w\fR|\fB\-\-wrap\fR \fITYP\fR	sprachspezifische Formatierung
+.br
+	\fB\-w\fR C		# C statischer Text
+.br
+\fB\-W\fR|\fB\-\-wrap-name\fR \fINAME\fR	Ein Name für das zu definierende Symbol.
+.RS
+Benutze nur Buchstaben aus den Alphabet [A-Z,a-z] einschließlich möglichem Understrich '_'.
+.RE
+	\fB\-W\fR wrap		# wrap
+.br
+.SS
+Zeige JSON auf stdout
+\fBoyjl\fR \fBjson\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+JSON - JavaScript Object Notation
+.br
+.sp
+.br
+\fBjson\fR	Zeige JSON auf stdout
+.br
+.SS
+Zeige YAML auf stdout
+\fBoyjl\fR \fByaml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+YAML - Yet Another Markup Language
+.br
+.sp
+.br
+\fByaml\fR	Zeige YAML auf stdout
+.br
+.SS
+Zeige XML auf stdout
+\fBoyjl\fR \fBxml\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+XML - eXtended Markup Language
+.br
+.sp
+.br
+\fBxml\fR	Zeige XML auf stdout
+.br
+.SS
+Zeige CSV auf stdout
+\fBoyjl\fR \fBcsv\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+CSV - Comma Separated Values
+.br
+.sp
+.br
+\fBcsv\fR	Zeige CSV auf stdout
+.br
+.SS
+Zeige CSV-Semikolon auf stdout
+\fBoyjl\fR \fBcsv-semicolon\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-s\fR \fITEXT\fR] [\fB\-r\fR \fIFORMAT\fR] [\fB\-p\fR] [\fB\-d\fR\fI[=TRENNER]\fR] [\fB\-w\fR \fITYP\fR] [\fB\-W\fR \fINAME\fR]
+.br
+CSV - Comma Separated Values
+.br
+.sp
+.br
+\fBcsv-semicolon\fR	Zeige CSV mit Semikolon auf stdout
+.br
+.SS
+Zeige Knotenanzahl
+\fBoyjl\fR \fBcount\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBcount\fR	Zeige Anzahl der Knotenzweige
+.br
+.SS
+Zeige Schlüsselname
+\fBoyjl\fR \fBkey\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBkey\fR	Zeige Schlüsselname des Knotens
+.br
+.SS
+Zeige Typ
+\fBoyjl\fR \fBtype\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBtype\fR	Hole Knotentyp
+.br
+.SS
+Zeige alle zutreffenden Pfade
+\fBoyjl\fR \fBpaths\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBpaths\fR	Zeige alle zutreffenden Pfade
+.br
+.SS
+Zeige Datenformat.
+\fBoyjl\fR \fBformat\fR [\fB\-i\fR \fIDATEINAME\fR ...] [\fB\-x\fR \fIPFAD\fR] [\fB\-r\fR \fIFORMAT\fR]
+.br
+\fBformat\fR	Zeige Datenformat
+.br
+.SS
+Allgemeine Optionen
+\fBoyjl\fR \fB\-h\fR\fI[=synopsis|...]\fR | \fB\-X\fR \fIjson|json+command|man|markdown\fR | \fB\-V\fR [\fB\-v\fR]
+.br
+\fB\-h\fR|\fB\-\-help\fR\fI[=synopsis|...]\fR	Zeige Hilfetext an
+.RS
+Zeige Benutzungsinformationen und Hinweise für das Werkzeug.
+.RE
+	\fB\-h\fR 1		# Vollständige Hilfe : Zeige Hilfe für alle Gruppen
+.br
+	\fB\-h\fR synopsis		# Übersicht : Liste Gruppen - Zeige alle Gruppen mit Syntax
+.br
+	\fB\-h\fR Eingabe		# Setze Eingangsdateiname und Pfad
+.br
+	\fB\-h\fR Zeige JSON		# Zeige JSON auf stdout : JSON - JavaScript Object Notation
+.br
+	\fB\-h\fR Zeige YAML		# Zeige YAML auf stdout : YAML - Yet Another Markup Language
+.br
+	\fB\-h\fR Zeige XML		# Zeige XML auf stdout : XML - eXtended Markup Language
+.br
+	\fB\-h\fR Zeige CSV		# Zeige CSV auf stdout : CSV - Comma Separated Values
+.br
+	\fB\-h\fR Zeige CSV-Semikolon		# Zeige CSV-Semikolon auf stdout : CSV - Comma Separated Values
+.br
+	\fB\-h\fR Anzahl		# Zeige Knotenanzahl
+.br
+	\fB\-h\fR Schlüsselname		# Zeige Schlüsselname
+.br
+	\fB\-h\fR Typ		# Zeige Typ
+.br
+	\fB\-h\fR Pfade		# Zeige alle zutreffenden Pfade
+.br
+	\fB\-h\fR Format		# Zeige Datenformat.
+.br
+	\fB\-h\fR Verschiedenes		# Allgemeine Optionen
+.br
+\fB\-X\fR|\fB\-\-export\fR \fIjson|json+command|man|markdown\fR	Exportiere formatierten Text
+.RS
+Hole Benutzerschnittstelle als Text
+.RE
+	\fB\-X\fR man		# Handbuch : Unix Handbuchseite - Hole Unix Handbuchseite
+.br
+	\fB\-X\fR markdown		# Markdown : Formatierter Text - Hole formatierten Text
+.br
+	\fB\-X\fR json		# Json : GUI - Hole Oyjl Json Benutzerschnittstelle
+.br
+	\fB\-X\fR json+command		# Json + Kommando : GUI + Kommando - Hole Oyjl Json Benutzerschnittstelle mit Kommando
+.br
+	\fB\-X\fR export		# Export : Alle verfügbaren Daten - Erhalte Daten für Entwickler. Das Format kann mit dem oyjl-args Werkzeug umgewandelt werden.
+.br
+\fB\-V\fR|\fB\-\-version\fR	Version
+.br
+\fB\-v\fR|\fB\-\-verbose\fR	mehr Infos
+.br
+.SH BEISPIELE
+.TP
+Zeige JSON auf stdout
+.br
+oyjl -i text.json -x ///[0]
+.TP
+Zeige Anzahl der Knotenzweige
+.br
+oyjl -c -i text.json -x mein/Pfad/
+.TP
+Zeige Schlüsselname des Knotens
+.br
+oyjl -k -i text.json -x ///[0]
+.TP
+Zeige alle zutreffenden Pfade
+.br
+oyjl -p -i text.json -x //
+.TP
+Setze Wert des Schlüssels
+.br
+oyjl -i text.json -x mein/Pfad/zum/Schlüssel -s Wert
+.SH SIEHE AUCH
+.TP
+oyjl-args(1) oyjl-translate(1) oyjl-args-qml(1)
+.br
+https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html
+.SH AUTOR
+Kai-Uwe Behrmann http://www.oyranos.org
+.SH KOPIERRECHT
+Copyright © 2017-2022 Kai-Uwe Behrmann
+.br
+Lizenz: newBSD http://www.oyranos.org
+.SH FEHLER
+https://www.gitlab.com/oyranos/oyranos/issues 
+
