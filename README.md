@@ -40,6 +40,7 @@ device specific Informations (ICC profiles) und system wide settings.
 * [libxml2](http://www.xmlsoft.org/) - for XML parsing (or internal fallback)
 * [libXcm >= 0.5.4] (http://www.oyranos.org/libxcm) - for monitor support (or internal fallback)
 * [Yajl](http://lloyd.github.com/yajl) - JSON API (or internall fallback)
+* [Oyjl](https://gitlab.com/beku/oyjl) - Oyjl Shared Basics API (or internall fallback)
 * [libOpenICC](https://github.com/OpenICC/config) - JSON/Yajl based DB API (or internall fallback)
 * [Elektra](http://www.libelektra.org) - DB API and D-Bus messaging
 * [FLTK](http://www.fltk.org) - (--enable-threads) is needed for the example Gui
