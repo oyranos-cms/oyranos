@@ -221,7 +221,7 @@ int myMain( int argc, const char ** argv )
   const char * export = NULL;
 
   /* handle options */
-  oyjlUiHeaderSection_s * sections = oyjlUiInfo_( _("The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON texts."),
+  oyjlUiHeaderSection_s * sections = oyjlUiInfo_( _("The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON, YAML, XML and CSV. It converts between data formats."),
                                                  "2017-11-12T12:00:00", _("November 12, 2017") );
 
   /* declare the option choices  *   nick,          name,               description,                  help */

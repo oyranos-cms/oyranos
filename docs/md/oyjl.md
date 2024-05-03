@@ -34,7 +34,7 @@ oyjl v1.0.0 - Oyjl Json Manipulation
 
 <h2>DESCRIPTION <a href="#toc" name="description">&uarr;</a></h2>
 
-The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON texts.
+The oyjl program can be used to parse, filter sub trees, select values and modify values in JSON, YAML, XML and CSV. It converts between data formats.
 
 <h2>OPTIONS <a href="#toc" name="options">&uarr;</a></h2>
 

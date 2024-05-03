@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-04-30 07:47+0200\n"
+"POT-Creation-Date: 2024-05-03 09:29+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -1443,7 +1443,7 @@ msgstr ""
 #: oyjl.c:224
 msgid ""
 "The oyjl program can be used to parse, filter sub trees, select values and "
-"modify values in JSON texts."
+"modify values in JSON, YAML, XML and CSV. It converts between data formats."
 msgstr ""
 
 #: oyjl.c:277
