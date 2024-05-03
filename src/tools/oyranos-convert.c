@@ -149,6 +149,225 @@ static oyjlOptionChoice_s * listIccNodes ( oyjlOption_s * o OYJL_UNUSED, int * y
   return c;
 }
 
+/**
+ *  Function oyImage_WriteCUBE
+ *  @memberof oyImage_s
+ *  @brief   write buffer to CUBE Lut format
+ *
+ *  @param[in]     image               the image
+ *  @param[in]     file_name           a writeable file name, The file can 
+ *                                     contain "%d" to include the image ID.
+ *                                     optional - default is stdout
+ *  @param[in]     free_text           A text to include as comment.
+ *  @return                            error
+ *
+ *  @see https://web.archive.org/web/20220215173646/https://wwwimages2.adobe.com/content/dam/acom/en/products/speedgrade/cc/pdfs/cube-lut-specification-1.0.pdf
+ *
+ *  @version Oyranos: 0.9.7
+ *  @date    2024/04/01
+ *  @since   2024/04/01 (Oyranos: 0.9.7)
+ */
+int          oyImage_WriteCUBE       ( oyImage_s         * image,
+                                       const char        * file_name,
+                                       const char        * free_text )
+{
+  int error = 0;
+  FILE * fp = stdout;
+  char * filename = NULL;
+#ifdef OYJL_HAVE_LOCALE_H
+  char * save_locale = oyjlStringCopy( setlocale(LC_NUMERIC, 0 ), malloc );
+  setlocale(LC_NUMERIC, "C");
+#endif
+
+  if(!image || image->type_ != oyOBJECT_IMAGE_S)
+  { char * text = oyjlBT(0);
+    const char * info = oyStruct_GetInfo(image, oyNAME_NAME, 0x01);
+    WARNc5_S( "%s %s %s(%s)\n%s", _("Unexpected object type:"), oyNoEmptyString_m_(info),
+              oyStructTypeToText( image ? image->type_ : oyOBJECT_NONE ),
+              oyStructTypeToText( oyOBJECT_IMAGE_S ), text?text:"")
+    oyFree_m_(text);
+    error = 1;
+  }
+
+  if(!error && file_name)
+    oyAllocHelper_m_( filename, char, strlen(file_name)+80, 0, return 1 );
+
+  if(!error && file_name)
+  {
+    if(strstr(file_name, "%d"))
+      sprintf( filename, file_name, oyStruct_GetId( (oyStruct_s*)image ) );
+    else
+      strcpy(filename,file_name);
+  }
+
+  if(filename && filename[0])
+  {
+    fp = oyjlFopen( filename, "wb" );
+    oyFree_m_( filename );
+  }
+  else
+    error = 2;
+
+  if(fp)
+  {
+      size_t pt = 0;
+      char text[256];
+      char * t = 0;
+      int  len = 0;
+      int  i,j,k,l, n;
+      char bytes[48];
+
+      oyProfile_s * p = oyImage_GetProfile( image );
+      int cchan_n = oyProfile_GetChannelsCount( p );
+      int channels = oyToChannels_m( oyImage_GetPixelLayout( image, oyLAYOUT ) );
+      int planar = oyToPlanar_m( oyImage_GetPixelLayout( image, oyLAYOUT ) );
+      int bigendian = oyToByteswap_m( oyImage_GetPixelLayout( image, oyLAYOUT ) ) != (uint8_t)oyBigEndian();
+      oyDATATYPE_e data_type = oyToDataType_m( oyImage_GetPixelLayout( image, oyLAYOUT ) );
+      int alpha = channels - cchan_n;
+      int byteps = oyDataTypeGetSize( data_type );
+      int width = oyImage_GetWidth( image );
+      int height = oyImage_GetHeight( image );
+      const char * colorspacename = oyProfile_GetText( p, oyNAME_DESCRIPTION );
+      const char * vs = oyVersionString(1);
+      uint8_t * out_values = 0;
+      const uint8_t * u8 = NULL;
+      double * dbls;
+      float * flts;
+      uint16_t * u16;
+      float flt;
+
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                "# CREATOR: Oyranos-%s\n",
+                oyNoEmptyString_m_(vs) ); 
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                " COMMENT: %s\n",
+                free_text?free_text:"" );
+      oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
+                " oyImage_s: %d\n",
+                oyObject_GetId( image->oy_ ) );
+      len = strlen( t );
+      do { fputc ( t[pt] , fp); if(t[pt] == '\n') fputc( '#', fp ); pt++; } while (--len); pt = 0;
+      fputc( '\n', fp );
+      oyFree_m_( t );
+
+      snprintf( text, 128, "# DATE/TIME: %s\n", oyjlPrintTime( 0, oyjlNO_MARK ) );
+      len = strlen( text );
+      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+
+      snprintf( text, 128, "# COLORSPACE: %s\n", colorspacename ?
+                colorspacename : "--" );
+      len = strlen( text );
+      do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+
+      if (byteps == 4 || byteps == 8 ||
+          (byteps == 2 && data_type == oyHALF))
+      {
+        if(bigendian)
+          snprintf( bytes, 48, "1.0" );
+        else
+          snprintf( bytes, 48, "-1.0" );
+      }
+      else
+      if(byteps == 1)
+        snprintf( bytes, 48, "255" );
+      else
+      if(byteps == 2)
+        snprintf( bytes, 48, "65535" );
+      else
+        oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
+             OY_DBG_FORMAT_ " byteps: %d",
+             OY_DBG_ARGS_, byteps );
+
+
+      if(alpha ||
+         cchan_n > 3 ||
+         !bigendian ||
+         planar)
+      {
+        snprintf( text, 256, "DOMAIN_MIN 0 0 0\nDOMAIN_MAX 1.0 1.0 1.0\nLUT_3D_SIZE %d\n",
+                  width );
+        len = strlen( text );
+        do { fputc ( text[pt++] , fp); } while (--len); pt = 0;
+      }
+
+      n = width;
+      if(byteps == 8)
+        u8 = (uint8_t*) &flt;
+
+      for( k = 0; k < height; ++k)
+      {
+        int height_ = 0,
+            is_allocated = 0;
+        out_values = oyImage_GetLineF(image)( image, k, &height_, -1, 
+                                            &is_allocated );
+        if(out_values)
+        for( l = 0; l < height_; ++l )
+        {
+          if(byteps == 8)
+          {
+            dbls = (double*)out_values;
+            for(i = 0; i < n; ++i)
+            {
+              for(j = 0; j < channels; ++j)
+                fprintf( fp, "%f ", dbls[l * width*channels + i*channels + j] );
+              fputc( '\n', fp );
+            }
+          } else if(byteps == 4)
+          {
+            flts = (float*)out_values;
+            for(i = 0; i < n; ++i)
+            {
+              for(j = 0; j < channels; ++j)
+                fprintf( fp, "%f ", flts[l * width*channels + i*channels + j] );
+              fputc( '\n', fp );
+            }
+          } else if(byteps == 2)
+          {
+            u16 = (uint16_t*)out_values;
+            for(i = 0; i < n; ++i)
+            {
+              for(j = 0; j < channels; ++j)
+                fprintf( fp, "%f ", u16[l * width*channels + i*channels + j]/65535.0 );
+              fputc( '\n', fp );
+            }
+          } else if(byteps == 1)
+          {
+            u8 = (uint8_t*)out_values;
+            for(i = 0; i < n; ++i)
+            {
+              for(j = 0; j < channels; ++j)
+                fprintf( fp, "%f ", u8[l * width*channels + i*channels + j]/255.0 );
+              fputc( '\n', fp );
+            }
+          }
+        }
+        else
+        {
+          oyMessageFunc_p( oyMSG_WARN, (oyStruct_s*)image,
+             OY_DBG_FORMAT_ " no line obtained for: %s",
+             OY_DBG_ARGS_, file_name?file_name:"stdout" );
+          error = 1;
+        }
+
+        if(is_allocated)
+          image->oy_->deallocateFunc_(out_values);
+      }
+
+      fflush( fp );
+      if(fp != stdout)
+        fclose (fp);
+      if(error && file_name)
+        remove(file_name);
+  }
+
+#ifdef OYJL_HAVE_LOCALE_H
+  setlocale(LC_NUMERIC, save_locale);
+  if(save_locale) free( save_locale );
+#endif
+
+  return error;
+}
+
 /* This function is called the
  * * first time for GUI generation and then
  * * for executing the tool.
@@ -182,6 +401,7 @@ int myMain( int argc, const char ** argv )
   /* handle options */
   /* declare the option choices  *   nick,          name,               description,                  help */
   oyjlOptionChoice_s f_choices[] = {{"clut",        _("CLUT"),          _("Generate a 3D LUT"),       _("Look Up Table")},
+                                    {"cube",        _("Cube"),          _("Generate a 3D LUT"),       _("Iridas")},
                                     {"icc",         _("ICC"),           _("Profile"),                 _("Device Link")},
                                     {"hald",        _("HALD"),          "",                        ""},
                                     {"slice",       _("Slice"),         "",                        ""},
@@ -205,6 +425,7 @@ int myMain( int argc, const char ** argv )
                                     {"",_("Convert image through ICC device link profile"),_("oyranos-icc -i image.png --device-link deviceLink.icc -o image.ppm"),NULL},
                                     {"",_("Get Conversion"),_("oyranos-icc -f icc -i input.icc -n lcm2 -p sRGB.icc -o device_link.icc"),      NULL},
                                     {"",_("Create 3D CLUT"),_("oyranos-icc -f clut -i Lab.icc -n lcm2 -p sRGB.icc -o clut.ppm"),              NULL},
+                                    {"",_("Play Movie with ffmpeg"),_("oyranos-icc -f=cube -i=web -p=\"`oyranos-monitor -lc -d=1 --path`\" -o monitor-1.cube; ffplay -vf \"lut3d=monitor-1.cube\" -i movie.mp4"),              NULL},
                                     {NULL,NULL,NULL,NULL}};
 
   oyjlOptionChoice_s S_choices[] = {{_("oyranos-profile(1) oyranos-profiles(1) oyranos(3)"),NULL,               NULL,                         NULL},
@@ -558,7 +779,11 @@ int myMain( int argc, const char ** argv )
     }
 
 
-    if(format && oyStringCaseCmp_(format,"clut") == 0)
+    if(format &&
+       ( oyStringCaseCmp_(format,"clut") == 0 ||
+         oyStringCaseCmp_(format,"cube") == 0
+       )
+      )
     {
       int width = levels,
           size, l,a,b,j;
@@ -617,7 +842,10 @@ int myMain( int argc, const char ** argv )
       error = oyConversion_RunPixels( cc, 0 );
       image = oyConversion_GetImage( cc, OY_OUTPUT );
 
-      error = oyImage_WritePPM( image, output, comment);
+      if(oyStringCaseCmp_(format,"cube") == 0)
+        error = oyImage_WriteCUBE( image, output, comment);
+      else
+        error = oyImage_WritePPM( image, output, comment);
 
       oyImage_Release( &image );
     } else
