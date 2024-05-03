@@ -1,6 +1,7 @@
-Oyjl API - low level C helper interfaces
-========================================
+Oyjl README
+===========
 [![Documentation](https://codedocs.xyz/oyranos-cms/oyranos.svg)](https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html)
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](http://www.opensource.org/licenses/mit-license.php)
 
 ![](oyjl-args-qml/images/logo.png)
 
