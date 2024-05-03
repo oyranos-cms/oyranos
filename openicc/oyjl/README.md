@@ -1,5 +1,6 @@
 Oyjl API - low level C helper interfaces
 ========================================
+[![Documentation](https://codedocs.xyz/oyranos-cms/oyranos.svg)](https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html)
 
 ![](oyjl-args-qml/images/logo.png)
 
@@ -16,7 +17,7 @@ Usage
 
 Documentation
 -------------
-https://codedocs.xyz/oyranos‐cms/oyranos/group\_\_oyjl.html
+https://codedocs.xyz/oyranos‐cms/oyranos/group__oyjl.html
 
 
 Dependencies
