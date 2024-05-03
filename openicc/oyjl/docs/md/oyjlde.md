@@ -34,7 +34,7 @@ oyjl v1.0.0 - Oyjl Json Bearbeitung
 
 <h2>BESCHREIBUNG <a href="#toc" name="description">&uarr;</a></h2>
 
-Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl und Wertveränderung in einem JSON Text.
+Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl und Wertveränderung in JSON, YAML, XML und CSV. Es übersetzt zwischen Datenformaten.
 
 <h2>OPTIONEN <a href="#toc" name="options">&uarr;</a></h2>
 

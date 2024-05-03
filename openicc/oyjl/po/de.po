@@ -1415,10 +1415,10 @@ msgstr "Optionen werden einzeln detailierter beschrieben."
 #: oyjl.c:224
 msgid ""
 "The oyjl program can be used to parse, filter sub trees, select values and "
-"modify values in JSON texts."
+"modify values in JSON, YAML, XML and CSV. It converts between data formats."
 msgstr ""
 "Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl "
-"und Wertveränderung in einem JSON Text."
+"und Wertveränderung in JSON, YAML, XML und CSV. Es übersetzt zwischen Datenformaten."
 
 #: oyjl.c:277
 msgid ""
