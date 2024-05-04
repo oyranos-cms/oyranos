@@ -69,5 +69,5 @@ test:
     - cd build && ls
     - ./oyjl-test-test
     - ./oyjl-test-args
-    - ./oyjl-test-core-static
+    - valgrind ./oyjl-test-core-static
     - ./oyjl-test-static
