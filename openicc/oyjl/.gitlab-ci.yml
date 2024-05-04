@@ -1,0 +1,66 @@
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/C++.gitlab-ci.yml
+
+# use the official gcc image, based on debian
+# can use verions as well, like gcc:5.2
+# see https://hub.docker.com/_/gcc/
+
+image: gcc
+
+build:
+  stage: build
+  # instead of calling g++ directly you can also use some build toolkit like make
+  # install the necessary build tools when needed
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind lcov pkg-config
+
+  script:
+    - cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF
+    - make
+    #- (cd openicc/oyjl; mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF ..; make; make check; OYJL_DEBUG=1 ./oyjl-args-ui)
+  artifacts:
+    paths:
+      - oyjl-test-static
+
+      # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
+  #cache:
+  #  paths:
+  #    - "*.o"
+
+Coverity:
+  variables:
+    COVERITY_SCAN_PROJECT_NAME: "oyranos-cms/oyranos"
+    COVERITY_SCAN_TOKEN: "movk9Tfe95jywzL1jf52tg"
+    GITLAB_USER_EMAIL: "ku.b@gmx.de"
+  only:
+    refs:
+      - coverity_scan
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind lcov pkg-config curl tar
+  script:
+  - echo run on $COVERITY_SCAN_PROJECT_NAME
+  - wget https://scan.coverity.com/download/linux64 --post-data "token=$COVERITY_SCAN_TOKEN&project=oyranos-cms%2Foyranos" -O coverity_tool.tgz
+  - tar xfz coverity_tool.tgz
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF
+  - cov-analysis-linux64-*/bin/cov-build --dir cov-int make -j4
+  - tar cfz cov-int.tar.gz cov-int
+  - curl https://scan.coverity.com/builds?project=$COVERITY_SCAN_PROJECT_NAME
+    --form token=$COVERITY_SCAN_TOKEN --form email=$GITLAB_USER_EMAIL
+    --form file=@cov-int.tar.gz --form version="`git describe --tags`"
+    --form description="`git describe --tags` / $CI_COMMIT_TITLE / $CI_COMMIT_REF_NAME:$CI_PIPELINE_ID "
+
+# run tests using the binary built before
+#include:
+#- template: Security/SAST.gitlab-ci.yml
+test:
+  stage: test
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind lcov pkg-config
+  script:
+    - ./oyjl-test-static
