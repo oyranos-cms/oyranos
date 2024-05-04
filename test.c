@@ -449,7 +449,7 @@ oyjlTESTRESULT_e testI18N()
   size = 0;
   oyjl_export = txt = oyjlReadCommandF( &size, "r", malloc, "LANG=C PATH=%s:$PATH %s --export export", OYJL_BUILDDIR, "oyjl" );
   plain = oyjlTermColorToPlain(txt, 0);
-  if(!txt || strlen(plain) != 27065)
+  if(!txt || strlen(plain) != 27112)
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(plain),
     "LANG=C oyjl --export export" );
   }
@@ -561,7 +561,7 @@ oyjlTESTRESULT_e testI18N()
   }
 
   int n = 1;
-  size_t test_translate_json = 27478;
+  size_t test_translate_json = 27524;
   loc = "de_DE";
   oyjlTranslation_SetLocale( trc, loc );
   txt = testTranslateJson( oyjl_export, trc, key_list, n, &clck );
@@ -2601,11 +2601,11 @@ oyjlTESTRESULT_e testToolOyjl ()
     { "paths -i i18n_de_DE.c -x '////'",            292,  NULL,       NULL },
     { "format -i i18n_cs_CZ.json",                  5,    "JSON",     NULL },
     { "format -i none.file",                        9,    "no input", NULL },
-    { "-X man > oyjl.1 && cat oyjl.1",              8138, NULL,       NULL },
+    { "-X man > oyjl.1 && cat oyjl.1",              8185, NULL,       NULL },
     { "-R cli > oyjl.txt && cat oyjl.txt",          0,    NULL,       NULL }
   };
   int count = 15;
-  result = testTool( "oyjl", 5430/*help size*/, commands_oyjl, count, result, oyjlTESTRESULT_FAIL );
+  result = testTool( "oyjl", 5477/*help size*/, commands_oyjl, count, result, oyjlTESTRESULT_FAIL );
 
   return result;
 }
