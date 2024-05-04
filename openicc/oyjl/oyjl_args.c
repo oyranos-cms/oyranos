@@ -6402,7 +6402,7 @@ char *       oyjlUi_ToMarkdown       ( oyjlUi_s          * ui,
   if(flags & oyjlUI_STATE_VERBOSE || *oyjl_debug)
     fprintf(stderr, "country: \"%s\" (LANG=%s)\n", country?country:"", getenv("LANG"));
 
-  oyjlStringAdd( &doxy_link, malloc, free, "{#%s%s}", ui->nick, country?country:"" );
+  oyjlStringAdd( &doxy_link, malloc, free, "{#%s%s}", ui->nick, country && strcmp(country,"en") != 0 ? country : "" );
   oyjlStringReplace( &doxy_link, "-", "", malloc, free );
   if(country) { free(country); country = NULL; }
 
