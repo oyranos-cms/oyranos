@@ -360,6 +360,7 @@ int        oyjlStringListFind        ( char             ** list,
       {
         oyjlStringListFree( list, list_n, pos, 1, deAlloc );
         ++found;
+        --n;
       }
     } else
     {
