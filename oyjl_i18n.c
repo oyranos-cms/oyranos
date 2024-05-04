@@ -81,6 +81,7 @@
 char *         oyjlLanguage          ( const char        * loc )
 {
   char * t = NULL;
+  if(!loc) return t;
 
   if(loc[0] == 'C')
     t = strdup("");
