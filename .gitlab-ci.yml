@@ -19,7 +19,7 @@ build:
     - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind lcov pkg-config
 
   script:
-    - cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF
+    - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF
     - make
     #- (cd openicc/oyjl; mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF ..; make; make check; OYJL_DEBUG=1 ./oyjl-args-ui)
   artifacts:
