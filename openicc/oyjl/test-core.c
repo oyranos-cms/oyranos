@@ -1213,9 +1213,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   int lib_a_size = oyjlIsFile( lib_a, "r", OYJL_NO_CHECK, info, 48 ),
       size;
   char * command = NULL;
-  char * t = oyjlReadCommandF( &size, "r", malloc, "pkg-config -libs-only-L openicc" );
-
-  if(t && t[0] && t[strlen(t)-1] == '\n') t[strlen(t)-1] = '\000';
+  char * t = NULL;
 
   fprintf( zout, "compiling and testing: %s\n", oyjlTermColor(oyjlBOLD, prog) );
 
@@ -1233,24 +1231,25 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   oyjlWriteFile( name, c_source, len );
   if(c_source) {free(c_source);} c_source = NULL;
   /* compile */
-  if(!(t && t[0]))
-    fprintf( zout, "Compiling without OpenICC\n" );
   if(lib_a_size)
-    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -L %s -loyjl-args-cli-static -loyjl-args-web-static-client -lmicrohttpd -loyjl-static -loyjl-core-static %s %s -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, OYJL_INSTALL_LIBDIR, t&&t[0]?t:"", t&&t[0]?"-lopenicc-static":"", prog );
+    oyjlStringAdd( &command, 0,0, "c++ %s -g -O0 -I %s -I %s %s -L %s/oyjl-args-qml -loyjl-args-qml-static -lQt5DBus -lQt5Qml -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core -L %s -L %s -loyjl-args-cli-static -loyjl-args-web-static-client -lmicrohttpd -loyjl-static -loyjl-core-static -lyaml -lyajl -lxml2 -o %s", verbose?"-Wall -Wextra":"-Wno-write-strings", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, OYJL_BUILDDIR, OYJL_INSTALL_LIBDIR, prog );
   else if(lib_so_size)
     oyjlStringAdd( &command, 0,0, "cc %s -g -O0 -I %s -I %s %s -L %s -lOyjl -lOyjlCore -o %s", verbose?"-Wall -Wextra":"", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, prog );
   if(t) { free(t); t = NULL; }
   if(command)
   {
+    int r;
     if(verbose)
       fprintf( stderr, "compiling: %s\n", oyjlTermColor( oyjlBOLD, command ) );
-    system(command);
-    if(command) {free(command); command = NULL;}
+    r = system(command);
+    oyjlWriteFile( prog, 0,0 );
     int size = oyjlIsFile( prog, "r", OYJL_NO_CHECK, info, 48 );
     if(!size || verbose)
     {
-      fprintf(stderr, "%scompile: %s %s %d\n", size == 0?"Could not ":"", oyjlTermColor(oyjlBOLD,prog), info, size);
+      fprintf(stderr, "%s\n", command );
+      fprintf(stderr, "%scompile: %s %s %d returned: %d\n", size == 0?"Could not ":"", oyjlTermColor(oyjlBOLD,prog), info, size, r);
     }
+    if(command) {free(command); command = NULL;}
   }
   if(name) {free(name);} name = NULL;
 
@@ -1277,6 +1276,8 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   } else
   { PRINT_SUB_INT( fail, len,
     "%s --help", prog );
+    if(len == 0)
+      system("pwd; ls -l");
   }
   OYJL_TEST_WRITE_RESULT( t, size, prog, "txt" )
   if(verbose && len)
