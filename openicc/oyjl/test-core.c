@@ -1242,7 +1242,6 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
     if(verbose)
       fprintf( stderr, "compiling: %s\n", oyjlTermColor( oyjlBOLD, command ) );
     r = system(command);
-    oyjlWriteFile( prog, 0,0 );
     int size = oyjlIsFile( prog, "r", OYJL_NO_CHECK, info, 48 );
     if(!size || verbose)
     {
@@ -2332,7 +2331,7 @@ oyjlTESTRESULT_e testIO ()
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlResolveDirFile(%s) = %s", t, text );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, /* depends on a DE, fails on servers or dockers */
     "oyjlResolveDirFile(%s) = %s", t, text );
   }
   free(text);
@@ -2359,24 +2358,24 @@ oyjlTESTRESULT_e testIO ()
   }
   free(text);
 
-  t = "./docs";
+  t = "../docs";
   text = oyjlResolveDirFile( t );
   if(oyjlIsDir(text))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlResolveDirFile(%s) = %s", t, text );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, /* depends on build path */
     "oyjlResolveDirFile(%s) = %s", t, text );
   }
   free(text);
 
-  t = "./docs/";
+  t = "../docs/";
   text = oyjlResolveDirFile( t );
   if(oyjlIsDir(text))
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlResolveDirFile(%s) = %s", t, text );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL, /* depends on build path */
     "oyjlResolveDirFile(%s) = %s", t, text );
   }
   free(text);
