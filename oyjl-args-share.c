@@ -1248,7 +1248,7 @@ char *             oyjlUiExportToCode( oyjl_val            root,
     }
     oyjlStr_Push( s, "    int count = 0, i;\n" );
     oyjlStr_Push( s, "    char ** results = oyjlOptions_ResultsToList( ui->opts, NULL, &count );\n" );
-    oyjlStr_Push( s, "    for(i = 0; i < count; ++i) fprintf( stderr, \"%s\\n\", results[i] );\n" );
+    oyjlStr_Push( s, "    for(i = 0; i < count; ++i) fprintf( stderr, \"\%s\\n\", results[i] );\n" );
     oyjlStr_Push( s, "    oyjlStringListRelease( &results, count, free );\n" );
     oyjlStr_Push( s, "    fputs( \"\\n\", stderr );\n" );
     oyjlStr_Push( s, "  }\n" );
@@ -1346,7 +1346,7 @@ char *             oyjlUiExportToCode( oyjl_val            root,
       oyjlStr_Push( s, "  if(!loc)\n" );
       oyjlStr_Push( s, "  {\n" );
       oyjlStr_Push( s, "    loc = lang;\n" );
-      oyjlStr_Push( s, "    fprintf( stderr, \"%s\", oyjlTermColor(oyjlRED,\"Usage Error:\") );\n" );
+      oyjlStr_Push( s, "    fprintf( stderr, \"\%s\", oyjlTermColor(oyjlRED,\"Usage Error:\") );\n" );
       oyjlStr_Add( s, "    fprintf( stderr, \" Environment variable possibly not correct. Translations might fail - LANG=%%s\\n\", oyjlTermColor(oyjlBOLD,lang) );\n" );
       oyjlStr_Push( s, "  }\n" );
       oyjlStr_Push( s, "  if(lang)\n" );
