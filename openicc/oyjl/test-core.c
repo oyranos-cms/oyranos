@@ -1227,7 +1227,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
     "oyjlUiExportToCode(OYJL_SOURCE_CODE_C)" );
   }
   OYJL_TEST_WRITE_RESULT( c_source, len, "oyjlUiExportToCode", "txt" )
-  if(verbose && c_source)
+  if(oy_test_last_result != oyjlTESTRESULT_SUCCESS || verbose)
     fprintf( zout, "%s\n", c_source );
   oyjlStringAdd( &name, 0,0, "%s.c", prog );
   oyjlWriteFile( name, c_source, len );

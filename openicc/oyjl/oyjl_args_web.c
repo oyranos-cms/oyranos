@@ -662,8 +662,809 @@ const char srv_signed_cert_pem[] = "-----BEGIN CERTIFICATE-----\n"
                                    "Bb01PCthGXiq/4A2RLAFosadzRa8SBpoSjPPfZ0b2w4MJpReHqKbR5+T2t6hzml6\n"
                                    "4ToyOKPDmamiTuN5KzLN3cw7DQlvWMvqSOChPLnA3Q==\n"
                                    "-----END CERTIFICATE-----\n";
-#include "oyjl_args_web_layout.h"
-#include "oyjl_args_web_normalize.h"
+/* fallback layout */
+#define oyjl_args_web_layout_css "\n\
+@font-face {\n\
+  font-family: Elsie;\n\
+  src: url(../fonts/Elsie-Regular.woff) format(woff);\n\
+}\n\
+@media screen and (orientation:portrait) {\n\
+body { margin: 0.25rem; } }\n\
+@media screen and (orientation:landscape) {\n\
+body { margin: 0.55rem; } }\n\
+\n\
+/* hide translations initially */\n\
+.hide { display: none; }\n\
+/* show a browser detected translation */\n\
+:lang(de) { display: block; }\n\
+li:lang(de) { display: list-item; }\n\
+a:lang(de) { display: inline; }\n\
+em:lang(de) { display: inline; }\n\
+/*span:lang(de) { display: inline; }*/\n\
+/* hide default language, if a translation was found */\n\
+:lang(de) ~ [lang=en] {\n\
+  display: none;\n\
+}\n\
+\n\
+body {\n\
+  background-color: #eee;\n\
+}\n\
+h1,h2,h3 {\n\
+  font-family: 'Elsie';\n\
+  /*font-weight: bold;\n\
+  font-variant: small-caps;*/\n\
+  font-style: normal;\n\
+  text-align: center;\n\
+  color: black;\n\
+  background-color: #eee;\n\
+}\n\
+h1 {\n\
+  font-size: 3em;\n\
+  padding-top: 0.5em;\n\
+  padding-bottom: 0.5em;\n\
+  margin: 0;\n\
+}\n\
+h2 {\n\
+  font-size: 2em;\n\
+  color: white;\n\
+  background-color: #568;\n\
+}\n\
+h3 {\n\
+  font-size: 1.5em;\n\
+}\n\
+h3,.mandatory {\n\
+  color: black;\n\
+  background-color: #75bffc;\n\
+}\n\
+\n\
+em {\n\
+  font-size: 1.1em;\n\
+}\n\
+a {\n\
+  text-align: center;\n\
+  color: black;\n\
+  text-decoration: none;\n\
+}\n\
+a:hover, a:focus {\n\
+  transition: 1s color;\n\
+  transition: 1s opacity;\n\
+  text-decoration: underline;\n\
+  opacity: 1.0;\n\
+}\n\
+\n\
+.topmenu a {\n\
+  display: block;\n\
+  text-align: center;\n\
+  line-height: 3;\n\
+  font-weight: bold;\n\
+  white-space: nowrap;\n\
+  padding: 0em 0.8em;\n\
+  margin: 0.5em 0em;\n\
+  border-radius: 0.2em;\n\
+  background: #568;\n\
+  box-shadow: 0 0 0.5em #568;\n\
+  opacity: 0.8;\n\
+  color: white;\n\
+}\n\
+.topmenu, .topmenu p, .topmenu span {\n\
+  width: 100%;\n\
+  text-align: justify;\n\
+  display: inline-block;\n\
+  margin: 0;\n\
+}\n\
+.topmenu {\n\
+  display: block;\n\
+}\n\
+.topmenu-background {\n\
+  background-color: #eee;\n\
+}\n\
+.topmenu-background div {\n\
+  margin: 0px 2vw;\n\
+  width: 86vw;\n\
+  width: -moz-available;          /* For Mozzila */\n\
+  width: -webkit-fill-available;  /* For Chrome. */\n\
+}\n\
+.mobile {\n\
+  display: none;\n\
+}\n\
+.desktop {\n\
+  height: 0px;\n\
+  padding-top: 1vw;\n\
+  overflow: visible;\n\
+  overflow-y: hidden;\n\
+  transition: height 0.5s linear;\n\
+}\n\
+details p { margin: 0; }\n\
+details summary::marker { content: '►'; }\n\
+details[open] summary::marker { content: '▼'; }\n\
+details[open] details summary::marker { content: '►'; }\n\
+details[open] details[open] summary::marker { content: '▼'; }\n\
+input[type=checkbox].mobile:checked ~ .desktop {\n\
+  height: 20em;\n\
+  padding-bottom: 4.5vw;\n\
+}\n\
+label[for].icon-bar {\n\
+  font-size: 2em;\n\
+  font-weight: bold;\n\
+  line-height: 0.25;\n\
+  text-align: center;\n\
+  white-space: nowrap;\n\
+  color: black;\n\
+  background-color: #eee;\n\
+  opacity: 0.8;\n\
+  padding: 0.43em 0.35em;\n\
+  border-radius: 0.1em;\n\
+  box-shadow: 0 0 0.25em #eee;\n\
+}\n\
+label[for].icon-bar:hover {\n\
+  transition: 0.5s color;\n\
+  transition: 0.5s box-shadow;\n\
+  transition: 0.5s background-color linear;\n\
+\n\
+  color: white;\n\
+  background-color: #568;\n\
+  box-shadow: 0 0 0.25em #568;\n\
+}\n\
+form select, form label[for] {\n\
+  width: 49%;\n\
+  display: inline-block;\n\
+  height: 1.7em;\n\
+}\n\
+form label[for] {\n\
+  vertical-align: middle;\n\
+}\n\
+form select {\n\
+  padding: 0.1em 0;\n\
+}\n\
+form input {\n\
+  width: 49%;\n\
+  display: inline-block;\n\
+  text-align: center;\n\
+  white-space: nowrap;\n\
+  color: black;\n\
+  background-color: #eee;\n\
+  padding: 0.2em 0;\n\
+  border-width: 0;\n\
+  border-radius: 0.1em;\n\
+}\n\
+form input[type=checkbox] {\n\
+  width: 49%;\n\
+}\n\
+form input[type=range] {\n\
+  width: 49%;\n\
+}\n\
+input[type=submit] {\n\
+  width: 100%;\n\
+  font-weight: bold;\n\
+}\n\
+p, .tile2, .tile {\n\
+  page-break-inside: avoid;\n\
+}\n\
+\n\
+a.img {\n\
+  border: 1px solid #ddd;\n\
+}\n\
+img {\n\
+  display: block;\n\
+  margin-left: auto;\n\
+  margin-right: auto;\n\
+  max-width: 97.5%;\n\
+}\n\
+.figure .picture {\n\
+  display: block;\n\
+  margin-left: auto;\n\
+  margin-right: auto;\n\
+  max-width: 97.5%;\n\
+}\n\
+\n\
+@media (min-width: 750px) {\n\
+  body {\n\
+    margin: 3rem;\n\
+  }\n\
+  h1 {\n\
+    font-size: 5vw;\n\
+  }\n\
+  h2 {\n\
+    font-size: 4.5vw;\n\
+  }\n\
+  h3 {\n\
+    font-size: 3vw;\n\
+  }\n\
+  .topmenu a {\n\
+    display: inline-block;\n\
+    padding: 0em 0.3em;\n\
+  }\n\
+  .desktop, .topmenu p, .topmenu span {\n\
+    display: inline-block;\n\
+    text-align: justify;\n\
+    width: 100%;\n\
+    margin: 0;\n\
+  }\n\
+  input[type=checkbox].mobile:checked ~ .desktop, .desktop {\n\
+    height: auto;\n\
+    padding-bottom: 1.35vw;\n\
+  }\n\
+  label[for].icon-bar {\n\
+    display: none;\n\
+  }\n\
+}\n\
+\n\
+@media (min-width: 1000px) {\n\
+  .tiles {\n\
+    display: flex;\n\
+    justify-content: space-between;\n\
+    flex-wrap: wrap;\n\
+    align-items: flex-start;\n\
+    width: 100%;\n\
+  }\n\
+  .tile {\n\
+    flex: 0 1 49%;\n\
+  }\n\
+  .tile2 {\n\
+    flex: 1 280px;\n\
+    margin: 0 1vw 0 0;\n\
+  }\n\
+  h1,h2,h3 {\n\
+    font-weight: normal;\n\
+    font-variant: normal;\n\
+  }\n\
+  .topmenu a {\n\
+    padding: 0em 1em;\n\
+  }\n\
+}\n\
+@media (min-width: 1200px) {\n\
+  @supports ( display: flex ) {\n\
+    .tile {\n\
+      flex: 0 1 24%;\n\
+    }\n\
+    h1 {\n\
+      font-size: 3vw;\n\
+    }\n\
+    h2 {\n\
+      font-size: 3vw;\n\
+    }\n\
+    h3 {\n\
+      font-size: 2vw;\n\
+    }\n\
+  }\n\
+  .topmenu a {\n\
+    font-size: 1.1em;\n\
+  }\n\
+}\n\
+\n\
+\n\
+@media (prefers-color-scheme: dark) {\n\
+  /* dunkles Farbschema für die Nacht */\n\
+  body {\n\
+    color: white;\n\
+    background: #555;\n\
+  }\n\
+  a {\n\
+    color: #7ea;\n\
+  }\n\
+  h1,h2,h3,.mandatory {\n\
+    color: #7da;\n\
+    background-color: #333;\n\
+  }\n\
+  h2 {\n\
+    /*color: black;\n\
+    background-color: #75fcbf;*/\n\
+  }\n\
+  .topmenu a {\n\
+    color: white;\n\
+    box-shadow: 0 0 0.5em #586;\n\
+    background: #586;\n\
+  }\n\
+  .topmenu-background {\n\
+    background-color: #333;\n\
+  }\n\
+  label[for].icon-bar {\n\
+    color: #586;\n\
+    background-color: #eee;\n\
+    box-shadow: 0 0 0.25em #eee;\n\
+  }\n\
+  label[for].icon-bar:hover {\n\
+    color: white;\n\
+    background-color: #586;\n\
+    box-shadow: 0 0 0.25em #586;\n\
+  }\n\
+}\n\
+\n\
+@media (prefers-color-scheme: light) {\n\
+  /* helles Farbschema für den Tag */\n\
+  body {\n\
+    color: black;\n\
+    background-color: white;\n\
+  }\n\
+  a {\n\
+    color: black;\n\
+  }\n\
+  h1,h2,h3,.mandatory {\n\
+    color: black;\n\
+    background-color: #eee;\n\
+  }\n\
+  h2 {\n\
+    color: black;\n\
+    background-color: #75bffc;\n\
+  }\n\
+  h3,.mandatory {\n\
+    color: black;\n\
+    background-color: #75bffc;\n\
+  }\n\
+  .topmenu a {\n\
+    box-shadow: 0 0 0.5em #568;\n\
+    background: #568;\n\
+  }\n\
+  .topmenu-background {\n\
+    background-color: #eee;\n\
+  }\n\
+}\n\
+"
+
+/* fallback layout 2 */
+#define oyjl_args_web_normalize_css "\n\
+/*! normalize.css v5.0.0 | MIT License | github.com/necolas/normalize.css */\n\
+\n\
+/**\n\
+ * 1. Change the default font family in all browsers (opinionated).\n\
+ * 2. Correct the line height in all browsers.\n\
+ * 3. Prevent adjustments of font size after orientation changes in\n\
+ *    IE on Windows Phone and in iOS.\n\
+ */\n\
+\n\
+/* Document\n\
+   ========================================================================== */\n\
+\n\
+html {\n\
+  font-family: sans-serif; /* 1 */\n\
+  line-height: 1.15; /* 2 */\n\
+  -ms-text-size-adjust: 100%; /* 3 */\n\
+  -webkit-text-size-adjust: 100%; /* 3 */\n\
+}\n\
+\n\
+/* Sections\n\
+   ========================================================================== */\n\
+\n\
+/**\n\
+ * Remove the margin in all browsers (opinionated).\n\
+ */\n\
+\n\
+body {\n\
+  margin: 0;\n\
+}\n\
+\n\
+/**\n\
+ * Add the correct display in IE 9-.\n\
+ */\n\
+\n\
+article,\n\
+aside,\n\
+footer,\n\
+header,\n\
+nav,\n\
+section {\n\
+  display: block;\n\
+}\n\
+\n\
+/**\n\
+ * Correct the font size and margin on `h1` elements within `section` and\n\
+ * `article` contexts in Chrome, Firefox, and Safari.\n\
+ */\n\
+\n\
+h1 {\n\
+  font-size: 2em;\n\
+  margin: 0.67em 0;\n\
+}\n\
+\n\
+/* Grouping content\n\
+   ========================================================================== */\n\
+\n\
+/**\n\
+ * Add the correct display in IE 9-.\n\
+ * 1. Add the correct display in IE.\n\
+ */\n\
+\n\
+figcaption,\n\
+figure,\n\
+main { /* 1 */\n\
+  display: block;\n\
+}\n\
+\n\
+/**\n\
+ * Add the correct margin in IE 8.\n\
+ */\n\
+\n\
+figure {\n\
+  margin: 1em 40px;\n\
+}\n\
+\n\
+/**\n\
+ * 1. Add the correct box sizing in Firefox.\n\
+ * 2. Show the overflow in Edge and IE.\n\
+ */\n\
+\n\
+hr {\n\
+  box-sizing: content-box; /* 1 */\n\
+  height: 0; /* 1 */\n\
+  overflow: visible; /* 2 */\n\
+}\n\
+\n\
+/**\n\
+ * 1. Correct the inheritance and scaling of font size in all browsers.\n\
+ * 2. Correct the odd `em` font sizing in all browsers.\n\
+ */\n\
+\n\
+pre {\n\
+  font-family: monospace, monospace; /* 1 */\n\
+  font-size: 1em; /* 2 */\n\
+}\n\
+\n\
+/* Text-level semantics\n\
+   ========================================================================== */\n\
+\n\
+/**\n\
+ * 1. Remove the gray background on active links in IE 10.\n\
+ * 2. Remove gaps in links underline in iOS 8+ and Safari 8+.\n\
+ */\n\
+\n\
+a {\n\
+  background-color: transparent; /* 1 */\n\
+  -webkit-text-decoration-skip: objects; /* 2 */\n\
+}\n\
+\n\
+/**\n\
+ * Remove the outline on focused links when they are also active or hovered\n\
+ * in all browsers (opinionated).\n\
+ */\n\
+\n\
+a:active,\n\
+a:hover {\n\
+  outline-width: 0;\n\
+}\n\
+\n\
+/**\n\
+ * 1. Remove the bottom border in Firefox 39-.\n\
+ * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.\n\
+ */\n\
+\n\
+abbr[title] {\n\
+  border-bottom: none; /* 1 */\n\
+  text-decoration: underline; /* 2 */\n\
+  text-decoration: underline dotted; /* 2 */\n\
+}\n\
+\n\
+/**\n\
+ * Prevent the duplicate application of `bolder` by the next rule in Safari 6.\n\
+ */\n\
+\n\
+b,\n\
+strong {\n\
+  font-weight: inherit;\n\
+}\n\
+\n\
+/**\n\
+ * Add the correct font weight in Chrome, Edge, and Safari.\n\
+ */\n\
+\n\
+b,\n\
+strong {\n\
+  font-weight: bolder;\n\
+}\n\
+\n\
+/**\n\
+ * 1. Correct the inheritance and scaling of font size in all browsers.\n\
+ * 2. Correct the odd `em` font sizing in all browsers.\n\
+ */\n\
+\n\
+code,\n\
+kbd,\n\
+samp {\n\
+  font-family: monospace, monospace; /* 1 */\n\
+  font-size: 1em; /* 2 */\n\
+}\n\
+\n\
+/**\n\
+ * Add the correct font style in Android 4.3-.\n\
+ */\n\
+\n\
+dfn {\n\
+  font-style: italic;\n\
+}\n\
+\n\
+/**\n\
+ * Add the correct background and color in IE 9-.\n\
+ */\n\
+\n\
+mark {\n\
+  background-color: #ff0;\n\
+  color: #000;\n\
+}\n\
+\n\
+/**\n\
+ * Add the correct font size in all browsers.\n\
+ */\n\
+\n\
+small {\n\
+  font-size: 80%;\n\
+}\n\
+\n\
+/**\n\
+ * Prevent `sub` and `sup` elements from affecting the line height in\n\
+ * all browsers.\n\
+ */\n\
+\n\
+sub,\n\
+sup {\n\
+  font-size: 75%;\n\
+  line-height: 0;\n\
+  position: relative;\n\
+  vertical-align: baseline;\n\
+}\n\
+\n\
+sub {\n\
+  bottom: -0.25em;\n\
+}\n\
+\n\
+sup {\n\
+  top: -0.5em;\n\
+}\n\
+\n\
+/* Embedded content\n\
+   ========================================================================== */\n\
+\n\
+/**\n\
+ * Add the correct display in IE 9-.\n\
+ */\n\
+\n\
+audio,\n\
+video {\n\
+  display: inline-block;\n\
+}\n\
+\n\
+/**\n\
+ * Add the correct display in iOS 4-7.\n\
+ */\n\
+\n\
+audio:not([controls]) {\n\
+  display: none;\n\
+  height: 0;\n\
+}\n\
+\n\
+/**\n\
+ * Remove the border on images inside links in IE 10-.\n\
+ */\n\
+\n\
+img {\n\
+  border-style: none;\n\
+}\n\
+\n\
+/**\n\
+ * Hide the overflow in IE.\n\
+ */\n\
+\n\
+svg:not(:root) {\n\
+  overflow: hidden;\n\
+}\n\
+\n\
+/* Forms\n\
+   ========================================================================== */\n\
+\n\
+/**\n\
+ * 1. Change the font styles in all browsers (opinionated).\n\
+ * 2. Remove the margin in Firefox and Safari.\n\
+ */\n\
+\n\
+button,\n\
+input,\n\
+optgroup,\n\
+select,\n\
+textarea {\n\
+  font-family: sans-serif; /* 1 */\n\
+  font-size: 100%; /* 1 */\n\
+  line-height: 1.15; /* 1 */\n\
+  margin: 0; /* 2 */\n\
+}\n\
+\n\
+/**\n\
+ * Show the overflow in IE.\n\
+ * 1. Show the overflow in Edge.\n\
+ */\n\
+\n\
+button,\n\
+input { /* 1 */\n\
+  overflow: visible;\n\
+}\n\
+\n\
+/**\n\
+ * Remove the inheritance of text transform in Edge, Firefox, and IE.\n\
+ * 1. Remove the inheritance of text transform in Firefox.\n\
+ */\n\
+\n\
+button,\n\
+select { /* 1 */\n\
+  text-transform: none;\n\
+}\n\
+\n\
+/**\n\
+ * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`\n\
+ *    controls in Android 4.\n\
+ * 2. Correct the inability to style clickable types in iOS and Safari.\n\
+ */\n\
+\n\
+button,\n\
+html [type=\"button\"], /* 1 */\n\
+[type=\"reset\"],\n\
+[type=\"submit\"] {\n\
+  -webkit-appearance: button; /* 2 */\n\
+}\n\
+\n\
+/**\n\
+ * Remove the inner border and padding in Firefox.\n\
+ */\n\
+\n\
+button::-moz-focus-inner,\n\
+[type=\"button\"]::-moz-focus-inner,\n\
+[type=\"reset\"]::-moz-focus-inner,\n\
+[type=\"submit\"]::-moz-focus-inner {\n\
+  border-style: none;\n\
+  padding: 0;\n\
+}\n\
+\n\
+/**\n\
+ * Restore the focus styles unset by the previous rule.\n\
+ */\n\
+\n\
+button:-moz-focusring,\n\
+[type=\"button\"]:-moz-focusring,\n\
+[type=\"reset\"]:-moz-focusring,\n\
+[type=\"submit\"]:-moz-focusring {\n\
+  outline: 1px dotted ButtonText;\n\
+}\n\
+\n\
+/**\n\
+ * Change the border, margin, and padding in all browsers (opinionated).\n\
+ */\n\
+\n\
+fieldset {\n\
+  border: 1px solid #c0c0c0;\n\
+  margin: 0 2px;\n\
+  padding: 0.35em 0.625em 0.75em;\n\
+}\n\
+\n\
+/**\n\
+ * 1. Correct the text wrapping in Edge and IE.\n\
+ * 2. Correct the color inheritance from `fieldset` elements in IE.\n\
+ * 3. Remove the padding so developers are not caught out when they zero out\n\
+ *    `fieldset` elements in all browsers.\n\
+ */\n\
+\n\
+legend {\n\
+  box-sizing: border-box; /* 1 */\n\
+  color: inherit; /* 2 */\n\
+  display: table; /* 1 */\n\
+  max-width: 100%; /* 1 */\n\
+  padding: 0; /* 3 */\n\
+  white-space: normal; /* 1 */\n\
+}\n\
+\n\
+/**\n\
+ * 1. Add the correct display in IE 9-.\n\
+ * 2. Add the correct vertical alignment in Chrome, Firefox, and Opera.\n\
+ */\n\
+\n\
+progress {\n\
+  display: inline-block; /* 1 */\n\
+  vertical-align: baseline; /* 2 */\n\
+}\n\
+\n\
+/**\n\
+ * Remove the default vertical scrollbar in IE.\n\
+ */\n\
+\n\
+textarea {\n\
+  overflow: auto;\n\
+}\n\
+\n\
+/**\n\
+ * 1. Add the correct box sizing in IE 10-.\n\
+ * 2. Remove the padding in IE 10-.\n\
+ */\n\
+\n\
+[type=\"checkbox\"],\n\
+[type=\"radio\"] {\n\
+  box-sizing: border-box; /* 1 */\n\
+  padding: 0; /* 2 */\n\
+}\n\
+\n\
+/**\n\
+ * Correct the cursor style of increment and decrement buttons in Chrome.\n\
+ */\n\
+\n\
+[type=\"number\"]::-webkit-inner-spin-button,\n\
+[type=\"number\"]::-webkit-outer-spin-button {\n\
+  height: auto;\n\
+}\n\
+\n\
+/**\n\
+ * 1. Correct the odd appearance in Chrome and Safari.\n\
+ * 2. Correct the outline style in Safari.\n\
+ */\n\
+\n\
+[type=\"search\"] {\n\
+  -webkit-appearance: textfield; /* 1 */\n\
+  outline-offset: -2px; /* 2 */\n\
+}\n\
+\n\
+/**\n\
+ * Remove the inner padding and cancel buttons in Chrome and Safari on macOS.\n\
+ */\n\
+\n\
+[type=\"search\"]::-webkit-search-cancel-button,\n\
+[type=\"search\"]::-webkit-search-decoration {\n\
+  -webkit-appearance: none;\n\
+}\n\
+\n\
+/**\n\
+ * 1. Correct the inability to style clickable types in iOS and Safari.\n\
+ * 2. Change font properties to `inherit` in Safari.\n\
+ */\n\
+\n\
+::-webkit-file-upload-button {\n\
+  -webkit-appearance: button; /* 1 */\n\
+  font: inherit; /* 2 */\n\
+}\n\
+\n\
+/* Interactive\n\
+   ========================================================================== */\n\
+\n\
+/*\n\
+ * Add the correct display in IE 9-.\n\
+ * 1. Add the correct display in Edge, IE, and Firefox.\n\
+ */\n\
+\n\
+details, /* 1 */\n\
+menu {\n\
+  display: block;\n\
+}\n\
+\n\
+/*\n\
+ * Add the correct display in all browsers.\n\
+ */\n\
+\n\
+summary {\n\
+  display: list-item;\n\
+}\n\
+\n\
+/* Scripting\n\
+   ========================================================================== */\n\
+\n\
+/**\n\
+ * Add the correct display in IE 9-.\n\
+ */\n\
+\n\
+canvas {\n\
+  display: inline-block;\n\
+}\n\
+\n\
+/**\n\
+ * Add the correct display in IE.\n\
+ */\n\
+\n\
+template {\n\
+  display: none;\n\
+}\n\
+\n\
+/* Hidden\n\
+   ========================================================================== */\n\
+\n\
+/**\n\
+ * Add the correct display in IE 10-.\n\
+ */\n\
+\n\
+[hidden] {\n\
+  display: none;\n\
+}\n\
+"
 
 int  oyjlArgsWebGroupIsMan_          ( oyjl_val            g )
 {
