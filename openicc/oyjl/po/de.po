@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-04-30 07:47+0200\n"
+"POT-Creation-Date: 2024-05-05 10:31+0200\n"
 "PO-Revision-Date: 2005-08-13 17:35+0200\n"
 "Last-Translator: Kai-Uwe Behrmann\n"
 "Language-Team:  Deutsch <de@li.org>\n"
@@ -302,11 +302,11 @@ msgid "Decimal Separator"
 msgstr "Ganzzahlentrenner"
 
 #: oyjl_args.c:6126 oyjl_args_cli.c:288 oyjl_args_tree.c:607
-#: oyjl_args_web.c:1468
+#: oyjl_args_web.c:2269
 msgid "Description"
 msgstr "Beschreibung"
 
-#: oyjl_args_web.c:1482
+#: oyjl_args_web.c:2283
 msgid "Details"
 msgstr "Details"
 
@@ -551,13 +551,13 @@ msgstr "Gui"
 msgid "HISTORY"
 msgstr "GESCHICHTE"
 
-#: oyjl_args.c:4289 oyjl_args_cli.c:154 oyjl_args_web.c:1630 test-args.c:416
+#: oyjl_args.c:4289 oyjl_args_cli.c:154 oyjl_args_web.c:2431 test-args.c:416
 #: test-args.c:977 test-args.c:1092 test-core.c:1417 test.c:2015 test.c:2152
 #: oyjl-args-qml/mini-app.c:185
 msgid "Help"
 msgstr "Hilfe"
 
-#: oyjl_args_web.c:1507
+#: oyjl_args_web.c:2308
 msgid ""
 "Hints: Options with colord labels are mandatory. Options with italic labels "
 "are ignored. Multiple options '...' can be separated by semicolon ';' in the "
@@ -785,7 +785,7 @@ msgstr "Modus8"
 msgid "Mode9"
 msgstr "Modus9"
 
-#: oyjl_args_tree.c:548 oyjl_args_web.c:1441
+#: oyjl_args_tree.c:548 oyjl_args_web.c:2242
 msgid "Module"
 msgstr "Modul"
 
@@ -1060,7 +1060,7 @@ msgstr "Zeige Hilfe für alle Gruppen"
 msgid "Print help for command line style interface"
 msgstr "Zeige Hilfstext für Benutzerschnittstelle auf der Kommandozeile."
 
-#: oyjl_args.c:3045 oyjl_args.c:4292 oyjl_args_cli.c:156 oyjl_args_web.c:1638
+#: oyjl_args.c:3045 oyjl_args.c:4292 oyjl_args_cli.c:156 oyjl_args_web.c:2439
 msgid "Print help text"
 msgstr "Zeige Hilfetext an"
 
@@ -1171,7 +1171,7 @@ msgstr ""
 "https_cert=TLS_CA_Zertifikat_Dateiname:css=Stil_Dateiname.css\" wird einen "
 "Web Service starten."
 
-#: oyjl_args_web.c:1544 oyjl_args_web.c:1563
+#: oyjl_args_web.c:2345 oyjl_args_web.c:2364
 msgid "Send"
 msgstr "Absenden"
 
@@ -1418,7 +1418,8 @@ msgid ""
 "modify values in JSON, YAML, XML and CSV. It converts between data formats."
 msgstr ""
 "Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl "
-"und Wertveränderung in JSON, YAML, XML und CSV. Es übersetzt zwischen Datenformaten."
+"und Wertveränderung in JSON, YAML, XML und CSV. Es übersetzt zwischen "
+"Datenformaten."
 
 #: oyjl.c:277
 msgid ""
@@ -1514,7 +1515,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr "Zu viele Eingangsdateien für diese Option"
 
-#: oyjl_args_tree.c:546 oyjl_args_web.c:1439
+#: oyjl_args_tree.c:546 oyjl_args_web.c:2240
 msgid "Tool"
 msgstr "Werkzeug"
 
