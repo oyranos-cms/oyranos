@@ -127,29 +127,6 @@ ApplicationWindow {
         statusText = qsTr("Battery") + ": " + qsTr(battery)
     }
 
-    onPrefered_themeChanged: checkTheme()
-    function checkTheme() {
-        if(prefered_theme === Material.System) {
-            if(isNight)
-                theme = Material.Dark
-            else
-                theme = Material.Light
-        }
-        else
-            theme = prefered_theme
-    }
-
-    signal nightInfo(var night)
-    property bool isNight: false
-    onNightInfo: {
-        if(night)
-            statusText = qsTr("Night")
-        else
-            statusText = qsTr("Day")
-        isNight = night
-        checkTheme()
-    }
-
     property alias appData: appData
     AppData {
         id: appData;

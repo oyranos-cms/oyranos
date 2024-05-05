@@ -26,63 +26,6 @@ IF(Qt5Qml_FOUND)
 ENDIF()
 
 IF( HAVE_QT)
-    FIND_PACKAGE(OpenIcc)
-    IF(HAVE_OPENICC)
-      INCLUDE_DIRECTORIES( ${OPENICC_INCLUDE_DIR} )
-      SET( OPENICC_DEFINITIONS -DOPENICC_LIB )
-      IF( NOT OPENICC_LIBRARIES )
-        SET( OPENICC_LIBRARY openicc-static )
-        SET( OPENICC_LIBRARIES ${OPENICC_LIBRARY} )
-        SET( OPENICC_LIBRARY_STATIC ${OPENICC_LIBRARY} )
-      ENDIF( NOT OPENICC_LIBRARIES )
-      MESSAGE( "-- OPENICC_LIBRARIES: " ${OPENICC_LIBRARIES} )
-    ELSE(HAVE_OPENICC)
-      SET( OPENICC_TREE ${CMAKE_CURRENT_SOURCE_DIR}/../.. )
-      INCLUDE_DIRECTORIES( ${OPENICC_TREE}/src/include )
-      INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR}/src/include )
-      SET( OPENICC_DEFINITIONS -DOPENICC_LIB )
-      FILE( GLOB OPENICC_SOURCES
-        ${OPENICC_TREE}/src/libopenicc/a*.c
-        ${OPENICC_TREE}/src/libopenicc/openicc_*.c
-        ${OPENICC_TREE}/src/libopenicc/xdg_*.c
-        )
-
-      CHECK_INCLUDE_FILE(glob.h HAVE_GLOB_H)
-      CHECK_LIBRARY_EXISTS( c glob "glob.h" HAVE_GLOB )
-      CHECK_LIBRARY_EXISTS( c issetugid "unistd.h" HAVE_ISSETUGID )
-      CHECK_LIBRARY_EXISTS( c getauxval "sys/auxv.h" HAVE_GETAUXVAL )
-      IF(NOT HAVE_GLOB)
-        FILE( GLOB GLOB_SOURCES ${OPENICC_TREE}/src/libopenicc/glo*.c )
-        SET( OPENICC_SOURCES ${OPENICC_SOURCES} ${GLOB_SOURCES} )
-        IF( HAVE_ISSETUGID )
-          SET_SOURCE_FILES_PROPERTIES( glob.c PROPERTIES COMPILE_DEFINITIONS "HAVE_ISSETUGID=1" )
-        ENDIF( HAVE_ISSETUGID )
-        IF( HAVE_GETAUXVAL )
-          SET_SOURCE_FILES_PROPERTIES( glob.c PROPERTIES COMPILE_DEFINITIONS "HAVE_GETAUXVAL=1" )
-        ENDIF( HAVE_GETAUXVAL )
-        IF( HAVE_LOCALE_H)
-          SET_SOURCE_FILES_PROPERTIES( glob.c PROPERTIES COMPILE_DEFINITIONS "HAVE_LOCALE_H=1" )
-        ENDIF( HAVE_LOCALE_H )
-      ENDIF( NOT HAVE_GLOB ) 
-      SET( OPENICC_MAJOR_VERSION 0)
-      SET( OPENICC_MINOR_VERSION 1)
-      SET( OPENICC_MICRO_VERSION 2)
-      SET( OPENICC_VERSION ${OPENICC_MAJOR_VERSION}.${OPENICC_MINOR_VERSION}.${OPENICC_MICRO_VERSION} )
-      IF( OPENICC_SOURCES )
-        CONFIGURE_FILE (
-      		"${OPENICC_TREE}/src/libopenicc/openicc_conf.h.in"
-      		"${CMAKE_BINARY_DIR}/src/include/openicc_conf.h"
-        	@ONLY
-      	)
-        CONFIGURE_FILE (
-          "${OPENICC_TREE}/src/include/openicc_version.h.in"
-      		"${CMAKE_BINARY_DIR}/src/include/openicc_version.h"
-      		@ONLY
-      	)
-      ENDIF( OPENICC_SOURCES )
-      MESSAGE( "OPENICC_TREE: " ${OPENICC_TREE} " openicc_conf.h: " ${CMAKE_BINARY_DIR}/src/include/openicc_conf.h )
-    ENDIF(HAVE_OPENICC)
-
     SET( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}  ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} )
 
     SET(CMAKE_AUTOMOC ON)
@@ -138,7 +81,6 @@ IF( HAVE_QT)
                 Qt5::Quick
                 ${QT5_DBUS_LIB}
                 ${QT5_ANDROIDEXTRAS_LIB}
-                ${OPENICC_LIBRARIES}
                 ${OYJL_TARGET_LIB}
                 ${OYJL_CORE_LIB}
                 ${EXTRA_LIBS}
@@ -188,7 +130,6 @@ IF( HAVE_QT)
                 Qt5::Quick
                 ${QT5_DBUS_LIB}
                 ${QT5_ANDROIDEXTRAS_LIB}
-                ${OPENICC_LIBRARY_STATIC}
                 oyjl-args-cli-static
                 ${OYJL_ARGS_WEB_LIB_STATIC}
                 ${OYJL_TARGET_LIB_STATIC}
@@ -269,7 +210,6 @@ IF( HAVE_QT)
 #${QT5SVG_LIBRARIES}
                 ${QT5_DBUS_LIB}
                 ${QT5_ANDROIDEXTRAS_LIB}
-                ${OPENICC_LIBRARIES}
                 ${OYJL_TARGET_LIB}
                 ${OYJL_CORE_LIB}
                 ${EXTRA_LIBS}

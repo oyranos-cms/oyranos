@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: ku.b@gmx.de\n"
-"POT-Creation-Date: 2024-05-03 09:29+0200\n"
+"POT-Creation-Date: 2024-05-05 10:17+0200\n"
 "PO-Revision-Date: 2007-11-07 11:11+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
@@ -305,12 +305,12 @@ msgid "Decimal Separator"
 msgstr ""
 
 #: oyjl_args.c:6126 oyjl_args_cli.c:288 oyjl_args_tree.c:607
-#: oyjl_args_web.c:1468
+#: oyjl_args_web.c:2269
 #, fuzzy
 msgid "Description"
 msgstr "Azalpena"
 
-#: oyjl_args_web.c:1482
+#: oyjl_args_web.c:2283
 msgid "Details"
 msgstr ""
 
@@ -562,13 +562,13 @@ msgstr ""
 msgid "HISTORY"
 msgstr ""
 
-#: oyjl_args.c:4289 oyjl_args_cli.c:154 oyjl_args_web.c:1630 test-args.c:416
+#: oyjl_args.c:4289 oyjl_args_cli.c:154 oyjl_args_web.c:2431 test-args.c:416
 #: test-args.c:977 test-args.c:1092 test-core.c:1417 test.c:2015 test.c:2152
 #: oyjl-args-qml/mini-app.c:185
 msgid "Help"
 msgstr ""
 
-#: oyjl_args_web.c:1507
+#: oyjl_args_web.c:2308
 msgid ""
 "Hints: Options with colord labels are mandatory. Options with italic labels "
 "are ignored. Multiple options '...' can be separated by semicolon ';' in the "
@@ -816,7 +816,7 @@ msgstr "Modeloa:"
 msgid "Mode9"
 msgstr "Modeloa:"
 
-#: oyjl_args_tree.c:548 oyjl_args_web.c:1441
+#: oyjl_args_tree.c:548 oyjl_args_web.c:2242
 #, fuzzy
 msgid "Module"
 msgstr "Bereizketa"
@@ -1111,7 +1111,7 @@ msgstr ""
 msgid "Print help for command line style interface"
 msgstr ""
 
-#: oyjl_args.c:3045 oyjl_args.c:4292 oyjl_args_cli.c:156 oyjl_args_web.c:1638
+#: oyjl_args.c:3045 oyjl_args.c:4292 oyjl_args_cli.c:156 oyjl_args_web.c:2439
 #, fuzzy
 msgid "Print help text"
 msgstr "Puntua"
@@ -1224,7 +1224,7 @@ msgid ""
 "a local Web Server, which listens on local port."
 msgstr ""
 
-#: oyjl_args_web.c:1544 oyjl_args_web.c:1563
+#: oyjl_args_web.c:2345 oyjl_args_web.c:2364
 msgid "Send"
 msgstr ""
 
@@ -1524,7 +1524,7 @@ msgstr ""
 msgid "Too many input files for option"
 msgstr ""
 
-#: oyjl_args_tree.c:546 oyjl_args_web.c:1439
+#: oyjl_args_tree.c:546 oyjl_args_web.c:2240
 msgid "Tool"
 msgstr ""
 
