@@ -97,7 +97,7 @@ oyjlTESTRESULT_e progNAME(testI18N) ()
     putenv(tmp);
     clang = getenv("LANG");
     if(!clang || strcmp(clang,"de_DE.UTF-8") != 0)
-      fprintf( stderr, "Could not modify LANG environment variable. Test will not be useful.\n" );
+      fprintf( zout, "Could not modify LANG environment variable. Test will not be useful.\n" );
   }
 
   clang = setlocale(LC_ALL,"");
@@ -272,7 +272,7 @@ oyjlTESTRESULT_e testString ()
     "oyjlStringReplace(end)    46 == %d", (int)strlen(test_out) );
   }
   if(verbose)
-    fprintf( stderr, "%s \"display_name\"->\"bar\" %s\n", test, test_out );
+    fprintf( zout, "%s \"display_name\"->\"bar\" %s\n", test, test_out );
   myDeAllocFunc(test_out);
 
   test_out = oyjlStringCopy("abc]",malloc);
@@ -290,7 +290,7 @@ oyjlTESTRESULT_e testString ()
     "oyjlStringReplace(end)      6 == %d", (int)strlen(test_out) );
   }
   if(verbose)
-    fprintf( stderr, "\"%s\" \"]\"->\" ] \" \"%s\"\n", "abc]", test_out );
+    fprintf( zout, "\"%s\" \"]\"->\" ] \" \"%s\"\n", "abc]", test_out );
   myDeAllocFunc(test_out);
 
   char * compare;
@@ -1125,7 +1125,7 @@ oyjlTESTRESULT_e testString ()
     oyjlStringAdd( &print, 0,0, "oyjlRegExpReplace( \"%s\", \"%s\", \"%s\" ) = \"%s\"", string_, regex_, replacement, t ); \
     n = oyjlStringReplace( &print, "\%s", "\%\%\%\%s", 0,0 ); \
     if(verbose) \
-    { fputs( print, stderr ); fputs( "\n", stderr ); } \
+    { fputs( print, zout ); fputs( "\n", zout ); } \
     if(text && strcmp( t, check ) == 0) \
     { PRINT_SUB( oyjlTESTRESULT_SUCCESS, \
       print ); \
@@ -1236,17 +1236,17 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   else if(lib_so_size)
     oyjlStringAdd( &command, 0,0, "cc %s -g -O0 -I %s -I %s %s -L %s -lOyjl -lOyjlCore -o %s", verbose?"-Wall -Wextra":"", OYJL_SOURCEDIR, OYJL_BUILDDIR, name, OYJL_BUILDDIR, prog );
   if(t) { free(t); t = NULL; }
+  if(verbose)
+    fprintf( zout, "compiling: %s\n", oyjlTermColor( oyjlBOLD, command?command:"----" ) );
   if(command)
   {
     int r;
-    if(verbose)
-      fprintf( stderr, "compiling: %s\n", oyjlTermColor( oyjlBOLD, command ) );
     r = system(command);
     int size = oyjlIsFile( prog, "r", OYJL_NO_CHECK, info, 48 );
     if(!size || verbose)
     {
-      fprintf(stderr, "%s\n", command );
-      fprintf(stderr, "%scompile: %s %s %d returned: %d\n", size == 0?"Could not ":"", oyjlTermColor(oyjlBOLD,prog), info, size, r);
+      fprintf(zout, "%s\n", command );
+      fprintf(zout, "%scompile: %s %s %d returned: %d\n", size == 0?"Could not ":"", oyjlTermColor(oyjlBOLD,prog), info, size, r);
     }
     if(command) {free(command); command = NULL;}
   }
@@ -2280,13 +2280,13 @@ oyjlTESTRESULT_e testIO ()
   { PRINT_SUB( oyjlTESTRESULT_FAIL,
     "oyjlColorTerm() = %s %d", t, len );
   }
-  fputs(t,stderr);
-  fputs(" plain text",stderr);
-  fputs("\n",stderr);
+  fputs(t,zout);
+  fputs(" plain text",zout);
+  fputs("\n",zout);
   oyjlStringAdd( &text, 0,0, "%s", t );
-  fputs(text,stderr);
-  fputs(" plain text",stderr);
-  fputs("\n",stderr);
+  fputs(text,zout);
+  fputs(" plain text",zout);
+  fputs("\n",zout);
   if(text) { free(text); text = NULL; }
   size = oyjlWriteFile( "test.txt", t, strlen(t) );
   fprintf( zout, "oyjlWriteFile(%s) = %d\n", t, size );
