@@ -1368,7 +1368,7 @@ oyjlTESTRESULT_e progNAME(testArgs)()
 
   fprintf(stdout, "\n" );
   const char * loc = setlocale(LC_ALL,"en_GB.UTF8");
-  oyjlLang(loc);
+  oyjlLang("en_GB.UTF8");
 
   int output = 0;
   const char * file = NULL;
