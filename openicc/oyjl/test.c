@@ -242,7 +242,7 @@ oyjlTESTRESULT_e testI18N()
   loc = setlocale(LC_ALL,"de_DE.UTF8");
   trc = oyjlTranslation_New( loc, OYJL_DOMAIN, &catalog, 0,0,0,0 );
   oyjlTranslation_Set( &trc );
-  oyjlLang(loc);
+  oyjlLang( "de_DE.UTF8");
 
 
   const char * json = "{\n\
@@ -443,7 +443,7 @@ oyjlTESTRESULT_e testI18N()
   size = sizeof(liboyjl_i18n_oiJS);
   catalog = (oyjl_val) oyjlStringAppendN( NULL, (const char*) liboyjl_i18n_oiJS, size, malloc );
   loc = setlocale(LC_ALL,"de_DE.UTF8");
-  loc = oyjlLang(loc);
+  loc = oyjlLang("de_DE.UTF8");
 
   char * oyjl_export, * txt;
   size = 0;
@@ -746,7 +746,7 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
   trc = oyjlTranslation_New( "C", OYJL_DOMAIN, &catalog, NULL,NULL,NULL, !verbose?0:OYJL_OBSERVE );
   oyjlTranslation_Set( &trc );
   loc = setlocale(LC_ALL,"de_DE.UTF8");
-  loc = oyjlLang(loc);
+  loc = oyjlLang("de_DE.UTF8");
   root = oyjlTreeParse2( oyjl_export, 0, __func__, NULL );
   fprintf( zout, timeformat "before while\n", printtime );
   size = 0; while(size < 1000) ++size;
@@ -1972,7 +1972,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
   fprintf(stdout, "\n" );
 
   const char * loc = setlocale(LC_ALL,"en_GB.UTF8");
-  oyjlLang( loc );
+  oyjlLang( "en_GB.UTF8" );
 
   int output = 0;
   const char * file = NULL;
@@ -2112,7 +2112,7 @@ oyjlTESTRESULT_e testUiTranslation ()
 
   oyjlTranslation_s * trc = NULL; oyjlTranslation_Unset( OYJL_DOMAIN );
   const char * loc = setlocale(LC_ALL,"en_GB.UTF8");
-  oyjlLang( loc );
+  oyjlLang("en_GB.UTF8");
 
   int output = 0;
   const char * file = NULL;
