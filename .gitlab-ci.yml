@@ -66,7 +66,7 @@ test:
     - apt-get update -qq
     - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind lcov pkg-config qtbase5-dev qttools5-dev libqt5svg5-dev qtdeclarative5-dev libmicrohttpd-dev
   script:
-    - cd build && ls
+    - cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF ..
     - make
     - ./oyjl-test-test
     - ./oyjl-test-args
