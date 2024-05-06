@@ -1817,6 +1817,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   }
   if(name) {free(name); name = NULL;}
   if(t) {free(t); t = NULL;}
+  if(!command) return result;
 
   c_source = oyjlUiExportToCode( json, OYJL_COMPLETION_BASH );
   len = c_source ? strlen(c_source) : 0;
