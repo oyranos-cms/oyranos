@@ -183,11 +183,24 @@ int oyjlTermColorCheck()
              color = 0;
   if(!colorterm_init)
   {
+    const char * term;
     colorterm_init = 1;
     oyjl_colorterm = getenv("COLORTERM");
+    if(!oyjl_colorterm)
+    {
+      term = getenv("TERM");
+      if(term)
+      {
+        if(strcmp(term, "linux") == 0)
+          oyjl_colorterm = term;
+        else
+        if(strcmp(term, "xterm-256color") == 0)
+          oyjl_colorterm = term;
+      }
+    }
     color = oyjl_colorterm != NULL ? 1 : 0;
     if(!oyjl_colorterm) oyjl_colorterm = getenv("TERM");
-    truecolor = oyjl_colorterm && strcmp(oyjl_colorterm,"truecolor") == 0;
+    truecolor = oyjl_colorterm && (strcmp(oyjl_colorterm,"truecolor") == 0 || strcmp(oyjl_colorterm,"linux") == 0 || strcmp(oyjl_colorterm,"xterm-256color") == 0);
     if(!oyjlTermColorCheck__())
       truecolor = color = 0;
     if( getenv("FORCE_COLORTERM") )
