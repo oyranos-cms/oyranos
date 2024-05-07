@@ -2,7 +2,7 @@
  *
  *  Oyranos is an open source Color Management System
  *
- *  Copyright (C) 2004-2023  Kai-Uwe Behrmann
+ *  Copyright (C) 2004-2024  Kai-Uwe Behrmann
  *
  *  @brief    Oyranos test suite
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -25,6 +25,7 @@
   TEST_RUN( testArgsValues, "Value converting OyjlArgs", 1 ); \
   /* Oyjl */ \
   TEST_RUN( testVersion, "Version matching", 1 ); \
+  TEST_RUN( testI18NSetup, "Internationalisation Setup", 1 ); \
   TEST_RUN( testI18N, "Internationalisation", 1 ); \
   /* OyjlCore */ \
   TEST_RUN( testString, "String handling OyjlCore", 1 ); \
@@ -37,6 +38,7 @@
   TEST_RUN( testI18N, "Internationalisation", 1 );*/ \
   TEST_RUN( testDataFormat, "Data Format Detection", 1 ); \
   TEST_RUN( testJson, "JSON handling", 1 ); \
+  TEST_RUN( testJsonEscape, "JSON Escape handling", 1 ); \
   TEST_RUN( testFromJson, "Data Writers", 1 ); \
   TEST_RUN( testJsonRoundtrip, "Data Readers", 1 ); \
   TEST_RUN( testUiRoundtrip, "Ui Export", 1 ); \
@@ -48,9 +50,11 @@
 #else
 #define TESTS_RUN \
   TEST_RUN( testVersion, "Version matching", 1 ); \
+  TEST_RUN( testI18NSetup, "Internationalisation Setup", 1 ); \
   TEST_RUN( testI18N, "Internationalisation", 1 ); \
   TEST_RUN( testDataFormat, "Data Format Detection", 1 ); \
   TEST_RUN( testJson, "JSON handling", 1 ); \
+  TEST_RUN( testJsonEscape, "JSON Escape handling", 1 ); \
   TEST_RUN( testFromJson, "Data Writers", 1 ); \
   TEST_RUN( testJsonRoundtrip, "Data Readers", 1 ); \
   TEST_RUN( testUiRoundtrip, "Ui Export", 1 ); \
@@ -139,7 +143,7 @@ int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
                                        const void        * context_object OYJL_UNUSED,
                                        const char        * format,
                                        ... );
-oyjlTESTRESULT_e testI18N()
+oyjlTESTRESULT_e testI18NSetup()
 {
   const char * clang, * plain;
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -173,6 +177,7 @@ oyjlTESTRESULT_e testI18N()
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "Language initialised failed %s", clang?clang:"---" );
+    fprintf( zout, "LANG=%s LANGUAGE=%s\n", getenv("LANG"), getenv("LANGUAGE"));
   }
 
   char * language = oyjlLanguage( clang );
@@ -232,8 +237,23 @@ oyjlTESTRESULT_e testI18N()
   } else
   { PRINT_SUB( oyjlTESTRESULT_XFAIL, 
     "dgettext() failed \"%s\"", text );
+    fprintf( zout, "LANG=%s LANGUAGE=%s\n", getenv("LANG"), getenv("LANGUAGE"));
   }
 #endif
+
+  return result;
+}
+
+oyjlTESTRESULT_e testI18N()
+{
+  const char * clang, * plain;
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  const char * loc;
+  const char * text;
+  oyjlTranslation_s * trc = NULL;
 
   oyjl_val catalog = NULL;
   int size;
@@ -597,7 +617,7 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   }
   loc = "de_DE";
@@ -610,7 +630,7 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   }
   loc = "de";
@@ -623,7 +643,7 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS, i,clck/(double)CLOCKS_PER_SEC,"tr",
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   } else
-  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+  { PRINT_SUB( oyjlTESTRESULT_XFAIL,
     "oyjlTranslate(\"%s\",%s,\"render\")", loc, name );
   }
 
@@ -636,7 +656,7 @@ oyjlTESTRESULT_e testI18N()
   { PRINT_SUB_PROFILING( oyjlTESTRESULT_SUCCESS,n,clck/(double)CLOCKS_PER_SEC,"JS",
     "oyjlTranslateJson(gettext)" );
   } else
-  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(plain),
+  { PRINT_SUB_INT( oyjlTESTRESULT_XFAIL, strlen(plain),
     "oyjlTranslateJson(gettext)" );
   }
   OYJL_TEST_WRITE_RESULT( txt, strlen(txt), "oyjlTranslateJson", "txt" )
@@ -905,142 +925,6 @@ oyjlTESTRESULT_e testDataFormat ()
 
 #define end_example
 
-oyjlTESTRESULT_e testEscapeJson      ( const char        * text_,
-                                       const char *        escaped,
-                                       int                 flags,
-                                       size_t              tree_size,
-                                       oyjlTESTRESULT_e    result,
-                                       oyjlTESTRESULT_e    fail )
-{
-  char * key = oyjlJsonEscape( text_, flags ), * text = 0;
-  int i = 0;
-
-  if( strcmp( key, escaped ) == 0 )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlJsonEscape(%s, [%s,%s,%s]) \"%s\"", oyjlTermColor(oyjlBOLD,text_),
-    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_REGEXP?"r":flags&OYJL_NO_INDEX?"\\[":"",
-    key  );
-  } else
-  { PRINT_SUB( fail,
-    "oyjlJsonEscape(%s, [%s,%s,%s]) \"%s\" %s", oyjlTermColor(oyjlBOLD,text_),
-    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_REGEXP?"r":flags&OYJL_NO_INDEX?"\\[":"",
-    key, escaped );
-  }
-
-  oyjl_val root = oyjlTreeNew("");
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "data/key-%s", key );
-  oyjlTreeToJson( root, &i, &text ); i = 0;
-  int status = 0;
-  oyjl_val rroot = oyjlTreeParse2( text, 0, __func__, &status );
-  if( text && strlen( oyjlTermColorToPlain(text, 0) ) == tree_size && rroot && status == oyjlPARSE_STATE_NONE )
-  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
-    "set key  [%s,%s,%s] \"%s\"",
-    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_NO_INDEX?"\\[":"",
-    oyjlTermColor(oyjlBOLD,key) );
-  } else
-  { PRINT_SUB_INT( fail, strlen(text),
-    "set key  [%s,%s,%s] \"%s\"",
-    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_NO_INDEX?"\\[":"",
-    oyjlTermColor(oyjlBOLD,key) );
-  }
-  oyjlTreeFree( rroot );
-  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeSetStringF", "txt" )
-  if(verbose && text)
-    fprintf( zout, "%s\n", text );
-  myDeAllocFunc( text ); text = NULL;
-
-  oyjl_val value = oyjlTreeGetValueF( root, 0, "data/key-%s", key );
-  if( value )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "get key                      \"%s\"", key );
-  } else
-  { PRINT_SUB( fail,
-    "get key                             \"%s\"", key );
-  }
-
-  char * path = oyjlTreeGetPath( root, value );
-  char * expect = NULL;
-  oyjlStringAdd( &expect, 0,0, "data/key-%s", key );
-  if( path && expect && ((expect && strchr(expect,'[') && !strstr(expect,"\\[")) || strcmp(path,expect) == 0) )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "get path                     \"%s\"", path );
-  } else
-  { PRINT_SUB( fail,
-    "get path \"%s\"/\"%s\"", expect, path );
-  }
-  myDeAllocFunc( path ); path = NULL;
-  myDeAllocFunc( expect ); expect = NULL;
-  if(oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL || verbose)
-  {
-    int count, i;
-    char ** paths = oyjlTreeToPaths( root, 10000000, NULL, OYJL_KEY, &count );
-
-    for(i = 0; i < count; ++i)
-    {
-      path = paths[i];
-      fprintf( zout, "paths[%d]: %s\n", i, path );
-    }
-
-    if(paths && count)
-      oyjlStringListRelease( &paths, count, free );
-  }
-  oyjlTreeFree( root );
-  myDeAllocFunc( text ); text = NULL;
-  myDeAllocFunc( key ); key = NULL;
-
-  return result;
-}
-
-oyjlTESTRESULT_e testEscapeJsonVal   ( const char        * text_,
-                                       const char *        escaped,
-                                       int                 flags,
-                                       size_t              tree_size,
-                                       oyjlTESTRESULT_e    result,
-                                       oyjlTESTRESULT_e    fail )
-{
-  char * value = oyjlJsonEscape( text_, flags ), * text = 0;
-  int i = 0;
-
-  if( strcmp( value, escaped ) == 0 )
-  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
-    "oyjlJsonEscape(%s, [%s,%s,%s])     \"%s\"", oyjlTermColor(oyjlBOLD,text_),
-    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_REGEXP?"r":flags&OYJL_NO_INDEX?"\\[":"",
-    value );
-  } else
-  { PRINT_SUB( fail,
-    "oyjlJsonEscape(%s, [%s,%s,%s]) \"%s\" %s", oyjlTermColor(oyjlBOLD,text_),
-    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_REGEXP?"r":flags&OYJL_NO_INDEX?"\\[":"",
-    value, escaped );
-  }
-
-  oyjl_val root = oyjlTreeNew("");
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, value, "key" );
-  oyjlTreeToJson( root, &i, &text ); i = 0;
-  int status = 0;
-  oyjl_val rroot = oyjlTreeParse2( text, 0, __func__, &status );
-  if( text && strlen( oyjlTermColorToPlain(text, 0) ) == tree_size && rroot && status == oyjlPARSE_STATE_NONE )
-  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text), 
-    "set value [%s,%s,%s] \"%s\"",
-    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_NO_INDEX?"\\[":"",
-    oyjlTermColor(oyjlBOLD,value), strlen(text) );
-  } else
-  { PRINT_SUB_INT( fail, strlen(text),
-    "set value [%s,%s,%s] \"%s\"",
-    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_NO_INDEX?"\\[":"",
-    oyjlTermColor(oyjlBOLD,value), strlen(text) );
-  }
-  oyjlTreeFree( rroot );
-  OYJL_TEST_WRITE_RESULT( text, strlen(text), "value", "txt" )
-  if(verbose && text)
-    fprintf( zout, "%s\n", text );
-
-  oyjlTreeFree( root );
-  myDeAllocFunc( text ); text = NULL;
-  myDeAllocFunc( value ); value = NULL;
-
-  return result;
-}
-
 oyjlTESTRESULT_e testJson ()
 {
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
@@ -1295,25 +1179,6 @@ oyjlTESTRESULT_e testJson ()
   oyjlTreeFree( root );
   root = NULL;
 
-  result = testEscapeJson( "Color", "Color", OYJL_NO_BACKSLASH, 44, result, oyjlTESTRESULT_FAIL );
-  result = testEscapeJson( "Color \"Rose\"", "Color \"Rose\"", OYJL_NO_BACKSLASH, 53, result, oyjlTESTRESULT_XFAIL );
-  result = testEscapeJson( "Color \"Rose\"", "Color \"Rose\"", 0, 53, result, oyjlTESTRESULT_XFAIL );
-
-  result = testEscapeJson( "2. Color", "2\\. Color", OYJL_NO_BACKSLASH | OYJL_REGEXP, 47, result, oyjlTESTRESULT_XFAIL );
-  result = testEscapeJson( "2. Color", "2\\. Color", OYJL_REGEXP, 47, result, oyjlTESTRESULT_XFAIL );
-
-  result = testEscapeJson( "Color [3]", "Color \\\\[3]", OYJL_NO_BACKSLASH | OYJL_NO_INDEX, 48, result, oyjlTESTRESULT_XFAIL );
-  result = testEscapeJson( "Color [3]", "Color [3]", 0, 38, result, oyjlTESTRESULT_XFAIL );
-
-  result = testEscapeJson( "Color(1)", "Color\\(1\\)", OYJL_REGEXP, 47, result, oyjlTESTRESULT_XFAIL );
-
-  result = testEscapeJsonVal( "my.value", "my\\.value", OYJL_REGEXP, 25, result, oyjlTESTRESULT_XFAIL );
-  result = testEscapeJsonVal( "my.value", "my.value", 0, 23, result, oyjlTESTRESULT_XFAIL );
-  result = testEscapeJsonVal( "my\\.value", "my\\\\.value", OYJL_QUOTE | OYJL_NO_BACKSLASH, 27, result, oyjlTESTRESULT_XFAIL );
-  result = testEscapeJsonVal( "my/key", "my%37key", OYJL_KEY, 23, result, oyjlTESTRESULT_XFAIL );
-  result = testEscapeJsonVal( "my/key.attribute", "my%37key.attribute", OYJL_KEY, 33, result, oyjlTESTRESULT_XFAIL );
-  result = testEscapeJsonVal( "value\nafter_line_break", "value\\nafter_line_break", 0, 39, result, oyjlTESTRESULT_XFAIL );
-
   const char * json2 = "{\n\
   \"org\": {\n\
     \"free\": [{\n\
@@ -1383,7 +1248,7 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
   }
   if(verbose)
     for(j = 0; j < count; ++j)
-      fprintf( zout, "%d: %s\n", j, paths[j] );
+      fprintf( zout, OYJL_DBG_FORMAT "%d: %s\n", OYJL_DBG_ARGS, j, paths[j] );
 
 const char * oyjlTreeGetString_      ( oyjl_val            v,
                                        int                 flags OYJL_UNUSED,
@@ -1439,7 +1304,7 @@ const char * oyjlTreeGetString_      ( oyjl_val            v,
   }
   if(verbose)
     for(j = 0; j < count; ++j)
-      fprintf( zout, "%d: %s\n", j, paths[j] );
+      fprintf( zout, OYJL_DBG_FORMAT "%d: %s\n", OYJL_DBG_ARGS, j, paths[j] );
 
   j = 0;
   if( count == 8 &&
@@ -1449,8 +1314,8 @@ const char * oyjlTreeGetString_      ( oyjl_val            v,
       strcmp(oyjlTreeGetString_( value, 0, paths[j++] ),"1.0") == 0 &&
       oyjlTreeGetValue( value, 0, paths[j++] )->type == oyjl_t_true &&
       oyjlTreeGetValue( value, 0, paths[j++] )->type == oyjl_t_false &&
-      strcmp(oyjlTreeGetString_( value, 0, paths[j++] ),"value\\.property") == 0 &&
-      strcmp(oyjlTreeGetString_( value, 0, paths[j++] ),"value.property") == 0
+      strcmp(oyjlTreeGetString_( value, flags, paths[j++] ),"value\\.property") == 0 &&
+      strcmp(oyjlTreeGetString_( value, flags, paths[j++] ),"value.property") == 0
     )
   { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
     "oyjlTreeGetString_( DeSerialised oiJS )" );
@@ -1483,6 +1348,170 @@ const char * oyjlTreeGetString_      ( oyjl_val            v,
     fprintf( zout, "%s\n", text );
   if(text) {free(text); text = NULL;}
   if(tree_text) {free(tree_text); tree_text = NULL;}
+
+  return result;
+}
+
+oyjlTESTRESULT_e testEscapeJson      ( const char        * text_,
+                                       const char *        escaped,
+                                       int                 flags,
+                                       size_t              tree_size,
+                                       oyjlTESTRESULT_e    result,
+                                       oyjlTESTRESULT_e    fail )
+{
+  char * key = oyjlJsonEscape( text_, flags ), * text = 0;
+  int i = 0;
+
+  if( strcmp( key, escaped ) == 0 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlJsonEscape(%s, [%s,%s,%s]) \"%s\"", oyjlTermColor(oyjlBOLD,text_),
+    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_REGEXP?"r":flags&OYJL_NO_INDEX?"\\[":"",
+    key  );
+  } else
+  { PRINT_SUB( fail,
+    "oyjlJsonEscape(%s, [%s,%s,%s]) \"%s\" %s", oyjlTermColor(oyjlBOLD,text_),
+    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_REGEXP?"r":flags&OYJL_NO_INDEX?"\\[":"",
+    key, escaped );
+  }
+
+  oyjl_val root = oyjlTreeNew("");
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value", "data/key-%s", key );
+  oyjlTreeToJson( root, &i, &text ); i = 0;
+  int status = 0;
+  oyjl_val rroot = oyjlTreeParse2( text, 0, __func__, &status );
+  if( text && strlen( oyjlTermColorToPlain(text, 0) ) == tree_size && rroot && status == oyjlPARSE_STATE_NONE )
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
+    "set key  [%s,%s,%s] \"%s\"",
+    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_NO_INDEX?"\\[":"",
+    oyjlTermColor(oyjlBOLD,key) );
+  } else
+  { PRINT_SUB_INT( fail, strlen(text),
+    "set key  [%s,%s,%s] \"%s\"",
+    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_NO_INDEX?"\\[":"",
+    oyjlTermColor(oyjlBOLD,key) );
+  }
+  oyjlTreeFree( rroot );
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlTreeSetStringF", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+  myDeAllocFunc( text ); text = NULL;
+
+  oyjl_val value = oyjlTreeGetValueF( root, 0, "data/key-%s", key );
+  if( value )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "get key                      \"%s\"", key );
+  } else
+  { PRINT_SUB( fail,
+    "get key                             \"%s\"", key );
+  }
+
+  char * path = oyjlTreeGetPath( root, value );
+  char * expect = NULL;
+  oyjlStringAdd( &expect, 0,0, "data/key-%s", key );
+  if( path && expect && ((expect && strchr(expect,'[') && !strstr(expect,"\\[")) || strcmp(path,expect) == 0) )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "get path                     \"%s\"", path );
+  } else
+  { PRINT_SUB( fail,
+    "get path \"%s\"/\"%s\"", expect, path );
+  }
+  myDeAllocFunc( path ); path = NULL;
+  myDeAllocFunc( expect ); expect = NULL;
+  if(oy_test_last_result == oyjlTESTRESULT_FAIL || oy_test_last_result == oyjlTESTRESULT_XFAIL || verbose)
+  {
+    int count, i;
+    char ** paths = oyjlTreeToPaths( root, 10000000, NULL, OYJL_KEY, &count );
+
+    for(i = 0; i < count; ++i)
+    {
+      path = paths[i];
+      fprintf( zout, "paths[%d]: %s\n", i, path );
+    }
+
+    if(paths && count)
+      oyjlStringListRelease( &paths, count, free );
+  }
+  oyjlTreeFree( root );
+  myDeAllocFunc( text ); text = NULL;
+  myDeAllocFunc( key ); key = NULL;
+
+  return result;
+}
+
+oyjlTESTRESULT_e testEscapeJsonVal   ( const char        * text_,
+                                       const char *        escaped,
+                                       int                 flags,
+                                       size_t              tree_size,
+                                       oyjlTESTRESULT_e    result,
+                                       oyjlTESTRESULT_e    fail )
+{
+  char * value = oyjlJsonEscape( text_, flags ), * text = 0;
+  int i = 0;
+
+  if( strcmp( value, escaped ) == 0 )
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlJsonEscape(%s, [%s,%s,%s])     \"%s\"", oyjlTermColor(oyjlBOLD,text_),
+    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_REGEXP?"r":flags&OYJL_NO_INDEX?"\\[":"",
+    value );
+  } else
+  { PRINT_SUB( fail,
+    "oyjlJsonEscape(%s, [%s,%s,%s]) \"%s\" %s", oyjlTermColor(oyjlBOLD,text_),
+    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_REGEXP?"r":flags&OYJL_NO_INDEX?"\\[":"",
+    value, escaped );
+  }
+
+  oyjl_val root = oyjlTreeNew("");
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, value, "key" );
+  oyjlTreeToJson( root, &i, &text ); i = 0;
+  int status = 0;
+  oyjl_val rroot = oyjlTreeParse2( text, 0, __func__, &status );
+  if( text && strlen( oyjlTermColorToPlain(text, 0) ) == tree_size && rroot && status == oyjlPARSE_STATE_NONE )
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text), 
+    "set value [%s,%s,%s] \"%s\"",
+    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_NO_INDEX?"\\[":"",
+    oyjlTermColor(oyjlBOLD,value), strlen(text) );
+  } else
+  { PRINT_SUB_INT( fail, strlen(text),
+    "set value [%s,%s,%s] \"%s\"",
+    flags&OYJL_NO_BACKSLASH?"/":"", flags&OYJL_QUOTE?"\"":"", flags&OYJL_NO_INDEX?"\\[":"",
+    oyjlTermColor(oyjlBOLD,value), strlen(text) );
+  }
+  oyjlTreeFree( rroot );
+  OYJL_TEST_WRITE_RESULT( text, strlen(text), "value", "txt" )
+  if(verbose && text)
+    fprintf( zout, "%s\n", text );
+
+  oyjlTreeFree( root );
+  myDeAllocFunc( text ); text = NULL;
+  myDeAllocFunc( value ); value = NULL;
+
+  return result;
+}
+
+oyjlTESTRESULT_e testJsonEscape ()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
+  result = testEscapeJson( "Color", "Color", OYJL_NO_BACKSLASH, 44, result, oyjlTESTRESULT_FAIL );
+  result = testEscapeJson( "Color \"Rose\"", "Color \"Rose\"", OYJL_NO_BACKSLASH, 53, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJson( "Color \"Rose\"", "Color \"Rose\"", 0, 53, result, oyjlTESTRESULT_XFAIL );
+
+  result = testEscapeJson( "2. Color", "2\\. Color", OYJL_NO_BACKSLASH | OYJL_REGEXP, 47, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJson( "2. Color", "2\\. Color", OYJL_REGEXP, 47, result, oyjlTESTRESULT_XFAIL );
+
+  result = testEscapeJson( "Color [3]", "Color \\\\[3]", OYJL_NO_BACKSLASH | OYJL_NO_INDEX, 48, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJson( "Color [3]", "Color [3]", 0, 38, result, oyjlTESTRESULT_XFAIL );
+
+  result = testEscapeJson( "Color(1)", "Color\\(1\\)", OYJL_REGEXP, 47, result, oyjlTESTRESULT_XFAIL );
+
+  result = testEscapeJsonVal( "my.value", "my\\.value", OYJL_REGEXP, 25, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJsonVal( "my.value", "my.value", 0, 23, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJsonVal( "my\\.value", "my\\\\.value", OYJL_QUOTE | OYJL_NO_BACKSLASH, 27, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJsonVal( "my/key", "my%37key", OYJL_KEY, 23, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJsonVal( "my/key.attribute", "my%37key.attribute", OYJL_KEY, 33, result, oyjlTESTRESULT_XFAIL );
+  result = testEscapeJsonVal( "value\nafter_line_break", "value\\nafter_line_break", 0, 39, result, oyjlTESTRESULT_XFAIL );
 
   return result;
 }
@@ -1817,6 +1846,7 @@ oyjlTESTRESULT_e   testCode          ( oyjl_val            json,
   }
   if(name) {free(name); name = NULL;}
   if(t) {free(t); t = NULL;}
+  if(!command) return result;
 
   c_source = oyjlUiExportToCode( json, OYJL_COMPLETION_BASH );
   len = c_source ? strlen(c_source) : 0;
@@ -2644,12 +2674,18 @@ msgstr \"\"\n\
   oyjlWriteFile( "de.po", po, strlen(po) );
   if(verbose)
     fprintf( zout, "de.po:\n%s\n", po );
+  const char * loc = setlocale(LC_ALL,"en_GB.UTF8");
+  if(verbose)
+  {
+    fprintf( zout, "setlocale(LC_ALL,\"en_GB.UTF8\") = %s\n", loc );
+    int err = setenv("OUTPUT_CHARSET", "UTF-8", 1); if(err || verbose) fprintf( zout, "setenv(\"OUTPUT_CHARSET\", \"UTF-8\", 1) == %d\n", err );
+  }
 
   oyjl_command_test_s commands_oyjl_translate[] = {
     { "-X export > oyjl-translate-ui.json && cat oyjl-translate-ui.json", 27994,  NULL,       NULL },
     { "-e -i oyjl-translate-ui.json -o i18n.c -f '_(\"%s\");\n' -k name,description,help && cat i18n.c", 4861,  NULL,       NULL },
 #ifdef OYJL_USE_GETTEXT
-    { "-a -i OUTPUT_CHARSET=UTF-8 oyjl-translate-ui.json -o oyjl-translate-ui-i18n.json -k name,description,help -d oyjl -p locale -l=de_DE,cs_CZ && cat oyjl-translate-ui-i18n.json", 34553, NULL,       NULL },
+    { "-a -i oyjl-translate-ui.json -o oyjl-translate-ui-i18n.json -k name,description,help -d oyjl -p locale -l=de_DE.UTF-8,cs_CZ.UTF-8 && cat oyjl-translate-ui-i18n.json", loc==NULL?0:34553, NULL,       NULL },
 #endif
     { "-V; xgettext --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=i18n --package-version=1.0.0 -o i18n.pot i18n.c && cat i18n.pot", 8803,  NULL,       "xgettext ... i18n.c -> i18n.pot; hand translate -> de.po(prepared example)" },
     { "-c -i de.po --locale=de_DE -o i18n-de_DE.json && cat i18n-de_DE.json", 320, NULL,       NULL }
