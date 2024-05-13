@@ -3,7 +3,7 @@
  *  oyjl - Basic string C API's
  *
  *  @par Copyright:
- *            2010-2023 (C) Kai-Uwe Behrmann
+ *            2010-2024 (C) Kai-Uwe Behrmann
  *
  *  @brief    OyjlCore API provides a platformindependent C interface for string helpers.
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -168,6 +168,14 @@ char *     oyjlRegExpEscape          ( const char        * text );
 int        oyjlRegExpReplace         ( char             ** text,
                                        const char        * regex,
                                        const char        * replacement );
+#define    OYJL_NO_INDEX               0x20 /**< @brief omit index resolving by squared brackets [] */
+#define    OYJL_QUOTE                  0x40 /**< @brief quotation marks '"' */
+#define    OYJL_NO_BACKSLASH           0x80 /**< @brief skip back slash '\' */
+#define    OYJL_REVERSE                0x100/**< @brief undo */
+#define    OYJL_REGEXP                 0x200/**< @brief handle regexp sequences */
+char *     oyjlStringEscape          ( const char        * string,
+                                       int                 flags,
+                                       void*            (* alloc)(size_t));
 int        oyjlStringStartsWith      ( const char        * text,
                                        const char        * pattern,
                                        int                 flags );

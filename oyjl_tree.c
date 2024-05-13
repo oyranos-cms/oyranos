@@ -3,7 +3,7 @@
  *  oyjl - Yajl tree extension
  *
  *  @par Copyright:
- *            2016-2023 (C) Kai-Uwe Behrmann
+ *            2016-2024 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl tree functions
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -325,12 +325,10 @@ static void  oyjlTreeFind_           ( oyjl_val            root,
 
              if(base && key)
              {
-               char * escape = NULL;
+               const char * escape = NULL;
                if(strpbrk(key, "[].^$*+?(){|/"))
                  escape = oyjlJsonEscape(key, OYJL_KEY | OYJL_NO_INDEX | OYJL_REGEXP);
                oyjlStringAdd( &xpath, 0,0, "%s%s%s", base,base[0]?"/":"", escape?escape:key );
-               if(escape)
-                 free(escape);
              }
 
              if( (flags & OYJL_PATH && ocount) ||
@@ -457,8 +455,7 @@ static void oyjlJsonIndent_( char ** json, const char * before, int level, const
   *json = njson;
 }
 
-void       oyjlRegExpEscape2_        ( oyjl_str            text );
-void       oyjlNoBracketCb_(const char * text, const char * start, const char * end, const char * search, const char ** replace, int * r_len OYJL_UNUSED, void * data OYJL_UNUSED);
+char * oyjl_json_escape_ = NULL;
 /** @brief Convert strings to pass through JSON
  *
  *  @param         in                  input string
@@ -472,77 +469,15 @@ void       oyjlNoBracketCb_(const char * text, const char * start, const char * 
  *  @return                            the resulting string
  *
  *  @version Oyjl: 1.0.0
- *  @date    2021/09/11
+ *  @date    2024/05/07
  *  @since   2021/09/01 (Oyjl: 1.0.0)
  */
-char *     oyjlJsonEscape            ( const char        * in,
+const char *  oyjlJsonEscape         ( const char        * in,
                                        int                 flags )
 {
-  char * out = NULL;
-  const char * t = in;
-  oyjl_str tmp;
-  if(!in) return NULL;
-
-  tmp = oyjlStr_New(10,0,0);
-  oyjlStr_Push( tmp, t );
-  if(flags & OYJL_REVERSE)
-  {
-    if(flags & OYJL_NO_INDEX || flags & OYJL_KEY)
-    {
-      oyjlStr_Replace( tmp, "\\\\[", "[", 0, NULL );
-      oyjlStr_Replace( tmp, "\\[", "[", 0, NULL );
-      oyjlStr_Replace( tmp, "\\]", "]", 0, NULL );
-    }
-    if(!(flags & OYJL_NO_BACKSLASH))
-      oyjlStr_Replace( tmp, "\\\\", "\\", 0, NULL );
-    if(flags & OYJL_QUOTE)
-      oyjlStr_Replace( tmp, "\\\"", "\"", 0, NULL );
-    oyjlStr_Replace( tmp, "\\b", "\b", 0, NULL );
-    oyjlStr_Replace( tmp, "\\f", "\f", 0, NULL );
-    oyjlStr_Replace( tmp, "\\n", "\n", 0, NULL );
-    oyjlStr_Replace( tmp, "\\r", "\r", 0, NULL );
-    oyjlStr_Replace( tmp, "\\t", "\t", 0, NULL );
-    oyjlStr_Replace( tmp, "%33", "\033", 0, NULL );
-    if(flags & OYJL_KEY)
-      oyjlStr_Replace( tmp, "%37", "/", NULL,NULL );
-    /* undo RegExp */
-    oyjlStr_Replace( tmp, "\\.", ".", 0, NULL );
-    oyjlStr_Replace( tmp, "\\^", "^", 0, NULL );
-    oyjlStr_Replace( tmp, "\\$", "$", 0, NULL );
-    oyjlStr_Replace( tmp, "\\*", "*", 0, NULL );
-    oyjlStr_Replace( tmp, "\\+", "+", 0, NULL );
-    oyjlStr_Replace( tmp, "\\?", "?", 0, NULL );
-    oyjlStr_Replace( tmp, "\\(", "(", 0, NULL );
-    oyjlStr_Replace( tmp, "\\)", ")", 0, NULL );
-    oyjlStr_Replace( tmp, "\\{", "{", 0, NULL );
-    oyjlStr_Replace( tmp, "\\|", "|", 0, NULL );
-  } else
-  {
-    if(!(flags & OYJL_NO_BACKSLASH) || !(flags & OYJL_REGEXP))
-      oyjlStr_Replace( tmp, "\\", "\\\\", oyjlNoBracketCb_, NULL );
-    if(flags & OYJL_REGEXP)
-      oyjlRegExpEscape2_( tmp );
-    if(flags & OYJL_QUOTE)
-      oyjlStr_Replace( tmp, "\"", "\\\"", 0, NULL );
-    oyjlStr_Replace( tmp, "\b", "\\b", 0, NULL );
-    oyjlStr_Replace( tmp, "\f", "\\f", 0, NULL );
-    oyjlStr_Replace( tmp, "\n", "\\n", 0, NULL );
-    oyjlStr_Replace( tmp, "\r", "\\r", 0, NULL );
-    oyjlStr_Replace( tmp, "\t", "\\t", 0, NULL );
-    oyjlStr_Replace( tmp, "\033", "%33", 0, NULL );
-    if(flags & OYJL_KEY)
-      oyjlStr_Replace( tmp, "/", "%37", NULL,NULL );
-    if(flags & OYJL_REGEXP)
-      oyjlStr_Replace( tmp, "\\[", "\\\\[", 0, NULL );
-    else if(flags & OYJL_NO_INDEX || flags & OYJL_KEY)
-    {
-      oyjlStr_Replace( tmp, "[", "\\\\[", 0, NULL );
-      //oyjlStr_Replace( tmp, "]", "\\\\]", 0, NULL );
-    }
-  }
-  out = oyjlStr_Pull(tmp); 
-  oyjlStr_Release( &tmp );
-  return out;
+  if(oyjl_json_escape_) free(oyjl_json_escape_);
+  oyjl_json_escape_ = oyjlStringEscape( in, flags, 0 );
+  return oyjl_json_escape_;
 }
 
 /** @brief   convert a C tree into a text string
@@ -618,12 +553,11 @@ int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
          oyjlStr_Push (json, t); break;
     case oyjl_t_string:
          {
-          char * escaped = oyjlJsonEscape( v->u.string, OYJL_QUOTE | OYJL_NO_BACKSLASH );
+          const char * escaped = oyjlJsonEscape( v->u.string, OYJL_QUOTE | OYJL_NO_BACKSLASH );
           t = oyjlTermColor(oyjlBOLD,escaped);
           oyjlStr_AppendN( json, "\"", 1 );
           oyjlStr_Push( json, t );
           oyjlStr_AppendN( json, "\"", 1 );
-          free( escaped );
          }
          break;
     case oyjl_t_array:
@@ -666,10 +600,9 @@ int  oyjlTreeToJson21_(oyjl_val v, int * level, oyjl_str json)
              }
              oyjlStr_AppendN( json, "\"", 1 );
              {
-              char * escaped = oyjlJsonEscape( v->u.object.keys[i], OYJL_QUOTE | OYJL_NO_BACKSLASH );
+              const char * escaped = oyjlJsonEscape( v->u.object.keys[i], OYJL_QUOTE | OYJL_NO_BACKSLASH );
               const char * t = oyjlTermColor(oyjlITALIC,escaped);
               oyjlStr_Push( json, t );
-              free( escaped );
              }
              oyjlStr_AppendN( json, "\": ", 3 );
              error = oyjlTreeToJson21_( v->u.object.values[i], level, json );
@@ -1657,8 +1590,8 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
       /* search for name in object */
       for(j = 0; j < count; ++j)
       {
-        const char * key = parent->u.object.keys[j];
-        char * regex = NULL;
+        const char * key = parent->u.object.keys[j],
+                   * regex = NULL;
         /* search for regex escaped key */
         if(strpbrk(key, "[].^$*+?(){|/"))
           regex = oyjlJsonEscape(key, OYJL_KEY | OYJL_REGEXP);
@@ -1668,10 +1601,8 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
         {
           found = 1;
           level = oyjlValuePosGet( parent, j );
-          if(regex) free(regex);
           break;
         }
-        if(regex) { free(regex); regex = NULL; }
       }
 
       /* add new leave */
@@ -1714,7 +1645,7 @@ static oyjl_val  oyjlTreeGetValue_   ( oyjl_val            v,
             }
             parent->u.object.keys = keys;
           }
-          parent->u.object.keys[parent->u.object.len] = oyjlJsonEscape( term, /*OYJL_KEY |*/ OYJL_REVERSE | OYJL_REGEXP | OYJL_KEY );
+          parent->u.object.keys[parent->u.object.len] = oyjlStringEscape( term, /*OYJL_KEY |*/ OYJL_REVERSE | OYJL_REGEXP | OYJL_KEY, 0);
           parent->u.object.values[parent->u.object.len] = level;
           parent->u.object.len++;
         }
@@ -2365,9 +2296,9 @@ char *         oyjlTranslate2_       ( const char        * loc,
                                        const char        * text,
                                        int                 flags )
 {
-  const char * translated = NULL;
+  const char * translated = NULL, * loc_ = NULL;
   oyjl_val v;
-  char * key = NULL, * loc_ = NULL;
+  char * key = NULL;
 
   if(flags & OYJL_GETTEXT)
   {
@@ -2388,7 +2319,7 @@ char *         oyjlTranslate2_       ( const char        * loc,
   if(!loc || !loc[0] || strcmp(loc,"C") == 0 || !catalog || !text || (text && !text[0]))
     return (char*)text;
 
-  key = oyjlJsonEscape( text, OYJL_KEY | OYJL_REGEXP );
+  key = oyjlStringEscape( text, OYJL_KEY | OYJL_REGEXP, 0 );
   if(flags & OYJL_OBSERVE)
     oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "text: \"%s\" key: \"%s\"", OYJL_DBG_ARGS, text, key );
 
@@ -2403,8 +2334,7 @@ char *         oyjlTranslate2_       ( const char        * loc,
     if(v)
     {
       translated = OYJL_GET_STRING(v);
-      if(key) {free(key); key = NULL;}
-      return translated ? (char*)translated : (char*)text;
+      goto oyjlTranslate2_clean;
     }
 
     paths = oyjlTreeToPaths( catalog, 10000000, NULL, OYJL_KEY | OYJL_NO_ALLOC, &count );
@@ -2420,9 +2350,8 @@ char *         oyjlTranslate2_       ( const char        * loc,
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\tcurrent: \"%s\"", OYJL_DBG_ARGS, current );
       if(strcmp(current, text) == 0)
       {
-        char * value = oyjlJsonEscape(strrchr(path,'/')+1, OYJL_REVERSE | OYJL_REGEXP);
+        const char * value = oyjlJsonEscape(strrchr(path,'/')+1, OYJL_REVERSE | OYJL_REGEXP);
         oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, value, "org/freedesktop/oyjl/translations/back/%s", key );
-        free(value);
         v = oyjlTreeGetValueF( catalog, OYJL_CREATE_NEW, "org/freedesktop/oyjl/translations/back/%s", key );
         translated = OYJL_GET_STRING(v);
         break;
@@ -2437,8 +2366,7 @@ char *         oyjlTranslate2_       ( const char        * loc,
         oyjlStringListRelease( &paths, count, free );
     }
 
-    if(key) {free(key); key = NULL;}
-    return translated ? (char*)translated : (char*)text;
+    goto oyjlTranslate2_clean;
   }
 
   loc_ = oyjlJsonEscape( loc, OYJL_KEY | OYJL_REGEXP );
@@ -2463,8 +2391,8 @@ char *         oyjlTranslate2_       ( const char        * loc,
   if(!translated && text[0])
   {
     char * language = oyjlLanguage(loc);
-    char * path = NULL,
-         * plain;
+    char * path = NULL;
+    const char * plain;
     char ** paths = NULL;
     int count, i;
     char * regex = NULL,
@@ -2480,7 +2408,7 @@ char *         oyjlTranslate2_       ( const char        * loc,
       plain = oyjlJsonEscape( path, OYJL_REVERSE | OYJL_REGEXP | OYJL_KEY );
       if(flags & OYJL_OBSERVE)
         oyjlMessage_p( oyjlMSG_INFO, 0, OYJL_DBG_FORMAT "\tpath[%d]: \"%s\" regex: \"%s\"", OYJL_DBG_ARGS, i, path, regex );
-      if(oyjlRegExpFind(plain, regex, NULL))
+      if(oyjlRegExpFind((char*)plain, regex, NULL))
       {
         char * p = strrchr(plain, '/');
         if(p) ++p;
@@ -2493,11 +2421,9 @@ char *         oyjlTranslate2_       ( const char        * loc,
           if(p) ++p;
           p[0] = '\000';
           oyjlStringAdd( &path, 0,0, "%s", key );
-          free(plain);
           break;
         }
       }
-      free(plain);
     }
 
     if(paths && count)
@@ -2525,7 +2451,6 @@ char *         oyjlTranslate2_       ( const char        * loc,
 
 oyjlTranslate2_clean:
   if(key) {free(key); key = NULL;}
-  if(loc_) {free(loc_); loc_ = NULL;}
 
   return translated ? (char*)translated : (char*)text;
 }
@@ -2678,9 +2603,14 @@ oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
     {
       const char * xpath = paths[i];
       oyjl_val val = oyjlTreeGetValue( v, 0, xpath );
-      oyjl_type type = val->type;
+      oyjl_type type = 0;
       int len = strlen(xpath);
       uint32_t v_offset = 0;
+      if(val)
+        type = val->type;
+      if(!val)
+        oyjlMessage_p( oyjlMSG_ERROR, 0, OYJL_DBG_FORMAT "\txpath:\"%s\" len:%d type:%d offsets:%d", OYJL_DBG_ARGS, xpath, len, type, size_ );
+
       nodes->offsets[i] = size_;
       size_ += oyjlXPathGetSize_( val, xpath, &v_offset );
       size_ += OYJL_PAD_SIZE( size_, PAD_SIZE );
@@ -3004,7 +2934,7 @@ char **  oyjlCatalogGetLangs_        ( char             ** paths,
         continue;
       t = strrchr(loc, '/');
       if(t) t[0] = '\000';
-      t = oyjlJsonEscape( loc, OYJL_REVERSE | OYJL_REGEXP | OYJL_KEY );
+      t = oyjlStringEscape( loc, OYJL_REVERSE | OYJL_REGEXP | OYJL_KEY, 0);
       free(loc); loc = NULL;
       loc = t;
       for(j = 0; j < locs_n; ++j)

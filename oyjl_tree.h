@@ -355,13 +355,11 @@ int        oyjlPathMatch             ( const char        * path,
 
 int        oyjlDataFormat            ( const char        * text );
 const char * oyjlDataFormatToString  ( int                 format );
-#define    OYJL_NO_INDEX               0x20 /**< @brief omit index resolving by squared brackets [] */
-#define    OYJL_QUOTE                  0x40 /**< @brief quotation marks '"' */
-#define    OYJL_NO_BACKSLASH           0x80 /**< @brief skip back slash '\' */
-#define    OYJL_REVERSE                0x100/**< @brief undo */
-#define    OYJL_REGEXP                 0x200/**< @brief handle regexp sequences */
-char *     oyjlJsonEscape            ( const char        * in,
+const char*oyjlJsonEscape            ( const char        * in,
                                        int                 flags );
+char *     oyjlStringEscape          ( const char        * string,
+                                       int                 flags,
+                                       void*            (* alloc)(size_t));
 
 #define OYJL_OBSERVE                   0x200000 /**< @brief be verbose on change */
 #define OYJL_IS_OBSERVED(v) (((v)!= NULL) && ((v)->u.number.flags & OYJL_OBSERVE))

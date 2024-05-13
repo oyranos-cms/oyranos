@@ -3,7 +3,7 @@
  *  libOyjl - JSON helper tool
  *
  *  @par Copyright:
- *            2018-2023 (C) Kai-Uwe Behrmann
+ *            2018-2024 (C) Kai-Uwe Behrmann
  *
  *  @brief    Oyjl JSON translation helper
  *  @internal
@@ -41,9 +41,10 @@ oyjl_val oyjlTreeParsePo             ( const char        * text,
     {
       const char * msgid = strstr( block, "msgid" );
       const char * msgstr = strstr( block, "\nmsgstr");
+      const char * txt;
       char * t = msgid ? oyjlStringCopy(msgid + 5+2, 0) : NULL;
       char * tr = msgstr ? oyjlStringCopy(msgstr + 7+2, 0) : NULL;
-      char * tmp;
+      char * tmp, * new_key;
       if(!(t && t[0] && tr && tr[0]))
       {
         if(t) free(t);
@@ -66,21 +67,19 @@ oyjl_val oyjlTreeParsePo             ( const char        * text,
       }
       oyjlStringReplace( &t, "\\", "", NULL,NULL );
       oyjlStringReplace( &tr, "\\", "", NULL,NULL );
-      char * new_path = NULL, * new_key = oyjlStringCopy( t, NULL );
-      tmp = oyjlJsonEscape( new_key,  0 );
+      new_key = oyjlStringCopy( t, NULL );
+      tmp = oyjlStringEscape( new_key,  0, 0 );
       free(new_key); new_key = tmp; tmp = NULL;
       oyjlTreeSetStringF( root, OYJL_CREATE_NEW, new_key,  "TS/context/message/[%d]/source", pos );
       if(verbose)
         fprintf(stderr, "[%d]: %s", i, new_key );
-      tmp = oyjlJsonEscape( tr, 0 );
-      if(tmp)
+      txt = oyjlJsonEscape( tr, 0 );
+      if(txt)
       {
-        oyjlTreeSetStringF( root, OYJL_CREATE_NEW, t != tr ? tmp : "", "TS/context/message/[%d]/translation", pos );
+        oyjlTreeSetStringF( root, OYJL_CREATE_NEW, t != tr ? txt : "", "TS/context/message/[%d]/translation", pos );
         if(verbose)
-          fprintf(stderr, " %s\n", oyjlTermColor(oyjlBOLD,tmp) );
-        free(tmp);
+          fprintf(stderr, " %s\n", oyjlTermColor(oyjlBOLD,txt) );
       }
-      free(new_path);
       ++pos;
     }
   }
@@ -155,7 +154,7 @@ int oyjlStrcmpWrap_ (const void * a_, const void * b_)
 void oyjlTreeSortStrings             ( oyjl_val          * root,
                                        int                 verbose )
 {
-  int count = 0, i;
+  int count = 0, i, r;
   oyjl_val sorted, root_ = *root;
   char ** paths = oyjlTreeToPaths( root_, 1000000, NULL, OYJL_KEY, &count );
 
@@ -165,10 +164,10 @@ void oyjlTreeSortStrings             ( oyjl_val          * root,
   for(i = 0; i < count; ++i)
   {
     const char * path = paths[i], * t;
-    t = oyjlTreeGetString_( root_, 0, path );
-    oyjlTreeSetStringF( sorted, OYJL_CREATE_NEW, t, "%s", path );
-    if(verbose)
-      fprintf( stderr, "path[%d]: %s:%s\n", i, path, t );
+    t = oyjlTreeGetString_( root_, strstr(path,"cs_CZ") != NULL?OYJL_OBSERVE:0, path );
+    r = oyjlTreeSetStringF( sorted, OYJL_CREATE_NEW, t, "%s", path );
+    if(verbose || r)
+      fprintf( stderr, OYJL_DBG_FORMAT "path[%d]: %s:%s%s\n", OYJL_DBG_ARGS, i, path, t, r?oyjlTermColorF(oyjlNO_MARK," r=%d",r):"" );
   }
   oyjlTreeFree( root_ );
   *root = sorted; sorted = NULL;
@@ -512,6 +511,9 @@ int myMain( int argc, const char ** argv )
             oyjlStringAdd( &language, 0,0, "%s", lang );
           else
             oyjlStringAdd( &language, 0,0, "%s.UTF-8", lang );
+          if(*oyjl_debug || verbose)
+            fprintf(stderr, "setenv(%s, 1)\n", oyjlTermColorF(oyjlGREEN,"LANG, %s", language) );
+          setenv("LANG", language, 1);
           checklocale = setlocale( LC_MESSAGES, language );
           if(*oyjl_debug || checklocale == NULL || verbose)
             fprintf(stderr, OYJL_DBG_FORMAT "setlocale(%s) == %s\n", OYJL_DBG_ARGS, oyjlTermColorF(oyjlGREEN,language), checklocale );
@@ -549,7 +551,7 @@ int myMain( int argc, const char ** argv )
 #endif
 
             if(*oyjl_debug || verbose)
-              fprintf( stderr, "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", dir, oyjlTermColor(oyjlGREEN,oyjl_domain_path), domain, var );
+              fprintf( stderr, OYJL_DBG_FORMAT "%s = bindtextdomain() to \"%s\"\ntextdomain: %s == %s\n", OYJL_DBG_ARGS, dir, oyjlTermColor(oyjlGREEN,oyjl_domain_path), domain, var );
 
             for(j = 0; j < count; ++j)
             {
@@ -574,19 +576,22 @@ int myMain( int argc, const char ** argv )
                     tr = t;
 #endif
                   if(verbose && t && t[0])
-                    fprintf(stderr, "found:\t key: %s value[%s](%s): \"%s\"\n", path, domain, t, tr?(t == tr?oyjlTermColor(oyjlITALIC,tr):oyjlTermColor(oyjlBOLD,tr)):oyjlTermColor(oyjlBLUE,"----") );
+                    fprintf(stderr, OYJL_DBG_FORMAT "found:\t key: %s value[%s](%s): \"%s\"\n", OYJL_DBG_ARGS, path, domain, t, tr?(t == tr?oyjlTermColorF(oyjlITALIC,"%s",tr):oyjlTermColorF(oyjlBOLD,"%s",tr)):oyjlTermColorF(oyjlBLUE,"%s","----") );
                   if(t != tr || list_empty)
                   {
                     char * new_path = NULL, * new_key = oyjlStringCopy( t, NULL ), * tmp;
-                    tmp = oyjlJsonEscape( new_key, OYJL_KEY | OYJL_NO_INDEX );
+                    tmp = oyjlStringEscape( new_key, OYJL_KEY | OYJL_NO_INDEX, 0 );
                     free(new_key); new_key = tmp; tmp = NULL;
                     oyjlStringAdd( &new_path, malloc, free, "org/freedesktop/oyjl/translations/%s/%s", lang, new_key );
                     v = oyjlTreeGetValue( new_translations?new_translations:root, OYJL_CREATE_NEW, new_path );
-                    tmp = oyjlJsonEscape( tr, 0 );
-                    if(tmp)
+                    if(tr)
                     {
-                      oyjlValueSetString( v, t != tr ? tr : "" );
-                      free(tmp);
+                      const char * txt = t != tr ? tr : "";
+                      char * t2 = NULL;
+                      if(verbose && t && t[0])
+                        fprintf(stderr, OYJL_DBG_FORMAT "\toyjlValueSetString( %s ) new_path: %s %s\n", OYJL_DBG_ARGS, oyjlTermColorPtr(oyjlBOLD,&t2,txt), oyjlTermColorF(oyjlITALIC,"%s",new_path), v?"":"failed" );
+                      oyjlValueSetString( v, txt );
+                      if(t2) free(t2);
                     }
                     oyjlStringAdd( &text, malloc, free, "%s\n", tr );
                     free(new_path);
@@ -666,16 +671,14 @@ int myMain( int argc, const char ** argv )
               if(tr || (list_empty && type && strcmp(type,"unfinished") == 0))
               {
                 char * new_path = NULL, * new_key = oyjlStringCopy( t, NULL ), * tmp;
-                tmp = oyjlJsonEscape( new_key, OYJL_KEY | OYJL_NO_INDEX );
+                const char * txt;
+                tmp = oyjlStringEscape( new_key, OYJL_KEY | OYJL_NO_INDEX, 0 );
                 free(new_key); new_key = tmp; tmp = NULL;
                 oyjlStringAdd( &new_path, malloc, free, "org/freedesktop/oyjl/translations/%s/%s", lang, new_key );
                 val = oyjlTreeGetValue( trans, OYJL_CREATE_NEW | OYJL_NO_INDEX, new_path );
-                tmp = oyjlJsonEscape( tr, 0 );
-                if(tmp)
-                {
-                  oyjlValueSetString( val, t != tr ? tmp : "" );
-                  free(tmp);
-                }
+                txt = oyjlJsonEscape( tr, 0 );
+                if(txt)
+                  oyjlValueSetString( val, t != tr ? txt : "" );
                 free(new_path);
               }
             }

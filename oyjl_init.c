@@ -54,6 +54,7 @@ extern char * oyjl_term_color_;
 extern char * oyjl_term_color_f_;
 extern char * oyjl_term_color_html_;
 extern char * oyjl_term_color_plain_;
+extern char * oyjl_json_escape_;
 extern int oyjl_args_render_init_;
 extern void *  oyjl_args_render_lib_;
 #ifdef HAVE_DL
@@ -112,6 +113,11 @@ void oyjlLibRelease() {
   {
     free(oyjl_term_color_plain_);
     oyjl_term_color_plain_ = NULL;
+  }
+  if(oyjl_json_escape_)
+  {
+    free(oyjl_json_escape_);
+    oyjl_json_escape_ = NULL;
   }
 }
 int oyjlIsFileFull_ (const char* fullFileName, const char * read_mode);

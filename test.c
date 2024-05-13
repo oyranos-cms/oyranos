@@ -53,7 +53,8 @@
   TEST_RUN( testI18NSetup, "Internationalisation Setup", 1 ); \
   TEST_RUN( testI18N, "Internationalisation", 1 ); \
   TEST_RUN( testDataFormat, "Data Format Detection", 1 ); \
-  TEST_RUN( testJson, "JSON handling", 1 ); \
+  TEST_RUN( testJson, "JSON handling simple", 1 ); \
+  TEST_RUN( testJson2, "JSON handling", 1 ); \
   TEST_RUN( testJsonEscape, "JSON Escape handling", 1 ); \
   TEST_RUN( testFromJson, "Data Writers", 1 ); \
   TEST_RUN( testJsonRoundtrip, "Data Readers", 1 ); \
@@ -1179,6 +1180,15 @@ oyjlTESTRESULT_e testJson ()
   oyjlTreeFree( root );
   root = NULL;
 
+  return result;
+}
+
+oyjlTESTRESULT_e testJson2 ()
+{
+  oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
+
+  fprintf(stdout, "\n" );
+
   const char * json2 = "{\n\
   \"org\": {\n\
     \"free\": [{\n\
@@ -1192,29 +1202,112 @@ oyjlTESTRESULT_e testJson ()
     \"key_f\": false\n\
   }\n\
 }";
-  root = oyjlTreeParse( json2, error_buffer, 128 );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value\\.property", "data/key.property" );
-  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, "value.property", "data/key.property2" );
+  char error_buffer[128];
+  oyjl_val root = oyjlTreeParse( json2, error_buffer, 128 );
+  /* now some stressing with to be escaped letters */
+  const char * prepend = "[]/",
+             * sequence = "\\.property/[1]-?%+;&more";
+  char * key = NULL, * val = NULL;
+  char * key_escaped = NULL;
+  oyjlStringAdd( &key, 0,0, "%skey%s", prepend, sequence );
+  key_escaped = oyjlStringEscape( key, OYJL_KEY | OYJL_REGEXP, 0 );
+  oyjlStringAdd( &val, 0,0, "%svalue%s", prepend, sequence );
+  if(key_escaped && strcmp(key_escaped, "\\\\[]%37key\\\\\\\\\\.property%37\\\\[1]-\\?%\\+;&more") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlJsonEscape( \"%s\" ) = \"%s\"", oyjlTermColor(oyjlITALIC,key), oyjlTermColorF(oyjlBOLD, "%s",key_escaped) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlJsonEscape( \"%s\" ) = \"%s\"", oyjlTermColor(oyjlITALIC,key), oyjlTermColorF(oyjlBOLD, "%s",key_escaped) );
+  }
+  if(verbose)
+    fprintf( zout, "oyjlTreeSetStringF( val:\"%s\", path:data/\"s\"(orig:%s )\n", val, key_escaped, key );
+  free(key); key = NULL;
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, val, "data/%s", key_escaped );
+  free(key_escaped); key_escaped = NULL;
+  free(val); val = NULL;
+
+  sequence = ".property/[1]-?%+;&more";
+  oyjlStringAdd( &key, 0,0, "%skey%s", prepend, sequence );
+  key_escaped = oyjlStringEscape( key, OYJL_KEY | OYJL_REGEXP, 0 );
+  oyjlStringAdd( &val, 0,0, "%svalue%s", prepend, sequence );
+  if(key_escaped && strcmp(key_escaped, "\\\\[]%37key\\.property%37\\\\[1]-\\?%\\+;&more") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlJsonEscape( \"%s\" ) = \"%s\"", oyjlTermColor(oyjlITALIC,key), oyjlTermColorF(oyjlBOLD, "%s",key_escaped) );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlJsonEscape( \"%s\" ) = \"%s\"", oyjlTermColor(oyjlITALIC,key), oyjlTermColorF(oyjlBOLD, "%s",key_escaped) );
+  }
+  if(verbose)
+    fprintf( zout, "oyjlTreeSetStringF( val:\"%s\", path:data/\"s\"(orig:%s )\n", val, key_escaped, key );
+  free(key); key = NULL;
+  oyjlTreeSetStringF( root, OYJL_CREATE_NEW, val, "data/%s", key_escaped );
+  free(val); val = NULL;
+
   char * text = NULL;
   int level = 0;
   oyjlTreeToJson( root, &level, &text );
-  if(text && strlen( oyjlTermColorToPlain(text, 0) ) == 293)
-  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, strlen(text),
+  int len = strlen( oyjlTermColorToPlain(text, 0) );
+  if(text && len == 364)
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, len,
     "escape roundtrip" );
   } else
-  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(text),
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, len,
     "escape roundtrip" );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "key.property", "txt" )
   if(verbose && text)
     fprintf( zout, "%s\n", text );
+
+  int count;
+  char ** paths = oyjlTreeToPaths( root, 10, NULL, 0, &count );
+  int j = 0;
+  if( count == 13 &&
+      strcmp(paths[j++],"org") == 0 &&
+      strcmp(paths[j++],"org/free") == 0 &&
+      strcmp(paths[j++],"org/free/[0]") == 0 &&
+      strcmp(paths[12],key_escaped) == 0
+    )
+  { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, count,
+    "oyjlTreeToPaths( OYJL_PATH ) %s", key_escaped );
+  } else
+  { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, count,
+    "oyjlTreeToPaths( OYJL_PATH ) %s", key_escaped );
+  }
+  if(verbose)
+  for(j = 0; j < count; ++j)
+    fprintf( zout, "%d: %s\n", j, paths[j] );
+  free(key_escaped); key_escaped = NULL;
+
+const char * oyjlTreeGetString_      ( oyjl_val            v,
+                                       int                 flags OYJL_UNUSED,
+                                       const char        * path );
+  int flags = verbose ? OYJL_OBSERVE : 0;
+  j = 11;
+  if(strcmp(oyjlTreeGetString_( root, flags, paths[j] ),"value\\.property") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeGetString_( %s ) %s", verbose?oyjlTermColorF(oyjlITALIC,"[%d] %s", j, paths[j]):"", verbose?oyjlTermColor(oyjlBOLD,"value\\.property"):"" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeGetString_( %s ) %s", verbose?oyjlTermColorF(oyjlITALIC,"[%d] %s", j, paths[j]):"", verbose?oyjlTermColor(oyjlBOLD,"value\\.property"):"" );
+  }
+  ++j;
+  if(strcmp(oyjlTreeGetString_( root, flags, paths[j] ),"value.property") == 0)
+  { PRINT_SUB( oyjlTESTRESULT_SUCCESS,
+    "oyjlTreeGetString_( %s ) %s", verbose?oyjlTermColorF(oyjlITALIC,"[%d] %s", j, paths[j]):"", verbose?oyjlTermColor(oyjlBOLD,"value.property"):"" );
+  } else
+  { PRINT_SUB( oyjlTESTRESULT_FAIL,
+    "oyjlTreeGetString_( %s ) %s", verbose?oyjlTermColorF(oyjlITALIC,"[%d] %s", j, paths[j]):"", verbose?oyjlTermColor(oyjlBOLD,"value.property"):"" );
+  }
+  if(paths && count)
+    oyjlStringListRelease( &paths, count, free );
   oyjlTreeFree( root );
+
+
   root = oyjlTreeParse2( text, 0, __func__, NULL );
   char * tree_text = text; text = NULL;
 
-  int size = 0,
-      flags = verbose ? OYJL_OBSERVE : 0;
-  value = oyjlTreeSerialise( root, flags, &size );
+  int size = 0;
+  oyjl_val value = oyjlTreeSerialise( root, flags, &size );
   oyjlTreeFree( root );
   if(size > 10 && oyjlStringStartsWith( (const char*)value, "oiJS", 0 ))
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, size,
@@ -1231,9 +1324,8 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
     fprintf( zout, "parsed: \"%s\"\n", text );
   free(text); text = NULL;
 
-  int count;
-  char ** paths = oyjlTreeToPaths( value, 10000000, NULL, flags | OYJL_KEY, &count );
-  int j = 0;
+  paths = oyjlTreeToPaths( value, 10000000, NULL, flags | OYJL_KEY, &count );
+  j = 0;
   if(count == 8 &&
       strcmp(paths[j++],"org/free/[0]/s1key_a") == 0 &&
       strcmp(paths[j++],"org/free/[0]/s1key_b") == 0 &&
@@ -1250,9 +1342,6 @@ char *     oyjlTreeSerialisedPrint_  ( oyjl_val            v,
     for(j = 0; j < count; ++j)
       fprintf( zout, OYJL_DBG_FORMAT "%d: %s\n", OYJL_DBG_ARGS, j, paths[j] );
 
-const char * oyjlTreeGetString_      ( oyjl_val            v,
-                                       int                 flags OYJL_UNUSED,
-                                       const char        * path );
   j = 0;
   if( count == 8 &&
       strcmp(oyjlTreeGetString_( value, 0, paths[j++] ),"null") == 0 &&
@@ -1359,7 +1448,7 @@ oyjlTESTRESULT_e testEscapeJson      ( const char        * text_,
                                        oyjlTESTRESULT_e    result,
                                        oyjlTESTRESULT_e    fail )
 {
-  char * key = oyjlJsonEscape( text_, flags ), * text = 0;
+  char * key = oyjlStringEscape( text_, flags, 0 ), * text = NULL;
   int i = 0;
 
   if( strcmp( key, escaped ) == 0 )
@@ -1445,7 +1534,7 @@ oyjlTESTRESULT_e testEscapeJsonVal   ( const char        * text_,
                                        oyjlTESTRESULT_e    result,
                                        oyjlTESTRESULT_e    fail )
 {
-  char * value = oyjlJsonEscape( text_, flags ), * text = 0;
+  char * value = oyjlStringEscape( text_, flags, 0 ), * text = 0;
   int i = 0;
 
   if( strcmp( value, escaped ) == 0 )
