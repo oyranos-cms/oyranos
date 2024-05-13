@@ -167,3 +167,17 @@ device specific Informations (ICC profiles) und system wide settings.
 * ENABLE\_SHARED\_LIBS\_OYRANOS - default is ON
 * ENABLE\_STATIC\_LIBS\_OYRANOS - default is ON
 
+### Maintenance
+libOyjl is included as a subtree project. Its main use is in the Oyranos tree. However spin off projects use the OyjlArgs API already.
+Checkout of the Oyranos tree includes the Oyjl sources - simple.
+For git check in of changes in openicc/oyjl use the prefix in:
+    $ git commit openicc/oyjl -m "\*[oyjl]: XXX"
+For commiting to Oyjl project use:
+    $ git commit openicc/oyjl # to register the libOyjl changes
+    $ git stash # hide everything else. git is a bit picky here.
+    $ git subtree push -P openicc/oyjl oyjl master
+    $ git stash pop # restore the stash cache
+For pulling in/update openicc/oyjl from the Oyjl upstream:
+    $ git stash # hide everything else. git is a bit picky here.
+    $ git subtree pull -P openicc/oyjl oyjl master
+    $ git stash pop # restore the stash cache
