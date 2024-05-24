@@ -168,11 +168,12 @@ char *     oyjlRegExpEscape          ( const char        * text );
 int        oyjlRegExpReplace         ( char             ** text,
                                        const char        * regex,
                                        const char        * replacement );
-#define    OYJL_NO_INDEX               0x20 /**< @brief omit index resolving by squared brackets [] */
+#define    OYJL_NO_INDEX               0x20 /**< @brief omit index resolving by squared brackets [] and escape them */
 #define    OYJL_QUOTE                  0x40 /**< @brief quotation marks '"' */
-#define    OYJL_NO_BACKSLASH           0x80 /**< @brief skip back slash '\' */
+#define    OYJL_NO_BACKSLASH           0x80 /**< @brief skip back slash '\' escaping */
 #define    OYJL_REVERSE                0x100/**< @brief undo */
 #define    OYJL_REGEXP                 0x200/**< @brief handle regexp sequences */
+#define    OYJL_JSON_VALUE             0x400/**< @brief flat to obtain only keys */
 char *     oyjlStringEscape          ( const char        * string,
                                        int                 flags,
                                        void*            (* alloc)(size_t));

@@ -1369,6 +1369,8 @@ char *     oyjlRegExpEscape          ( const char        * text )
   return out;
 }
 
+
+#define OYJL_SLASH 0x10000
 /** @brief Convert strings to pass through JSON
  *
  *  @see oyjlJsonEscape()
@@ -1387,17 +1389,25 @@ char *     oyjlStringEscape          ( const char        * string,
   if(!string) return NULL;
   if(!alloc) alloc = malloc;
 
+  if(flags & OYJL_REGEXP && !(flags & OYJL_REVERSE)) { char * t = oyjlBT(0); fprintf( stderr, "%s", t ); free(t); exit(1); }
+  if(flags & OYJL_KEY)
+    flags |= OYJL_NO_INDEX | OYJL_SLASH | OYJL_NO_BACKSLASH;
+  if(flags & OYJL_JSON_VALUE)
+    flags |= OYJL_NO_BACKSLASH | OYJL_JSON;
+  if(flags & OYJL_JSON)
+    flags |= OYJL_NO_BACKSLASH | OYJL_QUOTE;
+
   tmp = oyjlStr_New(10,0,0);
   oyjlStr_Push( tmp, t );
   if(flags & OYJL_REVERSE)
   {
-    if(flags & OYJL_NO_INDEX || flags & OYJL_KEY)
+    if(flags & OYJL_NO_INDEX)
     {
       oyjlStr_Replace( tmp, "\\\\[", "[", 0, NULL );
       oyjlStr_Replace( tmp, "\\[", "[", 0, NULL );
       oyjlStr_Replace( tmp, "\\]", "]", 0, NULL );
     }
-    if(!(flags & OYJL_NO_BACKSLASH))
+    if(!(flags & OYJL_NO_BACKSLASH) || flags & OYJL_JSON)
       oyjlStr_Replace( tmp, "\\\\", "\\", 0, NULL );
     if(flags & OYJL_QUOTE)
       oyjlStr_Replace( tmp, "\\\"", "\"", 0, NULL );
@@ -1407,25 +1417,26 @@ char *     oyjlStringEscape          ( const char        * string,
     oyjlStr_Replace( tmp, "\\r", "\r", 0, NULL );
     oyjlStr_Replace( tmp, "\\t", "\t", 0, NULL );
     oyjlStr_Replace( tmp, "%33", "\033", 0, NULL );
-    if(flags & OYJL_KEY)
+    if(flags & OYJL_SLASH)
       oyjlStr_Replace( tmp, "%37", "/", NULL,NULL );
     /* undo RegExp */
-    oyjlStr_Replace( tmp, "\\.", ".", 0, NULL );
-    oyjlStr_Replace( tmp, "\\^", "^", 0, NULL );
-    oyjlStr_Replace( tmp, "\\$", "$", 0, NULL );
-    oyjlStr_Replace( tmp, "\\*", "*", 0, NULL );
-    oyjlStr_Replace( tmp, "\\+", "+", 0, NULL );
-    oyjlStr_Replace( tmp, "\\?", "?", 0, NULL );
-    oyjlStr_Replace( tmp, "\\(", "(", 0, NULL );
-    oyjlStr_Replace( tmp, "\\)", ")", 0, NULL );
-    oyjlStr_Replace( tmp, "\\{", "{", 0, NULL );
-    oyjlStr_Replace( tmp, "\\|", "|", 0, NULL );
+    if(flags & OYJL_REGEXP)
+    {
+      oyjlStr_Replace( tmp, "\\.", ".", 0, NULL );
+      oyjlStr_Replace( tmp, "\\^", "^", 0, NULL );
+      oyjlStr_Replace( tmp, "\\$", "$", 0, NULL );
+      oyjlStr_Replace( tmp, "\\*", "*", 0, NULL );
+      oyjlStr_Replace( tmp, "\\+", "+", 0, NULL );
+      oyjlStr_Replace( tmp, "\\?", "?", 0, NULL );
+      oyjlStr_Replace( tmp, "\\(", "(", 0, NULL );
+      oyjlStr_Replace( tmp, "\\)", ")", 0, NULL );
+      oyjlStr_Replace( tmp, "\\{", "{", 0, NULL );
+      oyjlStr_Replace( tmp, "\\|", "|", 0, NULL );
+    }
   } else
   {
-    if(!(flags & OYJL_NO_BACKSLASH) || !(flags & OYJL_REGEXP))
+    if(!(flags & OYJL_NO_BACKSLASH) || flags & OYJL_JSON)
       oyjlStr_Replace( tmp, "\\", "\\\\", oyjlNoBracketCb_, NULL );
-    if(flags & OYJL_REGEXP)
-      oyjlRegExpEscape2_( tmp );
     if(flags & OYJL_QUOTE)
       oyjlStr_Replace( tmp, "\"", "\\\"", 0, NULL );
     oyjlStr_Replace( tmp, "\b", "\\b", 0, NULL );
@@ -1434,11 +1445,9 @@ char *     oyjlStringEscape          ( const char        * string,
     oyjlStr_Replace( tmp, "\r", "\\r", 0, NULL );
     oyjlStr_Replace( tmp, "\t", "\\t", 0, NULL );
     oyjlStr_Replace( tmp, "\033", "%33", 0, NULL );
-    if(flags & OYJL_KEY)
+    if(flags & OYJL_SLASH)
       oyjlStr_Replace( tmp, "/", "%37", NULL,NULL );
-    if(flags & OYJL_REGEXP)
-      oyjlStr_Replace( tmp, "\\[", "\\\\[", 0, NULL );
-    else if(flags & OYJL_NO_INDEX || flags & OYJL_KEY)
+    if(flags & OYJL_NO_INDEX)
     {
       oyjlStr_Replace( tmp, "[", "\\\\[", 0, NULL );
       //oyjlStr_Replace( tmp, "]", "\\\\]", 0, NULL );

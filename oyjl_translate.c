@@ -157,17 +157,17 @@ void oyjlTreeSortStrings             ( oyjl_val          * root,
   int count = 0, i, r;
   oyjl_val sorted, root_ = *root;
   char ** paths = oyjlTreeToPaths( root_, 1000000, NULL, OYJL_KEY, &count );
+  const char * base_key = "org/freedesktop/oyjl/translations";
 
   qsort( paths, count, sizeof(char*), oyjlStrcmpWrap_ );
 
-  sorted = oyjlTreeNew("org/freedesktop/oyjl/translations");
+  sorted = oyjlTreeNew(base_key);
   for(i = 0; i < count; ++i)
   {
-    const char * path = paths[i], * t;
-    t = oyjlTreeGetString_( root_, strstr(path,"cs_CZ") != NULL?OYJL_OBSERVE:0, path );
-    r = oyjlTreeSetStringF( sorted, OYJL_CREATE_NEW, t, "%s", path );
-    if(verbose || r)
-      fprintf( stderr, OYJL_DBG_FORMAT "path[%d]: %s:%s%s\n", OYJL_DBG_ARGS, i, path, t, r?oyjlTermColorF(oyjlNO_MARK," r=%d",r):"" );
+    const char * path = paths[i];
+    oyjl_val src = oyjlTreeGetValue( root_,  strstr(path,"cs_CZ") != NULL?OYJL_OBSERVE:0, path ),
+             v   = oyjlTreeGetValue( sorted, OYJL_CREATE_NEW,                             path );
+                   oyjlValueCopy( v, src );
   }
   oyjlTreeFree( root_ );
   *root = sorted; sorted = NULL;

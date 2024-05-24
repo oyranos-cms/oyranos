@@ -1,4 +1,4 @@
-/** @file oyjl_io_sgare.c
+/** @file oyjl_io_share.c
  *
  *  oyjl - file i/o and other basic helpers
  *

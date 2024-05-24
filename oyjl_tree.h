@@ -303,29 +303,29 @@ char *     oyjlTreeGetPath           ( oyjl_val            v,
 #define    OYJL_CREATE_NEW             0x02   /**< @brief  flag to allocate a new tree node, in case it is not inside */
 oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
                                        int                 flags,
-                                       const char        * path );
+                                       const char        * xpath );
 oyjl_val oyjlTreeGetNewValueFromArray( oyjl_val            root,
                                        const char        * name,
                                        oyjl_val          * array_ret,
                                        int               * pos_ret );
 oyjl_val   oyjlTreeGetValueF         ( oyjl_val            v,
                                        int                 flags,
-                                       const char        * format,
+                                       const char        * xformat,
                                                            ... );
 int        oyjlTreeSetStringF        ( oyjl_val            root,
                                        int                 flags,
                                        const char        * value_text,
-                                       const char        * format,
+                                       const char        * xformat,
                                                            ... );
 int        oyjlTreeSetDoubleF        ( oyjl_val            root,
                                        int                 flags,
                                        double              value,
-                                       const char        * format,
+                                       const char        * xformat,
                                                            ... );
 int        oyjlTreeSetIntF           ( oyjl_val            root,
                                        int                 flags,
                                        long long           value,
-                                       const char        * format,
+                                       const char        * xformat,
                                                            ... );
 oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
                                        int                 flags,
@@ -357,9 +357,6 @@ int        oyjlDataFormat            ( const char        * text );
 const char * oyjlDataFormatToString  ( int                 format );
 const char*oyjlJsonEscape            ( const char        * in,
                                        int                 flags );
-char *     oyjlStringEscape          ( const char        * string,
-                                       int                 flags,
-                                       void*            (* alloc)(size_t));
 
 #define OYJL_OBSERVE                   0x200000 /**< @brief be verbose on change */
 #define OYJL_IS_OBSERVED(v) (((v)!= NULL) && ((v)->u.number.flags & OYJL_OBSERVE))

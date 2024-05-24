@@ -2034,7 +2034,7 @@ oyjlTESTRESULT_e testTree ()
   oyjlTreeSetStringF( catalog, OYJL_CREATE_NEW, "prog -i test.json ///mein/Pfad/", "org/freedesktop/oyjl/translations/de/prog -i test.json %%37%%37%%37my%%37path%%37" );
 
   oyjl_val static_catalog = oyjlTreeSerialise( catalog, flags, &size );
-  if( static_catalog && size == 944 )
+  if( static_catalog && size == 928 )
   { PRINT_SUB_INT( oyjlTESTRESULT_SUCCESS, size,
     "oyjlTreeSerialise() oiJS" );
   } else

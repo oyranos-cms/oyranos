@@ -806,13 +806,25 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ${MEMCHECK} ./oyjl-test-extra-static
         DEPENDS oyjl-test-extra-static check
         COMMENT "Test Extra" VERBATIM )
-  ENDIF()
-  ADD_CUSTOM_TARGET( check-fast
+    ADD_CUSTOM_TARGET( check-fast
         COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-test
         COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-args
         COMMAND ./oyjl-args-ui -h
         COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static
         COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale ./oyjl-test-static
+        DEPENDS oyjl-test-test
+        DEPENDS oyjl-test-args
+        DEPENDS oyjl-args-ui
+        DEPENDS oyjl-test-core-static
+        DEPENDS oyjl-test-static
+        COMMENT "Check Fast" VERBATIM )
+  ELSE()
+    ADD_CUSTOM_TARGET( check-fast
+        COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-test
+        COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-args
+        COMMAND ./oyjl-args-ui -h
+        COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-core-static
+        COMMAND LOCPATH=${CMAKE_BINARY_DIR}/locale ./oyjl-test-static;
         COMMAND OYJL_LOCALEDIR=${CMAKE_BINARY_DIR}/locale ./oyjl-test-extra-static
         DEPENDS oyjl-test-test
         DEPENDS oyjl-test-args
@@ -821,6 +833,7 @@ IF( ENABLE_TESTS_${PROJECT_UP_NAME} )
         DEPENDS oyjl-test-static
         DEPENDS oyjl-test-extra-static
         COMMENT "Check Fast" VERBATIM )
+  ENDIF()
   # coverage testing
   IF(USE_GCOV AND CMAKE_COMPILER_IS_GNUCC)
     MESSAGE("testing coverage using gcc's gcov; try target: coverage")
