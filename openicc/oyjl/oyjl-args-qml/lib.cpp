@@ -146,16 +146,6 @@ int oyjlArgsQmlStart__               ( int                 argc,
       QObject::connect( &mgr, SIGNAL(commandsChanged(QVariant)), o, SIGNAL(commandsChanged(QVariant)) );
       QObject::connect( &mgr, SIGNAL(debugChanged(QVariant)), o, SIGNAL(debugChanged(QVariant)) );
 
-#if defined(QT_DBUS_LIB) && defined(OPENICC_LIB)
-      if( QDBusConnection::sessionBus().connect( QString(), "/org/libelektra/configuration", "org.libelektra", QString(),
-                                                 m, SLOT( setNightInfo( QDBusMessage ) )) )
-      {
-          QObject::connect( &mgr, SIGNAL(nightInfo(QVariant)), o, SIGNAL(nightInfo(QVariant)) );
-          LOG( QString("connect to /org/libelektra/configuration") );
-      }
-      emit mgr.nightInfo( mgr.isNight() ); // update QML
-#endif
-
       app_init = 1;
       if(app_debug)
       {

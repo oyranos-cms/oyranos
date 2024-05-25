@@ -109,7 +109,7 @@ char *         oyjlLanguage          ( const char        * loc )
  */
 char *         oyjlCountry           ( const char        * loc )
 {
-  if(strchr(loc,'_') != NULL)
+  if(loc && strchr(loc,'_') != NULL)
   {
     char * t = strdup( strchr(loc,'_') + 1 );
     if(strchr(t,'.') != NULL)

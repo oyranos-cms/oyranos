@@ -71,7 +71,6 @@ DYNAMIC_LIB_ARGS { # dlopen libOyjlArgsQml
     LIBS += -L../../../build-oyjl
     LIBS += -L../../../build-openicc/src/libopenicc
     DEFINES += USE_GETTEXT
-    DEFINES += OPENICC_LIB
     LIBS += -lopenicc-static
     LIBS += -loyjl-static
     LIBS += -lxml2

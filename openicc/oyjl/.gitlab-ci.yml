@@ -16,15 +16,18 @@ build:
   # install the necessary build tools when needed
   before_script:
     - apt-get update -qq
-    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind lcov pkg-config
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind lcov pkg-config qtbase5-dev qttools5-dev libqt5svg5-dev qtdeclarative5-dev libmicrohttpd-dev
 
   script:
-    - cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF
+    - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF ..
     - make
     #- (cd openicc/oyjl; mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF ..; make; make check; OYJL_DEBUG=1 ./oyjl-args-ui)
   artifacts:
     paths:
-      - oyjl-test-static
+      - build/oyjl-test-test
+      - build/oyjl-test-args
+      - build/oyjl-test-core-static
+      - build/oyjl-test-static
 
       # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
   #cache:
@@ -61,6 +64,11 @@ test:
   stage: test
   before_script:
     - apt-get update -qq
-    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind lcov pkg-config
+    - apt-get install -y locales cmake pkg-config libxml2-dev libyajl-dev libdbus-1-dev gettext valgrind lcov pkg-config qtbase5-dev qttools5-dev libqt5svg5-dev qtdeclarative5-dev libmicrohttpd-dev
   script:
+    - cd build && cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCU_OYJL:BOOL=OFF ..
+    - make
+    - ./oyjl-test-test
+    - ./oyjl-test-args
+    - ./oyjl-test-core-static -v
     - ./oyjl-test-static

@@ -3,7 +3,7 @@
  *  oyjl - Basic string C API's
  *
  *  @par Copyright:
- *            2010-2023 (C) Kai-Uwe Behrmann
+ *            2010-2024 (C) Kai-Uwe Behrmann
  *
  *  @brief    OyjlCore API provides a platformindependent C interface for string helpers.
  *  @author   Kai-Uwe Behrmann <ku.b@gmx.de>
@@ -51,9 +51,9 @@ char **    oyjlStringSplit2          ( const char        * text,
 int        oyjlStringFind            ( const char        * text,
                                        const char        * pattern,
                                        int                 flags );
-#define OYJL_REMOVE                    0x20
-#define OYJL_TO_JSON                   0x40
-#define OYJL_TO_TEXT                   0x80
+#define OYJL_TO_JSON                   0x20
+#define OYJL_TO_TEXT                   0x40
+#define OYJL_REMOVE                    0x20000
 int        oyjlStringSplitFind       ( const char        * set,
                                        const char        * delimiters,
                                        const char        * pattern,
@@ -168,6 +168,15 @@ char *     oyjlRegExpEscape          ( const char        * text );
 int        oyjlRegExpReplace         ( char             ** text,
                                        const char        * regex,
                                        const char        * replacement );
+#define    OYJL_NO_INDEX               0x20 /**< @brief omit index resolving by squared brackets [] and escape them */
+#define    OYJL_QUOTE                  0x40 /**< @brief quotation marks '"' */
+#define    OYJL_NO_BACKSLASH           0x80 /**< @brief skip back slash '\' escaping */
+#define    OYJL_REVERSE                0x100/**< @brief undo */
+#define    OYJL_REGEXP                 0x200/**< @brief handle regexp sequences */
+#define    OYJL_JSON_VALUE             0x400/**< @brief flat to obtain only keys */
+char *     oyjlStringEscape          ( const char        * string,
+                                       int                 flags,
+                                       void*            (* alloc)(size_t));
 int        oyjlStringStartsWith      ( const char        * text,
                                        const char        * pattern,
                                        int                 flags );

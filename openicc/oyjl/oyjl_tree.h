@@ -303,29 +303,29 @@ char *     oyjlTreeGetPath           ( oyjl_val            v,
 #define    OYJL_CREATE_NEW             0x02   /**< @brief  flag to allocate a new tree node, in case it is not inside */
 oyjl_val   oyjlTreeGetValue          ( oyjl_val            v,
                                        int                 flags,
-                                       const char        * path );
+                                       const char        * xpath );
 oyjl_val oyjlTreeGetNewValueFromArray( oyjl_val            root,
                                        const char        * name,
                                        oyjl_val          * array_ret,
                                        int               * pos_ret );
 oyjl_val   oyjlTreeGetValueF         ( oyjl_val            v,
                                        int                 flags,
-                                       const char        * format,
+                                       const char        * xformat,
                                                            ... );
 int        oyjlTreeSetStringF        ( oyjl_val            root,
                                        int                 flags,
                                        const char        * value_text,
-                                       const char        * format,
+                                       const char        * xformat,
                                                            ... );
 int        oyjlTreeSetDoubleF        ( oyjl_val            root,
                                        int                 flags,
                                        double              value,
-                                       const char        * format,
+                                       const char        * xformat,
                                                            ... );
 int        oyjlTreeSetIntF           ( oyjl_val            root,
                                        int                 flags,
                                        long long           value,
-                                       const char        * format,
+                                       const char        * xformat,
                                                            ... );
 oyjl_val   oyjlTreeSerialise         ( oyjl_val            v,
                                        int                 flags,
@@ -355,12 +355,7 @@ int        oyjlPathMatch             ( const char        * path,
 
 int        oyjlDataFormat            ( const char        * text );
 const char * oyjlDataFormatToString  ( int                 format );
-#define    OYJL_NO_INDEX               0x20 /**< @brief omit index resolving by squared brackets [] */
-#define    OYJL_QUOTE                  0x40 /**< @brief quotation marks '"' */
-#define    OYJL_NO_BACKSLASH           0x80 /**< @brief skip back slash '\' */
-#define    OYJL_REVERSE                0x100/**< @brief undo */
-#define    OYJL_REGEXP                 0x200/**< @brief handle regexp sequences */
-char *     oyjlJsonEscape            ( const char        * in,
+const char*oyjlJsonEscape            ( const char        * in,
                                        int                 flags );
 
 #define OYJL_OBSERVE                   0x200000 /**< @brief be verbose on change */

@@ -898,7 +898,7 @@ oyjlTESTRESULT_e testArgs()
     "oyjlUi_ToMarkdown() %lu", text?strlen(text):0 );
   }
   OYJL_TEST_WRITE_RESULT( text, strlen(text), "oyjlUi_ToMarkdown", "txt" )
-  if(verbose && text)
+  if((oy_test_last_result != oyjlTESTRESULT_SUCCESS || verbose) && text)
     fprintf( zout, "%s\n", text );
   if(text) {free(text); text = NULL;}
 

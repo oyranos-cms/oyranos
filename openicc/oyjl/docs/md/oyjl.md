@@ -45,7 +45,7 @@ The oyjl program can be used to parse, filter sub trees, select values and modif
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>FILENAME</em> ...</td> <td>File or Stream<br />A JSON file name or a input stream like "stdin". </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-x</strong>|<strong>--xpath</strong>=<em>PATH</em></td> <td>Path specifier<br />The path consists of slash '/' separated terms. Each term can be a key name or a square bracketed index. A empty term is used for a search inside a tree.  </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong>=<em>STRING</em></td> <td>Set a key name to a value  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong>=<em>STRING</em></td> <td>Set a key from "xpath" option to a value<br />Use "oyjl-remove" to remove the key.  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--plain</strong></td> <td>No Markup</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--try-format</strong>=<em>FORMAT</em></td> <td>Try to find data format, even with offset.
