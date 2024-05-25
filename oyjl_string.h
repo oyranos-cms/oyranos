@@ -51,9 +51,9 @@ char **    oyjlStringSplit2          ( const char        * text,
 int        oyjlStringFind            ( const char        * text,
                                        const char        * pattern,
                                        int                 flags );
-#define OYJL_REMOVE                    0x20
-#define OYJL_TO_JSON                   0x40
-#define OYJL_TO_TEXT                   0x80
+#define OYJL_TO_JSON                   0x20
+#define OYJL_TO_TEXT                   0x40
+#define OYJL_REMOVE                    0x20000
 int        oyjlStringSplitFind       ( const char        * set,
                                        const char        * delimiters,
                                        const char        * pattern,

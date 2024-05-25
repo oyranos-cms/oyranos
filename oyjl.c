@@ -149,7 +149,10 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
       if(verbose)
         fprintf(stderr, "processed:\t\"%s\"\n", error_name);
 
-      value = oyjlTreeGetValue( root_, 0, xpath_full );
+      if(flags & OYJL_REMOVE)
+        oyjlTreeClearValue( root_, xpath_full );
+      else
+        value = oyjlTreeGetValue( root_, 0, xpath_full );
 
       if(verbose)
         fprintf(stderr, "%s xpath \"%s\"\n", value?"found":"found not", xpath);
@@ -268,7 +271,7 @@ int myMain( int argc, const char ** argv )
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&key}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   NULL,"paths",        NULL,     _("Paths"),    _("Print all matching paths"),NULL,NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&paths}, NULL},
-    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","set",           NULL,     _("Set Value"),_("Set a key name to a value"),NULL,_("STRING"),
+    {"oiwi", OYJL_OPTION_FLAG_EDITABLE,  "s","set",           NULL,     _("Set Value"),_("Set a key from \"xpath\" option to a value"),_("Use \"oyjl-remove\" to remove the key."),_("STRING"),
         oyjlOPTIONTYPE_CHOICE,   {0},                oyjlSTRING,    {.s=&set}, NULL},
     {"oiwi", OYJL_OPTION_FLAG_NO_DASH,   "t","type",          NULL,     _("Type"),     _("Get node type"),          NULL,NULL,
         oyjlOPTIONTYPE_NONE,     {0},                oyjlINT,       {.i=&type}, NULL},
@@ -432,6 +435,8 @@ int myMain( int argc, const char ** argv )
         oyjl_val root_union = i_files_n > 1 && !paths ? oyjlTreeNew("") : NULL;
         if(detect && strcmp(detect, ",") == 0)
           flags |= OYJL_DECIMAL_SEPARATOR_COMMA;
+        if(set && strcmp(set,"oyjl-remove") == 0)
+          flags |= OYJL_REMOVE;
         for(i = 0; i < i_files_n; ++i)
         {
           int path_list_n = 0, j;
