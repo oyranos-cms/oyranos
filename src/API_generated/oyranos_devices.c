@@ -1533,7 +1533,7 @@ OYAPI int OYEXPORT oyDeviceToJSON    ( oyConfig_s        * device,
 
           if(value && count > j)
           {
-            char * escaped = oyjlJsonEscape( value, OYJL_QUOTE | OYJL_NO_BACKSLASH );
+            char * escaped = oyjlStringEscape( value, OYJL_QUOTE | OYJL_NO_BACKSLASH, 0 );
             if(j)
               oyStringAddPrintf_( &t, oyAllocateFunc_, oyDeAllocateFunc_,
                                   ",\n" );
