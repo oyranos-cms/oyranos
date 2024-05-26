@@ -1,8 +1,14 @@
 #include "oyCMMapi6_s.h"
+#include "oyranos_alpha_internal.h"
 #include "oyranos_module_internal.h"
 #include "oyranos_cache.h"
 #include "oyranos_debug.h"
+#include "oyranos_internal.h"
+#include "oyranos_sentinel.h"
 #include "oyCMMapi5_s_.h"
+#include "oyObject_s.h"
+#include "oyObject_s_.h"
+
 #include <oyjl.h>
 
 int main( int argc OY_UNUSED, char ** argv OY_UNUSED)
