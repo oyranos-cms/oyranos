@@ -163,18 +163,18 @@ Wandle Oyjl UI JSON nach C übersetzbare Texte für gettext Werkzeuge und übers
 
 <h2>AUTOR <a href="#toc" name="author">&uarr;</a></h2>
 
-Kai-Uwe Behrmann http://www.oyranos.org
+Kai-Uwe Behrmann 
 
 <h2>KOPIERRECHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*Copyright © 2017-2022 Kai-Uwe Behrmann*
+*Copyright © 2017-2024 Kai-Uwe Behrmann*
 
 
 <a name="license"></a>
 ### Lizenz
-newBSD <a href="http://www.oyranos.org">http://www.oyranos.org</a>
+MIT <a href="https://opensource.org/license/mit">https://opensource.org/license/mit</a>
 
 <h2>FEHLER <a href="#toc" name="bugs">&uarr;</a></h2>
 
-<a href="https://www.gitlab.com/oyranos/oyranos/issues">https://www.gitlab.com/oyranos/oyranos/issues</a>
+<a href="https://www.gitlab.com/beku/oyjl/issues">https://www.gitlab.com/beku/oyjl/issues</a>
 
