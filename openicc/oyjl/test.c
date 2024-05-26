@@ -146,7 +146,7 @@ int          oyjlMessageFunc         ( int/*oyjlMSG_e*/    error_code,
                                        ... );
 oyjlTESTRESULT_e testI18NSetup()
 {
-  const char * clang, * plain;
+  const char * clang;
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
@@ -247,7 +247,7 @@ oyjlTESTRESULT_e testI18NSetup()
 
 oyjlTESTRESULT_e testI18N()
 {
-  const char * clang, * plain;
+  const char * plain;
   oyjlTESTRESULT_e result = oyjlTESTRESULT_UNKNOWN;
 
   fprintf(stdout, "\n" );
@@ -1190,7 +1190,7 @@ void testEscapeJsonPrintFlags        ( int                 flags,
 {
   char * t = NULL, * t2 = NULL, * t3 = NULL, * t4 = NULL, * t5 = NULL, * t6 = NULL, * t7 = NULL;
 
-  fprintf( fp, "%s flags: %s%s%s%s%s%s%s%s\n", oyjlFunctionPrint(func, strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__, line), oyjlTermColorF( oyjlBLUE, "%d", flags),
+  fprintf( fp, "%s flags: %s%s%s%s%s%s%s%s%s\n", oyjlFunctionPrint(func, strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__, line), oyjlTermColorF( oyjlBLUE, "%d", flags),
       flags & OYJL_JSON   ? oyjlTermColorFPtr(oyjlNO_MARK, &t, " OYJL_JSON:%d",     OYJL_JSON ) : "",
       flags & OYJL_KEY    ? oyjlTermColorFPtr(oyjlNO_MARK, &t, " OYJL_KEY:%d",     OYJL_KEY ) : "",
       flags & OYJL_NO_INDEX    ? oyjlTermColorFPtr(oyjlNO_MARK, &t2, " OYJL_NO_INDEX:%d",     OYJL_NO_INDEX ) : "",
@@ -1472,7 +1472,7 @@ oyjlTESTRESULT_e testJson2 ()
     "oyjlStringEscape( \"%s\", OYJL_KEY ) = \"%s\"", oyjlTermColor(oyjlITALIC,key), oyjlTermColorF(oyjlBOLD, "%s",key_escaped) );
   }
   if(verbose)
-    fprintf( zout, "oyjlTreeSetStringF( val:\"%s\", path:data/\"s\"(orig:%s )\n", val, key_escaped, key );
+    fprintf( zout, "oyjlTreeSetStringF( val:\"%s\", path:data/\"s\"(orig:%s ) %s\n", val, key_escaped, key );
   free(key); key = NULL;
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, val, "data/%s", key_escaped );
   free(key_escaped); key_escaped = NULL;
@@ -1490,7 +1490,7 @@ oyjlTESTRESULT_e testJson2 ()
     "oyjlJsonEscape(   \"%s\", OYJL_KEY ) = \"%s\"", oyjlTermColor(oyjlITALIC,key), oyjlTermColorF(oyjlBOLD, "%s",key_escaped) );
   }
   if(verbose)
-    fprintf( zout, "oyjlTreeSetStringF( val:\"%s\", path:data/\"s\"(orig:%s )\n", val, key_escaped, key );
+    fprintf( zout, "oyjlTreeSetStringF( val:\"%s\", path:data/\"s\"(orig:%s ) %s\n", val, key_escaped, key );
   free(key); key = NULL;
   oyjlTreeSetStringF( root, OYJL_CREATE_NEW, val, "data/%s", key_escaped );
   free(val); val = NULL;
@@ -2342,7 +2342,7 @@ oyjlTESTRESULT_e testUiRoundtrip ()
 
   fprintf(stdout, "\n" );
 
-  const char * loc = setlocale(LC_ALL,"en_GB.UTF8");
+  setlocale(LC_ALL,"en_GB.UTF8");
   oyjlLang( "en_GB.UTF8" );
 
   int output = 0;
@@ -2482,7 +2482,7 @@ oyjlTESTRESULT_e testUiTranslation ()
   fprintf(stdout, "\n" );
 
   oyjlTranslation_s * trc = NULL; oyjlTranslation_Unset( OYJL_DOMAIN );
-  const char * loc = setlocale(LC_ALL,"en_GB.UTF8");
+  setlocale(LC_ALL,"en_GB.UTF8");
   oyjlLang("en_GB.UTF8");
 
   int output = 0;
