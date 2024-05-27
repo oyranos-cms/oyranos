@@ -470,7 +470,7 @@ oyjlTESTRESULT_e testI18N()
   size = 0;
   oyjl_export = txt = oyjlReadCommandF( &size, "r", malloc, "LANG=C PATH=%s:$PATH %s --export export", OYJL_BUILDDIR, "oyjl" );
   plain = oyjlTermColorToPlain(txt, 0);
-  if(!txt || strlen(plain) != 27165)
+  if(!txt || strlen(plain) != 27151)
   { PRINT_SUB_INT( oyjlTESTRESULT_FAIL, strlen(plain),
     "LANG=C oyjl --export export" );
   }
@@ -582,7 +582,7 @@ oyjlTESTRESULT_e testI18N()
   }
 
   int n = 1;
-  size_t test_translate_json = 27587;
+  size_t test_translate_json = 27573;
   loc = "de_DE";
   oyjlTranslation_SetLocale( trc, loc );
   txt = testTranslateJson( oyjl_export, trc, key_list, n, &clck );
@@ -2808,7 +2808,7 @@ oyjlTESTRESULT_e testToolOyjl ()
     { "paths -i i18n_de_DE.c -x '////'",            291,  NULL,       NULL },
     { "format -i i18n_cs_CZ.json",                  5,    "JSON",     NULL },
     { "format -i none.file",                        9,    "no input", NULL },
-    { "-X man > oyjl.1 && cat oyjl.1",              8241, NULL,       NULL },
+    { "-X man > oyjl.1 && cat oyjl.1",              8222, NULL,       NULL },
     { "-R cli > oyjl.txt && cat oyjl.txt",          0,    NULL,       NULL }
   };
   int count = 15;
@@ -2859,12 +2859,12 @@ msgstr \"\"\n\
   }
 
   oyjl_command_test_s commands_oyjl_translate[] = {
-    { "-X export > oyjl-translate-ui.json && cat oyjl-translate-ui.json", 27994,  NULL,       NULL },
-    { "-e -i oyjl-translate-ui.json -o i18n.c -f '_(\"%s\");\n' -k name,description,help && cat i18n.c", 4861,  NULL,       NULL },
+    { "-X export > oyjl-translate-ui.json && cat oyjl-translate-ui.json", 27980,  NULL,       NULL },
+    { "-e -i oyjl-translate-ui.json -o i18n.c -f '_(\"%s\");\n' -k name,description,help && cat i18n.c", 4833,  NULL,       NULL },
 #ifdef OYJL_USE_GETTEXT
-    { "-a -i oyjl-translate-ui.json -o oyjl-translate-ui-i18n.json -k name,description,help -d oyjl -p locale -l=de_DE.UTF-8,cs_CZ.UTF-8 && cat oyjl-translate-ui-i18n.json", loc==NULL?0:37633, NULL,       NULL },
+    { "-a -i oyjl-translate-ui.json -o oyjl-translate-ui-i18n.json -k name,description,help -d oyjl -p locale -l=de_DE.UTF-8,cs_CZ.UTF-8 && cat oyjl-translate-ui-i18n.json", loc==NULL?0:37619, NULL,       NULL },
 #endif
-    { "-V; xgettext --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=i18n --package-version=1.0.0 -o i18n.pot i18n.c && cat i18n.pot", 8803,  NULL,       "xgettext ... i18n.c -> i18n.pot; hand translate -> de.po(prepared example)" },
+    { "-V; xgettext --add-comments --keyword=gettext --flag=gettext:1:pass-c-format --keyword=_ --flag=_:1:pass-c-format --keyword=N_ --flag=N_:1:pass-c-format  --copyright-holder='Kai-Uwe Behrmann'  --msgid-bugs-address='ku.b@gmx.de' --from-code=utf-8 --package-name=i18n --package-version=1.0.0 -o i18n.pot i18n.c && cat i18n.pot", 8779,  NULL,       "xgettext ... i18n.c -> i18n.pot; hand translate -> de.po(prepared example)" },
     { "-c -i de.po --locale=de_DE -o i18n-de_DE.json && cat i18n-de_DE.json", 320, NULL,       NULL }
   };
   int count = 4;
