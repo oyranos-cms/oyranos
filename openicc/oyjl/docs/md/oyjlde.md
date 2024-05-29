@@ -45,7 +45,7 @@ Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl un
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-i</strong>|<strong>--input</strong>=<em>DATEINAME</em> ...</td> <td>Datei oder Datenstrom<br />Ein JSON-Dateiname oder Eingangsdatenstrom wie "stdin" </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-x</strong>|<strong>--xpath</strong>=<em>PFAD</em></td> <td>Pfadangabe<br />Der Pfad besteht aus Namen, welche durch Schrägstrich '/' getrennt sind. Jeder Name kann ein Schlüsselname sein oder ein Index in eckigen Klammern. Ein leerer Name wird für die Suche innerhalb eines Baumes benutzt.  </td>
  </tr>
- <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong>=<em>TEXT</em></td> <td>Set a key from "xpath" option to a value<br />Benutze "oyjl-remove" zum entfernen des Schlüssels.  </td>
+ <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-s</strong>|<strong>--set</strong>=<em>TEXT</em></td> <td>Setze Wert des "xpath" Schlüssels.<br />Benutze "oyjl-remove" zum entfernen des Schlüssels.  </td>
  </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-p</strong>|<strong>--plain</strong></td> <td>Keine Textformatierung</td> </tr>
  <tr><td style='padding-left:1em;padding-right:1em;vertical-align:top;width:25%'><strong>-r</strong>|<strong>--try-format</strong>=<em>FORMAT</em></td> <td>Versuche ein Datenformat zu finden, auch mit Versatz.
@@ -228,18 +228,18 @@ Das oyjl Programm unterstützt Einlesen, Filtern von Untermengen, Wertauswahl un
 
 <h2>AUTOR <a href="#toc" name="author">&uarr;</a></h2>
 
-Kai-Uwe Behrmann http://www.oyranos.org
+Kai-Uwe Behrmann 
 
 <h2>KOPIERRECHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*Copyright © 2017-2022 Kai-Uwe Behrmann*
+*Copyright © 2017-2024 Kai-Uwe Behrmann*
 
 
 <a name="license"></a>
 ### Lizenz
-newBSD <a href="http://www.oyranos.org">http://www.oyranos.org</a>
+MIT <a href="https://opensource.org/license/mit">https://opensource.org/license/mit</a>
 
 <h2>FEHLER <a href="#toc" name="bugs">&uarr;</a></h2>
 
-<a href="https://www.gitlab.com/oyranos/oyranos/issues">https://www.gitlab.com/oyranos/oyranos/issues</a>
+<a href="https://www.gitlab.com/beku/oyjl/issues">https://www.gitlab.com/beku/oyjl/issues</a>
 
