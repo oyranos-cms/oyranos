@@ -10,7 +10,7 @@ SET (TARGET_INCLUDE_FOLDER
 
 IF(NOT CMAKE_MODULES_INSTALL_DIR)
   SET (CMAKE_MODULES_INSTALL_DIR
-		"${CMAKE_INSTALL_LIBDIR}/cmake/${PACKAGE_NAME}"
+		"${CMAKE_INSTALL_LIBDIR}/cmake/oyranos"
 		CACHE STRING
 		"The folder where to install cmake files."
     )
