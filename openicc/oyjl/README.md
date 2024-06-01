@@ -2,7 +2,7 @@ Oyjl README
 ===========
 [![Pipeline](https://gitlab.com/beku/oyjl/badges/master/pipeline.svg)](https://gitlab.com/beku/oyjl/-/pipelines)
 [![Documentation](https://codedocs.xyz/oyranos-cms/oyranos.svg)](https://codedocs.xyz/oyranos-cms/oyranos/group__oyjl.html)
-[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](http://www.opensource.org/licenses/mit-license.php)
+[![License](docs/mit-license.svg)](http://www.opensource.org/licenses/mit-license.php)
 
 ![](oyjl-args-qml/images/logo.png)
 
