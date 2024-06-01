@@ -2796,6 +2796,8 @@ oyjlTESTRESULT_e testToolOyjl ()
 
   oyjl_command_test_s commands_oyjl[] = {
     { "json -i i18n_de_DE.c -i i18n_cs_CZ.json",    432,  NULL,       NULL },
+    { "json -i i18n_de_DE.c -i i18n_cs_CZ.json -w oiJS", 2474,  NULL },
+    { "json -i i18n_de_DE.c -i i18n_cs_CZ.json -w oiJS | oyjl json -i=-", 432, NULL,NULL },
     { "yaml -i i18n_de_DE.c -i i18n_cs_CZ.json",    289,  NULL,       NULL },
     { "xml -i i18n_de_DE.c -i i18n_cs_CZ.json",     482,  NULL,       NULL },
     { "json -i i18n_de_DE.c -x '/////[1]' --set 'LongValue'",344,NULL,     NULL }, /* change a value */
@@ -2811,7 +2813,7 @@ oyjlTESTRESULT_e testToolOyjl ()
     { "-X man > oyjl.1 && cat oyjl.1",              8222, NULL,       NULL },
     { "-R cli > oyjl.txt && cat oyjl.txt",          0,    NULL,       NULL }
   };
-  int count = 15;
+  int count = 17;
   result = testTool( "oyjl", 5539/*help size*/, commands_oyjl, count, result, oyjlTESTRESULT_FAIL );
 
   return result;

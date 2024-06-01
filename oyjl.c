@@ -98,6 +98,27 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
       { remove("oyjl-tmp"); remove("oyjl_tmp.c"); }
       text = text_tmp;
     }
+    /* convert exported C declarated oiJS into plain text using cc compiler */
+    if(oyjlStringStartsWith(text, "unsigned char ",0) && !delimiter)
+    {
+      int size = 0;
+      char * t = oyjlStringCopy( text, 0 ), * name, * txt;
+      name = oyjlStringCopy( t, 0 );
+      oyjlStringReplace( &name, "unsigned char ", "", NULL,NULL );
+      txt = strchr( name, '[' );
+      if(txt) txt[0] = '\000';
+      if(verbose)
+        fprintf( stderr, "Found C-oiJS object: %s\n", name );
+
+      oyjlStringAdd( &t, 0,0, "\n#include <stdio.h>\n#include <oyjl.h>\nint main(int argc, char**argv)\n{\noyjl_val root = oyjlTreeDeSerialise( (oyjl_val)%s, 0, sizeof(%s) ); puts(oyjlTreeToText(root, OYJL_JSON));\n}\n", name, name );
+      oyjlWriteFile( "oyjl_tmp.c", t, strlen(t) );
+      free(t);
+      free(name);
+      text_tmp = oyjlReadCommandF( &size, "r", malloc, "cc -g oyjl_tmp.c `pkg-config oyjl --libs --cflags` -o oyjl-tmp; ./oyjl-tmp" );
+      if(!verbose)
+      { remove("oyjl-tmp"); remove("oyjl_tmp.c"); }
+      text = text_tmp;
+    }
 
     /* convert exported C declarated oiJS into plain text using cc compiler */
     if( oyjlStringStartsWith(text, "unsigned char ",0) && strstr(text, "_oiJS[]") != NULL &&
