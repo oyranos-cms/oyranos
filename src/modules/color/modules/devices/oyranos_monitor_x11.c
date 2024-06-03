@@ -432,7 +432,8 @@ char * icProfileName( const char * p, int psize, int verbose )
   int moff = 4+4+4+4+4+4+12; /* magic offset */
   if(psize < 132)
   {
-    fprintf( stderr, "Size too small for a ICC profile: %d\n", psize );
+    if(p)
+      fprintf( stderr, "[oyX1] %s: Size too small for a ICC profile: %d\n", p, psize );
     return NULL;
   }
   if(verbose)
@@ -1262,9 +1263,9 @@ int      oyX1SetupMonitorCalibration ( oyMonitor_s       * display,
 
   int version = 0;
   const char * xs = "-s";
-  char * t = oyX1ReadCmd("FORCE_NO_COLORTERM=1 xcalib -version");
+  char * t = oyX1ReadCmd("FORCE_NO_COLORTERM=1 xcalib --version");
   if(!(t && t[0]))
-    t = oyX1ReadCmd("FORCE_NO_COLORTERM=1 xcalib --version");
+    t = oyX1ReadCmd("FORCE_NO_COLORTERM=1 xcalib -version");
   if(!(t && t[0]))
   {
     fprintf( stderr, OY_DBG_FORMAT_ "xcalib not found for setting with %s\n", OY_DBG_ARGS_, profile_name );

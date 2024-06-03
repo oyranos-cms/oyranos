@@ -120,7 +120,7 @@ int          oyX1ColorServer_Handle  ( oyOptions_s       * options OY_UNUSED,
     oyOptions_SetFromString( result,
               "//"OY_TYPE_STD"/config/color_server_active",
               active?"1":"0", OY_CREATE_NEW );
-    fprintf(stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+    fprintf(stderr, "%s [oyX1] ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
     _msg( oyMSG_WARN, (oyStruct_s*)options,
           OY_DBG_FORMAT_ "color_server_active%s: %d", OY_DBG_ARGS_,
           flags & oySOURCE_DATA?".source_data":"", active );
@@ -298,7 +298,7 @@ int          oyX1CleanOptions_Handle ( oyOptions_s       * options,
     oyMSG_e mtype = !display ? oyMSG_ERROR:oyMSG_DBG;
 
     error = !display;
-    fprintf(stderr, "%s clean_profiles\n", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+    fprintf(stderr, "%s [oyX1] clean_profiles\n", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
     _msg( mtype, (oyStruct_s*)options,
           OY_DBG_FORMAT_ "clean_profiles: display_name: %s", OY_DBG_ARGS_,
           display_name?display_name:"----" );
@@ -462,7 +462,7 @@ int  oyMoveColorServerProfiles       ( const char        * display_name,
 
   oyConfig_Release( &monitor );
 
-  fprintf(stderr, "%s oyMoveColorServerProfiles() %s %s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN), active ? "color_server_active":"no color server", setup?"setup":"unset" );
+  fprintf(stderr, "%s [oyX1] oyMoveColorServerProfiles() %s %s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN), active ? "color_server_active":"no color server", setup?"setup":"unset" );
   if(setup)
   {
     size_t size = 0;
@@ -528,7 +528,7 @@ int          oyX1MoveOptions_Handle  ( oyOptions_s       * options,
     _msg( oyMSG_DBG, (oyStruct_s*)options,
           OY_DBG_FORMAT_ "move_color_server_profiles: display_name: %s screen: %d setup: %d", OY_DBG_ARGS_,
           display_name, screen, setup );
-    fprintf(stderr, "%s move_color_server_profiles setup: %d ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN), setup );
+    fprintf(stderr, "%s [oyX1] move_color_server_profiles setup: %d ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN), setup );
     t = oyjlBT(0);
     fprintf( stderr, "%s", t );
     free(t);
@@ -716,7 +716,7 @@ int          oyX1UpdateOptions_Handle( oyOptions_s       * options,
                                      &format, &size, &left, &data );
     if(data && size && atoi((const char*)data) > 0)
       advanced = atoi((const char*)data);
-    fprintf(stderr, "%s send_native_update_event\n", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+    fprintf(stderr, "%s [oyX1] send_native_update_event\n", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
     _msg( oyMSG_DBG, (oyStruct_s*)options,
           OY_DBG_FORMAT_ "desktop uses advanced settings: %d\n", OY_DBG_ARGS_,
           advanced );

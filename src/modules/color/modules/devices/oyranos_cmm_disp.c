@@ -592,7 +592,7 @@ int                Configs_FromPattern (
 
         if(error == 0)
         {
-          fprintf(stderr, "%s SetupMonitorCalibration", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+          fprintf(stderr, "%s [" CMM_NICK "] SetupMonitorCalibration:", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
           if(!gamma_only)
             error = SetupMonitorProfile( moni, profile_fullname, data, size );
           error = SetupMonitorCalibration( moni, profile_fullname, data, size );
@@ -1211,7 +1211,7 @@ int            Configs_Modify        ( oyConfigs_s       * devices,
           int gamma_only = oyOptions_FindString( options, "gamma_only", "yes" ) != NULL;
           const char * profile_fullname = oyProfile_GetFileName( p, -1 );
 
-          fprintf(stderr, "%s SetupMonitorCalibration ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+          fprintf(stderr, "%s [" CMM_NICK "] SetupMonitorCalibration: ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
           _msg(oyMSG_DBG, (oyStruct_s*)options, OY_DBG_FORMAT_ "\n "
                   "command: setup on device_name: %s \"%s\" %lu %s",
                   OY_DBG_ARGS_, device_name, oprofile_name, size,
