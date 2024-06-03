@@ -93,7 +93,7 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
       oyjlWriteFile( "oyjl_tmp.c", t, strlen(t) );
       free(t);
       free(name);
-      text_tmp = oyjlReadCommandF( &size, "r", malloc, "cc -g oyjl_tmp.c -o oyjl-tmp; ./oyjl-tmp" );
+      text_tmp = oyjlReadCommandF( &size, verbose?"r.verbose":"r", malloc, "cc -g oyjl_tmp.c -o oyjl-tmp; ./oyjl-tmp" );
       if(!verbose)
       { remove("oyjl-tmp"); remove("oyjl_tmp.c"); }
       text = text_tmp;
@@ -114,7 +114,7 @@ oyjl_val oyjlTreeParse2_             ( const char        * input,
       oyjlWriteFile( "oyjl_tmp.c", t, strlen(t) );
       free(t);
       free(name);
-      text_tmp = oyjlReadCommandF( &size, "r", malloc, "cc -g oyjl_tmp.c `pkg-config oyjl --libs --cflags` -o oyjl-tmp; ./oyjl-tmp" );
+      text_tmp = oyjlReadCommandF( &size, verbose?"r.verbose":"r", malloc, "cc -g oyjl_tmp.c `pkg-config oyjl --libs --cflags` -I../ -I./ -L./  -lOyjl -lOyjlCore -o oyjl-tmp; LD_LIBRARY_PATH=$LD_LIBRARY_PATH:. ./oyjl-tmp" );
       if(!verbose)
       { remove("oyjl-tmp"); remove("oyjl_tmp.c"); }
       text = text_tmp;
