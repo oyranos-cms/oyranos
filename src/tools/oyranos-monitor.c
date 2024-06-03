@@ -331,8 +331,23 @@ int myMain( int argc, const char ** argv )
     if(path) simple = 2;
     if(device_pos || x || y)
       server = 1;
-    if(unset || erase || list || x_color_region_target || device_pos || format || output)
+    if(unset || erase || list || x_color_region_target || (device_pos && !gamma) || format || output)
+    {
+      if(verbose && monitor_profile)
+      {
+        fprintf( stderr, "%s ", oyjlFunctionPrint( __func__, strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__ ) );
+        fprintf( stderr, "%s: %s\n", "rm monitor_profile", oyjlTermColor(oyjlBOLD, monitor_profile) );
+      }
       monitor_profile = NULL;
+    }
+
+    if(verbose && device_pos != -1)
+    {
+      int r OY_UNUSED;
+      char*cmd=NULL; oyjlStringAdd( &cmd, 0,0, "oyranos-monitor -l -d %d\n", device_pos);
+      fprintf( stderr, "%s ", oyjlFunctionPrint( __func__, strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__ ) );
+      r = system(cmd);
+    }
 
     XcmDebugVariableSet( &oy_debug );
     if(xcm_active)
@@ -379,7 +394,9 @@ int myMain( int argc, const char ** argv )
     if(daemon_var)
     {
       int r OY_UNUSED;
-      r = system("oyranos-monitor-white-point --daemon=1");
+      char*cmd=NULL; oyjlStringAdd( &cmd, 0,0, "oyranos-monitor-white-point --daemon=1%s\n", verbose?" -v":"");
+      fprintf( stderr, "%s", oyjlTermColor(oyjlITALIC, cmd) );
+      r = system(cmd);
     }
 
 #ifdef XCM_HAVE_X11
@@ -734,7 +751,7 @@ int myMain( int argc, const char ** argv )
                 oyOptionChoicesGet2( oyWIDGET_DISPLAY_WHITE_POINT, flags,
                                    oyNAME_NAME, &choices,
                                    &choices_string_list, &current );
-                fprintf(stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+                fprintf(stderr, "%s [oy-moni] ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
                 fprintf(stderr, "Color Server active: %d white point mode: %s\n", active, 0 <= current && current < choices ? choices_string_list[current]:"" );
               }
             }
@@ -1036,7 +1053,11 @@ int myMain( int argc, const char ** argv )
             oyDeviceSetupVCGT( device, options, monitor_profile );
           }
           else
-            fprintf( stderr, "no monitor profile specified\n" );
+          {
+            fprintf( stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+            fprintf( stderr, "%s ", oyjlFunctionPrint( __func__, strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__ ) );
+            fprintf( stderr, "%s: %s\n", oyjlTermColor(oyjlRED, "no monitor profile specified"), monitor_profile?monitor_profile:"----" );
+          }
         }
 
         oyConfig_Release( &device );
