@@ -184,7 +184,7 @@ char ** getDBVals( oySCOPE_e scope, int *n, int mark )
 static oyjlOptionChoice_s * listVals ( oyjlOption_s * o OYJL_UNUSED, int * y OYJL_UNUSED, oyjlOptions_s * opts OYJL_UNUSED )
 {
   int count = 0;
-  char ** paths = getDBVals( oySCOPE_USER, &count, oyjlNO_MARK );
+  char ** paths = getDBVals( oySCOPE_USER, &count, 0 );
   oyjlOptionChoice_s * c = choicesFromStringList( paths, count );
   oyjlStringListRelease( &paths, count, free );
 
