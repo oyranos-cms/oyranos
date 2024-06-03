@@ -72,7 +72,7 @@ static void oyConfigCallbackDBus     ( double              progress_zero_till_on
 
   if(strstr(key,OY_STD) == NULL) return;
 
-  fprintf(stdout, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+  fprintf(stdout, "%s [oy-config] ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
   getKey( key, oySCOPE_USER_SYS, verbose, 1/*print*/ );
 
   /* Clear the changed state, before a new check. */
@@ -773,8 +773,8 @@ void  getKey                         ( const char        * key,
     oyGetCurrentGMTHour( &gmt_diff_second );
     oySplitHour( oyGetCurrentLocalHour( oyGetCurrentGMTHour(0), gmt_diff_second ), &hour, &minute, &second );
     if(verbose > 1) fprintf( print == 1 ? stdout : stderr, "%02d:%02d:%02d ", hour, minute, second );
-    if(verbose)     fprintf( print == 1 ? stdout : stderr, "%s:", key );
-    fprintf( print ? stdout : stderr, "%s\n", oyNoEmptyString_m_(v) );
+    if(verbose)     fprintf( print == 1 ? stdout : stderr, "%s:", oyjlTermColor(oyjlITALIC,key) );
+    fprintf( print ? stdout : stderr, "%s\n", oyjlTermColor(oyjlBOLD,oyNoEmptyString_m_(v)) );
     if(v) oyFree_m_(v);
   }
 }

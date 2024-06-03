@@ -56,11 +56,11 @@ int getLocation( double * lon, double * lat);
 double getSunHeight( double year, double month, double day, double gmt_hours, double lat, double lon, int verbose, oyjl_val root );
 int getSunriseSunset( double * rise, double * set, int dry, const char * format, char ** text, int verbose );
 int isNight(int dry);
-int runDaemon(int dmode);
-int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry );
+int runDaemon(int dmode, int verbose);
+int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry, int verbose );
 void pingNativeDisplay();
 int checkWtptState();
-void updateVCGT();
+void updateVCGT(int verbose);
 // Dark/Bright Desktop backgrounds
 char * getCurrentColorScheme();
 void setColorScheme( const char * scheme );
@@ -706,7 +706,7 @@ int myMain( int argc , const char** argv )
 
   if(wtpt_mode >= 0)
   {
-    error = setWtptMode( scope, wtpt_mode, dry );
+    error = setWtptMode( scope, wtpt_mode, dry, verbose );
     return error;
   }
 
@@ -851,13 +851,13 @@ int myMain( int argc , const char** argv )
 
   if(daemon != -1)
   {
-    error = runDaemon(daemon);
+    error = runDaemon(daemon, verbose);
     ++worked;
   }
 
   if(check)
   {
-    checkWtptState( dry );
+    checkWtptState( dry, verbose );
     ++worked;
   }
 
@@ -918,7 +918,7 @@ void pingNativeDisplay()
   oyOptions_Release( &opts );
 }
 
-int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
+int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry, int verbose )
 {
   int choices = 0;
   const char ** choices_string_list = NULL;
@@ -928,7 +928,7 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
   if(dry == 0)
   {
     error = oySetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT, scope, wtpt_mode );
-    updateVCGT();
+    updateVCGT(verbose);
     /* ping X11 observers about option change
      * ... by setting a known property again to its old value
      */
@@ -957,7 +957,7 @@ int setWtptMode( oySCOPE_e scope, int wtpt_mode, int dry )
 }
 
 
-void updateVCGT()
+void updateVCGT(int verbose)
 {
   int r = 0;
   DBG_S_( oyPrintTime() );
@@ -971,9 +971,14 @@ void updateVCGT()
   char * result = oyReadCmdToMem_( "oyranos-monitor -l | wc -l", &size, "r", malloc );
   char * tmpname = oyGetTempFileName_( NULL, "vcgt.icc", 0, oyAllocateFunc_ );
   if(!result) return;
+  char * bt = verbose?oyjlBT(2):NULL;
   int count = atoi(result), i;
   char * cmd = NULL;
-  fprintf(stderr, "monitor count: %d\n", count);
+  if(verbose)
+    fprintf(stderr, "%s", bt?bt:"");
+  else
+    fprintf(  stderr, "%s [oy-wtpt] ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+  fprintf(stderr, "%s %s\n", oyjlTermColor(oyjlBOLD,"monitor count:"), oyjlTermColorF(oyjlBLUE,"%d",count));
   free(result);
   if(count < 0) count = 0;
   if(count > 200) count = 0;
@@ -983,19 +988,20 @@ void updateVCGT()
   {
     int r OY_UNUSED;
     /* write VCGT to temporary profile */
-    oyStringAddPrintf(&cmd, 0,0, "oyranos-monitor -c -f vcgt -d %d -o %s", i, tmpname);
-    fputs(cmd, stderr); fputs("\n", stderr );
+    oyStringAddPrintf(&cmd, 0,0, "oyranos-monitor -c -f vcgt -d %d -o %s%s", i, tmpname, verbose?" -v":"");
+    fprintf( stderr, "%s%s %s\n", bt?bt:"", oyjlTermColorF(oyjlBOLD,"[%d]",i), oyjlTermColor(oyjlITALIC,cmd) );
     r = system( cmd );
     oyFree_m_(cmd);
     /* upload VCGT tag from temporary profile */
-    oyStringAddPrintf(&cmd, 0,0, "oyranos-monitor -g -d %d %s", i, tmpname);
-    fputs(cmd, stderr); fputs("\n", stderr );
+    oyStringAddPrintf(&cmd, 0,0, "oyranos-monitor -g -d %d %s%s", i, tmpname, verbose?" -v":"");
+    fprintf( stderr, "%s%s %s\n", bt?bt:"", oyjlTermColorF(oyjlBOLD,"[%d]",i), oyjlTermColor(oyjlITALIC,cmd) );
     r = system( cmd );
     oyFree_m_(cmd);
     if(getenv("OY_DEBUG_WRITE") == NULL)
       remove( tmpname );
   }
   DBG_S_( oyPrintTime() );
+  if(bt) free(bt);
 }
 
 int findLocation(oySCOPE_e scope, int dry, int verbose)
@@ -1263,7 +1269,7 @@ int isNight(int dry)
 }
 
 /* check the sunrise / sunset state */
-int checkWtptState(int dry)
+int checkWtptState(int dry, int verbose)
 {
   int error = 0;
   int cmode;
@@ -1328,7 +1334,7 @@ int checkWtptState(int dry)
     cmode = oyGetBehaviour( oyBEHAVIOUR_DISPLAY_WHITE_POINT );
     effect = oyGetPersistentString( OY_DEFAULT_DISPLAY_EFFECT_PROFILE, 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
     ccs = getCurrentColorScheme();
-    fprintf (stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+    fprintf (stderr, "%s [oy-wtpt] ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
     if(rise < dtime && dtime <= set)
       fprintf (stderr, "%s ", oyjlTermColor(oyjlBLUE, _("Day Mode")) );
     else
@@ -1413,7 +1419,7 @@ int checkWtptState(int dry)
               backlight[strlen(backlight)-1] = '\000';
             value = oyGetPersistentString( OY_DISPLAY_STD "/display_backlight_night", 0, oySCOPE_USER_SYS, oyAllocateFunc_ );
             nbl = atoi(value);
-            fprintf( stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+            fprintf( stderr, "%s [oy-wtpt] ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
             fprintf( stderr, "xbacklight old | new: %d(%s) | %d\n", bl, backlight, nbl );
             if(bl > nbl)
             {
@@ -1433,7 +1439,7 @@ int checkWtptState(int dry)
         ((effect?1:0) != (new_effect?1:0) ||
          (effect && new_effect && strcasecmp(effect, new_effect) != 0)))
     {
-      fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+      fprintf(  stderr, "%s [oy-wtpt] ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
       fprintf(  stderr, "%s: %s %s: %s\n", _("New white point mode"), oyjlTermColor(oyjlBOLD,new_mode<choices?choices_string_list[new_mode]:"----"),
                 _("Effect"), oyNoEmptyString_m_(new_effect) );
 
@@ -1449,13 +1455,13 @@ int checkWtptState(int dry)
       }
 
       if(cmode != new_mode)
-        error = setWtptMode( scope, new_mode, dry );
+        error = setWtptMode( scope, new_mode, dry, verbose );
     }
 
     if(dry == 0 && scheme && (!ccs || strcasecmp(scheme, ccs) != 0))
     {
       setColorScheme( scheme);
-      fprintf(  stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+      fprintf(  stderr, "%s [oy-wtpt] ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
       fprintf(  stderr, "%s: %s %s/%s\n", _("New color scheme"),
                 _("old/new"), oyNoEmptyString_m_(ccs), oyjlTermColor(oyjlBOLD,scheme) );
     }
@@ -1485,6 +1491,9 @@ static void oyMonitorCallbackDBus    ( double              progress_zero_till_on
                                        oyStruct_s        * cb_progress_context OY_UNUSED )
 {
   const char * key;
+  oyOptions_s * opts = (oyOptions_s*) cb_progress_context;
+  int32_t verbose = 0;
+  oyOptions_FindInt( opts, "verbose", 0, &verbose );
   if(!status_text) return;
   DBG_S_( oyPrintTime() );
 
@@ -1521,12 +1530,14 @@ static void oyMonitorCallbackDBus    ( double              progress_zero_till_on
     fprintf(stderr, "%s: no value\n", key );
   else
   {
-    fprintf(stderr, "%s:%s\n", key,v);
+    fprintf( stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
+    fprintf( stderr, "%s ", verbose ? oyjlFunctionPrint( __func__, strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__ ) : "[oy-wtpt]" );
+    fprintf( stderr, "%s:%s\n", oyjlTermColor(oyjlITALIC,key), oyjlTermColorF(oyjlBOLD,"%s",v));
     oyFree_m_(v);
   }
 
-  checkWtptState( 0 );
-  updateVCGT();
+  checkWtptState( 0, verbose );
+  updateVCGT(verbose);
 
   /* Clear the changed state, before a new check. */
   oy_dbus_config_changed = 1;
@@ -1535,7 +1546,7 @@ static void oyMonitorCallbackDBus    ( double              progress_zero_till_on
 #endif /* HAVE_DBUS */
 
 
-int runDaemon(int dmode)
+int runDaemon(int dmode, int verbose)
 {
   int error = 0, id, active = 1;
   double hour_old = 0.0;
@@ -1564,14 +1575,16 @@ int runDaemon(int dmode)
   /* ensure all keys are setup properly
    * before we lock the DBus connection by listening */
   if(active)
-    checkWtptState( 0 );
+    checkWtptState( 0, verbose );
 
 #ifdef HAVE_DBUS
+  oyOptions_s * options = NULL;
+  oyOptions_SetFromInt( &options, "verbose", verbose, 0, 0 );
   oyStartDBusObserver( oyWatchDBus, oyFinishDBus, oyMonitorCallbackDBus, OY_STD, NULL )
   if(id)
   {
     fprintf(stderr, "%s ", oyjlPrintTime(OYJL_BRACKETS, oyjlGREEN) );
-    fprintf(stderr, "oyStartDBusObserver ID: %d\n", id);
+    fprintf(stderr, "%s%soyStartDBusObserver ID: %d\n", verbose?oyjlFunctionPrint( __func__, strrchr(__FILE__,'/') ? strrchr(__FILE__,'/')+1 : __FILE__,__LINE__ ):"[oy-wtpt] ", verbose?" ":"", id);
   }
 
   while(1)
@@ -1579,7 +1592,7 @@ int runDaemon(int dmode)
     double hour = oyGetCurrentGMTHour_( 0 );
     double repeat_check = 1.0/60.0; /* every minute */
 
-    oyLoopDBusObserver( hour, repeat_check, oy_dbus_config_changed, checkWtptState(0) )
+    oyLoopDBusObserver( hour, repeat_check, oy_dbus_config_changed, checkWtptState(0, verbose) )
 
     /* delay next polling */
     oySleep( 0.25 );
