@@ -394,7 +394,7 @@ int myMain( int argc, const char ** argv )
     if(daemon_var)
     {
       int r OY_UNUSED;
-      char*cmd=NULL; oyjlStringAdd( &cmd, 0,0, "oyranos-monitor-white-point --daemon=1%s\n", verbose?" -v":"");
+      char*cmd=NULL; oyjlStringAdd( &cmd, 0,0, "oyranos-monitor-white-point --daemon=1%s &\n", verbose?" -v":"");
       fprintf( stderr, "%s", oyjlTermColor(oyjlITALIC, cmd) );
       r = system(cmd);
     }
@@ -420,7 +420,7 @@ int myMain( int argc, const char ** argv )
       }
       if((r=XcmColorServerCapabilities( display )) > 0 && r & XCM_COLOR_SERVER_MANAGEMENT)
         daemon_var = 2;
-      if(oy_debug) fprintf( stderr, "active: %d\n", r);
+      if(oy_debug || verbose) fprintf( stderr, "active: %d (daemon_var=%d)\n", r, daemon_var);
       XCloseDisplay( display );
       r = system(argv[0]);
     }
