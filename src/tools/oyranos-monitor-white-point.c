@@ -511,7 +511,7 @@ int myMain( int argc , const char** argv )
                                     {_("Switch all day light intereference off such as white point and effect"), "oyranos-monitor-white-point -s 0 -e 0", "", ""},
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s see_as_well[]={{"oyranos-monitor(1) oyranos-config(1) oyranos(3)", "", "", ""},
-                                    {"http://www.oyranos.org","","",""},
+                                    {"https://gitlab.com/oyranos/oyranos","","",""},
                                     {NULL,NULL,NULL,NULL}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */

@@ -13,18 +13,13 @@ device specific Informations (ICC profiles) und system wide settings.
 
 
 ### Links
-* [About](http://www.oyranos.org/about)
-* [Features](http://www.oyranos.org/features)
-* [Sources & Download](http://www.oyranos.org/downloads/)
-* [Documentation & Support](http://www.oyranos.org/support)
+* [Sources & Download](https://gitlab.com/oyranos/oyranos)
+* [Documentation & Support](https://gitlab.com/oyranos/oyranos/-/issues)
 * [Command Line Tools](src/tools/README.md)
 * [ChangeLog](ChangeLog.md)
 * [Copyright](COPYING.md) - BSD
 * [Authors](AUTHORS.md)
-* [Development](http://www.oyranos.org/development)
-* [Future](http://www.oyranos.org/future)
 * [Packaging](PACKAGING.md)
-* [Wiki](http://www.oyranos.org/wiki/index.php%3Ftitle=Oyranos)
 * [FAQ](doc/FAQ.md)
 
 
@@ -38,7 +33,7 @@ device specific Informations (ICC profiles) und system wide settings.
 
 ##### Optional
 * [libxml2](http://www.xmlsoft.org/) - for XML parsing (or internal fallback)
-* [libXcm >= 0.5.4] (http://www.oyranos.org/libxcm) - for monitor support (or internal fallback)
+* [libXcm >= 0.5.4] (https://gitlab.com/oyranos/libxcm) - for monitor support (or internal fallback)
 * [Yajl](http://lloyd.github.com/yajl) - JSON API (or internal fallback)
 * [Oyjl](https://gitlab.com/beku/oyjl) - Oyjl Shared Basics API (or internal fallback)
 * [libOpenICC](https://github.com/OpenICC/config) - JSON/Yajl based DB API (or internal fallback)

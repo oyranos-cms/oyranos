@@ -383,7 +383,7 @@ int myMain( int argc, const char ** argv )
                                     {NULL,NULL,NULL,NULL}};
 
   oyjlOptionChoice_s S_choices[] = {{_("oyranos-policy(1) oyranos-config(1) oyranos-profiles(1) oyranos-profile(1) oyranos(3)"),NULL,               NULL,                         NULL},
-                                    {"http://www.oyranos.org",NULL,               NULL,                         NULL},
+                                    {"https://gitlab.com/oyranos/oyranos",NULL,               NULL,                         NULL},
                                     {NULL,NULL,NULL,NULL}};
 
   /* declare options - the core information; use previously declared choices */

@@ -467,7 +467,7 @@ int myMain( int argc, const char ** argv )
                                   {"ncc",_("NCC"),"",_("Named Color Collection")},
                                   {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s see_as_well[]={{"oyranos-profile(1) oyranos-config(1) oyranos-policy(1) oyranos(3)", "", "", ""},
-                                    {"http://www.oyranos.org","","",""},
+                                    {"https://gitlab.com/oyranos/oyranos","","",""},
                                     {NULL,NULL,NULL,NULL}};
   oyjlOption_s oarray[] = {
   /* type,   flags, o, option, key, name, description, help, value_name, value_type, values, var_type, variable */

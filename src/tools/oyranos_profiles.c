@@ -98,7 +98,7 @@ int myMain( int argc, const char ** argv )
                                     {"",_("Show file infos"),"SAVEIFS=$IFS ; IFS=$'\\n\\b'; profiles=(`oyranos-profiles -ldf`); IFS=$SAVEIFS; for file in \"${profiles[@]}\"; do ls \"$file\"; done", ""},
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s see_as_well[]={{"oyranos-profile-graph(1) oyranos-config(1) oyranos-policy(1) oyranos(3)", "", "", ""},
-                                    {"http://www.oyranos.org","","",""},
+                                    {"https://gitlab.com/oyranos/oyranos","","",""},
                                     {NULL,NULL,NULL,NULL}};
   oyjlOptionChoice_s path_choices[]={{"basICColor","","",""}, {"colord","","",""}, {"edid","","",""}, {"OpenICC","","",""}, {"oyra","","",""}, {"xorg","","",""},
                                     {NULL,NULL,NULL,NULL}};

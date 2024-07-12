@@ -228,21 +228,21 @@ The tool can set the actual white point or set it by local day and night time. A
 
 &nbsp;&nbsp;[oyranos-monitor](oyranosmonitor.html)<a href="oyranosmonitor.md">(1)</a>&nbsp;&nbsp;[oyranos-config](oyranosconfig.html)<a href="oyranosconfig.md">(1)</a>&nbsp;&nbsp;[oyranos](oyranos.html)<a href="oyranos.md">(3)</a>
 
- http://www.oyranos.org
+ https://gitlab.com/oyranos/oyranos
 
 
 <h2>AUTHOR <a href="#toc" name="author">&uarr;</a></h2>
 
-Kai-Uwe Behrmann http://www.oyranos.org
+Kai-Uwe Behrmann https://gitlab.com/beku
 
 <h2>COPYRIGHT <a href="#toc" name="copyright">&uarr;</a></h2>
 
-*© 2005-2021 Kai-Uwe Behrmann and others*
+*© 2005-2024 Kai-Uwe Behrmann and others*
 
 
 <a name="license"></a>
 ### Licence
-newBSD <a href="http://www.oyranos.org">http://www.oyranos.org</a>
+newBSD <a href="https://gitlab.com/oyranos/oyranos">https://gitlab.com/oyranos/oyranos</a>
 
 <h2>BUGS <a href="#toc" name="bugs">&uarr;</a></h2>
 
